@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.monkey.flow.core.mapper.FlowHisTaskMapper">
+
+    <resultMap type="com.monkey.flow.core.domain.entity.FlowHisTask" id="FlowHisTaskResult">
+        <result property="id"    column="id"    />
+        <result property="nodeFrom"    column="node_from"    />
+        <result property="nodeFromName"    column="node_from_name"    />
+        <result property="nodeType"    column="node_type"    />
+        <result property="nodeTo"    column="node_to"    />
+        <result property="nodeToName"    column="node_to_name"    />
+        <result property="userCode"    column="user_code"    />
+        <result property="definitionId"    column="definition_id"    />
+        <result property="instanceId"    column="instance_id"    />
+        <result property="flowStatus"    column="flow_status"    />
+        <result property="message"    column="message"    />
+        <result property="conditionValue"    column="condition_value"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectVo">
+        select t.id, t.node_from, t.node_from_name, t.node_type, t.node_to, t.node_to_name, t.user_code, t.definition_id,
+               t.instance_id, t.flow_status, t.message, t.condition_value, t.create_time, t.update_time from flow_his_task t
+    </sql>
+
+    <select id="selectList" parameterType="com.monkey.flow.core.domain.entity.FlowHisTask" resultMap="FlowHisTaskResult">
+        <include refid="selectVo"/>
+        <where>
+            <if test="nodeFrom != null  and nodeFrom != ''"> and t.node_from = #{nodeFrom}</if>
+            <if test="nodeFromName != null  and nodeFromName != ''"> and t.node_from_name like concat('%', #{nodeFromName}, '%')</if>
+            <if test="nodeTo != null  and nodeTo != ''"> and t.node_to = #{nodeTo}</if>
+            <if test="nodeToName != null  and nodeToName != ''"> and t.node_to_name like concat('%', #{nodeToName}, '%')</if>
+            <if test="userCode != null  and userCode != ''"> and t.user_code = #{userCode}</if>
+            <if test="instanceId != null "> and instance_id = #{instanceId}</if>
+            <if test="message != null  and message != ''"> and t.message = #{message}</if>
+            <if test="conditionValue != null  and conditionValue != ''"> and t.condition_value = #{conditionValue}</if>
+        </where>
+    </select>
+
+    <select id="selectByIds" parameterType="Long" resultMap="FlowHisTaskResult">
+        <include refid="selectVo"/>
+        where t.id in
+        <foreach item="id" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="selectById" parameterType="Long" resultMap="FlowHisTaskResult">
+        <include refid="selectVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="queryByNewInstanceIds" resultMap="FlowHisTaskResult">
+        <include refid="selectVo"/>
+        left join flow_his_task r on t.instance_id in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        and t.instance_id = r.instance_id
+        and t.create_time &lt; r.create_time
+        where r.create_time is null
+    </select>
+
+    <select id="queryByInstanceIds" resultMap="FlowHisTaskResult">
+        <include refid="selectVo"/>
+        where t.instance_id in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <insert id="insert" parameterType="com.monkey.flow.core.domain.entity.FlowHisTask">
+        insert into flow_his_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="nodeFrom != null and nodeFrom != ''">node_from,</if>
+            <if test="nodeFromName != null and nodeFromName != ''">node_from_name,</if>
+            <if test="nodeType != null">node_type,</if>
+            <if test="nodeTo != null and nodeTo != ''">node_to,</if>
+            <if test="nodeToName != null and nodeToName != ''">node_to_name,</if>
+            <if test="userCode != null and userCode != ''">user_code,</if>
+            <if test="definitionId != null">definition_id,</if>
+            <if test="instanceId != null">instance_id,</if>
+            <if test="flowStatus != null">flow_status,</if>
+            <if test="message != null">message,</if>
+            <if test="conditionValue != null">condition_value,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="nodeFrom != null and nodeFrom != ''">#{nodeFrom},</if>
+            <if test="nodeFromName != null and nodeFromName != ''">#{nodeFromName},</if>
+            <if test="nodeType != null">#{nodeType},</if>
+            <if test="nodeTo != null and nodeTo != ''">#{nodeTo},</if>
+            <if test="nodeToName != null and nodeToName != ''">#{nodeToName},</if>
+            <if test="userCode != null and userCode != ''">#{userCode},</if>
+            <if test="definitionId != null">#{definitionId},</if>
+            <if test="instanceId != null">#{instanceId},</if>
+            <if test="flowStatus != null">#{flowStatus},</if>
+            <if test="message != null">#{message},</if>
+            <if test="conditionValue != null">#{conditionValue},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateById" parameterType="com.monkey.flow.core.domain.entity.FlowHisTask">
+        update flow_his_task
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="nodeFrom != null and nodeFrom != ''">node_from = #{nodeFrom},</if>
+            <if test="nodeFromName != null and nodeFromName != ''">node_from_name = #{nodeFromName},</if>
+            <if test="nodeType != null">node_type = #{nodeType},</if>
+            <if test="nodeTo != null and nodeTo != ''">node_to = #{nodeTo},</if>
+            <if test="nodeToName != null and nodeToName != ''">node_to_name = #{nodeToName},</if>
+            <if test="userCode != null and userCode != ''">user_code = #{userCode},</if>
+            <if test="definitionId != null">definition_id = #{definitionId},</if>
+            <if test="instanceId != null">instance_id = #{instanceId},</if>
+            <if test="flowStatus != null">flow_status = #{flowStatus},</if>
+            <if test="message != null">message = #{message},</if>
+            <if test="conditionValue != null">condition_value = #{conditionValue},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="Long">
+        delete from flow_his_task where id = #{id}
+    </delete>
+
+    <delete id="deleteByInstanceIds" parameterType="Long">
+        delete from flow_his_task where instance_id in
+        <foreach item="instanceIds" collection="list" open="(" separator="," close=")">
+            #{instanceIds}
+        </foreach>
+    </delete>
+
+    <delete id="deleteByIds" parameterType="Long">
+        delete from flow_his_task where id in
+        <foreach item="id" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
