@@ -13,9 +13,9 @@ import java.util.List;
  * @date 2023-03-29
  */
 public interface FlowNodeMapper extends FlowBaseMapper<FlowNode> {
-    List<FlowNode> queryNewVersionFlowNodeByFlowCode(String flowCode);
+    List<FlowNode> getLastByFlowCode(String flowCode);
 
-    List<FlowNode> queryFlowNodeByFlowCodeAndVersion(String flowCode, String version);
+    List<FlowNode> getByFlowCodeAndVersion(String flowCode, String version);
 
     /**
      * 根据ids批量删除

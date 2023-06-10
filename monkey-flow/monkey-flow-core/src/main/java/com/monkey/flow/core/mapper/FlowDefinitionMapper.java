@@ -27,7 +27,7 @@ public interface FlowDefinitionMapper extends FlowBaseMapper<FlowDefinition> {
      * @param ids 需要删除的数据主键集合
      * @return 结果
      */
-    public int deleteFlowNodeByDefinitionIds(Collection<? extends Serializable> ids);
+    public int deleteNodeByDefIds(Collection<? extends Serializable> ids);
 
     /**
      * 通过流程定义主键删除流程结点信息
@@ -35,7 +35,7 @@ public interface FlowDefinitionMapper extends FlowBaseMapper<FlowDefinition> {
      * @param id 流程定义ID
      * @return 结果
      */
-    public int deleteFlowNodeByDefinitionId(Serializable id);
+    public int deleteNodeByDefId(Serializable id);
 
     /**
      * 批量删除结点跳转关联
@@ -43,7 +43,7 @@ public interface FlowDefinitionMapper extends FlowBaseMapper<FlowDefinition> {
      * @param ids 需要删除的数据主键集合
      * @return 结果
      */
-    public int deleteFlowSkipByDefinitionIds(Collection<? extends Serializable> ids);
+    public int deleteSkipByDefIds(Collection<? extends Serializable> ids);
 
 
     /**
@@ -52,6 +52,6 @@ public interface FlowDefinitionMapper extends FlowBaseMapper<FlowDefinition> {
      * @param id 流程定义ID
      * @return 结果
      */
-    public int deleteFlowSkipByDefinitionId(Serializable id);
+    public int deleteSkipByDefId(Serializable id);
 
 }

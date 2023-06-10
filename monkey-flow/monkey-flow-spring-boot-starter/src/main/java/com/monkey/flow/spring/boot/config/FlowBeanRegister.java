@@ -24,18 +24,6 @@ public class FlowBeanRegister
   }
 
   @Bean
-  public HisTaskAppService hisTaskAppService()
-  {
-    return new HisTaskAppServiceImpl();
-  }
-
-  @Bean
-  public InsAppService insAppService()
-  {
-    return new InsAppServiceImpl();
-  }
-
-  @Bean
   public NodeAppService nodeAppService()
   {
     return new NodeAppServiceImpl();
@@ -48,21 +36,27 @@ public class FlowBeanRegister
   }
 
   @Bean
+  public InsAppService insAppService()
+  {
+    return new InsAppServiceImpl();
+  }
+
+  @Bean
+  public TaskAppService taskAppService()
+  {
+    return new TaskAppServiceImpl();
+  }
+
+  @Bean
+  public HisTaskAppService hisTaskAppService()
+  {
+    return new HisTaskAppServiceImpl();
+  }
+
+  @Bean
   public IFlowDefinitionService definitionService()
   {
     return new FlowDefinitionServiceImpl();
-  }
-
-  @Bean
-  public IFlowHisTaskService hisTaskService()
-  {
-    return new FlowHisTaskServiceImpl();
-  }
-
-  @Bean
-  public IFlowInstanceService instanceService()
-  {
-    return new FlowInstanceServiceImpl();
   }
 
   @Bean
@@ -75,5 +69,23 @@ public class FlowBeanRegister
   public IFlowSkipService skipService()
   {
     return new FlowSkipServiceImpl();
+  }
+
+  @Bean
+  public IFlowInstanceService instanceService()
+  {
+    return new FlowInstanceServiceImpl();
+  }
+
+  @Bean
+  public IFlowTaskService taskService()
+  {
+    return new FlowTaskServiceImpl();
+  }
+
+  @Bean
+  public IFlowHisTaskService hisTaskService()
+  {
+    return new FlowHisTaskServiceImpl();
   }
 }

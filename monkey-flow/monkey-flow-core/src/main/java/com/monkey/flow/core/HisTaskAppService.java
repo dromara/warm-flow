@@ -14,4 +14,5 @@ public interface HisTaskAppService {
      * @return
      */
     public IFlowHisTaskService getService();
+
 }

@@ -5,12 +5,12 @@ import com.monkey.mybatis.core.entity.FlowEntity;
 import java.util.Date;
 
 /**
- * 历史任务记录对象 flow_his_task
+ * 待办任务记录对象 flow_task
  *
  * @author hh
  * @date 2023-03-29
  */
-public class FlowHisTask implements FlowEntity {
+public class FlowTask implements FlowEntity {
     private static final long serialVersionUID = 1L;
 
     /** 主键 */
@@ -35,29 +35,20 @@ public class FlowHisTask implements FlowEntity {
     private String businessId;
 
     /**
-     * 开始结点编码
+     * 结点编码
      */
     private String nodeCode;
 
     /**
-     * 开始结点名称
+     * 结点名称
      */
     private String nodeName;
 
     /**
-     * 开始结点类型,0开始结点,1中间结点,2结束结点
+     * 结点类型,0开始结点,1中间结点,2结束结点
      */
     private Integer nodeType;
 
-    /**
-     * 目标结点编码
-     */
-    private String targetNodeCode;
-
-    /**
-     * 结束结点名称
-     */
-    private String targetNodeName;
 
     /**
      * 审批者
@@ -65,22 +56,14 @@ public class FlowHisTask implements FlowEntity {
     private String approver;
 
     /**
+     * 转办人
+     */
+    private String assignee;
+
+    /**
      * 流程状态
      */
     private Integer flowStatus;
-
-    /**
-     * 审批意见
-     */
-    private String message;
-
-    /**
-     * 跳转条件
-     */
-    private String conditionValue;
-
-    /** 创建者 */
-    private String createBy;
 
     /** 创建时间 */
     private Date createTime;
@@ -152,22 +135,6 @@ public class FlowHisTask implements FlowEntity {
         this.nodeType = nodeType;
     }
 
-    public String getTargetNodeCode() {
-        return targetNodeCode;
-    }
-
-    public void setTargetNodeCode(String targetNodeCode) {
-        this.targetNodeCode = targetNodeCode;
-    }
-
-    public String getTargetNodeName() {
-        return targetNodeName;
-    }
-
-    public void setTargetNodeName(String targetNodeName) {
-        this.targetNodeName = targetNodeName;
-    }
-
     public String getApprover() {
         return approver;
     }
@@ -176,36 +143,20 @@ public class FlowHisTask implements FlowEntity {
         this.approver = approver;
     }
 
+    public String getAssignee() {
+        return assignee;
+    }
+
+    public void setAssignee(String assignee) {
+        this.assignee = assignee;
+    }
+
     public Integer getFlowStatus() {
         return flowStatus;
     }
 
     public void setFlowStatus(Integer flowStatus) {
         this.flowStatus = flowStatus;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public String getConditionValue() {
-        return conditionValue;
-    }
-
-    public void setConditionValue(String conditionValue) {
-        this.conditionValue = conditionValue;
-    }
-
-    public String getCreateBy() {
-        return createBy;
-    }
-
-    public void setCreateBy(String createBy) {
-        this.createBy = createBy;
     }
 
     @Override
@@ -242,5 +193,13 @@ public class FlowHisTask implements FlowEntity {
 
     public void setFromCustom(String fromCustom) {
         this.fromCustom = fromCustom;
+    }
+
+    public String getFromPath() {
+        return fromPath;
+    }
+
+    public void setFromPath(String fromPath) {
+        this.fromPath = fromPath;
     }
 }

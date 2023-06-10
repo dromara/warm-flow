@@ -7,12 +7,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <resultMap type="com.monkey.flow.core.domain.entity.FlowInstance" id="FlowInstanceResult">
         <result property="id"    column="id"    />
         <result property="businessId"    column="business_id"    />
-        <result property="nodeCode"    column="node_code"    />
-        <result property="nodeName"    column="node_name"    />
-        <result property="nodeType"    column="node_type"    />
-        <result property="flowStatus"    column="flow_status"    />
-        <result property="flowVersion"    column="flow_version"    />
-        <result property="userCode"    column="user_code"    />
         <result property="definitionId"    column="definition_id"    />
         <result property="flowName"    column="flow_name"    />
         <result property="createBy"    column="create_by"    />
@@ -22,20 +16,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectVo">
-        select t.id, t.business_id, t.node_code, t.node_name, t.node_type, t.flow_status,  t.flow_version, t.user_code, t.definition_id, t.create_by
-        , t.create_time, t.update_time, t.ext from flow_instance t
+        select t.id, t.business_id, t.definition_id, t.create_by, t.create_time, t.update_time, t.ext from flow_instance t
     </sql>
 
     <select id="selectList" parameterType="com.monkey.flow.core.domain.entity.FlowInstance" resultMap="FlowInstanceResult">
         <include refid="selectVo"/>
         <where>
             <if test="businessId != null  and businessId != ''"> and t.business_id = #{businessId}</if>
-            <if test="nodeCode != null  and nodeCode != ''"> and t.node_code = #{nodeCode}</if>
-            <if test="nodeName != null  and nodeName != ''"> and t.node_name like concat('%', #{nodeName}, '%')</if>
-            <if test="nodeType != null"> and t.node_type = #{nodeCode}</if>
-            <if test="flowStatus != null"> and t.flow_status = #{flowStatus}</if>
-            <if test="flowVersion != null  and flowVersion != ''"> and t.flow_version = #{flowVersion}</if>
-            <if test="userCode != null  and userCode != ''"> and t.user_code = #{userCode}</if>
             <if test="definitionId != null "> and t.definition_id = #{definitionId}</if>
             <if test="createBy != null  and createBy != ''"> and t.create_by = #{createBy}</if>
         </where>
@@ -54,7 +41,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </select>
 
-    <select id="queryByidWithUpdateLock" resultMap="FlowInstanceResult">
+    <select id="getByIdWithLock" resultMap="FlowInstanceResult">
         <include refid="selectVo"/>
         where t.id in
         <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
@@ -68,12 +55,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">id,</if>
             <if test="businessId != null and businessId != ''">business_id,</if>
-            <if test="nodeCode != null and nodeCode != ''">node_code,</if>
-            <if test="nodeName != null and nodeName != ''">node_name,</if>
-            <if test="nodeType != null">node_type,</if>
-            <if test="flowStatus != null">flow_status,</if>
-            <if test="flowVersion != null and flowVersion != ''">flow_version,</if>
-            <if test="userCode != null and userCode != ''">user_code,</if>
             <if test="definitionId != null">definition_id,</if>
             <if test="createBy != null and createBy != ''">create_by,</if>
             <if test="createTime != null">create_time,</if>
@@ -83,12 +64,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
             <if test="businessId != null and businessId != ''">#{businessId},</if>
-            <if test="nodeCode != null and nodeCode != ''">#{nodeCode},</if>
-            <if test="nodeName != null and nodeName != ''">#{nodeName},</if>
-            <if test="nodeType != null">#{nodeType},</if>
-            <if test="flowStatus != null">#{flowStatus},</if>
-            <if test="flowVersion != null and flowVersion != ''">#{flowVersion},</if>
-            <if test="userCode != null and userCode != ''">#{userCode},</if>
             <if test="definitionId != null">#{definitionId},</if>
             <if test="createBy != null and createBy != ''">#{createBy},</if>
             <if test="createTime != null">#{createTime},</if>
@@ -101,12 +76,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         update flow_instance
         <trim prefix="SET" suffixOverrides=",">
             <if test="businessId != null and businessId != ''">business_id = #{businessId},</if>
-            <if test="nodeCode != null and nodeCode != ''">node_code = #{nodeCode},</if>
-            <if test="nodeName != null and nodeName != ''">node_name = #{nodeName},</if>
-            <if test="nodeType != null">node_type = #{nodeType},</if>
-            <if test="flowStatus != null">flow_status = #{flowStatus},</if>
-            <if test="flowVersion != null and flowVersion != ''">flow_version = #{flowVersion},</if>
-            <if test="userCode != null and userCode != ''">user_code = #{userCode},</if>
             <if test="definitionId != null">definition_id = #{definitionId},</if>
             <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>
             <if test="createTime != null">create_time = #{createTime},</if>

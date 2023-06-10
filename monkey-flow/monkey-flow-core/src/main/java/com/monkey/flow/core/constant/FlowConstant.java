@@ -52,13 +52,17 @@ public class FlowConstant {
 
     public static final String NULL_FLOW_VERSION = "流程版本不能为空!";
 
-    public static final String NOT_FOUNT_FLOW = "流程实例id为空!";
+    public static final String NOT_FOUNT_INSTANCE_ID = "流程实例id为空!";
 
-    public static final String LOST_FOUNT_FLOW = "流程实例缺失!";
+    public static final String LOST_FOUNT_INSTANCE = "流程实例缺失!";
 
     public static final String NOT_FOUNT_INSTANCE = "流程实例获取失败!";
 
     public static final String NULL_INSTANCE_ID = "流程实例id不能为空!";
+
+    public static final String LOST_FOUNT_TASK = "待办任务缺失!";
+
+    public static final String NOT_FOUNT_TASK = "待办任务获取失败!";
 
     public static final String NOT_ROLE_PERMISSIONS = "当前账号无角色权限!";
 

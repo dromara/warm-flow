@@ -2,28 +2,24 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.monkey.flow.core.mapper.FlowHisTaskMapper">
+<mapper namespace="com.monkey.flow.core.mapper.FlowTaskMapper">
 
-    <resultMap type="com.monkey.flow.core.domain.entity.FlowHisTask" id="FlowHisTaskResult">
+    <resultMap type="com.monkey.flow.core.domain.entity.FlowTask" id="FlowTaskResult">
         <result property="id"    column="id"    />
         <result property="nodeCode"    column="node_code"    />
         <result property="nodeName"    column="node_name"    />
         <result property="nodeType"    column="node_type"    />
-        <result property="targetNodeCode"    column="target_node_code"    />
-        <result property="targetNodeName"    column="target_node_name"    />
         <result property="approver"    column="approver"    />
         <result property="definitionId"    column="definition_id"    />
         <result property="instanceId"    column="instance_id"    />
         <result property="flowStatus"    column="flow_status"    />
-        <result property="message"    column="message"    />
-        <result property="conditionValue"    column="condition_value"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateTime"    column="update_time"    />
     </resultMap>
 
     <sql id="selectVo">
-        select t.id, t.node_code, t.node_name, t.node_type, t.target_node_code, t.target_node_name, t.approver, t.definition_id,
-               t.instance_id, t.flow_status, t.message, t.condition_value, t.create_time, t.update_time from flow_his_task t
+        select t.id, t.node_code, t.node_name, t.node_type, t.approver, t.definition_id,
+               t.instance_id, t.flow_status,t.create_time, t.update_time from flow_task t
     </sql>
 
     <sql id="paging_end">
@@ -32,21 +28,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
        	]]>
     </sql>
 
-    <select id="selectList" parameterType="com.monkey.flow.core.domain.entity.FlowHisTask" resultMap="FlowHisTaskResult">
+    <select id="selectList" parameterType="com.monkey.flow.core.domain.entity.FlowTask" resultMap="FlowTaskResult">
         <include refid="selectVo"/>
         <where>
             <if test="nodeCode != null  and nodeCode != ''"> and t.node_code = #{nodeCode}</if>
             <if test="nodeName != null  and nodeName != ''"> and t.node_name like concat('%', #{nodeName}, '%')</if>
-            <if test="targetNodeCode != null  and targetNodeCode != ''"> and t.target_node_code = #{targetNodeCode}</if>
-            <if test="targetNodeName != null  and targetNodeName != ''"> and t.target_node_name like concat('%', #{targetNodeName}, '%')</if>
+            <if test="nodeType != null"> and t.node_type = #{nodeCode}</if>
             <if test="approver != null  and approver != ''"> and t.approver = #{approver}</if>
             <if test="instanceId != null "> and instance_id = #{instanceId}</if>
-            <if test="message != null  and message != ''"> and t.message = #{message}</if>
-            <if test="conditionValue != null  and conditionValue != ''"> and t.condition_value = #{conditionValue}</if>
         </where>
     </select>
 
-    <select id="selectByIds" parameterType="Long" resultMap="FlowHisTaskResult">
+    <select id="selectByIds" parameterType="Long" resultMap="FlowTaskResult">
         <include refid="selectVo"/>
         where t.id in
         <foreach item="id" collection="list" open="(" separator="," close=")">
@@ -54,43 +47,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </select>
 
-    <select id="selectById" parameterType="Long" resultMap="FlowHisTaskResult">
+    <select id="selectById" parameterType="Long" resultMap="FlowTaskResult">
         <include refid="selectVo"/>
         where id = #{id}
     </select>
 
-    <sql id="select_done_parameter">
-        <where>
-            <if test="nodeCode != null  and nodeCode != ''"> and t.node_code = #{nodeCode}</if>
-            <if test="nodeName != null  and nodeName != ''"> and t.node_name like concat('%', #{nodeName}, '%')</if>
-            <if test="approver != null  and approver != ''"> and t.approver = #{approver}</if>
-            <if test="instanceId != null "> and instance_id = #{instanceId}</if>
-        </where>
-    </sql>
-
-    <select id="doneList" resultMap="FlowHisTaskResult">
-        select t.id, t.node_code, t.node_name, t.node_type, t.target_node_code, t.target_node_name, t.approver
-        , t.definition_id, t.instance_id, t.flow_status, t.message, t.condition_value, t.create_time, t.update_time
-        , i.business_id, d.flow_name from flow_his_task t
-        LEFT JOIN flow_definition d on t.definition_id = d.id
-        LEFT JOIN flow_instance i on t.instance_id = i.id
-        <include refid="select_done_parameter"/>
-        order by t.create_time desc
-        <!--        <include refid="paging_end"/>-->
-    </select>
-
-    <select id="getByNewInsIds" resultMap="FlowHisTaskResult">
-        <include refid="selectVo"/>
-        left join flow_his_task r on t.instance_id in
-        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
-            #{item}
-        </foreach>
-        and t.instance_id = r.instance_id
-        and t.create_time &lt; r.create_time
-        where r.create_time is null
-    </select>
-
-    <select id="getByInsIds" resultMap="FlowHisTaskResult">
+    <select id="getByInsIds" resultMap="FlowTaskResult">
         <include refid="selectVo"/>
         where t.instance_id in
         <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
@@ -98,21 +60,37 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </select>
 
-    <insert id="insert" parameterType="com.monkey.flow.core.domain.entity.FlowHisTask">
-        insert into flow_his_task
+    <sql id="select_toDo_parameter">
+        <where>
+            t.node_type != 0
+            <if test="nodeCode != null  and nodeCode != ''"> and t.node_code = #{nodeCode}</if>
+            <if test="nodeName != null  and nodeName != ''"> and t.node_name like concat('%', #{nodeName}, '%')</if>
+            <if test="approver != null  and approver != ''"> and t.approver = #{approver}</if>
+            <if test="instanceId != null "> and instance_id = #{instanceId}</if>
+        </where>
+    </sql>
+
+    <select id="toDoList" resultMap="FlowTaskResult">
+        select t.id, t.node_code, t.node_name, t.node_type, t.approver, t.definition_id, t.instance_id, t.flow_status
+        , t.create_time, t.update_time, i.business_id, d.flow_name, d.from_custom, d.from_path from flow_task t
+        LEFT JOIN flow_definition d on t.definition_id = d.id
+        LEFT JOIN flow_instance i on t.instance_id = i.id
+        <include refid="select_toDo_parameter"/>
+        order by t.create_time desc
+        <!--        <include refid="paging_end"/>-->
+    </select>
+
+    <insert id="insert" parameterType="com.monkey.flow.core.domain.entity.FlowTask">
+        insert into flow_task
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">id,</if>
             <if test="nodeCode != null and nodeCode != ''">node_code,</if>
             <if test="nodeName != null and nodeName != ''">node_name,</if>
             <if test="nodeType != null">node_type,</if>
-            <if test="targetNodeCode != null and targetNodeCode != ''">target_node_code,</if>
-            <if test="targetNodeName != null and targetNodeName != ''">target_node_name,</if>
             <if test="approver != null and approver != ''">approver,</if>
             <if test="definitionId != null">definition_id,</if>
             <if test="instanceId != null">instance_id,</if>
             <if test="flowStatus != null">flow_status,</if>
-            <if test="message != null">message,</if>
-            <if test="conditionValue != null">condition_value,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
         </trim>
@@ -121,33 +99,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="nodeCode != null and nodeCode != ''">#{nodeCode},</if>
             <if test="nodeName != null and nodeName != ''">#{nodeName},</if>
             <if test="nodeType != null">#{nodeType},</if>
-            <if test="targetNodeCode != null and targetNodeCode != ''">#{targetNodeCode},</if>
-            <if test="targetNodeName != null and targetNodeName != ''">#{targetNodeName},</if>
             <if test="approver != null and approver != ''">#{approver},</if>
             <if test="definitionId != null">#{definitionId},</if>
             <if test="instanceId != null">#{instanceId},</if>
             <if test="flowStatus != null">#{flowStatus},</if>
-            <if test="message != null">#{message},</if>
-            <if test="conditionValue != null">#{conditionValue},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
         </trim>
     </insert>
 
-    <update id="updateById" parameterType="com.monkey.flow.core.domain.entity.FlowHisTask">
-        update flow_his_task
+    <update id="updateById" parameterType="com.monkey.flow.core.domain.entity.FlowTask">
+        update flow_task
         <trim prefix="SET" suffixOverrides=",">
             <if test="nodeCode != null and nodeCode != ''">node_code = #{nodeCode},</if>
             <if test="nodeName != null and nodeName != ''">node_name = #{nodeName},</if>
             <if test="nodeType != null">node_type = #{nodeType},</if>
-            <if test="targetNodeCode != null and targetNodeCode != ''">target_node_code = #{targetNodeCode},</if>
-            <if test="targetNodeName != null and targetNodeName != ''">target_node_name = #{targetNodeName},</if>
             <if test="approver != null and approver != ''">approver = #{approver},</if>
             <if test="definitionId != null">definition_id = #{definitionId},</if>
             <if test="instanceId != null">instance_id = #{instanceId},</if>
             <if test="flowStatus != null">flow_status = #{flowStatus},</if>
-            <if test="message != null">message = #{message},</if>
-            <if test="conditionValue != null">condition_value = #{conditionValue},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
         </trim>
@@ -155,18 +125,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <delete id="deleteById" parameterType="Long">
-        delete from flow_his_task where id = #{id}
-    </delete>
-
-    <delete id="deleteByInsIds" parameterType="Long">
-        delete from flow_his_task where instance_id in
-        <foreach item="instanceIds" collection="list" open="(" separator="," close=")">
-            #{instanceIds}
-        </foreach>
+        delete from flow_task where id = #{id}
     </delete>
 
     <delete id="deleteByIds" parameterType="Long">
-        delete from flow_his_task where id in
+        delete from flow_task where id in
         <foreach item="id" collection="list" open="(" separator="," close=")">
             #{id}
         </foreach>

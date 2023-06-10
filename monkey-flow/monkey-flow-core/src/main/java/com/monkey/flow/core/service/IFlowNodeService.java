@@ -18,6 +18,6 @@ public interface IFlowNodeService extends IFlowBaseService<FlowNode> {
      * @param flowCode
      * @return
      */
-    List<FlowNode> queryNewVersionFlowNodeByFlowCode(String flowCode);
+    List<FlowNode> getLastByFlowCode(String flowCode);
 
 }

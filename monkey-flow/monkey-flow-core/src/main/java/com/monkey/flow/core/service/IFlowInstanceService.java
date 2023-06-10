@@ -16,9 +16,9 @@ public interface IFlowInstanceService extends IFlowBaseService<FlowInstance> {
     /**
      * 根据id集合进行查询 行锁
      *
-     * @param definitionIds
+     * @param ids
      * @return
      */
-    List<FlowInstance> queryByidWithUpdateLock(List<Long> definitionIds);
+    List<FlowInstance> getByIdWithLock(List<Long> ids);
 
 }

@@ -24,8 +24,8 @@ public class FlowNodeServiceImpl extends FlowBaseServiceImpl<FlowNode> implement
     }
 
     @Override
-    public List<FlowNode> queryNewVersionFlowNodeByFlowCode(String flowCode) {
-        return nodeMapper.queryNewVersionFlowNodeByFlowCode(flowCode);
+    public List<FlowNode> getLastByFlowCode(String flowCode) {
+        return nodeMapper.getLastByFlowCode(flowCode);
     }
 
 }

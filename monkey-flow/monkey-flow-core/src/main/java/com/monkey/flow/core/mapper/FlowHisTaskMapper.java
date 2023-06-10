@@ -12,9 +12,9 @@ import java.util.List;
  * @date 2023-03-29
  */
 public interface FlowHisTaskMapper extends FlowBaseMapper<FlowHisTask> {
-    List<FlowHisTask> queryByNewInstanceIds(List<Long> instanceIds);
+    List<FlowHisTask> getByNewInsIds(List<Long> instanceIds);
 
-    List<FlowHisTask> queryByInstanceIds(List<Long> instanceIds);
+    List<FlowHisTask> getByInsIds(List<Long> instanceIds);
 
     /**
      * 根据instanceIds删除
@@ -22,6 +22,13 @@ public interface FlowHisTaskMapper extends FlowBaseMapper<FlowHisTask> {
      * @param instanceIds 主键
      * @return 结果
      */
-    int deleteByInstanceIds(List<Long> instanceIds);
+    int deleteByInsIds(List<Long> instanceIds);
+
+    /**
+     * 获取已办任务
+     * @param flowHisTask
+     * @return
+     */
+    List<FlowHisTask> doneList(FlowHisTask flowHisTask);
 
 }

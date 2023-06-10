@@ -18,4 +18,5 @@ public class HisTaskAppServiceImpl implements HisTaskAppService {
     public IFlowHisTaskService getService(){
         return hisTaskService;
     }
+
 }

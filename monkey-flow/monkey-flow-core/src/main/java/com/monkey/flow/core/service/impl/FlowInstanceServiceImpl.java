@@ -4,8 +4,8 @@ import com.monkey.flow.core.constant.FlowConstant;
 import com.monkey.flow.core.domain.entity.FlowInstance;
 import com.monkey.flow.core.mapper.FlowInstanceMapper;
 import com.monkey.flow.core.service.IFlowInstanceService;
-import com.monkey.mybatis.core.service.impl.FlowBaseServiceImpl;
 import com.monkey.flow.core.utils.AssertUtil;
+import com.monkey.mybatis.core.service.impl.FlowBaseServiceImpl;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -26,11 +26,12 @@ public class FlowInstanceServiceImpl extends FlowBaseServiceImpl<FlowInstance> i
     }
 
     @Override
-    public List<FlowInstance> queryByidWithUpdateLock(List<Long> instanceIds) {
-        AssertUtil.isFalse(instanceIds == null || instanceIds.size() == 0, FlowConstant.NOT_FOUNT_FLOW);
-        for (int i = 0; i < instanceIds.size(); i++) {
-            AssertUtil.isNull(instanceIds.get(i), "流程定义id不能为空!");
+    public List<FlowInstance> getByIdWithLock(List<Long> ids) {
+        AssertUtil.isFalse(ids == null || ids.size() == 0, FlowConstant.NOT_FOUNT_INSTANCE_ID);
+        for (int i = 0; i < ids.size(); i++) {
+            AssertUtil.isNull(ids.get(i), "流程定义id不能为空!");
         }
-        return instanceMapper.queryByidWithUpdateLock(instanceIds);
+        return instanceMapper.getByIdWithLock(ids);
     }
+
 }

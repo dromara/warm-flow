@@ -30,16 +30,6 @@ public class FlowInstance implements FlowEntity {
     private String businessId;
 
     /**
-     * 结点编码
-     */
-    private String nodeCode;
-
-    /**
-     * 结点编码
-     */
-    private String nodeName;
-
-    /**
      * 结点类型,0开始结点,1中间结点,2结束结点
      */
     private Integer nodeType;
@@ -48,16 +38,6 @@ public class FlowInstance implements FlowEntity {
      * 流程状态
      */
     private Integer flowStatus;
-
-    /**
-     * 流程版本
-     */
-    private String flowVersion;
-
-    /**
-     * 流程创建者编码
-     */
-    private String userCode;
 
     /** 创建者 */
     private String createBy;
@@ -103,21 +83,6 @@ public class FlowInstance implements FlowEntity {
         this.businessId = businessId;
     }
 
-    public String getNodeCode() {
-        return nodeCode;
-    }
-
-    public void setNodeCode(String nodeCode) {
-        this.nodeCode = nodeCode;
-    }
-
-    public String getNodeName() {
-        return nodeName;
-    }
-
-    public void setNodeName(String nodeName) {
-        this.nodeName = nodeName;
-    }
 
     public Integer getNodeType() {
         return nodeType;
@@ -133,22 +98,6 @@ public class FlowInstance implements FlowEntity {
 
     public void setFlowStatus(Integer flowStatus) {
         this.flowStatus = flowStatus;
-    }
-
-    public String getFlowVersion() {
-        return flowVersion;
-    }
-
-    public void setFlowVersion(String flowVersion) {
-        this.flowVersion = flowVersion;
-    }
-
-    public String getUserCode() {
-        return userCode;
-    }
-
-    public void setUserCode(String userCode) {
-        this.userCode = userCode;
     }
 
     public String getFlowName() {

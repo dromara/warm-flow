@@ -13,6 +13,6 @@ import java.util.List;
  */
 public interface FlowInstanceMapper extends FlowBaseMapper<FlowInstance> {
 
-    List<FlowInstance> queryByidWithUpdateLock(List<Long> instanceIds);
+    List<FlowInstance> getByIdWithLock(List<Long> ids);
 
 }

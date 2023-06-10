@@ -58,7 +58,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </select>
 
-    <select id="queryNewVersionFlowNodeByFlowCode" resultMap="FlowNodeResult" parameterType="java.lang.String">
+    <select id="getLastByFlowCode" resultMap="FlowNodeResult" parameterType="java.lang.String">
         select a.id,
         a.definition_id,
         a.node_name,
@@ -69,7 +69,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         flow_definition b on b.flow_code = #{value} and a.definition_id = b.id and b.is_publish = 1
     </select>
 
-    <select id="queryFlowNodeByFlowCodeAndVersion" resultMap="FlowNodeResult" parameterType="java.util.Map">
+    <select id="getByFlowCodeAndVersion" resultMap="FlowNodeResult" parameterType="java.util.Map">
         select a.id,
         a.definition_id,
         a.node_name,

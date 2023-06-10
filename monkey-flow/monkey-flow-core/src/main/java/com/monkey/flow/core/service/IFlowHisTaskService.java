@@ -19,7 +19,7 @@ public interface IFlowHisTaskService extends IFlowBaseService<FlowHisTask> {
      * @return
      */
     @Deprecated
-    List<FlowHisTask> queryByNewInstanceIds(List<Long> instanceIds);
+    List<FlowHisTask> getByNewInsIds(List<Long> instanceIds);
 
     /**
      * 根据instanceIds查询出流程相关的记录(根据时间逆序)
@@ -27,13 +27,20 @@ public interface IFlowHisTaskService extends IFlowBaseService<FlowHisTask> {
      * @param instanceIds
      * @return
      */
-    List<FlowHisTask> queryByInstanceIds(List<Long> instanceIds);
+    List<FlowHisTask> getByInsIds(List<Long> instanceIds);
 
     /**
      * 根据instanceIds删除
      * @param instanceIds
      * @return
      */
-    boolean deleteByInstanceIds(List<Long> instanceIds);
+    boolean deleteByInsIds(List<Long> instanceIds);
+
+    /**
+     * 获取已办任务
+     * @param flowHisTask
+     * @return
+     */
+    List<FlowHisTask> doneList(FlowHisTask flowHisTask);
 
 }

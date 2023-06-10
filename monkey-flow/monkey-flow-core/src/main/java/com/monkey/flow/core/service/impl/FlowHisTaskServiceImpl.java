@@ -25,17 +25,22 @@ public class FlowHisTaskServiceImpl extends FlowBaseServiceImpl<FlowHisTask> imp
     }
 
     @Override
-    public List<FlowHisTask> queryByNewInstanceIds(List<Long> instanceIds) {
-        return hisTaskMapper.queryByNewInstanceIds(instanceIds);
+    public List<FlowHisTask> getByNewInsIds(List<Long> instanceIds) {
+        return hisTaskMapper.getByNewInsIds(instanceIds);
     }
 
     @Override
-    public List<FlowHisTask> queryByInstanceIds(List<Long> instanceIds) {
-        return hisTaskMapper.queryByInstanceIds(instanceIds);
+    public List<FlowHisTask> getByInsIds(List<Long> instanceIds) {
+        return hisTaskMapper.getByInsIds(instanceIds);
     }
 
     @Override
-    public boolean deleteByInstanceIds(List<Long> instanceIds) {
-        return SqlHelper.retBool(hisTaskMapper.deleteByInstanceIds(instanceIds));
+    public boolean deleteByInsIds(List<Long> instanceIds) {
+        return SqlHelper.retBool(hisTaskMapper.deleteByInsIds(instanceIds));
+    }
+
+    @Override
+    public List<FlowHisTask> doneList(FlowHisTask flowHisTask) {
+        return hisTaskMapper.doneList(flowHisTask);
     }
 }

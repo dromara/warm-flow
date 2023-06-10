@@ -7,7 +7,6 @@ import com.monkey.flow.core.exception.FlowException;
 import com.monkey.flow.core.mapper.FlowDefinitionMapper;
 import com.monkey.flow.core.service.IFlowDefinitionService;
 import com.monkey.flow.core.service.IFlowNodeService;
-import com.monkey.flow.core.service.IFlowSkipService;
 import com.monkey.mybatis.core.service.impl.FlowBaseServiceImpl;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,9 +26,6 @@ public class FlowDefinitionServiceImpl extends FlowBaseServiceImpl<FlowDefinitio
 
     @Resource
     private IFlowNodeService nodeService;
-
-    @Resource
-    private IFlowSkipService skipService;
 
     @Override
     public FlowDefinitionMapper getBaseMapper() {
@@ -66,8 +62,8 @@ public class FlowDefinitionServiceImpl extends FlowBaseServiceImpl<FlowDefinitio
     @Transactional(rollbackFor = Exception.class)
     public boolean remove(List<Long> ids)
     {
-        definitionMapper.deleteFlowNodeByDefinitionIds(ids);
-        definitionMapper.deleteFlowSkipByDefinitionIds(ids);
+        definitionMapper.deleteNodeByDefIds(ids);
+        definitionMapper.deleteSkipByDefIds(ids);
         return deleteByIds(ids);
     }
 
