@@ -6,17 +6,10 @@
     <parent>
         <groupId>io.github.minliuhua</groupId>
         <artifactId>monkey-mybatis</artifactId>
-        <version>1.0.0</version>
+        <version>1.1.0</version>
     </parent>
 
     <artifactId>monkey-mybatis-core</artifactId>
-
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <monkey.tools.version>1.0.0</monkey.tools.version>
-    </properties>
 
     <dependencies>
         <dependency>
