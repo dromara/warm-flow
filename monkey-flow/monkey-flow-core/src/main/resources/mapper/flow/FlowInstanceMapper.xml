@@ -19,13 +19,37 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select t.id, t.business_id, t.definition_id, t.create_by, t.create_time, t.update_time, t.ext from flow_instance t
     </sql>
 
+    <sql id="paging_end">
+        <if test="page.pageNum != null and page.pageSize != null">
+            <![CDATA[
+              LIMIT #{page.pageNum},#{page.pageSize}
+            ]]>
+        </if>
+    </sql>
+
+    <sql id="select_parameter">
+        <where>
+            <if test="entity.businessId != null  and entity.businessId != ''"> and t.business_id = #{entity.businessId}</if>
+            <if test="entity.definitionId != null "> and t.definition_id = #{entity.definitionId}</if>
+            <if test="entity.createBy != null  and entity.createBy != ''"> and t.create_by = #{entity.createBy}</if>
+        </where>
+    </sql>
+
+    <select id="selectPage" parameterType="com.monkey.flow.core.domain.entity.FlowInstance" resultMap="FlowInstanceResult">
+        <include refid="selectVo"/>
+        <include refid="select_parameter"/>
+        order by t.create_time desc
+        <include refid="paging_end"/>
+    </select>
+
+    <select id="selectCount" parameterType="com.monkey.flow.core.domain.entity.FlowInstance" resultType="java.lang.Long">
+        select count(*) from flow_instance t
+        <include refid="select_parameter"/>
+    </select>
+
     <select id="selectList" parameterType="com.monkey.flow.core.domain.entity.FlowInstance" resultMap="FlowInstanceResult">
         <include refid="selectVo"/>
-        <where>
-            <if test="businessId != null  and businessId != ''"> and t.business_id = #{businessId}</if>
-            <if test="definitionId != null "> and t.definition_id = #{definitionId}</if>
-            <if test="createBy != null  and createBy != ''"> and t.create_by = #{createBy}</if>
-        </where>
+        <include refid="select_parameter"/>
     </select>
 
     <select id="selectByIds" parameterType="Long" resultMap="FlowInstanceResult">

@@ -21,28 +21,40 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                t.update_time from flow_node t
     </sql>
 
+    <sql id="paging_end">
+        <if test="page.pageNum != null and page.pageSize != null">
+            <![CDATA[
+              LIMIT #{page.pageNum},#{page.pageSize}
+            ]]>
+        </if>
+    </sql>
+
+    <sql id="select_parameter">
+        <where>
+            <if test="entity.nodeType != null">and t.node_type = #{entity.nodeType}</if>
+            <if test="entity.definitionId != null">and t.definition_id = #{entity.definitionId}</if>
+            <if test="entity.nodeName != null and entity.nodeName != ''">and t.node_name like concat('%',#{entity.nodeName}, '%')</if>
+            <if test="entity.nodeCode != null and entity.nodeCode != ''">and t.node_code = #{entity.nodeCode}</if>
+            <if test="entity.permissionFlag != null and entity.permissionFlag != ''">and t.permission_flag = #{entity.permissionFlag}</if>
+            <if test="entity.version != null and entity.version != ''">and t.version = #{entity.version}</if>
+        </where>
+    </sql>
+
+    <select id="selectPage" parameterType="com.monkey.flow.core.domain.entity.FlowNode" resultMap="FlowNodeResult">
+        <include refid="selectVo"/>
+        <include refid="select_parameter"/>
+        order by t.create_time desc
+        <include refid="paging_end"/>
+    </select>
+
+    <select id="selectCount" parameterType="com.monkey.flow.core.domain.entity.FlowNode" resultType="java.lang.Long">
+        select count(*) from flow_node t
+        <include refid="select_parameter"/>
+    </select>
+
     <select id="selectList" parameterType="com.monkey.flow.core.domain.entity.FlowNode" resultMap="FlowNodeResult">
         <include refid="selectVo"/>
-        <where>
-            <if test="nodeType != null">
-                and t.node_type = #{nodeType}
-            </if>
-            <if test="definitionId != null">
-                and t.definition_id = #{definitionId}
-            </if>
-            <if test="nodeName != null and nodeName != ''">
-                and t.node_name like concat('%',#{nodeName}, '%')
-            </if>
-            <if test="nodeCode != null and nodeCode != ''">
-                and t.node_code = #{nodeCode}
-            </if>
-            <if test="permissionFlag != null and permissionFlag != ''">
-                and t.permission_flag = #{permissionFlag}
-            </if>
-            <if test="version != null and version != ''">
-                and t.version = #{version}
-            </if>
-        </where>
+        <include refid="select_parameter"/>
     </select>
 
     <select id="selectByIds" parameterType="Long" resultMap="FlowNodeResult">

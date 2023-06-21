@@ -1,6 +1,7 @@
 package com.monkey.flow.core.service;
 
 import com.monkey.flow.core.domain.entity.FlowTask;
+import com.monkey.mybatis.core.page.Page;
 import com.monkey.mybatis.core.service.IFlowBaseService;
 
 import java.util.List;
@@ -21,9 +22,10 @@ public interface IFlowTaskService extends IFlowBaseService<FlowTask> {
     List<FlowTask> getByInsIds(List<Long> instanceIds);
 
     /**
-     * 获取待办任务
-     * @param flowTask
+     * 分页查询待办任务
+     * @param flowTask 条件实体
+     * @param page
      * @return
      */
-    List<FlowTask> toDoList(FlowTask flowTask);
+    Page<FlowTask> toDoPage(FlowTask flowTask, Page<FlowTask> page);
 }

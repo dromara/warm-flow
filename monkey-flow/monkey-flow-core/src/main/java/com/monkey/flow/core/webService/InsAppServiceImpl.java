@@ -128,8 +128,8 @@ public class InsAppServiceImpl implements InsAppService {
             instances.add(instance);
             taskList.add(task);
         }
-        instanceService.batchInsert(instances);
-        taskService.batchInsert(taskList);
+        instanceService.saveBatch(instances);
+        taskService.saveBatch(taskList);
         return instances;
     }
 
@@ -164,9 +164,9 @@ public class InsAppServiceImpl implements InsAppService {
             insHisList.add(insHis);
         }
 
-        hisTaskService.batchInsert(insHisList);
-        taskService.batchUpdate(taskList);
-        instanceService.batchUpdate(instances);
+        hisTaskService.saveBatch(insHisList);
+        taskService.updateBatch(taskList);
+        instanceService.updateBatch(instances);
         return instances;
     }
 
@@ -309,7 +309,7 @@ public class InsAppServiceImpl implements InsAppService {
         FlowNode flowNode = new FlowNode();
         flowNode.setDefinitionId(task.getDefinitionId());
         flowNode.setNodeCode(task.getNodeCode());
-        FlowNode node = nodeService.selectOne(flowNode);
+        FlowNode node = nodeService.getOne(flowNode);
 
         AssertUtil.isFalse(StringUtils.isNotEmpty(node.getPermissionFlag()) && (CollUtil.isEmpty(roleList)
                 || !CollUtil.containsAny(roleList, StringUtils.strToArrAy(node.getPermissionFlag(), ","))), FlowConstant.NULL_ROLE_NODE);
@@ -342,13 +342,13 @@ public class InsAppServiceImpl implements InsAppService {
         FlowSkip skipCondition = new FlowSkip();
         skipCondition.setDefinitionId(task.getDefinitionId());
         skipCondition.setNowNodeCode(task.getNodeCode());
-        List<FlowSkip> flowSkips = skipService.selectList(skipCondition);
+        List<FlowSkip> flowSkips = skipService.list(skipCondition);
         FlowSkip nextSkip = checkAuthAndCondition(task, flowSkips, conditionValue, flowUser);
         AssertUtil.isFalse(nextSkip == null, FlowConstant.NULL_DEST_NODE);
         FlowNode query = new FlowNode();
         query.setDefinitionId(task.getDefinitionId());
         query.setNodeCode(nextSkip.getNextNodeCode());
-        List<FlowNode> nodes = nodeService.selectList(query);
+        List<FlowNode> nodes = nodeService.list(query);
         AssertUtil.isFalse(nodes.size() == 0, FlowConstant.NOT_NODE_DATA);
         AssertUtil.isFalse(nodes.size() > 1, "[" + nextSkip.getNextNodeCode() + "]" + FlowConstant.SAME_NODE_CODE);
         return nodes.get(0);
@@ -375,7 +375,7 @@ public class InsAppServiceImpl implements InsAppService {
         boolean success = hisTaskService.deleteByInsIds(instanceIds);
         if(success)
         {
-            return instanceService.deleteByIds(instanceIds);
+            return instanceService.removeByIds(instanceIds);
         }
         return false;
     }

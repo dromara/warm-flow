@@ -43,7 +43,7 @@ public class FlowDefinitionServiceImpl extends FlowBaseServiceImpl<FlowDefinitio
     }
 
     @Override
-    public void checkSave(FlowDefinition flowDefinition)
+    public boolean checkAndSave(FlowDefinition flowDefinition)
     {
         List<String> flowCodeList = Arrays.asList(flowDefinition.getFlowCode());
         List<FlowDefinition> flowDefinitions = queryByCodeList(flowCodeList);
@@ -52,6 +52,7 @@ public class FlowDefinitionServiceImpl extends FlowBaseServiceImpl<FlowDefinitio
                 throw new FlowException(flowDefinition.getFlowCode() + "(" + flowDefinition.getVersion() + ")" + FlowConstant.ALREADY_EXIST);
             }
         }
+        return save(flowDefinition);
     }
 
     /**
@@ -60,17 +61,17 @@ public class FlowDefinitionServiceImpl extends FlowBaseServiceImpl<FlowDefinitio
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean remove(List<Long> ids)
+    public boolean removeDef(List<Long> ids)
     {
         definitionMapper.deleteNodeByDefIds(ids);
         definitionMapper.deleteSkipByDefIds(ids);
-        return deleteByIds(ids);
+        return removeByIds(ids);
     }
 
     @Override
     public boolean publish(Long id)
     {
-        FlowDefinition definition = selectById(id);
+        FlowDefinition definition = getById(id);
         List<String> flowCodeList = Arrays.asList(definition.getFlowCode());
         // 把之前的流程定义改为已失效
         closeFlowByCodeList(flowCodeList);

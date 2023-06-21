@@ -1,6 +1,7 @@
 package com.monkey.flow.core.service;
 
 import com.monkey.flow.core.domain.entity.FlowHisTask;
+import com.monkey.mybatis.core.page.Page;
 import com.monkey.mybatis.core.service.IFlowBaseService;
 
 import java.util.List;
@@ -39,8 +40,9 @@ public interface IFlowHisTaskService extends IFlowBaseService<FlowHisTask> {
     /**
      * 获取已办任务
      * @param flowHisTask
+     * @param page
      * @return
      */
-    List<FlowHisTask> doneList(FlowHisTask flowHisTask);
+    Page<FlowHisTask> donePage(FlowHisTask flowHisTask, Page<FlowHisTask> page);
 
 }

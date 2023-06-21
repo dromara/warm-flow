@@ -2,7 +2,7 @@ package com.monkey.mybatis.core.service;
 
 
 import com.monkey.mybatis.core.entity.FlowEntity;
-import com.monkey.mybatis.core.page.PageResult;
+import com.monkey.mybatis.core.page.Page;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -23,7 +23,7 @@ public interface IFlowBaseService<T extends FlowEntity>
      * @param id 主键
      * @return 实体
      */
-    T selectById(Serializable id);
+    T getById(Serializable id);
 
     /**
      * 根据ids查询
@@ -31,15 +31,16 @@ public interface IFlowBaseService<T extends FlowEntity>
      * @param ids 主键
      * @return 实体
      */
-    List<T> selectByIds(Collection<? extends Serializable> ids);
+    List<T> getByIds(Collection<? extends Serializable> ids);
 
     /**
      * 分页查询
      *
      * @param entity 实体
+     * @param page
      * @return 集合
      */
-    PageResult<T> selectPage(T entity);
+    Page<T> listPage(T entity, Page<T> page);
 
     /**
      * 查询列表
@@ -47,7 +48,7 @@ public interface IFlowBaseService<T extends FlowEntity>
      * @param entity 实体列表
      * @return 集合
      */
-    List<T> selectList(T entity);
+    List<T> list(T entity);
 
     /**
      * 查询一条记录
@@ -55,20 +56,13 @@ public interface IFlowBaseService<T extends FlowEntity>
      * @param entity 实体列表
      * @return 结果
      */
-    T selectOne(T entity);
+    T getOne(T entity);
 
     /**
      * 新增
      *
      * @param entity 实体
      * @return 结果
-     */
-    boolean insert(T entity);
-
-    /**
-     * 新增
-     * @param entity
-     * @return
      */
     boolean save(T entity);
 
@@ -81,20 +75,12 @@ public interface IFlowBaseService<T extends FlowEntity>
     boolean updateById(T entity);
 
     /**
-     * 先校验后修改
-     *
-     * @param entity 实体
-     * @return 结果
-     */
-    boolean edit(T entity);
-
-    /**
      * 根据id删除
      *
      * @param id 主键
      * @return 结果
      */
-    boolean deleteById(Serializable id);
+    boolean removeById(Serializable id);
 
     /**
      * 根据ids批量删除
@@ -102,18 +88,18 @@ public interface IFlowBaseService<T extends FlowEntity>
      * @param ids 需要删除的数据主键集合
      * @return 结果
      */
-    boolean deleteByIds(Collection<? extends Serializable> ids);
+    boolean removeByIds(Collection<? extends Serializable> ids);
 
     /**
      * 批量新增
      * @param list
      */
-    void batchInsert(List<T> list);
+    void saveBatch(List<T> list);
 
     /**
      * 批量更新
      * @param list
      */
-    void batchUpdate(List<T> list);
+    void updateBatch(List<T> list);
 
 }

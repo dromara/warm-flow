@@ -3,6 +3,7 @@ package com.monkey.flow.core.service.impl;
 import com.monkey.flow.core.domain.entity.FlowHisTask;
 import com.monkey.flow.core.mapper.FlowHisTaskMapper;
 import com.monkey.flow.core.service.IFlowHisTaskService;
+import com.monkey.mybatis.core.page.Page;
 import com.monkey.mybatis.core.service.impl.FlowBaseServiceImpl;
 import com.monkey.mybatis.core.utils.SqlHelper;
 
@@ -40,7 +41,12 @@ public class FlowHisTaskServiceImpl extends FlowBaseServiceImpl<FlowHisTask> imp
     }
 
     @Override
-    public List<FlowHisTask> doneList(FlowHisTask flowHisTask) {
-        return hisTaskMapper.doneList(flowHisTask);
+    public Page<FlowHisTask> donePage(FlowHisTask flowHisTask, Page<FlowHisTask> page) {
+        long count = hisTaskMapper.countDone(flowHisTask, page);
+        if (count > 0) {
+            List<FlowHisTask> list = hisTaskMapper.donePage(flowHisTask, page);
+            return new Page<>(list, count);
+        }
+        return Page.empty();
     }
 }

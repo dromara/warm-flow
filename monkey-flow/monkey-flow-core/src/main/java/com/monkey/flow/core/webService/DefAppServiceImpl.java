@@ -64,14 +64,14 @@ public class DefAppServiceImpl implements DefAppService {
 
     @Override
     public FlowDefinition getAllDataDefinition(Long id) {
-        FlowDefinition definition = definitionService.selectById(id);
+        FlowDefinition definition = definitionService.getById(id);
         FlowNode node = new FlowNode();
         node.setDefinitionId(id);
-        List<FlowNode> nodeList = nodeService.selectList(node);
+        List<FlowNode> nodeList = nodeService.list(node);
         definition.setNodeList(nodeList);
         FlowSkip flowSkip = new FlowSkip();
         flowSkip.setDefinitionId(id);
-        List<FlowSkip> flowSkips = skipService.selectList(flowSkip);
+        List<FlowSkip> flowSkips = skipService.list(flowSkip);
         Map<Long, List<FlowSkip>> flowSkipMap = flowSkips.stream()
                 .collect(Collectors.groupingBy(FlowSkip::getNodeId));
         nodeList.forEach(flowNode -> flowNode.setSkipList(flowSkipMap.get(flowNode.getId())));
@@ -95,8 +95,8 @@ public class DefAppServiceImpl implements DefAppService {
                 throw new FlowException(definition.getFlowCode() + "(" + definition.getVersion() + ")" + FlowConstant.ALREADY_EXIST);
             }
         }
-        definitionService.insert(definition);
-        nodeService.batchInsert(allNodes);
-        skipService.batchInsert(allSkips);
+        definitionService.save(definition);
+        nodeService.saveBatch(allNodes);
+        skipService.saveBatch(allSkips);
     }
 }

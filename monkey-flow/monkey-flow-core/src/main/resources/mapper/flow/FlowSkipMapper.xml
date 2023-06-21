@@ -20,25 +20,39 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                t.update_time from flow_skip t
     </sql>
 
+    <sql id="paging_end">
+        <if test="page.pageNum != null and page.pageSize != null">
+            <![CDATA[
+              LIMIT #{page.pageNum},#{page.pageSize}
+            ]]>
+        </if>
+    </sql>
+
+    <sql id="select_parameter">
+        <where>
+            <if test="entity.definitionId != null">and t.definition_id = #{entity.definitionId}</if>
+            <if test="entity.nodeId != null">and t.node_id = #{entity.nodeId}</if>
+            <if test="entity.nowNodeCode != null">and t.now_node_code = #{entity.nowNodeCode}</if>
+            <if test="entity.nextNodeCode != null and entity.nextNodeCode != ''">and t.next_node_code = #{entity.nextNodeCode}</if>
+            <if test="entity.conditionValue != null and entity.conditionValue != ''">and t.condition_value = #{entity.conditionValue}</if>
+        </where>
+    </sql>
+
+    <select id="selectPage" parameterType="com.monkey.flow.core.domain.entity.FlowSkip" resultMap="FlowLineResult">
+        <include refid="selectVo"/>
+        <include refid="select_parameter"/>
+        order by t.create_time desc
+        <include refid="paging_end"/>
+    </select>
+
+    <select id="selectCount" parameterType="com.monkey.flow.core.domain.entity.FlowSkip" resultType="java.lang.Long">
+        select count(*) from flow_skip t
+        <include refid="select_parameter"/>
+    </select>
+
     <select id="selectList" parameterType="com.monkey.flow.core.domain.entity.FlowSkip" resultMap="FlowLineResult">
         <include refid="selectVo"/>
-        <where>
-            <if test="definitionId != null">
-                and t.definition_id = #{definitionId}
-            </if>
-            <if test="nodeId != null">
-                and t.node_id = #{nodeId}
-            </if>
-            <if test="nowNodeCode != null">
-                and t.now_node_code = #{nowNodeCode}
-            </if>
-            <if test="nextNodeCode != null and nextNodeCode != ''">
-                and t.next_node_code = #{nextNodeCode}
-            </if>
-            <if test="conditionValue != null and conditionValue != ''">
-                and t.condition_value = #{conditionValue}
-            </if>
-        </where>
+        <include refid="select_parameter"/>
     </select>
 
     <select id="selectByIds" parameterType="Long" resultMap="FlowLineResult">

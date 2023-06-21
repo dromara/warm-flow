@@ -6,7 +6,7 @@
 
     <groupId>io.github.minliuhua</groupId>
     <artifactId>monkey-freemarker</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
     <packaging>pom</packaging>
 
     <name>monkey-freemarker</name>
@@ -51,8 +51,9 @@
         <java.version>1.8</java.version>
         <spring.boot.version>2.5.14</spring.boot.version>
         <dom4j.version>2.1.1</dom4j.version>
+        <mybatis.version>3.5.9</mybatis.version>
         <mybatis-spring>2.0.7</mybatis-spring>
-        <monkey.freemarker>1.1.0</monkey.freemarker>
+        <monkey.freemarker>1.1.1</monkey.freemarker>
     </properties>
 
     <dependencyManagement>
@@ -69,6 +70,12 @@
                 <groupId>org.dom4j</groupId>
                 <artifactId>dom4j</artifactId>
                 <version>${dom4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis</artifactId>
+                <version>${mybatis.version}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.mybatis</groupId>

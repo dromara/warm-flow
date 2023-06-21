@@ -5,6 +5,7 @@ import com.monkey.flow.core.domain.entity.FlowTask;
 import com.monkey.flow.core.mapper.FlowTaskMapper;
 import com.monkey.flow.core.service.IFlowTaskService;
 import com.monkey.flow.core.utils.AssertUtil;
+import com.monkey.mybatis.core.page.Page;
 import com.monkey.mybatis.core.service.impl.FlowBaseServiceImpl;
 
 import javax.annotation.Resource;
@@ -35,7 +36,12 @@ public class FlowTaskServiceImpl extends FlowBaseServiceImpl<FlowTask> implement
     }
 
     @Override
-    public List<FlowTask> toDoList(FlowTask flowTask) {
-        return taskMapper.toDoList(flowTask);
+    public Page<FlowTask> toDoPage(FlowTask flowTask, Page<FlowTask> page) {
+        long count = taskMapper.countTodo(flowTask, page);
+        if (count > 0) {
+            List<FlowTask> list = taskMapper.toDoPage(flowTask, page);
+            return new Page<>(list, count);
+        }
+        return Page.empty();
     }
 }

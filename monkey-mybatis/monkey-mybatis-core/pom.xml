@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.github.minliuhua</groupId>
         <artifactId>monkey-mybatis</artifactId>
-        <version>1.1.0</version>
+        <version>1.1.1</version>
     </parent>
 
     <artifactId>monkey-mybatis-core</artifactId>
@@ -15,6 +15,11 @@
         <dependency>
             <groupId>io.github.minliuhua</groupId>
             <artifactId>monkey-tools</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
         </dependency>
     </dependencies>
 

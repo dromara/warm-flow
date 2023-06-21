@@ -27,23 +27,41 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <sql id="paging_end">
-        <![CDATA[
-       	  LIMIT #{pageNum},#{pageSize}
-       	]]>
+        <if test="page.pageNum != null and page.pageSize != null">
+            <![CDATA[
+              LIMIT #{page.pageNum},#{page.pageSize}
+            ]]>
+        </if>
     </sql>
+
+    <sql id="select_parameter">
+        <where>
+            <if test="entity.nodeCode != null  and entity.nodeCode != ''"> and t.node_code = #{entity.nodeCode}</if>
+            <if test="entity.nodeName != null  and entity.nodeName != ''"> and t.node_name like concat('%', #{entity.nodeName}, '%')</if>
+            <if test="entity.targetNodeCode != null  and entity.targetNodeCode != ''"> and t.target_node_code = #{entity.targetNodeCode}</if>
+            <if test="entity.targetNodeName != null  and entity.targetNodeName != ''"> and t.target_node_name like concat('%', #{entity.targetNodeName}, '%')</if>
+            <if test="entity.approver != null  and entity.approver != ''"> and t.approver = #{entity.approver}</if>
+            <if test="entity.instanceId != null "> and instance_id = #{entity.instanceId}</if>
+            <if test="entity.message != null  and entity.message != ''"> and t.message = #{entity.message}</if>
+            <if test="entity.conditionValue != null  and entity.conditionValue != ''"> and t.condition_value = #{entity.conditionValue}</if>
+        </where>
+    </sql>
+
+    <select id="selectPage" parameterType="com.monkey.flow.core.domain.entity.FlowHisTask" resultMap="FlowHisTaskResult">
+        <include refid="selectVo"/>
+        <include refid="select_parameter"/>
+        order by t.create_time desc
+        <include refid="paging_end"/>
+    </select>
+
+    <select id="selectCount" parameterType="com.monkey.flow.core.domain.entity.FlowHisTask" resultType="java.lang.Long">
+        select count(*) from flow_his_task t
+        <include refid="select_parameter"/>
+    </select>
 
     <select id="selectList" parameterType="com.monkey.flow.core.domain.entity.FlowHisTask" resultMap="FlowHisTaskResult">
         <include refid="selectVo"/>
-        <where>
-            <if test="nodeCode != null  and nodeCode != ''"> and t.node_code = #{nodeCode}</if>
-            <if test="nodeName != null  and nodeName != ''"> and t.node_name like concat('%', #{nodeName}, '%')</if>
-            <if test="targetNodeCode != null  and targetNodeCode != ''"> and t.target_node_code = #{targetNodeCode}</if>
-            <if test="targetNodeName != null  and targetNodeName != ''"> and t.target_node_name like concat('%', #{targetNodeName}, '%')</if>
-            <if test="approver != null  and approver != ''"> and t.approver = #{approver}</if>
-            <if test="instanceId != null "> and instance_id = #{instanceId}</if>
-            <if test="message != null  and message != ''"> and t.message = #{message}</if>
-            <if test="conditionValue != null  and conditionValue != ''"> and t.condition_value = #{conditionValue}</if>
-        </where>
+        <include refid="select_parameter"/>
     </select>
 
     <select id="selectByIds" parameterType="Long" resultMap="FlowHisTaskResult">
@@ -61,14 +79,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <sql id="select_done_parameter">
         <where>
-            <if test="nodeCode != null  and nodeCode != ''"> and t.node_code = #{nodeCode}</if>
-            <if test="nodeName != null  and nodeName != ''"> and t.node_name like concat('%', #{nodeName}, '%')</if>
-            <if test="approver != null  and approver != ''"> and t.approver = #{approver}</if>
-            <if test="instanceId != null "> and instance_id = #{instanceId}</if>
+            <if test="flowHisTask.nodeCode != null  and flowHisTask.nodeCode != ''"> and t.node_code = #{flowHisTask.nodeCode}</if>
+            <if test="flowHisTask.nodeName != null  and flowHisTask.nodeName != ''"> and t.node_name like concat('%', #{flowHisTask.nodeName}, '%')</if>
+            <if test="flowHisTask.approver != null  and flowHisTask.approver != ''"> and t.approver = #{flowHisTask.approver}</if>
+            <if test="flowHisTask.instanceId != null "> and instance_id = #{flowHisTask.instanceId}</if>
         </where>
     </sql>
 
-    <select id="doneList" resultMap="FlowHisTaskResult">
+    <select id="countDone" resultType="long">
+        select count(*) from flow_his_task t
+        <include refid="select_done_parameter"/>
+    </select>
+
+    <select id="donePage" resultMap="FlowHisTaskResult">
         select t.id, t.node_code, t.node_name, t.node_type, t.target_node_code, t.target_node_name, t.approver
         , t.definition_id, t.instance_id, t.flow_status, t.message, t.condition_value, t.create_time, t.update_time
         , i.business_id, d.flow_name from flow_his_task t
@@ -76,7 +99,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         LEFT JOIN flow_instance i on t.instance_id = i.id
         <include refid="select_done_parameter"/>
         order by t.create_time desc
-        <!--        <include refid="paging_end"/>-->
+        <include refid="paging_end"/>
     </select>
 
     <select id="getByNewInsIds" resultMap="FlowHisTaskResult">

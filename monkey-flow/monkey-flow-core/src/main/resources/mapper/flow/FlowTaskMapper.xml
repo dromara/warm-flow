@@ -23,20 +23,38 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <sql id="paging_end">
-        <![CDATA[
-       	  LIMIT #{pageNum},#{pageSize}
-       	]]>
+        <if test="page.pageNum != null and page.pageSize != null">
+            <![CDATA[
+              LIMIT #{page.pageNum},#{page.pageSize}
+            ]]>
+        </if>
     </sql>
+
+    <sql id="select_parameter">
+        <where>
+            <if test="entity.nodeCode != null  and entity.nodeCode != ''"> and t.node_code = #{entity.nodeCode}</if>
+            <if test="entity.nodeName != null  and entity.nodeName != ''"> and t.node_name like concat('%', #{entity.nodeName}, '%')</if>
+            <if test="entity.nodeType != null"> and t.node_type = #{entity.nodeCode}</if>
+            <if test="entity.approver != null  and entity.approver != ''"> and t.approver = #{entity.approver}</if>
+            <if test="entity.instanceId != null "> and instance_id = #{entity.instanceId}</if>
+        </where>
+    </sql>
+
+    <select id="selectPage" parameterType="com.monkey.flow.core.domain.entity.FlowTask" resultMap="FlowTaskResult">
+        <include refid="selectVo"/>
+        <include refid="select_parameter"/>
+        order by t.create_time desc
+        <include refid="paging_end"/>
+    </select>
+
+    <select id="selectCount" parameterType="com.monkey.flow.core.domain.entity.FlowTask" resultType="java.lang.Long">
+        select count(*) from flow_task t
+        <include refid="select_parameter"/>
+    </select>
 
     <select id="selectList" parameterType="com.monkey.flow.core.domain.entity.FlowTask" resultMap="FlowTaskResult">
         <include refid="selectVo"/>
-        <where>
-            <if test="nodeCode != null  and nodeCode != ''"> and t.node_code = #{nodeCode}</if>
-            <if test="nodeName != null  and nodeName != ''"> and t.node_name like concat('%', #{nodeName}, '%')</if>
-            <if test="nodeType != null"> and t.node_type = #{nodeCode}</if>
-            <if test="approver != null  and approver != ''"> and t.approver = #{approver}</if>
-            <if test="instanceId != null "> and instance_id = #{instanceId}</if>
-        </where>
+        <include refid="select_parameter"/>
     </select>
 
     <select id="selectByIds" parameterType="Long" resultMap="FlowTaskResult">
@@ -62,22 +80,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <sql id="select_toDo_parameter">
         <where>
-            t.node_type != 0
-            <if test="nodeCode != null  and nodeCode != ''"> and t.node_code = #{nodeCode}</if>
-            <if test="nodeName != null  and nodeName != ''"> and t.node_name like concat('%', #{nodeName}, '%')</if>
-            <if test="approver != null  and approver != ''"> and t.approver = #{approver}</if>
-            <if test="instanceId != null "> and instance_id = #{instanceId}</if>
+            t.node_type = 1
+            <if test="flowTask.nodeCode != null and flowTask.nodeCode != ''"> and t.node_code = #{flowTask.nodeCode}</if>
+            <if test="flowTask.nodeName != null and flowTask.nodeName != ''"> and t.node_name like concat('%', #{flowTask.nodeName}, '%')</if>
+            <if test="flowTask.approver != null and flowTask.approver != ''"> and t.approver = #{flowTask.approver}</if>
+            <if test="flowTask.instanceId != null "> and instance_id = #{flowTask.instanceId}</if>
         </where>
     </sql>
 
-    <select id="toDoList" resultMap="FlowTaskResult">
+    <select id="countTodo" resultType="long">
+        select count(*) from flow_task t
+        <include refid="select_toDo_parameter"/>
+    </select>
+
+    <select id="toDoPage" resultMap="FlowTaskResult">
         select t.id, t.node_code, t.node_name, t.node_type, t.approver, t.definition_id, t.instance_id, t.flow_status
         , t.create_time, t.update_time, i.business_id, d.flow_name, d.from_custom, d.from_path from flow_task t
         LEFT JOIN flow_definition d on t.definition_id = d.id
         LEFT JOIN flow_instance i on t.instance_id = i.id
         <include refid="select_toDo_parameter"/>
         order by t.create_time desc
-        <!--        <include refid="paging_end"/>-->
+        <include refid="paging_end"/>
     </select>
 
     <insert id="insert" parameterType="com.monkey.flow.core.domain.entity.FlowTask">

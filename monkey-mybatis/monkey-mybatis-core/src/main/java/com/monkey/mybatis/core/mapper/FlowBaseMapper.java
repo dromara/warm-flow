@@ -1,6 +1,8 @@
 package com.monkey.mybatis.core.mapper;
 
 import com.monkey.mybatis.core.entity.FlowEntity;
+import com.monkey.mybatis.core.page.Page;
+import org.apache.ibatis.annotations.Param;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -36,15 +38,7 @@ public interface FlowBaseMapper<T extends FlowEntity>
      * @param entity 实体列表
      * @return 集合
      */
-    List<T> selectPage(T entity);
-
-    /**
-     * 查询列表
-     *
-     * @param entity 实体列表
-     * @return 集合
-     */
-    List<T> selectList(T entity);
+    List<T> selectPage(@Param("entity") T entity, @Param("page") Page<T> page);
 
     /**
      * 查询数量
@@ -52,7 +46,15 @@ public interface FlowBaseMapper<T extends FlowEntity>
      * @param entity 实体列表
      * @return 集合
      */
-    Long selectCount(T entity);
+    long selectCount(@Param("entity") T entity);
+
+    /**
+     * 查询列表
+     *
+     * @param entity 实体列表
+     * @return 集合
+     */
+    List<T> selectList(@Param("entity") T entity);
 
     /**
      * 新增

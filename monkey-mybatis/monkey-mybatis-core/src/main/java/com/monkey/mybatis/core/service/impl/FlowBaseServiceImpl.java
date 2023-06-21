@@ -3,7 +3,7 @@ package com.monkey.mybatis.core.service.impl;
 
 import com.monkey.mybatis.core.entity.FlowEntity;
 import com.monkey.mybatis.core.mapper.FlowBaseMapper;
-import com.monkey.mybatis.core.page.PageResult;
+import com.monkey.mybatis.core.page.Page;
 import com.monkey.mybatis.core.service.IFlowBaseService;
 import com.monkey.mybatis.core.utils.SqlHelper;
 import com.monkey.tools.utils.CollUtil;
@@ -33,7 +33,7 @@ public abstract class FlowBaseServiceImpl<T extends FlowEntity> implements IFlow
      * @return 实体
      */
     @Override
-    public T selectById(Serializable id) {
+    public T getById(Serializable id) {
         return getBaseMapper().selectById(id);
     }
 
@@ -44,7 +44,7 @@ public abstract class FlowBaseServiceImpl<T extends FlowEntity> implements IFlow
      * @return 实体
      */
     @Override
-    public List<T> selectByIds(Collection<? extends Serializable> ids) {
+    public List<T> getByIds(Collection<? extends Serializable> ids) {
         return getBaseMapper().selectByIds(ids);
     }
 
@@ -55,13 +55,13 @@ public abstract class FlowBaseServiceImpl<T extends FlowEntity> implements IFlow
      * @return 集合
      */
     @Override
-    public PageResult<T> selectPage(T entity) {
+    public Page<T> listPage(T entity, Page<T> page) {
         long total = getBaseMapper().selectCount(entity);
         if (total > 0) {
-            List<T> list = getBaseMapper().selectPage(entity);
-            return new PageResult<>(list, total);
+            List<T> list = getBaseMapper().selectPage(entity, page);
+            return new Page<>(list, total);
         }
-        return PageResult.empty();
+        return Page.empty();
     }
 
     /**
@@ -71,7 +71,7 @@ public abstract class FlowBaseServiceImpl<T extends FlowEntity> implements IFlow
      * @return 集合
      */
     @Override
-    public List<T> selectList(T entity) {
+    public List<T> list(T entity) {
         return getBaseMapper().selectList(entity);
     }
 
@@ -82,7 +82,7 @@ public abstract class FlowBaseServiceImpl<T extends FlowEntity> implements IFlow
      * @return 结果
      */
     @Override
-    public T selectOne(T entity) {
+    public T getOne(T entity) {
         List<T> list = getBaseMapper().selectList(entity);
         return CollUtil.isEmpty(list) ? null: list.get(0);
     }
@@ -94,31 +94,9 @@ public abstract class FlowBaseServiceImpl<T extends FlowEntity> implements IFlow
      * @return 结果
      */
     @Override
-    public boolean insert(T entity) {
+    public boolean save(T entity) {
         insertFill(entity);
         return SqlHelper.retBool(getBaseMapper().insert(entity));
-    }
-
-    /**
-     * 先校验后修改
-     *
-     * @param entity 实体
-     * @return 结果
-     */
-    @Override
-    public boolean save(T entity) {
-
-        checkSave(entity);
-        return insert(entity);
-    }
-
-    /**
-     * 新增前校验
-     * @param entity
-     */
-    protected void checkSave(T entity)
-    {
-
     }
 
     /**
@@ -134,31 +112,13 @@ public abstract class FlowBaseServiceImpl<T extends FlowEntity> implements IFlow
     }
 
     /**
-     * 先校验后修改
-     *
-     * @param entity 实体
-     * @return 结果
-     */
-    @Override
-    public boolean edit(T entity)
-    {
-        checkEdit(entity);
-        return updateById(entity);
-    }
-
-    public void checkEdit(T entity)
-    {
-
-    }
-
-    /**
      * 根据id删除
      *
      * @param id 主键
      * @return 结果
      */
     @Override
-    public boolean deleteById(Serializable id) {
+    public boolean removeById(Serializable id) {
         return SqlHelper.retBool(getBaseMapper().deleteById(id));
     }
 
@@ -169,7 +129,7 @@ public abstract class FlowBaseServiceImpl<T extends FlowEntity> implements IFlow
      * @return 结果
      */
     @Override
-    public boolean deleteByIds(Collection<? extends Serializable> ids) {
+    public boolean removeByIds(Collection<? extends Serializable> ids) {
         return SqlHelper.retBool(getBaseMapper().deleteByIds(ids));
     }
 
@@ -179,7 +139,7 @@ public abstract class FlowBaseServiceImpl<T extends FlowEntity> implements IFlow
      * @param list
      */
     @Override
-    public void batchInsert(final List<T> list) {
+    public void saveBatch(final List<T> list) {
         if (CollUtil.isEmpty(list)) {
             return;
         }
@@ -195,7 +155,7 @@ public abstract class FlowBaseServiceImpl<T extends FlowEntity> implements IFlow
      * @param list
      */
     @Override
-    public void batchUpdate(final List<T> list) {
+    public void updateBatch(final List<T> list) {
         if (CollUtil.isEmpty(list)) {
             return;
         }

@@ -2,6 +2,8 @@ package com.monkey.flow.core.mapper;
 
 import com.monkey.flow.core.domain.entity.FlowHisTask;
 import com.monkey.mybatis.core.mapper.FlowBaseMapper;
+import com.monkey.mybatis.core.page.Page;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -25,10 +27,21 @@ public interface FlowHisTaskMapper extends FlowBaseMapper<FlowHisTask> {
     int deleteByInsIds(List<Long> instanceIds);
 
     /**
-     * 获取已办任务
+     * 获取已办任务数量
      * @param flowHisTask
+     * @param page
      * @return
      */
-    List<FlowHisTask> doneList(FlowHisTask flowHisTask);
+    long countDone(@Param("flowHisTask") FlowHisTask flowHisTask
+            , @Param("page") Page<FlowHisTask> page);
+
+    /**
+     * 获取已办任务
+     * @param flowHisTask
+     * @param page
+     * @return
+     */
+    List<FlowHisTask> donePage(@Param("flowHisTask") FlowHisTask flowHisTask
+            , @Param("page") Page<FlowHisTask> page);
 
 }

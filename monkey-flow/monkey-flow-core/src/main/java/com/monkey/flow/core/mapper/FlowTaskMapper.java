@@ -2,6 +2,8 @@ package com.monkey.flow.core.mapper;
 
 import com.monkey.flow.core.domain.entity.FlowTask;
 import com.monkey.mybatis.core.mapper.FlowBaseMapper;
+import com.monkey.mybatis.core.page.Page;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -16,9 +18,19 @@ public interface FlowTaskMapper extends FlowBaseMapper<FlowTask> {
     List<FlowTask> getByInsIds(List<Long> instanceIds);
 
     /**
-     * 获取待办任务
-     * @param flowTask
+     * 分页查询待办任务数量
+     * @param flowTask 条件实体
+     * @param page
      * @return
      */
-    List<FlowTask> toDoList(FlowTask flowTask);
+    long countTodo(@Param("flowTask") FlowTask flowTask, @Param("page") Page<FlowTask> page);
+
+    /**
+     * 分页查询待办任务
+     * @param flowTask 条件实体
+     * @param page
+     * @return
+     */
+    List<FlowTask> toDoPage(@Param("flowTask") FlowTask flowTask
+            , @Param("page") Page<FlowTask> page);
 }

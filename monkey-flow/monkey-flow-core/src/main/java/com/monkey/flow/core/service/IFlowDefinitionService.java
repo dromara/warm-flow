@@ -17,10 +17,18 @@ public interface IFlowDefinitionService extends IFlowBaseService<FlowDefinition>
     void closeFlowByCodeList(List<String> flowCodeList);
 
     /**
+     * 校验后新增
+     * @param flowDefinition
+     * @return
+     */
+    boolean checkAndSave(FlowDefinition flowDefinition);
+
+    /**
      * 删除流程定义
      * @param ids
+     * @return
      */
-    boolean remove(List<Long> ids);
+    boolean removeDef(List<Long> ids);
 
     /**
      * 发布流程定义
