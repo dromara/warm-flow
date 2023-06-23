@@ -1,6 +1,7 @@
 package com.monkey.mybatis.core.service;
 
 
+import com.monkey.mybatis.core.agent.FlowQuery;
 import com.monkey.mybatis.core.entity.FlowEntity;
 import com.monkey.mybatis.core.page.Page;
 
@@ -32,15 +33,6 @@ public interface IFlowService<T extends FlowEntity>
      * @return 实体
      */
     List<T> getByIds(Collection<? extends Serializable> ids);
-
-    /**
-     * 分页查询
-     *
-     * @param entity 实体
-     * @param page
-     * @return 集合
-     */
-    Page<T> page(T entity, Page<T> page);
 
     /**
      * 分页查询并且排序
@@ -118,4 +110,5 @@ public interface IFlowService<T extends FlowEntity>
      */
     void updateBatch(List<T> list);
 
+    FlowQuery orderByCreateTime();
 }

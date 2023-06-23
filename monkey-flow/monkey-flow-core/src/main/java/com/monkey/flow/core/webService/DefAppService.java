@@ -1,6 +1,5 @@
 package com.monkey.flow.core.webService;
 
-import com.monkey.flow.core.DefAppService;
 import com.monkey.flow.core.constant.FlowConstant;
 import com.monkey.flow.core.domain.dto.FlowCombine;
 import com.monkey.flow.core.domain.entity.FlowDefinition;
@@ -26,7 +25,7 @@ import java.util.stream.Collectors;
  * @description: 流程定义对外提供
  * @date: 2023/3/30 15:24
  */
-public class DefAppServiceImpl implements DefAppService {
+public class DefAppService {
 
     @Resource
     private IFlowNodeService nodeService;
@@ -37,13 +36,11 @@ public class DefAppServiceImpl implements DefAppService {
     @Resource
     private IFlowDefinitionService definitionService;
 
-    @Override
     public IFlowDefinitionService getService(){
         return definitionService;
     }
 
     @Transactional(rollbackFor = Exception.class)
-    @Override
     public void importXml(InputStream is) throws Exception {
         FlowCombine combine = FlowConfigUtil.readConfig(is);
         // 流程定义
@@ -56,13 +53,11 @@ public class DefAppServiceImpl implements DefAppService {
         updateFlow(definition, allNodes, allSkips);
     }
 
-    @Override
     public Document exportXml(Long id) {
         FlowDefinition definition = getAllDataDefinition(id);
         return FlowConfigUtil.createDocument(definition);
     }
 
-    @Override
     public FlowDefinition getAllDataDefinition(Long id) {
         FlowDefinition definition = definitionService.getById(id);
         FlowNode node = new FlowNode();

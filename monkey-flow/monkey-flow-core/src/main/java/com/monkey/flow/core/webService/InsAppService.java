@@ -1,6 +1,5 @@
 package com.monkey.flow.core.webService;
 
-import com.monkey.flow.core.InsAppService;
 import com.monkey.flow.core.constant.FlowConstant;
 import com.monkey.flow.core.domain.dto.FlowParams;
 import com.monkey.flow.core.domain.entity.*;
@@ -24,7 +23,7 @@ import java.util.stream.Collectors;
  * @description: 流程实例对外提供
  * @date: 2023/3/30 15:24
  */
-public class InsAppServiceImpl implements InsAppService {
+public class InsAppService {
 
     @Resource
     private IFlowNodeService nodeService;
@@ -44,57 +43,48 @@ public class InsAppServiceImpl implements InsAppService {
     @Resource
     private IFlowTaskService taskService;
 
-    @Override
     public IFlowInstanceService getService() {
         return instanceService;
     }
 
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public FlowInstance startFlow(String businessId, FlowParams flowUser) {
 
         return toStartFlow(Arrays.asList(businessId), flowUser).get(0);
     }
 
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public List<FlowInstance> startFlow(List<String> businessIds, FlowParams flowUser) {
         return toStartFlow(businessIds, flowUser);
     }
 
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public FlowInstance skipFlow(Long instanceId, String conditionValue, FlowParams flowUser) {
         return toSkipFlow(Arrays.asList(instanceId), conditionValue, null, flowUser).get(0);
     }
 
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public List<FlowInstance> skipFlow(List<Long> instanceIds, String conditionValue, FlowParams flowUser) {
         return toSkipFlow(instanceIds, conditionValue, null, flowUser);
     }
 
 
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public FlowInstance skipFlow(Long instanceId, String conditionValue, String message, FlowParams flowUser) {
         return toSkipFlow(Arrays.asList(instanceId), conditionValue, message, flowUser).get(0);
     }
 
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public List<FlowInstance> skipFlow(List<Long> instanceIds, String conditionValue, String message, FlowParams flowUser) {
         return toSkipFlow(instanceIds, conditionValue, message, flowUser);
     }
 
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean removeTask(Long instanceId) {
         return removeTask(Arrays.asList(instanceId));
     }
 
 
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean removeTask(List<Long> instanceIds) {
         return toRemoveTask(instanceIds);

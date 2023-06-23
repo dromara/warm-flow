@@ -1,6 +1,5 @@
 package com.monkey.flow.spring.boot.config;
 
-import com.monkey.flow.core.*;
 import com.monkey.flow.core.service.*;
 import com.monkey.flow.core.service.impl.*;
 import com.monkey.flow.core.webService.*;
@@ -20,37 +19,37 @@ public class FlowBeanRegister
   @Bean
   public DefAppService defAppService()
   {
-    return new DefAppServiceImpl();
+    return new DefAppService();
   }
 
   @Bean
   public NodeAppService nodeAppService()
   {
-    return new NodeAppServiceImpl();
+    return new NodeAppService();
   }
 
   @Bean
   public SkipAppService skipAppService()
   {
-    return new SkipAppServiceImpl();
+    return new SkipAppService();
   }
 
   @Bean
   public InsAppService insAppService()
   {
-    return new InsAppServiceImpl();
+    return new InsAppService();
   }
 
   @Bean
   public TaskAppService taskAppService()
   {
-    return new TaskAppServiceImpl();
+    return new TaskAppService();
   }
 
   @Bean
   public HisTaskAppService hisTaskAppService()
   {
-    return new HisTaskAppServiceImpl();
+    return new HisTaskAppService();
   }
 
   @Bean

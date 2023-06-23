@@ -1,16 +1,21 @@
 package com.monkey.mybatis.core.service.impl;
 
 
+import com.monkey.mybatis.core.agent.FlowQuery;
 import com.monkey.mybatis.core.entity.FlowEntity;
 import com.monkey.mybatis.core.mapper.FlowMapper;
 import com.monkey.mybatis.core.page.Page;
 import com.monkey.mybatis.core.service.IFlowService;
 import com.monkey.mybatis.core.utils.SqlHelper;
 import com.monkey.tools.utils.CollUtil;
+import com.monkey.tools.utils.IdUtils;
+import com.monkey.tools.utils.ObjectUtil;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * BaseService层处理
@@ -42,17 +47,6 @@ public abstract class FlowServiceImpl<T extends FlowEntity> implements IFlowServ
     @Override
     public List<T> getByIds(Collection<? extends Serializable> ids) {
         return getBaseMapper().selectByIds(ids);
-    }
-
-    /**
-     * 分页查询
-     *
-     * @param entity 实体列表
-     * @return 集合
-     */
-    @Override
-    public Page<T> page(T entity, Page<T> page) {
-        return page(entity, page, null);
     }
 
     /**
@@ -113,7 +107,7 @@ public abstract class FlowServiceImpl<T extends FlowEntity> implements IFlowServ
      */
     @Override
     public boolean save(T entity) {
-        // insertFill(entity);
+        insertFill(entity);
         return SqlHelper.retBool(getBaseMapper().insert(entity));
     }
 
@@ -125,7 +119,7 @@ public abstract class FlowServiceImpl<T extends FlowEntity> implements IFlowServ
      */
     @Override
     public boolean updateById(T entity) {
-        // updateFill(entity);
+        updateFill(entity);
         return SqlHelper.retBool(getBaseMapper().updateById(entity));
     }
 
@@ -162,7 +156,7 @@ public abstract class FlowServiceImpl<T extends FlowEntity> implements IFlowServ
             return;
         }
         for (T record : list) {
-            // insertFill(record);
+            insertFill(record);
             getBaseMapper().insert(record);
         }
     }
@@ -178,8 +172,98 @@ public abstract class FlowServiceImpl<T extends FlowEntity> implements IFlowServ
             return;
         }
         for (T record : list) {
-            // insertFill(record);
+            insertFill(record);
             getBaseMapper().updateById(record);
         }
     }
+
+    /**
+     * 创建时间设置正序排列
+     *
+     * @return 集合
+     */
+    @Override
+    public FlowQuery orderByCreateTime() {
+        FlowQuery flowQuery = new FlowQuery(this);
+        flowQuery.orderByCreateTime();
+        return flowQuery;
+    }
+
+    /**
+     * 更新时间设置正序排列
+     *
+     * @return 集合
+     */
+    public FlowQuery orderByUpdateTime() {
+        FlowQuery flowQuery = new FlowQuery(this);
+        flowQuery.orderByUpdateTime();
+        return flowQuery;
+    }
+
+    /**
+     * 设置正序排列
+     *
+     * @return 集合
+     */
+    public FlowQuery desc() {
+        FlowQuery flowQuery = new FlowQuery(this);
+        flowQuery.desc();
+        return flowQuery;
+    }
+
+    /**
+     * 设置正序排列
+     *
+     * @param orderByField 排序字段
+     * @return 集合
+     */
+    public FlowQuery orderByAsc(String orderByField) {
+        FlowQuery flowQuery = new FlowQuery(this);
+        flowQuery.orderByAsc(orderByField);
+        return flowQuery;
+    }
+
+    /**
+     * 设置倒序排列
+     *
+     * @param orderByField 排序字段
+     * @return 集合
+     */
+    public FlowQuery orderByDesc(String orderByField) {
+        FlowQuery flowQuery = new FlowQuery(this);
+        flowQuery.orderByDesc(orderByField);
+        return flowQuery;
+    }
+
+    /**
+     * 用户自定义排序方案
+     *
+     * @param orderByField 排序字段
+     * @return 集合
+     */
+    public FlowQuery orderBy(String orderByField) {
+        FlowQuery flowQuery = new FlowQuery(this);
+        flowQuery.orderBy(orderByField);
+        return flowQuery;
+    }
+
+    private void insertFill(T entity) {
+        if (ObjectUtil.isNotNull(entity)) {
+            if (Objects.isNull(entity.getId()))
+            {
+                entity.setId(IdUtils.nextId());
+            }
+            Date date = ObjectUtil.isNotNull(entity.getCreateTime())
+                    ? entity.getCreateTime() : new Date();
+            entity.setCreateTime(date);
+            entity.setUpdateTime(date);
+        }
+    }
+
+    private void updateFill(T entity) {
+        if (ObjectUtil.isNotNull(entity)) {
+            entity.setUpdateTime(new Date());
+        }
+    }
+
 }
