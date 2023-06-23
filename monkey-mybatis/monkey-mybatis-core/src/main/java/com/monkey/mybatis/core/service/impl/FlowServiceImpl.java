@@ -3,19 +3,18 @@ package com.monkey.mybatis.core.service.impl;
 
 import com.monkey.mybatis.core.agent.FlowQuery;
 import com.monkey.mybatis.core.entity.FlowEntity;
+import com.monkey.mybatis.core.handler.DataFillHandler;
+import com.monkey.mybatis.core.handler.DataFillHandlerFactory;
 import com.monkey.mybatis.core.mapper.FlowMapper;
 import com.monkey.mybatis.core.page.Page;
 import com.monkey.mybatis.core.service.IFlowService;
 import com.monkey.mybatis.core.utils.SqlHelper;
 import com.monkey.tools.utils.CollUtil;
-import com.monkey.tools.utils.IdUtils;
 import com.monkey.tools.utils.ObjectUtil;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * BaseService层处理
@@ -96,7 +95,7 @@ public abstract class FlowServiceImpl<T extends FlowEntity> implements IFlowServ
     @Override
     public T getOne(T entity) {
         List<T> list = getBaseMapper().selectList(entity);
-        return CollUtil.isEmpty(list) ? null: list.get(0);
+        return CollUtil.isEmpty(list) ? null : list.get(0);
     }
 
     /**
@@ -248,21 +247,16 @@ public abstract class FlowServiceImpl<T extends FlowEntity> implements IFlowServ
     }
 
     private void insertFill(T entity) {
-        if (ObjectUtil.isNotNull(entity)) {
-            if (Objects.isNull(entity.getId()))
-            {
-                entity.setId(IdUtils.nextId());
-            }
-            Date date = ObjectUtil.isNotNull(entity.getCreateTime())
-                    ? entity.getCreateTime() : new Date();
-            entity.setCreateTime(date);
-            entity.setUpdateTime(date);
+        DataFillHandler dataFillHandler = DataFillHandlerFactory.get();
+        if (ObjectUtil.isNotNull(dataFillHandler)) {
+            dataFillHandler.insertFill(entity);
         }
     }
 
     private void updateFill(T entity) {
-        if (ObjectUtil.isNotNull(entity)) {
-            entity.setUpdateTime(new Date());
+        DataFillHandler dataFillHandler = DataFillHandlerFactory.get();
+        if (ObjectUtil.isNotNull(dataFillHandler)) {
+            dataFillHandler.updateFill(entity);
         }
     }
 

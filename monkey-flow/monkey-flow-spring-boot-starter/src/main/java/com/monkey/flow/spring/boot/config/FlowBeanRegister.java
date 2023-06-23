@@ -1,11 +1,15 @@
 package com.monkey.flow.spring.boot.config;
 
+import com.monkey.flow.core.handler.DataFillHandlerImpl;
 import com.monkey.flow.core.service.*;
 import com.monkey.flow.core.service.impl.*;
 import com.monkey.flow.core.webService.*;
+import com.monkey.mybatis.core.handler.DataFillHandlerFactory;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import javax.annotation.PostConstruct;
 
 /**
  * @description:  工作流bean注册配置
@@ -16,6 +20,12 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class FlowBeanRegister
 {
+  @PostConstruct
+  public void setFlexConfig()
+  {
+    DataFillHandlerFactory.set(new DataFillHandlerImpl());
+  }
+
   @Bean
   public DefAppService defAppService()
   {
