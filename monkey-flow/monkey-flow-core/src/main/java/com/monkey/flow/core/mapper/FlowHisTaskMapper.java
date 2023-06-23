@@ -1,7 +1,7 @@
 package com.monkey.flow.core.mapper;
 
 import com.monkey.flow.core.domain.entity.FlowHisTask;
-import com.monkey.mybatis.core.mapper.FlowBaseMapper;
+import com.monkey.mybatis.core.mapper.FlowMapper;
 import com.monkey.mybatis.core.page.Page;
 import org.apache.ibatis.annotations.Param;
 
@@ -13,7 +13,7 @@ import java.util.List;
  * @author hh
  * @date 2023-03-29
  */
-public interface FlowHisTaskMapper extends FlowBaseMapper<FlowHisTask> {
+public interface FlowHisTaskMapper extends FlowMapper<FlowHisTask> {
     List<FlowHisTask> getByNewInsIds(List<Long> instanceIds);
 
     List<FlowHisTask> getByInsIds(List<Long> instanceIds);

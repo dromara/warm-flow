@@ -1,7 +1,7 @@
 package com.monkey.flow.core.mapper;
 
 import com.monkey.flow.core.domain.entity.FlowSkip;
-import com.monkey.mybatis.core.mapper.FlowBaseMapper;
+import com.monkey.mybatis.core.mapper.FlowMapper;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ import java.util.List;
  * @author hh
  * @date 2023-03-29
  */
-public interface FlowSkipMapper extends FlowBaseMapper<FlowSkip> {
+public interface FlowSkipMapper extends FlowMapper<FlowSkip> {
     /**
      * 根据nodeId删除
      *

@@ -14,7 +14,7 @@ import java.util.List;
  * @author hh
  * @date 2023-03-17
  */
-public interface FlowBaseMapper<T extends FlowEntity>
+public interface FlowMapper<T extends FlowEntity>
 {
     /**
      * 根据id查询
@@ -33,12 +33,32 @@ public interface FlowBaseMapper<T extends FlowEntity>
     List<T> selectByIds(Collection<? extends Serializable> ids);
 
     /**
+     * 查询列表
+     *
+     * @param entity 实体列表
+     * @return 集合
+     */
+    default List<T> selectList(@Param("entity") T entity) {
+        return selectList(entity, null);
+    }
+
+    /**
      * 分页查询
      *
      * @param entity 实体列表
      * @return 集合
      */
-    List<T> selectPage(@Param("entity") T entity, @Param("page") Page<T> page);
+    default List<T> selectList(@Param("entity") T entity, @Param("page") Page<T> page) {
+        return selectList(entity, page, null);
+    }
+
+    /**
+     * 分页查询
+     *
+     * @param entity 实体列表
+     * @return 集合
+     */
+    List<T> selectList(@Param("entity") T entity, @Param("page") Page<T> page, @Param("order") String order);
 
     /**
      * 查询数量
@@ -47,14 +67,6 @@ public interface FlowBaseMapper<T extends FlowEntity>
      * @return 集合
      */
     long selectCount(@Param("entity") T entity);
-
-    /**
-     * 查询列表
-     *
-     * @param entity 实体列表
-     * @return 集合
-     */
-    List<T> selectList(@Param("entity") T entity);
 
     /**
      * 新增

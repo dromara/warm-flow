@@ -22,11 +22,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <sql id="paging_end">
-        <if test="page.pageNum != null and page.pageSize != null">
-            <![CDATA[
-              LIMIT #{page.pageNum},#{page.pageSize}
-            ]]>
-        </if>
+        <if test="page !=null and page.pageNum != null and page.pageSize != null">LIMIT #{page.pageNum},#{page.pageSize}</if>
+    </sql>
+
+    <sql id="order_by">
+        <if test="order != null and order != ''">order by ${order}</if>
     </sql>
 
     <sql id="select_parameter">
@@ -40,13 +40,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </sql>
 
-    <select id="selectPage" parameterType="com.monkey.flow.core.domain.entity.FlowNode" resultMap="FlowNodeResult">
-        <include refid="selectVo"/>
-        <include refid="select_parameter"/>
-        order by t.create_time desc
-        <include refid="paging_end"/>
-    </select>
-
     <select id="selectCount" parameterType="com.monkey.flow.core.domain.entity.FlowNode" resultType="java.lang.Long">
         select count(*) from flow_node t
         <include refid="select_parameter"/>
@@ -55,6 +48,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectList" parameterType="com.monkey.flow.core.domain.entity.FlowNode" resultMap="FlowNodeResult">
         <include refid="selectVo"/>
         <include refid="select_parameter"/>
+        <include refid="order_by"/>
+        <include refid="paging_end"/>
     </select>
 
     <select id="selectByIds" parameterType="Long" resultMap="FlowNodeResult">

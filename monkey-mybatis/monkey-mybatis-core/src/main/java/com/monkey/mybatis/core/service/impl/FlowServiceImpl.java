@@ -2,19 +2,15 @@ package com.monkey.mybatis.core.service.impl;
 
 
 import com.monkey.mybatis.core.entity.FlowEntity;
-import com.monkey.mybatis.core.mapper.FlowBaseMapper;
+import com.monkey.mybatis.core.mapper.FlowMapper;
 import com.monkey.mybatis.core.page.Page;
-import com.monkey.mybatis.core.service.IFlowBaseService;
+import com.monkey.mybatis.core.service.IFlowService;
 import com.monkey.mybatis.core.utils.SqlHelper;
 import com.monkey.tools.utils.CollUtil;
-import com.monkey.tools.utils.IdUtils;
-import com.monkey.tools.utils.ObjectUtil;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * BaseService层处理
@@ -22,9 +18,9 @@ import java.util.Objects;
  * @author hh
  * @date 2023-03-17
  */
-public abstract class FlowBaseServiceImpl<T extends FlowEntity> implements IFlowBaseService<T> {
+public abstract class FlowServiceImpl<T extends FlowEntity> implements IFlowService<T> {
 
-    protected abstract FlowBaseMapper<T> getBaseMapper();
+    protected abstract FlowMapper<T> getBaseMapper();
 
     /**
      * 根据id查询
@@ -49,16 +45,27 @@ public abstract class FlowBaseServiceImpl<T extends FlowEntity> implements IFlow
     }
 
     /**
-     * 查询列表
+     * 分页查询
      *
      * @param entity 实体列表
      * @return 集合
      */
     @Override
-    public Page<T> listPage(T entity, Page<T> page) {
+    public Page<T> page(T entity, Page<T> page) {
+        return page(entity, page, null);
+    }
+
+    /**
+     * 分页查询并且排序
+     *
+     * @param entity 实体列表
+     * @return 集合
+     */
+    @Override
+    public Page<T> page(T entity, Page<T> page, String order) {
         long total = getBaseMapper().selectCount(entity);
         if (total > 0) {
-            List<T> list = getBaseMapper().selectPage(entity, page);
+            List<T> list = getBaseMapper().selectList(entity, page, order);
             return new Page<>(list, total);
         }
         return Page.empty();
@@ -73,6 +80,17 @@ public abstract class FlowBaseServiceImpl<T extends FlowEntity> implements IFlow
     @Override
     public List<T> list(T entity) {
         return getBaseMapper().selectList(entity);
+    }
+
+    /**
+     * 查询列表并排序
+     *
+     * @param entity 实体列表
+     * @return 集合
+     */
+    @Override
+    public List<T> list(T entity, String order) {
+        return getBaseMapper().selectList(entity, null, order);
     }
 
     /**
@@ -95,7 +113,7 @@ public abstract class FlowBaseServiceImpl<T extends FlowEntity> implements IFlow
      */
     @Override
     public boolean save(T entity) {
-        insertFill(entity);
+        // insertFill(entity);
         return SqlHelper.retBool(getBaseMapper().insert(entity));
     }
 
@@ -107,7 +125,7 @@ public abstract class FlowBaseServiceImpl<T extends FlowEntity> implements IFlow
      */
     @Override
     public boolean updateById(T entity) {
-        updateFill(entity);
+        // updateFill(entity);
         return SqlHelper.retBool(getBaseMapper().updateById(entity));
     }
 
@@ -144,7 +162,7 @@ public abstract class FlowBaseServiceImpl<T extends FlowEntity> implements IFlow
             return;
         }
         for (T record : list) {
-            insertFill(record);
+            // insertFill(record);
             getBaseMapper().insert(record);
         }
     }
@@ -160,28 +178,8 @@ public abstract class FlowBaseServiceImpl<T extends FlowEntity> implements IFlow
             return;
         }
         for (T record : list) {
-            insertFill(record);
+            // insertFill(record);
             getBaseMapper().updateById(record);
         }
     }
-
-    private void insertFill(T entity) {
-        if (ObjectUtil.isNotNull(entity)) {
-            if (Objects.isNull(entity.getId()))
-            {
-                entity.setId(IdUtils.nextId());
-            }
-            Date date = ObjectUtil.isNotNull(entity.getCreateTime())
-                    ? entity.getCreateTime() : new Date();
-            entity.setCreateTime(date);
-            entity.setUpdateTime(date);
-        }
-    }
-
-    private void updateFill(T entity) {
-        if (ObjectUtil.isNotNull(entity)) {
-            entity.setUpdateTime(new Date());
-        }
-    }
-
 }

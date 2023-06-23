@@ -14,7 +14,7 @@ import java.util.List;
  * @author hh
  * @date 2023-03-17
  */
-public interface IFlowBaseService<T extends FlowEntity>
+public interface IFlowService<T extends FlowEntity>
 {
 
     /**
@@ -40,7 +40,15 @@ public interface IFlowBaseService<T extends FlowEntity>
      * @param page
      * @return 集合
      */
-    Page<T> listPage(T entity, Page<T> page);
+    Page<T> page(T entity, Page<T> page);
+
+    /**
+     * 分页查询并且排序
+     *
+     * @param entity 实体列表
+     * @return 集合
+     */
+    Page<T> page(T entity, Page<T> page, String order);
 
     /**
      * 查询列表
@@ -49,6 +57,14 @@ public interface IFlowBaseService<T extends FlowEntity>
      * @return 集合
      */
     List<T> list(T entity);
+
+    /**
+     * 查询列表并排序
+     *
+     * @param entity 实体列表
+     * @return 集合
+     */
+    List<T> list(T entity, String order);
 
     /**
      * 查询一条记录

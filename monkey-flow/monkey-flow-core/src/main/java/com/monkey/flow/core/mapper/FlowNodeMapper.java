@@ -1,7 +1,7 @@
 package com.monkey.flow.core.mapper;
 
 import com.monkey.flow.core.domain.entity.FlowNode;
-import com.monkey.mybatis.core.mapper.FlowBaseMapper;
+import com.monkey.mybatis.core.mapper.FlowMapper;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import java.util.List;
  * @author hh
  * @date 2023-03-29
  */
-public interface FlowNodeMapper extends FlowBaseMapper<FlowNode> {
+public interface FlowNodeMapper extends FlowMapper<FlowNode> {
     List<FlowNode> getLastByFlowCode(String flowCode);
 
     List<FlowNode> getByFlowCodeAndVersion(String flowCode, String version);
