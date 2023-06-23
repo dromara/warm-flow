@@ -7,7 +7,7 @@ import com.monkey.flow.core.exception.FlowException;
 import com.monkey.flow.core.mapper.FlowDefinitionMapper;
 import com.monkey.flow.core.service.IFlowDefinitionService;
 import com.monkey.flow.core.service.IFlowNodeService;
-import com.monkey.mybatis.core.service.impl.FlowBaseServiceImpl;
+import com.monkey.mybatis.core.service.impl.FlowServiceImpl;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
@@ -20,7 +20,7 @@ import java.util.List;
  * @author hh
  * @date 2023-03-29
  */
-public class FlowDefinitionServiceImpl extends FlowBaseServiceImpl<FlowDefinition> implements IFlowDefinitionService {
+public class FlowDefinitionServiceImpl extends FlowServiceImpl<FlowDefinition> implements IFlowDefinitionService {
     @Resource
     private FlowDefinitionMapper definitionMapper;
 

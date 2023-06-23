@@ -5,7 +5,7 @@ import com.monkey.flow.core.domain.entity.FlowInstance;
 import com.monkey.flow.core.mapper.FlowInstanceMapper;
 import com.monkey.flow.core.service.IFlowInstanceService;
 import com.monkey.flow.core.utils.AssertUtil;
-import com.monkey.mybatis.core.service.impl.FlowBaseServiceImpl;
+import com.monkey.mybatis.core.service.impl.FlowServiceImpl;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.List;
  * @author hh
  * @date 2023-03-29
  */
-public class FlowInstanceServiceImpl extends FlowBaseServiceImpl<FlowInstance> implements IFlowInstanceService {
+public class FlowInstanceServiceImpl extends FlowServiceImpl<FlowInstance> implements IFlowInstanceService {
     @Resource
     private FlowInstanceMapper instanceMapper;
 

@@ -2,7 +2,7 @@ package com.monkey.flow.core.service;
 
 import com.monkey.flow.core.domain.entity.FlowTask;
 import com.monkey.mybatis.core.page.Page;
-import com.monkey.mybatis.core.service.IFlowBaseService;
+import com.monkey.mybatis.core.service.IFlowService;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import java.util.List;
  * @author hh
  * @date 2023-03-29
  */
-public interface IFlowTaskService extends IFlowBaseService<FlowTask> {
+public interface IFlowTaskService extends IFlowService<FlowTask> {
 
     /**
      * 根据实例ids获取待办任务

@@ -1,7 +1,7 @@
 package com.monkey.flow.core.service;
 
 import com.monkey.flow.core.domain.entity.FlowDefinition;
-import com.monkey.mybatis.core.service.IFlowBaseService;
+import com.monkey.mybatis.core.service.IFlowService;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ import java.util.List;
  * @author hh
  * @date 2023-03-29
  */
-public interface IFlowDefinitionService extends IFlowBaseService<FlowDefinition> {
+public interface IFlowDefinitionService extends IFlowService<FlowDefinition> {
     List<FlowDefinition> queryByCodeList(List<String> flowCodeList);
 
     void closeFlowByCodeList(List<String> flowCodeList);

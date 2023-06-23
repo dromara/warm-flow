@@ -6,7 +6,7 @@ import com.monkey.flow.core.mapper.FlowTaskMapper;
 import com.monkey.flow.core.service.IFlowTaskService;
 import com.monkey.flow.core.utils.AssertUtil;
 import com.monkey.mybatis.core.page.Page;
-import com.monkey.mybatis.core.service.impl.FlowBaseServiceImpl;
+import com.monkey.mybatis.core.service.impl.FlowServiceImpl;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.List;
  * @author hh
  * @date 2023-03-29
  */
-public class FlowTaskServiceImpl extends FlowBaseServiceImpl<FlowTask> implements IFlowTaskService {
+public class FlowTaskServiceImpl extends FlowServiceImpl<FlowTask> implements IFlowTaskService {
     @Resource
     private FlowTaskMapper taskMapper;
 

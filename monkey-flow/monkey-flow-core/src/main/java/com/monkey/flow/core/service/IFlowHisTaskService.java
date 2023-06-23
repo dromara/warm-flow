@@ -2,7 +2,7 @@ package com.monkey.flow.core.service;
 
 import com.monkey.flow.core.domain.entity.FlowHisTask;
 import com.monkey.mybatis.core.page.Page;
-import com.monkey.mybatis.core.service.IFlowBaseService;
+import com.monkey.mybatis.core.service.IFlowService;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import java.util.List;
  * @author hh
  * @date 2023-03-29
  */
-public interface IFlowHisTaskService extends IFlowBaseService<FlowHisTask> {
+public interface IFlowHisTaskService extends IFlowService<FlowHisTask> {
     /**
      * 根据instanceIds查询出流程相关的记录(根据时间逆序)
      *

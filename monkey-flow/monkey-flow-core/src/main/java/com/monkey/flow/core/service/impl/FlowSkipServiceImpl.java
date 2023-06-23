@@ -3,7 +3,7 @@ package com.monkey.flow.core.service.impl;
 import com.monkey.flow.core.domain.entity.FlowSkip;
 import com.monkey.flow.core.mapper.FlowSkipMapper;
 import com.monkey.flow.core.service.IFlowSkipService;
-import com.monkey.mybatis.core.service.impl.FlowBaseServiceImpl;
+import com.monkey.mybatis.core.service.impl.FlowServiceImpl;
 import com.monkey.mybatis.core.utils.SqlHelper;
 
 import javax.annotation.Resource;
@@ -15,7 +15,7 @@ import java.util.List;
  * @author hh
  * @date 2023-03-29
  */
-public class FlowSkipServiceImpl extends FlowBaseServiceImpl<FlowSkip> implements IFlowSkipService {
+public class FlowSkipServiceImpl extends FlowServiceImpl<FlowSkip> implements IFlowSkipService {
     @Resource
     private FlowSkipMapper flowSkipMapper;
 

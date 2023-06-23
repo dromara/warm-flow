@@ -4,7 +4,7 @@ import com.monkey.flow.core.domain.entity.FlowHisTask;
 import com.monkey.flow.core.mapper.FlowHisTaskMapper;
 import com.monkey.flow.core.service.IFlowHisTaskService;
 import com.monkey.mybatis.core.page.Page;
-import com.monkey.mybatis.core.service.impl.FlowBaseServiceImpl;
+import com.monkey.mybatis.core.service.impl.FlowServiceImpl;
 import com.monkey.mybatis.core.utils.SqlHelper;
 
 import javax.annotation.Resource;
@@ -16,7 +16,7 @@ import java.util.List;
  * @author hh
  * @date 2023-03-29
  */
-public class FlowHisTaskServiceImpl extends FlowBaseServiceImpl<FlowHisTask> implements IFlowHisTaskService {
+public class FlowHisTaskServiceImpl extends FlowServiceImpl<FlowHisTask> implements IFlowHisTaskService {
     @Resource
     private FlowHisTaskMapper hisTaskMapper;
 

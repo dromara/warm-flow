@@ -1,7 +1,7 @@
 package com.monkey.flow.core.service;
 
 import com.monkey.flow.core.domain.entity.FlowInstance;
-import com.monkey.mybatis.core.service.IFlowBaseService;
+import com.monkey.mybatis.core.service.IFlowService;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ import java.util.List;
  * @author hh
  * @date 2023-03-29
  */
-public interface IFlowInstanceService extends IFlowBaseService<FlowInstance> {
+public interface IFlowInstanceService extends IFlowService<FlowInstance> {
 
     /**
      * 根据id集合进行查询 行锁

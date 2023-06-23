@@ -1,7 +1,7 @@
 package com.monkey.flow.core.service;
 
 import com.monkey.flow.core.domain.entity.FlowNode;
-import com.monkey.mybatis.core.service.IFlowBaseService;
+import com.monkey.mybatis.core.service.IFlowService;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ import java.util.List;
  * @author hh
  * @date 2023-03-29
  */
-public interface IFlowNodeService extends IFlowBaseService<FlowNode> {
+public interface IFlowNodeService extends IFlowService<FlowNode> {
     /**
      * 根据流程编码获取开启的唯一流程的流程结点集合
      *
