@@ -7,6 +7,7 @@ import com.monkey.flow.core.service.IFlowTaskService;
 import com.monkey.flow.core.utils.AssertUtil;
 import com.monkey.mybatis.core.page.Page;
 import com.monkey.mybatis.core.service.impl.FlowServiceImpl;
+import com.monkey.mybatis.core.utils.SqlHelper;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -43,5 +44,10 @@ public class FlowTaskServiceImpl extends FlowServiceImpl<FlowTask> implements IF
             return new Page<>(list, count);
         }
         return Page.empty();
+    }
+
+    @Override
+    public boolean deleteByInsIds(List<Long> instanceIds) {
+        return SqlHelper.retBool(taskMapper.deleteByInsIds(instanceIds));
     }
 }

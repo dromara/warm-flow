@@ -28,4 +28,11 @@ public interface IFlowTaskService extends IFlowService<FlowTask> {
      * @return
      */
     Page<FlowTask> toDoPage(FlowTask flowTask, Page<FlowTask> page);
+
+    /**
+     * 根据instanceIds删除
+     * @param instanceIds
+     * @return
+     */
+    boolean deleteByInsIds(List<Long> instanceIds);
 }

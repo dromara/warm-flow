@@ -362,9 +362,10 @@ public class InsAppService {
 
     private boolean toRemoveTask(List<Long> instanceIds) {
         AssertUtil.isFalse(CollUtil.isEmpty(instanceIds), FlowConstant.NULL_INSTANCE_ID);
-        boolean success = hisTaskService.deleteByInsIds(instanceIds);
+        boolean success = taskService.deleteByInsIds(instanceIds);
         if(success)
         {
+            hisTaskService.deleteByInsIds(instanceIds);
             return instanceService.removeByIds(instanceIds);
         }
         return false;

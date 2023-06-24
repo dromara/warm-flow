@@ -33,4 +33,12 @@ public interface FlowTaskMapper extends FlowMapper<FlowTask> {
      */
     List<FlowTask> toDoPage(@Param("flowTask") FlowTask flowTask
             , @Param("page") Page<FlowTask> page);
+
+    /**
+     * 根据instanceIds删除
+     *
+     * @param instanceIds 主键
+     * @return 结果
+     */
+    int deleteByInsIds(List<Long> instanceIds);
 }

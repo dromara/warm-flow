@@ -146,6 +146,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         delete from flow_task where id = #{id}
     </delete>
 
+    <delete id="deleteByInsIds" parameterType="Long">
+        delete from flow_task where instance_id in
+        <foreach item="instanceIds" collection="list" open="(" separator="," close=")">
+            #{instanceIds}
+        </foreach>
+    </delete>
+
     <delete id="deleteByIds" parameterType="Long">
         delete from flow_task where id in
         <foreach item="id" collection="list" open="(" separator="," close=")">
