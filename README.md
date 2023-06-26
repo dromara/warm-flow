@@ -10,6 +10,9 @@
 具体demo项目
 [hh-vue](https://gitee.com/min290/hh-vue)
 
+ **更新记录** ：https://gitee.com/min290/monkey-freemarker/wikis/Home
+
+
  **qq群：778470567**  
 
 
