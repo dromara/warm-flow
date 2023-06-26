@@ -10,7 +10,7 @@
 具体demo项目
 [hh-vue](https://gitee.com/min290/hh-vue)
 
- **qq群：778470567**  **粗体** 
+ **qq群：778470567**  
 
 
 ![输入图片说明](https://foruda.gitee.com/images/1685245176850079274/44f8f0c1_2218307.png "屏幕截图")
