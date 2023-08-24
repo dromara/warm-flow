@@ -12,6 +12,17 @@
 
  **更新记录** ：https://gitee.com/min290/monkey-freemarker/wikis/Home
 
+# 集成注意（务必注意）：
+1、（感谢【luoheyu】提供测试意见）先查看自己项目mapper.xml是否在mapper/下面，此项目mapper.xml所在路径可能和自己项目加载的路径不一致，这时候需要把
+mybatis的配置加上这段后面的 ",classpath*:mapper/**/*Mapper.xml"
+把flow中的mpper.xml也加载进去，获取其他方式加载进去
+
+![输入图片说明](https://foruda.gitee.com/images/1692858175635657150/b6eba956_2218307.png "屏幕截图")
+
+2、（感谢【luoheyu】提供测试意见）此项目目前使用的是雪花算法生成id，可能导致前端页面获取丢失精度
+按照这个把long序列化成字符串，前端页面就不会丢失精度了，获取查看hh-vue项目如何处理
+http://doc.ruoyi.vip/ruoyi/other/faq.html#%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86long%E7%B1%BB%E5%9E%8B%E7%B2%BE%E5%BA%A6%E4%B8%A2%E5%A4%B1%E9%97%AE%E9%A2%98
+
 
  **qq群：778470567**  
 
