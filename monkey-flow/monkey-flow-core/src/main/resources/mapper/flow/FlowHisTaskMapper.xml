@@ -19,6 +19,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="conditionValue"    column="condition_value"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="businessId"    column="business_id"    />
+        <result property="flowName"    column="flow_name"    />
     </resultMap>
 
     <sql id="selectVo">

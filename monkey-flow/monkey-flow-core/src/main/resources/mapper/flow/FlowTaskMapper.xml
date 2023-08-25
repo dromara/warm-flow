@@ -15,6 +15,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="flowStatus"    column="flow_status"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="businessId"    column="business_id"    />
+        <result property="flowName"    column="flow_name"    />
+
+        <result property="businessId"    column="business_id"    />
+        <result property="flowName"    column="flow_name"    />
+        <result property="fromCustom"    column="from_custom"    />
+        <result property="fromPath"    column="from_path"    />
     </resultMap>
 
     <sql id="selectVo">
