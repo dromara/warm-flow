@@ -82,7 +82,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="flowHisTask.nodeName != null  and flowHisTask.nodeName != ''"> and t.node_name like concat('%', #{flowHisTask.nodeName}, '%')</if>
             <if test="flowHisTask.approver != null  and flowHisTask.approver != ''"> and t.approver = #{flowHisTask.approver}</if>
             <if test="flowHisTask.instanceId != null "> and instance_id = #{flowHisTask.instanceId}</if>
-            <if test="flowHisTask.tenantId != null "> and tenant_id = #{flowHisTask.tenantId}</if>
+            <if test="flowHisTask.tenantId != null "> and tenant_id = #{flowHisTask.tenant_id}</if>
         </where>
     </sql>
 
