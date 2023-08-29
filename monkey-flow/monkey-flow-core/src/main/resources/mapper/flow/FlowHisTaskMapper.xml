@@ -47,7 +47,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="entity.instanceId != null "> and instance_id = #{entity.instanceId}</if>
             <if test="entity.message != null  and entity.message != ''"> and t.message = #{entity.message}</if>
             <if test="entity.conditionValue != null  and entity.conditionValue != ''"> and t.condition_value = #{entity.conditionValue}</if>
-            <if test="entity.tenantId != null  and entity.tenantId != ''"> and t.tenant_id = #{entity.tenantId}</if>
+            <if test="entity.tenantId != null"> and t.tenant_id = #{entity.tenantId}</if>
         </where>
     </sql>
 
