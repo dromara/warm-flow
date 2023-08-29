@@ -209,7 +209,7 @@ public class InsAppService {
         insHis.setMessage(message);
         insHis.setCreateTime(new Date());
         insHis.setApprover(flowUser.getCreateBy());
-        insHis.setOrgid(flowUser.getOrgId());
+        insHis.setTenantId(flowUser.getTenantId());
         return insHis;
     }
 
@@ -268,7 +268,7 @@ public class InsAppService {
         task.setFlowStatus(FlowStatus.TOBESUBMIT.getKey());
         task.setCreateTime(date);
         task.setUpdateTime(date);
-        task.setOrgId(flowUser.getOrgId());
+        task.setTenantId(flowUser.getTenantId());
         return task;
     }
 

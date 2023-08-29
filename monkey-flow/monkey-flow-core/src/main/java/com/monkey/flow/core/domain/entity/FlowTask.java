@@ -78,7 +78,7 @@ public class FlowTask implements FlowEntity {
     private String fromPath;
 
     /** 所属组织（机构）id */
-    private Integer orgId;
+    private Integer tenantId;
 
     @Override
     public Long getId() {
@@ -206,11 +206,11 @@ public class FlowTask implements FlowEntity {
         this.fromPath = fromPath;
     }
 
-    public Integer getOrgId() {
-        return orgId;
+    public Integer getTenantId() {
+        return tenantId;
     }
 
-    public void setOrgId(Integer orgId) {
-        this.orgId = orgId;
+    public void setTenantId(Integer tenantId) {
+        this.tenantId = tenantId;
     }
 }

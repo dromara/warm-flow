@@ -98,7 +98,7 @@ public class FlowHisTask implements FlowEntity {
     *所属租住（企业）id
     *
     */
-    private Integer orgid;
+    private Integer tenantId;
 
     @Override
     public Long getId() {
@@ -250,11 +250,19 @@ public class FlowHisTask implements FlowEntity {
         this.fromCustom = fromCustom;
     }
 
-    public Integer getOrgid() {
-        return orgid;
+    public String getFromPath() {
+        return fromPath;
     }
 
-    public void setOrgid(Integer orgid) {
-        this.orgid = orgid;
+    public void setFromPath(String fromPath) {
+        this.fromPath = fromPath;
+    }
+
+    public Integer getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(Integer tenantId) {
+        this.tenantId = tenantId;
     }
 }
