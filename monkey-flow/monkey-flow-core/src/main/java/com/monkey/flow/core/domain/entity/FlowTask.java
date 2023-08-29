@@ -77,6 +77,9 @@ public class FlowTask implements FlowEntity {
     /** 审批表单是否自定义（Y是 2否） */
     private String fromPath;
 
+    /** 所属组织（机构）id */
+    private Integer tenantId;
+
     @Override
     public Long getId() {
         return id;
@@ -201,5 +204,13 @@ public class FlowTask implements FlowEntity {
 
     public void setFromPath(String fromPath) {
         this.fromPath = fromPath;
+    }
+
+    public Integer getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(Integer tenantId) {
+        this.tenantId = tenantId;
     }
 }

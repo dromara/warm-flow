@@ -26,6 +26,8 @@ public class FlowParams
     /** 扩展字段 */
     private String ext;
 
+    private Integer tenantId;
+
     public static FlowParams build() {
         return new FlowParams();
     }
@@ -51,6 +53,11 @@ public class FlowParams
 
     public FlowParams ext(String ext) {
         this.ext = ext;
+        return this;
+    }
+
+    public FlowParams tenantId(Integer tenantId) {
+        this.tenantId = tenantId;
         return this;
     }
 
@@ -92,5 +99,13 @@ public class FlowParams
 
     public void setExt(String ext) {
         this.ext = ext;
+    }
+
+    public Integer getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(Integer tenantId) {
+        this.tenantId = tenantId;
     }
 }
