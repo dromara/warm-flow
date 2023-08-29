@@ -15,8 +15,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="flowStatus"    column="flow_status"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateTime"    column="update_time"    />
-        <result property="businessId"    column="business_id"    />
-        <result property="flowName"    column="flow_name"    />
+        <result property="orgId"    column="org_id"    />
 
         <result property="businessId"    column="business_id"    />
         <result property="flowName"    column="flow_name"    />
@@ -24,9 +23,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="fromPath"    column="from_path"    />
     </resultMap>
 
+
     <sql id="selectVo">
         select t.id, t.node_code, t.node_name, t.node_type, t.approver, t.definition_id,
-               t.instance_id, t.flow_status,t.create_time, t.update_time from flow_task t
+               t.instance_id, t.flow_status,t.create_time, t.update_time,t.org_id from flow_task t
     </sql>
 
     <sql id="paging_end">
@@ -44,6 +44,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="entity.nodeType != null"> and t.node_type = #{entity.nodeCode}</if>
             <if test="entity.approver != null  and entity.approver != ''"> and t.approver = #{entity.approver}</if>
             <if test="entity.instanceId != null "> and instance_id = #{entity.instanceId}</if>
+            <if test="entity.orgId != null "> and org_id = #{entity.orgId}</if>
         </where>
     </sql>
 
@@ -87,6 +88,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="flowTask.nodeName != null and flowTask.nodeName != ''"> and t.node_name like concat('%', #{flowTask.nodeName}, '%')</if>
             <if test="flowTask.approver != null and flowTask.approver != ''"> and t.approver = #{flowTask.approver}</if>
             <if test="flowTask.instanceId != null "> and instance_id = #{flowTask.instanceId}</if>
+            <if test="flowTask.orgId != null "> and org_id = #{flowTask.orgId}</if>
         </where>
     </sql>
 
@@ -97,7 +99,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="toDoPage" resultMap="FlowTaskResult">
         select t.id, t.node_code, t.node_name, t.node_type, t.approver, t.definition_id, t.instance_id, t.flow_status
-        , t.create_time, t.update_time, i.business_id, d.flow_name, d.from_custom, d.from_path from flow_task t
+        , t.create_time, t.update_time,
+        t.org_id,
+        i.business_id, d.flow_name, d.from_custom, d.from_path from flow_task t
         LEFT JOIN flow_definition d on t.definition_id = d.id
         LEFT JOIN flow_instance i on t.instance_id = i.id
         <include refid="select_toDo_parameter"/>
@@ -118,6 +122,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="flowStatus != null">flow_status,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
+            <if test="orgId != null">org_id,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -130,6 +135,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="flowStatus != null">#{flowStatus},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
+            <if test="orgId != null">#{orgId},</if>
         </trim>
     </insert>
 
@@ -145,6 +151,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="flowStatus != null">flow_status = #{flowStatus},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="orgId != null">org_id = #{orgId},</if>
         </trim>
         where id = #{id}
     </update>

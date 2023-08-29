@@ -94,6 +94,12 @@ public class FlowHisTask implements FlowEntity {
     /** 审批表单是否自定义（Y是 2否） */
     private String fromPath;
 
+    /**
+    *所属租住（企业）id
+    *
+    */
+    private Integer orgid;
+
     @Override
     public Long getId() {
         return id;
@@ -242,5 +248,13 @@ public class FlowHisTask implements FlowEntity {
 
     public void setFromCustom(String fromCustom) {
         this.fromCustom = fromCustom;
+    }
+
+    public Integer getOrgid() {
+        return orgid;
+    }
+
+    public void setOrgid(Integer orgid) {
+        this.orgid = orgid;
     }
 }
