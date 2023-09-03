@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.warm.flow.core.mapper.FlowTaskMapper">
+
+    <resultMap type="com.warm.flow.core.domain.entity.FlowTask" id="FlowTaskResult">
+        <result property="id"    column="id"    />
+        <result property="nodeCode"    column="node_code"    />
+        <result property="nodeName"    column="node_name"    />
+        <result property="nodeType"    column="node_type"    />
+        <result property="approver"    column="approver"    />
+        <result property="definitionId"    column="definition_id"    />
+        <result property="instanceId"    column="instance_id"    />
+        <result property="flowStatus"    column="flow_status"    />
+        <result property="permissionFlag"    column="permission_flag"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="tenantId"    column="tenant_id"    />
+        <result property="businessId"    column="business_id"    />
+        <result property="flowName"    column="flow_name"    />
+        <result property="fromCustom"    column="from_custom"    />
+        <result property="fromPath"    column="from_path"    />
+    </resultMap>
+
+
+    <sql id="selectVo">
+        select t.id, t.node_code, t.node_name, t.node_type, t.approver, t.definition_id,t.permission_flag,
+               t.instance_id, t.flow_status,t.create_time, t.update_time,t.tenant_id from flow_task t
+    </sql>
+
+    <sql id="paging_end">
+        <if test="page !=null and page.pageNum != null and page.pageSize != null">LIMIT #{page.pageNum},#{page.pageSize}</if>
+    </sql>
+
+    <sql id="order_by">
+        <if test="order != null and order != ''">order by ${order}</if>
+    </sql>
+
+    <sql id="select_parameter">
+        <where>
+            <if test="entity.nodeCode != null  and entity.nodeCode != ''"> and t.node_code = #{entity.nodeCode}</if>
+            <if test="entity.nodeName != null  and entity.nodeName != ''"> and t.node_name like concat('%', #{entity.nodeName}, '%')</if>
+            <if test="entity.nodeType != null"> and t.node_type = #{entity.nodeCode}</if>
+            <if test="entity.approver != null  and entity.approver != ''"> and t.approver = #{entity.approver}</if>
+            <if test="entity.instanceId != null "> and instance_id = #{entity.instanceId}</if>
+            <if test="entity.tenantId != null "> and tenant_id = #{entity.tenantId}</if>
+        </where>
+    </sql>
+
+    <select id="selectCount" parameterType="com.warm.flow.core.domain.entity.FlowTask" resultType="java.lang.Long">
+        select count(*) from flow_task t
+        <include refid="select_parameter"/>
+    </select>
+
+    <select id="selectList" parameterType="com.warm.flow.core.domain.entity.FlowTask" resultMap="FlowTaskResult">
+        <include refid="selectVo"/>
+        <include refid="select_parameter"/>
+        <include refid="order_by"/>
+        <include refid="paging_end"/>
+    </select>
+
+    <select id="selectByIds" parameterType="Long" resultMap="FlowTaskResult">
+        <include refid="selectVo"/>
+        where t.id in
+        <foreach item="id" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="selectById" parameterType="Long" resultMap="FlowTaskResult">
+        <include refid="selectVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="getByInsIds" resultMap="FlowTaskResult">
+        <include refid="selectVo"/>
+        where t.instance_id in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <sql id="select_toDo_parameter">
+        <where>
+            t.node_type = 1
+            <if test="flowTask.nodeCode != null and flowTask.nodeCode != ''"> and t.node_code = #{flowTask.nodeCode}</if>
+            <if test="flowTask.nodeName != null and flowTask.nodeName != ''"> and t.node_name like concat('%', #{flowTask.nodeName}, '%')</if>
+            <if test="flowTask.approver != null and flowTask.approver != ''"> and t.approver = #{flowTask.approver}</if>
+            <if test="flowTask.instanceId != null "> and instance_id = #{flowTask.instanceId}</if>
+            <if test="flowTask.tenantId != null "> and tenant_id = #{flowTask.tenantId}</if>
+        </where>
+    </sql>
+
+    <select id="countTodo" resultType="long">
+        select count(*) from flow_task t
+        <include refid="select_toDo_parameter"/>
+    </select>
+
+    <select id="toDoPage" resultMap="FlowTaskResult">
+        select t.id, t.node_code, t.node_name, t.node_type, t.approver, t.definition_id, t.instance_id, t.flow_status
+        ,t.permission_flag, t.create_time, t.update_time,t.tenant_id,
+        i.business_id, d.flow_name, d.from_custom, d.from_path from flow_task t
+        LEFT JOIN flow_definition d on t.definition_id = d.id
+        LEFT JOIN flow_instance i on t.instance_id = i.id
+        <include refid="select_toDo_parameter"/>
+        order by t.create_time desc
+        <include refid="paging_end"/>
+    </select>
+
+    <insert id="insert" parameterType="com.warm.flow.core.domain.entity.FlowTask">
+        insert into flow_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="nodeCode != null and nodeCode != ''">node_code,</if>
+            <if test="nodeName != null and nodeName != ''">node_name,</if>
+            <if test="nodeType != null">node_type,</if>
+            <if test="approver != null and approver != ''">approver,</if>
+            <if test="definitionId != null">definition_id,</if>
+            <if test="instanceId != null">instance_id,</if>
+            <if test="flowStatus != null">flow_status,</if>
+            <if test="permissionFlag != null">permission_flag,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="tenantId != null">tenant_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="nodeCode != null and nodeCode != ''">#{nodeCode},</if>
+            <if test="nodeName != null and nodeName != ''">#{nodeName},</if>
+            <if test="nodeType != null">#{nodeType},</if>
+            <if test="approver != null and approver != ''">#{approver},</if>
+            <if test="definitionId != null">#{definitionId},</if>
+            <if test="instanceId != null">#{instanceId},</if>
+            <if test="flowStatus != null">#{flowStatus},</if>
+            <if test="permissionFlag != null">#{permissionFlag},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="tenantId != null">#{tenantId},</if>
+        </trim>
+    </insert>
+
+    <update id="updateById" parameterType="com.warm.flow.core.domain.entity.FlowTask">
+        update flow_task
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="nodeCode != null and nodeCode != ''">node_code = #{nodeCode},</if>
+            <if test="nodeName != null and nodeName != ''">node_name = #{nodeName},</if>
+            <if test="nodeType != null">node_type = #{nodeType},</if>
+            <if test="approver != null and approver != ''">approver = #{approver},</if>
+            <if test="definitionId != null">definition_id = #{definitionId},</if>
+            <if test="instanceId != null">instance_id = #{instanceId},</if>
+            <if test="flowStatus != null">flow_status = #{flowStatus},</if>
+            <if test="permissionFlag != null">permission_flag = #{permissionFlag},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="tenantId != null">tenant_id = #{tenantId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="Long">
+        delete from flow_task where id = #{id}
+    </delete>
+
+    <delete id="deleteByInsIds" parameterType="Long">
+        delete from flow_task where instance_id in
+        <foreach item="instanceIds" collection="list" open="(" separator="," close=")">
+            #{instanceIds}
+        </foreach>
+    </delete>
+
+    <delete id="deleteByIds" parameterType="Long">
+        delete from flow_task where id in
+        <foreach item="id" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

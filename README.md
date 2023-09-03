@@ -1,4 +1,4 @@
-# monkey-freemarker
+# warm-freemarker
 此项目是极其简单的工作流，没有太多设计，代码量少，并且只有6张表，一个小时就可以看完整个设计。使用起来方便
 
 
@@ -11,7 +11,7 @@
 具体demo项目
 [hh-vue](https://gitee.com/min290/hh-vue)
 
- **更新记录** ：https://gitee.com/min290/monkey-freemarker/wikis/Home
+ **更新记录** ：https://gitee.com/min290/warm-freemarker/wikis/Home
 
 # 集成注意（务必注意）：
 1、（感谢【luoheyu】提供测试意见）先查看自己项目mapper.xml是否在mapper/下面，此项目mapper.xml所在路径可能和自己项目加载的路径不一致，这时候需要把
@@ -35,3 +35,20 @@ http://doc.ruoyi.vip/ruoyi/other/faq.html#%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86lo
 ![输入图片说明](https://foruda.gitee.com/images/1685418370349267839/f70e5589_2218307.png "屏幕截图")
 ![输入图片说明](https://foruda.gitee.com/images/1685418217810487859/02883c8c_2218307.png "屏幕截图")
 ![输入图片说明](https://foruda.gitee.com/images/1685418386450207624/90327020_2218307.png "屏幕截图")
+
+## git提交规范
+
+    init 初始化  
+    feat 增加新功能  
+    fix 修复问题/BUG  
+    style 代码风格相关无影响运行结果的  
+    perf 优化/性能提升  
+    refactor 重构  
+    revert 撤销修改  
+    test 测试相关  
+    docs 文档/注释  
+    chore 依赖更新/脚手架配置修改等  
+    workflow 工作流改进  
+    ci 持续集成  
+    types 类型定义文件更改  
+    wip 开发中

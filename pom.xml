@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.github.minliuhua</groupId>
-    <artifactId>monkey-freemarker</artifactId>
-    <version>1.1.5</version>
+    <artifactId>warm-freemarker</artifactId>
+    <version>${revision}</version>
     <packaging>pom</packaging>
 
-    <name>monkey-freemarker</name>
-    <description>Monkey-Freemarker is a freemarker</description>
+    <name>warm-freemarker</name>
+    <description>Warm-Freemarker is a freemarker</description>
     <url>https://github.com/minliuhua/monkey-freemarker</url>
 
     <issueManagement>
@@ -39,12 +39,13 @@
     </developers>
 
     <modules>
-        <module>monkey-tools</module>
-        <module>monkey-mybatis</module>
-        <module>monkey-flow</module>
+        <module>warm-tools</module>
+        <module>warm-mybatis</module>
+        <module>warm-flow</module>
     </modules>
 
     <properties>
+        <revision>0.0.1</revision>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -53,7 +54,7 @@
         <dom4j.version>2.1.1</dom4j.version>
         <mybatis.version>3.5.9</mybatis.version>
         <mybatis-spring>2.0.7</mybatis-spring>
-        <monkey.freemarker>1.1.5</monkey.freemarker>
+        <flatten-maven-plugin.version>1.3.0</flatten-maven-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -84,28 +85,28 @@
             </dependency>
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
-                <artifactId>monkey-tools</artifactId>
-                <version>${monkey.freemarker}</version>
+                <artifactId>warm-tools</artifactId>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
-                <artifactId>monkey-flow-core</artifactId>
-                <version>${monkey.freemarker}</version>
+                <artifactId>warm-flow-core</artifactId>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
-                <artifactId>monkey-flow-spring-boot-starter</artifactId>
-                <version>${monkey.freemarker}</version>
+                <artifactId>warm-flow-spring-boot-starter</artifactId>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
-                <artifactId>monkey-mybatis-core</artifactId>
-                <version>${monkey.freemarker}</version>
+                <artifactId>warm-mybatis-core</artifactId>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
-                <artifactId>monkey-mybatis-spring-boot-starter</artifactId>
-                <version>${monkey.freemarker}</version>
+                <artifactId>warm-mybatis-spring-boot-starter</artifactId>
+                <version>${revision}</version>
             </dependency>
 
 
@@ -131,9 +132,6 @@
         <profile>
             <id>release</id>
             <build>
-                <!-- mvn versions:set -DnewVersion=1.2.3 -->
-                <!-- mvn versions:commit -->
-                <!-- mvn versions:revert -->
                 <!-- mvn clean deploy -P release -->
                 <plugins>
                     <!-- Source -->
@@ -156,8 +154,8 @@
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <version>2.10.4</version>
                         <configuration>
-                            <windowtitle>Monkey</windowtitle>
-                            <doctitle>Monkey</doctitle>
+                            <windowtitle>Warm</windowtitle>
+                            <doctitle>Warm</doctitle>
                             <show>private</show>
                             <detectLinks>false</detectLinks>
                             <detectOfflineLinks>true</detectOfflineLinks>
@@ -189,7 +187,32 @@
                             </execution>
                         </executions>
                     </plugin>
-
+                    <!-- 统一版本号管理 -->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>flatten-maven-plugin</artifactId>
+                        <version>${flatten-maven-plugin.version}</version>
+                        <configuration>
+                            <updatePomFile>true</updatePomFile>
+                            <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>flatten</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>flatten</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>flatten.clean</id>
+                                <phase>clean</phase>
+                                <goals>
+                                    <goal>clean</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
             <distributionManagement>

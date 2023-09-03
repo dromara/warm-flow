@@ -1,2 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.monkey.flow.spring.boot.config.FlowBeanRegister
