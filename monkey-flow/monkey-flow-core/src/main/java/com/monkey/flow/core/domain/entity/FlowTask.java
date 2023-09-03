@@ -3,6 +3,7 @@ package com.monkey.flow.core.domain.entity;
 import com.monkey.mybatis.core.entity.FlowEntity;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 待办任务记录对象 flow_task
@@ -21,13 +22,19 @@ public class FlowTask implements FlowEntity {
      */
     private Long definitionId;
 
-    /** 流程名称 */
-    private String flowName;
-
     /**
      * 流程实例表id
      */
     private Long instanceId;
+
+    /**
+     *所属租住（企业）id
+     *
+     */
+    private Long tenantId;
+
+    /** 流程名称 */
+    private String flowName;
 
     /**
      * 业务id
@@ -65,6 +72,16 @@ public class FlowTask implements FlowEntity {
      */
     private Integer flowStatus;
 
+    /**
+     * 权限标识（权限类型:权限标识，可以多个，如role:1,role:2)
+     */
+    private String permissionFlag;
+
+    /**
+     * 权限标识 permissionFlag的list形式
+     */
+    private List<String> permissionList;
+
     /** 创建时间 */
     private Date createTime;
 
@@ -76,9 +93,6 @@ public class FlowTask implements FlowEntity {
 
     /** 审批表单是否自定义（Y是 2否） */
     private String fromPath;
-
-    /** 所属组织（机构）id */
-    private Integer tenantId;
 
     @Override
     public Long getId() {
@@ -162,6 +176,22 @@ public class FlowTask implements FlowEntity {
         this.flowStatus = flowStatus;
     }
 
+    public String getPermissionFlag() {
+        return permissionFlag;
+    }
+
+    public void setPermissionFlag(String permissionFlag) {
+        this.permissionFlag = permissionFlag;
+    }
+
+    public List<String> getPermissionList() {
+        return permissionList;
+    }
+
+    public void setPermissionList(List<String> permissionList) {
+        this.permissionList = permissionList;
+    }
+
     @Override
     public Date getCreateTime() {
         return createTime;
@@ -206,11 +236,11 @@ public class FlowTask implements FlowEntity {
         this.fromPath = fromPath;
     }
 
-    public Integer getTenantId() {
+    public Long getTenantId() {
         return tenantId;
     }
 
-    public void setTenantId(Integer tenantId) {
+    public void setTenantId(Long tenantId) {
         this.tenantId = tenantId;
     }
 }

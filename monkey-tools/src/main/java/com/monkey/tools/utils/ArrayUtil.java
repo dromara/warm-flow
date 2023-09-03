@@ -38,4 +38,15 @@ public class ArrayUtil {
     {
         return ObjectUtil.isNotNull(object) && object.getClass().isArray();
     }
+
+    /**
+     * 字符串转数组
+     *
+     * @param str 字符串
+     * @param sep 分隔符
+     * @return
+     */
+    public static String[] strToArrAy(String str, String sep) {
+        return StringUtils.isEmpty(str) ? null : str.split(sep);
+    }
 }

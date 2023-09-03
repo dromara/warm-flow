@@ -8,7 +8,8 @@ package com.monkey.flow.core.enums;
 public enum FlowStatus {
 	TOBESUBMIT(0,"待提交"),
 	APPROVAL(1,"审批中"),
-	FINISHED(2,"已完成"),
+	PASS(2,"通过"),
+	FINISHED(8,"已完成"),
 	REJECT(9,"已驳回");
 
 	private Integer key;

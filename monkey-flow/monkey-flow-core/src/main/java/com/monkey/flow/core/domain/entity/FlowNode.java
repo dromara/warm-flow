@@ -36,7 +36,7 @@ public class FlowNode implements FlowEntity {
     private String nodeCode;
 
     /**
-     * 权限标识（权限类型:权限标识，可以多个，如role:leader
+     * 权限标识（权限类型:权限标识，可以多个，如role:1,role:2)
      */
     private String permissionFlag;
 

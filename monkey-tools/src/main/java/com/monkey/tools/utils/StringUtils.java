@@ -67,17 +67,6 @@ public class StringUtils
     }
 
     /**
-     * 字符串转数组
-     *
-     * @param str 字符串
-     * @param sep 分隔符
-     * @return
-     */
-    public static String[] strToArrAy(String str, String sep) {
-        return isEmpty(str) ? null : str.split(sep);
-    }
-
-    /**
      * 是否存都不为null或空对象或空白符的对象
      * @param args
      * @return

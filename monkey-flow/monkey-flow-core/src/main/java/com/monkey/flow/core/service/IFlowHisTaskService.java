@@ -13,22 +13,14 @@ import java.util.List;
  * @date 2023-03-29
  */
 public interface IFlowHisTaskService extends IFlowService<FlowHisTask> {
-    /**
-     * 根据instanceIds查询出流程相关的记录(根据时间逆序)
-     *
-     * @param instanceIds
-     * @return
-     */
-    @Deprecated
-    List<FlowHisTask> getByNewInsIds(List<Long> instanceIds);
 
     /**
-     * 根据instanceIds查询出流程相关的记录(根据时间逆序)
+     * 根据instanceId查询出流程相关的记录(根据时间逆序)
      *
-     * @param instanceIds
+     * @param instanceId
      * @return
      */
-    List<FlowHisTask> getByInsIds(List<Long> instanceIds);
+    List<FlowHisTask> getByInsIds(Long instanceId);
 
     /**
      * 根据instanceIds删除

@@ -1,6 +1,8 @@
 package com.monkey.tools.utils;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @description:  集合工具类
@@ -54,5 +56,42 @@ public class CollUtil {
             }
             return false;
         }
+    }
+
+    /**
+     * 判断给定的collection1列表中是否包含collection2 判断给定的collection2中是否包含给定的元素value
+     *
+     * @param collection1 给定的集合1
+     * @param collection2 给定的集合2
+     * @return boolean 结果
+     */
+    public static boolean containsAny(Collection<String> collection1, Collection<String> collection2)
+    {
+        if (isEmpty(collection1) || isEmpty(collection2))
+        {
+            return false;
+        }
+        else
+        {
+            for (String str : collection2)
+            {
+                if (collection1.contains(str))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    /**
+     * 字符串转数组
+     *
+     * @param str 字符串
+     * @param sep 分隔符
+     * @return
+     */
+    public static List<String> strToColl(String str, String sep) {
+        return StringUtils.isEmpty(str) ? null : Arrays.asList(str.split(sep));
     }
 }

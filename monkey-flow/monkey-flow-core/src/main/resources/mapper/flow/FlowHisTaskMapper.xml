@@ -15,6 +15,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="definitionId"    column="definition_id"    />
         <result property="instanceId"    column="instance_id"    />
         <result property="flowStatus"    column="flow_status"    />
+        <result property="permissionFlag"    column="permission_flag"    />
         <result property="message"    column="message"    />
         <result property="conditionValue"    column="condition_value"    />
         <result property="createTime"    column="create_time"    />
@@ -25,7 +26,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectVo">
-        select t.id, t.node_code, t.node_name, t.node_type, t.target_node_code, t.target_node_name, t.approver, t.definition_id,
+        select t.id, t.node_code, t.node_name, t.node_type, t.target_node_code, t.target_node_name, t.approver, t.definition_id, t.permission_flag,
                t.instance_id, t.flow_status, t.message, t.condition_value, t.create_time, t.update_time,t.tenant_id from flow_his_task t
     </sql>
 
@@ -82,7 +83,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="flowHisTask.nodeName != null  and flowHisTask.nodeName != ''"> and t.node_name like concat('%', #{flowHisTask.nodeName}, '%')</if>
             <if test="flowHisTask.approver != null  and flowHisTask.approver != ''"> and t.approver = #{flowHisTask.approver}</if>
             <if test="flowHisTask.instanceId != null "> and instance_id = #{flowHisTask.instanceId}</if>
-            <if test="flowHisTask.tenantId != null "> and tenant_id = #{flowHisTask.tenant_id}</if>
+            <if test="flowHisTask.tenantId != null "> and tenant_id = #{flowHisTask.tenantId}</if>
         </where>
     </sql>
 
@@ -93,9 +94,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="donePage" resultMap="FlowHisTaskResult">
         select t.id, t.node_code, t.node_name, t.node_type, t.target_node_code, t.target_node_name, t.approver
-        , t.definition_id, t.instance_id, t.flow_status, t.message, t.condition_value, t.create_time, t.update_time,
-        t.tenant_id
-        , i.business_id, d.flow_name from flow_his_task t
+        , t.definition_id, t.instance_id, t.flow_status, t.message, t.condition_value, t.create_time, t.update_time
+        ,t.permission_flag, t.tenant_id, i.business_id, d.flow_name from flow_his_task t
         LEFT JOIN flow_definition d on t.definition_id = d.id
         LEFT JOIN flow_instance i on t.instance_id = i.id
         <include refid="select_done_parameter"/>
@@ -103,23 +103,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="paging_end"/>
     </select>
 
-    <select id="getByNewInsIds" resultMap="FlowHisTaskResult">
+    <select id="getByInsId" resultMap="FlowHisTaskResult">
         <include refid="selectVo"/>
-        left join flow_his_task r on t.instance_id in
-        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
-            #{item}
-        </foreach>
-        and t.instance_id = r.instance_id
-        and t.create_time &lt; r.create_time
-        where r.create_time is null
-    </select>
-
-    <select id="getByInsIds" resultMap="FlowHisTaskResult">
-        <include refid="selectVo"/>
-        where t.instance_id in
-        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
-            #{item}
-        </foreach>
+        where t.instance_id = #{instanceId}
     </select>
 
     <insert id="insert" parameterType="com.monkey.flow.core.domain.entity.FlowHisTask">
@@ -135,6 +121,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="definitionId != null">definition_id,</if>
             <if test="instanceId != null">instance_id,</if>
             <if test="flowStatus != null">flow_status,</if>
+            <if test="permissionFlag != null">permission_flag,</if>
             <if test="message != null">message,</if>
             <if test="conditionValue != null">condition_value,</if>
             <if test="createTime != null">create_time,</if>
@@ -152,6 +139,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="definitionId != null">#{definitionId},</if>
             <if test="instanceId != null">#{instanceId},</if>
             <if test="flowStatus != null">#{flowStatus},</if>
+            <if test="permissionFlag != null">#{permissionFlag},</if>
             <if test="message != null">#{message},</if>
             <if test="conditionValue != null">#{conditionValue},</if>
             <if test="createTime != null">#{createTime},</if>
@@ -172,6 +160,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="definitionId != null">definition_id = #{definitionId},</if>
             <if test="instanceId != null">instance_id = #{instanceId},</if>
             <if test="flowStatus != null">flow_status = #{flowStatus},</if>
+            <if test="permissionFlag != null">permission_flag = #{permissionFlag},</if>
             <if test="message != null">message = #{message},</if>
             <if test="conditionValue != null">condition_value = #{conditionValue},</if>
             <if test="createTime != null">create_time = #{createTime},</if>

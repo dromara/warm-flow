@@ -13,10 +13,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="definitionId"    column="definition_id"    />
         <result property="instanceId"    column="instance_id"    />
         <result property="flowStatus"    column="flow_status"    />
+        <result property="permissionFlag"    column="permission_flag"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateTime"    column="update_time"    />
         <result property="tenantId"    column="tenant_id"    />
-
         <result property="businessId"    column="business_id"    />
         <result property="flowName"    column="flow_name"    />
         <result property="fromCustom"    column="from_custom"    />
@@ -25,7 +25,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <sql id="selectVo">
-        select t.id, t.node_code, t.node_name, t.node_type, t.approver, t.definition_id,
+        select t.id, t.node_code, t.node_name, t.node_type, t.approver, t.definition_id,t.permission_flag,
                t.instance_id, t.flow_status,t.create_time, t.update_time,t.tenant_id from flow_task t
     </sql>
 
@@ -99,8 +99,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="toDoPage" resultMap="FlowTaskResult">
         select t.id, t.node_code, t.node_name, t.node_type, t.approver, t.definition_id, t.instance_id, t.flow_status
-        , t.create_time, t.update_time,
-        t.tenant_id,
+        ,t.permission_flag, t.create_time, t.update_time,t.tenant_id,
         i.business_id, d.flow_name, d.from_custom, d.from_path from flow_task t
         LEFT JOIN flow_definition d on t.definition_id = d.id
         LEFT JOIN flow_instance i on t.instance_id = i.id
@@ -120,6 +119,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="definitionId != null">definition_id,</if>
             <if test="instanceId != null">instance_id,</if>
             <if test="flowStatus != null">flow_status,</if>
+            <if test="permissionFlag != null">permission_flag,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
             <if test="tenantId != null">tenant_id,</if>
@@ -133,6 +133,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="definitionId != null">#{definitionId},</if>
             <if test="instanceId != null">#{instanceId},</if>
             <if test="flowStatus != null">#{flowStatus},</if>
+            <if test="permissionFlag != null">#{permissionFlag},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
             <if test="tenantId != null">#{tenantId},</if>
@@ -149,6 +150,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="definitionId != null">definition_id = #{definitionId},</if>
             <if test="instanceId != null">instance_id = #{instanceId},</if>
             <if test="flowStatus != null">flow_status = #{flowStatus},</if>
+            <if test="permissionFlag != null">permission_flag = #{permissionFlag},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="tenantId != null">tenant_id = #{tenantId},</if>

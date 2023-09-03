@@ -9,6 +9,7 @@ import com.monkey.flow.core.enums.NodeType;
 import com.monkey.flow.core.exception.FlowException;
 import com.monkey.flow.core.service.*;
 import com.monkey.flow.core.utils.AssertUtil;
+import com.monkey.tools.utils.ArrayUtil;
 import com.monkey.tools.utils.CollUtil;
 import com.monkey.tools.utils.IdUtils;
 import com.monkey.tools.utils.StringUtils;
@@ -35,9 +36,6 @@ public class InsAppService {
     private IFlowInstanceService instanceService;
 
     @Resource
-    private IFlowDefinitionService definitionService;
-
-    @Resource
     private IFlowHisTaskService hisTaskService;
 
     @Resource
@@ -50,7 +48,7 @@ public class InsAppService {
     @Transactional(rollbackFor = Exception.class)
     public FlowInstance startFlow(String businessId, FlowParams flowUser) {
 
-        return toStartFlow(Arrays.asList(businessId), flowUser).get(0);
+        return toStartFlow(Collections.singletonList(businessId), flowUser).get(0);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -60,7 +58,7 @@ public class InsAppService {
 
     @Transactional(rollbackFor = Exception.class)
     public FlowInstance skipFlow(Long instanceId, String conditionValue, FlowParams flowUser) {
-        return toSkipFlow(Arrays.asList(instanceId), conditionValue, null, flowUser).get(0);
+        return toSkipFlow(Collections.singletonList(instanceId), conditionValue, null, flowUser).get(0);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -71,7 +69,7 @@ public class InsAppService {
 
     @Transactional(rollbackFor = Exception.class)
     public FlowInstance skipFlow(Long instanceId, String conditionValue, String message, FlowParams flowUser) {
-        return toSkipFlow(Arrays.asList(instanceId), conditionValue, message, flowUser).get(0);
+        return toSkipFlow(Collections.singletonList(instanceId), conditionValue, message, flowUser).get(0);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -81,7 +79,7 @@ public class InsAppService {
 
     @Transactional(rollbackFor = Exception.class)
     public boolean removeTask(Long instanceId) {
-        return removeTask(Arrays.asList(instanceId));
+        return removeTask(Collections.singletonList(instanceId));
     }
 
 
@@ -128,12 +126,12 @@ public class InsAppService {
         AssertUtil.isFalse(message != null && message.length() > 500, FlowConstant.MSG_OVER_LENGTH);
         // 获取当前流程
         List<FlowInstance> instances = instanceService.getByIdWithLock(instanceIds);
-        AssertUtil.isFalse(instances == null || instances.size() == 0, FlowConstant.NOT_FOUNT_INSTANCE);
+        AssertUtil.isFalse(CollUtil.isEmpty(instances), FlowConstant.NOT_FOUNT_INSTANCE);
         AssertUtil.isFalse(instances.size() < instanceIds.size(), FlowConstant.LOST_FOUNT_INSTANCE);
         // TODO min 后续考虑并发问题，待办任务和实例表不同步
         // 获取待办任务
         List<FlowTask> taskList = taskService.getByInsIds(instanceIds);
-        AssertUtil.isFalse(taskList == null || taskList.size() == 0, FlowConstant.NOT_FOUNT_TASK );
+        AssertUtil.isFalse(CollUtil.isEmpty(taskList), FlowConstant.NOT_FOUNT_TASK );
         AssertUtil.isFalse(taskList.size() < instanceIds.size(), FlowConstant.LOST_FOUNT_TASK );
         // 校验这些流程的流程状态是否相同，只有相同的情况下，下面才好做统一处理
         checkSameStatus(taskList);
@@ -146,11 +144,12 @@ public class InsAppService {
         for (FlowInstance instance: instances) {
             // 更新流程实例信息
             setSkipInstance(nextNode, instance, conditionValue, flowUser);
-            // 更新待办任务
             FlowTask task = taskMap.get(instance.getId());
-            setSkipTask(nextNode, task, conditionValue, flowUser);
             // 设置流程历史任务信息
             FlowHisTask insHis = setSkipInsHis(conditionValue, message, task, nextNode, flowUser);
+            // 更新待办任务
+            setSkipTask(nextNode, task, conditionValue, flowUser);
+
             insHisList.add(insHis);
         }
 
@@ -167,7 +166,7 @@ public class InsAppService {
      */
     private void setSkipInstance(FlowNode nextNode, FlowInstance instance, String conditionValue, FlowParams flowUser) {
         instance.setNodeType(nextNode.getNodeType());
-        instance.setFlowStatus(setFlowStatus(nextNode.getNodeType(), conditionValue));
+        instance.setFlowStatus(setFlowStatus(nextNode.getNodeType(), conditionValue, false));
         instance.setUpdateTime(new Date());
     }
 
@@ -181,8 +180,10 @@ public class InsAppService {
         task.setNodeName(nextNode.getNodeName());
         task.setNodeType(nextNode.getNodeType());
         task.setApprover(flowUser.getCreateBy());
-        task.setFlowStatus(setFlowStatus(nextNode.getNodeType(), conditionValue));
+        task.setPermissionFlag(nextNode.getPermissionFlag());
+        task.setFlowStatus(setFlowStatus(nextNode.getNodeType(), conditionValue, false));
         task.setUpdateTime(new Date());
+        task.setTenantId(flowUser.getTenantId());
     }
 
     /**
@@ -202,24 +203,33 @@ public class InsAppService {
         insHis.setNodeCode(task.getNodeCode());
         insHis.setNodeName(task.getNodeName());
         insHis.setNodeType(task.getNodeType());
+        insHis.setPermissionFlag(task.getPermissionFlag());
         insHis.setTargetNodeCode(nextNode.getNodeCode());
         insHis.setTargetNodeName(nextNode.getNodeName());
         insHis.setConditionValue(conditionValue);
-        insHis.setFlowStatus(setFlowStatus(nextNode.getNodeType(), conditionValue));
+        insHis.setFlowStatus(setFlowStatus(nextNode.getNodeType(), conditionValue, true));
         insHis.setMessage(message);
         insHis.setCreateTime(new Date());
         insHis.setApprover(flowUser.getCreateBy());
-        insHis.setTenantId(flowUser.getTenantId());
+        insHis.setTenantId(task.getTenantId());
         return insHis;
     }
 
-    private Integer setFlowStatus(Integer nodeType, String conditionValue) {
+    /**
+     *
+     * @param nodeType 节点类型（开始节点、中间节点、结束节点）
+     * @param conditionValue 流程条件
+     * @param type 实体类型（历史任务实体为true）
+     */
+    private Integer setFlowStatus(Integer nodeType, String conditionValue, boolean type) {
         // 根据审批动作确定流程状态
         if (NodeType.END.getKey().equals(nodeType))
         {
             return FlowStatus.FINISHED.getKey();
-        } else if (ApprovalAction.REJECT.getKey().equals(conditionValue) ) {
+        } else if (ApprovalAction.REJECT.getKey().equals(conditionValue)) {
             return FlowStatus.REJECT.getKey();
+        } else if (type) {
+            return FlowStatus.PASS.getKey();
         } else {
             return FlowStatus.APPROVAL.getKey();
         }
@@ -264,6 +274,7 @@ public class InsAppService {
         task.setNodeCode(startNode.getNodeCode());
         task.setNodeName(startNode.getNodeName());
         task.setNodeType(startNode.getNodeType());
+        task.setPermissionFlag(startNode.getPermissionFlag());
         task.setApprover(flowUser.getCreateBy());
         task.setFlowStatus(FlowStatus.TOBESUBMIT.getKey());
         task.setCreateTime(date);
@@ -294,17 +305,18 @@ public class InsAppService {
      */
     private FlowSkip checkAuthAndCondition(FlowTask task, List<FlowSkip> skips, String conditionValue
             , FlowParams flowUser) {
-        if (skips == null || skips.size() == 0) {
+        if (CollUtil.isEmpty(skips)) {
             return null;
         }
-        List<String> roleList = flowUser.getPermissionFlag();
+        List<String> permissionFlags = flowUser.getPermissionFlag();
         FlowNode flowNode = new FlowNode();
         flowNode.setDefinitionId(task.getDefinitionId());
         flowNode.setNodeCode(task.getNodeCode());
         FlowNode node = nodeService.getOne(flowNode);
 
-        AssertUtil.isFalse(StringUtils.isNotEmpty(node.getPermissionFlag()) && (CollUtil.isEmpty(roleList)
-                || !CollUtil.containsAny(roleList, StringUtils.strToArrAy(node.getPermissionFlag(), ","))), FlowConstant.NULL_ROLE_NODE);
+        AssertUtil.isFalse(StringUtils.isNotEmpty(node.getPermissionFlag()) && (CollUtil.isEmpty(permissionFlags)
+                || !CollUtil.containsAny(permissionFlags, ArrayUtil.strToArrAy(node.getPermissionFlag(),
+                ","))), FlowConstant.NULL_ROLE_NODE);
 
         if (!NodeType.START.getKey().equals(task.getNodeType())) {
             if (StringUtils.isEmpty(conditionValue)) {
@@ -313,7 +325,7 @@ public class InsAppService {
                 skips = skips.stream().filter(t -> conditionValue.equals(t.getConditionValue())).collect(Collectors.toList());
             }
         }
-        AssertUtil.isFalse(skips.size() == 0, FlowConstant.NULL_CONDITIONVALUE_NODE);
+        AssertUtil.isFalse(skips.isEmpty(), FlowConstant.NULL_CONDITIONVALUE_NODE);
         // 第一个结点
         return skips.get(0);
     }

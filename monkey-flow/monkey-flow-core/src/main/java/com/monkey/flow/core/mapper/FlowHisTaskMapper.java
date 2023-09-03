@@ -14,9 +14,8 @@ import java.util.List;
  * @date 2023-03-29
  */
 public interface FlowHisTaskMapper extends FlowMapper<FlowHisTask> {
-    List<FlowHisTask> getByNewInsIds(List<Long> instanceIds);
 
-    List<FlowHisTask> getByInsIds(List<Long> instanceIds);
+    List<FlowHisTask> getByInsId(Long instanceId);
 
     /**
      * 根据instanceIds删除
