@@ -6,9 +6,10 @@
 2. 支持角色、部门和用户等权限配置
 3. 官方提供简单流程封装很实用
 4. 支持多租户，感谢【luoheyu】PR
+5. 支持代办任务和已办任务，通过权限标识过滤数据
 
 
-具体demo项目
+ **具体demo项目** 
 [hh-vue](https://gitee.com/min290/hh-vue)
 
  **更新记录** ：https://gitee.com/min290/warm-freemarker/wikis/Home
@@ -25,7 +26,7 @@ mybatis的配置加上这段后面的 ",classpath*:mapper/**/*Mapper.xml"
 http://doc.ruoyi.vip/ruoyi/other/faq.html#%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86long%E7%B1%BB%E5%9E%8B%E7%B2%BE%E5%BA%A6%E4%B8%A2%E5%A4%B1%E9%97%AE%E9%A2%98
 
 
- **qq群：778470567**  
+# **qq群：778470567**  
 
 
 ![输入图片说明](https://foruda.gitee.com/images/1685245176850079274/44f8f0c1_2218307.png "屏幕截图")
@@ -36,7 +37,7 @@ http://doc.ruoyi.vip/ruoyi/other/faq.html#%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86lo
 ![输入图片说明](https://foruda.gitee.com/images/1685418217810487859/02883c8c_2218307.png "屏幕截图")
 ![输入图片说明](https://foruda.gitee.com/images/1685418386450207624/90327020_2218307.png "屏幕截图")
 
-## git提交规范
+ git提交规范
 
     init 初始化  
     feat 增加新功能  
