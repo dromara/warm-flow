@@ -2,7 +2,9 @@ package com.warm.flow.core.service;
 
 import com.warm.flow.core.domain.entity.FlowDefinition;
 import com.warm.mybatis.core.service.IFlowService;
+import org.dom4j.Document;
 
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -12,6 +14,17 @@ import java.util.List;
  * @date 2023-03-29
  */
 public interface IFlowDefinitionService extends IFlowService<FlowDefinition> {
+
+    /**
+     * 导入xml
+     *
+     * @param is
+     * @throws Exception
+     */
+    void importXml(InputStream is) throws Exception;
+
+    Document exportXml(Long id);
+
     List<FlowDefinition> queryByCodeList(List<String> flowCodeList);
 
     void closeFlowByCodeList(List<String> flowCodeList);

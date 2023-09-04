@@ -1,12 +1,13 @@
 package com.warm.flow.spring.boot.config;
 
+import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.handler.DataFillHandlerImpl;
 import com.warm.flow.core.service.*;
 import com.warm.flow.core.service.impl.*;
-import com.warm.flow.core.webService.*;
 import com.warm.mybatis.core.handler.DataFillHandlerFactory;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
@@ -17,41 +18,12 @@ import javax.annotation.PostConstruct;
  * @date: 2023/6/5 23:01
  */
 @MapperScan({"com.warm.flow.core.mapper"})
+@ComponentScan(basePackages = {"com.warm.flow.core.service.impl"})
 @Configuration
 public class FlowBeanRegister {
     @PostConstruct
-    public void setFlexConfig() {
+    public void init() {
         DataFillHandlerFactory.set(new DataFillHandlerImpl());
-    }
-
-    @Bean
-    public DefAppService defAppService() {
-        return new DefAppService();
-    }
-
-    @Bean
-    public NodeAppService nodeAppService() {
-        return new NodeAppService();
-    }
-
-    @Bean
-    public SkipAppService skipAppService() {
-        return new SkipAppService();
-    }
-
-    @Bean
-    public InsAppService insAppService() {
-        return new InsAppService();
-    }
-
-    @Bean
-    public TaskAppService taskAppService() {
-        return new TaskAppService();
-    }
-
-    @Bean
-    public HisTaskAppService hisTaskAppService() {
-        return new HisTaskAppService();
     }
 
     @Bean
@@ -82,5 +54,15 @@ public class FlowBeanRegister {
     @Bean
     public IFlowHisTaskService hisTaskService() {
         return new FlowHisTaskServiceImpl();
+    }
+
+    @Bean
+    public FlowFactory initFlowServer(IFlowDefinitionService definitionService, IFlowHisTaskService hisTaskService
+            , IFlowInstanceService instanceService, IFlowNodeService nodeService
+            , IFlowSkipService skipService, IFlowTaskService taskService) {
+        FlowFactory flowFactory = new FlowFactory(definitionService, hisTaskService, instanceService
+                , nodeService, skipService, taskService);
+        FlowFactory.flowFactory = flowFactory;
+        return flowFactory;
     }
 }

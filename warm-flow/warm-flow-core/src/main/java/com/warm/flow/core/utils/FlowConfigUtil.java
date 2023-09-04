@@ -13,7 +13,6 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
-import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -220,7 +219,7 @@ public class FlowConfigUtil {
         String nodeCode = node.getNodeCode();
         List<FlowSkip> skipList = node.getSkipList();
         if (!NodeType.END.getKey().equals(node.getNodeType())) {
-            AssertUtil.isFalse(CollectionUtils.isEmpty(skipList), "开始和中间结点必须有跳转规则");
+            AssertUtil.isFalse(CollUtil.isEmpty(skipList), "开始和中间结点必须有跳转规则");
         }
         AssertUtil.isBlank(nodeCode, "[" + nodeName + "]" + FlowConstant.LOST_NODE_CODE);
 

@@ -13,13 +13,21 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-tx</artifactId>
+            <groupId>io.github.minliuhua</groupId>
+            <artifactId>warm-tools</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>4.0.3</version>
         </dependency>
+        <!-- Mysql驱动包 -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.33</version>
+        </dependency>
+
         <dependency>
             <groupId>org.dom4j</groupId>
             <artifactId>dom4j</artifactId>
@@ -28,10 +36,30 @@
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis</artifactId>
         </dependency>
+
         <dependency>
             <groupId>io.github.minliuhua</groupId>
-            <artifactId>warm-mybatis-spring-boot-starter</artifactId>
+            <artifactId>warm-mybatis-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
         </dependency>
     </dependencies>
 
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>mapper/flow/FlowDefinitionMapper.xml</include>
+                    <include>mapper/flow/FlowHisTaskMapper.xml</include>
+                    <include>mapper/flow/FlowInstanceMapper.xml</include>
+                    <include>mapper/flow/FlowNodeMapper.xml</include>
+                    <include>mapper/flow/FlowSkipMapper.xml</include>
+                    <include>mapper/flow/FlowTaskMapper.xml</include>
+                </includes>
+            </resource>
+        </resources>
+    </build>
 </project>
