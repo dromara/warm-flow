@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * @description:  流程基础entity
  * @author minliuhua
+ * @description: 流程基础entity
  * @date: 2023/5/17 17:23
  */
 public interface FlowEntity extends Serializable {
@@ -18,7 +18,7 @@ public interface FlowEntity extends Serializable {
 
     public void setCreateTime(Date createTime);
 
-    public Date getUpdateTime() ;
+    public Date getUpdateTime();
 
     public void setUpdateTime(Date updateTime);
 }

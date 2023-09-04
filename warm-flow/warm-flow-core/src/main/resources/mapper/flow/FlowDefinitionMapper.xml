@@ -1,27 +1,37 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.warm.flow.core.mapper.FlowDefinitionMapper">
     <resultMap type="com.warm.flow.core.domain.entity.FlowDefinition" id="FlowDefinitionResult">
-        <result property="id"    column="id"    />
-        <result property="flowCode"    column="flow_code"    />
-        <result property="flowName"    column="flow_name"    />
-        <result property="version"    column="version"    />
-        <result property="isPublish"    column="is_publish"    />
-        <result property="fromCustom"    column="from_custom"    />
-        <result property="fromPath"    column="from_path"    />
-        <result property="createTime"    column="create_time"    />
-        <result property="updateTime"    column="update_time"    />
+        <result property="id" column="id"/>
+        <result property="flowCode" column="flow_code"/>
+        <result property="flowName" column="flow_name"/>
+        <result property="version" column="version"/>
+        <result property="isPublish" column="is_publish"/>
+        <result property="fromCustom" column="from_custom"/>
+        <result property="fromPath" column="from_path"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
     </resultMap>
 
     <sql id="selectVo">
-        select t.id, t.flow_code, t.flow_name, t.version, t.is_publish, t.from_custom, t.from_path, t.create_time,
-        t.update_time from flow_definition t
+        select t.id,
+               t.flow_code,
+               t.flow_name,
+               t.version,
+               t.is_publish,
+               t.from_custom,
+               t.from_path,
+               t.create_time,
+               t.update_time
+        from flow_definition t
     </sql>
 
     <sql id="paging_end">
-        <if test="page !=null and page.pageNum != null and page.pageSize != null">LIMIT #{page.pageNum},#{page.pageSize}</if>
+        <if test="page !=null and page.pageNum != null and page.pageSize != null">LIMIT
+            #{page.pageNum},#{page.pageSize}
+        </if>
     </sql>
 
     <sql id="order_by">
@@ -30,21 +40,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <sql id="select_parameter">
         <where>
-            <if test="entity.flowCode != null  and entity.flowCode != ''"> and t.flow_code = #{entity.flowCode}</if>
-            <if test="entity.flowName != null  and entity.flowName != ''"> and t.flow_name like concat('%', #{entity.flowName}, '%')</if>
-            <if test="entity.version != null  and entity.version != ''"> and t.version = #{entity.version}</if>
-            <if test="entity.isPublish != null "> and t.is_publish = #{entity.isPublish}</if>
+            <if test="entity.flowCode != null  and entity.flowCode != ''">and t.flow_code = #{entity.flowCode}</if>
+            <if test="entity.flowName != null  and entity.flowName != ''">and t.flow_name like concat('%',
+                #{entity.flowName}, '%')
+            </if>
+            <if test="entity.version != null  and entity.version != ''">and t.version = #{entity.version}</if>
+            <if test="entity.isPublish != null ">and t.is_publish = #{entity.isPublish}</if>
         </where>
     </sql>
 
-    <select id="selectList" parameterType="com.warm.flow.core.domain.entity.FlowDefinition" resultMap="FlowDefinitionResult">
+    <select id="selectList" parameterType="com.warm.flow.core.domain.entity.FlowDefinition"
+            resultMap="FlowDefinitionResult">
         <include refid="selectVo"/>
         <include refid="select_parameter"/>
         <include refid="order_by"/>
         <include refid="paging_end"/>
     </select>
 
-    <select id="selectCount" parameterType="com.warm.flow.core.domain.entity.FlowDefinition" resultType="java.lang.Long">
+    <select id="selectCount" parameterType="com.warm.flow.core.domain.entity.FlowDefinition"
+            resultType="java.lang.Long">
         select count(*) from flow_definition t
         <include refid="select_parameter"/>
     </select>
@@ -111,7 +125,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </update>
 
-    <update id="closeFlowByCodeList"  parameterType="java.util.List">
+    <update id="closeFlowByCodeList" parameterType="java.util.List">
         update flow_definition set is_publish = 9
         where flow_code in
         <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
@@ -120,7 +134,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <delete id="deleteById" parameterType="Long">
-        delete from flow_definition where id = #{id}
+        delete
+        from flow_definition
+        where id = #{id}
     </delete>
 
     <delete id="deleteByIds" parameterType="Long">
@@ -138,7 +154,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteNodeByDefId" parameterType="Long">
-        delete from flow_node where definition_id = #{definitionId}
+        delete
+        from flow_node
+        where definition_id = #{definitionId}
     </delete>
 
     <delete id="deleteSkipByDefIds" parameterType="Long">
@@ -149,6 +167,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSkipByDefId" parameterType="Long">
-        delete from flow_skip where definition_id = #{definitionId}
+        delete
+        from flow_skip
+        where definition_id = #{definitionId}
     </delete>
 </mapper>

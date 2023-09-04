@@ -16,8 +16,8 @@
 package com.warm.mybatis.core.handler;
 
 /**
- * @description: 填充类工厂
  * @author minliuhua
+ * @description: 填充类工厂
  * @date 2023/6/23 15:46
  */
 public class DataFillHandlerFactory {
@@ -36,7 +36,6 @@ public class DataFillHandlerFactory {
 
     /**
      * 获取填充类
-     *
      */
     public static DataFillHandler get() {
         return DATA_FILL_MAP;

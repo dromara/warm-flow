@@ -16,10 +16,14 @@ import java.util.List;
  */
 public class FlowQuery<T extends FlowEntity> {
 
-    /** 当前记录起始索引 */
+    /**
+     * 当前记录起始索引
+     */
     private int pageNum = 0;
 
-    /** 每页显示记录数 */
+    /**
+     * 每页显示记录数
+     */
     private int pageSize = 10;
 
     private String orderBy;
@@ -27,7 +31,7 @@ public class FlowQuery<T extends FlowEntity> {
     private IFlowService flowService;
 
     public FlowQuery(IFlowService flowService) {
-        this.flowService = flowService ;
+        this.flowService = flowService;
     }
 
     /**

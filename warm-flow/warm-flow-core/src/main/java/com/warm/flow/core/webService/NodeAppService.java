@@ -13,7 +13,8 @@ public class NodeAppService {
 
     @Resource
     private IFlowNodeService flowNodeService;
-    public IFlowNodeService getService(){
+
+    public IFlowNodeService getService() {
         return flowNodeService;
     }
 }

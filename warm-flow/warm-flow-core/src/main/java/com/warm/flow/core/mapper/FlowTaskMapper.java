@@ -19,6 +19,7 @@ public interface FlowTaskMapper extends FlowMapper<FlowTask> {
 
     /**
      * 分页查询待办任务数量
+     *
      * @param flowTask 条件实体
      * @param page
      * @return
@@ -27,6 +28,7 @@ public interface FlowTaskMapper extends FlowMapper<FlowTask> {
 
     /**
      * 分页查询待办任务
+     *
      * @param flowTask 条件实体
      * @param page
      * @return

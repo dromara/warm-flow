@@ -12,12 +12,10 @@ import javax.annotation.PostConstruct;
  * @author hh
  */
 @Configuration
-public class WarmMyBatisConfig
-{
+public class WarmMyBatisConfig {
 
     @PostConstruct
-    public void init()
-    {
+    public void init() {
         DataFillHandlerFactory.set(new DataFillHandlerImpl());
     }
 }

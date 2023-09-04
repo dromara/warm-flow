@@ -15,8 +15,7 @@ import java.util.List;
  * @author hh
  * @date 2023-03-17
  */
-public interface IFlowService<T extends FlowEntity>
-{
+public interface IFlowService<T extends FlowEntity> {
 
     /**
      * 根据id查询
@@ -100,12 +99,14 @@ public interface IFlowService<T extends FlowEntity>
 
     /**
      * 批量新增
+     *
      * @param list
      */
     void saveBatch(List<T> list);
 
     /**
      * 批量更新
+     *
      * @param list
      */
     void updateBatch(List<T> list);

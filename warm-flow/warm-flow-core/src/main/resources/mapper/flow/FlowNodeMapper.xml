@@ -1,28 +1,38 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.warm.flow.core.mapper.FlowNodeMapper">
 
     <resultMap type="com.warm.flow.core.domain.entity.FlowNode" id="FlowNodeResult">
-        <result property="id"    column="id"    />
-        <result property="nodeType"    column="node_type"    />
-        <result property="definitionId"    column="definition_id"    />
-        <result property="nodeName"    column="node_name"    />
-        <result property="nodeCode"    column="node_code"    />
-        <result property="permissionFlag"    column="permission_flag"    />
-        <result property="version"    column="version"    />
-        <result property="createTime"    column="create_time"    />
-        <result property="updateTime"    column="update_time"    />
+        <result property="id" column="id"/>
+        <result property="nodeType" column="node_type"/>
+        <result property="definitionId" column="definition_id"/>
+        <result property="nodeName" column="node_name"/>
+        <result property="nodeCode" column="node_code"/>
+        <result property="permissionFlag" column="permission_flag"/>
+        <result property="version" column="version"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
     </resultMap>
 
     <sql id="selectVo">
-        select t.id, t.node_type, t.definition_id, t.node_name, t.node_code, t.permission_flag, t.version, t.create_time,
-               t.update_time from flow_node t
+        select t.id,
+               t.node_type,
+               t.definition_id,
+               t.node_name,
+               t.node_code,
+               t.permission_flag,
+               t.version,
+               t.create_time,
+               t.update_time
+        from flow_node t
     </sql>
 
     <sql id="paging_end">
-        <if test="page !=null and page.pageNum != null and page.pageSize != null">LIMIT #{page.pageNum},#{page.pageSize}</if>
+        <if test="page !=null and page.pageNum != null and page.pageSize != null">LIMIT
+            #{page.pageNum},#{page.pageSize}
+        </if>
     </sql>
 
     <sql id="order_by">
@@ -33,9 +43,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>
             <if test="entity.nodeType != null">and t.node_type = #{entity.nodeType}</if>
             <if test="entity.definitionId != null">and t.definition_id = #{entity.definitionId}</if>
-            <if test="entity.nodeName != null and entity.nodeName != ''">and t.node_name like concat('%',#{entity.nodeName}, '%')</if>
+            <if test="entity.nodeName != null and entity.nodeName != ''">and t.node_name like
+                concat('%',#{entity.nodeName}, '%')
+            </if>
             <if test="entity.nodeCode != null and entity.nodeCode != ''">and t.node_code = #{entity.nodeCode}</if>
-            <if test="entity.permissionFlag != null and entity.permissionFlag != ''">and t.permission_flag = #{entity.permissionFlag}</if>
+            <if test="entity.permissionFlag != null and entity.permissionFlag != ''">and t.permission_flag =
+                #{entity.permissionFlag}
+            </if>
             <if test="entity.version != null and entity.version != ''">and t.version = #{entity.version}</if>
         </where>
     </sql>
@@ -67,26 +81,30 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="getLastByFlowCode" resultMap="FlowNodeResult" parameterType="java.lang.String">
         select a.id,
-        a.definition_id,
-        a.node_name,
-        a.node_code,
-        a.permission_flag,
-        a.update_time,
-        a.node_type,
-        b.version from flow_node a INNER JOIN
-        flow_definition b on b.flow_code = #{value} and a.definition_id = b.id and b.is_publish = 1
+               a.definition_id,
+               a.node_name,
+               a.node_code,
+               a.permission_flag,
+               a.update_time,
+               a.node_type,
+               b.version
+        from flow_node a
+                 INNER JOIN
+             flow_definition b on b.flow_code = #{value} and a.definition_id = b.id and b.is_publish = 1
     </select>
 
     <select id="getByFlowCodeAndVersion" resultMap="FlowNodeResult" parameterType="java.util.Map">
         select a.id,
-        a.definition_id,
-        a.node_name,
-        a.node_code,
-        a.permission_flag,
-        a.update_time,
-        a.node_type,
-        b.version from flow_node a INNER JOIN
-        flow_definition b on b.flow_code = #{flowCode} and a.definition_id = b.id and b.version = #{version}
+               a.definition_id,
+               a.node_name,
+               a.node_code,
+               a.permission_flag,
+               a.update_time,
+               a.node_type,
+               b.version
+        from flow_node a
+                 INNER JOIN
+             flow_definition b on b.flow_code = #{flowCode} and a.definition_id = b.id and b.version = #{version}
     </select>
 
     <insert id="insert" parameterType="com.warm.flow.core.domain.entity.FlowNode">
@@ -131,7 +149,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <delete id="deleteById" parameterType="Long">
-        delete from flow_node where id = #{id}
+        delete
+        from flow_node
+        where id = #{id}
     </delete>
 
     <delete id="deleteByIds" parameterType="Long">
@@ -142,7 +162,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteByDefinitionId" parameterType="Long">
-        delete from flow_node where definition_id = #{definitionId}
+        delete
+        from flow_node
+        where definition_id = #{definitionId}
     </delete>
 
 </mapper>

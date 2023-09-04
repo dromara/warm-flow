@@ -1,8 +1,8 @@
 package com.warm.mybatis.core.utils;
 
 /**
- * @description:  SQL 辅助类
  * @author minliuhua
+ * @description: SQL 辅助类
  * @date: 2023/5/3 15:22
  */
 public final class SqlHelper {

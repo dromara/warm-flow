@@ -16,7 +16,6 @@ import java.util.List;
 public interface FlowDefinitionMapper extends FlowMapper<FlowDefinition> {
 
 
-
     List<FlowDefinition> queryByCodeList(List<String> flowCodeList);
 
     void closeFlowByCodeList(List<String> flowCodeList);

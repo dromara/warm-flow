@@ -43,8 +43,7 @@ public class FlowDefinitionServiceImpl extends FlowServiceImpl<FlowDefinition> i
     }
 
     @Override
-    public boolean checkAndSave(FlowDefinition flowDefinition)
-    {
+    public boolean checkAndSave(FlowDefinition flowDefinition) {
         List<String> flowCodeList = Arrays.asList(flowDefinition.getFlowCode());
         List<FlowDefinition> flowDefinitions = queryByCodeList(flowCodeList);
         for (FlowDefinition beforeDefinition : flowDefinitions) {
@@ -57,20 +56,19 @@ public class FlowDefinitionServiceImpl extends FlowServiceImpl<FlowDefinition> i
 
     /**
      * 删除流程定义
+     *
      * @param ids
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean removeDef(List<Long> ids)
-    {
+    public boolean removeDef(List<Long> ids) {
         definitionMapper.deleteNodeByDefIds(ids);
         definitionMapper.deleteSkipByDefIds(ids);
         return removeByIds(ids);
     }
 
     @Override
-    public boolean publish(Long id)
-    {
+    public boolean publish(Long id) {
         FlowDefinition definition = getById(id);
         List<String> flowCodeList = Arrays.asList(definition.getFlowCode());
         // 把之前的流程定义改为已失效
@@ -83,8 +81,7 @@ public class FlowDefinitionServiceImpl extends FlowServiceImpl<FlowDefinition> i
     }
 
     @Override
-    public boolean unPublish(Long id)
-    {
+    public boolean unPublish(Long id) {
         FlowDefinition flowDefinition = new FlowDefinition();
         flowDefinition.setId(id);
         flowDefinition.setIsPublish(PublishStatus.UNPUBLISHED.getKey());

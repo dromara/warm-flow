@@ -1,26 +1,29 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.warm.flow.core.mapper.FlowInstanceMapper">
 
     <resultMap type="com.warm.flow.core.domain.entity.FlowInstance" id="FlowInstanceResult">
-        <result property="id"    column="id"    />
-        <result property="businessId"    column="business_id"    />
-        <result property="definitionId"    column="definition_id"    />
-        <result property="flowName"    column="flow_name"    />
-        <result property="createBy"    column="create_by"    />
-        <result property="createTime"    column="create_time"    />
-        <result property="updateTime"    column="update_time"    />
-        <result property="ext"    column="ext"    />
+        <result property="id" column="id"/>
+        <result property="businessId" column="business_id"/>
+        <result property="definitionId" column="definition_id"/>
+        <result property="flowName" column="flow_name"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="ext" column="ext"/>
     </resultMap>
 
     <sql id="selectVo">
-        select t.id, t.business_id, t.definition_id, t.create_by, t.create_time, t.update_time, t.ext from flow_instance t
+        select t.id, t.business_id, t.definition_id, t.create_by, t.create_time, t.update_time, t.ext
+        from flow_instance t
     </sql>
 
     <sql id="paging_end">
-        <if test="page !=null and page.pageNum != null and page.pageSize != null">LIMIT #{page.pageNum},#{page.pageSize}</if>
+        <if test="page !=null and page.pageNum != null and page.pageSize != null">LIMIT
+            #{page.pageNum},#{page.pageSize}
+        </if>
     </sql>
 
     <sql id="order_by">
@@ -29,9 +32,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <sql id="select_parameter">
         <where>
-            <if test="entity.businessId != null  and entity.businessId != ''"> and t.business_id = #{entity.businessId}</if>
-            <if test="entity.definitionId != null "> and t.definition_id = #{entity.definitionId}</if>
-            <if test="entity.createBy != null  and entity.createBy != ''"> and t.create_by = #{entity.createBy}</if>
+            <if test="entity.businessId != null  and entity.businessId != ''">and t.business_id = #{entity.businessId}
+            </if>
+            <if test="entity.definitionId != null ">and t.definition_id = #{entity.definitionId}</if>
+            <if test="entity.createBy != null  and entity.createBy != ''">and t.create_by = #{entity.createBy}</if>
         </where>
     </sql>
 
@@ -40,7 +44,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="select_parameter"/>
     </select>
 
-    <select id="selectList" parameterType="com.warm.flow.core.domain.entity.FlowInstance" resultMap="FlowInstanceResult">
+    <select id="selectList" parameterType="com.warm.flow.core.domain.entity.FlowInstance"
+            resultMap="FlowInstanceResult">
         <include refid="selectVo"/>
         <include refid="select_parameter"/>
         <include refid="order_by"/>
@@ -105,7 +110,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <delete id="deleteById" parameterType="Long">
-        delete from flow_instance where id = #{id}
+        delete
+        from flow_instance
+        where id = #{id}
     </delete>
 
     <delete id="deleteByIds" parameterType="Long">

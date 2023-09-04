@@ -5,8 +5,8 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * @description:  集合工具类
  * @author minliuhua
+ * @description: 集合工具类
  * @date: 2023/5/18 9:39
  */
 public class CollUtil {
@@ -16,8 +16,7 @@ public class CollUtil {
      * @param coll 要判断的Collection
      * @return true：为空 false：非空
      */
-    public static boolean isEmpty(Collection<?> coll)
-    {
+    public static boolean isEmpty(Collection<?> coll) {
         return ObjectUtil.isNull(coll) || coll.isEmpty();
     }
 
@@ -27,8 +26,7 @@ public class CollUtil {
      * @param coll 要判断的Collection
      * @return true：非空 false：空
      */
-    public static boolean isNotEmpty(Collection<?> coll)
-    {
+    public static boolean isNotEmpty(Collection<?> coll) {
         return !isEmpty(coll);
     }
 
@@ -36,21 +34,15 @@ public class CollUtil {
      * 判断给定的collection列表中是否包含数组array 判断给定的数组array中是否包含给定的元素value
      *
      * @param collection 给定的集合
-     * @param array 给定的数组
+     * @param array      给定的数组
      * @return boolean 结果
      */
-    public static boolean containsAny(Collection<String> collection, String... array)
-    {
-        if (isEmpty(collection) || ArrayUtil.isEmpty(array))
-        {
+    public static boolean containsAny(Collection<String> collection, String... array) {
+        if (isEmpty(collection) || ArrayUtil.isEmpty(array)) {
             return false;
-        }
-        else
-        {
-            for (String str : array)
-            {
-                if (collection.contains(str))
-                {
+        } else {
+            for (String str : array) {
+                if (collection.contains(str)) {
                     return true;
                 }
             }
@@ -65,18 +57,12 @@ public class CollUtil {
      * @param collection2 给定的集合2
      * @return boolean 结果
      */
-    public static boolean containsAny(Collection<String> collection1, Collection<String> collection2)
-    {
-        if (isEmpty(collection1) || isEmpty(collection2))
-        {
+    public static boolean containsAny(Collection<String> collection1, Collection<String> collection2) {
+        if (isEmpty(collection1) || isEmpty(collection2)) {
             return false;
-        }
-        else
-        {
-            for (String str : collection2)
-            {
-                if (collection1.contains(str))
-                {
+        } else {
+            for (String str : collection2) {
+                if (collection1.contains(str)) {
                     return true;
                 }
             }

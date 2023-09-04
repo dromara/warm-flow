@@ -1,8 +1,8 @@
 package com.warm.tools.utils;
 
 /**
- * @description:  数组工具类
  * @author minliuhua
+ * @description: 数组工具类
  * @date: 2023/5/18 9:45
  */
 public class ArrayUtil {
@@ -10,10 +10,9 @@ public class ArrayUtil {
      * * 判断一个对象数组是否为空
      *
      * @param objects 要判断的对象数组
-     ** @return true：为空 false：非空
+     *                * @return true：为空 false：非空
      */
-    public static boolean isEmpty(Object[] objects)
-    {
+    public static boolean isEmpty(Object[] objects) {
         return ObjectUtil.isNull(objects) || (objects.length == 0);
     }
 
@@ -23,8 +22,7 @@ public class ArrayUtil {
      * @param objects 要判断的对象数组
      * @return true：非空 false：空
      */
-    public static boolean isNotEmpty(Object[] objects)
-    {
+    public static boolean isNotEmpty(Object[] objects) {
         return !isEmpty(objects);
     }
 
@@ -34,8 +32,7 @@ public class ArrayUtil {
      * @param object 对象
      * @return true：是数组 false：不是数组
      */
-    public static boolean isArray(Object object)
-    {
+    public static boolean isArray(Object object) {
         return ObjectUtil.isNotNull(object) && object.getClass().isArray();
     }
 

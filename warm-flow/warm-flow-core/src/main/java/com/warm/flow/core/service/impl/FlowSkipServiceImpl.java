@@ -36,8 +36,7 @@ public class FlowSkipServiceImpl extends FlowServiceImpl<FlowSkip> implements IF
      * @return 结果
      */
     @Override
-    public boolean deleteByNodeIds(List<Long> nodeIds)
-    {
+    public boolean deleteByNodeIds(List<Long> nodeIds) {
         return SqlHelper.retBool(flowSkipMapper.deleteByNodeIds(nodeIds));
     }
 

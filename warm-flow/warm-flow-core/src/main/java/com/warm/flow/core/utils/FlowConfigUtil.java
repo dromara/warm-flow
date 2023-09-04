@@ -52,12 +52,13 @@ public class FlowConfigUtil {
         AssertUtil.isNull(is, "文件不存在！");
         // 获取流程结点
         List<Element> flowElements = new SAXReader().read(is).getRootElement().elements();
-        AssertUtil.isTrue(CollUtil.isNotEmpty(flowElements) && flowElements.size() ==1,
+        AssertUtil.isTrue(CollUtil.isNotEmpty(flowElements) && flowElements.size() == 1,
                 "流程为空，或者一次只能导入一条流程定义！");
 
         Element definitionElement = flowElements.get(0);
-        //读取流程定义
-        FlowDefinition definition = new FlowDefinition();;
+        // 读取流程定义
+        FlowDefinition definition = new FlowDefinition();
+        ;
         definition.setFlowCode(definitionElement.attributeValue("flowCode"));
         definition.setFlowName(definitionElement.attributeValue("flowName"));
         definition.setVersion(definitionElement.attributeValue("version"));
@@ -65,10 +66,9 @@ public class FlowConfigUtil {
         definition.setFromPath(definitionElement.attributeValue("fromPath"));
 
         List<Element> nodesElement = definitionElement.elements();
-        //遍历一个流程中的各个结点
+        // 遍历一个流程中的各个结点
         List<FlowNode> nodeList = definition.getNodeList();
-        for (Element nodeElement : nodesElement)
-        {
+        for (Element nodeElement : nodesElement) {
             FlowNode node = initNodeAndCondition(nodeElement);
             nodeList.add(node);
         }
@@ -97,12 +97,12 @@ public class FlowConfigUtil {
 
         List<Element> skipsElement = nodeElement.elements();
         List<FlowSkip> skips = node.getSkipList();
-        //遍历结点下的跳转条件
-        for (Element skipElement: skipsElement) {
+        // 遍历结点下的跳转条件
+        for (Element skipElement : skipsElement) {
             FlowSkip skip = new FlowSkip();
             if ("skip".equals(skipElement.getName())) {
                 skip.setNextNodeCode(skipElement.getText());
-                //条件约束
+                // 条件约束
                 skip.setConditionValue(skipElement.attributeValue("conditionValue"));
                 skips.add(skip);
             }
@@ -119,11 +119,11 @@ public class FlowConfigUtil {
         // 向根节点中添加第一个节点
         Element definitionElement = root.addElement("definition");
         // 向子节点中添加属性
-        definitionElement.addAttribute("flowCode",definition.getFlowCode());
-        definitionElement.addAttribute("flowName",definition.getFlowName());
-        definitionElement.addAttribute("version",definition.getVersion());
-        definitionElement.addAttribute("fromCustom",definition.getFromCustom());
-        definitionElement.addAttribute("fromPath",definition.getFromPath());
+        definitionElement.addAttribute("flowCode", definition.getFlowCode());
+        definitionElement.addAttribute("flowName", definition.getFlowName());
+        definitionElement.addAttribute("version", definition.getVersion());
+        definitionElement.addAttribute("fromCustom", definition.getFromCustom());
+        definitionElement.addAttribute("fromPath", definition.getFromPath());
 
         List<FlowNode> nodeList = definition.getNodeList();
         for (FlowNode node : nodeList) {
@@ -152,35 +152,34 @@ public class FlowConfigUtil {
     private static FlowCombine structureFlow(FlowDefinition definition) {
         // 获取流程
         FlowCombine combine = new FlowCombine();
-        //流程定义
+        // 流程定义
         combine.setDefinition(definition);
-        //所有的流程结点
+        // 所有的流程结点
         List<FlowNode> allNodes = combine.getAllNodes();
-        //所有的流程连线
+        // 所有的流程连线
         List<FlowSkip> allSkips = combine.getAllSkips();
 
         String flowName = definition.getFlowName();
         AssertUtil.isBlank(definition.getFlowCode(), "【" + flowName + "】流程flowCode为空!");
         AssertUtil.isBlank(definition.getVersion(), "【" + flowName + "】流程version为空!");
         Long id = IdUtils.nextId();
-        //发布
+        // 发布
         definition.setIsPublish(0);
         definition.setUpdateTime(new Date());
         definition.setId(id);
 
         List<FlowNode> nodeList = definition.getNodeList();
-        //每一个流程的开始结点个数
+        // 每一个流程的开始结点个数
         int startNum = 0;
         Set<String> nodeCodeSet = new HashSet<String>();
-        //便利一个流程中的各个结点
-        for (FlowNode node : nodeList)
-        {
+        // 便利一个流程中的各个结点
+        for (FlowNode node : nodeList) {
             initNodeAndCondition(node, id, definition.getVersion());
             if (NodeType.START.getKey().equals(node.getNodeType())) {
                 startNum++;
                 AssertUtil.isFalse(startNum > 1, "[" + flowName + "]" + FlowConstant.MUL_START_NODE);
             }
-            //保证不存在重复的nodeCode
+            // 保证不存在重复的nodeCode
             AssertUtil.isFalse(nodeCodeSet.contains(node.getNodeCode()),
                     "【" + flowName + "】" + FlowConstant.SAME_NODE_CODE);
             nodeCodeSet.add(node.getNodeCode());
@@ -189,7 +188,7 @@ public class FlowConfigUtil {
         }
 
         AssertUtil.isFalse(startNum == 0, "[" + flowName + "]" + FlowConstant.LOST_START_NODE);
-        //校验所有目标结点是否都存在
+        // 校验所有目标结点是否都存在
         validaIsExistDestNode(allSkips, nodeCodeSet);
         return combine;
     }
@@ -230,21 +229,21 @@ public class FlowConfigUtil {
         node.setDefinitionId(definitionId);
         node.setUpdateTime(new Date());
 
-        //跳转条件的集合
+        // 跳转条件的集合
         Set<String> conditionSet = new HashSet<>();
-        //目标结点的集合 这两个集合都不能重复
+        // 目标结点的集合 这两个集合都不能重复
         Set<String> targetSet = new HashSet<>();
-        //遍历结点下的跳转条件
+        // 遍历结点下的跳转条件
         for (int i = 0; i < skipList.size(); i++) {
             FlowSkip skip = skipList.get(i);
             skip.setId(IdUtils.nextId());
-            //流程id
+            // 流程id
             skip.setDefinitionId(definitionId);
-            //结点id
+            // 结点id
             skip.setNodeId(node.getId());
-            //起始结点
+            // 起始结点
             skip.setNowNodeCode(nodeCode);
-            //目标结点
+            // 目标结点
             String target = skip.getNextNodeCode();
             AssertUtil.isBlank(target, "【" + nodeName + "】" + FlowConstant.LOST_DEST_NODE);
             AssertUtil.isFalse(targetSet.contains(target), "[" + nodeName + "]" + FlowConstant.SAME_DEST_NODE);

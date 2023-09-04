@@ -14,8 +14,7 @@ import java.util.List;
  * @author hh
  * @date 2023-03-17
  */
-public interface FlowMapper<T extends FlowEntity>
-{
+public interface FlowMapper<T extends FlowEntity> {
     /**
      * 根据id查询
      *

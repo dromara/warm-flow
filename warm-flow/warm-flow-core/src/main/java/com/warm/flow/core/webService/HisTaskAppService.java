@@ -13,7 +13,7 @@ public class HisTaskAppService {
     @Resource
     private IFlowHisTaskService hisTaskService;
 
-    public IFlowHisTaskService getService(){
+    public IFlowHisTaskService getService() {
         return hisTaskService;
     }
 

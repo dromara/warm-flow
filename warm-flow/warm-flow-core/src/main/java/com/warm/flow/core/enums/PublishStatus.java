@@ -1,55 +1,46 @@
 package com.warm.flow.core.enums;
 
 /**
- * @description:  结点类型
  * @author minliuhua
+ * @description: 结点类型
  * @date: 2023/3/31 12:16
  */
 public enum PublishStatus {
-	EXPIRED(9,"已失效"),
-	UNPUBLISHED(0,"未发布"),
-	PUBLISHED(1,"已发布");
+    EXPIRED(9, "已失效"),
+    UNPUBLISHED(0, "未发布"),
+    PUBLISHED(1, "已发布");
 
-	private Integer key;
-	private String value;
+    private Integer key;
+    private String value;
 
-	private PublishStatus(Integer key, String value)
-	{
-		this.key = key;
-		this.value = value;
-	}
+    private PublishStatus(Integer key, String value) {
+        this.key = key;
+        this.value = value;
+    }
 
-	public Integer getKey()
-	{
-		return key;
-	}
+    public Integer getKey() {
+        return key;
+    }
 
-	public String getValue()
-	{
-		return value;
-	}
+    public String getValue() {
+        return value;
+    }
 
-	public static Integer getKeyByValue(String value)
-	{
-		for (PublishStatus item : PublishStatus.values())
-		{
-			if (item.getValue().equals(value))
-			{
-				return item.getKey();
-			}
-		}
-		return null;
-	}
+    public static Integer getKeyByValue(String value) {
+        for (PublishStatus item : PublishStatus.values()) {
+            if (item.getValue().equals(value)) {
+                return item.getKey();
+            }
+        }
+        return null;
+    }
 
-	public static String getValueByKey(Integer key)
-	{
-		for (PublishStatus item : PublishStatus.values())
-		{
-			if (item.getKey().equals(key))
-			{
-				return item.getValue();
-			}
-		}
-		return null;
-	}
+    public static String getValueByKey(Integer key) {
+        for (PublishStatus item : PublishStatus.values()) {
+            if (item.getKey().equals(key)) {
+                return item.getValue();
+            }
+        }
+        return null;
+    }
 }

@@ -13,7 +13,9 @@ import java.util.Date;
 public class FlowInstance implements FlowEntity {
     private static final long serialVersionUID = 1L;
 
-    /** 主键 */
+    /**
+     * 主键
+     */
     private Long id;
 
     /**
@@ -21,7 +23,9 @@ public class FlowInstance implements FlowEntity {
      */
     private Long definitionId;
 
-    /** 流程名称 */
+    /**
+     * 流程名称
+     */
     private String flowName;
 
     /**
@@ -39,22 +43,34 @@ public class FlowInstance implements FlowEntity {
      */
     private Integer flowStatus;
 
-    /** 创建者 */
+    /**
+     * 创建者
+     */
     private String createBy;
 
-    /** 创建时间 */
+    /**
+     * 创建时间
+     */
     private Date createTime;
 
-    /** 更新时间 */
+    /**
+     * 更新时间
+     */
     private Date updateTime;
 
-    /** 审批表单是否自定义（Y是 2否） */
+    /**
+     * 审批表单是否自定义（Y是 2否）
+     */
     private String fromCustom;
 
-    /** 审批表单是否自定义（Y是 2否） */
+    /**
+     * 审批表单是否自定义（Y是 2否）
+     */
     private String fromPath;
 
-    /** 扩展字段 */
+    /**
+     * 扩展字段
+     */
     private String ext;
 
     @Override

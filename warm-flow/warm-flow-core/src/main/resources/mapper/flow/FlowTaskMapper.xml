@@ -1,36 +1,49 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.warm.flow.core.mapper.FlowTaskMapper">
 
     <resultMap type="com.warm.flow.core.domain.entity.FlowTask" id="FlowTaskResult">
-        <result property="id"    column="id"    />
-        <result property="nodeCode"    column="node_code"    />
-        <result property="nodeName"    column="node_name"    />
-        <result property="nodeType"    column="node_type"    />
-        <result property="approver"    column="approver"    />
-        <result property="definitionId"    column="definition_id"    />
-        <result property="instanceId"    column="instance_id"    />
-        <result property="flowStatus"    column="flow_status"    />
-        <result property="permissionFlag"    column="permission_flag"    />
-        <result property="createTime"    column="create_time"    />
-        <result property="updateTime"    column="update_time"    />
-        <result property="tenantId"    column="tenant_id"    />
-        <result property="businessId"    column="business_id"    />
-        <result property="flowName"    column="flow_name"    />
-        <result property="fromCustom"    column="from_custom"    />
-        <result property="fromPath"    column="from_path"    />
+        <result property="id" column="id"/>
+        <result property="nodeCode" column="node_code"/>
+        <result property="nodeName" column="node_name"/>
+        <result property="nodeType" column="node_type"/>
+        <result property="approver" column="approver"/>
+        <result property="definitionId" column="definition_id"/>
+        <result property="instanceId" column="instance_id"/>
+        <result property="flowStatus" column="flow_status"/>
+        <result property="permissionFlag" column="permission_flag"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="tenantId" column="tenant_id"/>
+        <result property="businessId" column="business_id"/>
+        <result property="flowName" column="flow_name"/>
+        <result property="fromCustom" column="from_custom"/>
+        <result property="fromPath" column="from_path"/>
     </resultMap>
 
 
     <sql id="selectVo">
-        select t.id, t.node_code, t.node_name, t.node_type, t.approver, t.definition_id,t.permission_flag,
-               t.instance_id, t.flow_status,t.create_time, t.update_time,t.tenant_id from flow_task t
+        select t.id,
+               t.node_code,
+               t.node_name,
+               t.node_type,
+               t.approver,
+               t.definition_id,
+               t.permission_flag,
+               t.instance_id,
+               t.flow_status,
+               t.create_time,
+               t.update_time,
+               t.tenant_id
+        from flow_task t
     </sql>
 
     <sql id="paging_end">
-        <if test="page !=null and page.pageNum != null and page.pageSize != null">LIMIT #{page.pageNum},#{page.pageSize}</if>
+        <if test="page !=null and page.pageNum != null and page.pageSize != null">LIMIT
+            #{page.pageNum},#{page.pageSize}
+        </if>
     </sql>
 
     <sql id="order_by">
@@ -39,12 +52,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <sql id="select_parameter">
         <where>
-            <if test="entity.nodeCode != null  and entity.nodeCode != ''"> and t.node_code = #{entity.nodeCode}</if>
-            <if test="entity.nodeName != null  and entity.nodeName != ''"> and t.node_name like concat('%', #{entity.nodeName}, '%')</if>
-            <if test="entity.nodeType != null"> and t.node_type = #{entity.nodeCode}</if>
-            <if test="entity.approver != null  and entity.approver != ''"> and t.approver = #{entity.approver}</if>
-            <if test="entity.instanceId != null "> and instance_id = #{entity.instanceId}</if>
-            <if test="entity.tenantId != null "> and tenant_id = #{entity.tenantId}</if>
+            <if test="entity.nodeCode != null  and entity.nodeCode != ''">and t.node_code = #{entity.nodeCode}</if>
+            <if test="entity.nodeName != null  and entity.nodeName != ''">and t.node_name like concat('%',
+                #{entity.nodeName}, '%')
+            </if>
+            <if test="entity.nodeType != null">and t.node_type = #{entity.nodeCode}</if>
+            <if test="entity.approver != null  and entity.approver != ''">and t.approver = #{entity.approver}</if>
+            <if test="entity.instanceId != null ">and instance_id = #{entity.instanceId}</if>
+            <if test="entity.tenantId != null ">and tenant_id = #{entity.tenantId}</if>
         </where>
     </sql>
 
@@ -84,11 +99,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <sql id="select_toDo_parameter">
         <where>
             t.node_type = 1
-            <if test="flowTask.nodeCode != null and flowTask.nodeCode != ''"> and t.node_code = #{flowTask.nodeCode}</if>
-            <if test="flowTask.nodeName != null and flowTask.nodeName != ''"> and t.node_name like concat('%', #{flowTask.nodeName}, '%')</if>
-            <if test="flowTask.approver != null and flowTask.approver != ''"> and t.approver = #{flowTask.approver}</if>
-            <if test="flowTask.instanceId != null "> and instance_id = #{flowTask.instanceId}</if>
-            <if test="flowTask.tenantId != null "> and tenant_id = #{flowTask.tenantId}</if>
+            <if test="flowTask.nodeCode != null and flowTask.nodeCode != ''">and t.node_code = #{flowTask.nodeCode}</if>
+            <if test="flowTask.nodeName != null and flowTask.nodeName != ''">and t.node_name like concat('%',
+                #{flowTask.nodeName}, '%')
+            </if>
+            <if test="flowTask.approver != null and flowTask.approver != ''">and t.approver = #{flowTask.approver}</if>
+            <if test="flowTask.instanceId != null ">and instance_id = #{flowTask.instanceId}</if>
+            <if test="flowTask.tenantId != null ">and tenant_id = #{flowTask.tenantId}</if>
         </where>
     </sql>
 
@@ -159,7 +176,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <delete id="deleteById" parameterType="Long">
-        delete from flow_task where id = #{id}
+        delete
+        from flow_task
+        where id = #{id}
     </delete>
 
     <delete id="deleteByInsIds" parameterType="Long">

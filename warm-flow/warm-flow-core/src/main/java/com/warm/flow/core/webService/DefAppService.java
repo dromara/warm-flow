@@ -36,7 +36,7 @@ public class DefAppService {
     @Resource
     private IFlowDefinitionService definitionService;
 
-    public IFlowDefinitionService getService(){
+    public IFlowDefinitionService getService() {
         return definitionService;
     }
 

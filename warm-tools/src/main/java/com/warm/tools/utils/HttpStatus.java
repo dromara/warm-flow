@@ -5,8 +5,7 @@ package com.warm.tools.utils;
  *
  * @author hh
  */
-public class HttpStatus
-{
+public class HttpStatus {
     /**
      * 操作成功
      */

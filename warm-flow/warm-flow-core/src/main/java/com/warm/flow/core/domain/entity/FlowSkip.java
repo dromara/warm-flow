@@ -13,7 +13,9 @@ import java.util.Date;
 public class FlowSkip implements FlowEntity {
     private static final long serialVersionUID = 1L;
 
-    /** 主键 */
+    /**
+     * 主键
+     */
     private Long id;
 
     /**
@@ -41,10 +43,14 @@ public class FlowSkip implements FlowEntity {
      */
     private String conditionValue;
 
-    /** 创建时间 */
+    /**
+     * 创建时间
+     */
     private Date createTime;
 
-    /** 更新时间 */
+    /**
+     * 更新时间
+     */
     private Date updateTime;
 
     @Override

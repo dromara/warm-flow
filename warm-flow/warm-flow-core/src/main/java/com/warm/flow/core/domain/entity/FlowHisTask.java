@@ -14,7 +14,9 @@ import java.util.List;
 public class FlowHisTask implements FlowEntity {
     private static final long serialVersionUID = 1L;
 
-    /** 主键 */
+    /**
+     * 主键
+     */
     private Long id;
 
     /**
@@ -22,7 +24,9 @@ public class FlowHisTask implements FlowEntity {
      */
     private Long definitionId;
 
-    /** 流程名称 */
+    /**
+     * 流程名称
+     */
     private String flowName;
 
     /**
@@ -31,8 +35,7 @@ public class FlowHisTask implements FlowEntity {
     private Long instanceId;
 
     /**
-     *所属租住（企业）id
-     *
+     * 所属租住（企业）id
      */
     private Long tenantId;
 
@@ -96,19 +99,29 @@ public class FlowHisTask implements FlowEntity {
      */
     private String conditionValue;
 
-    /** 创建者 */
+    /**
+     * 创建者
+     */
     private String createBy;
 
-    /** 创建时间 */
+    /**
+     * 创建时间
+     */
     private Date createTime;
 
-    /** 更新时间 */
+    /**
+     * 更新时间
+     */
     private Date updateTime;
 
-    /** 审批表单是否自定义（Y是 2否） */
+    /**
+     * 审批表单是否自定义（Y是 2否）
+     */
     private String fromCustom;
 
-    /** 审批表单是否自定义（Y是 2否） */
+    /**
+     * 审批表单是否自定义（Y是 2否）
+     */
     private String fromPath;
 
 

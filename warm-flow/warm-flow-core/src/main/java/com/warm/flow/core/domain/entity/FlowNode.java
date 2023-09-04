@@ -15,7 +15,9 @@ import java.util.List;
 public class FlowNode implements FlowEntity {
     private static final long serialVersionUID = 1L;
 
-    /** 主键 */
+    /**
+     * 主键
+     */
     private Long id;
 
     /**
@@ -50,10 +52,14 @@ public class FlowNode implements FlowEntity {
      */
     private String skipDescribe;
 
-    /** 创建时间 */
+    /**
+     * 创建时间
+     */
     private Date createTime;
 
-    /** 更新时间 */
+    /**
+     * 更新时间
+     */
     private Date updateTime;
 
     /**

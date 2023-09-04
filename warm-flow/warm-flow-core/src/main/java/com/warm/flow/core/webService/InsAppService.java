@@ -3,14 +3,12 @@ package com.warm.flow.core.webService;
 import com.warm.flow.core.constant.FlowConstant;
 import com.warm.flow.core.domain.dto.FlowParams;
 import com.warm.flow.core.domain.entity.*;
-import com.warm.flow.core.domain.entity.*;
 import com.warm.flow.core.enums.ApprovalAction;
 import com.warm.flow.core.enums.FlowStatus;
 import com.warm.flow.core.enums.NodeType;
 import com.warm.flow.core.exception.FlowException;
 import com.warm.flow.core.service.*;
 import com.warm.flow.core.utils.AssertUtil;
-import com.warm.flow.core.service.*;
 import com.warm.tools.utils.ArrayUtil;
 import com.warm.tools.utils.CollUtil;
 import com.warm.tools.utils.IdUtils;
@@ -133,8 +131,8 @@ public class InsAppService {
         // TODO min 后续考虑并发问题，待办任务和实例表不同步
         // 获取待办任务
         List<FlowTask> taskList = taskService.getByInsIds(instanceIds);
-        AssertUtil.isFalse(CollUtil.isEmpty(taskList), FlowConstant.NOT_FOUNT_TASK );
-        AssertUtil.isFalse(taskList.size() < instanceIds.size(), FlowConstant.LOST_FOUNT_TASK );
+        AssertUtil.isFalse(CollUtil.isEmpty(taskList), FlowConstant.NOT_FOUNT_TASK);
+        AssertUtil.isFalse(taskList.size() < instanceIds.size(), FlowConstant.LOST_FOUNT_TASK);
         // 校验这些流程的流程状态是否相同，只有相同的情况下，下面才好做统一处理
         checkSameStatus(taskList);
         Map<Long, FlowTask> taskMap = taskList.stream()
@@ -143,7 +141,7 @@ public class InsAppService {
         List<FlowHisTask> insHisList = new ArrayList<>();
         // 获取关联的结点
         FlowNode nextNode = getNextNode(taskList.get(0), conditionValue, flowUser);
-        for (FlowInstance instance: instances) {
+        for (FlowInstance instance : instances) {
             // 更新流程实例信息
             setSkipInstance(nextNode, instance, conditionValue, flowUser);
             FlowTask task = taskMap.get(instance.getId());
@@ -163,6 +161,7 @@ public class InsAppService {
 
     /**
      * 设置流程实例信息
+     *
      * @param nextNode
      * @param instance
      */
@@ -174,6 +173,7 @@ public class InsAppService {
 
     /**
      * 设置待办任务信息
+     *
      * @param nextNode
      * @param task
      */
@@ -190,6 +190,7 @@ public class InsAppService {
 
     /**
      * 设置流程历史任务信息
+     *
      * @param conditionValue
      * @param message
      * @param task
@@ -218,15 +219,13 @@ public class InsAppService {
     }
 
     /**
-     *
-     * @param nodeType 节点类型（开始节点、中间节点、结束节点）
+     * @param nodeType       节点类型（开始节点、中间节点、结束节点）
      * @param conditionValue 流程条件
-     * @param type 实体类型（历史任务实体为true）
+     * @param type           实体类型（历史任务实体为true）
      */
     private Integer setFlowStatus(Integer nodeType, String conditionValue, boolean type) {
         // 根据审批动作确定流程状态
-        if (NodeType.END.getKey().equals(nodeType))
-        {
+        if (NodeType.END.getKey().equals(nodeType)) {
             return FlowStatus.FINISHED.getKey();
         } else if (ApprovalAction.REJECT.getKey().equals(conditionValue)) {
             return FlowStatus.REJECT.getKey();
@@ -239,6 +238,7 @@ public class InsAppService {
 
     /**
      * 设置流程实例对象
+     *
      * @param startNode
      * @param businessId
      * @return
@@ -263,6 +263,7 @@ public class InsAppService {
 
     /**
      * 设置流程待办任务对象
+     *
      * @param startNode
      * @param instance
      * @return
@@ -379,8 +380,7 @@ public class InsAppService {
     private boolean toRemoveTask(List<Long> instanceIds) {
         AssertUtil.isFalse(CollUtil.isEmpty(instanceIds), FlowConstant.NULL_INSTANCE_ID);
         boolean success = taskService.deleteByInsIds(instanceIds);
-        if(success)
-        {
+        if (success) {
             hisTaskService.deleteByInsIds(instanceIds);
             return instanceService.removeByIds(instanceIds);
         }

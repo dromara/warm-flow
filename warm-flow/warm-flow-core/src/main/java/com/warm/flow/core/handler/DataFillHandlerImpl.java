@@ -9,8 +9,8 @@ import java.util.Date;
 import java.util.Objects;
 
 /**
- * @description:  数据填充handler
  * @author minliuhua
+ * @description: 数据填充handler
  * @date: 2023/4/1 15:37
  */
 public class DataFillHandlerImpl implements DataFillHandler {
@@ -19,8 +19,7 @@ public class DataFillHandlerImpl implements DataFillHandler {
     public void insertFill(Object object) {
         FlowEntity entity = (FlowEntity) object;
         if (ObjectUtil.isNotNull(entity)) {
-            if (Objects.isNull(entity.getId()))
-            {
+            if (Objects.isNull(entity.getId())) {
                 entity.setId(IdUtils.nextId());
             }
             Date date = ObjectUtil.isNotNull(entity.getCreateTime())

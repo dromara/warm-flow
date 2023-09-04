@@ -3,8 +3,8 @@ package com.warm.tools.utils;
 import java.util.Map;
 
 /**
- * @description:  map工具类
  * @author minliuhua
+ * @description: map工具类
  * @date: 2023/5/18 9:46
  */
 public class MapUtil {
@@ -15,8 +15,7 @@ public class MapUtil {
      * @param map 要判断的Map
      * @return true：为空 false：非空
      */
-    public static boolean isEmpty(Map<?, ?> map)
-    {
+    public static boolean isEmpty(Map<?, ?> map) {
         return ObjectUtil.isNull(map) || map.isEmpty();
     }
 
@@ -26,8 +25,7 @@ public class MapUtil {
      * @param map 要判断的Map
      * @return true：非空 false：空
      */
-    public static boolean isNotEmpty(Map<?, ?> map)
-    {
+    public static boolean isNotEmpty(Map<?, ?> map) {
         return !isEmpty(map);
     }
 }

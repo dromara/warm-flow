@@ -15,31 +15,49 @@ import java.util.List;
 public class FlowDefinition implements FlowEntity {
     private static final long serialVersionUID = 1L;
 
-    /** 主键 */
+    /**
+     * 主键
+     */
     private Long id;
 
-    /** 流程编码 */
+    /**
+     * 流程编码
+     */
     private String flowCode;
 
-    /** 流程名称 */
+    /**
+     * 流程名称
+     */
     private String flowName;
 
-    /** 流程版本 */
+    /**
+     * 流程版本
+     */
     private String version;
 
-    /** 是否发布（0未开启 1开启） */
+    /**
+     * 是否发布（0未开启 1开启）
+     */
     private Integer isPublish;
 
-    /** 审批表单是否自定义（Y是 2否） */
+    /**
+     * 审批表单是否自定义（Y是 2否）
+     */
     private String fromCustom;
 
-    /** 审批表单是否自定义（Y是 2否） */
+    /**
+     * 审批表单是否自定义（Y是 2否）
+     */
     private String fromPath;
 
-    /** 创建时间 */
+    /**
+     * 创建时间
+     */
     private Date createTime;
 
-    /** 更新时间 */
+    /**
+     * 更新时间
+     */
     private Date updateTime;
 
     private List<FlowNode> nodeList = new ArrayList<>();

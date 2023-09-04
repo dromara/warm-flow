@@ -27,6 +27,7 @@ public interface FlowHisTaskMapper extends FlowMapper<FlowHisTask> {
 
     /**
      * 获取已办任务数量
+     *
      * @param flowHisTask
      * @param page
      * @return
@@ -36,6 +37,7 @@ public interface FlowHisTaskMapper extends FlowMapper<FlowHisTask> {
 
     /**
      * 获取已办任务
+     *
      * @param flowHisTask
      * @param page
      * @return

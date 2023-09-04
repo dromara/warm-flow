@@ -4,16 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @description: 分页
  * @author minliuhua
+ * @description: 分页
  * @date: 2023/5/17 1:28
  */
 public class Page<T> {
 
-    /** 当前记录起始索引 */
+    /**
+     * 当前记录起始索引
+     */
     private int pageNum;
 
-    /** 每页显示记录数 */
+    /**
+     * 每页显示记录数
+     */
     private int pageSize;
 
     /**
@@ -26,10 +30,14 @@ public class Page<T> {
      */
     private long total;
 
-    /** 排序列 */
+    /**
+     * 排序列
+     */
     private String orderBy;
 
-    /** 排序的方向desc或者asc */
+    /**
+     * 排序的方向desc或者asc
+     */
     private String isAsc = "desc";
 
     public Page() {

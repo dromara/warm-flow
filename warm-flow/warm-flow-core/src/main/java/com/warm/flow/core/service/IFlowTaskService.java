@@ -16,6 +16,7 @@ public interface IFlowTaskService extends IFlowService<FlowTask> {
 
     /**
      * 根据实例ids获取待办任务
+     *
      * @param instanceIds
      * @return
      */
@@ -23,6 +24,7 @@ public interface IFlowTaskService extends IFlowService<FlowTask> {
 
     /**
      * 分页查询待办任务
+     *
      * @param flowTask 条件实体
      * @param page
      * @return
@@ -31,6 +33,7 @@ public interface IFlowTaskService extends IFlowService<FlowTask> {
 
     /**
      * 根据instanceIds删除
+     *
      * @param instanceIds
      * @return
      */

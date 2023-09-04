@@ -1,8 +1,8 @@
 package com.warm.tools.utils;
 
 /**
- * @description:  Object 工具类
  * @author minliuhua
+ * @description: Object 工具类
  * @date: 2023/5/18 9:42
  */
 public class ObjectUtil {
@@ -13,8 +13,7 @@ public class ObjectUtil {
      * @param object Object
      * @return true：为空 false：非空
      */
-    public static boolean isNull(Object object)
-    {
+    public static boolean isNull(Object object) {
         return object == null;
     }
 
@@ -24,14 +23,12 @@ public class ObjectUtil {
      * @param object Object
      * @return true：非空 false：空
      */
-    public static boolean isNotNull(Object object)
-    {
+    public static boolean isNotNull(Object object) {
         return !isNull(object);
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T cast(Object obj)
-    {
+    public static <T> T cast(Object obj) {
         return (T) obj;
     }
 }

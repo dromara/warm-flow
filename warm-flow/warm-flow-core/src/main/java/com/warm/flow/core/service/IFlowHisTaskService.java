@@ -24,6 +24,7 @@ public interface IFlowHisTaskService extends IFlowService<FlowHisTask> {
 
     /**
      * 根据instanceIds删除
+     *
      * @param instanceIds
      * @return
      */
@@ -31,6 +32,7 @@ public interface IFlowHisTaskService extends IFlowService<FlowHisTask> {
 
     /**
      * 获取已办任务
+     *
      * @param flowHisTask
      * @param page
      * @return

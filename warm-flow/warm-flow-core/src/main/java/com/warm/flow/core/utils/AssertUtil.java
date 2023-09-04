@@ -11,7 +11,7 @@ import java.util.Collection;
  * @date: 2023/3/30 14:05
  */
 public class AssertUtil {
-    private AssertUtil(){
+    private AssertUtil() {
 
     }
 

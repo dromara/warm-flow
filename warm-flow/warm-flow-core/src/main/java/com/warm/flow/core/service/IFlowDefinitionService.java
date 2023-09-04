@@ -18,6 +18,7 @@ public interface IFlowDefinitionService extends IFlowService<FlowDefinition> {
 
     /**
      * 校验后新增
+     *
      * @param flowDefinition
      * @return
      */
@@ -25,6 +26,7 @@ public interface IFlowDefinitionService extends IFlowService<FlowDefinition> {
 
     /**
      * 删除流程定义
+     *
      * @param ids
      * @return
      */
@@ -32,6 +34,7 @@ public interface IFlowDefinitionService extends IFlowService<FlowDefinition> {
 
     /**
      * 发布流程定义
+     *
      * @param id
      * @return
      */
@@ -39,6 +42,7 @@ public interface IFlowDefinitionService extends IFlowService<FlowDefinition> {
 
     /**
      * 取消发布流程定义
+     *
      * @param id
      * @return
      */
