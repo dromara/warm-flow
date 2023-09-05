@@ -3,10 +3,10 @@ package com.warm.flow.core.service.impl;
 import com.warm.flow.core.domain.entity.FlowSkip;
 import com.warm.flow.core.mapper.FlowSkipMapper;
 import com.warm.flow.core.service.IFlowSkipService;
+import com.warm.mybatis.core.invoker.MapperInvoker;
 import com.warm.mybatis.core.service.impl.FlowServiceImpl;
 import com.warm.mybatis.core.utils.SqlHelper;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -15,18 +15,12 @@ import java.util.List;
  * @author hh
  * @date 2023-03-29
  */
-public class FlowSkipServiceImpl extends FlowServiceImpl<FlowSkip> implements IFlowSkipService {
-    @Resource
-    private FlowSkipMapper flowSkipMapper;
-
-    @Override
-    public FlowSkipMapper getBaseMapper() {
-        return flowSkipMapper;
-    }
+public class FlowSkipServiceImpl extends FlowServiceImpl<FlowSkipMapper, FlowSkip> implements IFlowSkipService {
 
     @Override
     public boolean deleteByNodeId(Long nodeId) {
-        return SqlHelper.retBool(flowSkipMapper.deleteByNodeId(nodeId));
+        Integer result = MapperInvoker.have(baseMapper -> baseMapper.deleteByNodeId(nodeId), mapperClass());
+        return SqlHelper.retBool(result);
     }
 
     /**
@@ -37,7 +31,8 @@ public class FlowSkipServiceImpl extends FlowServiceImpl<FlowSkip> implements IF
      */
     @Override
     public boolean deleteByNodeIds(List<Long> nodeIds) {
-        return SqlHelper.retBool(flowSkipMapper.deleteByNodeIds(nodeIds));
+        Integer result = MapperInvoker.have(baseMapper -> baseMapper.deleteByNodeIds(nodeIds), mapperClass());
+        return SqlHelper.retBool(result);
     }
 
 }

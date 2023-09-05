@@ -5,6 +5,8 @@ import com.warm.flow.core.handler.DataFillHandlerImpl;
 import com.warm.flow.core.service.*;
 import com.warm.flow.core.service.impl.*;
 import com.warm.mybatis.core.handler.DataFillHandlerFactory;
+import com.warm.mybatis.core.invoker.MapperInvoker;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -60,9 +62,12 @@ public class FlowBeanRegister {
     public FlowFactory initFlowServer(IFlowDefinitionService definitionService, IFlowHisTaskService hisTaskService
             , IFlowInstanceService instanceService, IFlowNodeService nodeService
             , IFlowSkipService skipService, IFlowTaskService taskService) {
-        FlowFactory flowFactory = new FlowFactory(definitionService, hisTaskService, instanceService
+        return new FlowFactory(definitionService, hisTaskService, instanceService
                 , nodeService, skipService, taskService);
-        FlowFactory.flowFactory = flowFactory;
-        return flowFactory;
+    }
+
+    @Bean
+    public MapperInvoker initMapperInvoker(SqlSessionFactory sqlSessionFactory) {
+        return MapperInvoker.mapperInvoker = new MapperInvoker(sqlSessionFactory);
     }
 }

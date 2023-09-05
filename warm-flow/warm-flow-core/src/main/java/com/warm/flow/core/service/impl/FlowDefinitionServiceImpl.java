@@ -1,5 +1,6 @@
 package com.warm.flow.core.service.impl;
 
+import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.constant.FlowConstant;
 import com.warm.flow.core.domain.dto.FlowCombine;
 import com.warm.flow.core.domain.entity.FlowDefinition;
@@ -10,17 +11,15 @@ import com.warm.flow.core.exception.FlowException;
 import com.warm.flow.core.mapper.FlowDefinitionMapper;
 import com.warm.flow.core.service.IFlowDefinitionService;
 import com.warm.flow.core.utils.FlowConfigUtil;
+import com.warm.mybatis.core.invoker.MapperInvoker;
 import com.warm.mybatis.core.service.impl.FlowServiceImpl;
 import org.dom4j.Document;
 
-import javax.annotation.Resource;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static com.warm.flow.core.FlowFactory.flowFactory;
 
 /**
  * 流程定义Service业务层处理
@@ -28,14 +27,7 @@ import static com.warm.flow.core.FlowFactory.flowFactory;
  * @author hh
  * @date 2023-03-29
  */
-public class FlowDefinitionServiceImpl extends FlowServiceImpl<FlowDefinition> implements IFlowDefinitionService {
-    @Resource
-    private FlowDefinitionMapper definitionMapper;
-
-    @Override
-    public FlowDefinitionMapper getBaseMapper() {
-        return definitionMapper;
-    }
+public class FlowDefinitionServiceImpl extends FlowServiceImpl<FlowDefinitionMapper, FlowDefinition> implements IFlowDefinitionService {
 
     @Override
     public void importXml(InputStream is) throws Exception {
@@ -57,14 +49,14 @@ public class FlowDefinitionServiceImpl extends FlowServiceImpl<FlowDefinition> i
     }
 
     public FlowDefinition getAllDataDefinition(Long id) {
-        FlowDefinition definition = flowFactory.defService().getById(id);
+        FlowDefinition definition = FlowFactory.defService().getById(id);
         FlowNode node = new FlowNode();
         node.setDefinitionId(id);
-        List<FlowNode> nodeList = flowFactory.nodeService().list(node);
+        List<FlowNode> nodeList = FlowFactory.nodeService().list(node);
         definition.setNodeList(nodeList);
         FlowSkip flowSkip = new FlowSkip();
         flowSkip.setDefinitionId(id);
-        List<FlowSkip> flowSkips = flowFactory.skipService().list(flowSkip);
+        List<FlowSkip> flowSkips = FlowFactory.skipService().list(flowSkip);
         Map<Long, List<FlowSkip>> flowSkipMap = flowSkips.stream()
                 .collect(Collectors.groupingBy(FlowSkip::getNodeId));
         nodeList.forEach(flowNode -> flowNode.setSkipList(flowSkipMap.get(flowNode.getId())));
@@ -81,26 +73,26 @@ public class FlowDefinitionServiceImpl extends FlowServiceImpl<FlowDefinition> i
      */
     private void updateFlow(FlowDefinition definition, List<FlowNode> allNodes, List<FlowSkip> allSkips) {
         List<String> flowCodeList = Arrays.asList(definition.getFlowCode());
-        List<FlowDefinition> flowDefinitions = flowFactory.defService().queryByCodeList(flowCodeList);
+        List<FlowDefinition> flowDefinitions = FlowFactory.defService().queryByCodeList(flowCodeList);
         for (int j = 0; j < flowDefinitions.size(); j++) {
             FlowDefinition beforeDefinition = flowDefinitions.get(j);
             if (definition.getFlowCode().equals(beforeDefinition.getFlowCode()) && definition.getVersion().equals(beforeDefinition.getVersion())) {
                 throw new FlowException(definition.getFlowCode() + "(" + definition.getVersion() + ")" + FlowConstant.ALREADY_EXIST);
             }
         }
-        flowFactory.defService().save(definition);
-        flowFactory.nodeService().saveBatch(allNodes);
-        flowFactory.skipService().saveBatch(allSkips);
+        FlowFactory.defService().save(definition);
+        FlowFactory.nodeService().saveBatch(allNodes);
+        FlowFactory.skipService().saveBatch(allSkips);
     }
 
     @Override
     public List<FlowDefinition> queryByCodeList(List<String> flowCodeList) {
-        return definitionMapper.queryByCodeList(flowCodeList);
+        return MapperInvoker.have(baseMapper -> baseMapper.queryByCodeList(flowCodeList), mapperClass());
     }
 
     @Override
     public void closeFlowByCodeList(List<String> flowCodeList) {
-        definitionMapper.closeFlowByCodeList(flowCodeList);
+        noHave(baseMapper -> baseMapper.closeFlowByCodeList(flowCodeList));
     }
 
     @Override
@@ -122,8 +114,8 @@ public class FlowDefinitionServiceImpl extends FlowServiceImpl<FlowDefinition> i
      */
     @Override
     public boolean removeDef(List<Long> ids) {
-        definitionMapper.deleteNodeByDefIds(ids);
-        definitionMapper.deleteSkipByDefIds(ids);
+        MapperInvoker.have(baseMapper -> baseMapper.deleteNodeByDefIds(ids), mapperClass());
+        MapperInvoker.have(baseMapper -> baseMapper.deleteSkipByDefIds(ids), mapperClass());
         return removeByIds(ids);
     }
 

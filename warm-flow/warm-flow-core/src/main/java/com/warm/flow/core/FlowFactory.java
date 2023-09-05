@@ -10,48 +10,46 @@ import com.warm.flow.core.service.*;
 public class FlowFactory {
 
 
-    public static FlowFactory flowFactory = null;
-    private final IFlowDefinitionService defService;
-    private final IFlowHisTaskService hisTaskService;
-    private final IFlowInstanceService insService;
-    private final IFlowNodeService nodeService;
-
-    private final IFlowSkipService skipService;
-
-    private final IFlowTaskService taskService;
+    private static IFlowDefinitionService defService = null;
+    private static IFlowHisTaskService hisTaskService = null;
+    private static IFlowInstanceService insService = null;
+    private static IFlowNodeService nodeService = null;
+    private static IFlowSkipService skipService = null;
+    private static IFlowTaskService taskService = null;
 
     public FlowFactory(IFlowDefinitionService defService, IFlowHisTaskService hisTaskService
             , IFlowInstanceService insService, IFlowNodeService nodeService
             , IFlowSkipService skipService, IFlowTaskService taskService) {
-        this.defService = defService;
-        this.hisTaskService = hisTaskService;
-        this.insService = insService;
-        this.nodeService = nodeService;
-        this.skipService = skipService;
-        this.taskService = taskService;
+        FlowFactory.defService = defService;
+        FlowFactory.hisTaskService = hisTaskService;
+        FlowFactory.insService = insService;
+        FlowFactory.nodeService = nodeService;
+        FlowFactory.skipService = skipService;
+        FlowFactory.taskService = taskService;
     }
 
-    public IFlowDefinitionService defService() {
+
+    public static IFlowDefinitionService defService() {
         return defService;
     }
 
-    public IFlowHisTaskService hisTaskService() {
+    public static IFlowHisTaskService hisTaskService() {
         return hisTaskService;
     }
 
-    public IFlowInstanceService insService() {
+    public static IFlowInstanceService insService() {
         return insService;
     }
 
-    public IFlowNodeService nodeService() {
+    public static IFlowNodeService nodeService() {
         return nodeService;
     }
 
-    public IFlowSkipService skipService() {
+    public static IFlowSkipService skipService() {
         return skipService;
     }
 
-    public IFlowTaskService taskService() {
+    public static IFlowTaskService taskService() {
         return taskService;
     }
 

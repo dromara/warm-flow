@@ -5,6 +5,7 @@ import com.warm.mybatis.core.agent.FlowQuery;
 import com.warm.mybatis.core.entity.FlowEntity;
 import com.warm.mybatis.core.handler.DataFillHandler;
 import com.warm.mybatis.core.handler.DataFillHandlerFactory;
+import com.warm.mybatis.core.invoker.MapperInvoker;
 import com.warm.mybatis.core.mapper.FlowMapper;
 import com.warm.mybatis.core.page.Page;
 import com.warm.mybatis.core.service.IFlowService;
@@ -13,8 +14,12 @@ import com.warm.tools.utils.CollUtil;
 import com.warm.tools.utils.ObjectUtil;
 
 import java.io.Serializable;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * BaseService层处理
@@ -22,9 +27,39 @@ import java.util.List;
  * @author hh
  * @date 2023-03-17
  */
-public abstract class FlowServiceImpl<T extends FlowEntity> implements IFlowService<T> {
+public abstract class FlowServiceImpl<M extends FlowMapper<T>, T extends FlowEntity> implements IFlowService<T> {
 
-    protected abstract FlowMapper<T> getBaseMapper();
+    protected Class<M> mapperClass() {
+        Type superClassType = this.getClass().getGenericSuperclass();
+        ParameterizedType pt = (ParameterizedType)superClassType;
+
+        Type[] genTypeArr = pt.getActualTypeArguments();
+        Type genType = genTypeArr[0];
+        try {
+            Class<?> aClass = Class.forName(genType.getTypeName());
+            return (Class<M>) aClass;
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 执行mapper方法
+     *
+     * @param function
+     */
+    public <R> R have(Function<M, R> function) {
+        return MapperInvoker.have(function, mapperClass());
+    }
+
+    /**
+     * 执行mapper方法
+     *
+     * @param consumer
+     */
+    public void noHave(Consumer<M> consumer) {
+        MapperInvoker.noHave(consumer, mapperClass());
+    }
 
     /**
      * 根据id查询
@@ -34,7 +69,7 @@ public abstract class FlowServiceImpl<T extends FlowEntity> implements IFlowServ
      */
     @Override
     public T getById(Serializable id) {
-        return getBaseMapper().selectById(id);
+        return MapperInvoker.have(baseMapper -> baseMapper.selectById(id), mapperClass());
     }
 
     /**
@@ -45,7 +80,7 @@ public abstract class FlowServiceImpl<T extends FlowEntity> implements IFlowServ
      */
     @Override
     public List<T> getByIds(Collection<? extends Serializable> ids) {
-        return getBaseMapper().selectByIds(ids);
+        return MapperInvoker.have(baseMapper -> baseMapper.selectByIds(ids), mapperClass());
     }
 
     /**
@@ -56,9 +91,10 @@ public abstract class FlowServiceImpl<T extends FlowEntity> implements IFlowServ
      */
     @Override
     public Page<T> page(T entity, Page<T> page, String order) {
-        long total = getBaseMapper().selectCount(entity);
+        long total = MapperInvoker.have(baseMapper -> baseMapper.selectCount(entity), mapperClass());
         if (total > 0) {
-            List<T> list = getBaseMapper().selectList(entity, page, order);
+            List<T> list = MapperInvoker.have(baseMapper -> baseMapper.selectList(entity, page, order), mapperClass());
+            ;
             return new Page<>(list, total);
         }
         return Page.empty();
@@ -72,7 +108,7 @@ public abstract class FlowServiceImpl<T extends FlowEntity> implements IFlowServ
      */
     @Override
     public List<T> list(T entity) {
-        return getBaseMapper().selectList(entity);
+        return MapperInvoker.have(baseMapper -> baseMapper.selectList(entity), mapperClass());
     }
 
     /**
@@ -83,7 +119,7 @@ public abstract class FlowServiceImpl<T extends FlowEntity> implements IFlowServ
      */
     @Override
     public List<T> list(T entity, String order) {
-        return getBaseMapper().selectList(entity, null, order);
+        return MapperInvoker.have(baseMapper -> baseMapper.selectList(entity, null, order), mapperClass());
     }
 
     /**
@@ -94,7 +130,7 @@ public abstract class FlowServiceImpl<T extends FlowEntity> implements IFlowServ
      */
     @Override
     public T getOne(T entity) {
-        List<T> list = getBaseMapper().selectList(entity);
+        List<T> list = MapperInvoker.have(baseMapper -> baseMapper.selectList(entity), mapperClass());
         return CollUtil.isEmpty(list) ? null : list.get(0);
     }
 
@@ -107,7 +143,8 @@ public abstract class FlowServiceImpl<T extends FlowEntity> implements IFlowServ
     @Override
     public boolean save(T entity) {
         insertFill(entity);
-        return SqlHelper.retBool(getBaseMapper().insert(entity));
+        Integer result = MapperInvoker.have(baseMapper -> baseMapper.insert(entity), mapperClass());
+        return SqlHelper.retBool(result);
     }
 
     /**
@@ -119,7 +156,8 @@ public abstract class FlowServiceImpl<T extends FlowEntity> implements IFlowServ
     @Override
     public boolean updateById(T entity) {
         updateFill(entity);
-        return SqlHelper.retBool(getBaseMapper().updateById(entity));
+        Integer result = MapperInvoker.have(baseMapper -> baseMapper.updateById(entity), mapperClass());
+        return SqlHelper.retBool(result);
     }
 
     /**
@@ -130,7 +168,8 @@ public abstract class FlowServiceImpl<T extends FlowEntity> implements IFlowServ
      */
     @Override
     public boolean removeById(Serializable id) {
-        return SqlHelper.retBool(getBaseMapper().deleteById(id));
+        Integer result = MapperInvoker.have(baseMapper -> baseMapper.deleteById(id), mapperClass());
+        return SqlHelper.retBool(result);
     }
 
     /**
@@ -141,7 +180,8 @@ public abstract class FlowServiceImpl<T extends FlowEntity> implements IFlowServ
      */
     @Override
     public boolean removeByIds(Collection<? extends Serializable> ids) {
-        return SqlHelper.retBool(getBaseMapper().deleteByIds(ids));
+        Integer result = MapperInvoker.have(baseMapper -> baseMapper.deleteByIds(ids), mapperClass());
+        return SqlHelper.retBool(result);
     }
 
     /**
@@ -156,7 +196,7 @@ public abstract class FlowServiceImpl<T extends FlowEntity> implements IFlowServ
         }
         for (T record : list) {
             insertFill(record);
-            getBaseMapper().insert(record);
+            MapperInvoker.have(baseMapper -> baseMapper.insert(record), mapperClass());
         }
     }
 
@@ -172,7 +212,7 @@ public abstract class FlowServiceImpl<T extends FlowEntity> implements IFlowServ
         }
         for (T record : list) {
             insertFill(record);
-            getBaseMapper().updateById(record);
+            MapperInvoker.have(baseMapper -> baseMapper.updateById(record), mapperClass());
         }
     }
 

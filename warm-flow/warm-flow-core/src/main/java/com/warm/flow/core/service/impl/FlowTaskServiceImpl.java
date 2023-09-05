@@ -5,13 +5,13 @@ import com.warm.flow.core.domain.entity.FlowTask;
 import com.warm.flow.core.mapper.FlowTaskMapper;
 import com.warm.flow.core.service.IFlowTaskService;
 import com.warm.flow.core.utils.AssertUtil;
+import com.warm.mybatis.core.invoker.MapperInvoker;
 import com.warm.mybatis.core.page.Page;
 import com.warm.mybatis.core.service.impl.FlowServiceImpl;
 import com.warm.mybatis.core.utils.SqlHelper;
 import com.warm.tools.utils.CollUtil;
 import com.warm.tools.utils.ObjectUtil;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,14 +21,7 @@ import java.util.stream.Collectors;
  * @author hh
  * @date 2023-03-29
  */
-public class FlowTaskServiceImpl extends FlowServiceImpl<FlowTask> implements IFlowTaskService {
-    @Resource
-    private FlowTaskMapper taskMapper;
-
-    @Override
-    public FlowTaskMapper getBaseMapper() {
-        return taskMapper;
-    }
+public class FlowTaskServiceImpl extends FlowServiceImpl<FlowTaskMapper, FlowTask> implements IFlowTaskService {
 
     @Override
     public List<FlowTask> getByInsIds(List<Long> instanceIds) {
@@ -36,14 +29,14 @@ public class FlowTaskServiceImpl extends FlowServiceImpl<FlowTask> implements IF
         for (int i = 0; i < instanceIds.size(); i++) {
             AssertUtil.isNull(instanceIds.get(i), "流程定义id不能为空!");
         }
-        return taskMapper.getByInsIds(instanceIds);
+        return MapperInvoker.have(baseMapper -> baseMapper.getByInsIds(instanceIds), mapperClass());
     }
 
     @Override
     public Page<FlowTask> toDoPage(FlowTask flowTask, Page<FlowTask> page) {
-        long count = taskMapper.countTodo(flowTask, page);
+        long count = have(baseMapper -> baseMapper.countTodo(flowTask, page));
         if (count > 0) {
-            List<FlowTask> list = taskMapper.toDoPage(flowTask, page);
+            List<FlowTask> list = MapperInvoker.have(baseMapper -> baseMapper.toDoPage(flowTask, page), mapperClass());
             // 根据权限标识符过滤
             List<String> permissionFlagD = CollUtil.strToColl(flowTask.getPermissionFlag(), ",");
             if (ObjectUtil.isNull(permissionFlagD)) {
@@ -66,6 +59,7 @@ public class FlowTaskServiceImpl extends FlowServiceImpl<FlowTask> implements IF
 
     @Override
     public boolean deleteByInsIds(List<Long> instanceIds) {
-        return SqlHelper.retBool(taskMapper.deleteByInsIds(instanceIds));
+        Integer result = MapperInvoker.have(baseMapper -> baseMapper.deleteByInsIds(instanceIds), mapperClass());
+        return SqlHelper.retBool(result);
     }
 }

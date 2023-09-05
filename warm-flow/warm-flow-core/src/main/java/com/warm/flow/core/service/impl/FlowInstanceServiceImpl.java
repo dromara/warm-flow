@@ -1,5 +1,6 @@
 package com.warm.flow.core.service.impl;
 
+import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.constant.FlowConstant;
 import com.warm.flow.core.domain.dto.FlowParams;
 import com.warm.flow.core.domain.entity.*;
@@ -10,17 +11,16 @@ import com.warm.flow.core.exception.FlowException;
 import com.warm.flow.core.mapper.FlowInstanceMapper;
 import com.warm.flow.core.service.IFlowInstanceService;
 import com.warm.flow.core.utils.AssertUtil;
+import com.warm.mybatis.core.invoker.MapperInvoker;
 import com.warm.mybatis.core.service.impl.FlowServiceImpl;
 import com.warm.tools.utils.ArrayUtil;
 import com.warm.tools.utils.CollUtil;
 import com.warm.tools.utils.IdUtils;
 import com.warm.tools.utils.StringUtils;
 
-import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.warm.flow.core.FlowFactory.flowFactory;
 
 /**
  * 流程实例Service业务层处理
@@ -28,22 +28,15 @@ import static com.warm.flow.core.FlowFactory.flowFactory;
  * @author hh
  * @date 2023-03-29
  */
-public class FlowInstanceServiceImpl extends FlowServiceImpl<FlowInstance> implements IFlowInstanceService {
-    @Resource
-    private FlowInstanceMapper instanceMapper;
-
-    @Override
-    public FlowInstanceMapper getBaseMapper() {
-        return instanceMapper;
-    }
+public class FlowInstanceServiceImpl extends FlowServiceImpl<FlowInstanceMapper, FlowInstance> implements IFlowInstanceService {
 
     @Override
     public List<FlowInstance> getByIdWithLock(List<Long> ids) {
-        AssertUtil.isFalse(ids == null || ids.size() == 0, FlowConstant.NOT_FOUNT_INSTANCE_ID);
+        AssertUtil.isFalse(CollUtil.isEmpty(ids), FlowConstant.NOT_FOUNT_INSTANCE_ID);
         for (int i = 0; i < ids.size(); i++) {
             AssertUtil.isNull(ids.get(i), "流程定义id不能为空!");
         }
-        return instanceMapper.getByIdWithLock(ids);
+        return MapperInvoker.have(baseMapper -> baseMapper.getByIdWithLock(ids), mapperClass());
     }
 
     @Override
@@ -99,15 +92,14 @@ public class FlowInstanceServiceImpl extends FlowServiceImpl<FlowInstance> imple
         AssertUtil.isNull(flowUser.getFlowCode(), FlowConstant.NULL_FLOW_CODE);
         AssertUtil.isFalse(CollUtil.isEmpty(businessIds), FlowConstant.NULL_BUSINESS_ID);
         // 根据流程编码获取开启的唯一流程的流程结点集合
-        List<FlowNode> nodes = flowFactory.nodeService().getLastByFlowCode(flowUser.getFlowCode());
+        List<FlowNode> nodes = FlowFactory.nodeService().getLastByFlowCode(flowUser.getFlowCode());
         AssertUtil.isFalse(CollUtil.isEmpty(nodes), FlowConstant.NOT_PUBLISH_NODE);
         // 获取开始结点
         FlowNode startNode = getFirstNode(nodes);
 
         List<FlowInstance> instances = new ArrayList<>();
         List<FlowTask> taskList = new ArrayList<>();
-        for (int i = 0; i < businessIds.size(); i++) {
-            String businessId = businessIds.get(i);
+        for (String businessId : businessIds) {
             AssertUtil.isBlank(businessId, FlowConstant.NULL_BUSINESS_ID);
             // 设置流程实例对象
             FlowInstance instance = setStartInstance(startNode, businessId, flowUser);
@@ -116,8 +108,8 @@ public class FlowInstanceServiceImpl extends FlowServiceImpl<FlowInstance> imple
             instances.add(instance);
             taskList.add(task);
         }
-        flowFactory.insService().saveBatch(instances);
-        flowFactory.taskService().saveBatch(taskList);
+        FlowFactory.insService().saveBatch(instances);
+        FlowFactory.taskService().saveBatch(taskList);
         return instances;
     }
 
@@ -125,12 +117,12 @@ public class FlowInstanceServiceImpl extends FlowServiceImpl<FlowInstance> imple
             , FlowParams flowUser) {
         AssertUtil.isFalse(message != null && message.length() > 500, FlowConstant.MSG_OVER_LENGTH);
         // 获取当前流程
-        List<FlowInstance> instances = flowFactory.insService().getByIdWithLock(instanceIds);
+        List<FlowInstance> instances = FlowFactory.insService().getByIdWithLock(instanceIds);
         AssertUtil.isFalse(CollUtil.isEmpty(instances), FlowConstant.NOT_FOUNT_INSTANCE);
         AssertUtil.isFalse(instances.size() < instanceIds.size(), FlowConstant.LOST_FOUNT_INSTANCE);
         // TODO min 后续考虑并发问题，待办任务和实例表不同步
         // 获取待办任务
-        List<FlowTask> taskList = flowFactory.taskService().getByInsIds(instanceIds);
+        List<FlowTask> taskList = FlowFactory.taskService().getByInsIds(instanceIds);
         AssertUtil.isFalse(CollUtil.isEmpty(taskList), FlowConstant.NOT_FOUNT_TASK);
         AssertUtil.isFalse(taskList.size() < instanceIds.size(), FlowConstant.LOST_FOUNT_TASK);
         // 校验这些流程的流程状态是否相同，只有相同的情况下，下面才好做统一处理
@@ -153,9 +145,9 @@ public class FlowInstanceServiceImpl extends FlowServiceImpl<FlowInstance> imple
             insHisList.add(insHis);
         }
 
-        flowFactory.hisTaskService().saveBatch(insHisList);
-        flowFactory.taskService().updateBatch(taskList);
-        flowFactory.insService().updateBatch(instances);
+        FlowFactory.hisTaskService().saveBatch(insHisList);
+        FlowFactory.taskService().updateBatch(taskList);
+        FlowFactory.insService().updateBatch(instances);
         return instances;
     }
 
@@ -315,7 +307,7 @@ public class FlowInstanceServiceImpl extends FlowServiceImpl<FlowInstance> imple
         FlowNode flowNode = new FlowNode();
         flowNode.setDefinitionId(task.getDefinitionId());
         flowNode.setNodeCode(task.getNodeCode());
-        FlowNode node = flowFactory.nodeService().getOne(flowNode);
+        FlowNode node = FlowFactory.nodeService().getOne(flowNode);
 
         AssertUtil.isFalse(StringUtils.isNotEmpty(node.getPermissionFlag()) && (CollUtil.isEmpty(permissionFlags)
                 || !CollUtil.containsAny(permissionFlags, ArrayUtil.strToArrAy(node.getPermissionFlag(),
@@ -349,13 +341,13 @@ public class FlowInstanceServiceImpl extends FlowServiceImpl<FlowInstance> imple
         FlowSkip skipCondition = new FlowSkip();
         skipCondition.setDefinitionId(task.getDefinitionId());
         skipCondition.setNowNodeCode(task.getNodeCode());
-        List<FlowSkip> flowSkips = flowFactory.skipService().list(skipCondition);
+        List<FlowSkip> flowSkips = FlowFactory.skipService().list(skipCondition);
         FlowSkip nextSkip = checkAuthAndCondition(task, flowSkips, conditionValue, flowUser);
         AssertUtil.isFalse(nextSkip == null, FlowConstant.NULL_DEST_NODE);
         FlowNode query = new FlowNode();
         query.setDefinitionId(task.getDefinitionId());
         query.setNodeCode(nextSkip.getNextNodeCode());
-        List<FlowNode> nodes = flowFactory.nodeService().list(query);
+        List<FlowNode> nodes = FlowFactory.nodeService().list(query);
         AssertUtil.isFalse(nodes.size() == 0, FlowConstant.NOT_NODE_DATA);
         AssertUtil.isFalse(nodes.size() > 1, "[" + nextSkip.getNextNodeCode() + "]" + FlowConstant.SAME_NODE_CODE);
         return nodes.get(0);
@@ -379,10 +371,10 @@ public class FlowInstanceServiceImpl extends FlowServiceImpl<FlowInstance> imple
 
     private boolean toRemoveTask(List<Long> instanceIds) {
         AssertUtil.isFalse(CollUtil.isEmpty(instanceIds), FlowConstant.NULL_INSTANCE_ID);
-        boolean success = flowFactory.taskService().deleteByInsIds(instanceIds);
+        boolean success = FlowFactory.taskService().deleteByInsIds(instanceIds);
         if (success) {
-            flowFactory.hisTaskService().deleteByInsIds(instanceIds);
-            return flowFactory.insService().removeByIds(instanceIds);
+            FlowFactory.hisTaskService().deleteByInsIds(instanceIds);
+            return FlowFactory.insService().removeByIds(instanceIds);
         }
         return false;
     }
