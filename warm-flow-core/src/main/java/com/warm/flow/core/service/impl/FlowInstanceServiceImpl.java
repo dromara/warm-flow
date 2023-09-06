@@ -109,7 +109,6 @@ public class FlowInstanceServiceImpl extends FlowServiceImpl<FlowInstanceMapper,
             taskList.add(task);
         }
         FlowFactory.insService().saveBatch(instances);
-        int a = 2 / 0;
         FlowFactory.taskService().saveBatch(taskList);
         return instances;
     }
