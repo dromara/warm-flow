@@ -11,7 +11,7 @@
 **具体demo项目**
 [hh-vue](https://gitee.com/min290/hh-vue)
 
-**更新记录** ：https://gitee.com/min290/warm-freemarker/wikis/Home
+**更新记录** ：https://gitee.com/warm_4/warm-flow/wikis/Home
 
 ## 集成注意（务必注意）：
 
