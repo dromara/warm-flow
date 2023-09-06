@@ -12,7 +12,7 @@
     <name>warm-flow</name>
     <description>Warm-Flow is a flow</description>
     <url>https://github.com/minliuhua/monkey-flow</url>
-    
+
     <issueManagement>
         <system>Github Issue</system>
         <url>https://github.com/minliuhua/warm-flow/issues</url>
@@ -37,7 +37,7 @@
             <timezone>+8</timezone>
         </developer>
     </developers>
-    
+
     <modules>
         <module>warm-flow-core</module>
         <module>warm-flow-adapter</module>

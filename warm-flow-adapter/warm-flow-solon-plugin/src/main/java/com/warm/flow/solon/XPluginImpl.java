@@ -1,7 +1,6 @@
 package com.warm.flow.solon;
 
 import com.warm.flow.solon.config.FlowConfig;
-import com.warm.mybatis.solon.config.MybatisConfig;
 import org.noear.solon.core.AppContext;
 import org.noear.solon.core.Plugin;
 
