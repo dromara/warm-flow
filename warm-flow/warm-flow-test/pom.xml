@@ -5,15 +5,14 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.github.minliuhua</groupId>
-        <artifactId>warm-freemarker</artifactId>
+        <artifactId>warm-flow</artifactId>
         <version>${revision}</version>
     </parent>
 
-    <artifactId>warm-mybatis</artifactId>
+    <artifactId>warm-flow-test</artifactId>
     <packaging>pom</packaging>
 
     <modules>
-        <module>warm-mybatis-core</module>
-        <module>warm-mybatis-adapter</module>
+        <module>warm-flow-core-test</module>
     </modules>
 </project>

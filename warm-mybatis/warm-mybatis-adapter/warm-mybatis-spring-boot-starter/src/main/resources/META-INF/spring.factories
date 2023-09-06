@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.warm.mybatis.spring.boot.starter.config.MybatisConfig

@@ -5,15 +5,16 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.github.minliuhua</groupId>
-        <artifactId>warm-freemarker</artifactId>
+        <artifactId>warm-mybatis</artifactId>
         <version>${revision}</version>
     </parent>
 
-    <artifactId>warm-mybatis</artifactId>
+    <artifactId>warm-mybatis-adapter</artifactId>
     <packaging>pom</packaging>
 
     <modules>
-        <module>warm-mybatis-core</module>
-        <module>warm-mybatis-adapter</module>
+        <module>warm-mybatis-spring-boot-starter</module>
+        <module>warm-mybatis-solon-plugin</module>
     </modules>
+
 </project>
