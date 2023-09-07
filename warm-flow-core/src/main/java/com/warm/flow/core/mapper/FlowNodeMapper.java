@@ -1,7 +1,7 @@
 package com.warm.flow.core.mapper;
 
 import com.warm.flow.core.domain.entity.FlowNode;
-import com.warm.mybatis.core.mapper.FlowMapper;
+import com.warm.mybatis.core.mapper.WarmMapper;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import java.util.List;
  * @author hh
  * @date 2023-03-29
  */
-public interface FlowNodeMapper extends FlowMapper<FlowNode> {
+public interface FlowNodeMapper extends WarmMapper<FlowNode> {
     List<FlowNode> getLastByFlowCode(String flowCode);
 
     List<FlowNode> getByFlowCodeAndVersion(String flowCode, String version);

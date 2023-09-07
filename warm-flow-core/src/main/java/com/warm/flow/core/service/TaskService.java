@@ -2,7 +2,7 @@ package com.warm.flow.core.service;
 
 import com.warm.flow.core.domain.entity.FlowTask;
 import com.warm.mybatis.core.page.Page;
-import com.warm.mybatis.core.service.IFlowService;
+import com.warm.mybatis.core.service.IWarmService;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import java.util.List;
  * @author hh
  * @date 2023-03-29
  */
-public interface IFlowTaskService extends IFlowService<FlowTask> {
+public interface TaskService extends IWarmService<FlowTask> {
 
     /**
      * 根据实例ids获取待办任务

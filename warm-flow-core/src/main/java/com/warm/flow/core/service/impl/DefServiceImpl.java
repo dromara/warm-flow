@@ -9,12 +9,14 @@ import com.warm.flow.core.domain.entity.FlowSkip;
 import com.warm.flow.core.enums.PublishStatus;
 import com.warm.flow.core.exception.FlowException;
 import com.warm.flow.core.mapper.FlowDefinitionMapper;
-import com.warm.flow.core.service.IFlowDefinitionService;
+import com.warm.flow.core.service.DefService;
+import com.warm.flow.core.service.SkipService;
 import com.warm.flow.core.utils.FlowConfigUtil;
 import com.warm.mybatis.core.invoker.MapperInvoker;
-import com.warm.mybatis.core.service.impl.FlowServiceImpl;
+import com.warm.mybatis.core.service.impl.WarmServiceImpl;
 import org.dom4j.Document;
 
+import javax.annotation.Resource;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
@@ -27,7 +29,13 @@ import java.util.stream.Collectors;
  * @author hh
  * @date 2023-03-29
  */
-public class FlowDefinitionServiceImpl extends FlowServiceImpl<FlowDefinitionMapper, FlowDefinition> implements IFlowDefinitionService {
+public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionMapper, FlowDefinition> implements DefService {
+
+    @Resource
+    private DefService defService;
+
+    @Resource
+    private SkipService skipService;
 
     @Override
     public void importXml(InputStream is) throws Exception {
@@ -49,14 +57,14 @@ public class FlowDefinitionServiceImpl extends FlowServiceImpl<FlowDefinitionMap
     }
 
     public FlowDefinition getAllDataDefinition(Long id) {
-        FlowDefinition definition = FlowFactory.defService().getById(id);
+        FlowDefinition definition = defService.getById(id);
         FlowNode node = new FlowNode();
         node.setDefinitionId(id);
         List<FlowNode> nodeList = FlowFactory.nodeService().list(node);
         definition.setNodeList(nodeList);
         FlowSkip flowSkip = new FlowSkip();
         flowSkip.setDefinitionId(id);
-        List<FlowSkip> flowSkips = FlowFactory.skipService().list(flowSkip);
+        List<FlowSkip> flowSkips = skipService.list(flowSkip);
         Map<Long, List<FlowSkip>> flowSkipMap = flowSkips.stream()
                 .collect(Collectors.groupingBy(FlowSkip::getNodeId));
         nodeList.forEach(flowNode -> flowNode.setSkipList(flowSkipMap.get(flowNode.getId())));
@@ -73,16 +81,16 @@ public class FlowDefinitionServiceImpl extends FlowServiceImpl<FlowDefinitionMap
      */
     private void updateFlow(FlowDefinition definition, List<FlowNode> allNodes, List<FlowSkip> allSkips) {
         List<String> flowCodeList = Arrays.asList(definition.getFlowCode());
-        List<FlowDefinition> flowDefinitions = FlowFactory.defService().queryByCodeList(flowCodeList);
+        List<FlowDefinition> flowDefinitions = defService.queryByCodeList(flowCodeList);
         for (int j = 0; j < flowDefinitions.size(); j++) {
             FlowDefinition beforeDefinition = flowDefinitions.get(j);
             if (definition.getFlowCode().equals(beforeDefinition.getFlowCode()) && definition.getVersion().equals(beforeDefinition.getVersion())) {
                 throw new FlowException(definition.getFlowCode() + "(" + definition.getVersion() + ")" + FlowConstant.ALREADY_EXIST);
             }
         }
-        FlowFactory.defService().save(definition);
+        defService.save(definition);
         FlowFactory.nodeService().saveBatch(allNodes);
-        FlowFactory.skipService().saveBatch(allSkips);
+        skipService.saveBatch(allSkips);
     }
 
     @Override

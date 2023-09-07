@@ -2,7 +2,7 @@ package com.warm.flow.core.service;
 
 import com.warm.flow.core.domain.dto.FlowParams;
 import com.warm.flow.core.domain.entity.FlowInstance;
-import com.warm.mybatis.core.service.IFlowService;
+import com.warm.mybatis.core.service.IWarmService;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import java.util.List;
  * @author hh
  * @date 2023-03-29
  */
-public interface IFlowInstanceService extends IFlowService<FlowInstance> {
+public interface InsService extends IWarmService<FlowInstance> {
 
     /**
      * 根据id集合进行查询 行锁

@@ -1,7 +1,7 @@
 package com.warm.flow.core;
 
 import com.warm.flow.core.domain.entity.FlowDefinition;
-import com.warm.flow.core.service.impl.*;
+import com.warm.flow.core.service.impl.DefServiceImpl;
 import com.warm.mybatis.core.invoker.MapperInvoker;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
@@ -40,10 +40,8 @@ public class FlowTest {
         }
 
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
-        new FlowFactory(new FlowDefinitionServiceImpl(), new FlowHisTaskServiceImpl(), new FlowInstanceServiceImpl()
-                , new FlowNodeServiceImpl(), new FlowSkipServiceImpl(), new FlowTaskServiceImpl());
         MapperInvoker.mapperInvoker = new MapperInvoker(sqlSessionFactory);
-        FlowDefinition flowDefinition = FlowFactory.defService().getById(1148442523895730176L);
+        FlowDefinition flowDefinition = new DefServiceImpl().getById(1148442523895730176L);
         System.out.println(flowDefinition);
 
         // try (SqlSession session = sqlSessionFactory.openSession()) {

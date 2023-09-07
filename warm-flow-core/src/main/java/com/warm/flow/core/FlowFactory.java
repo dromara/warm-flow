@@ -10,16 +10,16 @@ import com.warm.flow.core.service.*;
 public class FlowFactory {
 
 
-    private static IFlowDefinitionService defService = null;
-    private static IFlowHisTaskService hisTaskService = null;
-    private static IFlowInstanceService insService = null;
-    private static IFlowNodeService nodeService = null;
-    private static IFlowSkipService skipService = null;
-    private static IFlowTaskService taskService = null;
+    private static DefService defService = null;
+    private static HisTaskService hisTaskService = null;
+    private static InsService insService = null;
+    private static NodeService nodeService = null;
+    private static SkipService skipService = null;
+    private static TaskService taskService = null;
 
-    public FlowFactory(IFlowDefinitionService defService, IFlowHisTaskService hisTaskService
-            , IFlowInstanceService insService, IFlowNodeService nodeService
-            , IFlowSkipService skipService, IFlowTaskService taskService) {
+    public FlowFactory(DefService defService, HisTaskService hisTaskService
+            , InsService insService, NodeService nodeService
+            , SkipService skipService, TaskService taskService) {
         FlowFactory.defService = defService;
         FlowFactory.hisTaskService = hisTaskService;
         FlowFactory.insService = insService;
@@ -29,27 +29,27 @@ public class FlowFactory {
     }
 
 
-    public static IFlowDefinitionService defService() {
+    public static DefService defService() {
         return defService;
     }
 
-    public static IFlowHisTaskService hisTaskService() {
+    public static HisTaskService hisTaskService() {
         return hisTaskService;
     }
 
-    public static IFlowInstanceService insService() {
+    public static InsService insService() {
         return insService;
     }
 
-    public static IFlowNodeService nodeService() {
+    public static NodeService nodeService() {
         return nodeService;
     }
 
-    public static IFlowSkipService skipService() {
+    public static SkipService skipService() {
         return skipService;
     }
 
-    public static IFlowTaskService taskService() {
+    public static TaskService taskService() {
         return taskService;
     }
 

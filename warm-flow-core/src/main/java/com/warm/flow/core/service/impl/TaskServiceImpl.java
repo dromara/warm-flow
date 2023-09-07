@@ -3,11 +3,11 @@ package com.warm.flow.core.service.impl;
 import com.warm.flow.core.constant.FlowConstant;
 import com.warm.flow.core.domain.entity.FlowTask;
 import com.warm.flow.core.mapper.FlowTaskMapper;
-import com.warm.flow.core.service.IFlowTaskService;
+import com.warm.flow.core.service.TaskService;
 import com.warm.flow.core.utils.AssertUtil;
 import com.warm.mybatis.core.invoker.MapperInvoker;
 import com.warm.mybatis.core.page.Page;
-import com.warm.mybatis.core.service.impl.FlowServiceImpl;
+import com.warm.mybatis.core.service.impl.WarmServiceImpl;
 import com.warm.mybatis.core.utils.SqlHelper;
 import com.warm.tools.utils.CollUtil;
 import com.warm.tools.utils.ObjectUtil;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  * @author hh
  * @date 2023-03-29
  */
-public class FlowTaskServiceImpl extends FlowServiceImpl<FlowTaskMapper, FlowTask> implements IFlowTaskService {
+public class TaskServiceImpl extends WarmServiceImpl<FlowTaskMapper, FlowTask> implements TaskService {
 
     @Override
     public List<FlowTask> getByInsIds(List<Long> instanceIds) {

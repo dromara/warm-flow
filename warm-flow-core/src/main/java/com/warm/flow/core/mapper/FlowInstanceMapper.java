@@ -1,7 +1,7 @@
 package com.warm.flow.core.mapper;
 
 import com.warm.flow.core.domain.entity.FlowInstance;
-import com.warm.mybatis.core.mapper.FlowMapper;
+import com.warm.mybatis.core.mapper.WarmMapper;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ import java.util.List;
  * @author hh
  * @date 2023-03-29
  */
-public interface FlowInstanceMapper extends FlowMapper<FlowInstance> {
+public interface FlowInstanceMapper extends WarmMapper<FlowInstance> {
 
     List<FlowInstance> getByIdWithLock(List<Long> ids);
 

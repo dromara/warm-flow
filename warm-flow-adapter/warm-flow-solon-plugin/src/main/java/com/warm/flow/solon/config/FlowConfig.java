@@ -22,39 +22,39 @@ import java.util.List;
 public class FlowConfig {
 
     @Bean
-    public IFlowDefinitionService definitionService() {
-        return new FlowDefinitionServiceImpl();
+    public DefService definitionService() {
+        return new DefServiceImpl();
     }
 
     @Bean
-    public IFlowNodeService nodeService() {
-        return new FlowNodeServiceImpl();
+    public NodeService nodeService() {
+        return new NodeServiceImpl();
     }
 
     @Bean
-    public IFlowSkipService skipService() {
-        return new FlowSkipServiceImpl();
+    public SkipService skipService() {
+        return new SkipServiceImpl();
     }
 
     @Bean
-    public IFlowInstanceService instanceService() {
-        return new FlowInstanceServiceImpl();
+    public InsService instanceService() {
+        return new InsServiceImpl();
     }
 
     @Bean
-    public IFlowTaskService taskService() {
-        return new FlowTaskServiceImpl();
+    public TaskService taskService() {
+        return new TaskServiceImpl();
     }
 
     @Bean
-    public IFlowHisTaskService hisTaskService() {
-        return new FlowHisTaskServiceImpl();
+    public HisTaskService hisTaskService() {
+        return new HisTaskServiceImpl();
     }
 
     @Bean
-    public FlowFactory initFlowServer(IFlowDefinitionService definitionService, IFlowHisTaskService hisTaskService
-            , IFlowInstanceService instanceService, IFlowNodeService nodeService
-            , IFlowSkipService skipService, IFlowTaskService taskService, DataSource dataSource) {
+    public FlowFactory initFlowServer(DefService definitionService, HisTaskService hisTaskService
+            , InsService instanceService, NodeService nodeService
+            , SkipService skipService, TaskService taskService, DataSource dataSource) {
 
         DataFillHandlerFactory.set(new DataFillHandlerImpl());
 

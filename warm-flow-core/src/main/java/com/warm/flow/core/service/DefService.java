@@ -1,7 +1,7 @@
 package com.warm.flow.core.service;
 
 import com.warm.flow.core.domain.entity.FlowDefinition;
-import com.warm.mybatis.core.service.IFlowService;
+import com.warm.mybatis.core.service.IWarmService;
 import org.dom4j.Document;
 
 import java.io.InputStream;
@@ -13,7 +13,7 @@ import java.util.List;
  * @author hh
  * @date 2023-03-29
  */
-public interface IFlowDefinitionService extends IFlowService<FlowDefinition> {
+public interface DefService extends IWarmService<FlowDefinition> {
 
     /**
      * 导入xml

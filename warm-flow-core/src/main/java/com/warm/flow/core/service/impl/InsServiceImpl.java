@@ -9,10 +9,10 @@ import com.warm.flow.core.enums.FlowStatus;
 import com.warm.flow.core.enums.NodeType;
 import com.warm.flow.core.exception.FlowException;
 import com.warm.flow.core.mapper.FlowInstanceMapper;
-import com.warm.flow.core.service.IFlowInstanceService;
+import com.warm.flow.core.service.InsService;
 import com.warm.flow.core.utils.AssertUtil;
 import com.warm.mybatis.core.invoker.MapperInvoker;
-import com.warm.mybatis.core.service.impl.FlowServiceImpl;
+import com.warm.mybatis.core.service.impl.WarmServiceImpl;
 import com.warm.tools.utils.ArrayUtil;
 import com.warm.tools.utils.CollUtil;
 import com.warm.tools.utils.IdUtils;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  * @author hh
  * @date 2023-03-29
  */
-public class FlowInstanceServiceImpl extends FlowServiceImpl<FlowInstanceMapper, FlowInstance> implements IFlowInstanceService {
+public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInstance> implements InsService {
 
     @Override
     public List<FlowInstance> getByIdWithLock(List<Long> ids) {

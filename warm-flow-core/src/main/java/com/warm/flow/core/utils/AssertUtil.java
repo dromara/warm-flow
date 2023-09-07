@@ -27,12 +27,24 @@ public class AssertUtil {
         }
     }
 
+    /**
+     * 为true不抛异常
+     *
+     * @param obj
+     * @param errorMsg
+     */
     public static void isTrue(boolean obj, String errorMsg) {
         if (!obj) {
             throw new FlowException(errorMsg);
         }
     }
 
+    /**
+     * 为false不抛异常
+     *
+     * @param obj
+     * @param errorMsg
+     */
     public static void isFalse(boolean obj, String errorMsg) {
         if (obj) {
             throw new FlowException(errorMsg);

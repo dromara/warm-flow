@@ -1,6 +1,6 @@
 package com.warm.flow.core.domain.entity;
 
-import com.warm.mybatis.core.entity.FlowEntity;
+import com.warm.mybatis.core.entity.WarmEntity;
 
 import java.util.Date;
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.List;
  * @author hh
  * @date 2023-03-29
  */
-public class FlowTask implements FlowEntity {
+public class FlowTask implements WarmEntity {
     private static final long serialVersionUID = 1L;
 
     /**

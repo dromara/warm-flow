@@ -1,7 +1,7 @@
 package com.warm.flow.core.service;
 
 import com.warm.flow.core.domain.entity.FlowSkip;
-import com.warm.mybatis.core.service.IFlowService;
+import com.warm.mybatis.core.service.IWarmService;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ import java.util.List;
  * @author hh
  * @date 2023-03-29
  */
-public interface IFlowSkipService extends IFlowService<FlowSkip> {
+public interface SkipService extends IWarmService<FlowSkip> {
 
     /**
      * 根据nodeId删除

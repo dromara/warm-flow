@@ -1,7 +1,7 @@
 package com.warm.flow.core.mapper;
 
 import com.warm.flow.core.domain.entity.FlowDefinition;
-import com.warm.mybatis.core.mapper.FlowMapper;
+import com.warm.mybatis.core.mapper.WarmMapper;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -13,7 +13,7 @@ import java.util.List;
  * @author hh
  * @date 2023-03-29
  */
-public interface FlowDefinitionMapper extends FlowMapper<FlowDefinition> {
+public interface FlowDefinitionMapper extends WarmMapper<FlowDefinition> {
 
 
     List<FlowDefinition> queryByCodeList(List<String> flowCodeList);
