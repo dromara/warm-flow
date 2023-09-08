@@ -61,25 +61,10 @@ public class FlowConfig {
     @Bean
     public FlowFactory initFlowServer(DefService definitionService, HisTaskService hisTaskService
             , InsService instanceService, NodeService nodeService, SkipService skipService
-            , TaskService taskService, SqlSessionFactory sqlSessionFactory) {
+            , TaskService taskService) {
 
         DataFillHandlerFactory.set(new DataFillHandlerImpl());
 
-        List<String> mapperList = Arrays.asList("warm/flow/FlowDefinitionMapper.xml", "warm/flow/FlowHisTaskMapper.xml"
-                , "warm/flow/FlowInstanceMapper.xml", "warm/flow/FlowNodeMapper.xml"
-                , "warm/flow/FlowSkipMapper.xml", "warm/flow/FlowTaskMapper.xml");
-
-        org.apache.ibatis.session.Configuration configuration = sqlSessionFactory.getConfiguration();
-        try {
-            for (String mapper : mapperList) {
-                XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(Resources.getResourceAsStream(mapper),
-                        configuration, getClass().getResource("/") + mapper, configuration.getSqlFragments());
-                xmlMapperBuilder.parse();
-            }
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
         MapperInvoker.setMapperFunction(SpringUtil::getBean);
         return new FlowFactory(definitionService, hisTaskService, instanceService
                 , nodeService, skipService, taskService);

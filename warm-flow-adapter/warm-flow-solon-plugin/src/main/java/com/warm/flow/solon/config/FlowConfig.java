@@ -58,29 +58,9 @@ public class FlowConfig {
     @Bean
     public FlowFactory initFlowServer(DefService definitionService, HisTaskService hisTaskService
             , InsService instanceService, NodeService nodeService, SkipService skipService
-            , TaskService taskService, @Db("db1") org.apache.ibatis.session.Configuration db1Cfg) {
+            , TaskService taskService) {
 
         DataFillHandlerFactory.set(new DataFillHandlerImpl());
-
-        // List<String> mapperList = Arrays.asList("warm/flow/FlowDefinitionMapper.xml", "warm/flow/FlowHisTaskMapper.xml"
-        //         , "warm/flow/FlowInstanceMapper.xml", "warm/flow/FlowNodeMapper.xml"
-        //         , "warm/flow/FlowSkipMapper.xml", "warm/flow/FlowTaskMapper.xml");
-        // db1Cfg.addMapper(FlowDefinitionMapper.class);
-        // db1Cfg.addMapper(FlowHisTaskMapper.class);
-        // db1Cfg.addMapper(FlowInstanceMapper.class);
-        // db1Cfg.addMapper(FlowNodeMapper.class);
-        // db1Cfg.addMapper(FlowSkipMapper.class);
-        // db1Cfg.addMapper(FlowTaskMapper.class);
-        // try {
-        //     for (String mapper : mapperList) {
-        //         XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(Resources.getResourceAsStream(mapper),
-        //                 db1Cfg, getClass().getResource("/") + mapper, db1Cfg.getSqlFragments());
-        //         xmlMapperBuilder.parse();
-        //     }
-        //
-        // } catch (Exception e) {
-        //     throw new RuntimeException(e);
-        // }
 
         MapperInvoker.setMapperFunction(Solon.context()::getBean);
         return new FlowFactory(definitionService, hisTaskService, instanceService
