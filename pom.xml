@@ -45,7 +45,7 @@
     </modules>
 
     <properties>
-        <revision>0.0.3</revision>
+        <revision>0.0.4</revision>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -60,8 +60,8 @@
         <junit.version>4.13.2</junit.version>
         <solon.version>2.5.3</solon.version>
 
-        <warm-tool>0.0.3</warm-tool>
-        <warm-mybatis>0.0.3</warm-mybatis>
+        <warm-tool>0.0.4</warm-tool>
+        <warm-mybatis>0.0.4</warm-mybatis>
     </properties>
 
     <dependencyManagement>

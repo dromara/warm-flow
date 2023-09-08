@@ -1,13 +1,13 @@
 package com.warm.flow.core;
 
 import com.warm.flow.core.domain.entity.FlowDefinition;
-import com.warm.flow.core.service.impl.DefServiceImpl;
-import com.warm.mybatis.core.invoker.MapperInvoker;
+import com.warm.flow.core.mapper.FlowDefinitionMapper;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.TransactionFactory;
@@ -40,15 +40,11 @@ public class FlowTest {
         }
 
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
-        MapperInvoker.mapperInvoker = new MapperInvoker(sqlSessionFactory);
-        FlowDefinition flowDefinition = new DefServiceImpl().getById(1148442523895730176L);
-        System.out.println(flowDefinition);
-
-        // try (SqlSession session = sqlSessionFactory.openSession()) {
-        //     FlowDefinitionMapper mapper = session.getMapper(FlowDefinitionMapper.class);
-        //     FlowDefinition flowDefinition = mapper.selectById(1148442523895730176L);
-        //     System.out.println(flowDefinition);
-        // }
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            FlowDefinitionMapper mapper = session.getMapper(FlowDefinitionMapper.class);
+            FlowDefinition flowDefinition = mapper.selectById(1148442523895730176L);
+            System.out.println(flowDefinition);
+        }
     }
 
     private static Configuration getConfiguration() {

@@ -3,7 +3,6 @@ package com.warm.flow.core.service.impl;
 import com.warm.flow.core.domain.entity.FlowHisTask;
 import com.warm.flow.core.mapper.FlowHisTaskMapper;
 import com.warm.flow.core.service.HisTaskService;
-import com.warm.mybatis.core.invoker.MapperInvoker;
 import com.warm.mybatis.core.page.Page;
 import com.warm.mybatis.core.service.impl.WarmServiceImpl;
 import com.warm.mybatis.core.utils.SqlHelper;
@@ -23,21 +22,20 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskMapper, FlowH
 
     @Override
     public List<FlowHisTask> getByInsIds(Long instanceId) {
-        return MapperInvoker.have(baseMapper -> baseMapper.getByInsId(instanceId), mapperClass());
+        return getMapper().getByInsId(instanceId);
     }
 
     @Override
     public boolean deleteByInsIds(List<Long> instanceIds) {
-        Integer result = MapperInvoker.have(baseMapper -> baseMapper.deleteByInsIds(instanceIds), mapperClass());
-        return SqlHelper.retBool(result);
+        return SqlHelper.retBool(getMapper().deleteByInsIds(instanceIds));
     }
 
     @Override
     public Page<FlowHisTask> donePage(FlowHisTask flowHisTask, Page<FlowHisTask> page) {
-        long count = MapperInvoker.have(baseMapper -> baseMapper.countDone(flowHisTask, page), mapperClass());
+        long count = getMapper().countDone(flowHisTask, page);
 
         if (count > 0) {
-            List<FlowHisTask> list = MapperInvoker.have(baseMapper -> baseMapper.donePage(flowHisTask, page), mapperClass());
+            List<FlowHisTask> list = getMapper().donePage(flowHisTask, page);
             // 根据权限标识符过滤
             List<String> permissionFlagD = CollUtil.strToColl(flowHisTask.getPermissionFlag(), ",");
             if (ObjectUtil.isNull(permissionFlagD)) {

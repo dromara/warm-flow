@@ -11,7 +11,6 @@ import com.warm.flow.core.exception.FlowException;
 import com.warm.flow.core.mapper.FlowInstanceMapper;
 import com.warm.flow.core.service.InsService;
 import com.warm.flow.core.utils.AssertUtil;
-import com.warm.mybatis.core.invoker.MapperInvoker;
 import com.warm.mybatis.core.service.impl.WarmServiceImpl;
 import com.warm.tools.utils.ArrayUtil;
 import com.warm.tools.utils.CollUtil;
@@ -33,10 +32,10 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
     @Override
     public List<FlowInstance> getByIdWithLock(List<Long> ids) {
         AssertUtil.isFalse(CollUtil.isEmpty(ids), FlowConstant.NOT_FOUNT_INSTANCE_ID);
-        for (int i = 0; i < ids.size(); i++) {
-            AssertUtil.isNull(ids.get(i), "流程定义id不能为空!");
+        for (Long id : ids) {
+            AssertUtil.isNull(id, "流程定义id不能为空!");
         }
-        return MapperInvoker.have(baseMapper -> baseMapper.getByIdWithLock(ids), mapperClass());
+        return getMapper().getByIdWithLock(ids);
     }
 
     @Override
@@ -108,7 +107,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
             instances.add(instance);
             taskList.add(task);
         }
-        FlowFactory.insService().saveBatch(instances);
+        saveBatch(instances);
         FlowFactory.taskService().saveBatch(taskList);
         return instances;
     }
@@ -144,10 +143,9 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
 
             insHisList.add(insHis);
         }
-
         FlowFactory.hisTaskService().saveBatch(insHisList);
         FlowFactory.taskService().updateBatch(taskList);
-        FlowFactory.insService().updateBatch(instances);
+        updateBatch(instances);
         return instances;
     }
 

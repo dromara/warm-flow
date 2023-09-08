@@ -3,7 +3,6 @@ package com.warm.flow.core.service.impl;
 import com.warm.flow.core.domain.entity.FlowSkip;
 import com.warm.flow.core.mapper.FlowSkipMapper;
 import com.warm.flow.core.service.SkipService;
-import com.warm.mybatis.core.invoker.MapperInvoker;
 import com.warm.mybatis.core.service.impl.WarmServiceImpl;
 import com.warm.mybatis.core.utils.SqlHelper;
 
@@ -19,8 +18,7 @@ public class SkipServiceImpl extends WarmServiceImpl<FlowSkipMapper, FlowSkip> i
 
     @Override
     public boolean deleteByNodeId(Long nodeId) {
-        Integer result = MapperInvoker.have(baseMapper -> baseMapper.deleteByNodeId(nodeId), mapperClass());
-        return SqlHelper.retBool(result);
+        return SqlHelper.retBool(getMapper().deleteByNodeId(nodeId));
     }
 
     /**
@@ -31,8 +29,7 @@ public class SkipServiceImpl extends WarmServiceImpl<FlowSkipMapper, FlowSkip> i
      */
     @Override
     public boolean deleteByNodeIds(List<Long> nodeIds) {
-        Integer result = MapperInvoker.have(baseMapper -> baseMapper.deleteByNodeIds(nodeIds), mapperClass());
-        return SqlHelper.retBool(result);
+        return SqlHelper.retBool(getMapper().deleteByNodeIds(nodeIds));
     }
 
 }

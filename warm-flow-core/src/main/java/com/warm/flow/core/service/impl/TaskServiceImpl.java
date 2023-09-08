@@ -5,7 +5,6 @@ import com.warm.flow.core.domain.entity.FlowTask;
 import com.warm.flow.core.mapper.FlowTaskMapper;
 import com.warm.flow.core.service.TaskService;
 import com.warm.flow.core.utils.AssertUtil;
-import com.warm.mybatis.core.invoker.MapperInvoker;
 import com.warm.mybatis.core.page.Page;
 import com.warm.mybatis.core.service.impl.WarmServiceImpl;
 import com.warm.mybatis.core.utils.SqlHelper;
@@ -29,14 +28,14 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskMapper, FlowTask> i
         for (int i = 0; i < instanceIds.size(); i++) {
             AssertUtil.isNull(instanceIds.get(i), "流程定义id不能为空!");
         }
-        return MapperInvoker.have(baseMapper -> baseMapper.getByInsIds(instanceIds), mapperClass());
+        return getMapper().getByInsIds(instanceIds);
     }
 
     @Override
     public Page<FlowTask> toDoPage(FlowTask flowTask, Page<FlowTask> page) {
-        long count = have(baseMapper -> baseMapper.countTodo(flowTask, page));
+        long count = getMapper().countTodo(flowTask, page);
         if (count > 0) {
-            List<FlowTask> list = MapperInvoker.have(baseMapper -> baseMapper.toDoPage(flowTask, page), mapperClass());
+            List<FlowTask> list = getMapper().toDoPage(flowTask, page);
             // 根据权限标识符过滤
             List<String> permissionFlagD = CollUtil.strToColl(flowTask.getPermissionFlag(), ",");
             if (ObjectUtil.isNull(permissionFlagD)) {
@@ -59,7 +58,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskMapper, FlowTask> i
 
     @Override
     public boolean deleteByInsIds(List<Long> instanceIds) {
-        Integer result = MapperInvoker.have(baseMapper -> baseMapper.deleteByInsIds(instanceIds), mapperClass());
-        return SqlHelper.retBool(result);
+        return SqlHelper.retBool(getMapper().deleteByInsIds(instanceIds));
     }
 }

@@ -3,7 +3,6 @@ package com.warm.flow.core.service.impl;
 import com.warm.flow.core.domain.entity.FlowNode;
 import com.warm.flow.core.mapper.FlowNodeMapper;
 import com.warm.flow.core.service.NodeService;
-import com.warm.mybatis.core.invoker.MapperInvoker;
 import com.warm.mybatis.core.service.impl.WarmServiceImpl;
 
 import java.util.List;
@@ -18,7 +17,7 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeMapper, FlowNode> i
 
     @Override
     public List<FlowNode> getLastByFlowCode(String flowCode) {
-        return MapperInvoker.have(baseMapper -> baseMapper.getLastByFlowCode(flowCode), mapperClass());
+        return getMapper().getLastByFlowCode(flowCode);
     }
 
 }
