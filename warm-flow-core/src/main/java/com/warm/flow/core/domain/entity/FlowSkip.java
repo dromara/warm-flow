@@ -39,9 +39,20 @@ public class FlowSkip implements WarmEntity {
     private String nextNodeCode;
 
     /**
-     * 跳转条件(非空情况下才做条件校验)
+     * 跳转类型（PASS审批通过 REJECT驳回）
      */
-    private String conditionValue;
+    private String skipType;
+
+    /**
+     * 跳转方式（SERIAL串行 PARALLEL并行）
+     */
+    private String skipMode;
+
+    /**
+     * 跳转条件
+     */
+    private String skipCondition;
+
 
     /**
      * 创建时间
@@ -95,12 +106,28 @@ public class FlowSkip implements WarmEntity {
         this.nextNodeCode = nextNodeCode;
     }
 
-    public String getConditionValue() {
-        return conditionValue;
+    public String getSkipType() {
+        return skipType;
     }
 
-    public void setConditionValue(String conditionValue) {
-        this.conditionValue = conditionValue;
+    public void setSkipType(String skipType) {
+        this.skipType = skipType;
+    }
+
+    public String getSkipMode() {
+        return skipMode;
+    }
+
+    public void setSkipMode(String skipMode) {
+        this.skipMode = skipMode;
+    }
+
+    public String getSkipCondition() {
+        return skipCondition;
+    }
+
+    public void setSkipCondition(String skipCondition) {
+        this.skipCondition = skipCondition;
     }
 
     @Override

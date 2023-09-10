@@ -17,7 +17,6 @@
         <result property="flowStatus" column="flow_status"/>
         <result property="permissionFlag" column="permission_flag"/>
         <result property="message" column="message"/>
-        <result property="conditionValue" column="condition_value"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
         <result property="businessId" column="business_id"/>
@@ -38,7 +37,6 @@
                t.instance_id,
                t.flow_status,
                t.message,
-               t.condition_value,
                t.create_time,
                t.update_time,
                t.tenant_id
@@ -70,9 +68,6 @@
             <if test="entity.approver != null  and entity.approver != ''">and t.approver = #{entity.approver}</if>
             <if test="entity.instanceId != null ">and instance_id = #{entity.instanceId}</if>
             <if test="entity.message != null  and entity.message != ''">and t.message = #{entity.message}</if>
-            <if test="entity.conditionValue != null  and entity.conditionValue != ''">and t.condition_value =
-                #{entity.conditionValue}
-            </if>
             <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
         </where>
     </sql>
@@ -125,7 +120,7 @@
 
     <select id="donePage" resultMap="FlowHisTaskResult">
         select t.id, t.node_code, t.node_name, t.node_type, t.target_node_code, t.target_node_name, t.approver
-        , t.definition_id, t.instance_id, t.flow_status, t.message, t.condition_value, t.create_time, t.update_time
+        , t.definition_id, t.instance_id, t.flow_status, t.message, t.create_time, t.update_time
         ,t.permission_flag, t.tenant_id, i.business_id, d.flow_name from flow_his_task t
         LEFT JOIN flow_definition d on t.definition_id = d.id
         LEFT JOIN flow_instance i on t.instance_id = i.id
@@ -154,7 +149,6 @@
             <if test="flowStatus != null">flow_status,</if>
             <if test="permissionFlag != null">permission_flag,</if>
             <if test="message != null">message,</if>
-            <if test="conditionValue != null">condition_value,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
             <if test="tenantId != null">tenant_id,</if>
@@ -172,7 +166,6 @@
             <if test="flowStatus != null">#{flowStatus},</if>
             <if test="permissionFlag != null">#{permissionFlag},</if>
             <if test="message != null">#{message},</if>
-            <if test="conditionValue != null">#{conditionValue},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
             <if test="tenantId != null">#{tenantId},</if>
@@ -193,7 +186,6 @@
             <if test="flowStatus != null">flow_status = #{flowStatus},</if>
             <if test="permissionFlag != null">permission_flag = #{permissionFlag},</if>
             <if test="message != null">message = #{message},</if>
-            <if test="conditionValue != null">condition_value = #{conditionValue},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="tenantId != null">tenant_id = #{tenantId},</if>

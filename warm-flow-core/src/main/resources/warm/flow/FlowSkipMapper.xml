@@ -4,13 +4,15 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.warm.flow.core.mapper.FlowSkipMapper">
 
-    <resultMap type="com.warm.flow.core.domain.entity.FlowSkip" id="FlowLineResult">
+    <resultMap type="com.warm.flow.core.domain.entity.FlowSkip" id="FlowSkipResult">
         <result property="id" column="id"/>
         <result property="definitionId" column="definition_id"/>
         <result property="nodeId" column="node_id"/>
         <result property="nowNodeCode" column="now_node_code"/>
         <result property="nextNodeCode" column="next_node_code"/>
-        <result property="conditionValue" column="condition_value"/>
+        <result property="skipType" column="skip_type"/>
+        <result property="skipMode" column="skip_mode"/>
+        <result property="skipCondition" column="skip_condition"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
     </resultMap>
@@ -21,7 +23,9 @@
                t.node_id,
                t.now_node_code,
                t.next_node_code,
-               t.condition_value,
+               t.skip_type,
+               t.skip_mode,
+               t.skip_condition,
                t.create_time,
                t.update_time
         from flow_skip t
@@ -45,8 +49,8 @@
             <if test="entity.nextNodeCode != null and entity.nextNodeCode != ''">and t.next_node_code =
                 #{entity.nextNodeCode}
             </if>
-            <if test="entity.conditionValue != null and entity.conditionValue != ''">and t.condition_value =
-                #{entity.conditionValue}
+            <if test="entity.skipType != null and entity.skipType != ''">and t.skip_type =
+                #{entity.skipType}
             </if>
         </where>
     </sql>
@@ -56,14 +60,14 @@
         <include refid="select_parameter"/>
     </select>
 
-    <select id="selectList" parameterType="com.warm.flow.core.domain.entity.FlowSkip" resultMap="FlowLineResult">
+    <select id="selectList" parameterType="com.warm.flow.core.domain.entity.FlowSkip" resultMap="FlowSkipResult">
         <include refid="selectVo"/>
         <include refid="select_parameter"/>
         <include refid="order_by"/>
         <include refid="paging_end"/>
     </select>
 
-    <select id="selectByIds" parameterType="Long" resultMap="FlowLineResult">
+    <select id="selectByIds" parameterType="Long" resultMap="FlowSkipResult">
         <include refid="selectVo"/>
         where t.id in
         <foreach item="id" collection="list" open="(" separator="," close=")">
@@ -71,7 +75,7 @@
         </foreach>
     </select>
 
-    <select id="selectById" parameterType="Long" resultMap="FlowLineResult">
+    <select id="selectById" parameterType="Long" resultMap="FlowSkipResult">
         <include refid="selectVo"/>
         where id = #{id}
     </select>
@@ -84,7 +88,9 @@
             <if test="nodeId != null">node_id,</if>
             <if test="nowNodeCode != null and nowNodeCode != ''">now_node_code,</if>
             <if test="nextNodeCode != null and nextNodeCode != ''">next_node_code,</if>
-            <if test="conditionValue != null">condition_value,</if>
+            <if test="skipType != null">skip_type,</if>
+            <if test="skipMode != null">skip_mode,</if>
+            <if test="skipCondition != null">skip_condition,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
         </trim>
@@ -94,7 +100,9 @@
             <if test="nodeId != null">#{nodeId},</if>
             <if test="nowNodeCode != null and nowNodeCode != ''">#{nowNodeCode},</if>
             <if test="nextNodeCode != null and nextNodeCode != ''">#{nextNodeCode},</if>
-            <if test="conditionValue != null">#{conditionValue},</if>
+            <if test="skipType != null">#{skipType},</if>
+            <if test="skipMode != null">#{skipMode},</if>
+            <if test="skipCondition != null">#{skipCondition},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
         </trim>
@@ -107,7 +115,9 @@
             <if test="nodeId != null">node_id = #{nodeId},</if>
             <if test="nowNodeCode != null and nowNodeCode != ''">now_node_code = #{nowNodeCode},</if>
             <if test="nextNodeCode != null and nextNodeCode != ''">next_node_code = #{nextNodeCode},</if>
-            <if test="conditionValue != null">condition_value = #{conditionValue},</if>
+            <if test="skipType != null">skip_type = #{skipType},</if>
+            <if test="skipMode != null">skip_mode = #{skipMode},</if>
+            <if test="skipCondition != null">skip_condition = #{skipCondition},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
         </trim>

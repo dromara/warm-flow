@@ -10,7 +10,7 @@ public class FlowConstant {
     //******************************以下为异常常量****************************************
 
 
-    public static final String SAME_CONDITION_VALUE = "同一个结点不能有相同的跳转条件!";
+    public static final String SAME_CONDITION_VALUE = "同一个结点不能有相同的跳转跳转类型!";
 
     public static final String SAME_DEST_NODE = "同一结点不能跳转同一个目标结点!";
 
@@ -30,15 +30,17 @@ public class FlowConstant {
 
     public static final String MUL_FROM_STATUS = "存在流程状态不同的流程,无法批量处理!";
 
-    public static final String NULL_DEST_NODE = "无法跳转到结点,请检查跳转条件和当前用户权限是否匹配!";
+    public static final String NULL_DEST_NODE = "无法跳转到结点,请检查跳转类型和当前用户权限是否匹配!";
 
-    public static final String NULL_CONDITIONVALUE_NODE = "无法跳转到结点,请检查跳转条件是否匹配!";
+    public static final String NULL_CONDITIONVALUE_NODE = "无法跳转到结点,请检查跳转类型是否匹配!";
+
+    public static final String NULL_CONDITIONVALUE = "跳转条件不能为空!";
 
     public static final String FRIST_FORBID_BACK = "第一个结点禁止驳回";
 
     public static final String NULL_ROLE_NODE = "无法跳转到该结点,请检查当前用户是否有权限!";
 
-    public static final String MEANINGLESS_CONDITION = "开始结点不需要设置跳转条件和权限标识!";
+    public static final String MEANINGLESS_CONDITION = "开始结点不需要设置跳转类型和权限标识!";
 
     public static final String MUL_BUSINESS_ID = "当前业务id已经创建过流程!";
 

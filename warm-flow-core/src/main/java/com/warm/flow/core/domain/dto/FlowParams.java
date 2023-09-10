@@ -31,6 +31,22 @@ public class FlowParams {
     private List<String> permissionFlag;
 
     /**
+     * 跳转类型（PASS审批通过 REJECT驳回）
+     */
+    private String skipType;
+
+
+    /**
+     * 跳转条件
+     */
+    private String skipCondition;
+
+    /**
+     * 审批意见
+     */
+    private String message;
+
+    /**
      * 扩展字段
      */
     private String ext;
@@ -61,6 +77,30 @@ public class FlowParams {
 
     public FlowParams permissionFlag(List<String> permissionFlag) {
         this.permissionFlag = permissionFlag;
+        return this;
+    }
+
+    public FlowParams skipType(String skipType) {
+        this.skipType = skipType;
+        return this;
+    }
+
+    public FlowParams skipCondition(String skipCondition) {
+        this.skipCondition = skipCondition;
+        return this;
+    }
+
+
+    public String getSkipCondition() {
+        return skipCondition;
+    }
+
+    public void setSkipCondition(String skipCondition) {
+        this.skipCondition = skipCondition;
+    }
+
+    public FlowParams message(String message) {
+        this.message = message;
         return this;
     }
 
@@ -104,6 +144,23 @@ public class FlowParams {
 
     public void setPermissionFlag(List<String> permissionFlag) {
         this.permissionFlag = permissionFlag;
+    }
+
+
+    public String getSkipType() {
+        return skipType;
+    }
+
+    public void setSkipType(String skipType) {
+        this.skipType = skipType;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public String getExt() {

@@ -57,7 +57,6 @@ public class FlowConfigUtil {
         Element definitionElement = flowElements.get(0);
         // 读取流程定义
         FlowDefinition definition = new FlowDefinition();
-        ;
         definition.setFlowCode(definitionElement.attributeValue("flowCode"));
         definition.setFlowName(definitionElement.attributeValue("flowName"));
         definition.setVersion(definitionElement.attributeValue("version"));
@@ -102,7 +101,9 @@ public class FlowConfigUtil {
             if ("skip".equals(skipElement.getName())) {
                 skip.setNextNodeCode(skipElement.getText());
                 // 条件约束
-                skip.setConditionValue(skipElement.attributeValue("conditionValue"));
+                skip.setSkipType(skipElement.attributeValue("skipType"));
+                skip.setSkipMode(skipElement.attributeValue("skipMode"));
+                skip.setSkipCondition(skipElement.attributeValue("skipCondition"));
                 skips.add(skip);
             }
         }
@@ -137,8 +138,13 @@ public class FlowConfigUtil {
             if (CollUtil.isNotEmpty(skipList)) {
                 for (FlowSkip skip : skipList) {
                     Element skipElement = nodeElement.addElement("skip");
-                    if (StringUtils.isNotEmpty(skip.getConditionValue())) {
-                        skipElement.addAttribute("conditionValue", skip.getConditionValue());
+                    if (StringUtils.isNotEmpty(skip.getSkipType())) {
+                        AssertUtil.isTrue(StringUtils.isNotEmpty(skip.getSkipMode()), "跳转方式不能为空");
+                        AssertUtil.isTrue(StringUtils.isNotEmpty(skip.getSkipType()), "跳转类型不能为空");
+                        AssertUtil.isTrue(StringUtils.isNotEmpty(skip.getNextNodeCode()), "下一个流程结点编码为空");
+                        skipElement.addAttribute("skipType", skip.getSkipType());
+                        skipElement.addAttribute("skipMode", skip.getSkipMode());
+                        skipElement.addAttribute("skipCondition", skip.getSkipCondition());
                     }
                     skipElement.addText(skip.getNextNodeCode());
                 }
@@ -243,11 +249,11 @@ public class FlowConfigUtil {
             // 起始结点
             skip.setNowNodeCode(nodeCode);
             // 目标结点
-            String target = skip.getNextNodeCode();
+            String target = skip.getSkipCondition() + ":" + skip.getNextNodeCode();
             AssertUtil.isBlank(target, "【" + nodeName + "】" + FlowConstant.LOST_DEST_NODE);
             AssertUtil.isFalse(targetSet.contains(target), "[" + nodeName + "]" + FlowConstant.SAME_DEST_NODE);
             targetSet.add(target);
-            String value = skip.getConditionValue();
+            String value = skip.getSkipType() + ":" + skip.getSkipCondition();
             AssertUtil.isFalse(conditionSet.contains(value), "[" + nodeName + "]" + FlowConstant.SAME_CONDITION_VALUE);
             conditionSet.add(value);
         }

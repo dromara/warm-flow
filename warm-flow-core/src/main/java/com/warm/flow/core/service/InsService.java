@@ -4,6 +4,7 @@ import com.warm.flow.core.domain.dto.FlowParams;
 import com.warm.flow.core.domain.entity.FlowInstance;
 import com.warm.mybatis.core.service.IWarmService;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -44,43 +45,27 @@ public interface InsService extends IWarmService<FlowInstance> {
      * 流程跳转
      *
      * @param instanceId
-     * @param conditionValue
      * @param flowUser
      * @return
      */
-    FlowInstance skipFlow(Long instanceId, String conditionValue, FlowParams flowUser);
+    FlowInstance skipFlow(Long instanceId, FlowParams flowUser);
 
     /**
      * 流程跳转
      *
      * @param instanceIds
-     * @param conditionValue
      * @param flowUser
      * @return
      */
-    List<FlowInstance> skipFlow(List<Long> instanceIds, String conditionValue, FlowParams flowUser);
+    List<FlowInstance> skipFlow(List<Long> instanceIds, FlowParams flowUser);
 
     /**
      * 流程跳转
      *
      * @param instanceId
-     * @param conditionValue
-     * @param message
-     * @param flowUser
      * @return
      */
-    FlowInstance skipFlow(Long instanceId, String conditionValue, String message, FlowParams flowUser);
-
-    /**
-     * 流程跳转
-     *
-     * @param instanceIds
-     * @param conditionValue
-     * @param message
-     * @param flowUser
-     * @return
-     */
-    List<FlowInstance> skipFlow(List<Long> instanceIds, String conditionValue, String message, FlowParams flowUser);
+    boolean removeTask(Long instanceId);
 
     /**
      * 流程跳转

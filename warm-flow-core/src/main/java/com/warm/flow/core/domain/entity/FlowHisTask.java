@@ -95,11 +95,6 @@ public class FlowHisTask implements WarmEntity {
     private String message;
 
     /**
-     * 跳转条件
-     */
-    private String conditionValue;
-
-    /**
      * 创建者
      */
     private String createBy;
@@ -237,14 +232,6 @@ public class FlowHisTask implements WarmEntity {
 
     public void setMessage(String message) {
         this.message = message;
-    }
-
-    public String getConditionValue() {
-        return conditionValue;
-    }
-
-    public void setConditionValue(String conditionValue) {
-        this.conditionValue = conditionValue;
     }
 
     public String getCreateBy() {
