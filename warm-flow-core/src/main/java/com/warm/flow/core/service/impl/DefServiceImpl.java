@@ -1,7 +1,7 @@
 package com.warm.flow.core.service.impl;
 
 import com.warm.flow.core.FlowFactory;
-import com.warm.flow.core.constant.FlowConstant;
+import com.warm.flow.core.constant.ExceptionCons;
 import com.warm.flow.core.domain.dto.FlowCombine;
 import com.warm.flow.core.domain.entity.FlowDefinition;
 import com.warm.flow.core.domain.entity.FlowNode;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 /**
  * 流程定义Service业务层处理
  *
- * @author hh
+ * @author warm
  * @date 2023-03-29
  */
 public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionMapper, FlowDefinition> implements DefService {
@@ -76,7 +76,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionMapper, FlowDe
         for (int j = 0; j < flowDefinitions.size(); j++) {
             FlowDefinition beforeDefinition = flowDefinitions.get(j);
             if (definition.getFlowCode().equals(beforeDefinition.getFlowCode()) && definition.getVersion().equals(beforeDefinition.getVersion())) {
-                throw new FlowException(definition.getFlowCode() + "(" + definition.getVersion() + ")" + FlowConstant.ALREADY_EXIST);
+                throw new FlowException(definition.getFlowCode() + "(" + definition.getVersion() + ")" + ExceptionCons.ALREADY_EXIST);
             }
         }
         FlowFactory.defService().save(definition);
@@ -100,7 +100,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionMapper, FlowDe
         List<FlowDefinition> flowDefinitions = queryByCodeList(flowCodeList);
         for (FlowDefinition beforeDefinition : flowDefinitions) {
             if (flowDefinition.getFlowCode().equals(beforeDefinition.getFlowCode()) && flowDefinition.getVersion().equals(beforeDefinition.getVersion())) {
-                throw new FlowException(flowDefinition.getFlowCode() + "(" + flowDefinition.getVersion() + ")" + FlowConstant.ALREADY_EXIST);
+                throw new FlowException(flowDefinition.getFlowCode() + "(" + flowDefinition.getVersion() + ")" + ExceptionCons.ALREADY_EXIST);
             }
         }
         return save(flowDefinition);

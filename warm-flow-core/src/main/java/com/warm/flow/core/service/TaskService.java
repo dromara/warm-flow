@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * 待办任务Service接口
  *
- * @author hh
+ * @author warm
  * @date 2023-03-29
  */
 public interface TaskService extends IWarmService<FlowTask> {
@@ -17,10 +17,10 @@ public interface TaskService extends IWarmService<FlowTask> {
     /**
      * 根据实例ids获取待办任务
      *
-     * @param instanceIds
+     * @param instanceId
      * @return
      */
-    List<FlowTask> getByInsIds(List<Long> instanceIds);
+    List<FlowTask> getByInsId(Long instanceId);
 
     /**
      * 分页查询待办任务
@@ -30,6 +30,13 @@ public interface TaskService extends IWarmService<FlowTask> {
      * @return
      */
     Page<FlowTask> toDoPage(FlowTask flowTask, Page<FlowTask> page);
+
+    /**
+     * 查询未完成的代办任务
+     *
+     * @param instanceId 实例id
+     */
+    List<FlowTask> getNoFinish(Long instanceId);
 
     /**
      * 根据instanceIds删除

@@ -7,7 +7,7 @@ import java.util.Date;
 /**
  * 结点跳转关联对象 flow_skip
  *
- * @author hh
+ * @author warm
  * @date 2023-03-29
  */
 public class FlowSkip implements WarmEntity {
@@ -42,11 +42,6 @@ public class FlowSkip implements WarmEntity {
      * 跳转类型（PASS审批通过 REJECT驳回）
      */
     private String skipType;
-
-    /**
-     * 跳转方式（SERIAL串行 PARALLEL并行）
-     */
-    private String skipMode;
 
     /**
      * 跳转条件
@@ -112,14 +107,6 @@ public class FlowSkip implements WarmEntity {
 
     public void setSkipType(String skipType) {
         this.skipType = skipType;
-    }
-
-    public String getSkipMode() {
-        return skipMode;
-    }
-
-    public void setSkipMode(String skipMode) {
-        this.skipMode = skipMode;
     }
 
     public String getSkipCondition() {

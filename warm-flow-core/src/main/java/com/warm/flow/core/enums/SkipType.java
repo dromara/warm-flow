@@ -5,14 +5,14 @@ package com.warm.flow.core.enums;
  * @description: 审批动作
  * @date: 2023/3/31 12:16
  */
-public enum ApprovalAction {
+public enum SkipType {
     PASS("PASS", "审批通过"),
     REJECT("REJECT", "驳回");
 
     private String key;
     private String value;
 
-    private ApprovalAction(String key, String value) {
+    private SkipType(String key, String value) {
         this.key = key;
         this.value = value;
     }
@@ -26,7 +26,7 @@ public enum ApprovalAction {
     }
 
     public static String getKeyByValue(String value) {
-        for (ApprovalAction item : ApprovalAction.values()) {
+        for (SkipType item : SkipType.values()) {
             if (item.getValue().equals(value)) {
                 return item.getKey();
             }
@@ -35,7 +35,7 @@ public enum ApprovalAction {
     }
 
     public static String getValueByKey(String key) {
-        for (ApprovalAction item : ApprovalAction.values()) {
+        for (SkipType item : SkipType.values()) {
             if (item.getKey().equals(key)) {
                 return item.getValue();
             }

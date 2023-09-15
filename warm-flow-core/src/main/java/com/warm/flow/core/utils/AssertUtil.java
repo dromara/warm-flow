@@ -33,7 +33,7 @@ public class AssertUtil {
      * @param obj
      * @param errorMsg
      */
-    public static void isTrue(boolean obj, String errorMsg) {
+    public static void isFalse(boolean obj, String errorMsg) {
         if (!obj) {
             throw new FlowException(errorMsg);
         }
@@ -45,7 +45,7 @@ public class AssertUtil {
      * @param obj
      * @param errorMsg
      */
-    public static void isFalse(boolean obj, String errorMsg) {
+    public static void isTrue(boolean obj, String errorMsg) {
         if (obj) {
             throw new FlowException(errorMsg);
         }

@@ -1,6 +1,6 @@
 package com.warm.flow.core.utils;
 
-import com.warm.flow.core.constant.FlowConstant;
+import com.warm.flow.core.constant.ExceptionCons;
 import com.warm.flow.core.domain.dto.FlowCombine;
 import com.warm.flow.core.domain.entity.FlowDefinition;
 import com.warm.flow.core.domain.entity.FlowNode;
@@ -51,7 +51,7 @@ public class FlowConfigUtil {
         AssertUtil.isNull(is, "文件不存在！");
         // 获取流程结点
         List<Element> flowElements = new SAXReader().read(is).getRootElement().elements();
-        AssertUtil.isTrue(CollUtil.isNotEmpty(flowElements) && flowElements.size() == 1,
+        AssertUtil.isFalse(CollUtil.isNotEmpty(flowElements) && flowElements.size() == 1,
                 "流程为空，或者一次只能导入一条流程定义！");
 
         Element definitionElement = flowElements.get(0);
@@ -102,7 +102,6 @@ public class FlowConfigUtil {
                 skip.setNextNodeCode(skipElement.getText());
                 // 条件约束
                 skip.setSkipType(skipElement.attributeValue("skipType"));
-                skip.setSkipMode(skipElement.attributeValue("skipMode"));
                 skip.setSkipCondition(skipElement.attributeValue("skipCondition"));
                 skips.add(skip);
             }
@@ -139,11 +138,9 @@ public class FlowConfigUtil {
                 for (FlowSkip skip : skipList) {
                     Element skipElement = nodeElement.addElement("skip");
                     if (StringUtils.isNotEmpty(skip.getSkipType())) {
-                        AssertUtil.isTrue(StringUtils.isNotEmpty(skip.getSkipMode()), "跳转方式不能为空");
-                        AssertUtil.isTrue(StringUtils.isNotEmpty(skip.getSkipType()), "跳转类型不能为空");
-                        AssertUtil.isTrue(StringUtils.isNotEmpty(skip.getNextNodeCode()), "下一个流程结点编码为空");
+                        AssertUtil.isFalse(StringUtils.isNotEmpty(skip.getSkipType()), "跳转类型不能为空");
+                        AssertUtil.isFalse(StringUtils.isNotEmpty(skip.getNextNodeCode()), "下一个流程结点编码为空");
                         skipElement.addAttribute("skipType", skip.getSkipType());
-                        skipElement.addAttribute("skipMode", skip.getSkipMode());
                         skipElement.addAttribute("skipCondition", skip.getSkipCondition());
                     }
                     skipElement.addText(skip.getNextNodeCode());
@@ -182,17 +179,17 @@ public class FlowConfigUtil {
             initNodeAndCondition(node, id, definition.getVersion());
             if (NodeType.START.getKey().equals(node.getNodeType())) {
                 startNum++;
-                AssertUtil.isFalse(startNum > 1, "[" + flowName + "]" + FlowConstant.MUL_START_NODE);
+                AssertUtil.isTrue(startNum > 1, "[" + flowName + "]" + ExceptionCons.MUL_START_NODE);
             }
             // 保证不存在重复的nodeCode
-            AssertUtil.isFalse(nodeCodeSet.contains(node.getNodeCode()),
-                    "【" + flowName + "】" + FlowConstant.SAME_NODE_CODE);
+            AssertUtil.isTrue(nodeCodeSet.contains(node.getNodeCode()),
+                    "【" + flowName + "】" + ExceptionCons.SAME_NODE_CODE);
             nodeCodeSet.add(node.getNodeCode());
             allNodes.add(node);
             allSkips.addAll(node.getSkipList());
         }
 
-        AssertUtil.isFalse(startNum == 0, "[" + flowName + "]" + FlowConstant.LOST_START_NODE);
+        AssertUtil.isTrue(startNum == 0, "[" + flowName + "]" + ExceptionCons.LOST_START_NODE);
         // 校验所有目标结点是否都存在
         validaIsExistDestNode(allSkips, nodeCodeSet);
         return combine;
@@ -207,7 +204,7 @@ public class FlowConfigUtil {
     private static void validaIsExistDestNode(List<FlowSkip> allSkips, Set<String> nodeCodeSet) {
         for (int i = 0; i < allSkips.size(); i++) {
             String nextNodeCode = allSkips.get(i).getNextNodeCode();
-            AssertUtil.isFalse(!nodeCodeSet.contains(nextNodeCode), "【" + nextNodeCode + "】" + FlowConstant.NULL_NODE_CODE);
+            AssertUtil.isTrue(!nodeCodeSet.contains(nextNodeCode), "【" + nextNodeCode + "】" + ExceptionCons.NULL_NODE_CODE);
         }
     }
 
@@ -225,22 +222,27 @@ public class FlowConfigUtil {
         String nodeCode = node.getNodeCode();
         List<FlowSkip> skipList = node.getSkipList();
         if (!NodeType.END.getKey().equals(node.getNodeType())) {
-            AssertUtil.isFalse(CollUtil.isEmpty(skipList), "开始和中间结点必须有跳转规则");
+            AssertUtil.isTrue(CollUtil.isEmpty(skipList), "开始和中间结点必须有跳转规则");
         }
-        AssertUtil.isBlank(nodeCode, "[" + nodeName + "]" + FlowConstant.LOST_NODE_CODE);
+        AssertUtil.isBlank(nodeCode, "[" + nodeName + "]" + ExceptionCons.LOST_NODE_CODE);
 
         node.setId(IdUtils.nextId());
         node.setVersion(version);
         node.setDefinitionId(definitionId);
         node.setUpdateTime(new Date());
 
-        // 跳转条件的集合
-        Set<String> conditionSet = new HashSet<>();
-        // 目标结点的集合 这两个集合都不能重复
-        Set<String> targetSet = new HashSet<>();
+        // 中间节点的集合， 跳转类型和目标节点不能重复
+        Set<String> betweenSet = new HashSet<>();
+        // 网关的集合 跳转条件和下目标节点不能重复
+        Set<String> gateWaySet = new HashSet<>();
+        int skipNum = 0;
         // 遍历结点下的跳转条件
-        for (int i = 0; i < skipList.size(); i++) {
-            FlowSkip skip = skipList.get(i);
+        for (FlowSkip skip : skipList) {
+            if (NodeType.START.getKey().equals(node.getNodeType())) {
+                skipNum++;
+                AssertUtil.isTrue(skipNum > 1, "[" + node.getNodeName() + "]" + ExceptionCons.MUL_START_SKIP);
+            }
+            AssertUtil.isBlank(skip.getNextNodeCode(), "【" + nodeName + "】" + ExceptionCons.LOST_DEST_NODE);
             skip.setId(IdUtils.nextId());
             // 流程id
             skip.setDefinitionId(definitionId);
@@ -248,14 +250,19 @@ public class FlowConfigUtil {
             skip.setNodeId(node.getId());
             // 起始结点
             skip.setNowNodeCode(nodeCode);
-            // 目标结点
-            String target = skip.getSkipCondition() + ":" + skip.getNextNodeCode();
-            AssertUtil.isBlank(target, "【" + nodeName + "】" + FlowConstant.LOST_DEST_NODE);
-            AssertUtil.isFalse(targetSet.contains(target), "[" + nodeName + "]" + FlowConstant.SAME_DEST_NODE);
-            targetSet.add(target);
-            String value = skip.getSkipType() + ":" + skip.getSkipCondition();
-            AssertUtil.isFalse(conditionSet.contains(value), "[" + nodeName + "]" + FlowConstant.SAME_CONDITION_VALUE);
-            conditionSet.add(value);
+            if (NodeType.isGateWaySerial(node.getNodeType())) {
+                String target = skip.getSkipCondition() + ":" + skip.getNextNodeCode();
+                AssertUtil.isTrue(gateWaySet.contains(target), "[" + nodeName + "]" + ExceptionCons.SAME_CONDITION_NODE);
+                gateWaySet.add(target);
+            } else if (NodeType.isGateWayParallel(node.getNodeType())) {
+                String target = skip.getNextNodeCode();
+                AssertUtil.isTrue(gateWaySet.contains(target), "[" + nodeName + "]" + ExceptionCons.SAME_DEST_NODE);
+                gateWaySet.add(target);
+            } else {
+                String value = skip.getSkipType() + ":" + skip.getNextNodeCode();
+                AssertUtil.isTrue(betweenSet.contains(value), "[" + nodeName + "]" + ExceptionCons.SAME_CONDITION_VALUE);
+                betweenSet.add(value);
+            }
         }
     }
 

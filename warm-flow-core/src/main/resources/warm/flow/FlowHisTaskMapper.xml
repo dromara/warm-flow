@@ -15,6 +15,7 @@
         <result property="definitionId" column="definition_id"/>
         <result property="instanceId" column="instance_id"/>
         <result property="flowStatus" column="flow_status"/>
+        <result property="gateWayNode" column="gateWay_node"/>
         <result property="permissionFlag" column="permission_flag"/>
         <result property="message" column="message"/>
         <result property="createTime" column="create_time"/>
@@ -36,6 +37,7 @@
                t.permission_flag,
                t.instance_id,
                t.flow_status,
+               t.gateWay_node,
                t.message,
                t.create_time,
                t.update_time,
@@ -147,6 +149,7 @@
             <if test="definitionId != null">definition_id,</if>
             <if test="instanceId != null">instance_id,</if>
             <if test="flowStatus != null">flow_status,</if>
+            <if test="gateWayNode != null">gateWay_node,</if>
             <if test="permissionFlag != null">permission_flag,</if>
             <if test="message != null">message,</if>
             <if test="createTime != null">create_time,</if>
@@ -164,6 +167,7 @@
             <if test="definitionId != null">#{definitionId},</if>
             <if test="instanceId != null">#{instanceId},</if>
             <if test="flowStatus != null">#{flowStatus},</if>
+            <if test="gateWayNode != null">#{gateWayNode},</if>
             <if test="permissionFlag != null">#{permissionFlag},</if>
             <if test="message != null">#{message},</if>
             <if test="createTime != null">#{createTime},</if>
@@ -184,6 +188,7 @@
             <if test="definitionId != null">definition_id = #{definitionId},</if>
             <if test="instanceId != null">instance_id = #{instanceId},</if>
             <if test="flowStatus != null">flow_status = #{flowStatus},</if>
+            <if test="gateWayNode != null">gateWay_node = #{gateWayNode},</if>
             <if test="permissionFlag != null">permission_flag = #{permissionFlag},</if>
             <if test="message != null">message = #{message},</if>
             <if test="createTime != null">create_time = #{createTime},</if>

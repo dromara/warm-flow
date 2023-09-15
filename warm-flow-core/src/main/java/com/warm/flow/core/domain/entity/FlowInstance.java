@@ -7,7 +7,7 @@ import java.util.Date;
 /**
  * 流程实例对象 flow_instance
  *
- * @author hh
+ * @author warm
  * @date 2023-03-29
  */
 public class FlowInstance implements WarmEntity {
@@ -39,7 +39,17 @@ public class FlowInstance implements WarmEntity {
     private Integer nodeType;
 
     /**
-     * 流程状态
+     * 流程结点编码   每个流程的nodeCode是唯一的,即definitionId+nodeCode唯一,在数据库层面做了控制
+     */
+    private String nodeCode;
+
+    /**
+     * 流程结点名称
+     */
+    private String nodeName;
+
+    /**
+     * 流程状态（0待提交 1审批中 2 通过 8已完成 9已驳回 10失效）
      */
     private Integer flowStatus;
 
@@ -106,6 +116,22 @@ public class FlowInstance implements WarmEntity {
 
     public void setNodeType(Integer nodeType) {
         this.nodeType = nodeType;
+    }
+
+    public String getNodeCode() {
+        return nodeCode;
+    }
+
+    public void setNodeCode(String nodeCode) {
+        this.nodeCode = nodeCode;
+    }
+
+    public String getNodeName() {
+        return nodeName;
+    }
+
+    public void setNodeName(String nodeName) {
+        this.nodeName = nodeName;
     }
 
     public Integer getFlowStatus() {

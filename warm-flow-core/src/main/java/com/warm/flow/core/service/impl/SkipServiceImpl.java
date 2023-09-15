@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * 结点跳转关联Service业务层处理
  *
- * @author hh
+ * @author warm
  * @date 2023-03-29
  */
 public class SkipServiceImpl extends WarmServiceImpl<FlowSkipMapper, FlowSkip> implements SkipService {
@@ -32,4 +32,8 @@ public class SkipServiceImpl extends WarmServiceImpl<FlowSkipMapper, FlowSkip> i
         return SqlHelper.retBool(getMapper().deleteByNodeIds(nodeIds));
     }
 
+    @Override
+    public List<FlowSkip> queryByDefAndCode(Long definitionId, String nowNodeCode) {
+        return getMapper().queryByDefAndCode(definitionId, nowNodeCode);
+    }
 }

@@ -4,13 +4,12 @@ import com.warm.flow.core.domain.dto.FlowParams;
 import com.warm.flow.core.domain.entity.FlowInstance;
 import com.warm.mybatis.core.service.IWarmService;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
  * 流程实例Service接口
  *
- * @author hh
+ * @author warm
  * @date 2023-03-29
  */
 public interface InsService extends IWarmService<FlowInstance> {
@@ -24,54 +23,38 @@ public interface InsService extends IWarmService<FlowInstance> {
     List<FlowInstance> getByIdWithLock(List<Long> ids);
 
     /**
-     * 开启流程
+     * 根据开始的结点,业务id集合开启流程
      *
      * @param businessId
      * @param flowUser
      * @return
      */
-    FlowInstance startFlow(String businessId, FlowParams flowUser);
+    FlowInstance start(String businessId, FlowParams flowUser);
+
 
     /**
-     * 开启流程
-     *
-     * @param businessIds
-     * @param flowUser
-     * @return
-     */
-    List<FlowInstance> startFlow(List<String> businessIds, FlowParams flowUser);
-
-    /**
-     * 流程跳转
+     * 根据实例id，流程跳转，一般是开始节点后第一个节点，用来提交申请，此时不可有同时两个代办任务
      *
      * @param instanceId
      * @param flowUser
      * @return
      */
-    FlowInstance skipFlow(Long instanceId, FlowParams flowUser);
+    FlowInstance skipByInsId(Long instanceId, FlowParams flowUser);
 
     /**
-     * 流程跳转
+     * 根据任务id，流程跳转
      *
-     * @param instanceIds
+     * @param taskId
      * @param flowUser
      * @return
      */
-    List<FlowInstance> skipFlow(List<Long> instanceIds, FlowParams flowUser);
+    FlowInstance skip(Long taskId, FlowParams flowUser);
 
     /**
-     * 流程跳转
-     *
-     * @param instanceId
-     * @return
-     */
-    boolean removeTask(Long instanceId);
-
-    /**
-     * 流程跳转
+     * 根据实例id，删除流程
      *
      * @param instanceIds
      * @return
      */
-    boolean removeTask(List<Long> instanceIds);
+    boolean remove(List<Long> instanceIds);
 }

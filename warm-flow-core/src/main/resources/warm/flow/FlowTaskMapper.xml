@@ -13,6 +13,7 @@
         <result property="definitionId" column="definition_id"/>
         <result property="instanceId" column="instance_id"/>
         <result property="flowStatus" column="flow_status"/>
+        <result property="gateWayNode" column="gateway_node"/>
         <result property="permissionFlag" column="permission_flag"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
@@ -34,6 +35,7 @@
                t.permission_flag,
                t.instance_id,
                t.flow_status,
+               t.gateway_node,
                t.create_time,
                t.update_time,
                t.tenant_id
@@ -88,12 +90,9 @@
         where id = #{id}
     </select>
 
-    <select id="getByInsIds" resultMap="FlowTaskResult">
+    <select id="getByInsId" resultMap="FlowTaskResult">
         <include refid="selectVo"/>
-        where t.instance_id in
-        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
-            #{item}
-        </foreach>
+        where t.instance_id = #{item}
     </select>
 
     <sql id="select_toDo_parameter">
@@ -125,6 +124,11 @@
         <include refid="paging_end"/>
     </select>
 
+    <select id="getNoFinish" resultMap="FlowTaskResult">
+        <include refid="selectVo"/>
+        where t.instance_id = #{instanceId} and <![CDATA[t.flow_status <> 8 ]]>
+    </select>
+
     <insert id="insert" parameterType="com.warm.flow.core.domain.entity.FlowTask">
         insert into flow_task
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -136,6 +140,7 @@
             <if test="definitionId != null">definition_id,</if>
             <if test="instanceId != null">instance_id,</if>
             <if test="flowStatus != null">flow_status,</if>
+            <if test="gateWayNode != null">gateWay_node,</if>
             <if test="permissionFlag != null">permission_flag,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
@@ -150,6 +155,7 @@
             <if test="definitionId != null">#{definitionId},</if>
             <if test="instanceId != null">#{instanceId},</if>
             <if test="flowStatus != null">#{flowStatus},</if>
+            <if test="gateWayNode != null">#{gateWayNode},</if>
             <if test="permissionFlag != null">#{permissionFlag},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
@@ -167,6 +173,7 @@
             <if test="definitionId != null">definition_id = #{definitionId},</if>
             <if test="instanceId != null">instance_id = #{instanceId},</if>
             <if test="flowStatus != null">flow_status = #{flowStatus},</if>
+            <if test="gateWayNode != null">gateWay_node = #{gateWayNode},</if>
             <if test="permissionFlag != null">permission_flag = #{permissionFlag},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>

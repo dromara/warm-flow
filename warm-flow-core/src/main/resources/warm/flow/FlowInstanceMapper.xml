@@ -9,6 +9,10 @@
         <result property="businessId" column="business_id"/>
         <result property="definitionId" column="definition_id"/>
         <result property="flowName" column="flow_name"/>
+        <result property="nodeType" column="node_type"/>
+        <result property="nodeCode" column="node_code"/>
+        <result property="nodeName" column="node_name"/>
+        <result property="flowStatus" column="flow_status"/>
         <result property="createBy" column="create_by"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
@@ -16,7 +20,17 @@
     </resultMap>
 
     <sql id="selectVo">
-        select t.id, t.business_id, t.definition_id, t.create_by, t.create_time, t.update_time, t.ext
+        select t.id,
+               t.business_id,
+               t.definition_id,
+               t.node_type,
+               t.node_code,
+               t.node_name,
+               t.flow_status,
+               t.create_by,
+               t.create_time,
+               t.update_time,
+               t.ext
         from flow_instance t
     </sql>
 
@@ -80,6 +94,10 @@
             <if test="id != null">id,</if>
             <if test="businessId != null and businessId != ''">business_id,</if>
             <if test="definitionId != null">definition_id,</if>
+            <if test="nodeCode != null and nodeCode != ''">node_code,</if>
+            <if test="nodeName != null and nodeName != ''">node_name,</if>
+            <if test="nodeType != null">node_type,</if>
+            <if test="flowStatus != null">flow_status,</if>
             <if test="createBy != null and createBy != ''">create_by,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
@@ -89,6 +107,10 @@
             <if test="id != null">#{id},</if>
             <if test="businessId != null and businessId != ''">#{businessId},</if>
             <if test="definitionId != null">#{definitionId},</if>
+            <if test="nodeCode != null and nodeCode != ''">#{nodeCode},</if>
+            <if test="nodeName != null and nodeName != ''">#{nodeName},</if>
+            <if test="nodeType != null">#{nodeType},</if>
+            <if test="flowStatus != null">#{flowStatus},</if>
             <if test="createBy != null and createBy != ''">#{createBy},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
@@ -101,6 +123,10 @@
         <trim prefix="SET" suffixOverrides=",">
             <if test="businessId != null and businessId != ''">business_id = #{businessId},</if>
             <if test="definitionId != null">definition_id = #{definitionId},</if>
+            <if test="nodeType != null">node_type = #{nodeType},</if>
+            <if test="nodeCode != null and nodeCode != ''">node_code = #{nodeCode},</if>
+            <if test="nodeName != null and nodeName != ''">node_name = #{nodeName},</if>
+            <if test="flowStatus != null">flow_status = #{flowStatus},</if>
             <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>

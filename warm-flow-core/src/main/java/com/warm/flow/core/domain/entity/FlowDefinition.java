@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * 流程定义对象 flow_definition
  *
- * @author hh
+ * @author warm
  * @date 2023-03-29
  */
 public class FlowDefinition implements WarmEntity {

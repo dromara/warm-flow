@@ -10,7 +10,8 @@ public enum FlowStatus {
     APPROVAL(1, "审批中"),
     PASS(2, "通过"),
     FINISHED(8, "已完成"),
-    REJECT(9, "已驳回");
+    REJECT(9, "已驳回"),
+    INVALID(10, "失效");
 
     private Integer key;
     private String value;

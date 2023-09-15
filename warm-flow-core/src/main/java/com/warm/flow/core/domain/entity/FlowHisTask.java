@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * 历史任务记录对象 flow_his_task
  *
- * @author hh
+ * @author warm
  * @date 2023-03-29
  */
 public class FlowHisTask implements WarmEntity {
@@ -85,9 +85,14 @@ public class FlowHisTask implements WarmEntity {
     private List<String> permissionList;
 
     /**
-     * 流程状态
+     * 流程状态（0待提交 1审批中 2 通过 8已完成 9已驳回 10失效）
      */
     private Integer flowStatus;
+
+    /**
+     * 所属并行网关结点编码
+     */
+    private String gateWayNode;
 
     /**
      * 审批意见
@@ -208,6 +213,14 @@ public class FlowHisTask implements WarmEntity {
 
     public void setFlowStatus(Integer flowStatus) {
         this.flowStatus = flowStatus;
+    }
+
+    public String getGateWayNode() {
+        return gateWayNode;
+    }
+
+    public void setGateWayNode(String gateWayNode) {
+        this.gateWayNode = gateWayNode;
     }
 
     public String getPermissionFlag() {

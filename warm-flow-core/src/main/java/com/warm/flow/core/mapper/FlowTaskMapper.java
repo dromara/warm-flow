@@ -10,12 +10,12 @@ import java.util.List;
 /**
  * 待办任务Mapper接口
  *
- * @author hh
+ * @author warm
  * @date 2023-03-29
  */
 public interface FlowTaskMapper extends WarmMapper<FlowTask> {
 
-    List<FlowTask> getByInsIds(List<Long> instanceIds);
+    List<FlowTask> getByInsId(Long instanceId);
 
     /**
      * 分页查询待办任务数量
@@ -31,10 +31,16 @@ public interface FlowTaskMapper extends WarmMapper<FlowTask> {
      *
      * @param flowTask 条件实体
      * @param page
-     * @return
      */
     List<FlowTask> toDoPage(@Param("flowTask") FlowTask flowTask
             , @Param("page") Page<FlowTask> page);
+
+    /**
+     * 查询未完成的代办任务
+     *
+     * @param instanceId 实例id
+     */
+    List<FlowTask> getNoFinish(Long instanceId);
 
     /**
      * 根据instanceIds删除

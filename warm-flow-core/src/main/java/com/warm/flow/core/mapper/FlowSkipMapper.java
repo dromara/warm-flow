@@ -2,13 +2,14 @@ package com.warm.flow.core.mapper;
 
 import com.warm.flow.core.domain.entity.FlowSkip;
 import com.warm.mybatis.core.mapper.WarmMapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 /**
  * 结点跳转关联Mapper接口
  *
- * @author hh
+ * @author warm
  * @date 2023-03-29
  */
 public interface FlowSkipMapper extends WarmMapper<FlowSkip> {
@@ -27,4 +28,13 @@ public interface FlowSkipMapper extends WarmMapper<FlowSkip> {
      * @return 结果
      */
     int deleteByNodeIds(List<Long> nodeIds);
+
+    /**
+     * 获取当前节点跳转
+     *
+     * @param definitionId
+     * @param nowNodeCode
+     * @return
+     */
+    List<FlowSkip> queryByDefAndCode(@Param("definitionId") Long definitionId, @Param("nowNodeCode") String nowNodeCode);
 }

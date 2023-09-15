@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * 流程结点对象 flow_node
  *
- * @author hh
+ * @author warm
  * @date 2023-03-29
  */
 public class FlowNode implements WarmEntity {
@@ -24,18 +24,21 @@ public class FlowNode implements WarmEntity {
      * 结点类型,0开始结点,1中间结点,2结束结点
      */
     private Integer nodeType;
+
     /**
      * 流程id
      */
     private Long definitionId;
-    /**
-     * 流程结点名称
-     */
-    private String nodeName;
+
     /**
      * 流程结点编码   每个流程的nodeCode是唯一的,即definitionId+nodeCode唯一,在数据库层面做了控制
      */
     private String nodeCode;
+
+    /**
+     * 流程结点名称
+     */
+    private String nodeName;
 
     /**
      * 权限标识（权限类型:权限标识，可以多个，如role:1,role:2)

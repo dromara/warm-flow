@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * 结点跳转关联Service接口
  *
- * @author hh
+ * @author warm
  * @date 2023-03-29
  */
 public interface SkipService extends IWarmService<FlowSkip> {
@@ -28,4 +28,13 @@ public interface SkipService extends IWarmService<FlowSkip> {
      * @return 结果
      */
     boolean deleteByNodeIds(List<Long> nodeIds);
+
+    /**
+     * 获取当前节点跳转
+     *
+     * @param definitionId
+     * @param nowNodeCode
+     * @return
+     */
+    List<FlowSkip> queryByDefAndCode(Long definitionId, String nowNodeCode);
 }

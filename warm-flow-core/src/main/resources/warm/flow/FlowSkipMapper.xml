@@ -11,7 +11,6 @@
         <result property="nowNodeCode" column="now_node_code"/>
         <result property="nextNodeCode" column="next_node_code"/>
         <result property="skipType" column="skip_type"/>
-        <result property="skipMode" column="skip_mode"/>
         <result property="skipCondition" column="skip_condition"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
@@ -24,7 +23,6 @@
                t.now_node_code,
                t.next_node_code,
                t.skip_type,
-               t.skip_mode,
                t.skip_condition,
                t.create_time,
                t.update_time
@@ -80,6 +78,12 @@
         where id = #{id}
     </select>
 
+    <select id="queryByDefAndCode" resultMap="FlowSkipResult">
+        <include refid="selectVo"/>
+        where t.definition_id = #{definitionId} and t.now_node_code = #{nowNodeCode}
+
+    </select>
+
     <insert id="insert" parameterType="com.warm.flow.core.domain.entity.FlowSkip">
         insert into flow_skip
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -89,7 +93,6 @@
             <if test="nowNodeCode != null and nowNodeCode != ''">now_node_code,</if>
             <if test="nextNodeCode != null and nextNodeCode != ''">next_node_code,</if>
             <if test="skipType != null">skip_type,</if>
-            <if test="skipMode != null">skip_mode,</if>
             <if test="skipCondition != null">skip_condition,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
@@ -101,7 +104,6 @@
             <if test="nowNodeCode != null and nowNodeCode != ''">#{nowNodeCode},</if>
             <if test="nextNodeCode != null and nextNodeCode != ''">#{nextNodeCode},</if>
             <if test="skipType != null">#{skipType},</if>
-            <if test="skipMode != null">#{skipMode},</if>
             <if test="skipCondition != null">#{skipCondition},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
@@ -116,7 +118,6 @@
             <if test="nowNodeCode != null and nowNodeCode != ''">now_node_code = #{nowNodeCode},</if>
             <if test="nextNodeCode != null and nextNodeCode != ''">next_node_code = #{nextNodeCode},</if>
             <if test="skipType != null">skip_type = #{skipType},</if>
-            <if test="skipMode != null">skip_mode = #{skipMode},</if>
             <if test="skipCondition != null">skip_condition = #{skipCondition},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>

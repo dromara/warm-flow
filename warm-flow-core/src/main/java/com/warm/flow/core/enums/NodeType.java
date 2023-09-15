@@ -1,5 +1,7 @@
 package com.warm.flow.core.enums;
 
+import com.warm.tools.utils.ObjectUtil;
+
 /**
  * @author minliuhua
  * @description: 结点类型
@@ -17,7 +19,17 @@ public enum NodeType {
     /**
      * 结束结点
      */
-    END(2, "end");
+    END(2, "end"),
+
+    /**
+     * 互斥网关
+     */
+    SERIAL(3, "serial"),
+
+    /**
+     * 并行网关
+     */
+    PARALLEL(4, "parallel");
 
     private Integer key;
     private String value;
@@ -53,4 +65,34 @@ public enum NodeType {
         return null;
     }
 
+    /**
+     * 判断是否网关节点
+     *
+     * @param Key
+     * @return
+     */
+    public static Boolean isGateWay(Integer Key) {
+        return ObjectUtil.isNotNull(Key) && (NodeType.SERIAL.getKey().equals(Key)
+                || NodeType.PARALLEL.getKey().equals(Key));
+    }
+
+    /**
+     * 判断是否串行网关节点
+     *
+     * @param Key
+     * @return
+     */
+    public static Boolean isGateWaySerial(Integer Key) {
+        return ObjectUtil.isNotNull(Key) && NodeType.SERIAL.getKey().equals(Key);
+    }
+
+    /**
+     * 判断是否并行网关节点
+     *
+     * @param Key
+     * @return
+     */
+    public static Boolean isGateWayParallel(Integer Key) {
+        return ObjectUtil.isNotNull(Key) && NodeType.PARALLEL.getKey().equals(Key);
+    }
 }
