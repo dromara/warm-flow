@@ -1,22 +1,13 @@
 package com.warm.flow.core.domain.entity;
 
-import com.warm.mybatis.core.entity.WarmEntity;
-
-import java.util.Date;
-
 /**
  * 结点跳转关联对象 flow_skip
  *
  * @author warm
  * @date 2023-03-29
  */
-public class FlowSkip implements WarmEntity {
+public class FlowSkip extends FlowEntity {
     private static final long serialVersionUID = 1L;
-
-    /**
-     * 主键
-     */
-    private Long id;
 
     /**
      * 流程id
@@ -34,9 +25,19 @@ public class FlowSkip implements WarmEntity {
     private String nowNodeCode;
 
     /**
+     * 当前结点类型（0开始结点 1中间结点 2结束结点 3互斥网关 4并行网关）
+     */
+    private Integer nowNodeType;
+
+    /**
      * 下一个流程结点的编码
      */
     private String nextNodeCode;
+
+    /**
+     * 下一个结点类型（0开始结点 1中间结点 2结束结点 3互斥网关 4并行网关）
+     */
+    private Integer nextNodeType;
 
     /**
      * 跳转类型（PASS审批通过 REJECT驳回）
@@ -48,92 +49,77 @@ public class FlowSkip implements WarmEntity {
      */
     private String skipCondition;
 
-
-    /**
-     * 创建时间
-     */
-    private Date createTime;
-
-    /**
-     * 更新时间
-     */
-    private Date updateTime;
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Long getDefinitionId() {
         return definitionId;
     }
 
-    public void setDefinitionId(Long definitionId) {
+    public FlowSkip setDefinitionId(Long definitionId) {
         this.definitionId = definitionId;
+        return this;
     }
 
     public Long getNodeId() {
         return nodeId;
     }
 
-    public void setNodeId(Long nodeId) {
+    public FlowSkip setNodeId(Long nodeId) {
         this.nodeId = nodeId;
+        return this;
     }
 
     public String getNowNodeCode() {
         return nowNodeCode;
     }
 
-    public void setNowNodeCode(String nowNodeCode) {
+    public FlowSkip setNowNodeCode(String nowNodeCode) {
         this.nowNodeCode = nowNodeCode;
+        return this;
+    }
+
+    public Integer getNowNodeType() {
+        return nowNodeType;
+    }
+
+    public FlowSkip setNowNodeType(Integer nowNodeType) {
+        this.nowNodeType = nowNodeType;
+        return this;
+    }
+
+    public Integer getNextNodeType() {
+        return nextNodeType;
+    }
+
+    public FlowSkip setNextNodeType(Integer nextNodeType) {
+        this.nextNodeType = nextNodeType;
+        return this;
     }
 
     public String getNextNodeCode() {
         return nextNodeCode;
     }
 
-    public void setNextNodeCode(String nextNodeCode) {
+    public FlowSkip setNextNodeCode(String nextNodeCode) {
         this.nextNodeCode = nextNodeCode;
+        return this;
     }
+
 
     public String getSkipType() {
         return skipType;
     }
 
-    public void setSkipType(String skipType) {
+    public FlowSkip setSkipType(String skipType) {
         this.skipType = skipType;
+        return this;
     }
 
     public String getSkipCondition() {
         return skipCondition;
     }
 
-    public void setSkipCondition(String skipCondition) {
+    public FlowSkip setSkipCondition(String skipCondition) {
         this.skipCondition = skipCondition;
+        return this;
     }
 
-    @Override
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    @Override
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    @Override
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    @Override
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
 }

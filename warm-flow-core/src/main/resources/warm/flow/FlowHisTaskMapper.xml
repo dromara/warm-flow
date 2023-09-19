@@ -136,6 +136,13 @@
         where t.instance_id = #{instanceId}
     </select>
 
+    <select id="getNoReject" resultMap="FlowHisTaskResult">
+        <include refid="selectVo"/>
+        where t.node_code = #{nodeCode}
+        and t.flow_status <![CDATA[ <> ]]> 9
+        order by t.create_time desc
+    </select>
+
     <insert id="insert" parameterType="com.warm.flow.core.domain.entity.FlowHisTask">
         insert into flow_his_task
         <trim prefix="(" suffix=")" suffixOverrides=",">

@@ -124,11 +124,6 @@
         <include refid="paging_end"/>
     </select>
 
-    <select id="getNoFinish" resultMap="FlowTaskResult">
-        <include refid="selectVo"/>
-        where t.instance_id = #{instanceId} and <![CDATA[t.flow_status <> 8 ]]>
-    </select>
-
     <insert id="insert" parameterType="com.warm.flow.core.domain.entity.FlowTask">
         insert into flow_task
         <trim prefix="(" suffix=")" suffixOverrides=",">

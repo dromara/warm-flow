@@ -6,8 +6,10 @@ import com.warm.flow.core.domain.entity.FlowDefinition;
 import com.warm.flow.core.domain.entity.FlowNode;
 import com.warm.flow.core.domain.entity.FlowSkip;
 import com.warm.flow.core.enums.NodeType;
+import com.warm.flow.core.enums.SkipType;
 import com.warm.tools.utils.CollUtil;
 import com.warm.tools.utils.IdUtils;
+import com.warm.tools.utils.StreamUtils;
 import com.warm.tools.utils.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -16,10 +18,7 @@ import org.dom4j.io.SAXReader;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 流程配置帮助类
@@ -99,6 +98,8 @@ public class FlowConfigUtil {
         for (Element skipElement : skipsElement) {
             FlowSkip skip = new FlowSkip();
             if ("skip".equals(skipElement.getName())) {
+                skip.setNowNodeCode(node.getNodeCode());
+                skip.setNowNodeType(node.getNodeType());
                 skip.setNextNodeCode(skipElement.getText());
                 // 条件约束
                 skip.setSkipType(skipElement.attributeValue("skipType"));
@@ -138,7 +139,6 @@ public class FlowConfigUtil {
                 for (FlowSkip skip : skipList) {
                     Element skipElement = nodeElement.addElement("skip");
                     if (StringUtils.isNotEmpty(skip.getSkipType())) {
-                        AssertUtil.isFalse(StringUtils.isNotEmpty(skip.getSkipType()), "跳转类型不能为空");
                         AssertUtil.isFalse(StringUtils.isNotEmpty(skip.getNextNodeCode()), "下一个流程结点编码为空");
                         skipElement.addAttribute("skipType", skip.getSkipType());
                         skipElement.addAttribute("skipCondition", skip.getSkipCondition());
@@ -171,6 +171,7 @@ public class FlowConfigUtil {
         definition.setId(id);
 
         List<FlowNode> nodeList = definition.getNodeList();
+
         // 每一个流程的开始结点个数
         int startNum = 0;
         Set<String> nodeCodeSet = new HashSet<String>();
@@ -190,9 +191,48 @@ public class FlowConfigUtil {
         }
 
         AssertUtil.isTrue(startNum == 0, "[" + flowName + "]" + ExceptionCons.LOST_START_NODE);
+
+
+        // 校验跳转节点的合法性
+        checkSkipNode(allSkips, nodeList);
+
         // 校验所有目标结点是否都存在
         validaIsExistDestNode(allSkips, nodeCodeSet);
         return combine;
+    }
+
+    /**
+     * 校验跳转节点的合法性
+     *
+     * @param allSkips
+     * @param nodeList
+     */
+    private static void checkSkipNode(List<FlowSkip> allSkips, List<FlowNode> nodeList) {
+        Map<String, FlowNode> flowNodeMap = StreamUtils.toMap(nodeList, FlowNode::getNodeCode, node -> node);
+
+        List<FlowSkip> gatewaySkips = new ArrayList<>();
+        for (FlowSkip allSkip : allSkips) {
+            allSkip.setNextNodeType(flowNodeMap.get(allSkip.getNextNodeCode()).getNodeType());
+            if (NodeType.isGateWay(allSkip.getNowNodeType())) {
+                gatewaySkips.add(allSkip);
+            }
+            // 中间节点不可驳回到网关节点
+            AssertUtil.isTrue(!NodeType.isGateWay(allSkip.getNowNodeType())
+                            && SkipType.REJECT.getKey().equals(allSkip.getSkipType())
+                            && NodeType.isGateWay(allSkip.getNextNodeType())
+                    , ExceptionCons.BETWEEN_REJECT_GATEWAY);
+        }
+        // 校验相同类型网关节点不可直连
+        if (CollUtil.isNotEmpty(gatewaySkips)) {
+            for (FlowSkip gatewaySkip1 : gatewaySkips) {
+                for (FlowSkip gatewaySkip2 : gatewaySkips) {
+                    AssertUtil.isTrue(gatewaySkip1.getNextNodeCode().equals(gatewaySkip2.getNowNodeCode())
+                                    && gatewaySkip1.getNowNodeType().equals(gatewaySkip2.getNowNodeType())
+                            , ExceptionCons.SAME_NODE_CONNECT);
+                }
+            }
+        }
+
     }
 
     /**
@@ -248,8 +288,6 @@ public class FlowConfigUtil {
             skip.setDefinitionId(definitionId);
             // 结点id
             skip.setNodeId(node.getId());
-            // 起始结点
-            skip.setNowNodeCode(nodeCode);
             if (NodeType.isGateWaySerial(node.getNodeType())) {
                 String target = skip.getSkipCondition() + ":" + skip.getNextNodeCode();
                 AssertUtil.isTrue(gateWaySet.contains(target), "[" + nodeName + "]" + ExceptionCons.SAME_CONDITION_NODE);

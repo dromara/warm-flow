@@ -1,8 +1,5 @@
 package com.warm.flow.core.domain.entity;
 
-import com.warm.mybatis.core.entity.WarmEntity;
-
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -11,13 +8,8 @@ import java.util.List;
  * @author warm
  * @date 2023-03-29
  */
-public class FlowTask implements WarmEntity {
+public class FlowTask extends FlowEntity {
     private static final long serialVersionUID = 1L;
-
-    /**
-     * 主键
-     */
-    private Long id;
 
     /**
      * 对应flow_definition表的id
@@ -55,7 +47,7 @@ public class FlowTask implements WarmEntity {
     private String nodeName;
 
     /**
-     * 结点类型,0开始结点,1中间结点,2结束结点
+     * 结点类型（0开始结点 1中间结点 2结束结点 3互斥网关 4并行网关）
      */
     private Integer nodeType;
 
@@ -71,7 +63,7 @@ public class FlowTask implements WarmEntity {
     private String assignee;
 
     /**
-     * 流程状态（0待提交 1审批中 2 通过 8已完成 9已驳回 10失效）
+     * 流程状态（0待提交 1审批中 2 审批通过 8已完成 9已驳回 10失效）
      */
     private Integer flowStatus;
 
@@ -91,16 +83,6 @@ public class FlowTask implements WarmEntity {
     private List<String> permissionList;
 
     /**
-     * 创建时间
-     */
-    private Date createTime;
-
-    /**
-     * 更新时间
-     */
-    private Date updateTime;
-
-    /**
      * 审批表单是否自定义（Y是 2否）
      */
     private String fromCustom;
@@ -110,161 +92,147 @@ public class FlowTask implements WarmEntity {
      */
     private String fromPath;
 
-    @Override
-    public Long getId() {
-        return id;
+    public Long getDefinitionId() {
+        return definitionId;
     }
 
-    @Override
-    public void setId(Long id) {
-        this.id = id;
+    public FlowTask setDefinitionId(Long definitionId) {
+        this.definitionId = definitionId;
+        return this;
     }
 
     public Long getInstanceId() {
         return instanceId;
     }
 
-    public void setInstanceId(Long instanceId) {
+    public FlowTask setInstanceId(Long instanceId) {
         this.instanceId = instanceId;
-    }
-
-    public String getNodeCode() {
-        return nodeCode;
-    }
-
-    public void setNodeCode(String nodeCode) {
-        this.nodeCode = nodeCode;
-    }
-
-    public String getNodeName() {
-        return nodeName;
-    }
-
-    public void setNodeName(String nodeName) {
-        this.nodeName = nodeName;
-    }
-
-    public Long getDefinitionId() {
-        return definitionId;
-    }
-
-    public String getBusinessId() {
-        return businessId;
-    }
-
-    public void setBusinessId(String businessId) {
-        this.businessId = businessId;
-    }
-
-    public void setDefinitionId(Long definitionId) {
-        this.definitionId = definitionId;
-    }
-
-    public Integer getNodeType() {
-        return nodeType;
-    }
-
-    public void setNodeType(Integer nodeType) {
-        this.nodeType = nodeType;
-    }
-
-    public String getApprover() {
-        return approver;
-    }
-
-    public void setApprover(String approver) {
-        this.approver = approver;
-    }
-
-    public String getAssignee() {
-        return assignee;
-    }
-
-    public void setAssignee(String assignee) {
-        this.assignee = assignee;
-    }
-
-    public Integer getFlowStatus() {
-        return flowStatus;
-    }
-
-    public void setFlowStatus(Integer flowStatus) {
-        this.flowStatus = flowStatus;
-    }
-
-    public String getGateWayNode() {
-        return gateWayNode;
-    }
-
-    public void setGateWayNode(String gateWayNode) {
-        this.gateWayNode = gateWayNode;
-    }
-
-    public String getPermissionFlag() {
-        return permissionFlag;
-    }
-
-    public void setPermissionFlag(String permissionFlag) {
-        this.permissionFlag = permissionFlag;
-    }
-
-    public List<String> getPermissionList() {
-        return permissionList;
-    }
-
-    public void setPermissionList(List<String> permissionList) {
-        this.permissionList = permissionList;
-    }
-
-    @Override
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    @Override
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    @Override
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    @Override
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public String getFlowName() {
-        return flowName;
-    }
-
-    public void setFlowName(String flowName) {
-        this.flowName = flowName;
-    }
-
-    public String getFromCustom() {
-        return fromCustom;
-    }
-
-    public void setFromCustom(String fromCustom) {
-        this.fromCustom = fromCustom;
-    }
-
-    public String getFromPath() {
-        return fromPath;
-    }
-
-    public void setFromPath(String fromPath) {
-        this.fromPath = fromPath;
+        return this;
     }
 
     public Long getTenantId() {
         return tenantId;
     }
 
-    public void setTenantId(Long tenantId) {
+    public FlowTask setTenantId(Long tenantId) {
         this.tenantId = tenantId;
+        return this;
+    }
+
+    public String getFlowName() {
+        return flowName;
+    }
+
+    public FlowTask setFlowName(String flowName) {
+        this.flowName = flowName;
+        return this;
+    }
+
+    public String getBusinessId() {
+        return businessId;
+    }
+
+    public FlowTask setBusinessId(String businessId) {
+        this.businessId = businessId;
+        return this;
+    }
+
+    public String getNodeCode() {
+        return nodeCode;
+    }
+
+    public FlowTask setNodeCode(String nodeCode) {
+        this.nodeCode = nodeCode;
+        return this;
+    }
+
+    public String getNodeName() {
+        return nodeName;
+    }
+
+    public FlowTask setNodeName(String nodeName) {
+        this.nodeName = nodeName;
+        return this;
+    }
+
+    public Integer getNodeType() {
+        return nodeType;
+    }
+
+    public FlowTask setNodeType(Integer nodeType) {
+        this.nodeType = nodeType;
+        return this;
+    }
+
+    public String getApprover() {
+        return approver;
+    }
+
+    public FlowTask setApprover(String approver) {
+        this.approver = approver;
+        return this;
+    }
+
+    public String getAssignee() {
+        return assignee;
+    }
+
+    public FlowTask setAssignee(String assignee) {
+        this.assignee = assignee;
+        return this;
+    }
+
+    public Integer getFlowStatus() {
+        return flowStatus;
+    }
+
+    public FlowTask setFlowStatus(Integer flowStatus) {
+        this.flowStatus = flowStatus;
+        return this;
+    }
+
+    public String getGateWayNode() {
+        return gateWayNode;
+    }
+
+    public FlowTask setGateWayNode(String gateWayNode) {
+        this.gateWayNode = gateWayNode;
+        return this;
+    }
+
+    public String getPermissionFlag() {
+        return permissionFlag;
+    }
+
+    public FlowTask setPermissionFlag(String permissionFlag) {
+        this.permissionFlag = permissionFlag;
+        return this;
+    }
+
+    public List<String> getPermissionList() {
+        return permissionList;
+    }
+
+    public FlowTask setPermissionList(List<String> permissionList) {
+        this.permissionList = permissionList;
+        return this;
+    }
+
+    public String getFromCustom() {
+        return fromCustom;
+    }
+
+    public FlowTask setFromCustom(String fromCustom) {
+        this.fromCustom = fromCustom;
+        return this;
+    }
+
+    public String getFromPath() {
+        return fromPath;
+    }
+
+    public FlowTask setFromPath(String fromPath) {
+        this.fromPath = fromPath;
+        return this;
     }
 }

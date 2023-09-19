@@ -15,7 +15,21 @@ import java.util.List;
  */
 public interface FlowHisTaskMapper extends WarmMapper<FlowHisTask> {
 
+    /**
+     * 根据实例id获取历史记录集合
+     *
+     * @param instanceId
+     * @return
+     */
     List<FlowHisTask> getByInsId(Long instanceId);
+
+    /**
+     * 根据nodeCode获取未驳回的历史记录
+     *
+     * @param nodeCode
+     * @return
+     */
+    List<FlowHisTask> getNoReject(String nodeCode);
 
     /**
      * 根据instanceIds删除

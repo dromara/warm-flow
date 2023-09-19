@@ -1,8 +1,5 @@
 package com.warm.flow.core.domain.entity;
 
-import com.warm.mybatis.core.entity.WarmEntity;
-
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -11,13 +8,8 @@ import java.util.List;
  * @author warm
  * @date 2023-03-29
  */
-public class FlowHisTask implements WarmEntity {
+public class FlowHisTask extends FlowEntity {
     private static final long serialVersionUID = 1L;
-
-    /**
-     * 主键
-     */
-    private Long id;
 
     /**
      * 对应flow_definition表的id
@@ -55,7 +47,7 @@ public class FlowHisTask implements WarmEntity {
     private String nodeName;
 
     /**
-     * 开始结点类型,0开始结点,1中间结点,2结束结点
+     * 开始结点类型（0开始结点 1中间结点 2结束结点 3互斥网关 4并行网关）
      */
     private Integer nodeType;
 
@@ -85,7 +77,7 @@ public class FlowHisTask implements WarmEntity {
     private List<String> permissionList;
 
     /**
-     * 流程状态（0待提交 1审批中 2 通过 8已完成 9已驳回 10失效）
+     * 流程状态（0待提交 1审批中 2 审批通过 8已完成 9已驳回 10失效）
      */
     private Integer flowStatus;
 
@@ -104,15 +96,6 @@ public class FlowHisTask implements WarmEntity {
      */
     private String createBy;
 
-    /**
-     * 创建时间
-     */
-    private Date createTime;
-
-    /**
-     * 更新时间
-     */
-    private Date updateTime;
 
     /**
      * 审批表单是否自定义（Y是 2否）
@@ -125,185 +108,174 @@ public class FlowHisTask implements WarmEntity {
     private String fromPath;
 
 
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getInstanceId() {
-        return instanceId;
-    }
-
-    public void setInstanceId(Long instanceId) {
-        this.instanceId = instanceId;
-    }
-
-    public String getNodeCode() {
-        return nodeCode;
-    }
-
-    public void setNodeCode(String nodeCode) {
-        this.nodeCode = nodeCode;
-    }
-
-    public String getNodeName() {
-        return nodeName;
-    }
-
-    public void setNodeName(String nodeName) {
-        this.nodeName = nodeName;
-    }
-
     public Long getDefinitionId() {
         return definitionId;
     }
 
-    public String getBusinessId() {
-        return businessId;
-    }
-
-    public void setBusinessId(String businessId) {
-        this.businessId = businessId;
-    }
-
-    public void setDefinitionId(Long definitionId) {
+    public FlowHisTask setDefinitionId(Long definitionId) {
         this.definitionId = definitionId;
-    }
-
-    public Integer getNodeType() {
-        return nodeType;
-    }
-
-    public void setNodeType(Integer nodeType) {
-        this.nodeType = nodeType;
-    }
-
-    public String getTargetNodeCode() {
-        return targetNodeCode;
-    }
-
-    public void setTargetNodeCode(String targetNodeCode) {
-        this.targetNodeCode = targetNodeCode;
-    }
-
-    public String getTargetNodeName() {
-        return targetNodeName;
-    }
-
-    public void setTargetNodeName(String targetNodeName) {
-        this.targetNodeName = targetNodeName;
-    }
-
-    public String getApprover() {
-        return approver;
-    }
-
-    public void setApprover(String approver) {
-        this.approver = approver;
-    }
-
-    public Integer getFlowStatus() {
-        return flowStatus;
-    }
-
-    public void setFlowStatus(Integer flowStatus) {
-        this.flowStatus = flowStatus;
-    }
-
-    public String getGateWayNode() {
-        return gateWayNode;
-    }
-
-    public void setGateWayNode(String gateWayNode) {
-        this.gateWayNode = gateWayNode;
-    }
-
-    public String getPermissionFlag() {
-        return permissionFlag;
-    }
-
-    public void setPermissionFlag(String permissionFlag) {
-        this.permissionFlag = permissionFlag;
-    }
-
-    public List<String> getPermissionList() {
-        return permissionList;
-    }
-
-    public void setPermissionList(List<String> permissionList) {
-        this.permissionList = permissionList;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public String getCreateBy() {
-        return createBy;
-    }
-
-    public void setCreateBy(String createBy) {
-        this.createBy = createBy;
-    }
-
-    @Override
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    @Override
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    @Override
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    @Override
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
+        return this;
     }
 
     public String getFlowName() {
         return flowName;
     }
 
-    public void setFlowName(String flowName) {
+    public FlowHisTask setFlowName(String flowName) {
         this.flowName = flowName;
+        return this;
     }
 
-    public String getFromCustom() {
-        return fromCustom;
+    public Long getInstanceId() {
+        return instanceId;
     }
 
-    public void setFromCustom(String fromCustom) {
-        this.fromCustom = fromCustom;
-    }
-
-    public String getFromPath() {
-        return fromPath;
-    }
-
-    public void setFromPath(String fromPath) {
-        this.fromPath = fromPath;
+    public FlowHisTask setInstanceId(Long instanceId) {
+        this.instanceId = instanceId;
+        return this;
     }
 
     public Long getTenantId() {
         return tenantId;
     }
 
-    public void setTenantId(Long tenantId) {
+    public FlowHisTask setTenantId(Long tenantId) {
         this.tenantId = tenantId;
+        return this;
+    }
+
+    public String getBusinessId() {
+        return businessId;
+    }
+
+    public FlowHisTask setBusinessId(String businessId) {
+        this.businessId = businessId;
+        return this;
+    }
+
+    public String getNodeCode() {
+        return nodeCode;
+    }
+
+    public FlowHisTask setNodeCode(String nodeCode) {
+        this.nodeCode = nodeCode;
+        return this;
+    }
+
+    public String getNodeName() {
+        return nodeName;
+    }
+
+    public FlowHisTask setNodeName(String nodeName) {
+        this.nodeName = nodeName;
+        return this;
+    }
+
+    public Integer getNodeType() {
+        return nodeType;
+    }
+
+    public FlowHisTask setNodeType(Integer nodeType) {
+        this.nodeType = nodeType;
+        return this;
+    }
+
+    public String getTargetNodeCode() {
+        return targetNodeCode;
+    }
+
+    public FlowHisTask setTargetNodeCode(String targetNodeCode) {
+        this.targetNodeCode = targetNodeCode;
+        return this;
+    }
+
+    public String getTargetNodeName() {
+        return targetNodeName;
+    }
+
+    public FlowHisTask setTargetNodeName(String targetNodeName) {
+        this.targetNodeName = targetNodeName;
+        return this;
+    }
+
+    public String getApprover() {
+        return approver;
+    }
+
+    public FlowHisTask setApprover(String approver) {
+        this.approver = approver;
+        return this;
+    }
+
+    public String getPermissionFlag() {
+        return permissionFlag;
+    }
+
+    public FlowHisTask setPermissionFlag(String permissionFlag) {
+        this.permissionFlag = permissionFlag;
+        return this;
+    }
+
+    public List<String> getPermissionList() {
+        return permissionList;
+    }
+
+    public FlowHisTask setPermissionList(List<String> permissionList) {
+        this.permissionList = permissionList;
+        return this;
+    }
+
+    public Integer getFlowStatus() {
+        return flowStatus;
+    }
+
+    public FlowHisTask setFlowStatus(Integer flowStatus) {
+        this.flowStatus = flowStatus;
+        return this;
+    }
+
+    public String getGateWayNode() {
+        return gateWayNode;
+    }
+
+    public FlowHisTask setGateWayNode(String gateWayNode) {
+        this.gateWayNode = gateWayNode;
+        return this;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public FlowHisTask setMessage(String message) {
+        this.message = message;
+        return this;
+    }
+
+    public String getCreateBy() {
+        return createBy;
+    }
+
+    public FlowHisTask setCreateBy(String createBy) {
+        this.createBy = createBy;
+        return this;
+    }
+
+    public String getFromCustom() {
+        return fromCustom;
+    }
+
+    public FlowHisTask setFromCustom(String fromCustom) {
+        this.fromCustom = fromCustom;
+        return this;
+    }
+
+    public String getFromPath() {
+        return fromPath;
+    }
+
+    public FlowHisTask setFromPath(String fromPath) {
+        this.fromPath = fromPath;
+        return this;
     }
 }

@@ -1,9 +1,6 @@
 package com.warm.flow.core.domain.entity;
 
-import com.warm.mybatis.core.entity.WarmEntity;
-
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -12,13 +9,9 @@ import java.util.List;
  * @author warm
  * @date 2023-03-29
  */
-public class FlowDefinition implements WarmEntity {
-    private static final long serialVersionUID = 1L;
+public class FlowDefinition extends FlowEntity {
 
-    /**
-     * 主键
-     */
-    private Long id;
+    private static final long serialVersionUID = 1L;
 
     /**
      * 流程编码
@@ -50,102 +43,69 @@ public class FlowDefinition implements WarmEntity {
      */
     private String fromPath;
 
-    /**
-     * 创建时间
-     */
-    private Date createTime;
-
-    /**
-     * 更新时间
-     */
-    private Date updateTime;
-
     private List<FlowNode> nodeList = new ArrayList<>();
 
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getFlowCode() {
         return flowCode;
     }
 
-    public void setFlowCode(String flowCode) {
+    public FlowDefinition setFlowCode(String flowCode) {
         this.flowCode = flowCode;
+        return this;
     }
 
     public String getFlowName() {
         return flowName;
     }
 
-    public void setFlowName(String flowName) {
+    public FlowDefinition setFlowName(String flowName) {
         this.flowName = flowName;
+        return this;
     }
 
     public String getVersion() {
         return version;
     }
 
-    public void setVersion(String version) {
+    public FlowDefinition setVersion(String version) {
         this.version = version;
+        return this;
     }
 
     public Integer getIsPublish() {
         return isPublish;
     }
 
-    public void setIsPublish(Integer isPublish) {
+    public FlowDefinition setIsPublish(Integer isPublish) {
         this.isPublish = isPublish;
+        return this;
     }
 
     public String getFromCustom() {
         return fromCustom;
     }
 
-    public void setFromCustom(String fromCustom) {
+    public FlowDefinition setFromCustom(String fromCustom) {
         this.fromCustom = fromCustom;
+        return this;
     }
 
     public String getFromPath() {
         return fromPath;
     }
 
-    public void setFromPath(String fromPath) {
+    public FlowDefinition setFromPath(String fromPath) {
         this.fromPath = fromPath;
-    }
-
-    @Override
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    @Override
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    @Override
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    @Override
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
+        return this;
     }
 
     public List<FlowNode> getNodeList() {
         return nodeList;
     }
 
-    public void setNodeList(List<FlowNode> nodeList) {
+    public FlowDefinition setNodeList(List<FlowNode> nodeList) {
         this.nodeList = nodeList;
+        return this;
     }
 }

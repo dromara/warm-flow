@@ -9,7 +9,9 @@
         <result property="definitionId" column="definition_id"/>
         <result property="nodeId" column="node_id"/>
         <result property="nowNodeCode" column="now_node_code"/>
+        <result property="nowNodeType" column="now_node_type"/>
         <result property="nextNodeCode" column="next_node_code"/>
+        <result property="nextNodeType" column="next_node_type"/>
         <result property="skipType" column="skip_type"/>
         <result property="skipCondition" column="skip_condition"/>
         <result property="createTime" column="create_time"/>
@@ -21,7 +23,9 @@
                t.definition_id,
                t.node_id,
                t.now_node_code,
+               t.now_node_type,
                t.next_node_code,
+               t.next_node_type,
                t.skip_type,
                t.skip_condition,
                t.create_time,
@@ -91,7 +95,9 @@
             <if test="definitionId != null">definition_id,</if>
             <if test="nodeId != null">node_id,</if>
             <if test="nowNodeCode != null and nowNodeCode != ''">now_node_code,</if>
+            <if test="nowNodeType != null">now_node_type,</if>
             <if test="nextNodeCode != null and nextNodeCode != ''">next_node_code,</if>
+            <if test="nextNodeType != null">next_node_type,</if>
             <if test="skipType != null">skip_type,</if>
             <if test="skipCondition != null">skip_condition,</if>
             <if test="createTime != null">create_time,</if>
@@ -102,7 +108,9 @@
             <if test="definitionId != null">#{definitionId},</if>
             <if test="nodeId != null">#{nodeId},</if>
             <if test="nowNodeCode != null and nowNodeCode != ''">#{nowNodeCode},</if>
+            <if test="nowNodeType != null">#{nowNodeType},</if>
             <if test="nextNodeCode != null and nextNodeCode != ''">#{nextNodeCode},</if>
+            <if test="nextNodeType != null">#{nextNodeType},</if>
             <if test="skipType != null">#{skipType},</if>
             <if test="skipCondition != null">#{skipCondition},</if>
             <if test="createTime != null">#{createTime},</if>
@@ -116,7 +124,9 @@
             <if test="definitionId != null">definition_id = #{definitionId},</if>
             <if test="nodeId != null">node_id = #{nodeId},</if>
             <if test="nowNodeCode != null and nowNodeCode != ''">now_node_code = #{nowNodeCode},</if>
+            <if test="nowNodeType != null">now_node_type = #{nowNodeType},</if>
             <if test="nextNodeCode != null and nextNodeCode != ''">next_node_code = #{nextNodeCode},</if>
+            <if test="nextNodeType != null">next_node_type = #{nextNodeType},</if>
             <if test="skipType != null">skip_type = #{skipType},</if>
             <if test="skipCondition != null">skip_condition = #{skipCondition},</if>
             <if test="createTime != null">create_time = #{createTime},</if>

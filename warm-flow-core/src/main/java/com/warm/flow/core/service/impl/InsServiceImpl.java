@@ -14,10 +14,7 @@ import com.warm.flow.core.utils.AssertUtil;
 import com.warm.mybatis.core.service.impl.WarmServiceImpl;
 import com.warm.tools.utils.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -106,23 +103,27 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
         List<FlowNode> nextNodes = getNextNode(task, flowUser);
         FlowNode nextNode = nextNodes.get(0);
         Integer gatewayNodeType = nextNode.getNodeType();
+        String gatewayNodeCode = nextNode.getNodeCode();
 
-        // 多条线路汇聚到并行网关，必须所有任务都完成，才能继续。 根据并行网关节点，查询前面的节点是否都完成，
-        // 获取网关所有前置节点，并且查询前置节点是否完成，前置节点前面的节点完成时间是否早于前置节点
+        /* 多条线路汇聚到并行网关，必须所有任务都完成，才能继续。 根据并行网关节点，查询前面的节点是否都完成，
+            判断规则，获取网关所有前置节点，并且查询是否有历史任务记录，前前置节点完成时间是否早于前置节点 */
+        // 并行网关节点是否都完成
+        boolean gateWayParallelFinish = isGateWayParallelFinish(task, instance, gatewayNodeType, gatewayNodeCode);
+
         if (NodeType.isGateWayParallel(gatewayNodeType)) {
-
-
+            // 如果是网关节点，则重新获取后续节点
+            nextNodes = checkGateway(flowUser, task, gatewayNodeType, nextNode, nextNodes);
         }
-
-        // 如果是网关节点，则重新获取后续节点
-        nextNodes = checkGateway(flowUser, task, gatewayNodeType, nextNode, nextNodes);
-
-        // 构建增代办任务
-        List<FlowTask> addTasks = buildAddTasks(flowUser, task, instance, nextNodes, gatewayNodeType);
+        List<FlowTask> addTasks = null;
+        if (gateWayParallelFinish) {
+            // 构建代办任务
+            addTasks = buildAddTasks(flowUser, task, instance, nextNodes, gatewayNodeType);
+        }
 
         // 设置流程历史任务信息
         insHisList.add(setSkipInsHis(task, nextNodes, flowUser));
-
+        // 更新流程实例信息
+        setSkipInstance(instance, nextNodes, addTasks, flowUser);
         // 更新流程信息
         updateFlowInfo(flowUser, task, instance, nextNodes, insHisList, addTasks);
 
@@ -138,8 +139,116 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
         return instance;
     }
 
+    private static boolean isGateWayParallelFinish(FlowTask task, FlowInstance instance, Integer gatewayNodeType
+            , String gatewayNodeCode) {
+        if (NodeType.isGateWayParallel(gatewayNodeType)) {
+            List<FlowSkip> allSkips = FlowFactory.skipService().list(new FlowSkip()
+                    .setDefinitionId(instance.getDefinitionId()));
+            // 查询非当前任务的下个节点和上个节点对应关系
+            Map<String, List<FlowSkip>> skipMap = StreamUtils.groupByKeyFilter(skip ->
+                    !task.getNodeCode().equals(skip.getNowNodeCode()) ||
+                            !gatewayNodeCode.equals(skip.getNextNodeCode()), allSkips, FlowSkip::getNextNodeCode);
+            List<FlowSkip> oneLastSkips = skipMap.get(gatewayNodeCode);
+            if (CollUtil.isNotEmpty(oneLastSkips)) {
+                for (FlowSkip oneLastSkip : oneLastSkips) {
+                    FlowHisTask oneLastHisTask = CollUtil.getOne(FlowFactory.hisTaskService()
+                            .getNoReject(oneLastSkip.getNowNodeCode()));
+                    // 查询前置节点是否完成
+                    if (ObjectUtil.isNull(oneLastHisTask)) {
+                        return false;
+                    }
+                    List<FlowSkip> twoLastSkips = skipMap.get(oneLastSkip.getNowNodeCode());
+                    for (FlowSkip twoLastSkip : twoLastSkips) {
+                        // 如果前前置节点是网关，那网关前任意一个任务完成就算完成
+                        if (NodeType.isGateWay(twoLastSkip.getNowNodeType())) {
+                            List<FlowSkip> threeLastSkips = skipMap.get(twoLastSkip.getNowNodeCode());
+                            for (FlowSkip threeLastSkip : threeLastSkips) {
+                                FlowHisTask threeLastHisTask = CollUtil.getOne(FlowFactory.hisTaskService()
+                                        .getNoReject(threeLastSkip.getNowNodeCode()));
+                                if (ObjectUtil.isNull(threeLastHisTask) || threeLastHisTask.getCreateTime()
+                                        .after(oneLastHisTask.getCreateTime())) {
+                                    return false;
+                                }
+                            }
+                        } else {
+                            FlowHisTask twoLastHisTask = CollUtil.getOne(FlowFactory.hisTaskService()
+                                    .getNoReject(twoLastSkip.getNowNodeCode()));
+                            // 前前置节点完成时间是否早于前置节点，如果是串行网关，那前前置节点必须只有一个完成，如果是并行网关都要完成
+                            if (ObjectUtil.isNull(twoLastHisTask) || twoLastHisTask.getCreateTime()
+                                    .after(oneLastHisTask.getCreateTime())) {
+                                return false;
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 一票否决（谨慎使用），如果驳回，驳回指向节点后还存在其他正在执行的代办任务，转历史任务，状态都为驳回,重走流程。
+     *
+     * @param task
+     * @param instance
+     * @param gatewayNodeType
+     * @param gatewayNodeCode
+     * @return
+     */
+    private static boolean oneVoteVeto(FlowTask task, FlowInstance instance, Integer gatewayNodeType
+            , String gatewayNodeCode) {
+        List<FlowTask> tasks = FlowFactory.taskService().getByInsId(task.getInstanceId());
+        Map<String, FlowTask> taskMap = StreamUtils.toMap(tasks, FlowTask::getNodeCode, flowTask -> flowTask);
+        List<FlowSkip> allSkips = FlowFactory.skipService().list(new FlowSkip()
+                .setDefinitionId(task.getDefinitionId()));
+        // 排除执行当前节点的流程跳转
+        Map<String, List<FlowSkip>> skipMap = StreamUtils.groupByKeyFilter(skip ->
+                !task.getNodeCode().equals(skip.getNextNodeCode()), allSkips, FlowSkip::getNextNodeCode);
+        for (FlowTask flowTask : tasks) {
+            List<FlowSkip> oneLastSkips = skipMap.get(flowTask.getNodeCode());
+            if (CollUtil.isNotEmpty(oneLastSkips)) {
+                for (FlowSkip oneLastSkip : oneLastSkips) {
+                    FlowHisTask oneLastHisTask = CollUtil.getOne(FlowFactory.hisTaskService()
+                            .getNoReject(oneLastSkip.getNowNodeCode()));
+                    // 查询前置节点是否完成
+                    if (ObjectUtil.isNull(oneLastHisTask)) {
+                        return false;
+                    }
+                    List<FlowSkip> twoLastSkips = skipMap.get(oneLastSkip.getNowNodeCode());
+                    for (FlowSkip twoLastSkip : twoLastSkips) {
+                        // 如果前前置节点是网关，那网关前任意一个任务完成就算完成
+                        if (NodeType.isGateWay(twoLastSkip.getNowNodeType())) {
+                            List<FlowSkip> threeLastSkips = skipMap.get(twoLastSkip.getNowNodeCode());
+                            for (FlowSkip threeLastSkip : threeLastSkips) {
+                                FlowHisTask threeLastHisTask = CollUtil.getOne(FlowFactory.hisTaskService()
+                                        .getNoReject(threeLastSkip.getNowNodeCode()));
+                                if (ObjectUtil.isNull(threeLastHisTask) || threeLastHisTask.getCreateTime()
+                                        .after(oneLastHisTask.getCreateTime())) {
+                                    return false;
+                                }
+                            }
+                        } else {
+                            FlowHisTask twoLastHisTask = CollUtil.getOne(FlowFactory.hisTaskService()
+                                    .getNoReject(twoLastSkip.getNowNodeCode()));
+                            // 前前置节点完成时间是否早于前置节点，如果是串行网关，那前前置节点必须只有一个完成，如果是并行网关都要完成
+                            if (ObjectUtil.isNull(twoLastHisTask) || twoLastHisTask.getCreateTime()
+                                    .after(oneLastHisTask.getCreateTime())) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+        return true;
+    }
+
     /**
      * 校验是否网关节点,如果纯正获取新的后面的节点
+     *
      * @param flowUser
      * @param task
      * @param gatewayNodeType
@@ -181,6 +290,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
 
     /**
      * 构建增代办任务
+     *
      * @param flowUser
      * @param task
      * @param instance
@@ -218,13 +328,16 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
             // 结束节点不生成代办任务
             if (NodeType.END.getKey().equals(nextNode.getNodeType())) {
                 endInstanceId = instance.getId();
+                break;
             }
         }
         if (ObjectUtil.isNotNull(endInstanceId)) {
-            List<FlowTask> taskList = FlowFactory.taskService().getNoFinish(endInstanceId);
-            List<FlowHisTask> insHisList = convertInsHis(taskList, FlowStatus.FINISHED.getKey());
-            FlowFactory.taskService().removeByIds(StreamUtils.toList(taskList, FlowTask::getId));
-            FlowFactory.hisTaskService().saveBatch(insHisList);
+            List<FlowTask> taskList = FlowFactory.taskService().getByInsId(endInstanceId);
+            if (CollUtil.isNotEmpty(taskList)) {
+                List<FlowHisTask> insHisList = convertInsHis(taskList, FlowStatus.FINISHED.getKey());
+                FlowFactory.taskService().removeByIds(StreamUtils.toList(taskList, FlowTask::getId));
+                FlowFactory.hisTaskService().saveBatch(insHisList);
+            }
         }
     }
 
@@ -264,7 +377,6 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
      */
     private void updateFlowInfo(FlowParams flowUser, FlowTask task, FlowInstance instance, List<FlowNode> nextNodes
             , List<FlowHisTask> insHisList, List<FlowTask> addTasks) {
-        setSkipInstance(instance, nextNodes, flowUser);
         FlowFactory.taskService().removeById(task);
         FlowFactory.hisTaskService().saveBatch(insHisList);
         if (CollUtil.isNotEmpty(addTasks)) {
@@ -273,13 +385,23 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
         updateById(instance);
     }
 
-    private void setSkipInstance(FlowInstance instance, List<FlowNode> nextNodes, FlowParams flowUser) {
-        FlowNode flowNode = getNextNode(nextNodes);
+    private void setSkipInstance(FlowInstance instance, List<FlowNode> nextNodes, List<FlowTask> addTasks, FlowParams flowUser) {
         instance.setUpdateTime(new Date());
-        instance.setNodeType(flowNode.getNodeType());
-        instance.setNodeCode(flowNode.getNodeCode());
-        instance.setNodeName(flowNode.getNodeName());
-        instance.setFlowStatus(setFlowStatus(flowNode.getNodeType(), flowUser.getSkipType()));
+        for (FlowNode flowNode : nextNodes) {
+            // 结束节点不生成代办任务
+            if (NodeType.END.getKey().equals(flowNode.getNodeType())) {
+                instance.setFlowStatus(FlowStatus.FINISHED.getKey());
+                return;
+            }
+        }
+        // 如果是汇聚并行网关，不是最后一个执行的分支，addTasks会为空
+        if (CollUtil.isNotEmpty(addTasks)) {
+            FlowTask flowTask = getNextTask(addTasks);
+            instance.setNodeType(flowTask.getNodeType());
+            instance.setNodeCode(flowTask.getNodeCode());
+            instance.setNodeName(flowTask.getNodeName());
+            instance.setFlowStatus(setFlowStatus(flowTask.getNodeType(), flowUser.getSkipType()));
+        }
     }
 
     /**
@@ -300,7 +422,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
         insHis.setPermissionFlag(task.getPermissionFlag());
         insHis.setTargetNodeCode(StreamUtils.join(nextNodes, FlowNode::getNodeCode));
         insHis.setTargetNodeName(StreamUtils.join(nextNodes, FlowNode::getNodeName));
-        insHis.setFlowStatus(setFlowStatus(getNextNode(nextNodes).getNodeType(), flowUser.getSkipType()));
+        insHis.setFlowStatus(setHisFlowStatus(getNextNode(nextNodes).getNodeType(), flowUser.getSkipType()));
         insHis.setGateWayNode(task.getGateWayNode());
         insHis.setMessage(flowUser.getMessage());
         insHis.setCreateTime(new Date());
@@ -310,12 +432,15 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
     }
 
     /**
-     * 并行网关， 下个节点是结束节点，取结束节点类型，否则随便取第一条
+     * 下个节点是结束节点，取结束节点类型，否则随便取第一条
      *
      * @param nextNodes
      * @return
      */
     private FlowNode getNextNode(List<FlowNode> nextNodes) {
+        if (nextNodes.size() == 1) {
+            return nextNodes.get(0);
+        }
         for (FlowNode nextNode : nextNodes) {
             if (NodeType.END.getKey().equals(nextNode.getNodeType())) {
                 return nextNode;
@@ -330,7 +455,10 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
      * @param flowTasks
      * @return
      */
-    private FlowTask getGateWayTask(List<FlowTask> flowTasks) {
+    private FlowTask getNextTask(List<FlowTask> flowTasks) {
+        if (flowTasks.size() == 1) {
+            return flowTasks.get(0);
+        }
         for (FlowTask flowTask : flowTasks) {
             if (NodeType.END.getKey().equals(flowTask.getNodeType())) {
                 return flowTask;
@@ -340,6 +468,8 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
     }
 
     /**
+     * 设置流程实例和代码任务流程状态
+     *
      * @param nodeType 节点类型（开始节点、中间节点、结束节点）
      * @param skipType 流程条件
      */
@@ -353,6 +483,22 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
             return FlowStatus.REJECT.getKey();
         } else {
             return FlowStatus.APPROVAL.getKey();
+        }
+    }
+
+    /**
+     * 设置流程实例和代码任务流程状态
+     *
+     * @param skipType 流程条件
+     */
+    private Integer setHisFlowStatus(Integer nodeType, String skipType) {
+        // 根据审批动作确定流程状态
+        if (NodeType.END.getKey().equals(nodeType)) {
+            return FlowStatus.FINISHED.getKey();
+        } else if (SkipType.REJECT.getKey().equals(skipType)) {
+            return FlowStatus.REJECT.getKey();
+        } else {
+            return FlowStatus.PASS.getKey();
         }
     }
 

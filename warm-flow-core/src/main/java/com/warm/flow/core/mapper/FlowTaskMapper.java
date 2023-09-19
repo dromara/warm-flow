@@ -36,13 +36,6 @@ public interface FlowTaskMapper extends WarmMapper<FlowTask> {
             , @Param("page") Page<FlowTask> page);
 
     /**
-     * 查询未完成的代办任务
-     *
-     * @param instanceId 实例id
-     */
-    List<FlowTask> getNoFinish(Long instanceId);
-
-    /**
      * 根据instanceIds删除
      *
      * @param instanceIds 主键

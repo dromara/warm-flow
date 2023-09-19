@@ -1,9 +1,6 @@
 package com.warm.flow.core.domain.entity;
 
-import com.warm.mybatis.core.entity.WarmEntity;
-
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -12,16 +9,11 @@ import java.util.List;
  * @author warm
  * @date 2023-03-29
  */
-public class FlowNode implements WarmEntity {
+public class FlowNode extends FlowEntity {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 主键
-     */
-    private Long id;
-
-    /**
-     * 结点类型,0开始结点,1中间结点,2结束结点
+     * 结点类型（0开始结点 1中间结点 2结束结点 3互斥网关 4并行网关）
      */
     private Integer nodeType;
 
@@ -56,111 +48,79 @@ public class FlowNode implements WarmEntity {
     private String skipDescribe;
 
     /**
-     * 创建时间
-     */
-    private Date createTime;
-
-    /**
-     * 更新时间
-     */
-    private Date updateTime;
-
-    /**
      * 跳转条件
      */
     List<FlowSkip> skipList = new ArrayList<>();
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public Integer getNodeType() {
         return nodeType;
     }
 
-    public void setNodeType(Integer nodeType) {
+    public FlowNode setNodeType(Integer nodeType) {
         this.nodeType = nodeType;
+        return this;
     }
 
     public Long getDefinitionId() {
         return definitionId;
     }
 
-    public void setDefinitionId(Long definitionId) {
+    public FlowNode setDefinitionId(Long definitionId) {
         this.definitionId = definitionId;
-    }
-
-    public String getNodeName() {
-        return nodeName;
-    }
-
-    public void setNodeName(String nodeName) {
-        this.nodeName = nodeName;
+        return this;
     }
 
     public String getNodeCode() {
         return nodeCode;
     }
 
-    public void setNodeCode(String nodeCode) {
+    public FlowNode setNodeCode(String nodeCode) {
         this.nodeCode = nodeCode;
+        return this;
+    }
+
+    public String getNodeName() {
+        return nodeName;
+    }
+
+    public FlowNode setNodeName(String nodeName) {
+        this.nodeName = nodeName;
+        return this;
     }
 
     public String getPermissionFlag() {
         return permissionFlag;
     }
 
-    public void setPermissionFlag(String permissionFlag) {
+    public FlowNode setPermissionFlag(String permissionFlag) {
         this.permissionFlag = permissionFlag;
+        return this;
     }
 
     public String getVersion() {
         return version;
     }
 
-    public void setVersion(String version) {
+    public FlowNode setVersion(String version) {
         this.version = version;
+        return this;
     }
 
     public String getSkipDescribe() {
         return skipDescribe;
     }
 
-    public void setSkipDescribe(String skipDescribe) {
+    public FlowNode setSkipDescribe(String skipDescribe) {
         this.skipDescribe = skipDescribe;
-    }
-
-    @Override
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    @Override
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    @Override
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    @Override
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
+        return this;
     }
 
     public List<FlowSkip> getSkipList() {
         return skipList;
     }
 
-    public void setSkipList(List<FlowSkip> skipList) {
+    public FlowNode setSkipList(List<FlowSkip> skipList) {
         this.skipList = skipList;
+        return this;
     }
 }

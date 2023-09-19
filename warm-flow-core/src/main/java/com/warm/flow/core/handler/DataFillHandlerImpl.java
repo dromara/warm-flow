@@ -1,6 +1,6 @@
 package com.warm.flow.core.handler;
 
-import com.warm.mybatis.core.entity.WarmEntity;
+import com.warm.flow.core.domain.entity.FlowEntity;
 import com.warm.mybatis.core.handler.DataFillHandler;
 import com.warm.tools.utils.IdUtils;
 import com.warm.tools.utils.ObjectUtil;
@@ -17,7 +17,7 @@ public class DataFillHandlerImpl implements DataFillHandler {
 
     @Override
     public void insertFill(Object object) {
-        WarmEntity entity = (WarmEntity) object;
+        FlowEntity entity = (FlowEntity) object;
         if (ObjectUtil.isNotNull(entity)) {
             if (Objects.isNull(entity.getId())) {
                 entity.setId(IdUtils.nextId());
@@ -31,7 +31,7 @@ public class DataFillHandlerImpl implements DataFillHandler {
 
     @Override
     public void updateFill(Object object) {
-        WarmEntity entity = (WarmEntity) object;
+        FlowEntity entity = (FlowEntity) object;
         if (ObjectUtil.isNotNull(entity)) {
             entity.setUpdateTime(new Date());
         }

@@ -23,6 +23,14 @@ public interface HisTaskService extends IWarmService<FlowHisTask> {
     List<FlowHisTask> getByInsIds(Long instanceId);
 
     /**
+     * 根据nodeCode获取未驳回的历史记录
+     *
+     * @param nodeCode
+     * @return
+     */
+    List<FlowHisTask> getNoReject(String nodeCode);
+
+    /**
      * 根据instanceIds删除
      *
      * @param instanceIds

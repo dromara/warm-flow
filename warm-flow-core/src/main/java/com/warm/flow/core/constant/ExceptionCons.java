@@ -13,6 +13,10 @@ public class ExceptionCons {
 
     public static final String SAME_DEST_NODE = "并行网关，同一个结点不能跳转同一个目标结点!";
 
+    public static final String SAME_NODE_CONNECT = "相关相同类型网关不可直连!";
+
+    public static final String BETWEEN_REJECT_GATEWAY = "中间节点不可驳回到网关节点!";
+
     public static final String MUL_START_NODE = "开始结点不能超过1个!";
     public static final String MUL_START_SKIP = "结点流转条件不能超过1个!";
 

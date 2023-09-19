@@ -26,6 +26,11 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskMapper, FlowH
     }
 
     @Override
+    public List<FlowHisTask> getNoReject(String nodeCode) {
+        return getMapper().getNoReject(nodeCode);
+    }
+
+    @Override
     public boolean deleteByInsIds(List<Long> instanceIds) {
         return SqlHelper.retBool(getMapper().deleteByInsIds(instanceIds));
     }

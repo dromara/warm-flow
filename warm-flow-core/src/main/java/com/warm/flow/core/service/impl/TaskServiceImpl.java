@@ -53,16 +53,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskMapper, FlowTask> i
         return Page.empty();
     }
 
-    /**
-     * 查询未完成的代办任务
-     *
-     * @param instanceId 实例id
-     */
-    @Override
-    public List<FlowTask> getNoFinish(Long instanceId) {
-        return getMapper().getNoFinish(instanceId);
-    }
-
     @Override
     public boolean deleteByInsIds(List<Long> instanceIds) {
         return SqlHelper.retBool(getMapper().deleteByInsIds(instanceIds));
