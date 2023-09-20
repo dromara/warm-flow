@@ -31,8 +31,6 @@ public class ExceptionCons {
 
     public static final String SAME_NODE_CODE = "同一流程中结点编码重复!";
 
-    public static final String MUL_FROM_STATUS = "存在流程状态不同的流程,无法批量处理!";
-
     public static final String NULL_DEST_NODE = "无法跳转到结点,请检查跳转类型和当前用户权限是否匹配!";
 
     public static final String NULL_CONDITIONVALUE_NODE = "无法跳转到结点,请检查跳转类型和跳转条件是否匹配!";
