@@ -1,5 +1,8 @@
 package com.warm.flow.core.enums;
 
+import com.warm.tools.utils.ObjectUtil;
+import com.warm.tools.utils.StringUtils;
+
 /**
  * @author minliuhua
  * @description: 审批动作
@@ -41,5 +44,25 @@ public enum SkipType {
             }
         }
         return null;
+    }
+
+    /**
+     * 判断是否通过类型
+     *
+     * @param Key
+     * @return
+     */
+    public static Boolean isPass(String Key) {
+        return StringUtils.isNotEmpty(Key) && (SkipType.PASS.getKey().equals(Key));
+    }
+
+    /**
+     * 判断是否驳回类型
+     *
+     * @param Key
+     * @return
+     */
+    public static Boolean isReject(String Key) {
+        return StringUtils.isNotEmpty(Key) && (SkipType.REJECT.getKey().equals(Key));
     }
 }

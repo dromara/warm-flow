@@ -66,6 +66,36 @@ public enum NodeType {
     }
 
     /**
+     * 判断是否开始节点
+     *
+     * @param Key
+     * @return
+     */
+    public static Boolean isStart(Integer Key) {
+        return ObjectUtil.isNotNull(Key) && (NodeType.START.getKey().equals(Key));
+    }
+
+    /**
+     * 判断是否中间节点
+     *
+     * @param Key
+     * @return
+     */
+    public static Boolean isBetween(Integer Key) {
+        return ObjectUtil.isNotNull(Key) && (NodeType.BETWEEN.getKey().equals(Key));
+    }
+
+    /**
+     * 判断是否结束节点
+     *
+     * @param Key
+     * @return
+     */
+    public static Boolean isEnd(Integer Key) {
+        return ObjectUtil.isNotNull(Key) && (NodeType.END.getKey().equals(Key));
+    }
+
+    /**
      * 判断是否网关节点
      *
      * @param Key

@@ -99,7 +99,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
     private FlowInstance skip(FlowParams flowUser, FlowTask task, FlowInstance instance) {
         // TODO min 后续考虑并发问题，待办任务和实例表不同步，可给代办任务id加锁，抽取所接口，方便后续兼容分布式锁
         // 非第一个记得跳转类型必传
-        if (!NodeType.START.getKey().equals(task.getNodeType())) {
+        if (!NodeType.isStart(task.getNodeType())) {
             AssertUtil.isFalse(StringUtils.isNotEmpty(flowUser.getSkipType()), ExceptionCons.NULL_CONDITIONVALUE);
         }
 
@@ -195,7 +195,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
      */
     private void oneVoteVeto(FlowTask task, String skipType, String nextNodeCode) {
         // 一票否决（谨慎使用），如果驳回，驳回指向节点后还存在其他正在执行的代办任务，转历史任务，状态失效,重走流程。
-        if (SkipType.REJECT.getKey().equals(skipType)) {
+        if (SkipType.isReject(skipType)) {
             List<FlowTask> tasks = FlowFactory.taskService().getByInsId(task.getInstanceId());
             List<FlowSkip> allSkips = FlowFactory.skipService().list(new FlowSkip()
                     .setDefinitionId(task.getDefinitionId()));
@@ -258,7 +258,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
                 return null;
             }
 
-            if (!NodeType.START.getKey().equals(nextNode.getNodeType())) {
+            if (!NodeType.isStart(nextNode.getNodeType())) {
                 skipsGateway = skipsGateway.stream().filter(t -> {
                     if (NodeType.isGateWaySerial(nextNode.getNodeType())) {
                         if (ObjectUtil.isNotNull(t.getSkipCondition())) {
@@ -309,7 +309,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
             List<FlowTask> addTasks = new ArrayList<>();
             for (FlowNode flowNode : nextNodes) {
                 // 结束节点不生成代办任务
-                if (!NodeType.END.getKey().equals(flowNode.getNodeType())) {
+                if (!NodeType.isEnd(flowNode.getNodeType())) {
                     FlowTask flowTask = addTask(flowNode, instance, flowUser);
                     // 如果是并行网关节点, 把网关编码传递给新的代办任务
                     if (NodeType.isGateWayParallel(nextNode.getNodeType())) {
@@ -334,7 +334,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
         Long endInstanceId = null;
         for (FlowNode nextNode : nextNodes) {
             // 结束节点不生成代办任务
-            if (NodeType.END.getKey().equals(nextNode.getNodeType())) {
+            if (NodeType.isEnd(nextNode.getNodeType())) {
                 endInstanceId = instance.getId();
                 break;
             }
@@ -395,7 +395,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
         instance.setUpdateTime(new Date());
         for (FlowNode flowNode : nextNodes) {
             // 结束节点不生成代办任务
-            if (NodeType.END.getKey().equals(flowNode.getNodeType())) {
+            if (NodeType.isEnd(flowNode.getNodeType())) {
                 instance.setFlowStatus(FlowStatus.FINISHED.getKey());
                 return;
             }
@@ -448,7 +448,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
             return nextNodes.get(0);
         }
         for (FlowNode nextNode : nextNodes) {
-            if (NodeType.END.getKey().equals(nextNode.getNodeType())) {
+            if (NodeType.isEnd(nextNode.getNodeType())) {
                 return nextNode;
             }
         }
@@ -466,7 +466,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
             return flowTasks.get(0);
         }
         for (FlowTask flowTask : flowTasks) {
-            if (NodeType.END.getKey().equals(flowTask.getNodeType())) {
+            if (NodeType.isEnd(flowTask.getNodeType())) {
                 return flowTask;
             }
         }
@@ -481,11 +481,11 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
      */
     private Integer setFlowStatus(Integer nodeType, String skipType) {
         // 根据审批动作确定流程状态
-        if (NodeType.START.getKey().equals(nodeType)) {
+        if (NodeType.isStart(nodeType)) {
             return FlowStatus.TOBESUBMIT.getKey();
-        } else if (NodeType.END.getKey().equals(nodeType)) {
+        } else if (NodeType.isEnd(nodeType)) {
             return FlowStatus.FINISHED.getKey();
-        } else if (SkipType.REJECT.getKey().equals(skipType)) {
+        } else if (SkipType.isReject(skipType)) {
             return FlowStatus.REJECT.getKey();
         } else {
             return FlowStatus.APPROVAL.getKey();
@@ -499,9 +499,9 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
      */
     private Integer setHisFlowStatus(Integer nodeType, String skipType) {
         // 根据审批动作确定流程状态
-        if (NodeType.END.getKey().equals(nodeType)) {
+        if (NodeType.isEnd(nodeType)) {
             return FlowStatus.FINISHED.getKey();
-        } else if (SkipType.REJECT.getKey().equals(skipType)) {
+        } else if (SkipType.isReject(skipType)) {
             return FlowStatus.REJECT.getKey();
         } else {
             return FlowStatus.PASS.getKey();
@@ -579,7 +579,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
                 || !CollUtil.containsAny(permissionFlags, ArrayUtil.strToArrAy(node.getPermissionFlag(),
                 ","))), ExceptionCons.NULL_ROLE_NODE);
 
-        if (!NodeType.START.getKey().equals(task.getNodeType())) {
+        if (!NodeType.isStart(task.getNodeType())) {
             skips = skips.stream().filter(t -> {
                 if (StringUtils.isNotEmpty(t.getSkipType())) {
                     return (flowUser.getSkipType()).equals(t.getSkipType());
@@ -610,7 +610,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
                 .getByNodeCodes(Collections.singletonList(nextSkip.getNextNodeCode()), task.getDefinitionId());
         AssertUtil.isTrue(CollUtil.isEmpty(nodes), ExceptionCons.NOT_NODE_DATA);
         AssertUtil.isTrue(nodes.size() > 1, "[" + nextSkip.getNextNodeCode() + "]" + ExceptionCons.SAME_NODE_CODE);
-        AssertUtil.isTrue(NodeType.START.getKey().equals(nodes.get(0).getNodeType()), ExceptionCons.FRIST_FORBID_BACK);
+        AssertUtil.isTrue(NodeType.isStart(nodes.get(0).getNodeType()), ExceptionCons.FRIST_FORBID_BACK);
         return nodes.get(0);
 
     }
@@ -623,7 +623,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
      */
     private FlowNode getFirstBetween(List<FlowNode> nodes) {
         for (FlowNode flowNode : nodes) {
-            if (NodeType.START.getKey().equals(flowNode.getNodeType())) {
+            if (NodeType.isStart(flowNode.getNodeType())) {
                 List<FlowSkip> flowSkips = FlowFactory.skipService().queryByDefAndCode(flowNode.getDefinitionId(), flowNode.getNodeCode());
                 FlowSkip flowSkip = flowSkips.get(0);
                 return FlowFactory.nodeService().getByNodeCode(flowSkip.getNextNodeCode(), flowSkip.getDefinitionId());

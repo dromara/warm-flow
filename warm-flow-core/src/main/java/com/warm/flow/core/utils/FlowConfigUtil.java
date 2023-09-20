@@ -19,6 +19,7 @@ import org.dom4j.io.SAXReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 流程配置帮助类
@@ -141,6 +142,8 @@ public class FlowConfigUtil {
                     if (StringUtils.isNotEmpty(skip.getSkipType())) {
                         AssertUtil.isFalse(StringUtils.isNotEmpty(skip.getNextNodeCode()), "下一个流程结点编码为空");
                         skipElement.addAttribute("skipType", skip.getSkipType());
+                    }
+                    if (StringUtils.isNotEmpty(skip.getSkipCondition())) {
                         skipElement.addAttribute("skipCondition", skip.getSkipCondition());
                     }
                     skipElement.addText(skip.getNextNodeCode());
@@ -178,7 +181,7 @@ public class FlowConfigUtil {
         // 便利一个流程中的各个结点
         for (FlowNode node : nodeList) {
             initNodeAndCondition(node, id, definition.getVersion());
-            if (NodeType.START.getKey().equals(node.getNodeType())) {
+            if (NodeType.isStart(node.getNodeType())) {
                 startNum++;
                 AssertUtil.isTrue(startNum > 1, "[" + flowName + "]" + ExceptionCons.MUL_START_NODE);
             }
@@ -209,7 +212,7 @@ public class FlowConfigUtil {
      */
     private static void checkSkipNode(List<FlowSkip> allSkips, List<FlowNode> nodeList) {
         Map<String, FlowNode> flowNodeMap = StreamUtils.toMap(nodeList, FlowNode::getNodeCode, node -> node);
-
+        Map<String, List<FlowSkip>> allSkipMap = StreamUtils.groupByKey(allSkips, FlowSkip::getNowNodeCode);
         List<FlowSkip> gatewaySkips = new ArrayList<>();
         for (FlowSkip allSkip : allSkips) {
             allSkip.setNextNodeType(flowNodeMap.get(allSkip.getNextNodeCode()).getNodeType());
@@ -218,7 +221,7 @@ public class FlowConfigUtil {
             }
             // 中间节点不可驳回到网关节点
             AssertUtil.isTrue(!NodeType.isGateWay(allSkip.getNowNodeType())
-                            && SkipType.REJECT.getKey().equals(allSkip.getSkipType())
+                            && SkipType.isReject(allSkip.getSkipType())
                             && NodeType.isGateWay(allSkip.getNextNodeType())
                     , ExceptionCons.BETWEEN_REJECT_GATEWAY);
         }
@@ -232,7 +235,21 @@ public class FlowConfigUtil {
                 }
             }
         }
-
+        // 中间节点不可通过或者驳回到多个中间节点，必须先流转到网关节点
+        AtomicInteger passNum = new AtomicInteger();
+        AtomicInteger rejectNum = new AtomicInteger();
+        allSkipMap.forEach((key, values) -> {
+            for (FlowSkip value : values) {
+                if (NodeType.isBetween(value.getNowNodeType()) && NodeType.isBetween(value.getNextNodeType())) {
+                    if (SkipType.isPass(value.getSkipType())) {
+                        passNum.getAndIncrement();
+                    } else {
+                        rejectNum.getAndIncrement();
+                    }
+                }
+            }
+            AssertUtil.isTrue(passNum.get() > 1 || rejectNum.get() > 1, ExceptionCons.MUL_SKIP_BETWEEN);
+        });
     }
 
     /**
@@ -261,7 +278,7 @@ public class FlowConfigUtil {
         String nodeName = node.getNodeName();
         String nodeCode = node.getNodeCode();
         List<FlowSkip> skipList = node.getSkipList();
-        if (!NodeType.END.getKey().equals(node.getNodeType())) {
+        if (!NodeType.isEnd(node.getNodeType())) {
             AssertUtil.isTrue(CollUtil.isEmpty(skipList), "开始和中间结点必须有跳转规则");
         }
         AssertUtil.isBlank(nodeCode, "[" + nodeName + "]" + ExceptionCons.LOST_NODE_CODE);
@@ -278,7 +295,7 @@ public class FlowConfigUtil {
         int skipNum = 0;
         // 遍历结点下的跳转条件
         for (FlowSkip skip : skipList) {
-            if (NodeType.START.getKey().equals(node.getNodeType())) {
+            if (NodeType.isStart(node.getNodeType())) {
                 skipNum++;
                 AssertUtil.isTrue(skipNum > 1, "[" + node.getNodeName() + "]" + ExceptionCons.MUL_START_SKIP);
             }
