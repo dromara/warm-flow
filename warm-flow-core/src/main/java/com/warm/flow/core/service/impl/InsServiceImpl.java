@@ -8,6 +8,7 @@ import com.warm.flow.core.enums.FlowStatus;
 import com.warm.flow.core.enums.NodeType;
 import com.warm.flow.core.enums.SkipType;
 import com.warm.flow.core.exception.FlowException;
+import com.warm.flow.core.mapper.FlowDefinitionMapper;
 import com.warm.flow.core.mapper.FlowInstanceMapper;
 import com.warm.flow.core.service.InsService;
 import com.warm.flow.core.utils.AssertUtil;
@@ -25,6 +26,11 @@ import java.util.stream.Collectors;
  * @date 2023-03-29
  */
 public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInstance> implements InsService {
+
+    @Override
+    public Class<FlowInstanceMapper> getMapperClass() {
+        return FlowInstanceMapper.class;
+    }
 
     @Override
     public List<FlowInstance> getByIdWithLock(List<Long> ids) {
@@ -102,19 +108,22 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
         FlowNode nextNode = getNextNode(task, flowUser);
 
         // 如果是网关节点，则重新获取后续节点
-        List<FlowNode> nextNodes = checkGateWayParallel(flowUser, task, nextNode);
+        List<FlowNode> nextNodes = checkGateWay(flowUser, task, nextNode);
 
         // 构建代办任务
         List<FlowTask> addTasks = buildAddTasks(flowUser, task, instance, nextNodes, nextNode);
+
         // 设置流程历史任务信息
         insHisList.add(setSkipInsHis(task, nextNodes, flowUser));
-        // 更新流程实例信息
+
+        // 设置流程实例信息
         setSkipInstance(instance, nextNodes, addTasks, flowUser);
+
+        // 一票否决（谨慎使用），如果驳回，驳回指向节点后还存在其他正在执行的代办任务，转历史任务，状态都为失效,重走流程。
+        oneVoteVeto(task, flowUser.getSkipType(), nextNode.getNodeCode());
+
         // 更新流程信息
         updateFlowInfo(task, instance, insHisList, addTasks);
-
-        // 一票否决（谨慎使用），如果驳回，驳回指向节点后还存在其他正在执行的代办任务，转历史任务，状态都为驳回,重走流程。
-        oneVoteVeto(task, flowUser.getSkipType(), nextNode.getNodeCode());
 
         // 处理未完成的任务，当流程完成，还存在代办任务未完成，转历史任务，状态完成。
         handUndoneTask(instance, nextNodes);
@@ -123,6 +132,8 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
 
     /**
      * 判断并行网关节点前置任务是否都完成
+     * 多条线路汇聚到并行网关，必须所有任务都完成，才能继续。 根据并行网关节点，查询前面的节点是否都完成，
+     * 判断规则，获取网关所有前置节点，并且查询是否有历史任务记录，前前置节点完成时间是否早于前置节点
      *
      * @param task
      * @param instance
@@ -202,7 +213,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
                 }
             }
             if (CollUtil.isNotEmpty(noDoneTasks)) {
-                convertHisTask(noDoneTasks, FlowStatus.REJECT.getKey());
+                convertHisTask(noDoneTasks, FlowStatus.INVALID.getKey());
             }
         }
     }
@@ -230,16 +241,16 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
     }
 
     /**
-     * 校验是否并行网关节点,如果是重新获取新的后面的节点
+     * 校验是否网关节点,如果是重新获取新的后面的节点
      *
      * @param flowUser
      * @param task
      * @param nextNode
      * @return
      */
-    private List<FlowNode> checkGateWayParallel(FlowParams flowUser, FlowTask task, FlowNode nextNode) {
+    private List<FlowNode> checkGateWay(FlowParams flowUser, FlowTask task, FlowNode nextNode) {
         List<FlowNode> nextNodes = new ArrayList<>();
-        if (NodeType.isGateWayParallel(nextNode.getNodeType())) {
+        if (NodeType.isGateWay(nextNode.getNodeType())) {
             List<FlowSkip> skipsGateway = FlowFactory.skipService()
                     .queryByDefAndCode(nextNode.getDefinitionId(), nextNode.getNodeCode());
 
@@ -284,12 +295,10 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
     private List<FlowTask> buildAddTasks(FlowParams flowUser, FlowTask task, FlowInstance instance
             , List<FlowNode> nextNodes, FlowNode nextNode) {
         boolean buildFlag = false;
-        // 不是网关节点可以生成下一个代办任务
+        // 非并行网关节点可以直接生成下一个代办任务
         if (!NodeType.isGateWayParallel(nextNode.getNodeType())) {
             buildFlag = true;
         } else {
-            /* 多条线路汇聚到并行网关，必须所有任务都完成，才能继续。 根据并行网关节点，查询前面的节点是否都完成，
-            判断规则，获取网关所有前置节点，并且查询是否有历史任务记录，前前置节点完成时间是否早于前置节点 */
             // 并行网关节点是否都完成
             if (isGateWayParallelFinish(task, instance, nextNode.getNodeCode())) {
                 buildFlag = true;

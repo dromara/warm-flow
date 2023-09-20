@@ -21,6 +21,11 @@ import java.util.stream.Collectors;
 public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskMapper, FlowHisTask> implements HisTaskService {
 
     @Override
+    public Class<FlowHisTaskMapper> getMapperClass() {
+        return FlowHisTaskMapper.class;
+    }
+
+    @Override
     public List<FlowHisTask> getByInsIds(Long instanceId) {
         return getMapper().getByInsId(instanceId);
     }

@@ -50,13 +50,23 @@ public interface FlowHisTaskMapper extends WarmMapper<FlowHisTask> {
             , @Param("page") Page<FlowHisTask> page);
 
     /**
-     * 获取已办任务
+     * 获取最新的已办任务
      *
      * @param flowHisTask
      * @param page
      * @return
      */
     List<FlowHisTask> donePage(@Param("flowHisTask") FlowHisTask flowHisTask
+            , @Param("page") Page<FlowHisTask> page);
+
+    /**
+     * 获取已办任务
+     *
+     * @param flowHisTask
+     * @param page
+     * @return
+     */
+    List<FlowHisTask> doneAllPage(@Param("flowHisTask") FlowHisTask flowHisTask
             , @Param("page") Page<FlowHisTask> page);
 
 }

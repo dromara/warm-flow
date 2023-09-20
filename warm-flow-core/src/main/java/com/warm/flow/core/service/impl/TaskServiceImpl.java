@@ -2,6 +2,7 @@ package com.warm.flow.core.service.impl;
 
 import com.warm.flow.core.constant.ExceptionCons;
 import com.warm.flow.core.domain.entity.FlowTask;
+import com.warm.flow.core.mapper.FlowSkipMapper;
 import com.warm.flow.core.mapper.FlowTaskMapper;
 import com.warm.flow.core.service.TaskService;
 import com.warm.flow.core.utils.AssertUtil;
@@ -21,6 +22,11 @@ import java.util.stream.Collectors;
  * @date 2023-03-29
  */
 public class TaskServiceImpl extends WarmServiceImpl<FlowTaskMapper, FlowTask> implements TaskService {
+
+    @Override
+    public Class<FlowTaskMapper> getMapperClass() {
+        return FlowTaskMapper.class;
+    }
 
     @Override
     public List<FlowTask> getByInsId(Long instanceId) {

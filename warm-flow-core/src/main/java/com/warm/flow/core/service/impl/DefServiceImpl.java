@@ -9,6 +9,7 @@ import com.warm.flow.core.domain.entity.FlowSkip;
 import com.warm.flow.core.enums.PublishStatus;
 import com.warm.flow.core.exception.FlowException;
 import com.warm.flow.core.mapper.FlowDefinitionMapper;
+import com.warm.flow.core.mapper.FlowHisTaskMapper;
 import com.warm.flow.core.service.DefService;
 import com.warm.flow.core.utils.FlowConfigUtil;
 import com.warm.mybatis.core.service.impl.WarmServiceImpl;
@@ -27,6 +28,11 @@ import java.util.stream.Collectors;
  * @date 2023-03-29
  */
 public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionMapper, FlowDefinition> implements DefService {
+
+    @Override
+    public Class<FlowDefinitionMapper> getMapperClass() {
+        return FlowDefinitionMapper.class;
+    }
 
     @Override
     public void importXml(InputStream is) throws Exception {

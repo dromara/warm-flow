@@ -1,6 +1,7 @@
 package com.warm.flow.core.service.impl;
 
 import com.warm.flow.core.domain.entity.FlowSkip;
+import com.warm.flow.core.mapper.FlowNodeMapper;
 import com.warm.flow.core.mapper.FlowSkipMapper;
 import com.warm.flow.core.service.SkipService;
 import com.warm.mybatis.core.service.impl.WarmServiceImpl;
@@ -15,6 +16,11 @@ import java.util.List;
  * @date 2023-03-29
  */
 public class SkipServiceImpl extends WarmServiceImpl<FlowSkipMapper, FlowSkip> implements SkipService {
+
+    @Override
+    public Class<FlowSkipMapper> getMapperClass() {
+        return FlowSkipMapper.class;
+    }
 
     @Override
     public boolean deleteByNodeId(Long nodeId) {
