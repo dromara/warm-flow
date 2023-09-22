@@ -60,6 +60,7 @@
             </if>
             <if test="entity.nodeType != null">and t.node_type = #{entity.nodeCode}</if>
             <if test="entity.approver != null  and entity.approver != ''">and t.approver = #{entity.approver}</if>
+            <if test="entity.definitionId != null ">and t.definition_id = #{entity.definitionId}</if>
             <if test="entity.instanceId != null ">and instance_id = #{entity.instanceId}</if>
             <if test="entity.tenantId != null ">and tenant_id = #{entity.tenantId}</if>
         </where>

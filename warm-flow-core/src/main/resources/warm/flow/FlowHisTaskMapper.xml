@@ -68,6 +68,7 @@
                 concat('%', #{entity.targetNodeName}, '%')
             </if>
             <if test="entity.approver != null  and entity.approver != ''">and t.approver = #{entity.approver}</if>
+            <if test="entity.definitionId != null ">and t.definition_id = #{entity.definitionId}</if>
             <if test="entity.instanceId != null ">and instance_id = #{entity.instanceId}</if>
             <if test="entity.message != null  and entity.message != ''">and t.message = #{entity.message}</if>
             <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
