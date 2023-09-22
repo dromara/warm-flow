@@ -236,9 +236,9 @@ public class FlowConfigUtil {
             }
         }
         // 中间节点不可通过或者驳回到多个中间节点，必须先流转到网关节点
-        AtomicInteger passNum = new AtomicInteger();
-        AtomicInteger rejectNum = new AtomicInteger();
         allSkipMap.forEach((key, values) -> {
+            AtomicInteger passNum = new AtomicInteger();
+            AtomicInteger rejectNum = new AtomicInteger();
             for (FlowSkip value : values) {
                 if (NodeType.isBetween(value.getNowNodeType()) && NodeType.isBetween(value.getNextNodeType())) {
                     if (SkipType.isPass(value.getSkipType())) {
