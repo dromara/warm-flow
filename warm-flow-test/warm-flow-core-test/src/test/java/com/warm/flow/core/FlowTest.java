@@ -24,9 +24,9 @@ public class FlowTest {
     public void configuration() throws IOException {
         Configuration configuration = getConfiguration();
 
-        List<String> mapperList = Arrays.asList("mapper/flow/FlowDefinitionMapper.xml", "mapper/flow/FlowHisTaskMapper.xml"
-                , "mapper/flow/FlowInstanceMapper.xml", "mapper/flow/FlowNodeMapper.xml"
-                , "mapper/flow/FlowSkipMapper.xml", "mapper/flow/FlowTaskMapper.xml");
+        List<String> mapperList = Arrays.asList("warm/flow/FlowDefinitionMapper.xml", "warm/flow/FlowHisTaskMapper.xml"
+                , "warm/flow/FlowInstanceMapper.xml", "warm/flow/FlowNodeMapper.xml"
+                , "warm/flow/FlowSkipMapper.xml", "warm/flow/FlowTaskMapper.xml");
 
         try {
             for (String mapper : mapperList) {

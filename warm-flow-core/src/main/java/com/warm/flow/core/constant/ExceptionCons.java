@@ -65,6 +65,8 @@ public class ExceptionCons {
 
     public static final String NOT_PUBLISH_NODE = "不存在已发布的流程定义!";
 
+    public static final String NOT_PUBLISH_TASK = "存在正在执行的代办任务，不可取消!";
+
     public static final String MSG_OVER_LENGTH = "意见长度过长!";
 
 }

@@ -6,13 +6,15 @@ import com.warm.flow.core.domain.dto.FlowCombine;
 import com.warm.flow.core.domain.entity.FlowDefinition;
 import com.warm.flow.core.domain.entity.FlowNode;
 import com.warm.flow.core.domain.entity.FlowSkip;
+import com.warm.flow.core.domain.entity.FlowTask;
 import com.warm.flow.core.enums.PublishStatus;
 import com.warm.flow.core.exception.FlowException;
 import com.warm.flow.core.mapper.FlowDefinitionMapper;
-import com.warm.flow.core.mapper.FlowHisTaskMapper;
 import com.warm.flow.core.service.DefService;
+import com.warm.flow.core.utils.AssertUtil;
 import com.warm.flow.core.utils.FlowConfigUtil;
 import com.warm.mybatis.core.service.impl.WarmServiceImpl;
+import com.warm.tools.utils.CollUtil;
 import org.dom4j.Document;
 
 import java.io.InputStream;
@@ -139,6 +141,8 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionMapper, FlowDe
 
     @Override
     public boolean unPublish(Long id) {
+        List<FlowTask> flowTasks = FlowFactory.taskService().list(new FlowTask().setDefinitionId(id));
+        AssertUtil.isTrue(CollUtil.isNotEmpty(flowTasks), ExceptionCons.NOT_PUBLISH_TASK);
         FlowDefinition flowDefinition = new FlowDefinition();
         flowDefinition.setId(id);
         flowDefinition.setIsPublish(PublishStatus.UNPUBLISHED.getKey());
