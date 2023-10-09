@@ -4,20 +4,20 @@ import com.warm.tools.utils.ObjectUtil;
 
 /**
  * @author minliuhua
- * @description: 结点类型
+ * @description: 节点类型
  * @date: 2023/3/31 12:16
  */
 public enum NodeType {
     /**
-     * 开始结点
+     * 开始节点
      */
     START(0, "start"),
     /**
-     * 中间结点
+     * 中间节点
      */
     BETWEEN(1, "between"),
     /**
-     * 结束结点
+     * 结束节点
      */
     END(2, "end"),
 

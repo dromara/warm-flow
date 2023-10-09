@@ -37,17 +37,17 @@ public class FlowTask extends FlowEntity {
     private String businessId;
 
     /**
-     * 结点编码
+     * 节点编码
      */
     private String nodeCode;
 
     /**
-     * 结点名称
+     * 节点名称
      */
     private String nodeName;
 
     /**
-     * 结点类型（0开始结点 1中间结点 2结束结点 3互斥网关 4并行网关）
+     * 节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）
      */
     private Integer nodeType;
 
@@ -68,7 +68,7 @@ public class FlowTask extends FlowEntity {
     private Integer flowStatus;
 
     /**
-     * 所属并行网关结点编码
+     * 所属并行网关节点编码
      */
     private String gateWayNode;
 

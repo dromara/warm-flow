@@ -11,6 +11,7 @@
         <result property="nodeCode" column="node_code"/>
         <result property="nodeName" column="node_name"/>
         <result property="permissionFlag" column="permission_flag"/>
+        <result property="coordinate" column="coordinate"/>
         <result property="version" column="version"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
@@ -23,6 +24,7 @@
                t.node_code,
                t.node_name,
                t.permission_flag,
+               t.coordinate,
                t.version,
                t.create_time,
                t.update_time
@@ -111,6 +113,7 @@
             <if test="nodeCode != null and nodeCode != ''">node_code,</if>
             <if test="nodeName != null and nodeName != ''">node_name,</if>
             <if test="permissionFlag != null">permission_flag,</if>
+            <if test="coordinate != null and coordinate != ''">coordinate,</if>
             <if test="version != null and version != ''">version,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
@@ -122,6 +125,7 @@
             <if test="nodeCode != null and nodeCode != ''">#{nodeCode},</if>
             <if test="nodeName != null and nodeName != ''">#{nodeName},</if>
             <if test="permissionFlag != null">#{permissionFlag},</if>
+            <if test="coordinate != null and coordinate != ''">#{coordinate},</if>
             <if test="version != null and version != ''">#{version},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
@@ -136,6 +140,7 @@
             <if test="nodeCode != null and nodeCode != ''">node_code = #{nodeCode},</if>
             <if test="nodeName != null and nodeName != ''">node_name = #{nodeName},</if>
             <if test="permissionFlag != null">permission_flag = #{permissionFlag},</if>
+            <if test="coordinate != null and coordinate != ''">version = #{coordinate},</if>
             <if test="version != null and version != ''">version = #{version},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>

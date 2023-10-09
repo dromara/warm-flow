@@ -23,7 +23,7 @@ public interface InsService extends IWarmService<FlowInstance> {
     List<FlowInstance> getByIdWithLock(List<Long> ids);
 
     /**
-     * 根据开始的结点,业务id集合开启流程
+     * 根据开始的节点,业务id集合开启流程
      *
      * @param businessId
      * @param flowUser

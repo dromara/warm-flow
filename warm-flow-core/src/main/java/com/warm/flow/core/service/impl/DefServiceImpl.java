@@ -1,22 +1,32 @@
 package com.warm.flow.core.service.impl;
 
 import com.warm.flow.core.FlowFactory;
+import com.warm.flow.core.chart.*;
 import com.warm.flow.core.constant.ExceptionCons;
 import com.warm.flow.core.domain.dto.FlowCombine;
 import com.warm.flow.core.domain.entity.FlowDefinition;
 import com.warm.flow.core.domain.entity.FlowNode;
 import com.warm.flow.core.domain.entity.FlowSkip;
 import com.warm.flow.core.domain.entity.FlowTask;
+import com.warm.flow.core.enums.NodeType;
 import com.warm.flow.core.enums.PublishStatus;
+import com.warm.flow.core.enums.SkipType;
 import com.warm.flow.core.exception.FlowException;
 import com.warm.flow.core.mapper.FlowDefinitionMapper;
 import com.warm.flow.core.service.DefService;
 import com.warm.flow.core.utils.AssertUtil;
 import com.warm.flow.core.utils.FlowConfigUtil;
 import com.warm.mybatis.core.service.impl.WarmServiceImpl;
+import com.warm.tools.utils.Base64;
 import com.warm.tools.utils.CollUtil;
+import com.warm.tools.utils.StringUtils;
 import org.dom4j.Document;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
@@ -41,7 +51,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionMapper, FlowDe
         FlowCombine combine = FlowConfigUtil.readConfig(is);
         // 流程定义
         FlowDefinition definition = combine.getDefinition();
-        // 所有的流程结点
+        // 所有的流程节点
         List<FlowNode> allNodes = combine.getAllNodes();
         // 所有的流程连线
         List<FlowSkip> allSkips = combine.getAllSkips();
@@ -149,4 +159,93 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionMapper, FlowDe
         return updateById(flowDefinition);
     }
 
+    @Override
+    public String flowChart(Long definitionId) throws IOException {
+        // 绘制宽=480，长=640的图板
+        int width = 1500, height = 500;
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        // 获取图形上下文,graphics想象成一个画笔
+        Graphics2D graphics = (Graphics2D) image.getGraphics();
+        // 消除线条锯齿
+        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        // 对指定的矩形区域填充颜色
+        graphics.setColor(Color.WHITE);    // GREEN:绿色；  红色：RED;   灰色：GRAY
+        graphics.fillRect(0, 0, width, height);
+
+        FlowChartChain flowChartChain = new FlowChartChain();
+        addNodeChart(definitionId, flowChartChain);
+        addSkipChart(definitionId, flowChartChain);
+        flowChartChain.draw(graphics);
+
+        graphics.setPaintMode();
+        graphics.translate(400, 600);
+        graphics.dispose();// 释放此图形的上下文并释放它所使用的所有系统资源
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        ImageIO.write(image, "jpg", os);
+        return Base64.encode(os.toByteArray());
+
+    }
+
+    /**
+     * 添加跳转流程图
+     * @param definitionId
+     * @param flowChartChain
+     */
+    private void addSkipChart(Long definitionId, FlowChartChain flowChartChain) {
+        List<FlowSkip> skipList = FlowFactory.skipService().list(new FlowSkip().setDefinitionId(definitionId));
+        for (FlowSkip flowSkip : skipList) {
+            if (StringUtils.isNotEmpty(flowSkip.getCoordinate())) {
+                String[] coordinateSplit = flowSkip.getCoordinate().split("\\|");
+                String[] skipSplit = coordinateSplit[0].split(";");
+                int[] skipX = new int[skipSplit.length];
+                int[] skipY = new int[skipSplit.length];
+                TextChart textChart = null;
+                if (coordinateSplit.length > 1) {
+                    String[] textSplit = coordinateSplit[1].split(",");
+                    int textX = Integer.parseInt(textSplit[0]);
+                    int textY = Integer.parseInt(textSplit[1]);
+                    textChart = new TextChart(textX, textY, StringUtils.isEmpty(flowSkip.getSkipCondition()) ?
+                            SkipType.getValueByKey(flowSkip.getSkipType()): flowSkip.getSkipCondition());
+                }
+
+                for (int i = 0; i < skipSplit.length; i++) {
+                    skipX[i] = Integer.parseInt(skipSplit[i].split(",")[0]);
+                    skipY[i] = Integer.parseInt(skipSplit[i].split(",")[1]);
+                }
+                flowChartChain.addFlowChart(new SkipChart(skipX, skipY, textChart));
+            }
+        }
+    }
+
+    /**
+     * 添加节点流程图
+     * @param definitionId
+     * @param flowChartChain
+     */
+    private void addNodeChart(Long definitionId, FlowChartChain flowChartChain) {
+        List<FlowNode> nodeList = FlowFactory.nodeService().list(new FlowNode().setDefinitionId(definitionId));
+        for (FlowNode flowNode : nodeList) {
+            if (StringUtils.isNotEmpty(flowNode.getCoordinate())) {
+                String[] coordinateSplit = flowNode.getCoordinate().split("\\|");
+                String[] nodeSplit = coordinateSplit[0].split(",");
+                int nodeX = Integer.parseInt(nodeSplit[0]);
+                int nodeY = Integer.parseInt(nodeSplit[1]);
+                TextChart textChart = null;
+                if (coordinateSplit.length > 1) {
+                    String[] textSplit = coordinateSplit[1].split(",");
+                    int textX = Integer.parseInt(textSplit[0]);
+                    int textY = Integer.parseInt(textSplit[1]);
+                    textChart = new TextChart(textX, textY, flowNode.getNodeName());
+                }
+                if (NodeType.isStart(flowNode.getNodeType())) {
+                    flowChartChain.addFlowChart(new OvalChart(nodeX, nodeY, true));
+                } else if (NodeType.isBetween(flowNode.getNodeType())) {
+                    flowChartChain.addFlowChart(new BetweenChart(nodeX, nodeY, textChart));
+                } else if (NodeType.isEnd(flowNode.getNodeType())){
+                    flowChartChain.addFlowChart(new OvalChart(nodeX, nodeY, false));
+                }
+            }
+        }
+    }
 }

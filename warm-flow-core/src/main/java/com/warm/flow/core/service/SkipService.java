@@ -6,7 +6,7 @@ import com.warm.mybatis.core.service.IWarmService;
 import java.util.List;
 
 /**
- * 结点跳转关联Service接口
+ * 节点跳转关联Service接口
  *
  * @author warm
  * @date 2023-03-29

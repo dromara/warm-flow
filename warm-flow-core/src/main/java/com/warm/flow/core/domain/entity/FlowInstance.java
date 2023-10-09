@@ -25,17 +25,17 @@ public class FlowInstance extends FlowEntity {
     private String businessId;
 
     /**
-     * 结点类型（0开始结点 1中间结点 2结束结点 3互斥网关 4并行网关）
+     * 节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）
      */
     private Integer nodeType;
 
     /**
-     * 流程结点编码   每个流程的nodeCode是唯一的,即definitionId+nodeCode唯一,在数据库层面做了控制
+     * 流程节点编码   每个流程的nodeCode是唯一的,即definitionId+nodeCode唯一,在数据库层面做了控制
      */
     private String nodeCode;
 
     /**
-     * 流程结点名称
+     * 流程节点名称
      */
     private String nodeName;
 

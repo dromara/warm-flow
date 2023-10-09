@@ -14,6 +14,7 @@
         <result property="nextNodeType" column="next_node_type"/>
         <result property="skipType" column="skip_type"/>
         <result property="skipCondition" column="skip_condition"/>
+        <result property="coordinate" column="coordinate"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
     </resultMap>
@@ -28,6 +29,7 @@
                t.next_node_type,
                t.skip_type,
                t.skip_condition,
+               t.coordinate,
                t.create_time,
                t.update_time
         from flow_skip t
@@ -99,6 +101,7 @@
             <if test="nextNodeCode != null and nextNodeCode != ''">next_node_code,</if>
             <if test="nextNodeType != null">next_node_type,</if>
             <if test="skipType != null">skip_type,</if>
+            <if test="coordinate != null and coordinate != ''">coordinate,</if>
             <if test="skipCondition != null">skip_condition,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
@@ -113,6 +116,7 @@
             <if test="nextNodeType != null">#{nextNodeType},</if>
             <if test="skipType != null">#{skipType},</if>
             <if test="skipCondition != null">#{skipCondition},</if>
+            <if test="coordinate != null and coordinate != ''">#{coordinate},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
         </trim>
@@ -129,6 +133,7 @@
             <if test="nextNodeType != null">next_node_type = #{nextNodeType},</if>
             <if test="skipType != null">skip_type = #{skipType},</if>
             <if test="skipCondition != null">skip_condition = #{skipCondition},</if>
+            <if test="coordinate != null and coordinate != ''">coordinate = #{coordinate},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
         </trim>

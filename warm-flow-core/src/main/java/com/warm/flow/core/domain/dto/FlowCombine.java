@@ -21,12 +21,12 @@ public class FlowCombine {
     private FlowDefinition definition = new FlowDefinition();
 
     /**
-     * 所有的流程结点
+     * 所有的流程节点
      */
     private List<FlowNode> allNodes = new ArrayList<>();
 
     /**
-     * 所有的流程结点跳转关联
+     * 所有的流程节点跳转关联
      */
     private List<FlowSkip> allSkips = new ArrayList<>();
 

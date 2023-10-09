@@ -49,7 +49,7 @@ public class FlowConfigUtil {
     @SuppressWarnings("unchecked")
     public static FlowDefinition readDocument(InputStream is) throws Exception {
         AssertUtil.isNull(is, "文件不存在！");
-        // 获取流程结点
+        // 获取流程节点
         List<Element> flowElements = new SAXReader().read(is).getRootElement().elements();
         AssertUtil.isFalse(CollUtil.isNotEmpty(flowElements) && flowElements.size() == 1,
                 "流程为空，或者一次只能导入一条流程定义！");
@@ -64,7 +64,7 @@ public class FlowConfigUtil {
         definition.setFromPath(definitionElement.attributeValue("fromPath"));
 
         List<Element> nodesElement = definitionElement.elements();
-        // 遍历一个流程中的各个结点
+        // 遍历一个流程中的各个节点
         List<FlowNode> nodeList = definition.getNodeList();
         for (Element nodeElement : nodesElement) {
             FlowNode node = initNodeAndCondition(nodeElement);
@@ -81,7 +81,7 @@ public class FlowConfigUtil {
     }
 
     /**
-     * 读取工作结点和跳转条件
+     * 读取工作节点和跳转条件
      *
      * @param nodeElement
      * @return
@@ -92,10 +92,11 @@ public class FlowConfigUtil {
         node.setNodeCode(nodeElement.attributeValue("nodeCode"));
         node.setNodeName(nodeElement.attributeValue("nodeName"));
         node.setPermissionFlag(nodeElement.attributeValue("permissionFlag"));
+        node.setCoordinate(nodeElement.attributeValue("coordinate"));
 
         List<Element> skipsElement = nodeElement.elements();
         List<FlowSkip> skips = node.getSkipList();
-        // 遍历结点下的跳转条件
+        // 遍历节点下的跳转条件
         for (Element skipElement : skipsElement) {
             FlowSkip skip = new FlowSkip();
             if ("skip".equals(skipElement.getName())) {
@@ -140,7 +141,7 @@ public class FlowConfigUtil {
                 for (FlowSkip skip : skipList) {
                     Element skipElement = nodeElement.addElement("skip");
                     if (StringUtils.isNotEmpty(skip.getSkipType())) {
-                        AssertUtil.isFalse(StringUtils.isNotEmpty(skip.getNextNodeCode()), "下一个流程结点编码为空");
+                        AssertUtil.isFalse(StringUtils.isNotEmpty(skip.getNextNodeCode()), "下一个流程节点编码为空");
                         skipElement.addAttribute("skipType", skip.getSkipType());
                     }
                     if (StringUtils.isNotEmpty(skip.getSkipCondition())) {
@@ -159,7 +160,7 @@ public class FlowConfigUtil {
         FlowCombine combine = new FlowCombine();
         // 流程定义
         combine.setDefinition(definition);
-        // 所有的流程结点
+        // 所有的流程节点
         List<FlowNode> allNodes = combine.getAllNodes();
         // 所有的流程连线
         List<FlowSkip> allSkips = combine.getAllSkips();
@@ -175,10 +176,10 @@ public class FlowConfigUtil {
 
         List<FlowNode> nodeList = definition.getNodeList();
 
-        // 每一个流程的开始结点个数
+        // 每一个流程的开始节点个数
         int startNum = 0;
         Set<String> nodeCodeSet = new HashSet<String>();
-        // 便利一个流程中的各个结点
+        // 便利一个流程中的各个节点
         for (FlowNode node : nodeList) {
             initNodeAndCondition(node, id, definition.getVersion());
             if (NodeType.isStart(node.getNodeType())) {
@@ -199,7 +200,7 @@ public class FlowConfigUtil {
         // 校验跳转节点的合法性
         checkSkipNode(allSkips, nodeList);
 
-        // 校验所有目标结点是否都存在
+        // 校验所有目标节点是否都存在
         validaIsExistDestNode(allSkips, nodeCodeSet);
         return combine;
     }
@@ -225,7 +226,7 @@ public class FlowConfigUtil {
                             && NodeType.isGateWay(allSkip.getNextNodeType())
                     , ExceptionCons.BETWEEN_REJECT_GATEWAY);
         }
-        // 校验相同类型网关节点不可直连
+        // 校验网关节点不可直连
         if (CollUtil.isNotEmpty(gatewaySkips)) {
             for (FlowSkip gatewaySkip1 : gatewaySkips) {
                 for (FlowSkip gatewaySkip2 : gatewaySkips) {
@@ -253,7 +254,7 @@ public class FlowConfigUtil {
     }
 
     /**
-     * 校验所有的目标结点是否存在
+     * 校验所有的目标节点是否存在
      *
      * @param allSkips
      * @param nodeCodeSet
@@ -267,7 +268,7 @@ public class FlowConfigUtil {
 
 
     /**
-     * 读取工作结点和跳转条件
+     * 读取工作节点和跳转条件
      *
      * @param node
      * @param definitionId
@@ -279,7 +280,7 @@ public class FlowConfigUtil {
         String nodeCode = node.getNodeCode();
         List<FlowSkip> skipList = node.getSkipList();
         if (!NodeType.isEnd(node.getNodeType())) {
-            AssertUtil.isTrue(CollUtil.isEmpty(skipList), "开始和中间结点必须有跳转规则");
+            AssertUtil.isTrue(CollUtil.isEmpty(skipList), "开始和中间节点必须有跳转规则");
         }
         AssertUtil.isBlank(nodeCode, "[" + nodeName + "]" + ExceptionCons.LOST_NODE_CODE);
 
@@ -293,7 +294,7 @@ public class FlowConfigUtil {
         // 网关的集合 跳转条件和下目标节点不能重复
         Set<String> gateWaySet = new HashSet<>();
         int skipNum = 0;
-        // 遍历结点下的跳转条件
+        // 遍历节点下的跳转条件
         for (FlowSkip skip : skipList) {
             if (NodeType.isStart(node.getNodeType())) {
                 skipNum++;
@@ -303,7 +304,7 @@ public class FlowConfigUtil {
             skip.setId(IdUtils.nextId());
             // 流程id
             skip.setDefinitionId(definitionId);
-            // 结点id
+            // 节点id
             skip.setNodeId(node.getId());
             if (NodeType.isGateWaySerial(node.getNodeType())) {
                 String target = skip.getSkipCondition() + ":" + skip.getNextNodeCode();

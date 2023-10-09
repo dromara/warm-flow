@@ -8,7 +8,7 @@ import java.util.List;
 
 
 /**
- * 流程结点Mapper接口
+ * 流程节点Mapper接口
  *
  * @author warm
  * @date 2023-03-29

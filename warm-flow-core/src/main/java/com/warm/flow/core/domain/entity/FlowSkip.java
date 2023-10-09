@@ -1,7 +1,7 @@
 package com.warm.flow.core.domain.entity;
 
 /**
- * 结点跳转关联对象 flow_skip
+ * 节点跳转关联对象 flow_skip
  *
  * @author warm
  * @date 2023-03-29
@@ -15,27 +15,27 @@ public class FlowSkip extends FlowEntity {
     private Long definitionId;
 
     /**
-     * 结点id
+     * 节点id
      */
     private Long nodeId;
 
     /**
-     * 当前流程结点的编码
+     * 当前流程节点的编码
      */
     private String nowNodeCode;
 
     /**
-     * 当前结点类型（0开始结点 1中间结点 2结束结点 3互斥网关 4并行网关）
+     * 当前节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）
      */
     private Integer nowNodeType;
 
     /**
-     * 下一个流程结点的编码
+     * 下一个流程节点的编码
      */
     private String nextNodeCode;
 
     /**
-     * 下一个结点类型（0开始结点 1中间结点 2结束结点 3互斥网关 4并行网关）
+     * 下一个节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）
      */
     private Integer nextNodeType;
 
@@ -48,6 +48,11 @@ public class FlowSkip extends FlowEntity {
      * 跳转条件
      */
     private String skipCondition;
+
+    /**
+     * 流程跳转坐标
+     */
+    private String coordinate;
 
     public Long getDefinitionId() {
         return definitionId;
@@ -85,15 +90,6 @@ public class FlowSkip extends FlowEntity {
         return this;
     }
 
-    public Integer getNextNodeType() {
-        return nextNodeType;
-    }
-
-    public FlowSkip setNextNodeType(Integer nextNodeType) {
-        this.nextNodeType = nextNodeType;
-        return this;
-    }
-
     public String getNextNodeCode() {
         return nextNodeCode;
     }
@@ -103,6 +99,14 @@ public class FlowSkip extends FlowEntity {
         return this;
     }
 
+    public Integer getNextNodeType() {
+        return nextNodeType;
+    }
+
+    public FlowSkip setNextNodeType(Integer nextNodeType) {
+        this.nextNodeType = nextNodeType;
+        return this;
+    }
 
     public String getSkipType() {
         return skipType;
@@ -119,6 +123,15 @@ public class FlowSkip extends FlowEntity {
 
     public FlowSkip setSkipCondition(String skipCondition) {
         this.skipCondition = skipCondition;
+        return this;
+    }
+
+    public String getCoordinate() {
+        return coordinate;
+    }
+
+    public FlowSkip setCoordinate(String coordinate) {
+        this.coordinate = coordinate;
         return this;
     }
 

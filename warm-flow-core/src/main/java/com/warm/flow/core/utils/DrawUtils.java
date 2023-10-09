@@ -1,5 +1,7 @@
 package com.warm.flow.core.utils;
 
+import sun.font.FontDesignMetrics;
+
 import java.awt.*;
 
 /**
@@ -14,12 +16,12 @@ public class DrawUtils {
 
     }
 
-    public static void test(Graphics2D graphics) {
-        // 对指定的矩形区域填充颜色
-        graphics.setColor(Color.ORANGE);    // GREEN:绿色；  红色：RED;   灰色：GRAY
-        graphics.fillRect(0, 0, 360, 480);
-        // 对指定的矩形区域填充颜色
-        graphics.setColor(Color.PINK);
-        graphics.fillRect(360, 0, 360, 480);
+    /**
+     * 获取文字的宽度
+     * @param str
+     */
+    public static int stringWidth(String str) {
+        FontDesignMetrics fm = FontDesignMetrics.getMetrics(new Font("宋体", Font.PLAIN, 12));
+        return fm.stringWidth(str);
     }
 }

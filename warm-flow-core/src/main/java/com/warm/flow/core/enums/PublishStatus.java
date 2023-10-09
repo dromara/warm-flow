@@ -2,7 +2,7 @@ package com.warm.flow.core.enums;
 
 /**
  * @author minliuhua
- * @description: 结点类型
+ * @description: 节点类型
  * @date: 2023/3/31 12:16
  */
 public enum PublishStatus {

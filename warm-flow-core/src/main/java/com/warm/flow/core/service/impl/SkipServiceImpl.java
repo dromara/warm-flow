@@ -10,7 +10,7 @@ import com.warm.mybatis.core.utils.SqlHelper;
 import java.util.List;
 
 /**
- * 结点跳转关联Service业务层处理
+ * 节点跳转关联Service业务层处理
  *
  * @author warm
  * @date 2023-03-29

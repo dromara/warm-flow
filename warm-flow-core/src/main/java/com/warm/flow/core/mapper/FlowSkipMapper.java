@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 /**
- * 结点跳转关联Mapper接口
+ * 节点跳转关联Mapper接口
  *
  * @author warm
  * @date 2023-03-29

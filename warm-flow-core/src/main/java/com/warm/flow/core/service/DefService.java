@@ -4,6 +4,7 @@ import com.warm.flow.core.domain.entity.FlowDefinition;
 import com.warm.mybatis.core.service.IWarmService;
 import org.dom4j.Document;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -60,4 +61,12 @@ public interface DefService extends IWarmService<FlowDefinition> {
      * @return
      */
     boolean unPublish(Long id);
+
+    /**
+     * 获取流程图的图片流
+     * @param definitionId
+     * @return
+     * @throws IOException
+     */
+    String flowChart(Long definitionId) throws IOException;
 }

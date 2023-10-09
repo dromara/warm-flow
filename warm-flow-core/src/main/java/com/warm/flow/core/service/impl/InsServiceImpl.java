@@ -8,7 +8,6 @@ import com.warm.flow.core.enums.FlowStatus;
 import com.warm.flow.core.enums.NodeType;
 import com.warm.flow.core.enums.SkipType;
 import com.warm.flow.core.exception.FlowException;
-import com.warm.flow.core.mapper.FlowDefinitionMapper;
 import com.warm.flow.core.mapper.FlowInstanceMapper;
 import com.warm.flow.core.service.InsService;
 import com.warm.flow.core.utils.AssertUtil;
@@ -49,7 +48,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
         // 获取有意义有用的节点
         List<FlowNode> nodes = FlowFactory.nodeService().getByFlowCode(flowUser.getFlowCode());
         AssertUtil.isTrue(CollUtil.isEmpty(nodes), ExceptionCons.NOT_PUBLISH_NODE);
-        // 获取开始结点
+        // 获取开始节点
         FlowNode startNode = getFirstBetween(nodes);
 
         AssertUtil.isBlank(businessId, ExceptionCons.NULL_BUSINESS_ID);
@@ -104,7 +103,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
         }
 
         List<FlowHisTask> insHisList = new ArrayList<>();
-        // 获取关联的结点
+        // 获取关联的节点
         FlowNode nextNode = getNextNode(task, flowUser);
 
         // 如果是网关节点，则重新获取后续节点
@@ -140,10 +139,10 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
      * @param nextNodeCode
      * @return
      */
-    private boolean isGateWayParallelFinish(FlowTask task, FlowInstance instance, String nextNodeCode) {
+    private boolean gateWayParallelFinish(FlowTask task, FlowInstance instance, String nextNodeCode) {
         List<FlowSkip> allSkips = FlowFactory.skipService().list(new FlowSkip()
                 .setDefinitionId(instance.getDefinitionId()));
-        // 查询非当前任务的下个节点和上个节点对应关系
+        // 查询非当前任务的跳转
         Map<String, List<FlowSkip>> skipMap = StreamUtils.groupByKeyFilter(skip ->
                 !task.getNodeCode().equals(skip.getNowNodeCode()) ||
                         !nextNodeCode.equals(skip.getNextNodeCode()), allSkips, FlowSkip::getNextNodeCode);
@@ -295,12 +294,12 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
     private List<FlowTask> buildAddTasks(FlowParams flowUser, FlowTask task, FlowInstance instance
             , List<FlowNode> nextNodes, FlowNode nextNode) {
         boolean buildFlag = false;
-        // 非并行网关节点可以直接生成下一个代办任务
+        // 下个节点非并行网关节点，可以直接生成下一个代办任务
         if (!NodeType.isGateWayParallel(nextNode.getNodeType())) {
             buildFlag = true;
         } else {
-            // 并行网关节点是否都完成
-            if (isGateWayParallelFinish(task, instance, nextNode.getNodeCode())) {
+            // 下个节点是并行网关节点，判断前置节点是否都完成
+            if (gateWayParallelFinish(task, instance, nextNode.getNodeCode())) {
                 buildFlag = true;
             }
         }
@@ -592,7 +591,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
     }
 
     /**
-     * 根据流程id+当前流程结点编码获取与之直接关联(其为源结点)的结点。 definitionId:流程id nodeCode:当前流程状态
+     * 根据流程id+当前流程节点编码获取与之直接关联(其为源节点)的节点。 definitionId:流程id nodeCode:当前流程状态
      * skipType:跳转条件,没有填写的话不做校验
      *
      * @param task
@@ -616,7 +615,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
     }
 
     /**
-     * 有且只能有一个开始结点
+     * 有且只能有一个开始节点
      *
      * @param nodes
      * @return

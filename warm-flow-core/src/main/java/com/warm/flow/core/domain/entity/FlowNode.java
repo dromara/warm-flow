@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 流程结点对象 flow_node
+ * 流程节点对象 flow_node
  *
  * @author warm
  * @date 2023-03-29
@@ -13,7 +13,7 @@ public class FlowNode extends FlowEntity {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 结点类型（0开始结点 1中间结点 2结束结点 3互斥网关 4并行网关）
+     * 节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）
      */
     private Integer nodeType;
 
@@ -23,12 +23,12 @@ public class FlowNode extends FlowEntity {
     private Long definitionId;
 
     /**
-     * 流程结点编码   每个流程的nodeCode是唯一的,即definitionId+nodeCode唯一,在数据库层面做了控制
+     * 流程节点编码   每个流程的nodeCode是唯一的,即definitionId+nodeCode唯一,在数据库层面做了控制
      */
     private String nodeCode;
 
     /**
-     * 流程结点名称
+     * 流程节点名称
      */
     private String nodeName;
 
@@ -36,6 +36,11 @@ public class FlowNode extends FlowEntity {
      * 权限标识（权限类型:权限标识，可以多个，如role:1,role:2)
      */
     private String permissionFlag;
+
+    /**
+     * 流程节点坐标
+     */
+    private String coordinate;
 
     /**
      * 版本
@@ -94,6 +99,15 @@ public class FlowNode extends FlowEntity {
 
     public FlowNode setPermissionFlag(String permissionFlag) {
         this.permissionFlag = permissionFlag;
+        return this;
+    }
+
+    public String getCoordinate() {
+        return coordinate;
+    }
+
+    public FlowNode setCoordinate(String coordinate) {
+        this.coordinate = coordinate;
         return this;
     }
 

@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * 流程结点Service业务层处理
+ * 流程节点Service业务层处理
  *
  * @author warm
  * @date 2023-03-29
