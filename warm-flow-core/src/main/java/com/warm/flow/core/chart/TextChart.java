@@ -53,6 +53,6 @@ public class TextChart implements FlowChart {
     @Override
     public void draw(Graphics2D graphics) {
         graphics.setColor(Color.BLACK);
-        graphics.drawString(StringUtils.isEmpty(title)? "": title, xText, yText);
+        graphics.drawString(StringUtils.isEmpty(title) ? "" : title, xText, yText);
     }
 }

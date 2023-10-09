@@ -57,4 +57,5 @@ public interface InsService extends IWarmService<FlowInstance> {
      * @return
      */
     boolean remove(List<Long> instanceIds);
+
 }

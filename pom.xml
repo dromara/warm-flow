@@ -41,27 +41,26 @@
     <modules>
         <module>warm-flow-core</module>
         <module>warm-flow-adapter</module>
+        <module>warm-flow-tools</module>
+        <module>warm-flow-mybatis</module>
         <module>warm-flow-test</module>
     </modules>
 
     <properties>
-        <revision>0.0.7</revision>
+        <revision>0.0.9</revision>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
         <spring.boot.version>2.5.14</spring.boot.version>
         <dom4j.version>2.1.1</dom4j.version>
-        <mybatis.version>3.5.9</mybatis.version>
-        <mybatis-spring>2.0.7</mybatis-spring>
+        <mybatis.version>3.5.13</mybatis.version>
+        <mybatis-spring-boot>2.3.0</mybatis-spring-boot>
         <flatten-maven-plugin.version>1.3.0</flatten-maven-plugin.version>
         <mysql.version>8.0.33</mysql.version>
         <HikariCP.version>4.0.3</HikariCP.version>
         <junit.version>4.13.2</junit.version>
         <solon.version>2.5.3</solon.version>
-
-        <warm-tool>0.0.5</warm-tool>
-        <warm-mybatis>0.0.5</warm-mybatis>
     </properties>
 
     <dependencyManagement>
@@ -74,6 +73,14 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <dependency>
+                <groupId>org.noear</groupId>
+                <artifactId>solon</artifactId>
+                <version>${solon.version}</version>
+                <optional>true</optional>
+            </dependency>
+
             <dependency>
                 <groupId>org.dom4j</groupId>
                 <artifactId>dom4j</artifactId>
@@ -85,14 +92,21 @@
                 <version>${mybatis.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.mybatis</groupId>
-                <artifactId>mybatis-spring</artifactId>
-                <version>${mybatis-spring}</version>
+                <groupId>org.mybatis.spring.boot</groupId>
+                <artifactId>mybatis-spring-boot-starter</artifactId>
+                <version>${mybatis-spring-boot}</version>
+                <optional>true</optional>
+            </dependency>
+            <dependency>
+                <groupId>org.noear</groupId>
+                <artifactId>mybatis-solon-plugin</artifactId>
+                <version>${solon.version}</version>
+                <optional>true</optional>
             </dependency>
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
-                <artifactId>warm-tools</artifactId>
-                <version>${warm-tool}</version>
+                <artifactId>warm-flow-tools</artifactId>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
@@ -106,19 +120,8 @@
             </dependency>
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
-                <artifactId>warm-mybatis-core</artifactId>
-                <version>${warm-mybatis}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.minliuhua</groupId>
-                <artifactId>warm-mybatis-spring-boot-starter</artifactId>
-                <version>${warm-mybatis}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>io.github.minliuhua</groupId>
-                <artifactId>warm-mybatis-solon-plugin</artifactId>
-                <version>${warm-mybatis}</version>
+                <artifactId>warm-flow-mybatis</artifactId>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>

@@ -139,50 +139,51 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
      * @param nextNodeCode
      * @return
      */
-    private boolean gateWayParallelFinish(FlowTask task, FlowInstance instance, String nextNodeCode) {
+    private boolean gateWayParallelIsFinish(FlowTask task, FlowInstance instance, String nextNodeCode) {
         List<FlowSkip> allSkips = FlowFactory.skipService().list(new FlowSkip()
                 .setDefinitionId(instance.getDefinitionId()));
-        // 查询非当前任务的跳转
-        Map<String, List<FlowSkip>> skipMap = StreamUtils.groupByKeyFilter(skip ->
-                !task.getNodeCode().equals(skip.getNowNodeCode()) ||
-                        !nextNodeCode.equals(skip.getNextNodeCode()), allSkips, FlowSkip::getNextNodeCode);
-        List<FlowSkip> oneLastSkips = skipMap.get(nextNodeCode);
+        Map<String, List<FlowSkip>> skipNextMap = StreamUtils.groupByKeyFilter(skip -> !task.getNodeCode()
+                        .equals(skip.getNowNodeCode()) || !nextNodeCode.equals(skip.getNextNodeCode())
+                , allSkips, FlowSkip::getNextNodeCode);
+        List<FlowSkip> oneLastSkips = skipNextMap.get(nextNodeCode);
         if (CollUtil.isNotEmpty(oneLastSkips)) {
             for (FlowSkip oneLastSkip : oneLastSkips) {
                 FlowHisTask oneLastHisTask = CollUtil.getOne(FlowFactory.hisTaskService()
-                        .getNoReject(oneLastSkip.getNowNodeCode()));
-                // 查询前置节点是否完成
+                        .getNoReject(oneLastSkip.getNowNodeCode(), instance.getId()));
+                // 查询前置节点是否有完成记录
                 if (ObjectUtil.isNull(oneLastHisTask)) {
                     return false;
                 }
-                List<FlowSkip> twoLastSkips = skipMap.get(oneLastSkip.getNowNodeCode());
+                List<FlowSkip> twoLastSkips = skipNextMap.get(oneLastSkip.getNowNodeCode());
                 for (FlowSkip twoLastSkip : twoLastSkips) {
-                    // 如果前前置节点是网关，那网关前任意一个任务完成就算完成
-                    if (NodeType.isGateWay(twoLastSkip.getNowNodeType())) {
-                        List<FlowSkip> threeLastSkips = skipMap.get(twoLastSkip.getNowNodeCode());
+                    if (NodeType.isStart(twoLastSkip.getNowNodeType())) {
+                        return true;
+                    } else if (NodeType.isGateWay(twoLastSkip.getNowNodeType())) {
+                        // 如果前前置节点是网关，那网关前任意一个任务完成就算完成
+                        List<FlowSkip> threeLastSkips = skipNextMap.get(twoLastSkip.getNowNodeCode());
                         for (FlowSkip threeLastSkip : threeLastSkips) {
                             FlowHisTask threeLastHisTask = CollUtil.getOne(FlowFactory.hisTaskService()
-                                    .getNoReject(threeLastSkip.getNowNodeCode()));
-                            if (ObjectUtil.isNull(threeLastHisTask) || threeLastHisTask.getCreateTime()
-                                    .after(oneLastHisTask.getCreateTime())) {
-                                return false;
+                                    .getNoReject(threeLastSkip.getNowNodeCode(), instance.getId()));
+                            if (ObjectUtil.isNotNull(threeLastHisTask) && threeLastHisTask.getCreateTime()
+                                    .before(oneLastHisTask.getCreateTime())) {
+                                return true;
                             }
                         }
                     } else {
                         FlowHisTask twoLastHisTask = CollUtil.getOne(FlowFactory.hisTaskService()
-                                .getNoReject(twoLastSkip.getNowNodeCode()));
+                                .getNoReject(twoLastSkip.getNowNodeCode(), instance.getId()));
                         // 前前置节点完成时间是否早于前置节点，如果是串行网关，那前前置节点必须只有一个完成，如果是并行网关都要完成
-                        if (ObjectUtil.isNull(twoLastHisTask) || twoLastHisTask.getCreateTime()
-                                .after(oneLastHisTask.getCreateTime())) {
-                            return false;
+                        if (ObjectUtil.isNotNull(twoLastHisTask) && twoLastHisTask.getCreateTime()
+                                .before(oneLastHisTask.getCreateTime())) {
+                            return true;
                         }
                     }
-
                 }
             }
         }
-        return true;
+        return false;
     }
+
 
     /**
      * 一票否决（谨慎使用），如果驳回，驳回指向节点后还存在其他正在执行的代办任务，转历史任务，状态都为驳回,重走流程。
@@ -299,7 +300,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
             buildFlag = true;
         } else {
             // 下个节点是并行网关节点，判断前置节点是否都完成
-            if (gateWayParallelFinish(task, instance, nextNode.getNodeCode())) {
+            if (gateWayParallelIsFinish(task, instance, nextNode.getNodeCode())) {
                 buildFlag = true;
             }
         }

@@ -12,50 +12,25 @@ import java.awt.*;
 public class BetweenChart implements FlowChart {
     private int xRect;
     private int yRect;
-
+    private Color c = Color.BLACK;
     private TextChart textChart;
-
-    public TextChart getTextImage() {
-        return textChart;
-    }
-
-    public BetweenChart setTextImage(TextChart textChart) {
-        this.textChart = textChart;
-        return this;
-    }
 
     public BetweenChart(int xRect, int yRect) {
         this.xRect = xRect;
         this.yRect = yRect;
     }
 
-    public BetweenChart(int xRect, int yRect, TextChart textChart) {
+    public BetweenChart(int xRect, int yRect, Color c, TextChart textChart) {
         this.xRect = xRect;
         this.yRect = yRect;
+        this.c = c;
         this.textChart = textChart;
     }
 
-    public int getxRect() {
-        return xRect;
-    }
-
-    public BetweenChart setxRect(int xRect) {
-        this.xRect = xRect;
-        return this;
-    }
-
-    public int getyRect() {
-        return yRect;
-    }
-
-    public BetweenChart setyRect(int yRect) {
-        this.yRect = yRect;
-        return this;
-    }
 
     @Override
     public void draw(Graphics2D graphics) {
-        graphics.setColor(Color.BLACK);
+        graphics.setColor(c);
         graphics.drawRoundRect(xRect - 50, yRect - 40, 100, 80, 20, 20);
         if (ObjectUtil.isNotNull(textChart) && StringUtils.isNotEmpty(textChart.getTitle())) {
             textChart.setxText(textChart.getxText() - DrawUtils.stringWidth(textChart.getTitle()) / 2);

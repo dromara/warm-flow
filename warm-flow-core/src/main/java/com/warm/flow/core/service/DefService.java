@@ -64,9 +64,10 @@ public interface DefService extends IWarmService<FlowDefinition> {
 
     /**
      * 获取流程图的图片流
-     * @param definitionId
+     *
+     * @param instanceId
      * @return
      * @throws IOException
      */
-    String flowChart(Long definitionId) throws IOException;
+    String flowChart(Long instanceId) throws IOException;
 }

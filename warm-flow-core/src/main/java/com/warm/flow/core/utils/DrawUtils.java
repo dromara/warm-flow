@@ -18,6 +18,7 @@ public class DrawUtils {
 
     /**
      * 获取文字的宽度
+     *
      * @param str
      */
     public static int stringWidth(String str) {

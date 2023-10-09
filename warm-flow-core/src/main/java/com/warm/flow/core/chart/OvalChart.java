@@ -49,10 +49,10 @@ public class OvalChart implements FlowChart {
     public void draw(Graphics2D graphics) {
         if (isStart) {
             graphics.setColor(Color.GREEN);
-            graphics.drawString("开始", xStartOval -9, yStartOval + 35);
+            graphics.drawString("开始", xStartOval - 9, yStartOval + 35);
         } else {
             graphics.setColor(Color.RED);
-            graphics.drawString("结束", xStartOval -9, yStartOval + 35);
+            graphics.drawString("结束", xStartOval - 9, yStartOval + 35);
         }
         graphics.fillOval(xStartOval - 20, yStartOval - 20, 40, 40);
     }

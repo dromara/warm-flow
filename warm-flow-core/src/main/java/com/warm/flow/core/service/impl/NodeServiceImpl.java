@@ -1,7 +1,6 @@
 package com.warm.flow.core.service.impl;
 
 import com.warm.flow.core.domain.entity.FlowNode;
-import com.warm.flow.core.mapper.FlowInstanceMapper;
 import com.warm.flow.core.mapper.FlowNodeMapper;
 import com.warm.flow.core.service.NodeService;
 import com.warm.mybatis.core.service.impl.WarmServiceImpl;

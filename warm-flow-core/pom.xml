@@ -14,7 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>io.github.minliuhua</groupId>
-            <artifactId>warm-tools</artifactId>
+            <artifactId>warm-flow-tools</artifactId>
         </dependency>
         <dependency>
             <groupId>com.zaxxer</groupId>
@@ -34,13 +34,14 @@
         </dependency>
 
         <dependency>
-            <groupId>io.github.minliuhua</groupId>
-            <artifactId>warm-mybatis-core</artifactId>
-        </dependency>
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.minliuhua</groupId>
+            <artifactId>warm-flow-mybatis</artifactId>
         </dependency>
     </dependencies>
 </project>

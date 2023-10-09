@@ -4,10 +4,7 @@ import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.chart.*;
 import com.warm.flow.core.constant.ExceptionCons;
 import com.warm.flow.core.domain.dto.FlowCombine;
-import com.warm.flow.core.domain.entity.FlowDefinition;
-import com.warm.flow.core.domain.entity.FlowNode;
-import com.warm.flow.core.domain.entity.FlowSkip;
-import com.warm.flow.core.domain.entity.FlowTask;
+import com.warm.flow.core.domain.entity.*;
 import com.warm.flow.core.enums.NodeType;
 import com.warm.flow.core.enums.PublishStatus;
 import com.warm.flow.core.enums.SkipType;
@@ -17,9 +14,7 @@ import com.warm.flow.core.service.DefService;
 import com.warm.flow.core.utils.AssertUtil;
 import com.warm.flow.core.utils.FlowConfigUtil;
 import com.warm.mybatis.core.service.impl.WarmServiceImpl;
-import com.warm.tools.utils.Base64;
-import com.warm.tools.utils.CollUtil;
-import com.warm.tools.utils.StringUtils;
+import com.warm.tools.utils.*;
 import org.dom4j.Document;
 
 import javax.imageio.ImageIO;
@@ -160,7 +155,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionMapper, FlowDe
     }
 
     @Override
-    public String flowChart(Long definitionId) throws IOException {
+    public String flowChart(Long instanceId) throws IOException {
         // 绘制宽=480，长=640的图板
         int width = 1500, height = 500;
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -173,8 +168,9 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionMapper, FlowDe
         graphics.fillRect(0, 0, width, height);
 
         FlowChartChain flowChartChain = new FlowChartChain();
-        addNodeChart(definitionId, flowChartChain);
-        addSkipChart(definitionId, flowChartChain);
+        FlowInstance instance = FlowFactory.insService().getById(instanceId);
+        addNodeChart(instance, flowChartChain);
+        addSkipChart(instance, flowChartChain);
         flowChartChain.draw(graphics);
 
         graphics.setPaintMode();
@@ -189,11 +185,12 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionMapper, FlowDe
 
     /**
      * 添加跳转流程图
-     * @param definitionId
+     *
+     * @param instance
      * @param flowChartChain
      */
-    private void addSkipChart(Long definitionId, FlowChartChain flowChartChain) {
-        List<FlowSkip> skipList = FlowFactory.skipService().list(new FlowSkip().setDefinitionId(definitionId));
+    private void addSkipChart(FlowInstance instance, FlowChartChain flowChartChain) {
+        List<FlowSkip> skipList = FlowFactory.skipService().list(new FlowSkip().setDefinitionId(instance.getDefinitionId()));
         for (FlowSkip flowSkip : skipList) {
             if (StringUtils.isNotEmpty(flowSkip.getCoordinate())) {
                 String[] coordinateSplit = flowSkip.getCoordinate().split("\\|");
@@ -206,7 +203,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionMapper, FlowDe
                     int textX = Integer.parseInt(textSplit[0]);
                     int textY = Integer.parseInt(textSplit[1]);
                     textChart = new TextChart(textX, textY, StringUtils.isEmpty(flowSkip.getSkipCondition()) ?
-                            SkipType.getValueByKey(flowSkip.getSkipType()): flowSkip.getSkipCondition());
+                            SkipType.getValueByKey(flowSkip.getSkipType()) : flowSkip.getSkipCondition());
                 }
 
                 for (int i = 0; i < skipSplit.length; i++) {
@@ -220,11 +217,14 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionMapper, FlowDe
 
     /**
      * 添加节点流程图
-     * @param definitionId
+     *
+     * @param instance
      * @param flowChartChain
      */
-    private void addNodeChart(Long definitionId, FlowChartChain flowChartChain) {
-        List<FlowNode> nodeList = FlowFactory.nodeService().list(new FlowNode().setDefinitionId(definitionId));
+    private void addNodeChart(FlowInstance instance, FlowChartChain flowChartChain) {
+        List<FlowNode> nodeList = FlowFactory.nodeService().list(new FlowNode().setDefinitionId(instance.getDefinitionId()));
+        List<FlowSkip> allSkips = FlowFactory.skipService().list(new FlowSkip()
+                .setDefinitionId(instance.getDefinitionId()));
         for (FlowNode flowNode : nodeList) {
             if (StringUtils.isNotEmpty(flowNode.getCoordinate())) {
                 String[] coordinateSplit = flowNode.getCoordinate().split("\\|");
@@ -241,11 +241,65 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionMapper, FlowDe
                 if (NodeType.isStart(flowNode.getNodeType())) {
                     flowChartChain.addFlowChart(new OvalChart(nodeX, nodeY, true));
                 } else if (NodeType.isBetween(flowNode.getNodeType())) {
-                    flowChartChain.addFlowChart(new BetweenChart(nodeX, nodeY, textChart));
-                } else if (NodeType.isEnd(flowNode.getNodeType())){
+                    Color c = nodeIsFinish(flowNode.getNodeCode(), allSkips, instance.getId());
+                    flowChartChain.addFlowChart(new BetweenChart(nodeX, nodeY, c, textChart));
+                } else if (NodeType.isEnd(flowNode.getNodeType())) {
                     flowChartChain.addFlowChart(new OvalChart(nodeX, nodeY, false));
                 }
             }
         }
+    }
+
+    /**
+     * 判断节点是否完成,是否代办，显示对应的颜色
+     *
+     * @param nodeCode
+     * @param allSkips
+     * @param instanceId
+     * @return
+     */
+    public Color nodeIsFinish(String nodeCode, List<FlowSkip> allSkips, Long instanceId) {
+        FlowTask flowTask = FlowFactory.taskService()
+                .getOne(new FlowTask().setNodeCode(nodeCode).setInstanceId(instanceId));
+        // 查询前置节点是否完成
+        if (ObjectUtil.isNotNull(flowTask)) {
+            return Color.RED;
+        }
+        FlowHisTask curHisTask = CollUtil.getOne(FlowFactory.hisTaskService()
+                .getNoReject(nodeCode, instanceId));
+        // 查询前置节点是否完成
+        if (ObjectUtil.isNull(curHisTask)) {
+            return Color.BLACK;
+        }
+
+        Map<String, List<FlowSkip>> skipNextMap = StreamUtils.groupByKey(allSkips, FlowSkip::getNextNodeCode);
+        List<FlowSkip> oneLastSkips = skipNextMap.get(nodeCode);
+        if (CollUtil.isNotEmpty(oneLastSkips)) {
+            for (FlowSkip oneLastSkip : oneLastSkips) {
+                if (NodeType.isStart(oneLastSkip.getNowNodeType())) {
+                    return Color.GREEN;
+                } else if (NodeType.isGateWay(oneLastSkip.getNowNodeType())) {
+                    // 如果前置节点是网关，那网关前任意一个任务完成就算完成
+                    List<FlowSkip> twoLastSkips = skipNextMap.get(oneLastSkip.getNowNodeCode());
+                    for (FlowSkip twoLastSkip : twoLastSkips) {
+                        FlowHisTask twoLastHisTask = CollUtil.getOne(FlowFactory.hisTaskService()
+                                .getNoReject(twoLastSkip.getNowNodeCode(), instanceId));
+                        if (ObjectUtil.isNotNull(twoLastHisTask) && twoLastHisTask.getCreateTime()
+                                .before(curHisTask.getCreateTime())) {
+                            return Color.GREEN;
+                        }
+                    }
+                } else {
+                    FlowHisTask twoLastHisTask = CollUtil.getOne(FlowFactory.hisTaskService()
+                            .getNoReject(oneLastSkip.getNowNodeCode(), instanceId));
+                    // 前前置节点完成时间是否早于前置节点，如果是串行网关，那前前置节点必须只有一个完成，如果是并行网关都要完成
+                    if (ObjectUtil.isNotNull(twoLastHisTask) && twoLastHisTask.getCreateTime()
+                            .before(curHisTask.getCreateTime())) {
+                        return Color.GREEN;
+                    }
+                }
+            }
+        }
+        return Color.BLACK;
     }
 }

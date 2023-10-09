@@ -2,7 +2,6 @@ package com.warm.flow.core.service.impl;
 
 import com.warm.flow.core.constant.ExceptionCons;
 import com.warm.flow.core.domain.entity.FlowTask;
-import com.warm.flow.core.mapper.FlowSkipMapper;
 import com.warm.flow.core.mapper.FlowTaskMapper;
 import com.warm.flow.core.service.TaskService;
 import com.warm.flow.core.utils.AssertUtil;

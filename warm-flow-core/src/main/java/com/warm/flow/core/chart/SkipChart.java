@@ -70,16 +70,16 @@ public class SkipChart implements FlowChart {
             // 1、 如果最后两个左边x相同，最后一个 < 倒数第二个，朝下
             if (yEndOne > yEndTwo) {
                 yArrow = new int[]{yEndOne - 10, yEndOne, yEndOne - 10};
-            } else  {
+            } else {
                 // 2、 如果最后两个左边x相同，最后一个 > 倒数第二个，朝上
                 yArrow = new int[]{yEndOne + 10, yEndOne, yEndOne + 10};
             }
-        } else  {
+        } else {
             yArrow = new int[]{yEndOne - 5, yEndOne, yEndOne + 5};
             // 3、 如果最后两个左边y相同，最后一个 < 倒数第二个，朝左
             if (xEndOne < xEndTwo) {
                 xArrow = new int[]{xEndOne + 10, xEndOne, xEndOne + 10};
-            } else  {
+            } else {
                 // 4、 如果最后两个左边y相同，最后一个 > 倒数第二个，朝右
                 xArrow = new int[]{xEndOne - 10, xEndOne, xEndOne - 10};
             }

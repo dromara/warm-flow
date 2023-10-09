@@ -6,7 +6,7 @@
 2. 支持角色、部门和用户等权限配置
 3. 官方提供简单流程封装很实用
 4. 支持多租户，感谢【luoheyu】PR
-5. 支持代办任务和已办任务，通过权限标识过滤数据  
+5. 支持代办任务和已办任务，通过权限标识过滤数据
 6. 支持互斥网关，并行网关（会签、或签）
 
 具体demo项目：[hh-vue](https://gitee.com/min290/hh-vue)
@@ -30,8 +30,12 @@
         <td><img src="https://foruda.gitee.com/images/1695188776587670207/9a188f9f_2218307.png"/></td>
     </tr>
     <tr>
-        <td><img src="https://foruda.gitee.com/images/1695869289700125082/76a7e6ce_2218307.png"/></td>
-        <td><img src="https://foruda.gitee.com/images/1695869309561476266/faf196d9_2218307.png"/></td>
+        <td><img src="https://foruda.gitee.com/images/1695188769430380611/91b05a8d_2218307.png"/></td>
+        <td><img src="https://foruda.gitee.com/images/1695188776587670207/9a188f9f_2218307.png"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://foruda.gitee.com/images/1696843582818811115/d90c75bb_2218307.png"/></td>
+        <td><img src="https://foruda.gitee.com/images/1696843604894928843/828a2493_2218307.png"/></td>
     </tr>
     <tr>
         <td><img src="https://foruda.gitee.com/images/1695188998289095833/73611acd_2218307.png"/></td>

@@ -31,8 +31,8 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskMapper, FlowH
     }
 
     @Override
-    public List<FlowHisTask> getNoReject(String nodeCode) {
-        return getMapper().getNoReject(nodeCode);
+    public List<FlowHisTask> getNoReject(String nodeCode, Long instanceId) {
+        return getMapper().getNoReject(nodeCode, instanceId);
     }
 
     @Override

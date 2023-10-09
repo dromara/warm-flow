@@ -1,6 +1,5 @@
 package com.warm.flow.core.enums;
 
-import com.warm.tools.utils.ObjectUtil;
 import com.warm.tools.utils.StringUtils;
 
 /**

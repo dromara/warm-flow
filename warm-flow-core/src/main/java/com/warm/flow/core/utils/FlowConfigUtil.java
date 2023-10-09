@@ -232,7 +232,7 @@ public class FlowConfigUtil {
                 for (FlowSkip gatewaySkip2 : gatewaySkips) {
                     AssertUtil.isTrue(gatewaySkip1.getNextNodeCode().equals(gatewaySkip2.getNowNodeCode())
                                     && gatewaySkip1.getNowNodeType().equals(gatewaySkip2.getNowNodeType())
-                            , ExceptionCons.SAME_NODE_CONNECT);
+                            , ExceptionCons.GATEWAY_NOT_CONNECT);
                 }
             }
         }

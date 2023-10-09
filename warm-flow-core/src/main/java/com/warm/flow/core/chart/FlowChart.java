@@ -11,6 +11,7 @@ public interface FlowChart {
 
     /**
      * 绘制流程图
+     *
      * @param graphics 画笔
      */
     void draw(Graphics2D graphics);

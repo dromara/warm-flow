@@ -1,7 +1,6 @@
 package com.warm.flow.core.service.impl;
 
 import com.warm.flow.core.domain.entity.FlowSkip;
-import com.warm.flow.core.mapper.FlowNodeMapper;
 import com.warm.flow.core.mapper.FlowSkipMapper;
 import com.warm.flow.core.service.SkipService;
 import com.warm.mybatis.core.service.impl.WarmServiceImpl;
