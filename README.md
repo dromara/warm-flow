@@ -19,6 +19,12 @@
 
 ## qq群：778470567
 
+## 演示地址
+- admin/admin123
+
+演示地址：http://www.hhzai.top:81
+
+
 ## 演示图
 <table>
     <tr>
