@@ -43,16 +43,14 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskMapper, FlowTask> i
             if (ObjectUtil.isNull(permissionFlagD)) {
                 permissionFlagD = flowTask.getPermissionList();
             }
-            if (CollUtil.isNotEmpty(permissionFlagD)) {
-                List<String> finalPermissionFlagD = permissionFlagD;
-                list = list.stream().filter(task -> {
-                    List<String> permissionFlagO = CollUtil.strToColl(task.getPermissionFlag(), ",");
-                    if (ObjectUtil.isNull(permissionFlagO)) {
-                        return false;
-                    }
-                    return CollUtil.containsAny(permissionFlagO, finalPermissionFlagD);
-                }).collect(Collectors.toList());
-            }
+            List<String> finalPermissionFlagD = permissionFlagD;
+            list = list.stream().filter(task -> {
+                List<String> permissionFlagO = CollUtil.strToColl(task.getPermissionFlag(), ",");
+                if (ObjectUtil.isNull(permissionFlagO)) {
+                    return true;
+                }
+                return CollUtil.containsAny(permissionFlagO, finalPermissionFlagD);
+            }).collect(Collectors.toList());
             return new Page<>(list, count);
         }
         return Page.empty();

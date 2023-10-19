@@ -109,6 +109,14 @@ public interface WarmMapper<T> {
     int updateById(T entity);
 
     /**
+     * 根据entity删除
+     *
+     * @param entity 实体
+     * @return 结果
+     */
+    int delete(T entity);
+
+    /**
      * 根据id删除
      *
      * @param id 主键

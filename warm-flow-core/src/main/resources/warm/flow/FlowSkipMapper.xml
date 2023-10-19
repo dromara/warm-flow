@@ -101,8 +101,8 @@
             <if test="nextNodeCode != null and nextNodeCode != ''">next_node_code,</if>
             <if test="nextNodeType != null">next_node_type,</if>
             <if test="skipType != null">skip_type,</if>
-            <if test="coordinate != null and coordinate != ''">coordinate,</if>
             <if test="skipCondition != null">skip_condition,</if>
+            <if test="coordinate != null and coordinate != ''">coordinate,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
         </trim>
@@ -164,5 +164,23 @@
         <foreach item="item" collection="list" open="(" separator="," close=")">
             #{item}
         </foreach>
+    </delete>
+
+    <delete id="delete" parameterType="com.warm.flow.core.domain.entity.FlowSkip">
+        delete from flow_skip
+        <where>
+            <if test="id != null">and id = #{id}</if>
+            <if test="definitionId != null">and definition_id = #{definitionId}</if>
+            <if test="nodeId != null">and node_id = #{nodeId}</if>
+            <if test="nowNodeCode != null and nowNodeCode != ''">and now_node_code = #{nowNodeCode}</if>
+            <if test="nowNodeType != null">and now_node_type = #{nowNodeType}</if>
+            <if test="nextNodeCode != null and nextNodeCode != ''">and next_node_code = #{nextNodeCode}</if>
+            <if test="nextNodeType != null">and next_node_type = #{nextNodeType}</if>
+            <if test="skipType != null">and skip_type = #{skipType}</if>
+            <if test="coordinate != null and coordinate != ''">and coordinate = #{coordinate}</if>
+            <if test="skipCondition != null">and skip_condition = #{skipCondition}</if>
+            <if test="createTime != null">and create_time = #{createTime}</if>
+            <if test="updateTime != null">and update_time = #{updateTime}</if>
+        </where>
     </delete>
 </mapper>

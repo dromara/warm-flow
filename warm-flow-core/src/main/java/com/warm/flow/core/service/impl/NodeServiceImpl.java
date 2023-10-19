@@ -37,4 +37,5 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeMapper, FlowNode> i
         List<FlowNode> nodeCodes = getMapper().getByNodeCodes(Collections.singletonList(nodeCode), definitionId);
         return CollUtil.getOne(nodeCodes);
     }
+
 }

@@ -7,10 +7,7 @@ import com.warm.flow.core.domain.entity.FlowNode;
 import com.warm.flow.core.domain.entity.FlowSkip;
 import com.warm.flow.core.enums.NodeType;
 import com.warm.flow.core.enums.SkipType;
-import com.warm.tools.utils.CollUtil;
-import com.warm.tools.utils.IdUtils;
-import com.warm.tools.utils.StreamUtils;
-import com.warm.tools.utils.StringUtils;
+import com.warm.tools.utils.*;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -50,11 +47,9 @@ public class FlowConfigUtil {
     public static FlowDefinition readDocument(InputStream is) throws Exception {
         AssertUtil.isNull(is, "文件不存在！");
         // 获取流程节点
-        List<Element> flowElements = new SAXReader().read(is).getRootElement().elements();
-        AssertUtil.isFalse(CollUtil.isNotEmpty(flowElements) && flowElements.size() == 1,
-                "流程为空，或者一次只能导入一条流程定义！");
+        Element definitionElement = new SAXReader().read(is).getRootElement();
+        AssertUtil.isTrue(ObjectUtil.isNull(definitionElement),"流程为空！");
 
-        Element definitionElement = flowElements.get(0);
         // 读取流程定义
         FlowDefinition definition = new FlowDefinition();
         definition.setFlowCode(definitionElement.attributeValue("flowCode"));
@@ -105,6 +100,7 @@ public class FlowConfigUtil {
                 skip.setNextNodeCode(skipElement.getText());
                 // 条件约束
                 skip.setSkipType(skipElement.attributeValue("skipType"));
+                skip.setCoordinate(skipElement.attributeValue("coordinate"));
                 skip.setSkipCondition(skipElement.attributeValue("skipCondition"));
                 skips.add(skip);
             }
@@ -117,9 +113,7 @@ public class FlowConfigUtil {
         // 创建document对象
         Document document = DocumentHelper.createDocument();
         // 创建根节点bookRoot
-        Element root = document.addElement("definitionConfig");
-        // 向根节点中添加第一个节点
-        Element definitionElement = root.addElement("definition");
+        Element definitionElement = document.addElement("definition");
         // 向子节点中添加属性
         definitionElement.addAttribute("flowCode", definition.getFlowCode());
         definitionElement.addAttribute("flowName", definition.getFlowName());
@@ -135,11 +129,14 @@ public class FlowConfigUtil {
             nodeElement.addAttribute("nodeCode", node.getNodeCode());
             nodeElement.addAttribute("nodeName", node.getNodeName());
             nodeElement.addAttribute("permissionFlag", node.getPermissionFlag());
+            nodeElement.addAttribute("coordinate", node.getCoordinate());
 
             List<FlowSkip> skipList = node.getSkipList();
             if (CollUtil.isNotEmpty(skipList)) {
                 for (FlowSkip skip : skipList) {
                     Element skipElement = nodeElement.addElement("skip");
+                    skipElement.addAttribute("id", String.valueOf(skip.getId()));
+                    skipElement.addAttribute("coordinate", skip.getCoordinate());
                     if (StringUtils.isNotEmpty(skip.getSkipType())) {
                         AssertUtil.isFalse(StringUtils.isNotEmpty(skip.getNextNodeCode()), "下一个流程节点编码为空");
                         skipElement.addAttribute("skipType", skip.getSkipType());
@@ -236,7 +233,7 @@ public class FlowConfigUtil {
                 }
             }
         }
-        // 中间节点不可通过或者驳回到多个中间节点，必须先流转到网关节点
+        // 不可同时通过或者驳回到多个中间节点，必须先流转到网关节点
         allSkipMap.forEach((key, values) -> {
             AtomicInteger passNum = new AtomicInteger();
             AtomicInteger rejectNum = new AtomicInteger();

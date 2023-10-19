@@ -43,6 +43,11 @@ public class FlowDefinition extends FlowEntity {
      */
     private String fromPath;
 
+    /**
+     * 审批表单是否自定义（Y是 2否）
+     */
+    private String xmlString;
+
     private List<FlowNode> nodeList = new ArrayList<>();
 
 
@@ -106,6 +111,15 @@ public class FlowDefinition extends FlowEntity {
 
     public FlowDefinition setNodeList(List<FlowNode> nodeList) {
         this.nodeList = nodeList;
+        return this;
+    }
+
+    public String getXmlString() {
+        return xmlString;
+    }
+
+    public FlowDefinition setXmlString(String xmsString) {
+        this.xmlString = xmsString;
         return this;
     }
 }

@@ -19,7 +19,7 @@ public class ExceptionCons {
 
     public static final String MUL_START_NODE = "开始节点不能超过1个!";
 
-    public static final String MUL_SKIP_BETWEEN = "中间节点不可通过或者驳回到多个中间节点，必须先流转到网关节点!";
+    public static final String MUL_SKIP_BETWEEN = "不可同时通过或者驳回到多个中间节点，必须先流转到网关节点!";
 
     public static final String MUL_START_SKIP = "节点流转条件不能超过1个!";
 

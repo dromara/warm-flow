@@ -1,5 +1,9 @@
 package com.warm.flow.core.chart;
 
+import com.warm.flow.core.utils.DrawUtils;
+import com.warm.tools.utils.ObjectUtil;
+import com.warm.tools.utils.StringUtils;
+
 import java.awt.*;
 
 /**
@@ -10,50 +14,58 @@ public class OvalChart implements FlowChart {
 
     private int yStartOval;
 
-    private boolean isStart;
+    private Color c = Color.BLACK;
 
-    public OvalChart(int xStartOval, int yStartOval, boolean isStart) {
+    private TextChart textChart;
+
+    public OvalChart(int xStartOval, int yStartOval, Color c, TextChart textChart) {
         this.xStartOval = xStartOval;
         this.yStartOval = yStartOval;
-        this.isStart = isStart;
+        this.c = c;
+        this.textChart = textChart;
     }
 
     public int getxStartOval() {
         return xStartOval;
     }
 
-    public OvalChart setxStartOval(int xStartOval) {
+    public void setxStartOval(int xStartOval) {
         this.xStartOval = xStartOval;
-        return this;
     }
 
     public int getyStartOval() {
         return yStartOval;
     }
 
-    public OvalChart setyStartOval(int yStartOval) {
+    public void setyStartOval(int yStartOval) {
         this.yStartOval = yStartOval;
-        return this;
     }
 
-    public boolean isStart() {
-        return isStart;
+    public Color getC() {
+        return c;
     }
 
-    public OvalChart setStart(boolean start) {
-        isStart = start;
-        return this;
+    public void setC(Color c) {
+        this.c = c;
+    }
+
+    public TextChart getTextChart() {
+        return textChart;
+    }
+
+    public void setTextChart(TextChart textChart) {
+        this.textChart = textChart;
     }
 
     @Override
     public void draw(Graphics2D graphics) {
-        if (isStart) {
-            graphics.setColor(Color.GREEN);
-            graphics.drawString("开始", xStartOval - 9, yStartOval + 35);
-        } else {
-            graphics.setColor(Color.RED);
-            graphics.drawString("结束", xStartOval - 9, yStartOval + 35);
+        graphics.setColor(c);
+        graphics.drawOval(xStartOval - 20, yStartOval - 20, 40, 40);
+        if (ObjectUtil.isNotNull(textChart) && StringUtils.isNotEmpty(textChart.getTitle())) {
+            textChart.setxText(textChart.getxText() - DrawUtils.stringWidth(textChart.getTitle()) / 2);
+            textChart.setyText(textChart.getyText() + 5);
+            // 填充文字说明
+            textChart.draw(graphics);
         }
-        graphics.fillOval(xStartOval - 20, yStartOval - 20, 40, 40);
     }
 }

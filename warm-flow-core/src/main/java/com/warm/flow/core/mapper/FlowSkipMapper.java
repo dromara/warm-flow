@@ -37,4 +37,5 @@ public interface FlowSkipMapper extends WarmMapper<FlowSkip> {
      * @return
      */
     List<FlowSkip> queryByDefAndCode(@Param("definitionId") Long definitionId, @Param("nowNodeCode") String nowNodeCode);
+
 }

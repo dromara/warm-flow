@@ -171,4 +171,19 @@
         from flow_skip
         where definition_id = #{definitionId}
     </delete>
+
+    <delete id="delete" parameterType="com.warm.flow.core.domain.entity.FlowDefinition">
+        delete from flow_definition
+        <where>
+            <if test="id != null">and id = #{id}</if>
+            <if test="flowCode != null and flowCode != ''">and flow_code = #{flowCode}</if>
+            <if test="flowName != null and flowName != ''">and flow_name = #{flowName}</if>
+            <if test="version != null and version != ''">and version = #{version}</if>
+            <if test="isPublish != null">and is_publish = #{isPublish}</if>
+            <if test="fromCustom != null">and from_custom = #{fromCustom}</if>
+            <if test="fromPath != null">and from_path = #{fromPath}</if>
+            <if test="createTime != null">and create_time = #{createTime}</if>
+            <if test="updateTime != null">and update_time = #{updateTime}</if>
+        </where>
+    </delete>
 </mapper>

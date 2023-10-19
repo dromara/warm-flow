@@ -15,11 +15,6 @@ public class BetweenChart implements FlowChart {
     private Color c = Color.BLACK;
     private TextChart textChart;
 
-    public BetweenChart(int xRect, int yRect) {
-        this.xRect = xRect;
-        this.yRect = yRect;
-    }
-
     public BetweenChart(int xRect, int yRect, Color c, TextChart textChart) {
         this.xRect = xRect;
         this.yRect = yRect;

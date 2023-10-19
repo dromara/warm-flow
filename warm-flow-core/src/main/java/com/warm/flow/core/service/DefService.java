@@ -24,7 +24,16 @@ public interface DefService extends IWarmService<FlowDefinition> {
      */
     void importXml(InputStream is) throws Exception;
 
+    /**
+     * 根据xml字符串保持流程定义
+     * @param def
+     * @throws Exception
+     */
+    void saveXml(FlowDefinition def) throws Exception;
+
     Document exportXml(Long id);
+
+    String xmlString(Long id);
 
     List<FlowDefinition> queryByCodeList(List<String> flowCodeList);
 

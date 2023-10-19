@@ -25,12 +25,4 @@ public interface FlowNodeMapper extends WarmMapper<FlowNode> {
 
     List<FlowNode> getByNodeCodes(@Param("nodeCodes") List<String> nodeCodes, @Param("definitionId") Long definitionId);
 
-    /**
-     * 根据ids批量删除
-     *
-     * @param definitionId 需要删除的数据主键集合
-     * @return 结果
-     */
-    int deleteByDefinitionId(Long definitionId);
-
 }

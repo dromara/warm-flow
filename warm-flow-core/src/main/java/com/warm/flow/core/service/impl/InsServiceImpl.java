@@ -146,6 +146,10 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
                         .equals(skip.getNowNodeCode()) || !nextNodeCode.equals(skip.getNextNodeCode())
                 , allSkips, FlowSkip::getNextNodeCode);
         List<FlowSkip> oneLastSkips = skipNextMap.get(nextNodeCode);
+        // 说明没有其他前置节点，那可以完成往下执行
+        if (CollUtil.isEmpty(oneLastSkips)) {
+            return true;
+        }
         if (CollUtil.isNotEmpty(oneLastSkips)) {
             for (FlowSkip oneLastSkip : oneLastSkips) {
                 FlowHisTask oneLastHisTask = CollUtil.getOne(FlowFactory.hisTaskService()

@@ -197,4 +197,23 @@
             #{id}
         </foreach>
     </delete>
+
+    <delete id="delete" parameterType="com.warm.flow.core.domain.entity.FlowTask">
+        delete from flow_task
+        <where>
+            <if test="id != null">and id = #{id}</if>
+            <if test="nodeCode != null and nodeCode != ''">and node_code = #{nodeCode}</if>
+            <if test="nodeName != null and nodeName != ''">and node_name = #{nodeName}</if>
+            <if test="nodeType != null">and node_type = #{nodeType}</if>
+            <if test="approver != null and approver != ''">and approver = #{approver}</if>
+            <if test="definitionId != null">and definition_id = #{definitionId}</if>
+            <if test="instanceId != null">and instance_id = #{instanceId}</if>
+            <if test="flowStatus != null">and flow_status = #{flowStatus}</if>
+            <if test="gateWayNode != null">and gateWay_node = #{gateWayNode}</if>
+            <if test="permissionFlag != null">and permission_flag = #{permissionFlag}</if>
+            <if test="createTime != null">and create_time = #{createTime}</if>
+            <if test="updateTime != null">and update_time = #{updateTime}</if>
+            <if test="tenantId != null">and tenant_id = #{tenantId}</if>
+        </where>
+    </delete>
 </mapper>

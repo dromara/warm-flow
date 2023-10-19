@@ -161,10 +161,19 @@
         </foreach>
     </delete>
 
-    <delete id="deleteByDefinitionId" parameterType="Long">
-        delete
-        from flow_node
-        where definition_id = #{definitionId}
+    <delete id="delete" parameterType="com.warm.flow.core.domain.entity.FlowNode">
+        delete from flow_node
+        <where>
+            <if test="id != null">and id = #{id}</if>
+            <if test="nodeType != null">and node_type = #{nodeType}</if>
+            <if test="definitionId != null">and definition_id = #{definitionId}</if>
+            <if test="nodeCode != null and nodeCode != ''">and node_code = #{nodeCode}</if>
+            <if test="nodeName != null and nodeName != ''">and node_name = #{nodeName}</if>
+            <if test="permissionFlag != null">and permission_flag = #{permissionFlag}</if>
+            <if test="coordinate != null and coordinate != ''">and coordinate = #{coordinate}</if>
+            <if test="version != null and version != ''">and version = #{version}</if>
+            <if test="createTime != null">and create_time = #{createTime}</if>
+            <if test="updateTime != null">and update_time = #{updateTime}</if>
+        </where>
     </delete>
-
 </mapper>

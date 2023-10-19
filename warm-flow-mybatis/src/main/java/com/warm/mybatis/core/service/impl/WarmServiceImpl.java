@@ -77,6 +77,11 @@ public abstract class WarmServiceImpl<M extends WarmMapper<T>, T> implements IWa
     }
 
     @Override
+    public boolean remove(T entity) {
+        return SqlHelper.retBool(getMapper().delete(entity));
+    }
+
+    @Override
     public boolean removeByIds(Collection<? extends Serializable> ids) {
         return SqlHelper.retBool(getMapper().deleteByIds(ids));
     }

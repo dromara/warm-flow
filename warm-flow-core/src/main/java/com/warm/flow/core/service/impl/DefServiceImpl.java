@@ -5,6 +5,7 @@ import com.warm.flow.core.chart.*;
 import com.warm.flow.core.constant.ExceptionCons;
 import com.warm.flow.core.domain.dto.FlowCombine;
 import com.warm.flow.core.domain.entity.*;
+import com.warm.flow.core.enums.FlowStatus;
 import com.warm.flow.core.enums.NodeType;
 import com.warm.flow.core.enums.PublishStatus;
 import com.warm.flow.core.enums.SkipType;
@@ -20,9 +21,11 @@ import org.dom4j.Document;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +46,9 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionMapper, FlowDe
 
     @Override
     public void importXml(InputStream is) throws Exception {
+        if (ObjectUtil.isNull(is)) {
+            return;
+        }
         FlowCombine combine = FlowConfigUtil.readConfig(is);
         // 流程定义
         FlowDefinition definition = combine.getDefinition();
@@ -55,9 +61,37 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionMapper, FlowDe
     }
 
     @Override
+    public void saveXml(FlowDefinition def) throws Exception {
+        if (StringUtils.isEmpty(def.getXmlString())) {
+            FlowFactory.nodeService().remove(new FlowNode().setDefinitionId(def.getId()));
+            FlowFactory.skipService().remove(new FlowSkip().setDefinitionId(def.getId()));
+            return;
+        }
+        FlowCombine combine = FlowConfigUtil.readConfig(new ByteArrayInputStream(def.getXmlString()
+                .getBytes(StandardCharsets.UTF_8)));
+        // 所有的流程节点
+        List<FlowNode> allNodes = combine.getAllNodes();
+        // 所有的流程连线
+        List<FlowSkip> allSkips = combine.getAllSkips();
+        FlowFactory.nodeService().remove(new FlowNode().setDefinitionId(def.getId()));
+        FlowFactory.skipService().remove(new FlowSkip().setDefinitionId(def.getId()));
+        allNodes.forEach(node -> node.setDefinitionId(def.getId()));
+        allSkips.forEach(skip -> skip.setDefinitionId(def.getId()));
+        FlowFactory.nodeService().saveBatch(allNodes);
+        FlowFactory.skipService().saveBatch(allSkips);
+    }
+
+    @Override
     public Document exportXml(Long id) {
         FlowDefinition definition = getAllDataDefinition(id);
         return FlowConfigUtil.createDocument(definition);
+    }
+
+    @Override
+    public String xmlString(Long id) {
+        FlowDefinition definition = getAllDataDefinition(id);
+        Document document = FlowConfigUtil.createDocument(definition);
+        return document.asXML();
     }
 
     public FlowDefinition getAllDataDefinition(Long id) {
@@ -156,11 +190,10 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionMapper, FlowDe
 
     @Override
     public String flowChart(Long instanceId) throws IOException {
-        // 绘制宽=480，长=640的图板
-        int width = 1500, height = 500;
+        int width = 1600, height = 800;
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         // 获取图形上下文,graphics想象成一个画笔
-        Graphics2D graphics = (Graphics2D) image.getGraphics();
+        Graphics2D graphics = image.createGraphics();
         // 消除线条锯齿
         graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         // 对指定的矩形区域填充颜色
@@ -178,9 +211,18 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionMapper, FlowDe
         graphics.dispose();// 释放此图形的上下文并释放它所使用的所有系统资源
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
+
         ImageIO.write(image, "jpg", os);
         return Base64.encode(os.toByteArray());
 
+    }
+
+    public static BufferedImage zoomImage(BufferedImage originalImage, int newWidth, int newHeight) {
+        BufferedImage zoomedImage = new BufferedImage(newWidth, newHeight, originalImage.getType());
+        Graphics2D g = zoomedImage.createGraphics();
+        g.drawImage(originalImage, 0, 0, newWidth, newHeight, null);
+        g.dispose();
+        return zoomedImage;
     }
 
     /**
@@ -200,15 +242,15 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionMapper, FlowDe
                 TextChart textChart = null;
                 if (coordinateSplit.length > 1) {
                     String[] textSplit = coordinateSplit[1].split(",");
-                    int textX = Integer.parseInt(textSplit[0]);
-                    int textY = Integer.parseInt(textSplit[1]);
+                    int textX = Integer.parseInt(textSplit[0].split("\\.")[0]);
+                    int textY = Integer.parseInt(textSplit[1].split("\\.")[0]);
                     textChart = new TextChart(textX, textY, StringUtils.isEmpty(flowSkip.getSkipCondition()) ?
                             SkipType.getValueByKey(flowSkip.getSkipType()) : flowSkip.getSkipCondition());
                 }
 
                 for (int i = 0; i < skipSplit.length; i++) {
-                    skipX[i] = Integer.parseInt(skipSplit[i].split(",")[0]);
-                    skipY[i] = Integer.parseInt(skipSplit[i].split(",")[1]);
+                    skipX[i] = Integer.parseInt(skipSplit[i].split(",")[0].split("\\.")[0]);
+                    skipY[i] = Integer.parseInt(skipSplit[i].split(",")[1].split("\\.")[0]);
                 }
                 flowChartChain.addFlowChart(new SkipChart(skipX, skipY, textChart));
             }
@@ -229,22 +271,27 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionMapper, FlowDe
             if (StringUtils.isNotEmpty(flowNode.getCoordinate())) {
                 String[] coordinateSplit = flowNode.getCoordinate().split("\\|");
                 String[] nodeSplit = coordinateSplit[0].split(",");
-                int nodeX = Integer.parseInt(nodeSplit[0]);
-                int nodeY = Integer.parseInt(nodeSplit[1]);
+                int nodeX = Integer.parseInt(nodeSplit[0].split("\\.")[0]);
+                int nodeY = Integer.parseInt(nodeSplit[1].split("\\.")[0]);
                 TextChart textChart = null;
                 if (coordinateSplit.length > 1) {
                     String[] textSplit = coordinateSplit[1].split(",");
-                    int textX = Integer.parseInt(textSplit[0]);
-                    int textY = Integer.parseInt(textSplit[1]);
+                    int textX = Integer.parseInt(textSplit[0].split("\\.")[0]);
+                    int textY = Integer.parseInt(textSplit[1].split("\\.")[0]);
                     textChart = new TextChart(textX, textY, flowNode.getNodeName());
                 }
                 if (NodeType.isStart(flowNode.getNodeType())) {
-                    flowChartChain.addFlowChart(new OvalChart(nodeX, nodeY, true));
+                    flowChartChain.addFlowChart(new OvalChart(nodeX, nodeY, Color.GREEN, textChart));
                 } else if (NodeType.isBetween(flowNode.getNodeType())) {
                     Color c = nodeIsFinish(flowNode.getNodeCode(), allSkips, instance.getId());
                     flowChartChain.addFlowChart(new BetweenChart(nodeX, nodeY, c, textChart));
+                }  else if (NodeType.isGateWaySerial(flowNode.getNodeType())) {
+                    flowChartChain.addFlowChart(new SerialChart(nodeX, nodeY));
+                }  else if (NodeType.isGateWayParallel(flowNode.getNodeType())) {
+                    flowChartChain.addFlowChart(new ParallelChart(nodeX, nodeY));
                 } else if (NodeType.isEnd(flowNode.getNodeType())) {
-                    flowChartChain.addFlowChart(new OvalChart(nodeX, nodeY, false));
+                    Color c = FlowStatus.FINISHED.getKey().equals(instance.getFlowStatus()) ? Color.GREEN : Color.BLACK;
+                    flowChartChain.addFlowChart(new OvalChart(nodeX, nodeY,  c, textChart));
                 }
             }
         }

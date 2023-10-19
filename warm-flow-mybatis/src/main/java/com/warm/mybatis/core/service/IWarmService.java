@@ -91,6 +91,14 @@ public interface IWarmService<T> {
     boolean removeById(Serializable id);
 
     /**
+     * 根据entity删除
+     *
+     * @param entity 实体
+     * @return 结果
+     */
+    boolean remove(T entity);
+
+    /**
      * 根据ids批量删除
      *
      * @param ids 需要删除的数据主键集合

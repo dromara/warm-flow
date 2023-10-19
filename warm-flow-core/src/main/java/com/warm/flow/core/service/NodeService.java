@@ -35,4 +35,5 @@ public interface NodeService extends IWarmService<FlowNode> {
      * @return
      */
     FlowNode getByNodeCode(String nodeCode, Long definitionId);
+
 }
