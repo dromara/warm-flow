@@ -265,6 +265,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
             if (!NodeType.isStart(nextNode.getNodeType())) {
                 skipsGateway = skipsGateway.stream().filter(t -> {
                     if (NodeType.isGateWaySerial(nextNode.getNodeType())) {
+                        AssertUtil.isTrue(StringUtils.isEmpty(flowUser.getSkipCondition()), ExceptionCons.MUST_CONDITIONVALUE_NODE);
                         if (ObjectUtil.isNotNull(t.getSkipCondition())) {
                             return (flowUser.getSkipCondition()).equals(t.getSkipCondition());
                         }

@@ -23,6 +23,8 @@ public class ExceptionCons {
 
     public static final String MUL_START_SKIP = "节点流转条件不能超过1个!";
 
+    public static final String MUST_CONDITIONVALUE_NODE = "互斥网关必须传递条件!";
+
     public static final String ALREADY_EXIST = "流程已经存在,请通过创建新版本的流程对该流程进行更新!";
 
     public static final String LOST_START_NODE = "流程缺少开始节点!";

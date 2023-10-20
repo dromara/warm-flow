@@ -212,17 +212,18 @@ public class FlowConfigUtil {
         Map<String, FlowNode> flowNodeMap = StreamUtils.toMap(nodeList, FlowNode::getNodeCode, node -> node);
         Map<String, List<FlowSkip>> allSkipMap = StreamUtils.groupByKey(allSkips, FlowSkip::getNowNodeCode);
         List<FlowSkip> gatewaySkips = new ArrayList<>();
-        for (FlowSkip allSkip : allSkips) {
-            allSkip.setNextNodeType(flowNodeMap.get(allSkip.getNextNodeCode()).getNodeType());
-            if (NodeType.isGateWay(allSkip.getNowNodeType())) {
-                gatewaySkips.add(allSkip);
-            }
-            // 中间节点不可驳回到网关节点
-            AssertUtil.isTrue(!NodeType.isGateWay(allSkip.getNowNodeType())
-                            && SkipType.isReject(allSkip.getSkipType())
-                            && NodeType.isGateWay(allSkip.getNextNodeType())
-                    , ExceptionCons.BETWEEN_REJECT_GATEWAY);
-        }
+        // TODO min 2023-10-20 ,之前定义的规则，现在已经不适用了，后面观察，会有啥影响
+        // for (FlowSkip allSkip : allSkips) {
+        //     allSkip.setNextNodeType(flowNodeMap.get(allSkip.getNextNodeCode()).getNodeType());
+        //     if (NodeType.isGateWay(allSkip.getNowNodeType())) {
+        //         gatewaySkips.add(allSkip);
+        //     }
+        //     // 中间节点不可驳回到网关节点
+        //     AssertUtil.isTrue(!NodeType.isGateWay(allSkip.getNowNodeType())
+        //                     && SkipType.isReject(allSkip.getSkipType())
+        //                     && NodeType.isGateWay(allSkip.getNextNodeType())
+        //             , ExceptionCons.BETWEEN_REJECT_GATEWAY);
+        // }
         // 校验网关节点不可直连
         if (CollUtil.isNotEmpty(gatewaySkips)) {
             for (FlowSkip gatewaySkip1 : gatewaySkips) {
