@@ -45,6 +45,10 @@
     </tr>
 </table>
 
+## 你可以请作者喝杯咖啡表示鼓励
+
+<div class="body">    <img    src="warm-vue3/src/assets/images/pay.png"      alt="donate"      style="width:100%"    />
+
 
 
 git提交规范
