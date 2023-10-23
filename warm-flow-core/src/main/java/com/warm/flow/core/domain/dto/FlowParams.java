@@ -26,6 +26,11 @@ public class FlowParams {
     private String nickName;
 
     /**
+     * 节点编码（如果要指定跳转节点，传入）
+     */
+    private String nodeCode;
+
+    /**
      * 权限标识 例如：role:admin,user:2
      */
     private List<String> permissionFlag;
@@ -72,6 +77,15 @@ public class FlowParams {
 
     public FlowParams nickName(String nickName) {
         this.nickName = nickName;
+        return this;
+    }
+
+    public String getNodeCode() {
+        return nodeCode;
+    }
+
+    public FlowParams setNodeCode(String nodeCode) {
+        this.nodeCode = nodeCode;
         return this;
     }
 

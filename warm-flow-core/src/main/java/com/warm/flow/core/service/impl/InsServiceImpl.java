@@ -566,8 +566,9 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
 
     /**
      * 权限和条件校验
-     *
+     * @param task
      * @param skips
+     * @param flowUser
      * @return
      */
     private FlowSkip checkAuthAndCondition(FlowTask task, List<FlowSkip> skips, FlowParams flowUser) {
@@ -597,6 +598,24 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
     }
 
     /**
+     * 校验跳转指定节点是否有权限
+     * @param task
+     * @param flowUser
+     * @return
+     */
+    private FlowNode checkSkipAppointAuth(FlowTask task, FlowParams flowUser) {
+        List<String> permissionFlags = flowUser.getPermissionFlag();
+        List<FlowNode> nodes = FlowFactory.nodeService()
+                .getByNodeCodes(Collections.singletonList(flowUser.getNodeCode()), task.getDefinitionId());
+        FlowNode node = CollUtil.getOne(nodes);
+        AssertUtil.isTrue(ObjectUtil.isNull(node), ExceptionCons.NOT_NODE_DATA);
+        AssertUtil.isTrue(StringUtils.isNotEmpty(node.getPermissionFlag()) && (CollUtil.isEmpty(permissionFlags)
+                || !CollUtil.containsAny(permissionFlags, ArrayUtil.strToArrAy(node.getPermissionFlag(),
+                ","))), ExceptionCons.NULL_ROLE_NODE);
+        return node;
+    }
+
+    /**
      * 根据流程id+当前流程节点编码获取与之直接关联(其为源节点)的节点。 definitionId:流程id nodeCode:当前流程状态
      * skipType:跳转条件,没有填写的话不做校验
      *
@@ -607,6 +626,10 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
     private FlowNode getNextNode(FlowTask task, FlowParams flowUser) {
         AssertUtil.isNull(task.getDefinitionId(), ExceptionCons.NOT_DEFINITION_ID);
         AssertUtil.isBlank(task.getNodeCode(), ExceptionCons.LOST_NODE_CODE);
+        // 如果指定了跳转节点，则判断权限，直接获取节点
+        if (StringUtils.isNotEmpty(flowUser.getNodeCode())) {
+            return checkSkipAppointAuth(task, flowUser);
+        }
         List<FlowSkip> flowSkips = FlowFactory.skipService()
                 .queryByDefAndCode(task.getDefinitionId(), task.getNodeCode());
         FlowSkip nextSkip = checkAuthAndCondition(task, flowSkips, flowUser);
