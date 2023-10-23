@@ -88,6 +88,7 @@ public class FlowConfigUtil {
         node.setNodeName(nodeElement.attributeValue("nodeName"));
         node.setPermissionFlag(nodeElement.attributeValue("permissionFlag"));
         node.setCoordinate(nodeElement.attributeValue("coordinate"));
+        node.setSkipAnyNode(nodeElement.attributeValue("skipAnyNode"));
 
         List<Element> skipsElement = nodeElement.elements();
         List<FlowSkip> skips = node.getSkipList();
@@ -130,6 +131,7 @@ public class FlowConfigUtil {
             nodeElement.addAttribute("nodeName", node.getNodeName());
             nodeElement.addAttribute("permissionFlag", node.getPermissionFlag());
             nodeElement.addAttribute("coordinate", node.getCoordinate());
+            nodeElement.addAttribute("skipAnyNode", node.getSkipAnyNode());
 
             List<FlowSkip> skipList = node.getSkipList();
             if (CollUtil.isNotEmpty(skipList)) {

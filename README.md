@@ -8,6 +8,7 @@
 4. 支持多租户，感谢【luoheyu】PR
 5. 支持代办任务和已办任务，通过权限标识过滤数据
 6. 支持互斥网关，并行网关（会签、或签）
+7. 可退回任意节点
 
 具体demo项目：[hh-vue](https://gitee.com/min290/hh-vue)
 
@@ -42,6 +43,10 @@
     <tr>
         <td><img src="https://foruda.gitee.com/images/1697767718130579881/8f29cbfc_2218307.png"/></td>
         <td><img src="https://foruda.gitee.com/images/1697767731619319111/59871f55_2218307.png"/></td>
+    </tr>
+    <tr>
+        <td><img src="https://foruda.gitee.com/images/1698042602148217599/0cdd247e_2218307.png"/></td>
+        <td><img src="https://foruda.gitee.com/images/1698042624784729710/7c85ec5a_2218307.png"/></td>
     </tr>
 </table>
 

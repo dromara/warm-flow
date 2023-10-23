@@ -89,11 +89,6 @@ public class FlowParams {
         return this;
     }
 
-    public FlowParams permissionFlag(List<String> permissionFlag) {
-        this.permissionFlag = permissionFlag;
-        return this;
-    }
-
     public FlowParams skipType(String skipType) {
         this.skipType = skipType;
         return this;
@@ -128,68 +123,41 @@ public class FlowParams {
         return this;
     }
 
-    public String getFlowCode() {
-        return flowCode;
+    public FlowParams permissionFlag(List<String> permissionFlag) {
+        this.permissionFlag = permissionFlag;
+        return this;
     }
 
-    public void setFlowCode(String flowCode) {
-        this.flowCode = flowCode;
+    public String getFlowCode() {
+        return flowCode;
     }
 
     public String getCreateBy() {
         return createBy;
     }
 
-    public void setCreateBy(String createBy) {
-        this.createBy = createBy;
-    }
-
     public String getNickName() {
         return nickName;
-    }
-
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
     }
 
     public List<String> getPermissionFlag() {
         return permissionFlag;
     }
 
-    public void setPermissionFlag(List<String> permissionFlag) {
-        this.permissionFlag = permissionFlag;
-    }
-
-
     public String getSkipType() {
         return skipType;
-    }
-
-    public void setSkipType(String skipType) {
-        this.skipType = skipType;
     }
 
     public String getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
     public String getExt() {
         return ext;
-    }
-
-    public void setExt(String ext) {
-        this.ext = ext;
     }
 
     public Long getTenantId() {
         return tenantId;
     }
 
-    public void setTenantId(Long tenantId) {
-        this.tenantId = tenantId;
-    }
 }

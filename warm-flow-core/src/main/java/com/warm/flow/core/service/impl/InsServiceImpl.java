@@ -598,21 +598,26 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
     }
 
     /**
-     * 校验跳转指定节点是否有权限
+     * 校验跳转指定节点是否有权限任意退回
      * @param task
      * @param flowUser
      * @return
      */
     private FlowNode checkSkipAppointAuth(FlowTask task, FlowParams flowUser) {
         List<String> permissionFlags = flowUser.getPermissionFlag();
-        List<FlowNode> nodes = FlowFactory.nodeService()
-                .getByNodeCodes(Collections.singletonList(flowUser.getNodeCode()), task.getDefinitionId());
-        FlowNode node = CollUtil.getOne(nodes);
-        AssertUtil.isTrue(ObjectUtil.isNull(node), ExceptionCons.NOT_NODE_DATA);
-        AssertUtil.isTrue(StringUtils.isNotEmpty(node.getPermissionFlag()) && (CollUtil.isEmpty(permissionFlags)
-                || !CollUtil.containsAny(permissionFlags, ArrayUtil.strToArrAy(node.getPermissionFlag(),
+        List<FlowNode> curNodes = FlowFactory.nodeService()
+                .getByNodeCodes(Collections.singletonList(task.getNodeCode()), task.getDefinitionId());
+        FlowNode curNode = CollUtil.getOne(curNodes);
+        // 判断当前节点是否可以任意退回
+        AssertUtil.isTrue(ObjectUtil.isNull(curNode), ExceptionCons.NOT_NODE_DATA);
+        AssertUtil.isFalse("Y".equals(curNode.getSkipAnyNode()), ExceptionCons.SKIP_ANY_NODE);
+
+        AssertUtil.isTrue(StringUtils.isNotEmpty(curNode.getPermissionFlag()) && (CollUtil.isEmpty(permissionFlags)
+                || !CollUtil.containsAny(permissionFlags, ArrayUtil.strToArrAy(curNode.getPermissionFlag(),
                 ","))), ExceptionCons.NULL_ROLE_NODE);
-        return node;
+        List<FlowNode> nextNodes = FlowFactory.nodeService()
+                .getByNodeCodes(Collections.singletonList(flowUser.getNodeCode()), task.getDefinitionId());
+        return CollUtil.getOne(nextNodes);
     }
 
     /**
