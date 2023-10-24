@@ -26,6 +26,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -267,6 +268,12 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionMapper, FlowDe
         List<FlowNode> nodeList = FlowFactory.nodeService().list(new FlowNode().setDefinitionId(instance.getDefinitionId()));
         List<FlowSkip> allSkips = FlowFactory.skipService().list(new FlowSkip()
                 .setDefinitionId(instance.getDefinitionId()));
+        // 如果当前流程状态处于驳回，那么当前任务的后续任务都算未完成
+        Map<String, List<FlowSkip>> skipMap = StreamUtils.groupByKeyFilter(skip ->
+                !SkipType.isReject(skip.getSkipType()), allSkips, FlowSkip::getNowNodeCode);
+        List<FlowSkip> flowSkips = skipMap.get(instance.getNodeCode());
+        List<String> allNextNode = new ArrayList<>();
+        getNextNode(flowSkips, allNextNode, skipMap);
         for (FlowNode flowNode : nodeList) {
             if (StringUtils.isNotEmpty(flowNode.getCoordinate())) {
                 String[] coordinateSplit = flowNode.getCoordinate().split("\\|");
@@ -283,7 +290,10 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionMapper, FlowDe
                 if (NodeType.isStart(flowNode.getNodeType())) {
                     flowChartChain.addFlowChart(new OvalChart(nodeX, nodeY, Color.GREEN, textChart));
                 } else if (NodeType.isBetween(flowNode.getNodeType())) {
-                    Color c = nodeIsFinish(flowNode.getNodeCode(), allSkips, instance.getId());
+                    Color c = Color.BLACK;
+                    if (CollUtil.isEmpty(allNextNode) || !allNextNode.contains(flowNode.getNodeCode())) {
+                        c = nodeIsFinish(flowNode.getNodeCode(), allSkips, instance.getId());
+                    }
                     flowChartChain.addFlowChart(new BetweenChart(nodeX, nodeY, c, textChart));
                 }  else if (NodeType.isGateWaySerial(flowNode.getNodeType())) {
                     flowChartChain.addFlowChart(new SerialChart(nodeX, nodeY));
@@ -293,6 +303,22 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionMapper, FlowDe
                     Color c = FlowStatus.FINISHED.getKey().equals(instance.getFlowStatus()) ? Color.GREEN : Color.BLACK;
                     flowChartChain.addFlowChart(new OvalChart(nodeX, nodeY,  c, textChart));
                 }
+            }
+        }
+    }
+
+    /**
+     *
+     * 获取下一个节点nodeCode
+     * @param nextSkips
+     * @param allNextNode
+     */
+    private void getNextNode(List<FlowSkip> nextSkips, List<String> allNextNode, Map<String, List<FlowSkip>> skipMap) {
+        if (CollUtil.isNotEmpty(nextSkips)) {
+            for (FlowSkip nextSkip : nextSkips) {
+                allNextNode.add(nextSkip.getNextNodeCode());
+                List<FlowSkip> nextNextSkips = skipMap.get(nextSkip.getNextNodeCode());
+                getNextNode(nextNextSkips, allNextNode,skipMap);
             }
         }
     }
