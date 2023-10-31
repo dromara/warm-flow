@@ -112,7 +112,7 @@
                 #{flowHisTask.approver}
             </if>
             <if test="flowHisTask.instanceId != null ">and instance_id = #{flowHisTask.instanceId}</if>
-            <if test="flowHisTask.tenantId != null ">and tenant_id = #{flowHisTask.tenantId}</if>
+            <if test="flowHisTask.tenantId != null  and flowHisTask.tenantId != ''">and tenant_id = #{flowHisTask.tenantId}</if>
         </where>
     </sql>
 
@@ -178,7 +178,7 @@
             <if test="message != null">message,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
-            <if test="tenantId != null">tenant_id,</if>
+            <if test="tenantId != null and tenantId != ''">tenant_id,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -196,7 +196,7 @@
             <if test="message != null">#{message},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
-            <if test="tenantId != null">#{tenantId},</if>
+            <if test="tenantId != null and tenantId != ''">#{tenantId},</if>
         </trim>
     </insert>
 
@@ -217,7 +217,7 @@
             <if test="message != null">message = #{message},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
-            <if test="tenantId != null">tenant_id = #{tenantId},</if>
+            <if test="tenantId != null and tenantId != ''">tenant_id = #{tenantId},</if>
         </trim>
         where id = #{id}
     </update>
@@ -260,7 +260,7 @@
             <if test="message != null">and message = #{message}</if>
             <if test="createTime != null">and create_time = #{createTime}</if>
             <if test="updateTime != null">and update_time = #{updateTime}</if>
-            <if test="tenantId != null">and tenant_id = #{tenantId}</if>
+            <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
         </where>
     </delete>
 </mapper>

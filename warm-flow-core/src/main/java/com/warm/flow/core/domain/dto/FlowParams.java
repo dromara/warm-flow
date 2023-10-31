@@ -59,7 +59,7 @@ public class FlowParams {
     /**
      * 租户id
      */
-    private Long tenantId;
+    private String tenantId;
 
     public static FlowParams build() {
         return new FlowParams();
@@ -118,7 +118,7 @@ public class FlowParams {
         return this;
     }
 
-    public FlowParams tenantId(Long tenantId) {
+    public FlowParams tenantId(String tenantId) {
         this.tenantId = tenantId;
         return this;
     }
@@ -156,7 +156,7 @@ public class FlowParams {
         return ext;
     }
 
-    public Long getTenantId() {
+    public String getTenantId() {
         return tenantId;
     }
 

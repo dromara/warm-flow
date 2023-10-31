@@ -29,7 +29,7 @@ public class FlowHisTask extends FlowEntity {
     /**
      * 所属租住（企业）id
      */
-    private Long tenantId;
+    private String tenantId;
 
     /**
      * 业务id
@@ -135,11 +135,11 @@ public class FlowHisTask extends FlowEntity {
         return this;
     }
 
-    public Long getTenantId() {
+    public String getTenantId() {
         return tenantId;
     }
 
-    public FlowHisTask setTenantId(Long tenantId) {
+    public FlowHisTask setTenantId(String tenantId) {
         this.tenantId = tenantId;
         return this;
     }

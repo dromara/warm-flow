@@ -24,7 +24,7 @@ public class FlowTask extends FlowEntity {
     /**
      * 所属租住（企业）id
      */
-    private Long tenantId;
+    private String tenantId;
 
     /**
      * 流程名称
@@ -110,11 +110,11 @@ public class FlowTask extends FlowEntity {
         return this;
     }
 
-    public Long getTenantId() {
+    public String getTenantId() {
         return tenantId;
     }
 
-    public FlowTask setTenantId(Long tenantId) {
+    public FlowTask setTenantId(String tenantId) {
         this.tenantId = tenantId;
         return this;
     }
