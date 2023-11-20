@@ -43,11 +43,6 @@ public class FlowNode extends FlowEntity {
     private String coordinate;
 
     /**
-     * 跳转规则描述
-     */
-    private String skipDescribe;
-
-    /**
      * 版本
      */
     private String version;
@@ -131,15 +126,6 @@ public class FlowNode extends FlowEntity {
 
     public FlowNode setVersion(String version) {
         this.version = version;
-        return this;
-    }
-
-    public String getSkipDescribe() {
-        return skipDescribe;
-    }
-
-    public FlowNode setSkipDescribe(String skipDescribe) {
-        this.skipDescribe = skipDescribe;
         return this;
     }
 
