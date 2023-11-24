@@ -40,14 +40,15 @@
 
     <modules>
         <module>warm-flow-core</module>
-        <module>warm-flow-adapter</module>
         <module>warm-flow-tools</module>
         <module>warm-flow-mybatis</module>
         <module>warm-flow-test</module>
+        <module>warm-flow-spring-boot-starter</module>
+        <module>warm-flow-solon-plugin</module>
     </modules>
 
     <properties>
-        <revision>0.5.4</revision>
+        <revision>0.5.6</revision>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

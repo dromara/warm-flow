@@ -73,4 +73,6 @@ public class ExceptionCons {
 
     public static final String MSG_OVER_LENGTH = "意见长度过长!";
 
+    public static final String CONDITION_ERR = "条件判断异常！";
+
 }

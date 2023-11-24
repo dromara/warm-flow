@@ -1,6 +1,7 @@
 package com.warm.flow.core.domain.dto;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author minliuhua
@@ -44,7 +45,7 @@ public class FlowParams {
     /**
      * 跳转条件
      */
-    private String skipCondition;
+    private Map<String, String> skipCondition;
 
     /**
      * 审批意见
@@ -94,17 +95,17 @@ public class FlowParams {
         return this;
     }
 
-    public FlowParams skipCondition(String skipCondition) {
+    public FlowParams skipCondition(Map<String, String> skipCondition) {
         this.skipCondition = skipCondition;
         return this;
     }
 
 
-    public String getSkipCondition() {
+    public Map<String, String> getSkipCondition() {
         return skipCondition;
     }
 
-    public void setSkipCondition(String skipCondition) {
+    public void setSkipCondition(Map<String, String> skipCondition) {
         this.skipCondition = skipCondition;
     }
 

@@ -11,6 +11,7 @@ import com.warm.flow.core.exception.FlowException;
 import com.warm.flow.core.mapper.FlowInstanceMapper;
 import com.warm.flow.core.service.InsService;
 import com.warm.flow.core.utils.AssertUtil;
+import com.warm.flow.core.utils.ExpressionUtil;
 import com.warm.mybatis.core.service.impl.WarmServiceImpl;
 import com.warm.tools.utils.*;
 
@@ -265,9 +266,9 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceMapper, FlowInst
             if (!NodeType.isStart(nextNode.getNodeType())) {
                 skipsGateway = skipsGateway.stream().filter(t -> {
                     if (NodeType.isGateWaySerial(nextNode.getNodeType())) {
-                        AssertUtil.isTrue(StringUtils.isEmpty(flowUser.getSkipCondition()), ExceptionCons.MUST_CONDITIONVALUE_NODE);
+                        AssertUtil.isTrue(MapUtil.isEmpty(flowUser.getSkipCondition()), ExceptionCons.MUST_CONDITIONVALUE_NODE);
                         if (ObjectUtil.isNotNull(t.getSkipCondition())) {
-                            return (flowUser.getSkipCondition()).equals(t.getSkipCondition());
+                            return ExpressionUtil.eval(t.getSkipCondition(), flowUser.getSkipCondition());
                         }
                         return true;
                     }
