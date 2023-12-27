@@ -152,7 +152,7 @@ CREATE TABLE `flow_task` (
 <dependency>
       <groupId>io.github.minliuhua</groupId>
       <artifactId>warm-flow-spring-boot-starter</artifactId>
-	    <version>最新版本</version>
+      <version>最新版本</version>
 </dependency>
 ```
 
@@ -162,7 +162,7 @@ CREATE TABLE `flow_task` (
 <dependency>
       <groupId>io.github.minliuhua</groupId>
       <artifactId>warm-flow-solon-plugin</artifactId>
-	    <version>最新版本</version>
+      <version>最新版本</version>
 </dependency>
 ```
 
