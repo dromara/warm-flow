@@ -10,7 +10,6 @@ import com.warm.tools.utils.CollUtil;
 import com.warm.tools.utils.ObjectUtil;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 历史任务记录Service业务层处理
@@ -42,25 +41,14 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskMapper, FlowH
 
     @Override
     public Page<FlowHisTask> donePage(FlowHisTask flowHisTask, Page<FlowHisTask> page) {
+        // 根据权限标识符过滤
+        List<String> permissionFlagD = CollUtil.strToColl(flowHisTask.getPermissionFlag(), ",");
+        if (ObjectUtil.isNull(permissionFlagD)) {
+            flowHisTask.setPermissionList(flowHisTask.getPermissionList());
+        }
         long count = getMapper().countDone(flowHisTask, page);
-
         if (count > 0) {
             List<FlowHisTask> list = getMapper().donePage(flowHisTask, page);
-            // 根据权限标识符过滤
-            List<String> permissionFlagD = CollUtil.strToColl(flowHisTask.getPermissionFlag(), ",");
-            if (ObjectUtil.isNull(permissionFlagD)) {
-                permissionFlagD = flowHisTask.getPermissionList();
-            }
-            if (ObjectUtil.isNotNull(permissionFlagD)) {
-                List<String> finalPermissionFlagD = permissionFlagD;
-                list = list.stream().filter(hisTask -> {
-                    List<String> permissionFlagO = CollUtil.strToColl(hisTask.getPermissionFlag(), ",");
-                    if (ObjectUtil.isNull(permissionFlagO)) {
-                        return false;
-                    }
-                    return CollUtil.containsAny(permissionFlagO, finalPermissionFlagD);
-                }).collect(Collectors.toList());
-            }
             return new Page<>(list, count);
         }
         return Page.empty();

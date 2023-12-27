@@ -40,6 +40,11 @@ public class FlowSkip extends FlowEntity {
     private Integer nextNodeType;
 
     /**
+     * 跳转名称
+     */
+    private String skipName;
+
+    /**
      * 跳转类型（PASS审批通过 REJECT驳回）
      */
     private String skipType;
@@ -105,6 +110,15 @@ public class FlowSkip extends FlowEntity {
 
     public FlowSkip setNextNodeType(Integer nextNodeType) {
         this.nextNodeType = nextNodeType;
+        return this;
+    }
+
+    public String getSkipName() {
+        return skipName;
+    }
+
+    public FlowSkip setSkipName(String skipName) {
+        this.skipName = skipName;
         return this;
     }
 

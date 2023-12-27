@@ -12,6 +12,7 @@
         <result property="nowNodeType" column="now_node_type"/>
         <result property="nextNodeCode" column="next_node_code"/>
         <result property="nextNodeType" column="next_node_type"/>
+        <result property="skipName" column="skip_name"/>
         <result property="skipType" column="skip_type"/>
         <result property="skipCondition" column="skip_condition"/>
         <result property="coordinate" column="coordinate"/>
@@ -27,6 +28,7 @@
                t.now_node_type,
                t.next_node_code,
                t.next_node_type,
+               t.skip_name,
                t.skip_type,
                t.skip_condition,
                t.coordinate,
@@ -100,6 +102,7 @@
             <if test="nowNodeType != null">now_node_type,</if>
             <if test="nextNodeCode != null and nextNodeCode != ''">next_node_code,</if>
             <if test="nextNodeType != null">next_node_type,</if>
+            <if test="skipName != null and skipName != ''">skip_name,</if>
             <if test="skipType != null">skip_type,</if>
             <if test="skipCondition != null">skip_condition,</if>
             <if test="coordinate != null and coordinate != ''">coordinate,</if>
@@ -114,6 +117,7 @@
             <if test="nowNodeType != null">#{nowNodeType},</if>
             <if test="nextNodeCode != null and nextNodeCode != ''">#{nextNodeCode},</if>
             <if test="nextNodeType != null">#{nextNodeType},</if>
+            <if test="skipName != null">#{skipName},</if>
             <if test="skipType != null">#{skipType},</if>
             <if test="skipCondition != null">#{skipCondition},</if>
             <if test="coordinate != null and coordinate != ''">#{coordinate},</if>
@@ -131,6 +135,7 @@
             <if test="nowNodeType != null">now_node_type = #{nowNodeType},</if>
             <if test="nextNodeCode != null and nextNodeCode != ''">next_node_code = #{nextNodeCode},</if>
             <if test="nextNodeType != null">next_node_type = #{nextNodeType},</if>
+            <if test="skipName != null">skip_name = #{skipName},</if>
             <if test="skipType != null">skip_type = #{skipType},</if>
             <if test="skipCondition != null">skip_condition = #{skipCondition},</if>
             <if test="coordinate != null and coordinate != ''">coordinate = #{coordinate},</if>
@@ -176,6 +181,7 @@
             <if test="nowNodeType != null">and now_node_type = #{nowNodeType}</if>
             <if test="nextNodeCode != null and nextNodeCode != ''">and next_node_code = #{nextNodeCode}</if>
             <if test="nextNodeType != null">and next_node_type = #{nextNodeType}</if>
+            <if test="skipName != null">and skip_name = #{skipName}</if>
             <if test="skipType != null">and skip_type = #{skipType}</if>
             <if test="coordinate != null and coordinate != ''">and coordinate = #{coordinate}</if>
             <if test="skipCondition != null">and skip_condition = #{skipCondition}</if>

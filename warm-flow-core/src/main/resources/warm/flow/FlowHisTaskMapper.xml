@@ -113,27 +113,37 @@
             </if>
             <if test="flowHisTask.instanceId != null ">and instance_id = #{flowHisTask.instanceId}</if>
             <if test="flowHisTask.tenantId != null  and flowHisTask.tenantId != ''">and tenant_id = #{flowHisTask.tenantId}</if>
+            <if test="flowHisTask.permissionList != null and flowHisTask.permissionList.size > 0">
+                AND
+                <foreach item="permission" collection="flowHisTask.permissionList" open="(" separator="or" close=")">
+                    t.permission_flag like concat ('%', #{permission}, '%')
+                </foreach>
+            </if>
         </where>
     </sql>
 
     <select id="countDone" resultType="long">
         select count(*) from flow_his_task t
-        <include refid="select_done_parameter"/>
+        <include refid="donePageQuery"/>
     </select>
 
     <select id="donePage" resultMap="FlowHisTaskResult">
         select t.id, t.node_code, t.node_name, t.node_type, t.target_node_code, t.target_node_name, t.approver
         , t.definition_id, t.instance_id, t.flow_status, t.message, t.create_time, t.update_time
         ,t.permission_flag, t.tenant_id, i.business_id, d.flow_name from flow_his_task t
+        <include refid="donePageQuery"/>
+        order by t.create_time desc
+        <include refid="paging_end"/>
+    </select>
+
+    <sql id="donePageQuery">
         LEFT JOIN flow_definition d on t.definition_id = d.id
         LEFT JOIN flow_instance i on t.instance_id = i.id
         right JOIN ( SELECT instance_id, max( create_time ) create_time FROM flow_his_task
         GROUP BY instance_id ) tmp ON t.instance_id = tmp.instance_id
         AND t.create_time = tmp.create_time and t.flow_status <![CDATA[<> '10']]>
         <include refid="select_done_parameter"/>
-        order by t.create_time desc
-        <include refid="paging_end"/>
-    </select>
+    </sql>
 
     <select id="doneAllPage" resultMap="FlowHisTaskResult">
         select t.id, t.node_code, t.node_name, t.node_type, t.target_node_code, t.target_node_name, t.approver

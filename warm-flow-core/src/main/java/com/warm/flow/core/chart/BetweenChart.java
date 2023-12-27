@@ -12,7 +12,7 @@ import java.awt.*;
 public class BetweenChart implements FlowChart {
     private int xRect;
     private int yRect;
-    private Color c = Color.BLACK;
+    private Color c;
     private TextChart textChart;
 
     public BetweenChart(int xRect, int yRect, Color c, TextChart textChart) {
@@ -28,7 +28,7 @@ public class BetweenChart implements FlowChart {
         graphics.setColor(c);
         graphics.drawRoundRect(xRect - 50, yRect - 40, 100, 80, 20, 20);
         if (ObjectUtil.isNotNull(textChart) && StringUtils.isNotEmpty(textChart.getTitle())) {
-            textChart.setxText(textChart.getxText() - DrawUtils.stringWidth(textChart.getTitle()) / 2);
+            textChart.setxText(textChart.getxText() - DrawUtils.stringWidth(graphics, textChart.getTitle()) / 2);
             // 填充文字说明
             textChart.draw(graphics);
         }

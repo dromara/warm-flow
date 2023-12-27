@@ -1,7 +1,5 @@
 package com.warm.flow.core.utils;
 
-import sun.font.FontDesignMetrics;
-
 import java.awt.*;
 
 /**
@@ -19,10 +17,11 @@ public class DrawUtils {
     /**
      * 获取文字的宽度
      *
+     * @param graphics
      * @param str
      */
-    public static int stringWidth(String str) {
-        FontDesignMetrics fm = FontDesignMetrics.getMetrics(new Font("宋体", Font.PLAIN, 12));
+    public static int stringWidth(Graphics2D graphics, String str) {
+        FontMetrics fm = graphics.getFontMetrics(new Font("宋体", Font.PLAIN, 12));
         return fm.stringWidth(str);
     }
 }

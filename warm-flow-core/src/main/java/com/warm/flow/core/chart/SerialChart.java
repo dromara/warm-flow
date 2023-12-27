@@ -10,30 +10,22 @@ public class SerialChart implements FlowChart {
 
     private int ySerial;
 
+    private Color c;
+
     public SerialChart(int xSerial, int ySerial) {
         this.xSerial = xSerial;
         this.ySerial = ySerial;
     }
 
-    public int getxSerial() {
-        return xSerial;
-    }
-
-    public void setxSerial(int xSerial) {
+    public SerialChart(int xSerial, int ySerial, Color c) {
         this.xSerial = xSerial;
-    }
-
-    public int getySerial() {
-        return ySerial;
-    }
-
-    public void setySerial(int ySerial) {
         this.ySerial = ySerial;
+        this.c = c;
     }
-
 
     @Override
     public void draw(Graphics2D graphics) {
+        graphics.setColor(c);
         int[] xSerials = {xSerial - 20, xSerial, xSerial + 20, xSerial};
         int[] ySerials = {ySerial, ySerial - 20, ySerial, ySerial + 20};
         graphics.drawPolygon(xSerials, ySerials, 4);

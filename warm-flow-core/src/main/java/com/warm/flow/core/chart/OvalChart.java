@@ -14,7 +14,7 @@ public class OvalChart implements FlowChart {
 
     private int yStartOval;
 
-    private Color c = Color.BLACK;
+    private Color c;
 
     private TextChart textChart;
 
@@ -25,44 +25,12 @@ public class OvalChart implements FlowChart {
         this.textChart = textChart;
     }
 
-    public int getxStartOval() {
-        return xStartOval;
-    }
-
-    public void setxStartOval(int xStartOval) {
-        this.xStartOval = xStartOval;
-    }
-
-    public int getyStartOval() {
-        return yStartOval;
-    }
-
-    public void setyStartOval(int yStartOval) {
-        this.yStartOval = yStartOval;
-    }
-
-    public Color getC() {
-        return c;
-    }
-
-    public void setC(Color c) {
-        this.c = c;
-    }
-
-    public TextChart getTextChart() {
-        return textChart;
-    }
-
-    public void setTextChart(TextChart textChart) {
-        this.textChart = textChart;
-    }
-
     @Override
     public void draw(Graphics2D graphics) {
         graphics.setColor(c);
         graphics.drawOval(xStartOval - 20, yStartOval - 20, 40, 40);
         if (ObjectUtil.isNotNull(textChart) && StringUtils.isNotEmpty(textChart.getTitle())) {
-            textChart.setxText(textChart.getxText() - DrawUtils.stringWidth(textChart.getTitle()) / 2);
+            textChart.setxText(textChart.getxText() - DrawUtils.stringWidth(graphics, textChart.getTitle()) / 2);
             textChart.setyText(textChart.getyText() + 5);
             // 填充文字说明
             textChart.draw(graphics);

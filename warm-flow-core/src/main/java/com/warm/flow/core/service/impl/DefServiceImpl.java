@@ -15,6 +15,7 @@ import com.warm.flow.core.service.DefService;
 import com.warm.flow.core.utils.AssertUtil;
 import com.warm.flow.core.utils.FlowConfigUtil;
 import com.warm.mybatis.core.service.impl.WarmServiceImpl;
+import com.warm.tools.utils.Base64;
 import com.warm.tools.utils.*;
 import org.dom4j.Document;
 
@@ -26,10 +27,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -203,8 +202,9 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionMapper, FlowDe
 
         FlowChartChain flowChartChain = new FlowChartChain();
         FlowInstance instance = FlowFactory.insService().getById(instanceId);
-        addNodeChart(instance, flowChartChain);
-        addSkipChart(instance, flowChartChain);
+        Map<String, Color> colorMap = new HashMap<>();
+        addNodeChart(colorMap, instance, flowChartChain);
+        addSkipChart(colorMap, instance, flowChartChain);
         flowChartChain.draw(graphics);
 
         graphics.setPaintMode();
@@ -229,10 +229,11 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionMapper, FlowDe
     /**
      * 添加跳转流程图
      *
+     * @param colorMap
      * @param instance
      * @param flowChartChain
      */
-    private void addSkipChart(FlowInstance instance, FlowChartChain flowChartChain) {
+    private void addSkipChart(Map<String, Color> colorMap, FlowInstance instance, FlowChartChain flowChartChain) {
         List<FlowSkip> skipList = FlowFactory.skipService().list(new FlowSkip().setDefinitionId(instance.getDefinitionId()));
         for (FlowSkip flowSkip : skipList) {
             if (StringUtils.isNotEmpty(flowSkip.getCoordinate())) {
@@ -245,15 +246,15 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionMapper, FlowDe
                     String[] textSplit = coordinateSplit[1].split(",");
                     int textX = Integer.parseInt(textSplit[0].split("\\.")[0]);
                     int textY = Integer.parseInt(textSplit[1].split("\\.")[0]);
-                    textChart = new TextChart(textX, textY, StringUtils.isEmpty(flowSkip.getSkipCondition()) ?
-                            SkipType.getValueByKey(flowSkip.getSkipType()) : flowSkip.getSkipCondition());
+                    textChart = new TextChart(textX, textY, flowSkip.getSkipName());
                 }
 
                 for (int i = 0; i < skipSplit.length; i++) {
                     skipX[i] = Integer.parseInt(skipSplit[i].split(",")[0].split("\\.")[0]);
                     skipY[i] = Integer.parseInt(skipSplit[i].split(",")[1].split("\\.")[0]);
                 }
-                flowChartChain.addFlowChart(new SkipChart(skipX, skipY, textChart));
+                Color c = colorGet(colorMap, "skip:" + flowSkip.getId().toString());
+                flowChartChain.addFlowChart(new SkipChart(skipX, skipY, c, textChart));
             }
         }
     }
@@ -264,16 +265,11 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionMapper, FlowDe
      * @param instance
      * @param flowChartChain
      */
-    private void addNodeChart(FlowInstance instance, FlowChartChain flowChartChain) {
+    private void addNodeChart(Map<String, Color> colorMap, FlowInstance instance, FlowChartChain flowChartChain) {
         List<FlowNode> nodeList = FlowFactory.nodeService().list(new FlowNode().setDefinitionId(instance.getDefinitionId()));
         List<FlowSkip> allSkips = FlowFactory.skipService().list(new FlowSkip()
-                .setDefinitionId(instance.getDefinitionId()));
-        // 如果当前流程状态处于驳回，那么当前任务的后续任务都算未完成
-        Map<String, List<FlowSkip>> skipMap = StreamUtils.groupByKeyFilter(skip ->
-                !SkipType.isReject(skip.getSkipType()), allSkips, FlowSkip::getNowNodeCode);
-        List<FlowSkip> flowSkips = skipMap.get(instance.getNodeCode());
-        List<String> allNextNode = new ArrayList<>();
-        getNextNode(flowSkips, allNextNode, skipMap);
+                .setDefinitionId(instance.getDefinitionId()).setSkipType(SkipType.PASS.getKey()));
+        setColorMap(colorMap, instance, allSkips, nodeList);
         for (FlowNode flowNode : nodeList) {
             if (StringUtils.isNotEmpty(flowNode.getCoordinate())) {
                 String[] coordinateSplit = flowNode.getCoordinate().split("\\|");
@@ -287,20 +283,16 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionMapper, FlowDe
                     int textY = Integer.parseInt(textSplit[1].split("\\.")[0]);
                     textChart = new TextChart(textX, textY, flowNode.getNodeName());
                 }
+                Color c = colorGet(colorMap, "node:" + flowNode.getNodeCode());
                 if (NodeType.isStart(flowNode.getNodeType())) {
                     flowChartChain.addFlowChart(new OvalChart(nodeX, nodeY, Color.GREEN, textChart));
                 } else if (NodeType.isBetween(flowNode.getNodeType())) {
-                    Color c = Color.BLACK;
-                    if (CollUtil.isEmpty(allNextNode) || !allNextNode.contains(flowNode.getNodeCode())) {
-                        c = nodeIsFinish(flowNode.getNodeCode(), allSkips, instance.getId());
-                    }
                     flowChartChain.addFlowChart(new BetweenChart(nodeX, nodeY, c, textChart));
                 }  else if (NodeType.isGateWaySerial(flowNode.getNodeType())) {
-                    flowChartChain.addFlowChart(new SerialChart(nodeX, nodeY));
+                    flowChartChain.addFlowChart(new SerialChart(nodeX, nodeY, c));
                 }  else if (NodeType.isGateWayParallel(flowNode.getNodeType())) {
-                    flowChartChain.addFlowChart(new ParallelChart(nodeX, nodeY));
+                    flowChartChain.addFlowChart(new ParallelChart(nodeX, nodeY, c));
                 } else if (NodeType.isEnd(flowNode.getNodeType())) {
-                    Color c = FlowStatus.FINISHED.getKey().equals(instance.getFlowStatus()) ? Color.GREEN : Color.BLACK;
                     flowChartChain.addFlowChart(new OvalChart(nodeX, nodeY,  c, textChart));
                 }
             }
@@ -308,71 +300,153 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionMapper, FlowDe
     }
 
     /**
+     * 设置节点和跳转对应的颜色
      *
-     * 获取下一个节点nodeCode
-     * @param nextSkips
-     * @param allNextNode
+     * @param colorMap
+     * @param instance
+     * @param allSkips
+     * @param nodeList
+     * @return
      */
-    private void getNextNode(List<FlowSkip> nextSkips, List<String> allNextNode, Map<String, List<FlowSkip>> skipMap) {
-        if (CollUtil.isNotEmpty(nextSkips)) {
-            for (FlowSkip nextSkip : nextSkips) {
-                allNextNode.add(nextSkip.getNextNodeCode());
-                List<FlowSkip> nextNextSkips = skipMap.get(nextSkip.getNextNodeCode());
-                getNextNode(nextNextSkips, allNextNode,skipMap);
+    public void setColorMap(Map<String, Color> colorMap, FlowInstance instance, List<FlowSkip> allSkips
+        , List<FlowNode> nodeList) {
+        final Color color = new Color(255, 145, 158);
+        Map<String, List<FlowSkip>> skipLastMap = StreamUtils.groupByKey(allSkips, FlowSkip::getNextNodeCode);
+        Map<String, List<FlowSkip>> skipNextMap = StreamUtils.groupByKey(allSkips, FlowSkip::getNowNodeCode);
+        for (FlowNode flowNode : nodeList) {
+            List<FlowSkip> oneNextSkips = skipNextMap.get(flowNode.getNodeCode());
+            if (NodeType.isStart(flowNode.getNodeType())) {
+                colorPut(colorMap, "node:" + flowNode.getNodeCode(), Color.GREEN);
+                if (CollUtil.isNotEmpty(oneNextSkips)) {
+                    oneNextSkips.forEach(oneNextSkip -> colorPut(colorMap, "skip:" + oneNextSkip.getId().toString(), Color.GREEN));
+                }
+                continue;
+            }
+            if (NodeType.isEnd(flowNode.getNodeType()) && FlowStatus.FINISHED.getKey().equals(instance.getFlowStatus())) {
+                colorPut(colorMap, "node:" + flowNode.getNodeCode(), Color.GREEN);
+                continue;
+            }
+            if (NodeType.isGateWay(flowNode.getNodeType())) {
+                continue;
+            }
+            FlowTask flowTask = FlowFactory.taskService()
+                    .getOne(new FlowTask().setNodeCode(flowNode.getNodeCode()).setInstanceId(instance.getId()));
+            List<FlowSkip> oneLastSkips = skipLastMap.get(flowNode.getNodeCode());
+            FlowHisTask curHisTask = CollUtil.getOne(FlowFactory.hisTaskService()
+                    .getNoReject(flowNode.getNodeCode(), instance.getId()));
+
+            if (CollUtil.isNotEmpty(oneLastSkips)) {
+                for (FlowSkip oneLastSkip : oneLastSkips) {
+                    if (NodeType.isStart(oneLastSkip.getNowNodeType())) {
+                        colorPut(colorMap, "node:" + flowNode.getNodeCode(), Color.GREEN);
+                        colorPut(colorMap, "skip:" + oneLastSkip.getId().toString(), Color.GREEN);
+                        oneNextSkips.forEach(oneNextSkip -> colorPut(colorMap, "skip:" + oneNextSkip.getId().toString(), Color.GREEN));
+
+                    } else if (NodeType.isGateWay(oneLastSkip.getNowNodeType())) {
+                        // 如果前置节点是网关，那网关前任意一个任务完成就算完成
+                        List<FlowSkip> twoLastSkips = skipLastMap.get(oneLastSkip.getNowNodeCode());
+                        for (FlowSkip twoLastSkip : twoLastSkips) {
+                            FlowHisTask twoLastHisTask = CollUtil.getOne(FlowFactory.hisTaskService()
+                                    .getNoReject(twoLastSkip.getNowNodeCode(), instance.getId()));
+                            Color c;
+                            // 前前置节点完成时间是否早于前置节点，如果是串行网关，那前前置节点必须只有一个完成，如果是并行网关都要完成
+                            if (flowTask != null) {
+                                c = color;
+                            } else if (curHisTask != null && ObjectUtil.isNotNull(twoLastHisTask) && twoLastHisTask.getCreateTime()
+                                    .before(curHisTask.getCreateTime())) {
+                                c = Color.GREEN;
+                            } else {
+                                c = Color.BLACK;
+                            }
+                            colorPut(colorMap, "node:" + flowNode.getNodeCode(), c);
+                            colorPut(colorMap, "node:" + oneLastSkip.getNowNodeCode(), c);
+                            colorPut(colorMap, "skip:" + oneLastSkip.getNowNodeCode(), c);
+                            colorPut1(colorMap, "skip:" + oneLastSkip.getId().toString(), c);
+                            colorPut(colorMap, "skip:" + twoLastSkip.getId().toString(), c);
+                            setNextColorMap(colorMap, oneNextSkips, c, skipNextMap);
+                        }
+                    } else {
+                        FlowHisTask twoLastHisTask = CollUtil.getOne(FlowFactory.hisTaskService()
+                                .getNoReject(oneLastSkip.getNowNodeCode(), instance.getId()));
+                        Color c;
+                        // 前前置节点完成时间是否早于前置节点，如果是串行网关，那前前置节点必须只有一个完成，如果是并行网关都要完成
+                        if (flowTask != null) {
+                            c = color;
+                        } else if (curHisTask != null && ObjectUtil.isNotNull(twoLastHisTask) && twoLastHisTask.getCreateTime()
+                                .before(curHisTask.getCreateTime())) {
+                            c = Color.GREEN;
+                        } else {
+                            c = Color.BLACK;
+                        }
+                        colorPut(colorMap, "node:" + flowNode.getNodeCode(), c);
+                        colorPut(colorMap, "skip:" + oneLastSkip.getId().toString(), c);
+                        setNextColorMap(colorMap, oneNextSkips, c, skipNextMap);
+                    }
+                }
             }
         }
     }
 
     /**
-     * 判断节点是否完成,是否代办，显示对应的颜色
-     *
-     * @param nodeCode
-     * @param allSkips
-     * @param instanceId
-     * @return
+     * 设置下个节点的颜色
+     * @param colorMap
+     * @param oneNextSkips
+     * @param c
+     * @param skipNextMap
      */
-    public Color nodeIsFinish(String nodeCode, List<FlowSkip> allSkips, Long instanceId) {
-        FlowTask flowTask = FlowFactory.taskService()
-                .getOne(new FlowTask().setNodeCode(nodeCode).setInstanceId(instanceId));
-        // 查询前置节点是否完成
-        if (ObjectUtil.isNotNull(flowTask)) {
-            return Color.RED;
-        }
-        FlowHisTask curHisTask = CollUtil.getOne(FlowFactory.hisTaskService()
-                .getNoReject(nodeCode, instanceId));
-        // 查询前置节点是否完成
-        if (ObjectUtil.isNull(curHisTask)) {
-            return Color.BLACK;
-        }
-
-        Map<String, List<FlowSkip>> skipNextMap = StreamUtils.groupByKey(allSkips, FlowSkip::getNextNodeCode);
-        List<FlowSkip> oneLastSkips = skipNextMap.get(nodeCode);
-        if (CollUtil.isNotEmpty(oneLastSkips)) {
-            for (FlowSkip oneLastSkip : oneLastSkips) {
-                if (NodeType.isStart(oneLastSkip.getNowNodeType())) {
-                    return Color.GREEN;
-                } else if (NodeType.isGateWay(oneLastSkip.getNowNodeType())) {
-                    // 如果前置节点是网关，那网关前任意一个任务完成就算完成
-                    List<FlowSkip> twoLastSkips = skipNextMap.get(oneLastSkip.getNowNodeCode());
-                    for (FlowSkip twoLastSkip : twoLastSkips) {
-                        FlowHisTask twoLastHisTask = CollUtil.getOne(FlowFactory.hisTaskService()
-                                .getNoReject(twoLastSkip.getNowNodeCode(), instanceId));
-                        if (ObjectUtil.isNotNull(twoLastHisTask) && twoLastHisTask.getCreateTime()
-                                .before(curHisTask.getCreateTime())) {
-                            return Color.GREEN;
-                        }
-                    }
-                } else {
-                    FlowHisTask twoLastHisTask = CollUtil.getOne(FlowFactory.hisTaskService()
-                            .getNoReject(oneLastSkip.getNowNodeCode(), instanceId));
-                    // 前前置节点完成时间是否早于前置节点，如果是串行网关，那前前置节点必须只有一个完成，如果是并行网关都要完成
-                    if (ObjectUtil.isNotNull(twoLastHisTask) && twoLastHisTask.getCreateTime()
-                            .before(curHisTask.getCreateTime())) {
-                        return Color.GREEN;
-                    }
+    private void setNextColorMap(Map<String, Color> colorMap, List<FlowSkip> oneNextSkips, Color c, Map<String, List<FlowSkip>> skipNextMap) {
+        if (CollUtil.isNotEmpty(oneNextSkips)) {
+            oneNextSkips.forEach(oneNextSkip -> {
+                colorPut(colorMap, "skip:" + oneNextSkip.getId().toString(), c);
+                if (NodeType.isGateWay(oneNextSkip.getNextNodeType()) && (c == Color.GREEN || c == Color.BLACK)) {
+                    colorPut(colorMap, "node:" + oneNextSkip.getNextNodeCode(), c);
+                    List<FlowSkip> twoNextSkips = skipNextMap.get(oneNextSkip.getNextNodeCode());
+                    twoNextSkips.forEach(twoNextSkip -> colorPut(colorMap, "skip:" + twoNextSkip.getId().toString(), c));
                 }
+            });
+        }
+    }
+
+    /**
+     * 优先绿色
+     * @param colorMap
+     * @param key
+     * @param c
+     */
+    private void colorPut(Map<String, Color> colorMap, String key, Color c) {
+        Color color = colorMap.get(key);
+        if (c == Color.GREEN) {
+            colorMap.put(key, c);
+        } else if (color == null || color == Color.BLACK) {
+            colorMap.put(key, c);
+        }
+    }
+
+    /**
+     * 优先黑色，然后是绿色
+     * @param colorMap
+     * @param key
+     * @param c
+     */
+    private void colorPut1(Map<String, Color> colorMap, String key, Color c) {
+        Color color = colorMap.get(key);
+        if (c == Color.BLACK) {
+            colorMap.put(key, c);
+        } else if (color == null || color != Color.BLACK) {
+            if (c == Color.GREEN) {
+                colorMap.put(key, c);
+            } else if (color == null) {
+                colorMap.put(key, c);
             }
         }
-        return Color.BLACK;
     }
+
+    private Color colorGet(Map<String, Color> colorMap, String key) {
+        Color color = colorMap.get(key);
+        if (color == null) {
+            color = Color.BLACK;
+        }
+        return color;
+    }
+
 }

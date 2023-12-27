@@ -10,29 +10,22 @@ public class ParallelChart implements FlowChart {
 
     private int yParallel;
 
+    private Color c;
+
     public ParallelChart(int xParallel, int yParallel) {
         this.xParallel = xParallel;
         this.yParallel = yParallel;
     }
 
-    public int getxParallel() {
-        return xParallel;
-    }
-
-    public void setxParallel(int xParallel) {
+    public ParallelChart(int xParallel, int yParallel, Color c) {
         this.xParallel = xParallel;
-    }
-
-    public int getyParallel() {
-        return yParallel;
-    }
-
-    public void setyParallel(int yParallel) {
         this.yParallel = yParallel;
+        this.c = c;
     }
 
     @Override
     public void draw(Graphics2D graphics) {
+        graphics.setColor(c);
         int[] xParallels = {xParallel - 20, xParallel, xParallel + 20, xParallel};
         int[] yParallels = {yParallel, yParallel - 20, yParallel, yParallel + 20};
         graphics.drawPolygon(xParallels, yParallels, 4);

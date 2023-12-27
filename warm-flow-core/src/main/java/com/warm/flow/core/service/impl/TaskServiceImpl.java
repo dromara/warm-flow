@@ -12,7 +12,6 @@ import com.warm.tools.utils.CollUtil;
 import com.warm.tools.utils.ObjectUtil;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 待办任务Service业务层处理
@@ -35,22 +34,14 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskMapper, FlowTask> i
 
     @Override
     public Page<FlowTask> toDoPage(FlowTask flowTask, Page<FlowTask> page) {
+        // 根据权限标识符过滤
+        List<String> permissionFlagD = CollUtil.strToColl(flowTask.getPermissionFlag(), ",");
+        if (ObjectUtil.isNull(permissionFlagD)) {
+            flowTask.setPermissionList(flowTask.getPermissionList());
+        }
         long count = getMapper().countTodo(flowTask, page);
         if (count > 0) {
             List<FlowTask> list = getMapper().toDoPage(flowTask, page);
-            // 根据权限标识符过滤
-            List<String> permissionFlagD = CollUtil.strToColl(flowTask.getPermissionFlag(), ",");
-            if (ObjectUtil.isNull(permissionFlagD)) {
-                permissionFlagD = flowTask.getPermissionList();
-            }
-            List<String> finalPermissionFlagD = permissionFlagD;
-            list = list.stream().filter(task -> {
-                List<String> permissionFlagO = CollUtil.strToColl(task.getPermissionFlag(), ",");
-                if (ObjectUtil.isNull(permissionFlagO)) {
-                    return true;
-                }
-                return CollUtil.containsAny(permissionFlagO, finalPermissionFlagD);
-            }).collect(Collectors.toList());
             return new Page<>(list, count);
         }
         return Page.empty();

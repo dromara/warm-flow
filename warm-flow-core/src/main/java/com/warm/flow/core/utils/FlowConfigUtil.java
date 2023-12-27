@@ -39,8 +39,7 @@ public class FlowConfigUtil {
      */
     public static FlowCombine readConfig(InputStream is) throws Exception {
         FlowDefinition definition = readDocument(is);
-        FlowCombine combine = structureFlow(definition);
-        return combine;
+        return structureFlow(definition);
     }
 
     @SuppressWarnings("unchecked")
@@ -100,6 +99,7 @@ public class FlowConfigUtil {
                 skip.setNowNodeType(node.getNodeType());
                 skip.setNextNodeCode(skipElement.getText());
                 // 条件约束
+                skip.setSkipName(skipElement.attributeValue("skipName"));
                 skip.setSkipType(skipElement.attributeValue("skipType"));
                 skip.setCoordinate(skipElement.attributeValue("coordinate"));
                 skip.setSkipCondition(skipElement.attributeValue("skipCondition"));
@@ -142,6 +142,9 @@ public class FlowConfigUtil {
                     if (StringUtils.isNotEmpty(skip.getSkipType())) {
                         AssertUtil.isFalse(StringUtils.isNotEmpty(skip.getNextNodeCode()), "下一个流程节点编码为空");
                         skipElement.addAttribute("skipType", skip.getSkipType());
+                    }
+                    if (StringUtils.isNotEmpty(skip.getSkipName())) {
+                        skipElement.addAttribute("skipName", skip.getSkipName());
                     }
                     if (StringUtils.isNotEmpty(skip.getSkipCondition())) {
                         skipElement.addAttribute("skipCondition", skip.getSkipCondition());
@@ -192,13 +195,11 @@ public class FlowConfigUtil {
             allNodes.add(node);
             allSkips.addAll(node.getSkipList());
         }
-
+        Map<String, Integer> skipMap = StreamUtils.toMap(allNodes, FlowNode::getNodeCode, FlowNode::getNodeType);
+        allSkips.forEach(allSkip -> allSkip.setNextNodeType(skipMap.get(allSkip.getNextNodeCode())));
         AssertUtil.isTrue(startNum == 0, "[" + flowName + "]" + ExceptionCons.LOST_START_NODE);
-
-
         // 校验跳转节点的合法性
         checkSkipNode(allSkips, nodeList);
-
         // 校验所有目标节点是否都存在
         validaIsExistDestNode(allSkips, nodeCodeSet);
         return combine;

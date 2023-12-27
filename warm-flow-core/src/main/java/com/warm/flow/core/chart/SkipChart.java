@@ -13,21 +13,10 @@ public class SkipChart implements FlowChart {
     private int[] xPoints;
     private int[] yPoints;
 
+    private Color c;
+
     private TextChart textChart;
 
-    public TextChart getTextImage() {
-        return textChart;
-    }
-
-    public SkipChart setTextImage(TextChart textChart) {
-        this.textChart = textChart;
-        return this;
-    }
-
-    public SkipChart(int[] xPoints, int[] yPoints) {
-        this.xPoints = xPoints;
-        this.yPoints = yPoints;
-    }
 
     public SkipChart(int[] xPoints, int[] yPoints, TextChart textChart) {
         this.xPoints = xPoints;
@@ -35,27 +24,16 @@ public class SkipChart implements FlowChart {
         this.textChart = textChart;
     }
 
-    public int[] getxPoints() {
-        return xPoints;
-    }
-
-    public SkipChart setxPoints(int[] xPoints) {
+    public SkipChart(int[] xPoints, int[] yPoints, Color c, TextChart textChart) {
         this.xPoints = xPoints;
-        return this;
-    }
-
-    public int[] getyPoints() {
-        return yPoints;
-    }
-
-    public SkipChart setyPoints(int[] yPoints) {
         this.yPoints = yPoints;
-        return this;
+        this.c = c;
+        this.textChart = textChart;
     }
 
     @Override
     public void draw(Graphics2D graphics) {
-        graphics.setColor(Color.BLACK);
+        graphics.setColor(c);
         // 画跳转线
         graphics.drawPolyline(xPoints, yPoints, xPoints.length);
         // 画箭头， 判断箭头朝向
@@ -86,7 +64,7 @@ public class SkipChart implements FlowChart {
         }
         graphics.fillPolygon(xArrow, yArrow, 3);
         if (ObjectUtil.isNotNull(textChart) && StringUtils.isNotEmpty(textChart.getTitle())) {
-            textChart.setxText(textChart.getxText() - DrawUtils.stringWidth(textChart.getTitle()) / 2);
+            textChart.setxText(textChart.getxText() - DrawUtils.stringWidth(graphics, textChart.getTitle()) / 2);
             textChart.setyText(textChart.getyText() - 10);
             // 填充文字说明
             textChart.draw(graphics);

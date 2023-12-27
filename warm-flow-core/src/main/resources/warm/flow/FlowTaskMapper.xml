@@ -106,24 +106,34 @@
             <if test="flowTask.approver != null and flowTask.approver != ''">and t.approver = #{flowTask.approver}</if>
             <if test="flowTask.instanceId != null ">and instance_id = #{flowTask.instanceId}</if>
             <if test="flowTask.tenantId != null and flowTask.tenantId != ''">and tenant_id = #{flowTask.tenantId}</if>
+            <if test="flowTask.permissionList != null and flowTask.permissionList.size > 0">
+                AND
+                <foreach item="permission" collection="flowTask.permissionList" open="(" separator="or" close=")">
+                    t.permission_flag like concat ('%', #{permission}, '%')
+                </foreach>
+            </if>
         </where>
     </sql>
 
     <select id="countTodo" resultType="long">
         select count(*) from flow_task t
-        <include refid="select_toDo_parameter"/>
+        <include refid="donePageQuery"/>
     </select>
 
     <select id="toDoPage" resultMap="FlowTaskResult">
         select t.id, t.node_code, t.node_name, t.node_type, t.approver, t.definition_id, t.instance_id, t.flow_status
         ,t.permission_flag, t.create_time, t.update_time,t.tenant_id,
         i.business_id, d.flow_name, d.from_custom, d.from_path from flow_task t
-        LEFT JOIN flow_definition d on t.definition_id = d.id
-        LEFT JOIN flow_instance i on t.instance_id = i.id
-        <include refid="select_toDo_parameter"/>
+        <include refid="donePageQuery"/>
         order by t.create_time desc
         <include refid="paging_end"/>
     </select>
+
+    <sql id="donePageQuery">
+        LEFT JOIN flow_definition d on t.definition_id = d.id
+        LEFT JOIN flow_instance i on t.instance_id = i.id
+        <include refid="select_toDo_parameter"/>
+    </sql>
 
     <insert id="insert" parameterType="com.warm.flow.core.domain.entity.FlowTask">
         insert into flow_task
