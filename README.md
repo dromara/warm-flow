@@ -190,10 +190,6 @@ solon：[warm-sun](https://gitee.com/min290/warm-sun.git) ｜[演示地址](http
 </dependency>
 ```
 
-**<u>注意：solon版本需要自己加载warm-flow流的xml文件，mybatis的配置加上这段后面的 &quot;classpath</u>** ***<u>:mapper/**/</u>*****<u>Mapper.xml&quot;</u>**
-
-h![输入图片说明](https://foruda.gitee.com/images/1692858175635657150/b6eba956_2218307.png "屏幕截图")
-
 ‍
 
 ### 支持数据库类型
