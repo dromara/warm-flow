@@ -26,7 +26,7 @@ import java.util.List;
 @Configuration
 @MapperScan("com.warm.**.mapper")
 @Import(SpringUtil.class)
-public class FlowConfig {
+public class FlowAutoConfig {
 
     @Bean
     public DefService definitionService() {

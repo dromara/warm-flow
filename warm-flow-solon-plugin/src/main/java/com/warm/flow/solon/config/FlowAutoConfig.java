@@ -16,7 +16,7 @@ import org.noear.solon.annotation.Configuration;
  * @date: 2023/6/5 23:01
  */
 @Configuration
-public class FlowConfig {
+public class FlowAutoConfig {
 
     @Bean
     public DefService definitionService() {
