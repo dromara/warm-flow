@@ -14,15 +14,9 @@
 10. 兼容java8和java17,理论11也可以
 11. 支持不同orm框架和数据库扩展
 
-
-
-**联系方式**
-
-qq群：778470567  
-
-![输入图片说明](https://foruda.gitee.com/images/1703695662316836735/8a72a5bf_2218307.png "屏幕截图")
-
-**git地址**：https://gitee.com/warm_4/warm-flow.git
+>   **可二开、商用，但请注明出处，保留代码注释中的作者名**  
+>   **联系方式：qq群：778470567**
+>   **git地址**：https://gitee.com/warm_4/warm-flow.git
 
 
 
