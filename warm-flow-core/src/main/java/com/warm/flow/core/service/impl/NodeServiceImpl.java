@@ -1,9 +1,9 @@
 package com.warm.flow.core.service.impl;
 
-import com.warm.flow.core.domain.entity.FlowNode;
-import com.warm.flow.core.mapper.FlowNodeMapper;
+import com.warm.flow.core.entity.Node;
+import com.warm.flow.core.dao.FlowNodeDao;
+import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.NodeService;
-import com.warm.mybatis.core.service.impl.WarmServiceImpl;
 import com.warm.tools.utils.CollUtil;
 
 import java.util.Collections;
@@ -15,26 +15,27 @@ import java.util.List;
  * @author warm
  * @date 2023-03-29
  */
-public class NodeServiceImpl extends WarmServiceImpl<FlowNodeMapper, FlowNode> implements NodeService {
+public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao, Node> implements NodeService {
 
     @Override
-    public Class<FlowNodeMapper> getMapperClass() {
-        return FlowNodeMapper.class;
+    public NodeService setDao(FlowNodeDao warmDao) {
+        this.warmDao = warmDao;
+        return this;
     }
 
     @Override
-    public List<FlowNode> getByFlowCode(String flowCode) {
-        return getMapper().getByFlowCode(flowCode);
+    public List<Node> getByFlowCode(String flowCode) {
+        return getDao().getByFlowCode(flowCode);
     }
 
     @Override
-    public List<FlowNode> getByNodeCodes(List<String> nodeCodes, Long definitionId) {
-        return getMapper().getByNodeCodes(nodeCodes, definitionId);
+    public List<Node> getByNodeCodes(List<String> nodeCodes, Long definitionId) {
+        return getDao().getByNodeCodes(nodeCodes, definitionId);
     }
 
     @Override
-    public FlowNode getByNodeCode(String nodeCode, Long definitionId) {
-        List<FlowNode> nodeCodes = getMapper().getByNodeCodes(Collections.singletonList(nodeCode), definitionId);
+    public Node getByNodeCode(String nodeCode, Long definitionId) {
+        List<Node> nodeCodes = getDao().getByNodeCodes(Collections.singletonList(nodeCode), definitionId);
         return CollUtil.getOne(nodeCodes);
     }
 

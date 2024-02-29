@@ -39,9 +39,5 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>io.github.minliuhua</groupId>
-            <artifactId>warm-flow-mybatis</artifactId>
-        </dependency>
     </dependencies>
 </project>

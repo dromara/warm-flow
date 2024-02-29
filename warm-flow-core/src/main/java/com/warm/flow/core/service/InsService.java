@@ -1,8 +1,8 @@
 package com.warm.flow.core.service;
 
-import com.warm.flow.core.domain.dto.FlowParams;
-import com.warm.flow.core.domain.entity.FlowInstance;
-import com.warm.mybatis.core.service.IWarmService;
+import com.warm.flow.core.dto.FlowParams;
+import com.warm.flow.core.entity.Instance;
+import com.warm.flow.core.orm.service.IWarmService;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import java.util.List;
  * @author warm
  * @date 2023-03-29
  */
-public interface InsService extends IWarmService<FlowInstance> {
+public interface InsService extends IWarmService<Instance> {
 
     /**
      * 根据id集合进行查询 行锁
@@ -20,7 +20,7 @@ public interface InsService extends IWarmService<FlowInstance> {
      * @param ids
      * @return
      */
-    List<FlowInstance> getByIdWithLock(List<Long> ids);
+    List<Instance> getByIdWithLock(List<Long> ids);
 
     /**
      * 根据开始的节点,业务id集合开启流程
@@ -29,7 +29,7 @@ public interface InsService extends IWarmService<FlowInstance> {
      * @param flowUser
      * @return
      */
-    FlowInstance start(String businessId, FlowParams flowUser);
+    Instance start(String businessId, FlowParams flowUser);
 
 
     /**
@@ -39,7 +39,7 @@ public interface InsService extends IWarmService<FlowInstance> {
      * @param flowUser
      * @return
      */
-    FlowInstance skipByInsId(Long instanceId, FlowParams flowUser);
+    Instance skipByInsId(Long instanceId, FlowParams flowUser);
 
     /**
      * 根据任务id，流程跳转
@@ -48,7 +48,7 @@ public interface InsService extends IWarmService<FlowInstance> {
      * @param flowUser
      * @return
      */
-    FlowInstance skip(Long taskId, FlowParams flowUser);
+    Instance skip(Long taskId, FlowParams flowUser);
 
     /**
      * 根据实例id，删除流程

@@ -1,7 +1,7 @@
 package com.warm.flow.core.service;
 
-import com.warm.flow.core.domain.entity.FlowDefinition;
-import com.warm.mybatis.core.service.IWarmService;
+import com.warm.flow.core.entity.Definition;
+import com.warm.flow.core.orm.service.IWarmService;
 import org.dom4j.Document;
 
 import java.io.IOException;
@@ -14,7 +14,7 @@ import java.util.List;
  * @author warm
  * @date 2023-03-29
  */
-public interface DefService extends IWarmService<FlowDefinition> {
+public interface DefService extends IWarmService<Definition> {
 
     /**
      * 导入xml
@@ -22,30 +22,30 @@ public interface DefService extends IWarmService<FlowDefinition> {
      * @param is
      * @throws Exception
      */
-    void importXml(InputStream is) throws Exception;
+    Definition importXml(InputStream is) throws Exception;
 
     /**
      * 根据xml字符串保持流程定义
      * @param def
      * @throws Exception
      */
-    void saveXml(FlowDefinition def) throws Exception;
+    void saveXml(Definition def) throws Exception;
 
     Document exportXml(Long id);
 
     String xmlString(Long id);
 
-    List<FlowDefinition> queryByCodeList(List<String> flowCodeList);
+    List<Definition> queryByCodeList(List<String> flowCodeList);
 
     void closeFlowByCodeList(List<String> flowCodeList);
 
     /**
      * 校验后新增
      *
-     * @param flowDefinition
+     * @param definition
      * @return
      */
-    boolean checkAndSave(FlowDefinition flowDefinition);
+    boolean checkAndSave(Definition definition);
 
     /**
      * 删除流程定义

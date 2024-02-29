@@ -1,8 +1,8 @@
 package com.warm.flow.core.service;
 
-import com.warm.flow.core.domain.entity.FlowHisTask;
-import com.warm.mybatis.core.page.Page;
-import com.warm.mybatis.core.service.IWarmService;
+import com.warm.flow.core.entity.HisTask;
+import com.warm.flow.core.orm.service.IWarmService;
+import com.warm.tools.utils.page.Page;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import java.util.List;
  * @author warm
  * @date 2023-03-29
  */
-public interface HisTaskService extends IWarmService<FlowHisTask> {
+public interface HisTaskService extends IWarmService<HisTask> {
 
     /**
      * 根据instanceId查询出流程相关的记录(根据时间逆序)
@@ -20,7 +20,7 @@ public interface HisTaskService extends IWarmService<FlowHisTask> {
      * @param instanceId
      * @return
      */
-    List<FlowHisTask> getByInsIds(Long instanceId);
+    List<HisTask> getByInsIds(Long instanceId);
 
     /**
      * 根据nodeCode获取未驳回的历史记录
@@ -29,7 +29,7 @@ public interface HisTaskService extends IWarmService<FlowHisTask> {
      * @param instanceId
      * @return
      */
-    List<FlowHisTask> getNoReject(String nodeCode, Long instanceId);
+    List<HisTask> getNoReject(String nodeCode, Long instanceId);
 
     /**
      * 根据instanceIds删除
@@ -42,10 +42,10 @@ public interface HisTaskService extends IWarmService<FlowHisTask> {
     /**
      * 获取已办任务
      *
-     * @param flowHisTask
+     * @param hisTask
      * @param page
      * @return
      */
-    Page<FlowHisTask> donePage(FlowHisTask flowHisTask, Page<FlowHisTask> page);
+    Page<HisTask> donePage(HisTask hisTask, Page<HisTask> page);
 
 }

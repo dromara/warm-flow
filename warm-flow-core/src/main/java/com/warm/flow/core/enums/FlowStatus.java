@@ -1,5 +1,7 @@
 package com.warm.flow.core.enums;
 
+import com.warm.tools.utils.ObjectUtil;
+
 /**
  * @author minliuhua
  * @description: 流程状态
@@ -45,5 +47,15 @@ public enum FlowStatus {
             }
         }
         return null;
+    }
+
+    /**
+     * 判断是否开始节点
+     *
+     * @param Key
+     * @return
+     */
+    public static Boolean isFinished(Integer Key) {
+        return ObjectUtil.isNotNull(Key) && (FlowStatus.FINISHED.getKey().equals(Key));
     }
 }

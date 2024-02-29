@@ -1,8 +1,8 @@
 package com.warm.flow.core.service;
 
-import com.warm.flow.core.domain.entity.FlowTask;
-import com.warm.mybatis.core.page.Page;
-import com.warm.mybatis.core.service.IWarmService;
+import com.warm.flow.core.entity.Task;
+import com.warm.flow.core.orm.service.IWarmService;
+import com.warm.tools.utils.page.Page;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import java.util.List;
  * @author warm
  * @date 2023-03-29
  */
-public interface TaskService extends IWarmService<FlowTask> {
+public interface TaskService extends IWarmService<Task> {
 
     /**
      * 根据实例ids获取待办任务
@@ -20,16 +20,16 @@ public interface TaskService extends IWarmService<FlowTask> {
      * @param instanceId
      * @return
      */
-    List<FlowTask> getByInsId(Long instanceId);
+    List<Task> getByInsId(Long instanceId);
 
     /**
      * 分页查询待办任务
      *
-     * @param flowTask 条件实体
+     * @param task 条件实体
      * @param page
      * @return
      */
-    Page<FlowTask> toDoPage(FlowTask flowTask, Page<FlowTask> page);
+    Page<Task> toDoPage(Task task, Page<Task> page);
 
     /**
      * 根据instanceIds删除

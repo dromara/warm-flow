@@ -29,7 +29,7 @@
 
         <dependency>
             <groupId>io.github.minliuhua</groupId>
-            <artifactId>warm-flow-spring-boot-starter</artifactId>
+            <artifactId>warm-flow-mybatis-sb-starter</artifactId>
         </dependency>
 
         <dependency>

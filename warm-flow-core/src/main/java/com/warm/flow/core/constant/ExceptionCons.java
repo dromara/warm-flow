@@ -35,7 +35,7 @@ public class ExceptionCons {
 
     public static final String NULL_DEST_NODE = "无法跳转到节点,请检查跳转类型和当前用户权限是否匹配!";
 
-    public static final String NULL_CONDITIONVALUE_NODE = "无法跳转到节点,请检查跳转类型和跳转条件是否匹配!";
+    public static final String NULL_CONDITIONVALUE_NODE = "未找到跳转条件，不支持跳转!";
 
     public static final String NULL_CONDITIONVALUE = "跳转条件不能为空!";
 
@@ -76,5 +76,7 @@ public class ExceptionCons {
     public static final String MSG_OVER_LENGTH = "意见长度过长!";
 
     public static final String CONDITION_ERR = "条件判断异常！";
+
+    public static final String FLOW_FINISH = "流程已完成！";
 
 }

@@ -1,0 +1,52 @@
+package com.warm.flow.core.entity;
+
+/**
+ * 流程实例对象 flow_instance
+ *
+ * @author warm
+ * @date 2023-03-29
+ */
+public interface Instance extends RootEntity {
+
+    public Long getDefinitionId();
+
+    public Instance setDefinitionId(Long definitionId);
+
+    public String getFlowName();
+
+    public Instance setFlowName(String flowName);
+
+    public String getBusinessId();
+
+    public Instance setBusinessId(String businessId);
+
+    public Integer getNodeType();
+
+    public Instance setNodeType(Integer nodeType);
+
+    public String getNodeCode();
+
+    public Instance setNodeCode(String nodeCode);
+    public String getNodeName();
+
+    public Instance setNodeName(String nodeName);
+
+    public Integer getFlowStatus();
+
+    public Instance setFlowStatus(Integer flowStatus);
+
+    public String getCreateBy();
+
+    public Instance setCreateBy(String createBy);
+
+    public String getFromCustom();
+
+    public Instance setFromCustom(String fromCustom);
+    public String getFromPath();
+
+    public Instance setFromPath(String fromPath);
+
+    public String getExt();
+
+    public Instance setExt(String ext);
+}

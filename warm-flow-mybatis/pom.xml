@@ -13,8 +13,13 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>io.github.minliuhua</groupId>
-            <artifactId>warm-flow-tools</artifactId>
+            <artifactId>warm-flow-core</artifactId>
         </dependency>
 
         <dependency>
@@ -22,5 +27,6 @@
             <artifactId>mybatis</artifactId>
         </dependency>
     </dependencies>
+
 
 </project>

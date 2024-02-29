@@ -1,13 +1,13 @@
 package com.warm.flow.core.service.impl;
 
-import com.warm.flow.core.domain.entity.FlowHisTask;
-import com.warm.flow.core.mapper.FlowHisTaskMapper;
+import com.warm.flow.core.entity.HisTask;
+import com.warm.flow.core.dao.FlowHisTaskDao;
+import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.HisTaskService;
-import com.warm.mybatis.core.page.Page;
-import com.warm.mybatis.core.service.impl.WarmServiceImpl;
-import com.warm.mybatis.core.utils.SqlHelper;
+import com.warm.flow.core.utils.SqlHelper;
 import com.warm.tools.utils.CollUtil;
 import com.warm.tools.utils.ObjectUtil;
+import com.warm.tools.utils.page.Page;
 
 import java.util.List;
 
@@ -17,40 +17,42 @@ import java.util.List;
  * @author warm
  * @date 2023-03-29
  */
-public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskMapper, FlowHisTask> implements HisTaskService {
+public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao, HisTask> implements HisTaskService {
 
     @Override
-    public Class<FlowHisTaskMapper> getMapperClass() {
-        return FlowHisTaskMapper.class;
+    public HisTaskService setDao(FlowHisTaskDao warmDao) {
+        this.warmDao = warmDao;
+        return this;
     }
 
     @Override
-    public List<FlowHisTask> getByInsIds(Long instanceId) {
-        return getMapper().getByInsId(instanceId);
+    public List<HisTask> getByInsIds(Long instanceId) {
+        return getDao().getByInsId(instanceId);
     }
 
     @Override
-    public List<FlowHisTask> getNoReject(String nodeCode, Long instanceId) {
-        return getMapper().getNoReject(nodeCode, instanceId);
+    public List<HisTask> getNoReject(String nodeCode, Long instanceId) {
+        return getDao().getNoReject(nodeCode, instanceId);
     }
 
     @Override
     public boolean deleteByInsIds(List<Long> instanceIds) {
-        return SqlHelper.retBool(getMapper().deleteByInsIds(instanceIds));
+        return SqlHelper.retBool(getDao().deleteByInsIds(instanceIds));
     }
 
     @Override
-    public Page<FlowHisTask> donePage(FlowHisTask flowHisTask, Page<FlowHisTask> page) {
+    public Page<HisTask> donePage(HisTask hisTask, Page<HisTask> page) {
         // 根据权限标识符过滤
-        List<String> permissionFlagD = CollUtil.strToColl(flowHisTask.getPermissionFlag(), ",");
+        List<String> permissionFlagD = CollUtil.strToColl(hisTask.getPermissionFlag(), ",");
         if (ObjectUtil.isNull(permissionFlagD)) {
-            flowHisTask.setPermissionList(flowHisTask.getPermissionList());
+            hisTask.setPermissionList(hisTask.getPermissionList());
         }
-        long count = getMapper().countDone(flowHisTask, page);
+        long count = getDao().countDone(hisTask, page);
         if (count > 0) {
-            List<FlowHisTask> list = getMapper().donePage(flowHisTask, page);
+            List<HisTask> list = getDao().donePage(hisTask, page);
             return new Page<>(list, count);
         }
         return Page.empty();
     }
+
 }

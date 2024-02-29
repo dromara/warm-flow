@@ -1,10 +1,10 @@
 package com.warm.flow.core.service.impl;
 
-import com.warm.flow.core.domain.entity.FlowSkip;
-import com.warm.flow.core.mapper.FlowSkipMapper;
+import com.warm.flow.core.dao.FlowSkipDao;
+import com.warm.flow.core.entity.Skip;
+import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.SkipService;
-import com.warm.mybatis.core.service.impl.WarmServiceImpl;
-import com.warm.mybatis.core.utils.SqlHelper;
+import com.warm.flow.core.utils.SqlHelper;
 
 import java.util.List;
 
@@ -14,16 +14,17 @@ import java.util.List;
  * @author warm
  * @date 2023-03-29
  */
-public class SkipServiceImpl extends WarmServiceImpl<FlowSkipMapper, FlowSkip> implements SkipService {
+public class SkipServiceImpl extends WarmServiceImpl<FlowSkipDao, Skip> implements SkipService {
 
     @Override
-    public Class<FlowSkipMapper> getMapperClass() {
-        return FlowSkipMapper.class;
+    public SkipService setDao(FlowSkipDao warmDao) {
+        this.warmDao = warmDao;
+        return this;
     }
 
     @Override
     public boolean deleteByNodeId(Long nodeId) {
-        return SqlHelper.retBool(getMapper().deleteByNodeId(nodeId));
+        return SqlHelper.retBool(getDao().deleteByNodeId(nodeId));
     }
 
     /**
@@ -34,11 +35,11 @@ public class SkipServiceImpl extends WarmServiceImpl<FlowSkipMapper, FlowSkip> i
      */
     @Override
     public boolean deleteByNodeIds(List<Long> nodeIds) {
-        return SqlHelper.retBool(getMapper().deleteByNodeIds(nodeIds));
+        return SqlHelper.retBool(getDao().deleteByNodeIds(nodeIds));
     }
 
     @Override
-    public List<FlowSkip> queryByDefAndCode(Long definitionId, String nowNodeCode) {
-        return getMapper().queryByDefAndCode(definitionId, nowNodeCode);
+    public List<Skip> queryByDefAndCode(Long definitionId, String nowNodeCode) {
+        return getDao().queryByDefAndCode(definitionId, nowNodeCode);
     }
 }

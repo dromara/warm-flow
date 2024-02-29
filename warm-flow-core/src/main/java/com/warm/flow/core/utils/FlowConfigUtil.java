@@ -1,10 +1,11 @@
 package com.warm.flow.core.utils;
 
+import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.constant.ExceptionCons;
-import com.warm.flow.core.domain.dto.FlowCombine;
-import com.warm.flow.core.domain.entity.FlowDefinition;
-import com.warm.flow.core.domain.entity.FlowNode;
-import com.warm.flow.core.domain.entity.FlowSkip;
+import com.warm.flow.core.dto.FlowCombine;
+import com.warm.flow.core.entity.Definition;
+import com.warm.flow.core.entity.Node;
+import com.warm.flow.core.entity.Skip;
 import com.warm.flow.core.enums.NodeType;
 import com.warm.flow.core.enums.SkipType;
 import com.warm.tools.utils.*;
@@ -38,19 +39,19 @@ public class FlowConfigUtil {
      * @throws Exception
      */
     public static FlowCombine readConfig(InputStream is) throws Exception {
-        FlowDefinition definition = readDocument(is);
+        Definition definition = readDocument(is);
         return structureFlow(definition);
     }
 
     @SuppressWarnings("unchecked")
-    public static FlowDefinition readDocument(InputStream is) throws Exception {
+    public static Definition readDocument(InputStream is) throws Exception {
         AssertUtil.isNull(is, "文件不存在！");
         // 获取流程节点
         Element definitionElement = new SAXReader().read(is).getRootElement();
         AssertUtil.isTrue(ObjectUtil.isNull(definitionElement),"流程为空！");
 
         // 读取流程定义
-        FlowDefinition definition = new FlowDefinition();
+        Definition definition = FlowFactory.newDef();
         definition.setFlowCode(definitionElement.attributeValue("flowCode"));
         definition.setFlowName(definitionElement.attributeValue("flowName"));
         definition.setVersion(definitionElement.attributeValue("version"));
@@ -59,9 +60,9 @@ public class FlowConfigUtil {
 
         List<Element> nodesElement = definitionElement.elements();
         // 遍历一个流程中的各个节点
-        List<FlowNode> nodeList = definition.getNodeList();
+        List<Node> nodeList = definition.getNodeList();
         for (Element nodeElement : nodesElement) {
-            FlowNode node = initNodeAndCondition(nodeElement);
+            Node node = initNodeAndCondition(nodeElement);
             nodeList.add(node);
         }
         try {
@@ -80,8 +81,8 @@ public class FlowConfigUtil {
      * @param nodeElement
      * @return
      */
-    private static FlowNode initNodeAndCondition(Element nodeElement) {
-        FlowNode node = new FlowNode();
+    private static Node initNodeAndCondition(Element nodeElement) {
+        Node node = FlowFactory.newNode();
         node.setNodeType(NodeType.getKeyByValue(nodeElement.attributeValue("nodeType")));
         node.setNodeCode(nodeElement.attributeValue("nodeCode"));
         node.setNodeName(nodeElement.attributeValue("nodeName"));
@@ -90,10 +91,10 @@ public class FlowConfigUtil {
         node.setSkipAnyNode(nodeElement.attributeValue("skipAnyNode"));
 
         List<Element> skipsElement = nodeElement.elements();
-        List<FlowSkip> skips = node.getSkipList();
+        List<Skip> skips = node.getSkipList();
         // 遍历节点下的跳转条件
         for (Element skipElement : skipsElement) {
-            FlowSkip skip = new FlowSkip();
+            Skip skip = FlowFactory.newSkip();
             if ("skip".equals(skipElement.getName())) {
                 skip.setNowNodeCode(node.getNodeCode());
                 skip.setNowNodeType(node.getNodeType());
@@ -110,7 +111,7 @@ public class FlowConfigUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public static Document createDocument(FlowDefinition definition) {
+    public static Document createDocument(Definition definition) {
         // 创建document对象
         Document document = DocumentHelper.createDocument();
         // 创建根节点bookRoot
@@ -122,8 +123,8 @@ public class FlowConfigUtil {
         definitionElement.addAttribute("fromCustom", definition.getFromCustom());
         definitionElement.addAttribute("fromPath", definition.getFromPath());
 
-        List<FlowNode> nodeList = definition.getNodeList();
-        for (FlowNode node : nodeList) {
+        List<Node> nodeList = definition.getNodeList();
+        for (Node node : nodeList) {
             // 向节点中添加子节点
             Element nodeElement = definitionElement.addElement("node");
             nodeElement.addAttribute("nodeType", NodeType.getValueByKey(node.getNodeType()));
@@ -133,11 +134,10 @@ public class FlowConfigUtil {
             nodeElement.addAttribute("coordinate", node.getCoordinate());
             nodeElement.addAttribute("skipAnyNode", node.getSkipAnyNode());
 
-            List<FlowSkip> skipList = node.getSkipList();
+            List<Skip> skipList = node.getSkipList();
             if (CollUtil.isNotEmpty(skipList)) {
-                for (FlowSkip skip : skipList) {
+                for (Skip skip : skipList) {
                     Element skipElement = nodeElement.addElement("skip");
-                    skipElement.addAttribute("id", String.valueOf(skip.getId()));
                     skipElement.addAttribute("coordinate", skip.getCoordinate());
                     if (StringUtils.isNotEmpty(skip.getSkipType())) {
                         AssertUtil.isFalse(StringUtils.isNotEmpty(skip.getNextNodeCode()), "下一个流程节点编码为空");
@@ -157,15 +157,15 @@ public class FlowConfigUtil {
     }
 
 
-    private static FlowCombine structureFlow(FlowDefinition definition) {
+    private static FlowCombine structureFlow(Definition definition) {
         // 获取流程
         FlowCombine combine = new FlowCombine();
         // 流程定义
         combine.setDefinition(definition);
         // 所有的流程节点
-        List<FlowNode> allNodes = combine.getAllNodes();
+        List<Node> allNodes = combine.getAllNodes();
         // 所有的流程连线
-        List<FlowSkip> allSkips = combine.getAllSkips();
+        List<Skip> allSkips = combine.getAllSkips();
 
         String flowName = definition.getFlowName();
         AssertUtil.isBlank(definition.getFlowCode(), "【" + flowName + "】流程flowCode为空!");
@@ -176,13 +176,13 @@ public class FlowConfigUtil {
         definition.setUpdateTime(new Date());
         definition.setId(id);
 
-        List<FlowNode> nodeList = definition.getNodeList();
+        List<Node> nodeList = definition.getNodeList();
 
         // 每一个流程的开始节点个数
         int startNum = 0;
         Set<String> nodeCodeSet = new HashSet<String>();
         // 便利一个流程中的各个节点
-        for (FlowNode node : nodeList) {
+        for (Node node : nodeList) {
             initNodeAndCondition(node, id, definition.getVersion());
             if (NodeType.isStart(node.getNodeType())) {
                 startNum++;
@@ -195,7 +195,7 @@ public class FlowConfigUtil {
             allNodes.add(node);
             allSkips.addAll(node.getSkipList());
         }
-        Map<String, Integer> skipMap = StreamUtils.toMap(allNodes, FlowNode::getNodeCode, FlowNode::getNodeType);
+        Map<String, Integer> skipMap = StreamUtils.toMap(allNodes, Node::getNodeCode, Node::getNodeType);
         allSkips.forEach(allSkip -> allSkip.setNextNodeType(skipMap.get(allSkip.getNextNodeCode())));
         AssertUtil.isTrue(startNum == 0, "[" + flowName + "]" + ExceptionCons.LOST_START_NODE);
         // 校验跳转节点的合法性
@@ -211,10 +211,10 @@ public class FlowConfigUtil {
      * @param allSkips
      * @param nodeList
      */
-    private static void checkSkipNode(List<FlowSkip> allSkips, List<FlowNode> nodeList) {
-        Map<String, FlowNode> flowNodeMap = StreamUtils.toMap(nodeList, FlowNode::getNodeCode, node -> node);
-        Map<String, List<FlowSkip>> allSkipMap = StreamUtils.groupByKey(allSkips, FlowSkip::getNowNodeCode);
-        List<FlowSkip> gatewaySkips = new ArrayList<>();
+    private static void checkSkipNode(List<Skip> allSkips, List<Node> nodeList) {
+        Map<String, Node> flowNodeMap = StreamUtils.toMap(nodeList, Node::getNodeCode, node -> node);
+        Map<String, List<Skip>> allSkipMap = StreamUtils.groupByKey(allSkips, Skip::getNowNodeCode);
+        List<Skip> gatewaySkips = new ArrayList<>();
         // TODO min 2023-10-20 ,之前定义的规则，现在已经不适用了，后面观察，会有啥影响
         // for (FlowSkip allSkip : allSkips) {
         //     allSkip.setNextNodeType(flowNodeMap.get(allSkip.getNextNodeCode()).getNodeType());
@@ -229,8 +229,8 @@ public class FlowConfigUtil {
         // }
         // 校验网关节点不可直连
         if (CollUtil.isNotEmpty(gatewaySkips)) {
-            for (FlowSkip gatewaySkip1 : gatewaySkips) {
-                for (FlowSkip gatewaySkip2 : gatewaySkips) {
+            for (Skip gatewaySkip1 : gatewaySkips) {
+                for (Skip gatewaySkip2 : gatewaySkips) {
                     AssertUtil.isTrue(gatewaySkip1.getNextNodeCode().equals(gatewaySkip2.getNowNodeCode())
                                     && gatewaySkip1.getNowNodeType().equals(gatewaySkip2.getNowNodeType())
                             , ExceptionCons.GATEWAY_NOT_CONNECT);
@@ -241,7 +241,7 @@ public class FlowConfigUtil {
         allSkipMap.forEach((key, values) -> {
             AtomicInteger passNum = new AtomicInteger();
             AtomicInteger rejectNum = new AtomicInteger();
-            for (FlowSkip value : values) {
+            for (Skip value : values) {
                 if (NodeType.isBetween(value.getNowNodeType()) && NodeType.isBetween(value.getNextNodeType())) {
                     if (SkipType.isPass(value.getSkipType())) {
                         passNum.getAndIncrement();
@@ -260,7 +260,7 @@ public class FlowConfigUtil {
      * @param allSkips
      * @param nodeCodeSet
      */
-    private static void validaIsExistDestNode(List<FlowSkip> allSkips, Set<String> nodeCodeSet) {
+    private static void validaIsExistDestNode(List<Skip> allSkips, Set<String> nodeCodeSet) {
         for (int i = 0; i < allSkips.size(); i++) {
             String nextNodeCode = allSkips.get(i).getNextNodeCode();
             AssertUtil.isTrue(!nodeCodeSet.contains(nextNodeCode), "【" + nextNodeCode + "】" + ExceptionCons.NULL_NODE_CODE);
@@ -276,10 +276,10 @@ public class FlowConfigUtil {
      * @param version
      * @return
      */
-    private static void initNodeAndCondition(FlowNode node, Long definitionId, String version) {
+    private static void initNodeAndCondition(Node node, Long definitionId, String version) {
         String nodeName = node.getNodeName();
         String nodeCode = node.getNodeCode();
-        List<FlowSkip> skipList = node.getSkipList();
+        List<Skip> skipList = node.getSkipList();
         if (!NodeType.isEnd(node.getNodeType())) {
             AssertUtil.isTrue(CollUtil.isEmpty(skipList), "开始和中间节点必须有跳转规则");
         }
@@ -296,7 +296,7 @@ public class FlowConfigUtil {
         Set<String> gateWaySet = new HashSet<>();
         int skipNum = 0;
         // 遍历节点下的跳转条件
-        for (FlowSkip skip : skipList) {
+        for (Skip skip : skipList) {
             if (NodeType.isStart(node.getNodeType())) {
                 skipNum++;
                 AssertUtil.isTrue(skipNum > 1, "[" + node.getNodeName() + "]" + ExceptionCons.MUL_START_SKIP);

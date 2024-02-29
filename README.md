@@ -12,9 +12,7 @@
 8. 支持条件表达式，可扩展
 9. 同时支持spring和solon
 10. 兼容java8和java17,理论11也可以
-
-
->   **可二开、商用或者再开源，但请注明出处，保留代码注释中的作者名**  
+11. 支持不同orm框架和数据库扩展
 
 
 
@@ -33,9 +31,7 @@ qq群：778470567
 springboot：[hh-vue](https://gitee.com/min290/hh-vue) ｜[演示地址](http://www.hhzai.top:81)  
 solon：[warm-sun](https://gitee.com/min290/warm-sun.git) ｜[演示地址](http://www.warm-sun.vip)
 
-**vue3版本流程设计器**：  
-目前是和前端项目代码在一起
-https://gitee.com/min290/warm-vue3.git
+
 
 ## 快速开始
 
@@ -63,7 +59,7 @@ https://gitee.com/warm_4/warm-flow/wikis/%E8%A1%A8%E7%BB%93%E6%9E%84?sort_id=933
 ```maven
 <dependency>
       <groupId>io.github.minliuhua</groupId>
-      <artifactId>warm-flow-spring-boot-starter</artifactId>
+      <artifactId>warm-flow-mybatis-sb-starter</artifactId>
       <version>最新版本</version>
 </dependency>
 ```
@@ -73,7 +69,7 @@ https://gitee.com/warm_4/warm-flow/wikis/%E8%A1%A8%E7%BB%93%E6%9E%84?sort_id=933
 ```maven
 <dependency>
       <groupId>io.github.minliuhua</groupId>
-      <artifactId>warm-flow-solon-plugin</artifactId>
+      <artifactId>warm-flow-mybatis-solon-plugin</artifactId>
       <version>最新版本</version>
 </dependency>
 ```
@@ -83,16 +79,78 @@ https://gitee.com/warm_4/warm-flow/wikis/%E8%A1%A8%E7%BB%93%E6%9E%84?sort_id=933
 ### 支持数据库类型
 
 * [x] mysql
+* [ ] oracle
+* [ ] sqlserver
+* [ ] ......
+
 
 ### 支持orm框架类型
 
 * [x] mybatis及其增强组件
+* [ ] jpa
+* [ ] easy-query
+* [ ] wood
+* [ ] sqltoy
+* [ ] beetlsql
+* [ ] ......
+
+
+
+
+> **有想扩展其他orm框架和数据库的可加qq群联系群主**
+
+### 代码示例
+
+
+
+> **以下测试代码请详见hh-vue项目中的hh-vue/hh-admin/src/test/java/com/hh/test/service/impl/FlowTest.java**
+
+
+
+#### 部署流程
+
+```java
+public void deployFlow() throws Exception {
+        String path = "/Users/minliuhua/Desktop/mdata/file/IdeaProjects/min/hh-vue/hh-admin/src/main/resources/leaveFlow-serial.xml";
+        System.out.println("已部署流程的id：" + defService.importXml(new FileInputStream(path)).getId());
+    }
+```
+
+#### 发布流程
+
+```java
+public void publish() throws Exception {
+        defService.publish(1212437969554771968L);
+    }
+```
+
+#### 开启流程
+
+```java
+public void startFlow() {
+        System.out.println("已开启的流程实例id：" + insService.start("1", getUser()).getId());
+    }
+```
+
+#### 流程流转
+
+```java
+public void skipFlow() throws Exception {
+//        // 通过当前代办任务流转
+//        insService.skip()
+        
+         // 通过实例id流转
+        Instance instance = insService.skipByInsId(1212438548456804352L, getUser().skipType(SkipType.PASS.getKey())
+                .permissionFlag(Arrays.asList("role:1", "role:2")));
+        System.out.println("流转后流程实例：" + instance.toString());
+    }
+```
 
 
 
 
 
-## 流程设计
+## 流程设计器
 
 ### 演示图
 
@@ -153,7 +211,7 @@ https://gitee.com/warm_4/warm-flow/wikis/%E8%A1%A8%E7%BB%93%E6%9E%84?sort_id=933
 
    
 
-## 流程流转
+## 流程页面演示
 
 ### 开启流程实例
 

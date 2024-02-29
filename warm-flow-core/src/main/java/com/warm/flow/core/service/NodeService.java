@@ -1,7 +1,7 @@
 package com.warm.flow.core.service;
 
-import com.warm.flow.core.domain.entity.FlowNode;
-import com.warm.mybatis.core.service.IWarmService;
+import com.warm.flow.core.entity.Node;
+import com.warm.flow.core.orm.service.IWarmService;
 
 import java.util.List;
 
@@ -11,14 +11,15 @@ import java.util.List;
  * @author warm
  * @date 2023-03-29
  */
-public interface NodeService extends IWarmService<FlowNode> {
+public interface NodeService extends IWarmService<Node> {
+
     /**
      * 跟进流程编码获取流程节点集合
      *
      * @param flowCode
      * @return
      */
-    List<FlowNode> getByFlowCode(String flowCode);
+    List<Node> getByFlowCode(String flowCode);
 
     /**
      * 根据流程编码获取开启的唯一流程的流程节点集合
@@ -26,7 +27,7 @@ public interface NodeService extends IWarmService<FlowNode> {
      * @param nodeCodes
      * @return
      */
-    List<FlowNode> getByNodeCodes(List<String> nodeCodes, Long definitionId);
+    List<Node> getByNodeCodes(List<String> nodeCodes, Long definitionId);
 
     /**
      * 根据流程编码获取开启的唯一流程的流程节点
@@ -34,6 +35,6 @@ public interface NodeService extends IWarmService<FlowNode> {
      * @param nodeCode
      * @return
      */
-    FlowNode getByNodeCode(String nodeCode, Long definitionId);
+    Node getByNodeCode(String nodeCode, Long definitionId);
 
 }

@@ -1,7 +1,7 @@
 package com.warm.flow.core.service;
 
-import com.warm.flow.core.domain.entity.FlowSkip;
-import com.warm.mybatis.core.service.IWarmService;
+import com.warm.flow.core.entity.Skip;
+import com.warm.flow.core.orm.service.IWarmService;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ import java.util.List;
  * @author warm
  * @date 2023-03-29
  */
-public interface SkipService extends IWarmService<FlowSkip> {
+public interface SkipService extends IWarmService<Skip> {
 
     /**
      * 根据nodeId删除
@@ -36,5 +36,5 @@ public interface SkipService extends IWarmService<FlowSkip> {
      * @param nowNodeCode
      * @return
      */
-    List<FlowSkip> queryByDefAndCode(Long definitionId, String nowNodeCode);
+    List<Skip> queryByDefAndCode(Long definitionId, String nowNodeCode);
 }
