@@ -192,25 +192,28 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao, Definitio
 
     @Override
     public String flowChart(Long instanceId) throws IOException {
-        int width = 1600, height = 800;
+        FlowChartChain flowChartChain = new FlowChartChain();
+        Instance instance = FlowFactory.insService().getById(instanceId);
+        Map<String, Color> colorMap = new HashMap<>();
+        Map<String, Integer> nodeXY = addNodeChart(colorMap, instance, flowChartChain);
+        addSkipChart(colorMap, instance, flowChartChain);
+
+        int width = nodeXY.get("maxX") + nodeXY.get("minX");
+        int height = nodeXY.get("maxY") + nodeXY.get("minY");
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         // 获取图形上下文,graphics想象成一个画笔
         Graphics2D graphics = image.createGraphics();
+        graphics.setStroke(new BasicStroke(2f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND));
+        graphics.setFont(new Font("宋体", Font.BOLD, 12));
         // 消除线条锯齿
         graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         // 对指定的矩形区域填充颜色
         graphics.setColor(Color.WHITE);    // GREEN:绿色；  红色：RED;   灰色：GRAY
         graphics.fillRect(0, 0, width, height);
 
-        FlowChartChain flowChartChain = new FlowChartChain();
-        Instance instance = FlowFactory.insService().getById(instanceId);
-        Map<String, Color> colorMap = new HashMap<>();
-        addNodeChart(colorMap, instance, flowChartChain);
-        addSkipChart(colorMap, instance, flowChartChain);
         flowChartChain.draw(graphics);
 
         graphics.setPaintMode();
-        graphics.translate(400, 600);
         graphics.dispose();// 释放此图形的上下文并释放它所使用的所有系统资源
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -267,19 +270,38 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao, Definitio
      * @param instance
      * @param flowChartChain
      */
-    private void addNodeChart(Map<String, Color> colorMap, Instance instance, FlowChartChain flowChartChain) {
+    private Map<String, Integer> addNodeChart(Map<String, Color> colorMap, Instance instance, FlowChartChain flowChartChain) {
         List<Node> nodeList = FlowFactory.nodeService().list(FlowFactory.newNode().setDefinitionId(instance.getDefinitionId()));
         List<Skip> allSkips = FlowFactory.skipService().list(FlowFactory.newSkip()
                 .setDefinitionId(instance.getDefinitionId()).setSkipType(SkipType.PASS.getKey()));
         // 流程图渲染，过滤掉当前任务后的节点
         List<Node> needChartNodes = filterNodes(instance, allSkips, nodeList);
         setColorMap(colorMap, instance, allSkips, needChartNodes);
+
+        Map<String, Integer> maxR = new HashMap<>();
+        maxR.put("minX", 999999999);
+        maxR.put("minY", 999999999);
+        maxR.put("maxX", 0);
+        maxR.put("maxY", 0);
+
         for (Node node : nodeList) {
             if (StringUtils.isNotEmpty(node.getCoordinate())) {
                 String[] coordinateSplit = node.getCoordinate().split("\\|");
                 String[] nodeSplit = coordinateSplit[0].split(",");
                 int nodeX = Integer.parseInt(nodeSplit[0].split("\\.")[0]);
                 int nodeY = Integer.parseInt(nodeSplit[1].split("\\.")[0]);
+                if (nodeX > maxR.get("maxX")) {
+                    maxR.put("maxX", nodeX);
+                }
+                if (nodeX < maxR.get("minX")) {
+                    maxR.put("minX", nodeX);
+                }
+                if (nodeY > maxR.get("maxY")) {
+                    maxR.put("maxY", nodeY);
+                }
+                if (nodeY < maxR.get("minY")) {
+                    maxR.put("minY", nodeY);
+                }
                 TextChart textChart = null;
                 if (coordinateSplit.length > 1) {
                     String[] textSplit = coordinateSplit[1].split(",");
@@ -301,6 +323,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao, Definitio
                 }
             }
         }
+        return maxR;
     }
 
     /**
