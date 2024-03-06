@@ -15,7 +15,7 @@
 11. 支持不同orm框架和数据库扩展
 
 >   **可二开、商用，但请注明出处，保留代码注释中的作者名**  
->   **联系方式：qq群：778470567 微信：warm-houhou**
+>   **联系方式：qq群：778470567， 微信：warm-houhou**
 >
 >   **git地址**：https://gitee.com/warm_4/warm-flow.git
 
