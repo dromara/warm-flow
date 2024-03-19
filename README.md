@@ -40,7 +40,7 @@ solon：[warm-sun](https://gitee.com/min290/warm-sun.git) ｜[演示地址](http
 
 ### 导入sql，按需求执行增量脚本
 
-导入组件目录下文件https://gitee.com/warm_4/warm-flow/blob/master/sql/warm-flow.sql
+导入组件目录下文件https://gitee.com/warm_4/warm-flow/blob/master/sql/warm-flow_20231228.sql
 
 ### 表结构
 https://gitee.com/warm_4/warm-flow/wikis/%E8%A1%A8%E7%BB%93%E6%9E%84?sort_id=9330548
