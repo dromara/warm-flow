@@ -113,8 +113,8 @@
             <if test="hisTask.approver != null  and hisTask.approver != ''">and t.approver =
                 #{hisTask.approver}
             </if>
-            <if test="hisTask.instanceId != null ">and instance_id = #{hisTask.instanceId}</if>
-            <if test="hisTask.tenantId != null  and hisTask.tenantId != ''">and tenant_id = #{hisTask.tenantId}</if>
+            <if test="hisTask.instanceId != null ">and t.instance_id = #{hisTask.instanceId}</if>
+            <if test="hisTask.tenantId != null  and hisTask.tenantId != ''">and t.tenant_id = #{hisTask.tenantId}</if>
             <if test="hisTask.permissionList != null and hisTask.permissionList.size > 0">
                 AND
                 <foreach item="permission" collection="hisTask.permissionList" open="(" separator="or" close=")">
