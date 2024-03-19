@@ -38,7 +38,7 @@ solon：[warm-sun](https://gitee.com/min290/warm-sun.git) ｜[演示地址](http
 * 熟悉 Spring Boot或者Solon 及相关框架
 * 熟悉 Java 构建工具，比如 Maven
 
-### 导入sql
+### 导入sql，按需求执行增量脚本
 
 导入组件目录下文件https://gitee.com/warm_4/warm-flow/blob/master/sql/warm-flow.sql
 
