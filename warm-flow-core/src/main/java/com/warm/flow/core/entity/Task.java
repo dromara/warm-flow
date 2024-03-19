@@ -57,6 +57,10 @@ public interface Task extends RootEntity {
 
     public Task setGateWayNode(String gateWayNode);
 
+    String getVariable();
+
+    Task setVariable(String variable);
+
     public String getPermissionFlag();
 
     public Task setPermissionFlag(String permissionFlag);

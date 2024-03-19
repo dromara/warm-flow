@@ -53,6 +53,16 @@ public class FlowParams {
     private String message;
 
     /**
+     * 流程变量
+     */
+    private Map<String, Object> variable;
+
+    /**
+     * 任务变量
+     */
+    private Map<String, Object> variableTask;
+
+    /**
      * 扩展字段
      */
     private String ext;
@@ -81,12 +91,18 @@ public class FlowParams {
         return this;
     }
 
-    public String getNodeCode() {
-        return nodeCode;
+    public FlowParams nodeCode(String nodeCode) {
+        this.nodeCode = nodeCode;
+        return this;
     }
 
-    public FlowParams setNodeCode(String nodeCode) {
-        this.nodeCode = nodeCode;
+    public FlowParams variable(Map<String, Object> variable) {
+        this.variable = variable;
+        return this;
+    }
+
+    public FlowParams variableTask(Map<String, Object> variableTask) {
+        this.variableTask = variableTask;
         return this;
     }
 
@@ -100,6 +116,10 @@ public class FlowParams {
         return this;
     }
 
+    public FlowParams tenantId(String tenantId) {
+        this.tenantId = tenantId;
+        return this;
+    }
 
     public Map<String, String> getSkipCondition() {
         return skipCondition;
@@ -119,9 +139,16 @@ public class FlowParams {
         return this;
     }
 
-    public FlowParams tenantId(String tenantId) {
-        this.tenantId = tenantId;
-        return this;
+    public Map<String, Object> getVariable() {
+        return variable;
+    }
+
+    public String getNodeCode() {
+        return nodeCode;
+    }
+
+    public Map<String, Object> getVariableTask() {
+        return variableTask;
     }
 
     public FlowParams permissionFlag(List<String> permissionFlag) {

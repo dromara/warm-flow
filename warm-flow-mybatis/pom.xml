@@ -10,23 +10,12 @@
     </parent>
 
     <artifactId>warm-flow-mybatis</artifactId>
+    <packaging>pom</packaging>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.github.minliuhua</groupId>
-            <artifactId>warm-flow-core</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mybatis</groupId>
-            <artifactId>mybatis</artifactId>
-        </dependency>
-    </dependencies>
-
+    <modules>
+        <module>warm-flow-mybatis-core</module>
+        <module>warm-flow-mybatis-sb-starter</module>
+        <module>warm-flow-mybatis-solon-plugin</module>
+    </modules>
 
 </project>

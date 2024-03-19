@@ -67,7 +67,7 @@ public class ExceptionCons {
 
     public static final String NOT_NODE_DATA = "流程节点数据缺失!";
 
-    public static final String SKIP_ANY_NODE = "该节点未配置可退回到任意节点!";
+    public static final String SKIP_ANY_NODE = "该节点未配置可跳转到任意节点!";
 
     public static final String NOT_PUBLISH_NODE = "不存在已发布的流程节点!";
 

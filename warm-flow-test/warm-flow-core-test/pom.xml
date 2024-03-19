@@ -34,7 +34,7 @@
 
         <dependency>
             <groupId>io.github.minliuhua</groupId>
-            <artifactId>warm-flow-mybatis</artifactId>
+            <artifactId>warm-flow-mybatis-core</artifactId>
         </dependency>
 
         <dependency>

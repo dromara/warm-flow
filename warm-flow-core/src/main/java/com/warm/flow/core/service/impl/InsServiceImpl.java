@@ -2,6 +2,7 @@ package com.warm.flow.core.service.impl;
 
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.constant.ExceptionCons;
+import com.warm.flow.core.constant.FlowCons;
 import com.warm.flow.core.dto.FlowParams;
 import com.warm.flow.core.entity.*;
 import com.warm.flow.core.enums.FlowStatus;
@@ -9,11 +10,16 @@ import com.warm.flow.core.enums.NodeType;
 import com.warm.flow.core.enums.SkipType;
 import com.warm.flow.core.exception.FlowException;
 import com.warm.flow.core.dao.FlowInstanceDao;
+import com.warm.flow.core.invoker.BeanInvoker;
+import com.warm.flow.core.listener.Listener;
+import com.warm.flow.core.listener.ListenerVariable;
 import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.InsService;
 import com.warm.flow.core.utils.AssertUtil;
+import com.warm.flow.core.utils.ClassUtil;
 import com.warm.flow.core.utils.ExpressionUtil;
 import com.warm.tools.utils.*;
+import org.noear.snack.ONode;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -43,30 +49,32 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
     }
 
     @Override
-    public Instance start(String businessId, FlowParams flowUser) {
+    public Instance start(String businessId, FlowParams flowParams) {
 
-        AssertUtil.isNull(flowUser.getFlowCode(), ExceptionCons.NULL_FLOW_CODE);
+        AssertUtil.isNull(flowParams.getFlowCode(), ExceptionCons.NULL_FLOW_CODE);
         AssertUtil.isTrue(StringUtils.isEmpty(businessId), ExceptionCons.NULL_BUSINESS_ID);
         // 获取有意义有用的节点
-        List<Node> nodes = FlowFactory.nodeService().getByFlowCode(flowUser.getFlowCode());
+        List<Node> nodes = FlowFactory.nodeService().getByFlowCode(flowParams.getFlowCode());
         AssertUtil.isTrue(CollUtil.isEmpty(nodes), ExceptionCons.NOT_PUBLISH_NODE);
         // 获取开始节点
         Node startNode = getFirstBetween(nodes);
 
         AssertUtil.isBlank(businessId, ExceptionCons.NULL_BUSINESS_ID);
         // 设置流程实例对象
-        Instance instance = setStartInstance(startNode, businessId, flowUser);
+        Instance instance = setStartInstance(startNode, businessId, flowParams);
         // 设置流程历史任务记录对象
-        Task task = addTask(startNode, instance, flowUser);
+        Task task = addTask(startNode, instance, flowParams);
         save(instance);
         FlowFactory.taskService().save(task);
+        // 执行任务开始监听器
+        executeListener(instance, startNode, Listener.LISTENER_START, flowParams);
         return instance;
     }
 
     @Override
-    public Instance skipByInsId(Long instanceId, FlowParams flowUser) {
-        AssertUtil.isTrue(StringUtils.isNotEmpty(flowUser.getMessage())
-                && flowUser.getMessage().length() > 500, ExceptionCons.MSG_OVER_LENGTH);
+    public Instance skipByInsId(Long instanceId, FlowParams flowParams) {
+        AssertUtil.isTrue(StringUtils.isNotEmpty(flowParams.getMessage())
+                && flowParams.getMessage().length() > 500, ExceptionCons.MSG_OVER_LENGTH);
         // 获取当前流程
         Instance instance = getById(instanceId);
         AssertUtil.isTrue(FlowStatus.isFinished(instance.getFlowStatus()), ExceptionCons.FLOW_FINISH);
@@ -76,20 +84,20 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         AssertUtil.isTrue(CollUtil.isEmpty(taskList), ExceptionCons.NOT_FOUNT_TASK);
         AssertUtil.isTrue(taskList.size() > 1, ExceptionCons.TASK_NOT_ONE);
         Task task = taskList.get(0);
-        return skip(flowUser, task, instance);
+        return skip(flowParams, task, instance);
     }
 
     @Override
-    public Instance skip(Long taskId, FlowParams flowUser) {
-        AssertUtil.isTrue(StringUtils.isNotEmpty(flowUser.getMessage())
-                && flowUser.getMessage().length() > 500, ExceptionCons.MSG_OVER_LENGTH);
+    public Instance skip(Long taskId, FlowParams flowParams) {
+        AssertUtil.isTrue(StringUtils.isNotEmpty(flowParams.getMessage())
+                && flowParams.getMessage().length() > 500, ExceptionCons.MSG_OVER_LENGTH);
         // 获取待办任务
         Task task = FlowFactory.taskService().getById(taskId);
         AssertUtil.isTrue(ObjectUtil.isNull(task), ExceptionCons.NOT_FOUNT_TASK);
         // 获取当前流程
         Instance instance = getById(task.getInstanceId());
         AssertUtil.isTrue(ObjectUtil.isNull(instance), ExceptionCons.NOT_FOUNT_INSTANCE);
-        return skip(flowUser, task, instance);
+        return skip(flowParams, task, instance);
     }
 
 
@@ -98,37 +106,43 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         return toRemoveTask(instanceIds);
     }
 
-    private Instance skip(FlowParams flowUser, Task task, Instance instance) {
+    private Instance skip(FlowParams flowParams, Task task, Instance instance) {
         // TODO min 后续考虑并发问题，待办任务和实例表不同步，可给代办任务id加锁，抽取所接口，方便后续兼容分布式锁
         // 非第一个记得跳转类型必传
         if (!NodeType.isStart(task.getNodeType())) {
-            AssertUtil.isFalse(StringUtils.isNotEmpty(flowUser.getSkipType()), ExceptionCons.NULL_CONDITIONVALUE);
+            AssertUtil.isFalse(StringUtils.isNotEmpty(flowParams.getSkipType()), ExceptionCons.NULL_CONDITIONVALUE);
         }
 
         List<HisTask> insHisList = new ArrayList<>();
+        Node NowNode = CollUtil.getOne(FlowFactory.nodeService()
+                .getByNodeCodes(Collections.singletonList(task.getNodeCode()), task.getDefinitionId()));
+
         // 获取关联的节点
-        Node nextNode = getNextNode(task, flowUser);
+        Node nextNode = getNextNode(NowNode, task, flowParams);
 
         // 如果是网关节点，则重新获取后续节点
-        List<Node> nextNodes = checkGateWay(flowUser, task, nextNode);
+        List<Node> nextNodes = checkGateWay(flowParams, task, nextNode);
 
         // 构建代办任务
-        List<Task> addTasks = buildAddTasks(flowUser, task, instance, nextNodes, nextNode);
+        List<Task> addTasks = buildAddTasks(flowParams, task, instance, nextNodes, nextNode);
 
         // 设置流程历史任务信息
-        insHisList.add(setSkipInsHis(task, nextNodes, flowUser));
+        insHisList.add(setSkipInsHis(task, nextNodes, flowParams));
 
         // 设置流程实例信息
-        setSkipInstance(instance, nextNodes, addTasks, flowUser);
+        setSkipInstance(instance, nextNodes, addTasks, flowParams);
 
         // 一票否决（谨慎使用），如果驳回，驳回指向节点后还存在其他正在执行的代办任务，转历史任务，状态都为失效,重走流程。
-        oneVoteVeto(task, flowUser.getSkipType(), nextNode.getNodeCode());
+        oneVoteVeto(task, flowParams.getSkipType(), nextNode.getNodeCode());
 
         // 更新流程信息
         updateFlowInfo(task, instance, insHisList, addTasks);
 
         // 处理未完成的任务，当流程完成，还存在代办任务未完成，转历史任务，状态完成。
         handUndoneTask(instance, nextNodes);
+
+        // 最后判断是否存在监听器，存在执行监听器
+        executeListener(instance, NowNode, nextNodes, flowParams);
         return instance;
     }
 
@@ -250,12 +264,12 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
     /**
      * 校验是否网关节点,如果是重新获取新的后面的节点
      *
-     * @param flowUser
+     * @param flowParams
      * @param task
      * @param nextNode
      * @return
      */
-    private List<Node> checkGateWay(FlowParams flowUser, Task task, Node nextNode) {
+    private List<Node> checkGateWay(FlowParams flowParams, Task task, Node nextNode) {
         List<Node> nextNodes = new ArrayList<>();
         if (NodeType.isGateWay(nextNode.getNodeType())) {
             List<Skip> skipsGateway = FlowFactory.skipService()
@@ -268,9 +282,9 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
             if (!NodeType.isStart(nextNode.getNodeType())) {
                 skipsGateway = skipsGateway.stream().filter(t -> {
                     if (NodeType.isGateWaySerial(nextNode.getNodeType())) {
-                        AssertUtil.isTrue(MapUtil.isEmpty(flowUser.getSkipCondition()), ExceptionCons.MUST_CONDITIONVALUE_NODE);
+                        AssertUtil.isTrue(MapUtil.isEmpty(flowParams.getSkipCondition()), ExceptionCons.MUST_CONDITIONVALUE_NODE);
                         if (ObjectUtil.isNotNull(t.getSkipCondition())) {
-                            return ExpressionUtil.eval(t.getSkipCondition(), flowUser.getSkipCondition());
+                            return ExpressionUtil.eval(t.getSkipCondition(), flowParams.getSkipCondition());
                         }
                         return true;
                     }
@@ -294,13 +308,13 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
     /**
      * 构建增代办任务
      *
-     * @param flowUser
+     * @param flowParams
      * @param task
      * @param instance
      * @param nextNode
      * @return
      */
-    private List<Task> buildAddTasks(FlowParams flowUser, Task task, Instance instance
+    private List<Task> buildAddTasks(FlowParams flowParams, Task task, Instance instance
             , List<Node> nextNodes, Node nextNode) {
         boolean buildFlag = false;
         // 下个节点非并行网关节点，可以直接生成下一个代办任务
@@ -318,7 +332,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
             for (Node node : nextNodes) {
                 // 结束节点不生成代办任务
                 if (!NodeType.isEnd(node.getNodeType())) {
-                    Task flowTask = addTask(node, instance, flowUser);
+                    Task flowTask = addTask(node, instance, flowParams);
                     // 如果是并行网关节点, 把网关编码传递给新的代办任务
                     if (NodeType.isGateWayParallel(nextNode.getNodeType())) {
                         flowTask.setGateWayNode(task.getGateWayNode());
@@ -399,8 +413,17 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
     }
 
     private void setSkipInstance(Instance instance, List<Node> nextNodes, List<Task> addTasks
-            , FlowParams flowUser) {
+            , FlowParams flowParams) {
         instance.setUpdateTime(new Date());
+        Map<String, Object> variable = flowParams.getVariable();
+        if (MapUtil.isNotEmpty(variable)) {
+            String variableStr = instance.getVariable();
+            if (StringUtils.isNotEmpty(variableStr)) {
+                Map<String, Object> deserialize = ONode.deserialize(variableStr);
+                deserialize.putAll(variable);
+            }
+            instance.setVariable(ONode.serialize(variable));
+        }
         for (Node node : nextNodes) {
             // 结束节点不生成代办任务
             if (NodeType.isEnd(node.getNodeType())) {
@@ -414,7 +437,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
             instance.setNodeType(task.getNodeType());
             instance.setNodeCode(task.getNodeCode());
             instance.setNodeName(task.getNodeName());
-            instance.setFlowStatus(setFlowStatus(task.getNodeType(), flowUser.getSkipType()));
+            instance.setFlowStatus(setFlowStatus(task.getNodeType(), flowParams.getSkipType()));
         }
     }
 
@@ -425,7 +448,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
      * @param nextNodes
      * @return
      */
-    private HisTask setSkipInsHis(Task task, List<Node> nextNodes, FlowParams flowUser) {
+    private HisTask setSkipInsHis(Task task, List<Node> nextNodes, FlowParams flowParams) {
         HisTask insHis = FlowFactory.newHisTask();
         insHis.setId(task.getId());
         insHis.setInstanceId(task.getInstanceId());
@@ -436,22 +459,23 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         insHis.setPermissionFlag(task.getPermissionFlag());
         insHis.setTargetNodeCode(StreamUtils.join(nextNodes, Node::getNodeCode));
         insHis.setTargetNodeName(StreamUtils.join(nextNodes, Node::getNodeName));
-        insHis.setFlowStatus(setHisFlowStatus(getNextNode(nextNodes).getNodeType(), flowUser.getSkipType()));
+        insHis.setFlowStatus(setHisFlowStatus(getNextNode(nextNodes).getNodeType(), flowParams.getSkipType()));
         insHis.setGateWayNode(task.getGateWayNode());
-        insHis.setMessage(flowUser.getMessage());
+        insHis.setMessage(flowParams.getMessage());
         insHis.setCreateTime(new Date());
-        insHis.setApprover(flowUser.getCreateBy());
+        insHis.setApprover(flowParams.getCreateBy());
         insHis.setTenantId(task.getTenantId());
         return insHis;
     }
 
     /**
-     * 下个节点是结束节点，取结束节点类型，否则随便取第一条
+     * 下个节点是结束节点，取结束节点类型，否则随便取id最大的
      *
      * @param nextNodes
      * @return
      */
     private Node getNextNode(List<Node> nextNodes) {
+        // 通过lambda方式获取nextNodes中id最大的
         if (nextNodes.size() == 1) {
             return nextNodes.get(0);
         }
@@ -460,11 +484,12 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
                 return nextNode;
             }
         }
-        return nextNodes.get(0);
+        nextNodes.sort(Comparator.comparing(Node::getId));
+        return nextNodes.get(nextNodes.size() - 1);
     }
 
     /**
-     * 并行网关，流程状态,取哪个流程节点
+     * 并行网关，取结束节点类型，否则随便取id最大的
      *
      * @param tasks
      * @return
@@ -478,7 +503,8 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
                 return task;
             }
         }
-        return tasks.get(0);
+        tasks.sort(Comparator.comparing(Task::getId));
+        return tasks.get(tasks.size() - 1);
     }
 
     /**
@@ -524,74 +550,80 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
      * @return
      */
     private Instance setStartInstance(Node startNode, String businessId
-            , FlowParams flowUser) {
+            , FlowParams flowParams) {
         Instance instance = FlowFactory.newIns();
         Date now = new Date();
         Long id = IdUtils.nextId();
         instance.setId(id);
         instance.setDefinitionId(startNode.getDefinitionId());
         instance.setBusinessId(businessId);
+        instance.setTenantId(flowParams.getTenantId());
         instance.setNodeType(startNode.getNodeType());
         instance.setNodeCode(startNode.getNodeCode());
         instance.setNodeName(startNode.getNodeName());
         instance.setFlowStatus(FlowStatus.TOBESUBMIT.getKey());
+        Map<String, Object> variable = flowParams.getVariable();
+        if (MapUtil.isNotEmpty(variable)) {
+            instance.setVariable(ONode.serialize(variable));
+        }
         // 关联业务id,起始后面可以不用到业务id,传业务id目前来看只是为了批量创建流程的时候能创建出有区别化的流程,也是为了后期需要用到businessId。
         instance.setCreateTime(now);
         instance.setUpdateTime(now);
-        instance.setCreateBy(flowUser.getCreateBy());
-        instance.setExt(flowUser.getExt());
+        instance.setCreateBy(flowParams.getCreateBy());
+        instance.setExt(flowParams.getExt());
         return instance;
     }
 
     /**
      * 设置流程待办任务对象
-     *
      * @param node
      * @param instance
+     * @param flowParams
      * @return
      */
-    private Task addTask(Node node, Instance instance, FlowParams flowUser) {
-        Task task = FlowFactory.newTask();
+    private Task addTask(Node node, Instance instance, FlowParams flowParams) {
+        Task addTask = FlowFactory.newTask();
         Date date = new Date();
-        task.setId(IdUtils.nextId());
-        task.setDefinitionId(instance.getDefinitionId());
-        task.setInstanceId(instance.getId());
-        task.setNodeCode(node.getNodeCode());
-        task.setNodeName(node.getNodeName());
-        task.setNodeType(node.getNodeType());
-        task.setPermissionFlag(node.getPermissionFlag());
-        task.setApprover(flowUser.getCreateBy());
-        task.setFlowStatus(setFlowStatus(node.getNodeType(), flowUser.getSkipType()));
-        task.setCreateTime(date);
-        task.setTenantId(flowUser.getTenantId());
-        return task;
+        addTask.setId(IdUtils.nextId());
+        addTask.setDefinitionId(instance.getDefinitionId());
+        addTask.setInstanceId(instance.getId());
+        addTask.setNodeCode(node.getNodeCode());
+        addTask.setNodeName(node.getNodeName());
+        addTask.setNodeType(node.getNodeType());
+        Map<String, Object> variableTask = flowParams.getVariableTask();
+        if (MapUtil.isNotEmpty(variableTask)) {
+            addTask.setVariable(ONode.serialize(variableTask));
+        }
+        addTask.setPermissionFlag(node.getPermissionFlag());
+        addTask.setApprover(flowParams.getCreateBy());
+        addTask.setFlowStatus(setFlowStatus(node.getNodeType(), flowParams.getSkipType()));
+        addTask.setCreateTime(date);
+        addTask.setTenantId(flowParams.getTenantId());
+        return addTask;
     }
 
     /**
      * 权限和条件校验
      * @param task
      * @param skips
-     * @param flowUser
+     * @param flowParams
      * @return
      */
-    private Skip checkAuthAndCondition(Task task, List<Skip> skips, FlowParams flowUser) {
+    private Skip checkAuthAndCondition(Node NowNode, Task task, List<Skip> skips, FlowParams flowParams) {
         if (CollUtil.isEmpty(skips)) {
             return null;
         }
-        List<String> permissionFlags = flowUser.getPermissionFlag();
-        List<Node> nodes = FlowFactory.nodeService()
-                .getByNodeCodes(Collections.singletonList(task.getNodeCode()), task.getDefinitionId());
-        Node node = CollUtil.getOne(nodes);
-        AssertUtil.isTrue(ObjectUtil.isNull(node), ExceptionCons.NOT_NODE_DATA);
+        List<String> permissionFlags = flowParams.getPermissionFlag();
+        AssertUtil.isTrue(ObjectUtil.isNull(NowNode), ExceptionCons.NOT_NODE_DATA);
 
-        AssertUtil.isTrue(StringUtils.isNotEmpty(node.getPermissionFlag()) && (CollUtil.isEmpty(permissionFlags)
-                || !CollUtil.containsAny(permissionFlags, ArrayUtil.strToArrAy(node.getPermissionFlag(),
+        AssertUtil.isTrue(StringUtils.isNotEmpty(NowNode.getPermissionFlag()) && (CollUtil.isEmpty(permissionFlags)
+                || !CollUtil.containsAny(permissionFlags, ArrayUtil.strToArrAy(NowNode.getPermissionFlag(),
                 ","))), ExceptionCons.NULL_ROLE_NODE);
 
         if (!NodeType.isStart(task.getNodeType())) {
             skips = skips.stream().filter(t -> {
                 if (StringUtils.isNotEmpty(t.getSkipType())) {
-                    return (flowUser.getSkipType()).equals(t.getSkipType());
+                    return (flowParams.getSkipType()).equals(t.getSkipType());
                 }
                 return true;
             }).collect(Collectors.toList());
@@ -601,25 +633,25 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
     }
 
     /**
-     * 校验跳转指定节点是否有权限任意退回
+     * 校验跳转指定节点是否有权限任意跳转
      * @param task
-     * @param flowUser
+     * @param flowParams
      * @return
      */
-    private Node checkSkipAppointAuth(Task task, FlowParams flowUser) {
-        List<String> permissionFlags = flowUser.getPermissionFlag();
+    private Node checkSkipAppointAuth(Task task, FlowParams flowParams) {
+        List<String> permissionFlags = flowParams.getPermissionFlag();
         List<Node> curNodes = FlowFactory.nodeService()
                 .getByNodeCodes(Collections.singletonList(task.getNodeCode()), task.getDefinitionId());
         Node curNode = CollUtil.getOne(curNodes);
-        // 判断当前节点是否可以任意退回
+        // 判断当前节点是否可以任意跳转
         AssertUtil.isTrue(ObjectUtil.isNull(curNode), ExceptionCons.NOT_NODE_DATA);
-        AssertUtil.isFalse("Y".equals(curNode.getSkipAnyNode()), ExceptionCons.SKIP_ANY_NODE);
+        AssertUtil.isFalse(FlowCons.SKIP_ANY_Y.equals(curNode.getSkipAnyNode()), ExceptionCons.SKIP_ANY_NODE);
 
         AssertUtil.isTrue(StringUtils.isNotEmpty(curNode.getPermissionFlag()) && (CollUtil.isEmpty(permissionFlags)
                 || !CollUtil.containsAny(permissionFlags, ArrayUtil.strToArrAy(curNode.getPermissionFlag(),
                 ","))), ExceptionCons.NULL_ROLE_NODE);
         List<Node> nextNodes = FlowFactory.nodeService()
-                .getByNodeCodes(Collections.singletonList(flowUser.getNodeCode()), task.getDefinitionId());
+                .getByNodeCodes(Collections.singletonList(flowParams.getNodeCode()), task.getDefinitionId());
         return CollUtil.getOne(nextNodes);
     }
 
@@ -627,20 +659,21 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
      * 根据流程id+当前流程节点编码获取与之直接关联(其为源节点)的节点。 definitionId:流程id nodeCode:当前流程状态
      * skipType:跳转条件,没有填写的话不做校验
      *
+     * @param NowNode
      * @param task
-     * @param flowUser
+     * @param flowParams
      * @return
      */
-    private Node getNextNode(Task task, FlowParams flowUser) {
+    private Node getNextNode(Node NowNode, Task task, FlowParams flowParams) {
         AssertUtil.isNull(task.getDefinitionId(), ExceptionCons.NOT_DEFINITION_ID);
         AssertUtil.isBlank(task.getNodeCode(), ExceptionCons.LOST_NODE_CODE);
         // 如果指定了跳转节点，则判断权限，直接获取节点
-        if (StringUtils.isNotEmpty(flowUser.getNodeCode())) {
-            return checkSkipAppointAuth(task, flowUser);
+        if (StringUtils.isNotEmpty(flowParams.getNodeCode())) {
+            return checkSkipAppointAuth(task, flowParams);
         }
         List<Skip> skips = FlowFactory.skipService()
                 .queryByDefAndCode(task.getDefinitionId(), task.getNodeCode());
-        Skip nextSkip = checkAuthAndCondition(task, skips, flowUser);
+        Skip nextSkip = checkAuthAndCondition(NowNode, task, skips, flowParams);
         AssertUtil.isTrue(ObjectUtil.isNull(nextSkip), ExceptionCons.NULL_DEST_NODE);
         List<Node> nodes = FlowFactory.nodeService()
                 .getByNodeCodes(Collections.singletonList(nextSkip.getNextNodeCode()), task.getDefinitionId());
@@ -678,4 +711,55 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         return false;
     }
 
+    private void executeListener(Instance instance, Node NowNode, List<Node> nextNodes, FlowParams flowParams) {
+        // 执行任务开始监听器
+        nextNodes.forEach(node -> {
+            executeListener(instance, node, Listener.LISTENER_START, flowParams);
+        });
+
+        // 执行任务完成监听器
+        executeListener(instance, NowNode, Listener.LISTENER_END, flowParams);
+    }
+
+    private static void executeListener(Instance instance, Node node, String lisType, FlowParams flowParams) {
+        // 执行监听器
+        String listenerType = node.getListenerType();
+        if (StringUtils.isNotEmpty(listenerType)) {
+            String[] listenerTypeArr = listenerType.split(",");
+            for (int i = 0; i < listenerTypeArr.length; i++) {
+                String listenerTypeStr = listenerTypeArr[i].trim();
+                if (listenerTypeStr.equals(lisType)) {
+                    String listenerPath = node.getListenerPath();
+                    if (StringUtils.isNotEmpty(listenerPath)) {
+                        String[] listenerPathArr = listenerPath.split(",");
+                        Class<?> clazz = ClassUtil.getClazz(listenerPathArr[i].trim());
+                        Listener listener = (Listener) BeanInvoker.getBean(clazz);
+                        ListenerVariable variable = new ListenerVariable(instance, flowParams.getVariable()
+                                , flowParams.getVariableTask());
+                        listener.notify(variable);
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        // Map序列化示例
+        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> v = new HashMap<>();
+        Map<String, Object> vt = new HashMap<>();
+        ListenerVariable variable = new ListenerVariable(null, v, vt);
+        map.put("name", "张三");
+        map.put("variable", variable);
+        v.put("name", new FlowParams());
+        String stringify = ONode.serialize(map);
+        System.out.println(stringify);
+        Map<String, Object> map1 = ONode.deserialize(stringify);
+        System.out.println(map1);
+        System.out.println(((ListenerVariable) map1.get("variable")));
+
+        Map<String, Object> map2 = ONode.deserialize("");
+        System.out.println(map2);
+    }
 }

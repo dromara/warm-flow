@@ -38,6 +38,14 @@ public interface Node extends RootEntity {
 
     public Node setSkipAnyNode(String skipAnyNode);
 
+    String getListenerType();
+
+    Node setListenerType(String listenerType);
+
+    String getListenerPath();
+
+    Node setListenerPath(String listenerPath);
+
     public String getVersion();
 
     public Node setVersion(String version);

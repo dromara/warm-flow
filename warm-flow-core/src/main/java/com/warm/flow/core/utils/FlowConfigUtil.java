@@ -89,6 +89,8 @@ public class FlowConfigUtil {
         node.setPermissionFlag(nodeElement.attributeValue("permissionFlag"));
         node.setCoordinate(nodeElement.attributeValue("coordinate"));
         node.setSkipAnyNode(nodeElement.attributeValue("skipAnyNode"));
+        node.setListenerType(nodeElement.attributeValue("listenerType"));
+        node.setListenerPath(nodeElement.attributeValue("listenerPath"));
 
         List<Element> skipsElement = nodeElement.elements();
         List<Skip> skips = node.getSkipList();
@@ -133,6 +135,8 @@ public class FlowConfigUtil {
             nodeElement.addAttribute("permissionFlag", node.getPermissionFlag());
             nodeElement.addAttribute("coordinate", node.getCoordinate());
             nodeElement.addAttribute("skipAnyNode", node.getSkipAnyNode());
+            nodeElement.addAttribute("listenerType", node.getListenerType());
+            nodeElement.addAttribute("listenerPath", node.getListenerPath());
 
             List<Skip> skipList = node.getSkipList();
             if (CollUtil.isNotEmpty(skipList)) {

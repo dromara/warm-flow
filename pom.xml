@@ -43,12 +43,10 @@
         <module>warm-flow-tools</module>
         <module>warm-flow-mybatis</module>
         <module>warm-flow-test</module>
-        <module>warm-flow-mybatis-sb-starter</module>
-        <module>warm-flow-mybatis-solon-plugin</module>
     </modules>
 
     <properties>
-        <revision>1.0.4</revision>
+        <revision>1.1.0-SNAPSHOT</revision>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -62,6 +60,7 @@
         <HikariCP.version>4.0.3</HikariCP.version>
         <junit.version>4.13.2</junit.version>
         <solon.version>2.5.3</solon.version>
+        <snack3.version>3.2.88</snack3.version>
     </properties>
 
     <dependencyManagement>
@@ -121,7 +120,7 @@
             </dependency>
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
-                <artifactId>warm-flow-mybatis</artifactId>
+                <artifactId>warm-flow-mybatis-core</artifactId>
                 <version>${revision}</version>
             </dependency>
 
@@ -150,6 +149,12 @@
                 <artifactId>HikariCP</artifactId>
                 <version>${HikariCP.version}</version>
                 <optional>true</optional>
+            </dependency>
+
+            <dependency>
+                <groupId>org.noear</groupId>
+                <artifactId>snack3</artifactId>
+                <version>${snack3.version}</version>
             </dependency>
 
         </dependencies>
@@ -261,10 +266,12 @@
             <distributionManagement>
                 <snapshotRepository>
                     <id>ossrh</id>
+                    <name>snapshots</name>
                     <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
                 </snapshotRepository>
                 <repository>
                     <id>ossrh</id>
+                    <name>releases</name>
                     <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
                 </repository>
             </distributionManagement>

@@ -26,29 +26,29 @@ public interface InsService extends IWarmService<Instance> {
      * 根据开始的节点,业务id集合开启流程
      *
      * @param businessId
-     * @param flowUser
+     * @param flowParams
      * @return
      */
-    Instance start(String businessId, FlowParams flowUser);
+    Instance start(String businessId, FlowParams flowParams);
 
 
     /**
      * 根据实例id，流程跳转，一般是开始节点后第一个节点，用来提交申请，此时不可有同时两个代办任务
      *
      * @param instanceId
-     * @param flowUser
+     * @param flowParams
      * @return
      */
-    Instance skipByInsId(Long instanceId, FlowParams flowUser);
+    Instance skipByInsId(Long instanceId, FlowParams flowParams);
 
     /**
      * 根据任务id，流程跳转
      *
      * @param taskId
-     * @param flowUser
+     * @param flowParams
      * @return
      */
-    Instance skip(Long taskId, FlowParams flowUser);
+    Instance skip(Long taskId, FlowParams flowParams);
 
     /**
      * 根据实例id，删除流程

@@ -20,6 +20,10 @@ public interface Instance extends RootEntity {
 
     public Instance setBusinessId(String businessId);
 
+    String getTenantId();
+
+    Instance setTenantId(String tenantId);
+
     public Integer getNodeType();
 
     public Instance setNodeType(Integer nodeType);
@@ -30,6 +34,10 @@ public interface Instance extends RootEntity {
     public String getNodeName();
 
     public Instance setNodeName(String nodeName);
+
+    String getVariable();
+
+    Instance setVariable(String variable);
 
     public Integer getFlowStatus();
 
@@ -49,4 +57,5 @@ public interface Instance extends RootEntity {
     public String getExt();
 
     public Instance setExt(String ext);
+
 }
