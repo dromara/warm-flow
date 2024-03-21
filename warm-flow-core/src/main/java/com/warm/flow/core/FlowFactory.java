@@ -21,12 +21,6 @@ public class FlowFactory {
     private static SkipService skipService = null;
     private static TaskService taskService = null;
 
-    private static FlowDefinitionDao defDao = null;
-    private static FlowHisTaskDao hisTaskDao = null;
-    private static FlowInstanceDao instanceDao = null;
-    private static FlowNodeDao nodeDao = null;
-    private static FlowSkipDao skipDao = null;
-    private static FlowTaskDao taskDao = null;
 
     private static Supplier<Definition> defSupplier;
     private static Supplier<HisTask> hisTaskSupplier;
@@ -45,18 +39,6 @@ public class FlowFactory {
         FlowFactory.skipService = skipService;
         FlowFactory.taskService = taskService;
     }
-
-    public void setFlowDao(FlowDefinitionDao defDao, FlowHisTaskDao hisTaskDao
-            , FlowInstanceDao instanceDao, FlowNodeDao nodeDao
-            , FlowSkipDao skipDao, FlowTaskDao taskDao) {
-        FlowFactory.defDao = defDao;
-        FlowFactory.hisTaskDao = hisTaskDao;
-        FlowFactory.instanceDao = instanceDao;
-        FlowFactory.nodeDao = nodeDao;
-        FlowFactory.skipDao = skipDao;
-        FlowFactory.taskDao = taskDao;
-    }
-
 
     public static DefService defService() {
         return defService;
@@ -80,29 +62,6 @@ public class FlowFactory {
 
     public static TaskService taskService() {
         return taskService;
-    }
-    public static FlowDefinitionDao defDao() {
-        return defDao;
-    }
-
-    public static FlowHisTaskDao hisTaskDao() {
-        return hisTaskDao;
-    }
-
-    public static FlowInstanceDao instanceDao() {
-        return instanceDao;
-    }
-
-    public static FlowNodeDao nodeDao() {
-        return nodeDao;
-    }
-
-    public static FlowSkipDao skipDao() {
-        return skipDao;
-    }
-
-    public static FlowTaskDao taskDao() {
-        return taskDao;
     }
 
     public static void setDefSupplier(Supplier<Definition> supplier) {

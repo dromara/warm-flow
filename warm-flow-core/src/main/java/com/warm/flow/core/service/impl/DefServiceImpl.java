@@ -96,43 +96,6 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao, Definitio
         return document.asXML();
     }
 
-    public Definition getAllDataDefinition(Long id) {
-        Definition definition = getDao().selectById(id);
-        Node node = FlowFactory.newNode();
-        node.setDefinitionId(id);
-        List<Node> nodeList = FlowFactory.nodeService().list(node);
-        definition.setNodeList(nodeList);
-        Skip skip = FlowFactory.newSkip();
-        skip.setDefinitionId(id);
-        List<Skip> skips = FlowFactory.skipService().list(skip);
-        Map<Long, List<Skip>> flowSkipMap = skips.stream()
-                .collect(Collectors.groupingBy(Skip::getNodeId));
-        nodeList.forEach(flowNode -> flowNode.setSkipList(flowSkipMap.get(flowNode.getId())));
-
-        return definition;
-    }
-
-    /**
-     * 每次只做新增操作,保证新增的flowCode+version是唯一的
-     *
-     * @param definition
-     * @param allNodes
-     * @param allSkips
-     */
-    private void updateFlow(Definition definition, List<Node> allNodes, List<Skip> allSkips) {
-        List<String> flowCodeList = Collections.singletonList(definition.getFlowCode());
-        List<Definition> definitions = getDao().queryByCodeList(flowCodeList);
-        for (int j = 0; j < definitions.size(); j++) {
-            Definition beforeDefinition = definitions.get(j);
-            if (definition.getFlowCode().equals(beforeDefinition.getFlowCode()) && definition.getVersion().equals(beforeDefinition.getVersion())) {
-                throw new FlowException(definition.getFlowCode() + "(" + definition.getVersion() + ")" + ExceptionCons.ALREADY_EXIST);
-            }
-        }
-        FlowFactory.defService().save(definition);
-        FlowFactory.nodeService().saveBatch(allNodes);
-        FlowFactory.skipService().saveBatch(allSkips);
-    }
-
     @Override
     public List<Definition> queryByCodeList(List<String> flowCodeList) {
         return getDao().queryByCodeList(flowCodeList);
@@ -274,7 +237,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao, Definitio
         List<Node> nodeList = FlowFactory.nodeService().list(FlowFactory.newNode().setDefinitionId(instance.getDefinitionId()));
         List<Skip> allSkips = FlowFactory.skipService().list(FlowFactory.newSkip()
                 .setDefinitionId(instance.getDefinitionId()).setSkipType(SkipType.PASS.getKey()));
-        // 流程图渲染，过滤掉当前任务后的节点
+        // 流程图渲染，过滤掉所有后置节点
         List<Node> needChartNodes = filterNodes(instance, allSkips, nodeList);
         setColorMap(colorMap, instance, allSkips, needChartNodes);
 
@@ -334,37 +297,89 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao, Definitio
      * @return
      */
     private List<Node> filterNodes(Instance instance, List<Skip> allSkips, List<Node> nodeList) {
-        List<String> allLastNode = new ArrayList<>();
+        List<String> allNextNode = new ArrayList<>();
         Map<String, List<Skip>> skipLastMap = StreamUtils.groupByKey(allSkips, Skip::getNextNodeCode);
+        Map<String, List<Skip>> skipNextMap = StreamUtils.groupByKey(allSkips, Skip::getNowNodeCode);
         if (FlowStatus.isFinished(instance.getFlowStatus())) {
-            Map<String, List<Skip>> skipNextMap = StreamUtils.groupByKey(allSkips, Skip::getNowNodeCode);
-            String endNodeCode = skipNextMap.get(instance.getNodeCode()).get(0).getNextNodeCode();
-            allLastNode.add(endNodeCode);
-            List<Skip> lastSkips = skipLastMap.get(endNodeCode);
-            getAllLastNode(lastSkips, allLastNode, skipLastMap);
+//            String endNodeCode = skipNextMap.get(instance.getNodeCode()).get(0).getNextNodeCode();
+//            allLastNode.add(endNodeCode);
+//            List<Skip> lastSkips = skipLastMap.get(endNodeCode);
+//            getAllLastNode(lastSkips, allLastNode, skipLastMap);
+            return nodeList;
         } else {
             List<Task> curTasks = FlowFactory.taskService().getByInsId(instance.getId());
+//            // 判断同一个并行网关下分支是否有完成了的，完成了的也要显示出来
+//            String gateWayParallel = getGateWayParallelBefore(skipLastMap, curTasks.get(0).getNodeCode());
+//            List<String> gateWayParallelNode = new ArrayList<>();
+//            List<String> curNodeCodes = StreamUtils.toList(curTasks, Task::getNodeCode);
+//            for (Skip skip : skipNextMap.get(gateWayParallel)) {
+//                gateWayParallelNode = getStrings(skip, curNodeCodes, gateWayParallelNode, skipNextMap);
+//            }
+
             for (Task curTask : curTasks) {
-                allLastNode.add(curTask.getNodeCode());
-                List<Skip> lastSkips = skipLastMap.get(curTask.getNodeCode());
-                getAllLastNode(lastSkips, allLastNode, skipLastMap);
+//                allNextNode.add(curTask.getNodeCode());
+                List<Skip> nextSkips = skipNextMap.get(curTask.getNodeCode());
+                getAllNextNode(nextSkips, allNextNode, skipNextMap);
+            }
+            return StreamUtils.filter(nodeList, node -> !allNextNode.contains(node.getNodeCode()));
+        }
+    }
+
+    private static List<String> getStrings(Skip skip, List<String> curNodeCodes, List<String> gateWayParallelNode, Map<String, List<Skip>> skipNextMap) {
+        if (curNodeCodes.contains(skip.getNextNodeCode())) {
+            gateWayParallelNode = new ArrayList<>();
+        } else {
+            gateWayParallelNode.add(skip.getNextNodeCode());
+            List<Skip> skips = skipNextMap.get(skip.getNextNodeCode());
+            for (Skip skip1 : skips) {
+
             }
         }
-        return StreamUtils.filter(nodeList, node -> allLastNode.contains(node.getNodeCode()));
+        return gateWayParallelNode;
+    }
+
+    /**
+     * 获取此节点前的并行网关节点
+     * @param skipLastMap
+     * @param nodeCode
+     * @return
+     */
+    private String getGateWayParallelBefore(Map<String, List<Skip>> skipLastMap, String nodeCode) {
+        List<Skip> skips = skipLastMap.get(nodeCode);
+        if (NodeType.isGateWayParallel(skips.get(0).getNowNodeType())) {
+            return skips.get(0).getNowNodeCode();
+        } else {
+            return getGateWayParallelBefore(skipLastMap, skips.get(0).getNowNodeCode());
+        }
+    }
+
+    /**
+     * 获取此节点前的并行网关节点
+     * @param skipLastMap
+     * @param nodeCode
+     * @return
+     */
+    private String getGateWayParallelAfter(Map<String, List<Skip>> skipLastMap, String nodeCode) {
+        List<Skip> skips = skipLastMap.get(nodeCode);
+        if (NodeType.isGateWayParallel(skips.get(0).getNowNodeType())) {
+            return skips.get(0).getNowNodeCode();
+        } else {
+            return getGateWayParallelAfter(skipLastMap, skips.get(0).getNowNodeCode());
+        }
     }
 
     /**
      *
-     * 获取代办任务节点前的所有节点
-     * @param lastSkips
-     * @param allLastNode
+     * 获取代办任务节点后的所有节点
+     * @param nextkips
+     * @param allNextNode
      */
-    private void getAllLastNode(List<Skip> lastSkips, List<String> allLastNode, Map<String, List<Skip>> skipMap) {
-        if (CollUtil.isNotEmpty(lastSkips)) {
-            for (Skip lastSkip : lastSkips) {
-                allLastNode.add(lastSkip.getNowNodeCode());
-                List<Skip> lastLastSkips = skipMap.get(lastSkip.getNowNodeCode());
-                getAllLastNode(lastLastSkips, allLastNode,skipMap);
+    private void getAllNextNode(List<Skip> nextkips, List<String> allNextNode, Map<String, List<Skip>> skipMap) {
+        if (CollUtil.isNotEmpty(nextkips)) {
+            for (Skip nextSkip : nextkips) {
+                allNextNode.add(nextSkip.getNextNodeCode());
+                List<Skip> nextNextSkips = skipMap.get(nextSkip.getNextNodeCode());
+                getAllNextNode(nextNextSkips, allNextNode,skipMap);
             }
         }
     }
@@ -495,6 +510,43 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao, Definitio
             color = Color.BLACK;
         }
         return color;
+    }
+
+    public Definition getAllDataDefinition(Long id) {
+        Definition definition = getDao().selectById(id);
+        Node node = FlowFactory.newNode();
+        node.setDefinitionId(id);
+        List<Node> nodeList = FlowFactory.nodeService().list(node);
+        definition.setNodeList(nodeList);
+        Skip skip = FlowFactory.newSkip();
+        skip.setDefinitionId(id);
+        List<Skip> skips = FlowFactory.skipService().list(skip);
+        Map<Long, List<Skip>> flowSkipMap = skips.stream()
+                .collect(Collectors.groupingBy(Skip::getNodeId));
+        nodeList.forEach(flowNode -> flowNode.setSkipList(flowSkipMap.get(flowNode.getId())));
+
+        return definition;
+    }
+
+    /**
+     * 每次只做新增操作,保证新增的flowCode+version是唯一的
+     *
+     * @param definition
+     * @param allNodes
+     * @param allSkips
+     */
+    private void updateFlow(Definition definition, List<Node> allNodes, List<Skip> allSkips) {
+        List<String> flowCodeList = Collections.singletonList(definition.getFlowCode());
+        List<Definition> definitions = getDao().queryByCodeList(flowCodeList);
+        for (int j = 0; j < definitions.size(); j++) {
+            Definition beforeDefinition = definitions.get(j);
+            if (definition.getFlowCode().equals(beforeDefinition.getFlowCode()) && definition.getVersion().equals(beforeDefinition.getVersion())) {
+                throw new FlowException(definition.getFlowCode() + "(" + definition.getVersion() + ")" + ExceptionCons.ALREADY_EXIST);
+            }
+        }
+        FlowFactory.defService().save(definition);
+        FlowFactory.nodeService().saveBatch(allNodes);
+        FlowFactory.skipService().saveBatch(allSkips);
     }
 
 }
