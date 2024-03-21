@@ -39,8 +39,8 @@ solon：[warm-sun](https://gitee.com/min290/warm-sun.git) ｜[演示地址](http
 * 熟悉 Java 构建工具，比如 Maven
 
 ### 导入sql
-如果第一次导入，请先创建数据库，并导入：https://gitee.com/warm_4/warm-flow/blob/master/sql/warm-flow.sql
-如果需要增量更细，请按需导入：https://gitee.com/warm_4/warm-flow/blob/master/sql/warm-flow_xxx.sql
+>   如果第一次导入，请先创建数据库，并导入：https://gitee.com/warm_4/warm-flow/blob/master/sql/warm-flow.sql
+>   如果需要增量更细，请按需导入：https://gitee.com/warm_4/warm-flow/blob/master/sql/warm-flow_xxx.sql
 
 ### 表结构
 https://gitee.com/warm_4/warm-flow/wikis/%E8%A1%A8%E7%BB%93%E6%9E%84?sort_id=9330548
