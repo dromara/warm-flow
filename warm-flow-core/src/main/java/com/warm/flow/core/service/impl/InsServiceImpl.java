@@ -77,8 +77,8 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
                 && flowParams.getMessage().length() > 500, ExceptionCons.MSG_OVER_LENGTH);
         // 获取当前流程
         Instance instance = getById(instanceId);
-        AssertUtil.isTrue(FlowStatus.isFinished(instance.getFlowStatus()), ExceptionCons.FLOW_FINISH);
         AssertUtil.isTrue(ObjectUtil.isNull(instance), ExceptionCons.NOT_FOUNT_INSTANCE);
+        AssertUtil.isTrue(FlowStatus.isFinished(instance.getFlowStatus()), ExceptionCons.FLOW_FINISH);
         // 获取待办任务
         List<Task> taskList = FlowFactory.taskService().getByInsId(instanceId);
         AssertUtil.isTrue(CollUtil.isEmpty(taskList), ExceptionCons.NOT_FOUNT_TASK);

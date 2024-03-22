@@ -106,8 +106,8 @@
                 #{task.nodeName}, '%')
             </if>
             <if test="task.approver != null and task.approver != ''">and t.approver = #{task.approver}</if>
-            <if test="task.instanceId != null ">and instance_id = #{task.instanceId}</if>
-            <if test="task.tenantId != null and task.tenantId != ''">and tenant_id = #{task.tenantId}</if>
+            <if test="task.instanceId != null ">and t.instance_id = #{task.instanceId}</if>
+            <if test="task.tenantId != null and task.tenantId != ''">and t.tenant_id = #{task.tenantId}</if>
             <if test="task.permissionList != null and task.permissionList.size > 0">
                 AND
                 <foreach item="permission" collection="task.permissionList" open="(" separator="or" close=")">
