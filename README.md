@@ -8,15 +8,16 @@
 4. 支持多租户
 5. 支持代办任务和已办任务，通过权限标识过滤数据
 6. 支持互斥网关，并行网关（会签、或签）
-7. 可跳转任意节点
+7. 可退回任意节点
 8. 支持条件表达式，可扩展
 9. 同时支持spring和solon
 10. 兼容java8和java17,理论11也可以
 11. 支持不同orm框架和数据库扩展
-12. 支持增加监听器，参数传递
+12. 支持增加监听器，参数传递 
+
 
 >   **可二开、商用，但请注明出处，保留代码注释中的作者名**  
->   **联系方式：qq群：778470567， 微信：warm-houhou**
+>   **联系方式：微信：warm-houhou（微信更及时），qq群：778470567**
 >
 >   **git地址**：https://gitee.com/warm_4/warm-flow.git
 
@@ -24,7 +25,7 @@
 
 **demo项目**：  
 
-springboot：[hh-vue](https://gitee.com/min290/hh-vue) ｜[演示地址](http://www.hhzai.top:81)  
+springboot：[RuoYi-Vue-Warm-Flow](https://gitee.com/min290/hh-vue) ｜[演示地址](http://www.hhzai.top:81)  
 solon：[warm-sun](https://gitee.com/min290/warm-sun.git) ｜[演示地址](http://www.warm-sun.vip)
 
 
@@ -38,9 +39,10 @@ solon：[warm-sun](https://gitee.com/min290/warm-sun.git) ｜[演示地址](http
 * 熟悉 Spring Boot或者Solon 及相关框架
 * 熟悉 Java 构建工具，比如 Maven
 
-### 导入sql
+### 导入sql，按需求执行增量脚本
 >   **如果第一次导入，请先创建数据库，并导入：https://gitee.com/warm_4/warm-flow/blob/master/sql/warm-flow.sql**  
 >   **如果需要增量更细，请按需导入：https://gitee.com/warm_4/warm-flow/blob/master/sql/warm-flow_xxx.sql**
+
 
 ### 表结构
 https://gitee.com/warm_4/warm-flow/wikis/%E8%A1%A8%E7%BB%93%E6%9E%84?sort_id=9330548
@@ -97,9 +99,7 @@ https://gitee.com/warm_4/warm-flow/wikis/%E8%A1%A8%E7%BB%93%E6%9E%84?sort_id=933
 
 ### 代码示例
 
-
-
-> **以下测试代码请详见hh-vue项目中的hh-vue/hh-admin/src/test/java/com/hh/test/service/impl/FlowTest.java**
+https://gitee.com/min290/hh-vue/blob/master/ruoyi-admin/src/test/java/com/ruoyi/system/service/impl/FlowTest.java
 
 
 
@@ -132,18 +132,51 @@ public void startFlow() {
 
 ```java
 public void skipFlow() throws Exception {
-//        // 通过当前代办任务流转
-//        insService.skip()
-        
-         // 通过实例id流转
-        Instance instance = insService.skipByInsId(1212438548456804352L, getUser().skipType(SkipType.PASS.getKey())
+        // 通过实例id流转
+        Instance instance = insService.skipByInsId(1219286332141080576L, getUser().skipType(SkipType.PASS.getKey())
                 .permissionFlag(Arrays.asList("role:1", "role:2")));
+        System.out.println("流转后流程实例：" + instance.toString());
+
+//        // 通过任务id流转
+//        Instance instance = insService.skip(1219286332145274880L, getUser().skipType(SkipType.PASS.getKey())
+//                .permissionFlag(Arrays.asList("role:1", "role:2")));
+//        System.out.println("流转后流程实例：" + instance.toString());
+    }
+
+ public void skipAnyNode() throws Exception {
+        // 跳转到指定节点
+        Instance instance = insService.skip(1219286332145274880L, getUser().skipType(SkipType.PASS.getKey())
+                .permissionFlag(Arrays.asList("role:1", "role:2")).nodeCode("4"));
         System.out.println("流转后流程实例：" + instance.toString());
     }
 ```
 
+#### 监听器
+实现Listener接口，然后在设计器中配置好监听器
+```java
+public class FinishListener implements Listener {
 
+    @Resource
+    private TestLeaveMapper testLeaveMapper;
 
+    private static final Logger log = LoggerFactory.getLogger(StartListener.class);
+
+    @Override
+    public void notify(ListenerVariable variable) {
+        log.info("完成监听器:{}", variable);
+        Instance instance = variable.getInstance();
+        Map<String, Object> testLeaveMap = variable.getVariable();
+        TestLeave testLeave = (TestLeave) testLeaveMap.get("testLeave");
+        /** 如果{@link com.ruoyi.system.service.impl.TestLeaveServiceImpl}中更新了，这里就不用更新了*/
+//        testLeave.setNodeCode(instance.getNodeCode());
+//        testLeave.setNodeName(instance.getNodeName());
+//        testLeave.setFlowStatus(instance.getFlowStatus());
+//        testLeave.setUpdateTime(DateUtils.getNowDate());
+//        testLeaveMapper.updateTestLeave(testLeave);
+        log.info("完成监听器结束;{}", "任务完成");
+    }
+}
+```
 
 
 ## 流程设计器
