@@ -21,7 +21,8 @@
 >
 >   **[gitee地址](https://gitee.com/warm_4/warm-flow.git  )** |**[github地址](https://github.com/minliuhua/warm-flow.git)**
 
-
+## 使用文档 
+[使用文档](https://warm_4.gitee.io/warm-flow-doc/#/)
 
 
 **demo项目**：  
@@ -178,29 +179,6 @@ public class FinishListener implements Listener {
     }
 }
 ```
-
-
-## 使用文档 
-[使用文档](https://warm_4.gitee.io/warm-flow-doc/#/)
-
-
-
-## 流程规则
-
- [流程规则 - Wiki - Gitee.com](https://gitee.com/warm_4/warm-flow/wikis/流程规则)
-
-
-
-## 常见问题
-
-[常见问题 - Wiki - Gitee.com](https://gitee.com/warm_4/warm-flow/wikis/常见问题)
-
-
-
-## **更新记录和未来计划** 
-
-[更新记录和未来计划 - Wiki - Gitee.com](https://gitee.com/warm_4/warm-flow/wikis/更新记录和未来计划?sort_id=8390375)
-
 
 
 ## 你可以请作者喝杯咖啡表示鼓励
