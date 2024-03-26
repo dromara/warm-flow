@@ -15,7 +15,7 @@
 11. 支持不同orm框架和数据库扩展
 12. 支持增加监听器，参数传递 
 
-
+>  **希望一键三连，你的⭐️ Star ⭐️是我持续开发的动力，项目也活的更长**  
 >   **可二开、商用，但请注明出处，保留代码注释中的作者名**  
 >   **联系方式：qq群：778470567**，微信：warm-houhou
 >
@@ -145,6 +145,17 @@ public void skipFlow() throws Exception {
                 .permissionFlag(Arrays.asList("role:1", "role:2")).nodeCode("4"));
         System.out.println("流转后流程实例：" + instance.toString());
     }
+```
+
+
+#### 参数传递
+
+```java
+// 流程变量
+Map<String, Object> variable = new HashMap<>();
+variable.put("testLeave", testLeave);
+flowParams.variable(variable);
+Instance instance = insService.skip(taskId, flowParams);
 ```
 
 #### 监听器
