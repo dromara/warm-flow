@@ -46,11 +46,10 @@ public interface InsService extends IWarmService<Instance> {
      *        - skipType:跳转类型(PASS审批通过 REJECT驳回) [必传]
      *        - nodeCode:节点编码 [如果指定跳转节点,必传]
      *        - permissionFlag:办理人权限标识[必传]
-     *        - skipCondition:跳转条件[互斥网关必传]
      *        - message:审批意见  [按需传输]
      *        - createBy:办理人帐号[建议传]
      *        - nickname:办理人昵称[按需传输]
-     *        - variable:流程变量[按需传输]
+     *        - variable:流程变量[按需传输,跳转条件放入流程变量<互斥网关必传>]
      *        - variableTask:任务变量[按需传输]
      * @return
      */
@@ -64,11 +63,10 @@ public interface InsService extends IWarmService<Instance> {
      *        - skipType:跳转类型(PASS审批通过 REJECT驳回) [必传]
      *        - nodeCode:节点编码 [如果指定跳转节点,必传]
      *        - permissionFlag:办理人权限标识[必传]
-     *        - skipCondition:跳转条件(变量值：如flag=xxx)[互斥网关必传]
      *        - message:审批意见  [按需传输]
      *        - createBy:办理人帐号[建议传]
      *        - nickname:办理人昵称[按需传输]
-     *        - variable:流程变量[按需传输]
+     *        - variable:流程变量[按需传输,跳转条件放入流程变量<互斥网关必传>]
      *        - variableTask:任务变量[按需传输]     * @return
      */
     Instance skip(Long taskId, FlowParams flowParams);
