@@ -147,6 +147,17 @@ public void skipFlow() throws Exception {
     }
 ```
 
+
+### 参数传递
+
+```java
+// 流程变量
+Map<String, Object> variable = new HashMap<>();
+variable.put("testLeave", testLeave);
+flowParams.variable(variable);
+Instance instance = insService.skip(taskId, flowParams);
+```
+
 #### 监听器
 实现Listener接口，然后在设计器中配置好监听器
 ```java
