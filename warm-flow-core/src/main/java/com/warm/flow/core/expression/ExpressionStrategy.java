@@ -6,5 +6,5 @@ public interface ExpressionStrategy {
 
     String getType();
 
-    boolean eval(String expression, Map<String, String> variable);
+    boolean eval(String expression, Map<String, Object> variable);
 }

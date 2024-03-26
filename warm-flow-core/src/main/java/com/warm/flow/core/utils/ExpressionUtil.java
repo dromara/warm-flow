@@ -38,7 +38,7 @@ public class ExpressionUtil {
      * @param variable
      * @return
      */
-    public static boolean eval(String expression, Map<String, String> variable) {
+    public static boolean eval(String expression, Map<String, Object> variable) {
         if (StringUtils.isEmpty(expression)) {
             return true;
         }

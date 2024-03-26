@@ -3,13 +3,13 @@ package com.warm.flow.core.service.impl;
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.constant.ExceptionCons;
 import com.warm.flow.core.constant.FlowCons;
+import com.warm.flow.core.dao.FlowInstanceDao;
 import com.warm.flow.core.dto.FlowParams;
 import com.warm.flow.core.entity.*;
 import com.warm.flow.core.enums.FlowStatus;
 import com.warm.flow.core.enums.NodeType;
 import com.warm.flow.core.enums.SkipType;
 import com.warm.flow.core.exception.FlowException;
-import com.warm.flow.core.dao.FlowInstanceDao;
 import com.warm.flow.core.invoker.BeanInvoker;
 import com.warm.flow.core.listener.Listener;
 import com.warm.flow.core.listener.ListenerVariable;
@@ -282,9 +282,9 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
             if (!NodeType.isStart(nextNode.getNodeType())) {
                 skipsGateway = skipsGateway.stream().filter(t -> {
                     if (NodeType.isGateWaySerial(nextNode.getNodeType())) {
-                        AssertUtil.isTrue(MapUtil.isEmpty(flowParams.getSkipCondition()), ExceptionCons.MUST_CONDITIONVALUE_NODE);
+                        AssertUtil.isTrue(MapUtil.isEmpty(flowParams.getVariable()), ExceptionCons.MUST_CONDITIONVALUE_NODE);
                         if (ObjectUtil.isNotNull(t.getSkipCondition())) {
-                            return ExpressionUtil.eval(t.getSkipCondition(), flowParams.getSkipCondition());
+                            return ExpressionUtil.eval(t.getSkipCondition(), flowParams.getVariable());
                         }
                         return true;
                     }

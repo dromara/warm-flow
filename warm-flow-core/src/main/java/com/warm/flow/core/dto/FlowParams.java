@@ -42,10 +42,10 @@ public class FlowParams {
     private String skipType;
 
 
-    /**
-     * 跳转条件
-     */
-    private Map<String, String> skipCondition;
+//    /**
+//     * 跳转条件
+//     */
+//    private Map<String, String> skipCondition;
 
     /**
      * 审批意见
@@ -111,23 +111,23 @@ public class FlowParams {
         return this;
     }
 
-    public FlowParams skipCondition(Map<String, String> skipCondition) {
-        this.skipCondition = skipCondition;
-        return this;
-    }
+//    public FlowParams skipCondition(Map<String, String> skipCondition) {
+//        this.skipCondition = skipCondition;
+//        return this;
+//    }
 
     public FlowParams tenantId(String tenantId) {
         this.tenantId = tenantId;
         return this;
     }
 
-    public Map<String, String> getSkipCondition() {
-        return skipCondition;
-    }
+//    public Map<String, String> getSkipCondition() {
+//        return skipCondition;
+//    }
 
-    public void setSkipCondition(Map<String, String> skipCondition) {
-        this.skipCondition = skipCondition;
-    }
+//    public void setSkipCondition(Map<String, String> skipCondition) {
+//        this.skipCondition = skipCondition;
+//    }
 
     public FlowParams message(String message) {
         this.message = message;
