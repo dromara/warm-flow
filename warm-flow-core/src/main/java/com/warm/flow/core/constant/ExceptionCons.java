@@ -30,6 +30,7 @@ public class ExceptionCons {
     public static final String LOST_START_NODE = "流程缺少开始节点!";
 
     public static final String LOST_NODE_CODE = "节点编码缺失";
+    public static final String LOST_NEXT_NODE_CODE = "下一节点编码缺失";
 
     public static final String SAME_NODE_CODE = "同一流程中节点编码重复!";
 
@@ -69,6 +70,7 @@ public class ExceptionCons {
     public static final String NOT_NODE_DATA = "流程节点数据缺失!";
 
     public static final String SKIP_ANY_NODE = "该节点未配置可跳转到任意节点!";
+    public static final String SKIP_ANY_TO_NODE = "该节点配置可跳转到任意节点!";
 
     public static final String NOT_PUBLISH_NODE = "不存在已发布的流程节点!";
 
@@ -79,5 +81,6 @@ public class ExceptionCons {
     public static final String CONDITION_ERR = "条件判断异常！";
 
     public static final String FLOW_FINISH = "流程已完成！";
+    public static final String NOT_SKIP_TYPE = "跳转类型不能为空!";
 
 }

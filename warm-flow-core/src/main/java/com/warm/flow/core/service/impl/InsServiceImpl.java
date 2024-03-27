@@ -121,7 +121,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         Node nextNode = getNextNode(NowNode, task, flowParams);
 
         // 如果是网关节点，则重新获取后续节点
-        List<Node> nextNodes = checkGateWay(flowParams, task, nextNode);
+        List<Node> nextNodes = checkGateWay(flowParams, nextNode);
 
         // 构建代办任务
         List<Task> addTasks = buildAddTasks(flowParams, task, instance, nextNodes, nextNode);
@@ -265,11 +265,10 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
      * 校验是否网关节点,如果是重新获取新的后面的节点
      *
      * @param flowParams
-     * @param task
      * @param nextNode
      * @return
      */
-    private List<Node> checkGateWay(FlowParams flowParams, Task task, Node nextNode) {
+    public static List<Node> checkGateWay(FlowParams flowParams , Node nextNode) {
         List<Node> nextNodes = new ArrayList<>();
         if (NodeType.isGateWay(nextNode.getNodeType())) {
             List<Skip> skipsGateway = FlowFactory.skipService()
@@ -297,7 +296,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
 
             List<String> nextNodeCodes = StreamUtils.toList(skipsGateway, Skip::getNextNodeCode);
             nextNodes = FlowFactory.nodeService()
-                    .getByNodeCodes(nextNodeCodes, task.getDefinitionId());
+                    .getByNodeCodes(nextNodeCodes, nextNode.getDefinitionId());
             AssertUtil.isTrue(CollUtil.isEmpty(nextNodes), ExceptionCons.NOT_NODE_DATA);
         } else {
             nextNodes.add(nextNode);
@@ -734,7 +733,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
                         String[] listenerPathArr = listenerPath.split(",");
                         Class<?> clazz = ClassUtil.getClazz(listenerPathArr[i].trim());
                         Listener listener = (Listener) BeanInvoker.getBean(clazz);
-                        ListenerVariable variable = new ListenerVariable(instance, flowParams.getVariable()
+                        ListenerVariable variable = new ListenerVariable(instance,node, flowParams.getVariable()
                                 , flowParams.getVariableTask());
                         listener.notify(variable);
                     }
@@ -749,7 +748,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> v = new HashMap<>();
         Map<String, Object> vt = new HashMap<>();
-        ListenerVariable variable = new ListenerVariable(null, v, vt);
+        ListenerVariable variable = new ListenerVariable(null,null, v, vt);
         map.put("name", "张三");
         map.put("variable", variable);
         v.put("name", new FlowParams());

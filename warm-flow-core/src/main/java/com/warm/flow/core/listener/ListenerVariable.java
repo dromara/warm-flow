@@ -1,9 +1,9 @@
 package com.warm.flow.core.listener;
 
 import com.warm.flow.core.entity.Instance;
+import com.warm.flow.core.entity.Node;
 
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * 监听器变量
@@ -18,6 +18,10 @@ public class ListenerVariable {
     private Instance instance;
 
     /**
+     * 当前节点
+     */
+    private Node node;
+    /**
      * 流程变量
      */
     private Map<String, Object> variable;
@@ -27,7 +31,7 @@ public class ListenerVariable {
      */
     private Map<String, Object> variableTask;
 
-    public ListenerVariable(Instance instance, Map<String, Object> variable, Map<String, Object> variableTask) {
+    public ListenerVariable(Instance instance,Node node, Map<String, Object> variable, Map<String, Object> variableTask) {
         this.instance = instance;
         this.variable = variable;
         this.variableTask = variableTask;
