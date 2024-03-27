@@ -26,15 +26,10 @@ public class ListenerVariable {
      */
     private Map<String, Object> variable;
 
-    /**
-     * 任务变量
-     */
-    private Map<String, Object> variableTask;
-
-    public ListenerVariable(Instance instance,Node node, Map<String, Object> variable, Map<String, Object> variableTask) {
+    public ListenerVariable(Instance instance, Node node, Map<String, Object> variable) {
         this.instance = instance;
+        this.node = node;
         this.variable = variable;
-        this.variableTask = variableTask;
     }
 
     public Instance getInstance() {
@@ -43,6 +38,15 @@ public class ListenerVariable {
 
     public ListenerVariable setInstance(Instance instance) {
         this.instance = instance;
+        return this;
+    }
+
+    public Node getNode() {
+        return node;
+    }
+
+    public ListenerVariable setNode(Node node) {
+        this.node = node;
         return this;
     }
 
@@ -55,21 +59,12 @@ public class ListenerVariable {
         return this;
     }
 
-    public Map<String, Object> getVariableTask() {
-        return variableTask;
-    }
-
-    public ListenerVariable setVariableTask(Map<String, Object> variableTask) {
-        this.variableTask = variableTask;
-        return this;
-    }
-
     @Override
     public String toString() {
         return "ListenerVariable{" +
                 "instance=" + instance +
+                ", node=" + node +
                 ", variable=" + variable +
-                ", variableTask=" + variableTask +
                 '}';
     }
 }

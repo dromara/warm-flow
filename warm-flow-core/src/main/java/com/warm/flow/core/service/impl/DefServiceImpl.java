@@ -154,6 +154,29 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao, Definitio
     }
 
     @Override
+    public boolean copyDef(Long id) {
+        Definition definition = getById(id);
+        List<Node> nodeList = FlowFactory.nodeService().list(FlowFactory.newNode().setDefinitionId(id));
+        List<Skip> skipList = FlowFactory.skipService().list(FlowFactory.newSkip().setDefinitionId(id));
+        definition.setId(IdUtils.nextId());
+        definition.setVersion(definition.getVersion() + "_copy");
+        definition.setIsPublish(PublishStatus.UNPUBLISHED.getKey());
+
+        nodeList.forEach(node -> {
+            node.setId(null);
+            node.setDefinitionId(definition.getId());
+        });
+        FlowFactory.nodeService().saveBatch(nodeList);
+
+        skipList.forEach(skip -> {
+            skip.setId(null);
+            skip.setDefinitionId(definition.getId());
+        });
+        FlowFactory.skipService().saveBatch(skipList);
+        return save(definition);
+    }
+
+    @Override
     public String flowChart(Long instanceId) throws IOException {
         FlowChartChain flowChartChain = new FlowChartChain();
         Instance instance = FlowFactory.insService().getById(instanceId);
@@ -184,14 +207,6 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao, Definitio
         ImageIO.write(image, "jpg", os);
         return Base64.encode(os.toByteArray());
 
-    }
-
-    public static BufferedImage zoomImage(BufferedImage originalImage, int newWidth, int newHeight) {
-        BufferedImage zoomedImage = new BufferedImage(newWidth, newHeight, originalImage.getType());
-        Graphics2D g = zoomedImage.createGraphics();
-        g.drawImage(originalImage, 0, 0, newWidth, newHeight, null);
-        g.dispose();
-        return zoomedImage;
     }
 
     /**
@@ -298,74 +313,16 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao, Definitio
      */
     private List<Node> filterNodes(Instance instance, List<Skip> allSkips, List<Node> nodeList) {
         List<String> allNextNode = new ArrayList<>();
-        Map<String, List<Skip>> skipLastMap = StreamUtils.groupByKey(allSkips, Skip::getNextNodeCode);
         Map<String, List<Skip>> skipNextMap = StreamUtils.groupByKey(allSkips, Skip::getNowNodeCode);
         if (FlowStatus.isFinished(instance.getFlowStatus())) {
-//            String endNodeCode = skipNextMap.get(instance.getNodeCode()).get(0).getNextNodeCode();
-//            allLastNode.add(endNodeCode);
-//            List<Skip> lastSkips = skipLastMap.get(endNodeCode);
-//            getAllLastNode(lastSkips, allLastNode, skipLastMap);
             return nodeList;
-        } else {
-            List<Task> curTasks = FlowFactory.taskService().getByInsId(instance.getId());
-//            // 判断同一个并行网关下分支是否有完成了的，完成了的也要显示出来
-//            String gateWayParallel = getGateWayParallelBefore(skipLastMap, curTasks.get(0).getNodeCode());
-//            List<String> gateWayParallelNode = new ArrayList<>();
-//            List<String> curNodeCodes = StreamUtils.toList(curTasks, Task::getNodeCode);
-//            for (Skip skip : skipNextMap.get(gateWayParallel)) {
-//                gateWayParallelNode = getStrings(skip, curNodeCodes, gateWayParallelNode, skipNextMap);
-//            }
-
-            for (Task curTask : curTasks) {
-//                allNextNode.add(curTask.getNodeCode());
-                List<Skip> nextSkips = skipNextMap.get(curTask.getNodeCode());
-                getAllNextNode(nextSkips, allNextNode, skipNextMap);
-            }
-            return StreamUtils.filter(nodeList, node -> !allNextNode.contains(node.getNodeCode()));
         }
-    }
-
-    private static List<String> getStrings(Skip skip, List<String> curNodeCodes, List<String> gateWayParallelNode, Map<String, List<Skip>> skipNextMap) {
-        if (curNodeCodes.contains(skip.getNextNodeCode())) {
-            gateWayParallelNode = new ArrayList<>();
-        } else {
-            gateWayParallelNode.add(skip.getNextNodeCode());
-            List<Skip> skips = skipNextMap.get(skip.getNextNodeCode());
-            for (Skip skip1 : skips) {
-
-            }
+        List<Task> curTasks = FlowFactory.taskService().getByInsId(instance.getId());
+        for (Task curTask : curTasks) {
+            List<Skip> nextSkips = skipNextMap.get(curTask.getNodeCode());
+            getAllNextNode(nextSkips, allNextNode, skipNextMap);
         }
-        return gateWayParallelNode;
-    }
-
-    /**
-     * 获取此节点前的并行网关节点
-     * @param skipLastMap
-     * @param nodeCode
-     * @return
-     */
-    private String getGateWayParallelBefore(Map<String, List<Skip>> skipLastMap, String nodeCode) {
-        List<Skip> skips = skipLastMap.get(nodeCode);
-        if (NodeType.isGateWayParallel(skips.get(0).getNowNodeType())) {
-            return skips.get(0).getNowNodeCode();
-        } else {
-            return getGateWayParallelBefore(skipLastMap, skips.get(0).getNowNodeCode());
-        }
-    }
-
-    /**
-     * 获取此节点前的并行网关节点
-     * @param skipLastMap
-     * @param nodeCode
-     * @return
-     */
-    private String getGateWayParallelAfter(Map<String, List<Skip>> skipLastMap, String nodeCode) {
-        List<Skip> skips = skipLastMap.get(nodeCode);
-        if (NodeType.isGateWayParallel(skips.get(0).getNowNodeType())) {
-            return skips.get(0).getNowNodeCode();
-        } else {
-            return getGateWayParallelAfter(skipLastMap, skips.get(0).getNowNodeCode());
-        }
+        return StreamUtils.filter(nodeList, node -> !allNextNode.contains(node.getNodeCode()));
     }
 
     /**
@@ -514,17 +471,12 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao, Definitio
 
     public Definition getAllDataDefinition(Long id) {
         Definition definition = getDao().selectById(id);
-        Node node = FlowFactory.newNode();
-        node.setDefinitionId(id);
-        List<Node> nodeList = FlowFactory.nodeService().list(node);
+        List<Node> nodeList = FlowFactory.nodeService().list(FlowFactory.newNode().setDefinitionId(id));
         definition.setNodeList(nodeList);
-        Skip skip = FlowFactory.newSkip();
-        skip.setDefinitionId(id);
-        List<Skip> skips = FlowFactory.skipService().list(skip);
-        Map<Long, List<Skip>> flowSkipMap = skips.stream()
-                .collect(Collectors.groupingBy(Skip::getNodeId));
-        nodeList.forEach(flowNode -> flowNode.setSkipList(flowSkipMap.get(flowNode.getId())));
-
+        List<Skip> skips = FlowFactory.skipService().list(FlowFactory.newSkip().setDefinitionId(id));
+        Map<String, List<Skip>> flowSkipMap = skips.stream()
+                .collect(Collectors.groupingBy(Skip::getNowNodeCode));
+        nodeList.forEach(flowNode -> flowNode.setSkipList(flowSkipMap.get(flowNode.getNodeCode())));
         return definition;
     }
 
@@ -548,5 +500,4 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao, Definitio
         FlowFactory.nodeService().saveBatch(allNodes);
         FlowFactory.skipService().saveBatch(allSkips);
     }
-
 }

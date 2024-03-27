@@ -332,10 +332,6 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
                 // 结束节点不生成代办任务
                 if (!NodeType.isEnd(node.getNodeType())) {
                     Task flowTask = addTask(node, instance, flowParams);
-                    // 如果是并行网关节点, 把网关编码传递给新的代办任务
-                    if (NodeType.isGateWayParallel(nextNode.getNodeType())) {
-                        flowTask.setGateWayNode(task.getGateWayNode());
-                    }
                     flowTask.setTenantId(task.getTenantId());
                     addTasks.add(flowTask);
                 }
@@ -459,7 +455,6 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         insHis.setTargetNodeCode(StreamUtils.join(nextNodes, Node::getNodeCode));
         insHis.setTargetNodeName(StreamUtils.join(nextNodes, Node::getNodeName));
         insHis.setFlowStatus(setHisFlowStatus(getNextNode(nextNodes).getNodeType(), flowParams.getSkipType()));
-        insHis.setGateWayNode(task.getGateWayNode());
         insHis.setMessage(flowParams.getMessage());
         insHis.setCreateTime(new Date());
         insHis.setApprover(flowParams.getCreateBy());
@@ -589,10 +584,6 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         addTask.setNodeCode(node.getNodeCode());
         addTask.setNodeName(node.getNodeName());
         addTask.setNodeType(node.getNodeType());
-        Map<String, Object> variableTask = flowParams.getVariableTask();
-        if (MapUtil.isNotEmpty(variableTask)) {
-            addTask.setVariable(ONode.serialize(variableTask));
-        }
         addTask.setPermissionFlag(node.getPermissionFlag());
         addTask.setApprover(flowParams.getCreateBy());
         addTask.setFlowStatus(setFlowStatus(node.getNodeType(), flowParams.getSkipType()));
@@ -733,8 +724,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
                         String[] listenerPathArr = listenerPath.split(",");
                         Class<?> clazz = ClassUtil.getClazz(listenerPathArr[i].trim());
                         Listener listener = (Listener) BeanInvoker.getBean(clazz);
-                        ListenerVariable variable = new ListenerVariable(instance,node, flowParams.getVariable()
-                                , flowParams.getVariableTask());
+                        ListenerVariable variable = new ListenerVariable(instance, node, flowParams.getVariable());
                         listener.notify(variable);
                     }
                     break;
@@ -743,22 +733,22 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         }
     }
 
-    public static void main(String[] args) {
-        // Map序列化示例
-        Map<String, Object> map = new HashMap<>();
-        Map<String, Object> v = new HashMap<>();
-        Map<String, Object> vt = new HashMap<>();
-        ListenerVariable variable = new ListenerVariable(null,null, v, vt);
-        map.put("name", "张三");
-        map.put("variable", variable);
-        v.put("name", new FlowParams());
-        String stringify = ONode.serialize(map);
-        System.out.println(stringify);
-        Map<String, Object> map1 = ONode.deserialize(stringify);
-        System.out.println(map1);
-        System.out.println(((ListenerVariable) map1.get("variable")));
-
-        Map<String, Object> map2 = ONode.deserialize("");
-        System.out.println(map2);
-    }
+//    public static void main(String[] args) {
+//        // Map序列化示例
+//        Map<String, Object> map = new HashMap<>();
+//        Map<String, Object> v = new HashMap<>();
+//        Map<String, Object> vt = new HashMap<>();
+//        ListenerVariable variable = new ListenerVariable(null, v, vt);
+//        map.put("name", "张三");
+//        map.put("variable", variable);
+//        v.put("name", new FlowParams());
+//        String stringify = ONode.serialize(map);
+//        System.out.println(stringify);
+//        Map<String, Object> map1 = ONode.deserialize(stringify);
+//        System.out.println(map1);
+//        System.out.println(((ListenerVariable) map1.get("variable")));
+//
+//        Map<String, Object> map2 = ONode.deserialize("");
+//        System.out.println(map2);
+//    }
 }

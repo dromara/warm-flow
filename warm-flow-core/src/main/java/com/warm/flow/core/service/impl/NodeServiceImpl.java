@@ -54,7 +54,8 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao, Node> implemen
     }
 
     @Override
-    public List<Node> getNextNodeByNodeCode(Long definitionId, String nowNodeCode, String skipType, Map<String, Object> variable,String nextNodeCode) {
+    public List<Node> getNextNodeByNodeCode(Long definitionId, String nowNodeCode, String skipType
+            , Map<String, Object> variable,String nextNodeCode) {
         AssertUtil.isNull(definitionId ,ExceptionCons.NOT_DEFINITION_ID);
         AssertUtil.isBlank(nowNodeCode, ExceptionCons.LOST_NODE_CODE);
         //不传,默认取通过的条件
@@ -103,8 +104,7 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao, Node> implemen
         Node nextNode = FlowFactory.nodeService().getByNodeCode(skip.getNextNodeCode(), skip.getDefinitionId());
         // 如果是网关节点，则重新获取后续节点
         FlowParams flowParams = FlowParams.build().variable(variable);
-        List<Node> nextNodes = checkGateWay(flowParams, nextNode);
-        return nextNodes;
+        return checkGateWay(flowParams, nextNode);
     };
 
 }

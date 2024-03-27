@@ -39,6 +39,7 @@ public class ExceptionCons {
     public static final String NULL_CONDITIONVALUE_NODE = "未找到跳转条件，不支持跳转!";
 
     public static final String NULL_CONDITIONVALUE = "跳转条件不能为空!";
+
     public static final String CONDITIONVALUE_STRING = "跳转条件需为字符串!";
 
     public static final String NULL_EXPRESSION_STRATEGY = "条件表达式不能为空!";

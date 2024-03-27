@@ -13,8 +13,6 @@
         <result property="definitionId" column="definition_id"/>
         <result property="instanceId" column="instance_id"/>
         <result property="flowStatus" column="flow_status"/>
-        <result property="gateWayNode" column="gateway_node"/>
-        <result property="variable" column="variable"/>
         <result property="permissionFlag" column="permission_flag"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
@@ -36,8 +34,6 @@
                t.permission_flag,
                t.instance_id,
                t.flow_status,
-               t.gateway_node,
-               t.variable,
                t.create_time,
                t.update_time,
                t.tenant_id
@@ -109,10 +105,10 @@
             <if test="task.instanceId != null ">and t.instance_id = #{task.instanceId}</if>
             <if test="task.tenantId != null and task.tenantId != ''">and t.tenant_id = #{task.tenantId}</if>
             <if test="task.permissionList != null and task.permissionList.size > 0">
-                AND
+                AND (t.permission_flag is null OR
                 <foreach item="permission" collection="task.permissionList" open="(" separator="or" close=")">
                     t.permission_flag like concat ('%', #{permission}, '%')
-                </foreach>
+                </foreach>)
             </if>
         </where>
     </sql>
@@ -148,8 +144,6 @@
             <if test="definitionId != null">definition_id,</if>
             <if test="instanceId != null">instance_id,</if>
             <if test="flowStatus != null">flow_status,</if>
-            <if test="gateWayNode != null">gateWay_node,</if>
-            <if test="variable != null">variable,</if>
             <if test="permissionFlag != null">permission_flag,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
@@ -164,8 +158,6 @@
             <if test="definitionId != null">#{definitionId},</if>
             <if test="instanceId != null">#{instanceId},</if>
             <if test="flowStatus != null">#{flowStatus},</if>
-            <if test="gateWayNode != null">#{gateWayNode},</if>
-            <if test="variable != null">#{variable},</if>
             <if test="permissionFlag != null">#{permissionFlag},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
@@ -183,8 +175,6 @@
             <if test="definitionId != null">definition_id = #{definitionId},</if>
             <if test="instanceId != null">instance_id = #{instanceId},</if>
             <if test="flowStatus != null">flow_status = #{flowStatus},</if>
-            <if test="gateWayNode != null">gateWay_node = #{gateWayNode},</if>
-            <if test="variable != null">variable = #{variable},</if>
             <if test="permissionFlag != null">permission_flag = #{permissionFlag},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
@@ -224,8 +214,6 @@
             <if test="definitionId != null">and definition_id = #{definitionId}</if>
             <if test="instanceId != null">and instance_id = #{instanceId}</if>
             <if test="flowStatus != null">and flow_status = #{flowStatus}</if>
-            <if test="gateWayNode != null">and gateWay_node = #{gateWayNode}</if>
-            <if test="variable != null">and variable = #{variable}</if>
             <if test="permissionFlag != null">and permission_flag = #{permissionFlag}</if>
             <if test="createTime != null">and create_time = #{createTime}</if>
             <if test="updateTime != null">and update_time = #{updateTime}</if>

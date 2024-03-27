@@ -53,14 +53,6 @@ public interface Task extends RootEntity {
 
     public Task setFlowStatus(Integer flowStatus);
 
-    public String getGateWayNode();
-
-    public Task setGateWayNode(String gateWayNode);
-
-    String getVariable();
-
-    Task setVariable(String variable);
-
     public String getPermissionFlag();
 
     public Task setPermissionFlag(String permissionFlag);

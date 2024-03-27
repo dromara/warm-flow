@@ -14,22 +14,6 @@ import java.util.List;
 public interface SkipService extends IWarmService<Skip> {
 
     /**
-     * 根据nodeId删除
-     *
-     * @param nodeId 需要删除的nodeId
-     * @return 结果
-     */
-    boolean deleteByNodeId(Long nodeId);
-
-    /**
-     * 根据nodeIds删除
-     *
-     * @param nodeIds 需要删除的nodeIds
-     * @return 结果
-     */
-    boolean deleteByNodeIds(List<Long> nodeIds);
-
-    /**
      * 获取当前节点跳转
      *
      * @param definitionId

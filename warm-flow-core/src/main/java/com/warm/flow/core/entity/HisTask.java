@@ -65,10 +65,6 @@ public interface HisTask extends RootEntity {
 
     public HisTask setFlowStatus(Integer flowStatus);
 
-    public String getGateWayNode();
-
-    public HisTask setGateWayNode(String gateWayNode);
-
     public String getMessage();
 
     public HisTask setMessage(String message);

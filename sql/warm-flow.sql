@@ -25,7 +25,6 @@ CREATE TABLE `flow_his_task` (
                                  `approver` varchar(40)  DEFAULT NULL COMMENT '审批者',
                                  `permission_flag` varchar(200)  DEFAULT NULL COMMENT '权限标识（权限类型:权限标识，可以多个，如role:1,role:2)',
                                  `flow_status` tinyint(1) NOT NULL COMMENT '流程状态（0待提交 1审批中 2 审批通过 8已完成 9已驳回 10失效）',
-                                 `gateway_node` varchar(40)  DEFAULT NULL COMMENT '所属并行网关节点编码',
                                  `message` varchar(500)  DEFAULT NULL COMMENT '审批意见',
                                  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
                                  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
@@ -70,7 +69,6 @@ CREATE TABLE `flow_node` (
 CREATE TABLE `flow_skip` (
                              `id` bigint unsigned NOT NULL COMMENT '主键id',
                              `definition_id` bigint NOT NULL COMMENT '流程定义id',
-                             `node_id` bigint NOT NULL COMMENT '当前节点id',
                              `now_node_code` varchar(100)  NOT NULL COMMENT '当前流程节点的编码',
                              `now_node_type` tinyint(1) DEFAULT NULL COMMENT '当前节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）',
                              `next_node_code` varchar(100)  NOT NULL COMMENT '下一个流程节点的编码',
@@ -96,8 +94,6 @@ CREATE TABLE `flow_task` (
                              `flow_status` tinyint(1) NOT NULL COMMENT '流程状态（0待提交 1审批中 2 审批通过 8已完成 9已驳回 10失效）',
                              `approver` varchar(40)  DEFAULT NULL COMMENT '审批者',
                              `assignee` varchar(40)  DEFAULT NULL COMMENT '转办人',
-                             `gateway_node` varchar(40)  DEFAULT NULL COMMENT '所属并行网关节点编码',
-                             `variable` text   COMMENT '任务变量',
                              `create_time` datetime DEFAULT NULL COMMENT '创建时间',
                              `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                              PRIMARY KEY (`id`) USING BTREE

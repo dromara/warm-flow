@@ -7,7 +7,6 @@
     <resultMap type="com.warm.flow.orm.entity.FlowSkip" id="FlowSkipResult">
         <result property="id" column="id"/>
         <result property="definitionId" column="definition_id"/>
-        <result property="nodeId" column="node_id"/>
         <result property="nowNodeCode" column="now_node_code"/>
         <result property="nowNodeType" column="now_node_type"/>
         <result property="nextNodeCode" column="next_node_code"/>
@@ -23,7 +22,6 @@
     <sql id="selectVo">
         select t.id,
                t.definition_id,
-               t.node_id,
                t.now_node_code,
                t.now_node_type,
                t.next_node_code,
@@ -50,7 +48,6 @@
     <sql id="select_parameter">
         <where>
             <if test="entity.definitionId != null">and t.definition_id = #{entity.definitionId}</if>
-            <if test="entity.nodeId != null">and t.node_id = #{entity.nodeId}</if>
             <if test="entity.nowNodeCode != null">and t.now_node_code = #{entity.nowNodeCode}</if>
             <if test="entity.nextNodeCode != null and entity.nextNodeCode != ''">and t.next_node_code =
                 #{entity.nextNodeCode}
@@ -97,7 +94,6 @@
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">id,</if>
             <if test="definitionId != null">definition_id,</if>
-            <if test="nodeId != null">node_id,</if>
             <if test="nowNodeCode != null and nowNodeCode != ''">now_node_code,</if>
             <if test="nowNodeType != null">now_node_type,</if>
             <if test="nextNodeCode != null and nextNodeCode != ''">next_node_code,</if>
@@ -112,7 +108,6 @@
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
             <if test="definitionId != null">#{definitionId},</if>
-            <if test="nodeId != null">#{nodeId},</if>
             <if test="nowNodeCode != null and nowNodeCode != ''">#{nowNodeCode},</if>
             <if test="nowNodeType != null">#{nowNodeType},</if>
             <if test="nextNodeCode != null and nextNodeCode != ''">#{nextNodeCode},</if>
@@ -130,7 +125,6 @@
         update flow_skip
         <trim prefix="SET" suffixOverrides=",">
             <if test="definitionId != null">definition_id = #{definitionId},</if>
-            <if test="nodeId != null">node_id = #{nodeId},</if>
             <if test="nowNodeCode != null and nowNodeCode != ''">now_node_code = #{nowNodeCode},</if>
             <if test="nowNodeType != null">now_node_type = #{nowNodeType},</if>
             <if test="nextNodeCode != null and nextNodeCode != ''">next_node_code = #{nextNodeCode},</if>
@@ -158,25 +152,12 @@
         </foreach>
     </delete>
 
-    <delete id="deleteByNodeId" parameterType="Long">
-        delete
-        from flow_skip
-        where node_id = #{nodeId}
-    </delete>
-
-    <delete id="deleteByNodeIds" parameterType="Long">
-        delete from flow_skip where node_id in
-        <foreach item="item" collection="list" open="(" separator="," close=")">
-            #{item}
-        </foreach>
-    </delete>
 
     <delete id="delete" parameterType="com.warm.flow.orm.entity.FlowSkip">
         delete from flow_skip
         <where>
             <if test="id != null">and id = #{id}</if>
             <if test="definitionId != null">and definition_id = #{definitionId}</if>
-            <if test="nodeId != null">and node_id = #{nodeId}</if>
             <if test="nowNodeCode != null and nowNodeCode != ''">and now_node_code = #{nowNodeCode}</if>
             <if test="nowNodeType != null">and now_node_type = #{nowNodeType}</if>
             <if test="nextNodeCode != null and nextNodeCode != ''">and next_node_code = #{nextNodeCode}</if>
