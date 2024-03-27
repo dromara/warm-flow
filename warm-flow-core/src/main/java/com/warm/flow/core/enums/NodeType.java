@@ -107,7 +107,7 @@ public enum NodeType {
     }
 
     /**
-     * 判断是否串行网关节点
+     * 判断是否互斥网关节点
      *
      * @param Key
      * @return
