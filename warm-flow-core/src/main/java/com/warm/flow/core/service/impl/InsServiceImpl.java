@@ -734,7 +734,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
                         String[] listenerPathArr = listenerPath.split(",");
                         Class<?> clazz = ClassUtil.getClazz(listenerPathArr[i].trim());
                         Listener listener = (Listener) BeanInvoker.getBean(clazz);
-                        ListenerVariable variable = new ListenerVariable(instance, flowParams.getVariable()
+                        ListenerVariable variable = new ListenerVariable(instance,node, flowParams.getVariable()
                                 , flowParams.getVariableTask());
                         listener.notify(variable);
                     }
@@ -749,7 +749,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> v = new HashMap<>();
         Map<String, Object> vt = new HashMap<>();
-        ListenerVariable variable = new ListenerVariable(null, v, vt);
+        ListenerVariable variable = new ListenerVariable(null,null, v, vt);
         map.put("name", "张三");
         map.put("variable", variable);
         v.put("name", new FlowParams());
