@@ -72,6 +72,13 @@ public interface DefService extends IWarmService<Definition> {
     boolean unPublish(Long id);
 
     /**
+     * 复制流程定义
+     * @param id
+     * @return
+     */
+    boolean copyDef(Long id);
+
+    /**
      * 获取流程图的图片流
      *
      * @param instanceId

@@ -83,11 +83,6 @@ public class FlowHisTask extends FlowEntity implements HisTask {
     private Integer flowStatus;
 
     /**
-     * 所属并行网关节点编码
-     */
-    private String gateWayNode;
-
-    /**
      * 审批意见
      */
     private String message;
@@ -263,17 +258,6 @@ public class FlowHisTask extends FlowEntity implements HisTask {
     }
 
     @Override
-    public String getGateWayNode() {
-        return gateWayNode;
-    }
-
-    @Override
-    public FlowHisTask setGateWayNode(String gateWayNode) {
-        this.gateWayNode = gateWayNode;
-        return this;
-    }
-
-    @Override
     public String getMessage() {
         return message;
     }
@@ -334,7 +318,6 @@ public class FlowHisTask extends FlowEntity implements HisTask {
                 ", permissionFlag='" + permissionFlag + '\'' +
                 ", permissionList=" + permissionList +
                 ", flowStatus=" + flowStatus +
-                ", gateWayNode='" + gateWayNode + '\'' +
                 ", message='" + message + '\'' +
                 ", createBy='" + createBy + '\'' +
                 ", fromCustom='" + fromCustom + '\'' +

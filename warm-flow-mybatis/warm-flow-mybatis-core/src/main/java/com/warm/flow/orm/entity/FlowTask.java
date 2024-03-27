@@ -69,16 +69,6 @@ public class FlowTask extends FlowEntity implements Task {
     private Integer flowStatus;
 
     /**
-     * 所属并行网关节点编码
-     */
-    private String gateWayNode;
-
-    /**
-     * 任务变量
-     */
-    private String variable;
-
-    /**
      * 权限标识（权限类型:权限标识，可以多个，如role:1,role:2)
      */
     private String permissionFlag;
@@ -219,28 +209,6 @@ public class FlowTask extends FlowEntity implements Task {
     }
 
     @Override
-    public String getGateWayNode() {
-        return gateWayNode;
-    }
-
-    @Override
-    public FlowTask setGateWayNode(String gateWayNode) {
-        this.gateWayNode = gateWayNode;
-        return this;
-    }
-
-    @Override
-    public String getVariable() {
-        return variable;
-    }
-
-    @Override
-    public FlowTask setVariable(String variable) {
-        this.variable = variable;
-        return this;
-    }
-
-    @Override
     public String getPermissionFlag() {
         return permissionFlag;
     }
@@ -298,7 +266,6 @@ public class FlowTask extends FlowEntity implements Task {
                 ", approver='" + approver + '\'' +
                 ", assignee='" + assignee + '\'' +
                 ", flowStatus=" + flowStatus +
-                ", gateWayNode='" + gateWayNode + '\'' +
                 ", permissionFlag='" + permissionFlag + '\'' +
                 ", permissionList=" + permissionList +
                 ", fromCustom='" + fromCustom + '\'' +

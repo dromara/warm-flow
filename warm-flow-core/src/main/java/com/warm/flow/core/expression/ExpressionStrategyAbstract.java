@@ -3,7 +3,7 @@ package com.warm.flow.core.expression;
 import com.warm.flow.core.constant.ExceptionCons;
 import com.warm.flow.core.exception.FlowException;
 import com.warm.tools.utils.MapUtil;
-import com.warm.tools.utils.StringUtils;
+import com.warm.tools.utils.ObjectUtil;
 
 import java.util.Map;
 
@@ -23,15 +23,21 @@ public abstract class ExpressionStrategyAbstract implements ExpressionStrategy {
      * @return
      */
     @Override
-    public boolean eval(String expression, Map<String, String> variable) {
+    public boolean eval(String expression, Map<String, Object> variable) {
         String[] split = expression.split(splitAt);
         preEval(split, variable);
-        return afterEval(split, variable.get(split[0].trim()));
+        String variableValue = String.valueOf(variable.get(split[0].trim()));
+        return afterEval(split, variableValue );
     }
 
-    public void preEval(String[] split, Map<String, String> variable) {
-        if (MapUtil.isEmpty(variable) && StringUtils.isEmpty(variable.get(split[0].trim()))) {
+    public void preEval(String[] split, Map<String, Object> variable) {
+        Object o = variable.get(split[0].trim());
+        if (MapUtil.isEmpty(variable) && ObjectUtil.isNull(o)) {
             throw new FlowException(ExceptionCons.NULL_CONDITIONVALUE);
+        }
+        // 判断 variable.get(split[0].trim()) 是否为 String 类型
+        if (!(o instanceof String)) {
+            throw new FlowException(ExceptionCons.CONDITIONVALUE_STRING);
         }
     }
 

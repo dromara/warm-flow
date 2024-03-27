@@ -41,12 +41,6 @@ public class FlowParams {
      */
     private String skipType;
 
-
-    /**
-     * 跳转条件
-     */
-    private Map<String, String> skipCondition;
-
     /**
      * 审批意见
      */
@@ -56,11 +50,6 @@ public class FlowParams {
      * 流程变量
      */
     private Map<String, Object> variable;
-
-    /**
-     * 任务变量
-     */
-    private Map<String, Object> variableTask;
 
     /**
      * 扩展字段
@@ -101,32 +90,14 @@ public class FlowParams {
         return this;
     }
 
-    public FlowParams variableTask(Map<String, Object> variableTask) {
-        this.variableTask = variableTask;
-        return this;
-    }
-
     public FlowParams skipType(String skipType) {
         this.skipType = skipType;
-        return this;
-    }
-
-    public FlowParams skipCondition(Map<String, String> skipCondition) {
-        this.skipCondition = skipCondition;
         return this;
     }
 
     public FlowParams tenantId(String tenantId) {
         this.tenantId = tenantId;
         return this;
-    }
-
-    public Map<String, String> getSkipCondition() {
-        return skipCondition;
-    }
-
-    public void setSkipCondition(Map<String, String> skipCondition) {
-        this.skipCondition = skipCondition;
     }
 
     public FlowParams message(String message) {
@@ -145,10 +116,6 @@ public class FlowParams {
 
     public String getNodeCode() {
         return nodeCode;
-    }
-
-    public Map<String, Object> getVariableTask() {
-        return variableTask;
     }
 
     public FlowParams permissionFlag(List<String> permissionFlag) {

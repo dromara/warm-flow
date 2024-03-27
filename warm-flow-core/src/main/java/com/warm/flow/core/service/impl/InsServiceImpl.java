@@ -3,13 +3,13 @@ package com.warm.flow.core.service.impl;
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.constant.ExceptionCons;
 import com.warm.flow.core.constant.FlowCons;
+import com.warm.flow.core.dao.FlowInstanceDao;
 import com.warm.flow.core.dto.FlowParams;
 import com.warm.flow.core.entity.*;
 import com.warm.flow.core.enums.FlowStatus;
 import com.warm.flow.core.enums.NodeType;
 import com.warm.flow.core.enums.SkipType;
 import com.warm.flow.core.exception.FlowException;
-import com.warm.flow.core.dao.FlowInstanceDao;
 import com.warm.flow.core.invoker.BeanInvoker;
 import com.warm.flow.core.listener.Listener;
 import com.warm.flow.core.listener.ListenerVariable;
@@ -121,7 +121,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         Node nextNode = getNextNode(NowNode, task, flowParams);
 
         // 如果是网关节点，则重新获取后续节点
-        List<Node> nextNodes = checkGateWay(flowParams, task, nextNode);
+        List<Node> nextNodes = checkGateWay(flowParams, nextNode);
 
         // 构建代办任务
         List<Task> addTasks = buildAddTasks(flowParams, task, instance, nextNodes, nextNode);
@@ -265,11 +265,10 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
      * 校验是否网关节点,如果是重新获取新的后面的节点
      *
      * @param flowParams
-     * @param task
      * @param nextNode
      * @return
      */
-    private List<Node> checkGateWay(FlowParams flowParams, Task task, Node nextNode) {
+    public static List<Node> checkGateWay(FlowParams flowParams , Node nextNode) {
         List<Node> nextNodes = new ArrayList<>();
         if (NodeType.isGateWay(nextNode.getNodeType())) {
             List<Skip> skipsGateway = FlowFactory.skipService()
@@ -282,9 +281,9 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
             if (!NodeType.isStart(nextNode.getNodeType())) {
                 skipsGateway = skipsGateway.stream().filter(t -> {
                     if (NodeType.isGateWaySerial(nextNode.getNodeType())) {
-                        AssertUtil.isTrue(MapUtil.isEmpty(flowParams.getSkipCondition()), ExceptionCons.MUST_CONDITIONVALUE_NODE);
+                        AssertUtil.isTrue(MapUtil.isEmpty(flowParams.getVariable()), ExceptionCons.MUST_CONDITIONVALUE_NODE);
                         if (ObjectUtil.isNotNull(t.getSkipCondition())) {
-                            return ExpressionUtil.eval(t.getSkipCondition(), flowParams.getSkipCondition());
+                            return ExpressionUtil.eval(t.getSkipCondition(), flowParams.getVariable());
                         }
                         return true;
                     }
@@ -297,7 +296,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
 
             List<String> nextNodeCodes = StreamUtils.toList(skipsGateway, Skip::getNextNodeCode);
             nextNodes = FlowFactory.nodeService()
-                    .getByNodeCodes(nextNodeCodes, task.getDefinitionId());
+                    .getByNodeCodes(nextNodeCodes, nextNode.getDefinitionId());
             AssertUtil.isTrue(CollUtil.isEmpty(nextNodes), ExceptionCons.NOT_NODE_DATA);
         } else {
             nextNodes.add(nextNode);
@@ -333,10 +332,6 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
                 // 结束节点不生成代办任务
                 if (!NodeType.isEnd(node.getNodeType())) {
                     Task flowTask = addTask(node, instance, flowParams);
-                    // 如果是并行网关节点, 把网关编码传递给新的代办任务
-                    if (NodeType.isGateWayParallel(nextNode.getNodeType())) {
-                        flowTask.setGateWayNode(task.getGateWayNode());
-                    }
                     flowTask.setTenantId(task.getTenantId());
                     addTasks.add(flowTask);
                 }
@@ -460,7 +455,6 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         insHis.setTargetNodeCode(StreamUtils.join(nextNodes, Node::getNodeCode));
         insHis.setTargetNodeName(StreamUtils.join(nextNodes, Node::getNodeName));
         insHis.setFlowStatus(setHisFlowStatus(getNextNode(nextNodes).getNodeType(), flowParams.getSkipType()));
-        insHis.setGateWayNode(task.getGateWayNode());
         insHis.setMessage(flowParams.getMessage());
         insHis.setCreateTime(new Date());
         insHis.setApprover(flowParams.getCreateBy());
@@ -590,10 +584,6 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         addTask.setNodeCode(node.getNodeCode());
         addTask.setNodeName(node.getNodeName());
         addTask.setNodeType(node.getNodeType());
-        Map<String, Object> variableTask = flowParams.getVariableTask();
-        if (MapUtil.isNotEmpty(variableTask)) {
-            addTask.setVariable(ONode.serialize(variableTask));
-        }
         addTask.setPermissionFlag(node.getPermissionFlag());
         addTask.setApprover(flowParams.getCreateBy());
         addTask.setFlowStatus(setFlowStatus(node.getNodeType(), flowParams.getSkipType()));
@@ -734,8 +724,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
                         String[] listenerPathArr = listenerPath.split(",");
                         Class<?> clazz = ClassUtil.getClazz(listenerPathArr[i].trim());
                         Listener listener = (Listener) BeanInvoker.getBean(clazz);
-                        ListenerVariable variable = new ListenerVariable(instance, flowParams.getVariable()
-                                , flowParams.getVariableTask());
+                        ListenerVariable variable = new ListenerVariable(instance, node, flowParams.getVariable());
                         listener.notify(variable);
                     }
                     break;
@@ -744,22 +733,22 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         }
     }
 
-    public static void main(String[] args) {
-        // Map序列化示例
-        Map<String, Object> map = new HashMap<>();
-        Map<String, Object> v = new HashMap<>();
-        Map<String, Object> vt = new HashMap<>();
-        ListenerVariable variable = new ListenerVariable(null, v, vt);
-        map.put("name", "张三");
-        map.put("variable", variable);
-        v.put("name", new FlowParams());
-        String stringify = ONode.serialize(map);
-        System.out.println(stringify);
-        Map<String, Object> map1 = ONode.deserialize(stringify);
-        System.out.println(map1);
-        System.out.println(((ListenerVariable) map1.get("variable")));
-
-        Map<String, Object> map2 = ONode.deserialize("");
-        System.out.println(map2);
-    }
+//    public static void main(String[] args) {
+//        // Map序列化示例
+//        Map<String, Object> map = new HashMap<>();
+//        Map<String, Object> v = new HashMap<>();
+//        Map<String, Object> vt = new HashMap<>();
+//        ListenerVariable variable = new ListenerVariable(null, v, vt);
+//        map.put("name", "张三");
+//        map.put("variable", variable);
+//        v.put("name", new FlowParams());
+//        String stringify = ONode.serialize(map);
+//        System.out.println(stringify);
+//        Map<String, Object> map1 = ONode.deserialize(stringify);
+//        System.out.println(map1);
+//        System.out.println(((ListenerVariable) map1.get("variable")));
+//
+//        Map<String, Object> map2 = ONode.deserialize("");
+//        System.out.println(map2);
+//    }
 }
