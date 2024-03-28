@@ -13,6 +13,7 @@ import com.warm.flow.core.exception.FlowException;
 import com.warm.flow.core.invoker.BeanInvoker;
 import com.warm.flow.core.listener.Listener;
 import com.warm.flow.core.listener.ListenerVariable;
+import com.warm.flow.core.listener.ValueHolder;
 import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.InsService;
 import com.warm.flow.core.utils.AssertUtil;
@@ -22,7 +23,11 @@ import com.warm.tools.utils.*;
 import org.noear.snack.ONode;
 
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.stream.Collectors;
+
+import static com.warm.flow.core.constant.ListenerCons.listenerPattern;
+import static com.warm.flow.core.constant.ListenerCons.splitAt;
 
 
 /**
@@ -268,7 +273,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
      * @param nextNode
      * @return
      */
-    public static List<Node> checkGateWay(FlowParams flowParams , Node nextNode) {
+    public static List<Node> checkGateWay(FlowParams flowParams, Node nextNode) {
         List<Node> nextNodes = new ArrayList<>();
         if (NodeType.isGateWay(nextNode.getNodeType())) {
             List<Skip> skipsGateway = FlowFactory.skipService()
@@ -570,6 +575,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
 
     /**
      * 设置流程待办任务对象
+     *
      * @param node
      * @param instance
      * @param flowParams
@@ -594,6 +600,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
 
     /**
      * 权限和条件校验
+     *
      * @param task
      * @param skips
      * @param flowParams
@@ -624,6 +631,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
 
     /**
      * 校验跳转指定节点是否有权限任意跳转
+     *
      * @param task
      * @param flowParams
      * @return
@@ -713,27 +721,76 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
 
     private static void executeListener(Instance instance, Node node, String lisType, FlowParams flowParams) {
         // 执行监听器
+        //listenerPath({"name": "John Doe", "age": 30})@@listenerPath@@listenerPath
         String listenerType = node.getListenerType();
         if (StringUtils.isNotEmpty(listenerType)) {
-            String[] listenerTypeArr = listenerType.split(",");
+            String[] listenerTypeArr = listenerType.split(splitAt);
             for (int i = 0; i < listenerTypeArr.length; i++) {
                 String listenerTypeStr = listenerTypeArr[i].trim();
                 if (listenerTypeStr.equals(lisType)) {
-                    String listenerPath = node.getListenerPath();
-                    if (StringUtils.isNotEmpty(listenerPath)) {
-                        String[] listenerPathArr = listenerPath.split(",");
-                        Class<?> clazz = ClassUtil.getClazz(listenerPathArr[i].trim());
-                        Listener listener = (Listener) BeanInvoker.getBean(clazz);
-                        ListenerVariable variable = new ListenerVariable(instance, node, flowParams.getVariable());
-                        listener.notify(variable);
+                    //"listenerPath1({\"name\": \"John Doe\", \"age\": 30})@@listenerPath2";
+                    String listenerPathStr = node.getListenerPath();
+                    if (StringUtils.isNotEmpty(listenerPathStr)) {
+                        //"listenerPath1({\"name\": \"John Doe\", \"age\": 30})";
+                        //listenerPath2
+                        String[] listenerPathArr = listenerPathStr.split(splitAt);
+                        String listenerPath = listenerPathArr[i].trim();
+                        ValueHolder valueHolder = new ValueHolder();
+                        //截取出path 和parms
+                        getListenerPath(listenerPath, valueHolder);
+                        if (ObjectUtil.isNotNull(valueHolder)) {
+                            Class<?> clazz = ClassUtil.getClazz(valueHolder.getPath());
+                            Listener listener = (Listener) BeanInvoker.getBean(clazz);
+                            ListenerVariable variable = new ListenerVariable(instance, node, flowParams.getVariable(), valueHolder.getParms());
+                            listener.notify(variable);
+                        }
                     }
-                    break;
+
                 }
+                break;
             }
+        }
+
+    }
+
+    /**
+     * 分别截取监听器path 和 监听器parms
+     * String input = "listenerPath({\"name\": \"John Doe\", \"age\": 30})";
+     *
+     * @param listenerStr
+     * @param valueHolder
+     */
+    public static void getListenerPath(String listenerStr, ValueHolder valueHolder) {
+        String path;
+        String parms;
+
+        Matcher matcher = listenerPattern.matcher(listenerStr);
+        if (matcher.find()) {
+
+            path = matcher.group(1).replaceAll("[\\(\\)]", "");
+            parms = matcher.group(2).replaceAll("[\\(\\)]", "");
+            System.out.println(path);
+            System.out.println(parms);
+            valueHolder.setPath(path);
+            valueHolder.setParms(parms);
+        } else {
+            System.out.println("else");
         }
     }
 
-//    public static void main(String[] args) {
+    public static void main(String[] args) {
+        String input = "listenerPath({\"name\": \"John Doe\", \"age\": 30})";
+        String input3 = "listenerPath";
+        ValueHolder valueHolder = new ValueHolder();
+        getListenerPath(input3, valueHolder);
+        if (ObjectUtil.isNotNull(valueHolder)) {
+
+            System.out.println(valueHolder.toString());
+        }
+    }
+
+
+    //    public static void main(String[] args) {
 //        // Map序列化示例
 //        Map<String, Object> map = new HashMap<>();
 //        Map<String, Object> v = new HashMap<>();
@@ -751,4 +808,5 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
 //        Map<String, Object> map2 = ONode.deserialize("");
 //        System.out.println(map2);
 //    }
+
 }

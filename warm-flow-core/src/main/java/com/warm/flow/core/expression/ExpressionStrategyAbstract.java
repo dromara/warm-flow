@@ -1,6 +1,7 @@
 package com.warm.flow.core.expression;
 
 import com.warm.flow.core.constant.ExceptionCons;
+import com.warm.flow.core.constant.ListenerCons;
 import com.warm.flow.core.exception.FlowException;
 import com.warm.tools.utils.MapUtil;
 import com.warm.tools.utils.ObjectUtil;
@@ -14,7 +15,7 @@ import java.util.Map;
  */
 public abstract class ExpressionStrategyAbstract implements ExpressionStrategy {
 
-    public static final String splitAt = "@@";
+     public String splitAt = ListenerCons.splitAt;
 
     /**
      *

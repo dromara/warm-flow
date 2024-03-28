@@ -8,5 +8,7 @@ public interface Listener extends Serializable {
     String LISTENER_END = "finish";
     String LISTENER_ASSIGNMENT = "assignment";
 
+    String LISTENER_PERMISSION = "permission";
+
     void notify(ListenerVariable variable);
 }
