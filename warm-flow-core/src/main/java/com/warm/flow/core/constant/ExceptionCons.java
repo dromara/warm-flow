@@ -84,4 +84,6 @@ public class ExceptionCons {
     public static final String FLOW_FINISH = "流程已完成！";
     public static final String NOT_SKIP_TYPE = "跳转类型不能为空!";
 
+    public static final String NOT_PERMISSION_LISTENER_VARIABLE = "权限监听器返回的权限标识不能为空";
+    public static final String NOT_PERMISSION_NODE_PERMISSION = "权限监听器返回的节点权限为空";
 }

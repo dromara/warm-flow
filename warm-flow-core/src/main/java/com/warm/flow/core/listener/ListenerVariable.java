@@ -31,9 +31,10 @@ public class ListenerVariable {
      */
     private String parms;
     /**
+     * 权限监听器使用
      * 权限标识 例如：[role:admin,user:2]
      */
-    private List<String> permissionFlag;
+    private List<NodePermission> nodePermissionList;
 
     public ListenerVariable(Instance instance, Node node, Map<String, Object> variable) {
         this.instance = instance;
@@ -84,12 +85,20 @@ public class ListenerVariable {
         this.parms = parms;
     }
 
-    public List<String> getPermissionFlag() {
-        return permissionFlag;
+    public List<NodePermission> getNodePermissionList() {
+        return nodePermissionList;
     }
 
-    public void setPermissionFlag(List<String> permissionFlag) {
-        this.permissionFlag = permissionFlag;
+    public NodePermission getPermissionByNode(String nodeCode) {
+        NodePermission nodePermission = nodePermissionList.stream().filter(t -> t.getNodeCode().equals(nodeCode))
+                .findFirst()
+                .orElse(null);
+
+        return nodePermission;
+    }
+
+    public void setNodePermissionList(List<NodePermission> nodePermissionList) {
+        this.nodePermissionList = nodePermissionList;
     }
 
     @Override
