@@ -1,5 +1,6 @@
 package com.warm.flow.core.expression;
 
+import com.warm.flow.core.constant.FlowCons;
 import com.warm.tools.utils.MathUtil;
 
 /**
@@ -10,7 +11,7 @@ import com.warm.tools.utils.MathUtil;
 public class ExpressionStrategyGe extends ExpressionStrategyAbstract {
 
     public String getType() {
-        return splitAt + "ge" + splitAt;
+        return FlowCons.splitAt + "ge" + FlowCons.splitAt;
     }
 
     @Override

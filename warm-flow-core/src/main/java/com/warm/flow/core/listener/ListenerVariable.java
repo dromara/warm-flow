@@ -29,7 +29,7 @@ public class ListenerVariable {
     /**
      * 监听器自定义参数
      */
-    private String parms;
+    private String params;
     /**
      * 权限监听器使用
      * 权限标识 例如：[role:admin,user:2]
@@ -42,11 +42,11 @@ public class ListenerVariable {
         this.variable = variable;
     }
 
-    public ListenerVariable(Instance instance, Node node, Map<String, Object> variable, String parms) {
+    public ListenerVariable(Instance instance, Node node, Map<String, Object> variable, String params) {
         this.instance = instance;
         this.node = node;
         this.variable = variable;
-        this.parms = parms;
+        this.params = params;
     }
 
 
@@ -77,12 +77,12 @@ public class ListenerVariable {
         return this;
     }
 
-    public String getParms() {
-        return parms;
+    public String getParams() {
+        return params;
     }
 
-    public void setParms(String parms) {
-        this.parms = parms;
+    public void setParams(String params) {
+        this.params = params;
     }
 
     public List<NodePermission> getNodePermissionList() {
@@ -107,6 +107,8 @@ public class ListenerVariable {
                 "instance=" + instance +
                 ", node=" + node +
                 ", variable=" + variable +
+                ", params='" + params + '\'' +
+                ", nodePermissionList=" + nodePermissionList +
                 '}';
     }
 }

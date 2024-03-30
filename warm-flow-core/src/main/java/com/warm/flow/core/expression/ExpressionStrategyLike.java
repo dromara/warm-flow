@@ -1,5 +1,7 @@
 package com.warm.flow.core.expression;
 
+import com.warm.flow.core.constant.FlowCons;
+
 /**
  * 条件表达式包含
  *
@@ -8,7 +10,7 @@ package com.warm.flow.core.expression;
 public class ExpressionStrategyLike extends ExpressionStrategyAbstract {
 
     public String getType() {
-        return splitAt + "like" + splitAt;
+        return FlowCons.splitAt + "like" + FlowCons.splitAt;
     }
 
     @Override

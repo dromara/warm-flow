@@ -27,10 +27,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
-import static com.warm.flow.core.constant.ListenerCons.listenerPattern;
-import static com.warm.flow.core.constant.ListenerCons.splitAt;
-
-
 /**
  * 流程实例Service业务层处理
  *
@@ -135,7 +131,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         }
 
         // 获取关联的节点
-        Node nextNode = getNextNode(instance, NowNode, task, flowParams);
+        Node nextNode = getNextNode(NowNode, task, flowParams);
 
         // 如果是网关节点，则重新获取后续节点
         List<Node> nextNodes = checkGateWay(flowParams, nextNode);
@@ -627,7 +623,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
      * @param flowParams
      * @return
      */
-    private Skip checkAuthAndCondition(Instance instance, Node NowNode, Task task, List<Skip> skips, FlowParams flowParams) {
+    private Skip checkAuthAndCondition(Node NowNode, Task task, List<Skip> skips, FlowParams flowParams) {
         if (CollUtil.isEmpty(skips)) {
             return null;
         }
@@ -655,20 +651,18 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
      * 执行权限监听器,并拿到对应值
      *
      * @param instance
-     * @param NowNode
+     * @param node
      * @param flowParams
      */
-    private void executeGetNodePermission(Instance instance, Node NowNode, FlowParams flowParams) {
+    private void executeGetNodePermission(Instance instance, Node node, FlowParams flowParams) {
         //执行权限监听器
-        ListenerVariable variable = executeListener(instance, NowNode, Listener.LISTENER_PERMISSION, flowParams);
+        ListenerVariable variable = executeListener(instance, node, Listener.LISTENER_PERMISSION, flowParams);
         //拿到监听器内的权限标识 给NowNode.的PermissionFlag 赋值
 
-        AssertUtil.isTrue(CollUtil.isEmpty(variable.getNodePermissionList()), ExceptionCons.NOT_PERMISSION_LISTENER_VARIABLE);
-        NodePermission nodePermission = variable.getPermissionByNode(NowNode.getNodeCode());
-
-        AssertUtil.isTrue(ObjectUtil.isNull(nodePermission), ExceptionCons.NOT_PERMISSION_NODE_PERMISSION);
-
-        NowNode.setPermissionFlag(nodePermission.getPermissionFlag());
+        if (variable != null && ObjectUtil.isNotNull(variable.getPermissionByNode(node.getNodeCode()))) {
+            NodePermission nodePermission = variable.getPermissionByNode(node.getNodeCode());
+            node.setPermissionFlag(nodePermission.getPermissionFlag());
+        }
     }
 
     /**
@@ -704,7 +698,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
      * @param flowParams
      * @return
      */
-    private Node getNextNode(Instance instance, Node NowNode, Task task, FlowParams flowParams) {
+    private Node getNextNode(Node NowNode, Task task, FlowParams flowParams) {
         AssertUtil.isNull(task.getDefinitionId(), ExceptionCons.NOT_DEFINITION_ID);
         AssertUtil.isBlank(task.getNodeCode(), ExceptionCons.LOST_NODE_CODE);
         // 如果指定了跳转节点，则判断权限，直接获取节点
@@ -713,7 +707,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         }
         List<Skip> skips = FlowFactory.skipService()
                 .queryByDefAndCode(task.getDefinitionId(), task.getNodeCode());
-        Skip nextSkip = checkAuthAndCondition(instance, NowNode, task, skips, flowParams);
+        Skip nextSkip = checkAuthAndCondition(NowNode, task, skips, flowParams);
         AssertUtil.isTrue(ObjectUtil.isNull(nextSkip), ExceptionCons.NULL_DEST_NODE);
         List<Node> nodes = FlowFactory.nodeService()
                 .getByNodeCodes(Collections.singletonList(nextSkip.getNextNodeCode()), task.getDefinitionId());
@@ -766,7 +760,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         //listenerPath({"name": "John Doe", "age": 30})@@listenerPath@@listenerPath
         String listenerType = node.getListenerType();
         if (StringUtils.isNotEmpty(listenerType)) {
-            String[] listenerTypeArr = listenerType.split(splitAt);
+            String[] listenerTypeArr = listenerType.split(",");
             for (int i = 0; i < listenerTypeArr.length; i++) {
                 String listenerTypeStr = listenerTypeArr[i].trim();
                 if (listenerTypeStr.equals(lisType)) {
@@ -775,18 +769,16 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
                     if (StringUtils.isNotEmpty(listenerPathStr)) {
                         //"listenerPath1({\"name\": \"John Doe\", \"age\": 30})";
                         //listenerPath2
-                        String[] listenerPathArr = listenerPathStr.split(splitAt);
+                        String[] listenerPathArr = listenerPathStr.split(FlowCons.splitAt);
                         String listenerPath = listenerPathArr[i].trim();
                         ValueHolder valueHolder = new ValueHolder();
-                        //截取出path 和parms
+                        //截取出path 和params
                         getListenerPath(listenerPath, valueHolder);
-                        if (ObjectUtil.isNotNull(valueHolder)) {
-                            Class<?> clazz = ClassUtil.getClazz(valueHolder.getPath());
-                            Listener listener = (Listener) BeanInvoker.getBean(clazz);
-                            ListenerVariable variable = new ListenerVariable(instance, node, flowParams.getVariable(), valueHolder.getParms());
-                            listener.notify(variable);
-                            return variable;
-                        }
+                        Class<?> clazz = ClassUtil.getClazz(valueHolder.getPath());
+                        Listener listener = (Listener) BeanInvoker.getBean(clazz);
+                        ListenerVariable variable = new ListenerVariable(instance, node, flowParams.getVariable(), valueHolder.getParams());
+                        listener.notify(variable);
+                        return variable;
                     }
 
                 }
@@ -796,7 +788,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
     }
 
     /**
-     * 分别截取监听器path 和 监听器parms
+     * 分别截取监听器path 和 监听器params
      * String input = "listenerPath({\"name\": \"John Doe\", \"age\": 30})";
      *
      * @param listenerStr
@@ -804,17 +796,17 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
      */
     public static void getListenerPath(String listenerStr, ValueHolder valueHolder) {
         String path;
-        String parms;
+        String params;
 
-        Matcher matcher = listenerPattern.matcher(listenerStr);
+        Matcher matcher = FlowCons.listenerPattern.matcher(listenerStr);
         if (matcher.find()) {
 
             path = matcher.group(1).replaceAll("[\\(\\)]", "");
-            parms = matcher.group(2).replaceAll("[\\(\\)]", "");
+            params = matcher.group(2).replaceAll("[\\(\\)]", "");
             System.out.println(path);
-            System.out.println(parms);
+            System.out.println(params);
             valueHolder.setPath(path);
-            valueHolder.setParms(parms);
+            valueHolder.setParams(params);
         } else {
             System.out.println("else");
         }
@@ -824,11 +816,8 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         String input = "listenerPath({\"name\": \"John Doe\", \"age\": 30})";
         String input3 = "listenerPath";
         ValueHolder valueHolder = new ValueHolder();
-        getListenerPath(input3, valueHolder);
-        if (ObjectUtil.isNotNull(valueHolder)) {
-
-            System.out.println(valueHolder.toString());
-        }
+        getListenerPath(input, valueHolder);
+        System.out.println(valueHolder);
     }
 
 

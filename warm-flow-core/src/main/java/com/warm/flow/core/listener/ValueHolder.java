@@ -2,7 +2,7 @@ package com.warm.flow.core.listener;
 
 public class ValueHolder {
     private String path;
-    private String parms;
+    private String params;
 
 
     public ValueHolder() {
@@ -16,19 +16,19 @@ public class ValueHolder {
         this.path = path;
     }
 
-    public String getParms() {
-        return parms;
+    public String getParams() {
+        return params;
     }
 
-    public void setParms(String parms) {
-        this.parms = parms;
+    public void setParams(String params) {
+        this.params = params;
     }
 
     @Override
     public String toString() {
         return "ValueHolder{" +
                 "path='" + path + '\'' +
-                ", parms='" + parms + '\'' +
+                ", params='" + params + '\'' +
                 '}';
     }
 }

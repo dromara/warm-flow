@@ -26,9 +26,9 @@ public class NodePermission {
 
     @Override
     public String toString() {
-        return "ValueHolder{" +
-                "path='" + nodeCode + '\'' +
-                ", parms='" + permissionFlag + '\'' +
+        return "NodePermission{" +
+                "nodeCode='" + nodeCode + '\'' +
+                ", permissionFlag='" + permissionFlag + '\'' +
                 '}';
     }
 }
