@@ -13,6 +13,8 @@ import com.warm.flow.core.exception.FlowException;
 import com.warm.flow.core.invoker.BeanInvoker;
 import com.warm.flow.core.listener.Listener;
 import com.warm.flow.core.listener.ListenerVariable;
+import com.warm.flow.core.listener.NodePermission;
+import com.warm.flow.core.listener.ValueHolder;
 import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.InsService;
 import com.warm.flow.core.utils.AssertUtil;
@@ -22,8 +24,8 @@ import com.warm.tools.utils.*;
 import org.noear.snack.ONode;
 
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.stream.Collectors;
-
 
 /**
  * 流程实例Service业务层处理
@@ -62,6 +64,12 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         AssertUtil.isBlank(businessId, ExceptionCons.NULL_BUSINESS_ID);
         // 设置流程实例对象
         Instance instance = setStartInstance(startNode, businessId, flowParams);
+
+        //判断结点是否有权限监听器,有执行权限监听器startNode.setPermissionFlag,无走数据库的权限标识符
+        if (startNode.getListenerType().contains(Listener.LISTENER_PERMISSION)) {
+            executeGetNodePermission(instance, startNode, flowParams);
+        }
+
         // 设置流程历史任务记录对象
         Task task = addTask(startNode, instance, flowParams);
         save(instance);
@@ -117,11 +125,25 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         Node NowNode = CollUtil.getOne(FlowFactory.nodeService()
                 .getByNodeCodes(Collections.singletonList(task.getNodeCode()), task.getDefinitionId()));
 
+        //判断结点是否有权限监听器,有执行权限监听器NowNode.setPermissionFlag,无走数据库的权限标识符
+        if (NowNode.getListenerType().contains(Listener.LISTENER_PERMISSION)) {
+            executeGetNodePermission(instance, NowNode, flowParams);
+        }
+
         // 获取关联的节点
         Node nextNode = getNextNode(NowNode, task, flowParams);
 
         // 如果是网关节点，则重新获取后续节点
         List<Node> nextNodes = checkGateWay(flowParams, nextNode);
+
+        //判断下一结点是否有权限监听器,有执行权限监听器nextNode.setPermissionFlag,无走数据库的权限标识符
+        nextNodes.forEach(next -> {
+            //判断结点是否有权限监听器,有执行权限监听器NowNode.setPermissionFlag,无走数据库的权限标识符
+            if (next.getListenerType().contains(Listener.LISTENER_PERMISSION)) {
+                executeGetNodePermission(instance, next, flowParams);
+            }
+        });
+
 
         // 构建代办任务
         List<Task> addTasks = buildAddTasks(flowParams, task, instance, nextNodes, nextNode);
@@ -268,7 +290,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
      * @param nextNode
      * @return
      */
-    public static List<Node> checkGateWay(FlowParams flowParams , Node nextNode) {
+    public static List<Node> checkGateWay(FlowParams flowParams, Node nextNode) {
         List<Node> nextNodes = new ArrayList<>();
         if (NodeType.isGateWay(nextNode.getNodeType())) {
             List<Skip> skipsGateway = FlowFactory.skipService()
@@ -570,6 +592,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
 
     /**
      * 设置流程待办任务对象
+     *
      * @param node
      * @param instance
      * @param flowParams
@@ -594,6 +617,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
 
     /**
      * 权限和条件校验
+     *
      * @param task
      * @param skips
      * @param flowParams
@@ -610,6 +634,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
                 || !CollUtil.containsAny(permissionFlags, ArrayUtil.strToArrAy(NowNode.getPermissionFlag(),
                 ","))), ExceptionCons.NULL_ROLE_NODE);
 
+
         if (!NodeType.isStart(task.getNodeType())) {
             skips = skips.stream().filter(t -> {
                 if (StringUtils.isNotEmpty(t.getSkipType())) {
@@ -623,7 +648,26 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
     }
 
     /**
+     * 执行权限监听器,并拿到对应值
+     *
+     * @param instance
+     * @param node
+     * @param flowParams
+     */
+    private void executeGetNodePermission(Instance instance, Node node, FlowParams flowParams) {
+        //执行权限监听器
+        ListenerVariable variable = executeListener(instance, node, Listener.LISTENER_PERMISSION, flowParams);
+        //拿到监听器内的权限标识 给NowNode.的PermissionFlag 赋值
+
+        if (variable != null && ObjectUtil.isNotNull(variable.getPermissionByNode(node.getNodeCode()))) {
+            NodePermission nodePermission = variable.getPermissionByNode(node.getNodeCode());
+            node.setPermissionFlag(nodePermission.getPermissionFlag());
+        }
+    }
+
+    /**
      * 校验跳转指定节点是否有权限任意跳转
+     *
      * @param task
      * @param flowParams
      * @return
@@ -711,29 +755,73 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         executeListener(instance, NowNode, Listener.LISTENER_END, flowParams);
     }
 
-    private static void executeListener(Instance instance, Node node, String lisType, FlowParams flowParams) {
+    private ListenerVariable executeListener(Instance instance, Node node, String lisType, FlowParams flowParams) {
         // 执行监听器
+        //listenerPath({"name": "John Doe", "age": 30})@@listenerPath@@listenerPath
         String listenerType = node.getListenerType();
         if (StringUtils.isNotEmpty(listenerType)) {
             String[] listenerTypeArr = listenerType.split(",");
             for (int i = 0; i < listenerTypeArr.length; i++) {
                 String listenerTypeStr = listenerTypeArr[i].trim();
                 if (listenerTypeStr.equals(lisType)) {
-                    String listenerPath = node.getListenerPath();
-                    if (StringUtils.isNotEmpty(listenerPath)) {
-                        String[] listenerPathArr = listenerPath.split(",");
-                        Class<?> clazz = ClassUtil.getClazz(listenerPathArr[i].trim());
+                    //"listenerPath1({\"name\": \"John Doe\", \"age\": 30})@@listenerPath2";
+                    String listenerPathStr = node.getListenerPath();
+                    if (StringUtils.isNotEmpty(listenerPathStr)) {
+                        //"listenerPath1({\"name\": \"John Doe\", \"age\": 30})";
+                        //listenerPath2
+                        String[] listenerPathArr = listenerPathStr.split(FlowCons.splitAt);
+                        String listenerPath = listenerPathArr[i].trim();
+                        ValueHolder valueHolder = new ValueHolder();
+                        //截取出path 和params
+                        getListenerPath(listenerPath, valueHolder);
+                        Class<?> clazz = ClassUtil.getClazz(valueHolder.getPath());
                         Listener listener = (Listener) BeanInvoker.getBean(clazz);
-                        ListenerVariable variable = new ListenerVariable(instance, node, flowParams.getVariable());
+                        ListenerVariable variable = new ListenerVariable(instance, node, flowParams.getVariable(), valueHolder.getParams());
                         listener.notify(variable);
+                        return variable;
                     }
-                    break;
+
                 }
             }
         }
+        return null;
     }
 
-//    public static void main(String[] args) {
+    /**
+     * 分别截取监听器path 和 监听器params
+     * String input = "listenerPath({\"name\": \"John Doe\", \"age\": 30})";
+     *
+     * @param listenerStr
+     * @param valueHolder
+     */
+    public static void getListenerPath(String listenerStr, ValueHolder valueHolder) {
+        String path;
+        String params;
+
+        Matcher matcher = FlowCons.listenerPattern.matcher(listenerStr);
+        if (matcher.find()) {
+
+            path = matcher.group(1).replaceAll("[\\(\\)]", "");
+            params = matcher.group(2).replaceAll("[\\(\\)]", "");
+            System.out.println(path);
+            System.out.println(params);
+            valueHolder.setPath(path);
+            valueHolder.setParams(params);
+        } else {
+            System.out.println("else");
+        }
+    }
+
+    public static void main(String[] args) {
+        String input = "listenerPath({\"name\": \"John Doe\", \"age\": 30})";
+        String input3 = "listenerPath";
+        ValueHolder valueHolder = new ValueHolder();
+        getListenerPath(input, valueHolder);
+        System.out.println(valueHolder);
+    }
+
+
+    //    public static void main(String[] args) {
 //        // Map序列化示例
 //        Map<String, Object> map = new HashMap<>();
 //        Map<String, Object> v = new HashMap<>();
@@ -751,4 +839,5 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
 //        Map<String, Object> map2 = ONode.deserialize("");
 //        System.out.println(map2);
 //    }
+
 }

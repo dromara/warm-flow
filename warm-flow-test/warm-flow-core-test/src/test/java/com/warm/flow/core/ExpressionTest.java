@@ -1,6 +1,7 @@
 package com.warm.flow.core;
 
 import com.warm.flow.core.constant.ExceptionCons;
+import com.warm.flow.core.constant.FlowCons;
 import com.warm.flow.core.exception.FlowException;
 import com.warm.flow.core.utils.ExpressionUtil;
 import com.warm.tools.utils.MapUtil;
@@ -9,8 +10,6 @@ import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static com.warm.flow.core.expression.ExpressionStrategyAbstract.splitAt;
 
 /**
  * JavaScript表达式
@@ -27,10 +26,11 @@ public class ExpressionTest {
         System.out.println(ExpressionUtil.eval(expression, variable));
 
     }
-    public static void main(String[] args) {
+    @Test
+    public void test2() {
         String expression = "@@gt@@|flag@@gt@@4".replace("@@gt@@|", "");
         //System.out.println(expression);//flag@@gt@@4
-        String[] split = expression.split(splitAt);
+        String[] split = expression.split(FlowCons.splitAt);
         for (String item : split) {
             System.out.println(item);
 //            flag

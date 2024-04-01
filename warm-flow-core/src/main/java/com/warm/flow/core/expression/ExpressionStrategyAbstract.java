@@ -1,6 +1,7 @@
 package com.warm.flow.core.expression;
 
 import com.warm.flow.core.constant.ExceptionCons;
+import com.warm.flow.core.constant.FlowCons;
 import com.warm.flow.core.exception.FlowException;
 import com.warm.tools.utils.MapUtil;
 import com.warm.tools.utils.ObjectUtil;
@@ -14,8 +15,6 @@ import java.util.Map;
  */
 public abstract class ExpressionStrategyAbstract implements ExpressionStrategy {
 
-    public static final String splitAt = "@@";
-
     /**
      *
      * @param expression @@eq@@|flag@@eq@@4
@@ -24,7 +23,7 @@ public abstract class ExpressionStrategyAbstract implements ExpressionStrategy {
      */
     @Override
     public boolean eval(String expression, Map<String, Object> variable) {
-        String[] split = expression.split(splitAt);
+        String[] split = expression.split(FlowCons.splitAt);
         preEval(split, variable);
         String variableValue = String.valueOf(variable.get(split[0].trim()));
         return afterEval(split, variableValue );

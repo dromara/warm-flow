@@ -1,5 +1,7 @@
 package com.warm.flow.core.expression;
 
+import com.warm.flow.core.constant.FlowCons;
+
 /**
  * 条件表达式不包含
  *
@@ -8,7 +10,7 @@ package com.warm.flow.core.expression;
 public class ExpressionStrategyNotLike extends ExpressionStrategyAbstract {
 
     public String getType() {
-        return splitAt + "notNike" +splitAt;
+        return FlowCons.splitAt + "notNike" +FlowCons.splitAt;
     }
 
     @Override
