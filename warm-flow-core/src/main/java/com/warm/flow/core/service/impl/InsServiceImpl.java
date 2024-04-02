@@ -59,23 +59,38 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         List<Node> nodes = FlowFactory.nodeService().getByFlowCode(flowParams.getFlowCode());
         AssertUtil.isTrue(CollUtil.isEmpty(nodes), ExceptionCons.NOT_PUBLISH_NODE);
         // 获取开始节点
-        Node startNode = getFirstBetween(nodes);
+        Node startNode = nodes.stream().filter(t -> NodeType.isStart(t.getNodeType()))
+                .findFirst().orElse(null);
+
+        AssertUtil.isNull(startNode, ExceptionCons.LOST_START_NODE);
+
+        // 获取开始节点的第一个中间节点
+        Node firstBetweenNode = getFirstBetween(nodes);
 
         AssertUtil.isBlank(businessId, ExceptionCons.NULL_BUSINESS_ID);
         // 设置流程实例对象
-        Instance instance = setStartInstance(startNode, businessId, flowParams);
+        Instance instance = setStartInstance(firstBetweenNode, businessId, flowParams);
+        //执行开始节点 开始监听器
+        executeListener(instance, startNode, Listener.LISTENER_START, flowParams);
 
-        //判断结点是否有权限监听器,有执行权限监听器startNode.setPermissionFlag,无走数据库的权限标识符
+        //判断开始结点是否有权限监听器,有执行权限监听器startNode.setPermissionFlag,无走数据库的权限标识符
         if (StringUtils.isNotEmpty(startNode.getListenerType()) && startNode.getListenerType().contains(Listener.LISTENER_PERMISSION)) {
             executeGetNodePermission(instance, startNode, flowParams);
         }
+        //判断下一结点是否有权限监听器,有执行权限监听器firstBetweenNode.setPermissionFlag,无走数据库的权限标识符
+        if (StringUtils.isNotEmpty(firstBetweenNode.getListenerType()) && firstBetweenNode.getListenerType().contains(Listener.LISTENER_PERMISSION)) {
+            executeGetNodePermission(instance, firstBetweenNode, flowParams);
+        }
 
         // 设置流程历史任务记录对象
-        Task task = addTask(startNode, instance, flowParams);
+        Task task = addTask(firstBetweenNode, instance, flowParams);
         save(instance);
         FlowFactory.taskService().save(task);
-        // 执行任务开始监听器
-        executeListener(instance, startNode, Listener.LISTENER_START, flowParams);
+
+//        执行结束监听器和下一节点的开始监听器
+        ArrayList<Node> nextNodes = new ArrayList<Node>();
+        nextNodes.add(firstBetweenNode);
+        executeListener(instance, startNode, nextNodes, flowParams);
         return instance;
     }
 
@@ -561,22 +576,22 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
     /**
      * 设置流程实例对象
      *
-     * @param startNode
+     * @param firstBetweenNode
      * @param businessId
      * @return
      */
-    private Instance setStartInstance(Node startNode, String businessId
+    private Instance setStartInstance(Node firstBetweenNode, String businessId
             , FlowParams flowParams) {
         Instance instance = FlowFactory.newIns();
         Date now = new Date();
         Long id = IdUtils.nextId();
         instance.setId(id);
-        instance.setDefinitionId(startNode.getDefinitionId());
+        instance.setDefinitionId(firstBetweenNode.getDefinitionId());
         instance.setBusinessId(businessId);
         instance.setTenantId(flowParams.getTenantId());
-        instance.setNodeType(startNode.getNodeType());
-        instance.setNodeCode(startNode.getNodeCode());
-        instance.setNodeName(startNode.getNodeName());
+        instance.setNodeType(firstBetweenNode.getNodeType());
+        instance.setNodeCode(firstBetweenNode.getNodeCode());
+        instance.setNodeName(firstBetweenNode.getNodeName());
         instance.setFlowStatus(FlowStatus.TOBESUBMIT.getKey());
         Map<String, Object> variable = flowParams.getVariable();
         if (MapUtil.isNotEmpty(variable)) {
@@ -648,20 +663,21 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
     }
 
     /**
-     * 执行权限监听器,并拿到对应值
+     * 执行当前节点的权限监听器,并赋值权限值集合
      *
      * @param instance
      * @param node
      * @param flowParams
+     * @return
      */
     private void executeGetNodePermission(Instance instance, Node node, FlowParams flowParams) {
         //执行权限监听器
         ListenerVariable variable = executeListener(instance, node, Listener.LISTENER_PERMISSION, flowParams);
         //拿到监听器内的权限标识 给NowNode.的PermissionFlag 赋值
 
-        if (variable != null && ObjectUtil.isNotNull(variable.getPermissionByNode(node.getNodeCode()))) {
-            NodePermission nodePermission = variable.getPermissionByNode(node.getNodeCode());
-            node.setPermissionFlag(nodePermission.getPermissionFlag());
+        if (variable != null && CollUtil.isNotEmpty(variable.getNodePermissionList())) {
+            NodePermission permissionByNode = variable.getPermissionByNode(node.getNodeCode());
+            node.setPermissionFlag(permissionByNode.getPermissionFlag());
         }
     }
 
@@ -745,6 +761,14 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         return false;
     }
 
+    /**
+     * 执行结束监听器和下一节点的开始监听器
+     *
+     * @param instance
+     * @param NowNode
+     * @param nextNodes
+     * @param flowParams
+     */
     private void executeListener(Instance instance, Node NowNode, List<Node> nextNodes, FlowParams flowParams) {
         // 执行任务开始监听器
         nextNodes.forEach(node -> {
@@ -803,8 +827,8 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
 
             path = matcher.group(1).replaceAll("[\\(\\)]", "");
             params = matcher.group(2).replaceAll("[\\(\\)]", "");
-            System.out.println(path);
-            System.out.println(params);
+            System.out.println("监听器path:" + path);
+            System.out.println("监听器params:" + params);
             valueHolder.setPath(path);
             valueHolder.setParams(params);
         } else {

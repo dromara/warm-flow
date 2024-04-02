@@ -95,6 +95,11 @@
                a.permission_flag,
                a.update_time,
                a.node_type,
+               a.coordinate,
+               a.skip_any_node,
+               a.listener_type,
+               a.listener_path,
+               a.create_time,
                b.version
         from flow_node a
                  INNER JOIN
