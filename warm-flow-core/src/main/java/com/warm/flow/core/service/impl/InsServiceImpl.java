@@ -66,7 +66,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         Instance instance = setStartInstance(startNode, businessId, flowParams);
 
         //判断结点是否有权限监听器,有执行权限监听器startNode.setPermissionFlag,无走数据库的权限标识符
-        if (startNode.getListenerType().contains(Listener.LISTENER_PERMISSION)) {
+        if (StringUtils.isNotEmpty(startNode.getListenerType()) && startNode.getListenerType().contains(Listener.LISTENER_PERMISSION)) {
             executeGetNodePermission(instance, startNode, flowParams);
         }
 
@@ -126,7 +126,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
                 .getByNodeCodes(Collections.singletonList(task.getNodeCode()), task.getDefinitionId()));
 
         //判断结点是否有权限监听器,有执行权限监听器NowNode.setPermissionFlag,无走数据库的权限标识符
-        if (NowNode.getListenerType().contains(Listener.LISTENER_PERMISSION)) {
+        if (StringUtils.isNotEmpty(NowNode.getListenerType()) && NowNode.getListenerType().contains(Listener.LISTENER_PERMISSION)) {
             executeGetNodePermission(instance, NowNode, flowParams);
         }
 
@@ -139,7 +139,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         //判断下一结点是否有权限监听器,有执行权限监听器nextNode.setPermissionFlag,无走数据库的权限标识符
         nextNodes.forEach(next -> {
             //判断结点是否有权限监听器,有执行权限监听器NowNode.setPermissionFlag,无走数据库的权限标识符
-            if (next.getListenerType().contains(Listener.LISTENER_PERMISSION)) {
+            if (StringUtils.isNotEmpty(next.getListenerType()) && next.getListenerType().contains(Listener.LISTENER_PERMISSION)) {
                 executeGetNodePermission(instance, next, flowParams);
             }
         });
