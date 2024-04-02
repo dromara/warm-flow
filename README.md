@@ -17,9 +17,12 @@
 
 >  **希望一键三连，你的⭐️ Star ⭐️是我持续开发的动力，项目也活的更长**  
 >   **可二开、商用，但请注明出处，保留代码注释中的作者名**  
->   **联系方式：qq群：778470567**，微信：warm-houhou
 >
 >   **[gitee地址](https://gitee.com/warm_4/warm-flow.git  )** |**[github地址](https://github.com/minliuhua/warm-flow.git)**
+
+## 联系方式
+
+![输入图片说明](https://gitee.com/warm_4/warm-flow-doc/raw/main/image.png)
 
 ## 使用文档 
 [使用文档](https://warm_4.gitee.io/warm-flow-doc/#/)
