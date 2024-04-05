@@ -15,8 +15,6 @@ public class ExceptionCons {
 
     public static final String GATEWAY_NOT_CONNECT = "网关节点不可直连!";
 
-    public static final String BETWEEN_REJECT_GATEWAY = "中间节点不可驳回到网关节点!";
-
     public static final String MUL_START_NODE = "开始节点不能超过1个!";
 
     public static final String MUL_SKIP_BETWEEN = "不可同时通过或者驳回到多个中间节点，必须先流转到网关节点!";
@@ -71,7 +69,6 @@ public class ExceptionCons {
     public static final String NOT_NODE_DATA = "流程节点数据缺失!";
 
     public static final String SKIP_ANY_NODE = "该节点未配置可跳转到任意节点!";
-    public static final String SKIP_ANY_TO_NODE = "该节点配置可跳转到任意节点!";
 
     public static final String NOT_PUBLISH_NODE = "不存在已发布的流程节点!";
 
@@ -79,11 +76,7 @@ public class ExceptionCons {
 
     public static final String MSG_OVER_LENGTH = "意见长度过长!";
 
-    public static final String CONDITION_ERR = "条件判断异常！";
-
     public static final String FLOW_FINISH = "流程已完成！";
-    public static final String NOT_SKIP_TYPE = "跳转类型不能为空!";
 
-    public static final String NOT_PERMISSION_LISTENER_VARIABLE = "权限监听器返回的权限标识不能为空";
-    public static final String NOT_PERMISSION_NODE_PERMISSION = "权限监听器返回的节点权限为空";
+    public static final String NOT_LISTENER = "监听器不存在";
 }

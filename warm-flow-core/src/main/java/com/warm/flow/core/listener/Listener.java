@@ -4,7 +4,10 @@ import java.io.Serializable;
 
 public interface Listener extends Serializable {
 
-    /** 开始监听器，当前任务开始前执行 */
+    /** 创建监听器，任务创建时执行 */
+    String LISTENER_CREATE = "create";
+
+    /** 开始监听器，任务开始办理时执行 */
     String LISTENER_START = "start";
 
     /** 结束监听器，当前任务完成后执行 */
