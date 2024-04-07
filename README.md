@@ -7,7 +7,7 @@
 3. 官方提供简单流程封装demo项目，很实用
 4. 支持多租户
 5. 支持代办任务和已办任务，通过权限标识过滤数据
-6. 支持互斥网关，并行网关（会签、或签）
+6. 支持互斥网关，并行网关（或签）
 7. 可跳转任意节点
 8. 支持条件表达式，可扩展
 9. 同时支持spring和solon
@@ -16,10 +16,13 @@
 12. 支持增加监听器，参数传递 
 
 >  **希望一键三连，你的⭐️ Star ⭐️是我持续开发的动力，项目也活的更长**  
->   **可二开、商用，但请注明出处，保留代码注释中的作者名**  
->   **联系方式：qq群：778470567**，微信：warm-houhou
+>   **可二开、商用，但请注明出处，保留代码注释中的作者名，[但是使用前请先登记](https://gitee.com/warm_4/warm-flow/issues/I7Y57D)**  
 >
 >   **[gitee地址](https://gitee.com/warm_4/warm-flow.git  )** |**[github地址](https://github.com/minliuhua/warm-flow.git)**
+
+## 联系方式
+
+![输入图片说明](https://gitee.com/warm_4/warm-flow-doc/raw/main/image.png)
 
 ## 使用文档 
 [使用文档](https://warm_4.gitee.io/warm-flow-doc/#/)
