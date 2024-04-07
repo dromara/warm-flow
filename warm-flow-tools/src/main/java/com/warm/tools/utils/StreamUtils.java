@@ -4,6 +4,7 @@ package com.warm.tools.utils;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -222,6 +223,22 @@ public class StreamUtils {
             return new HashSet<>();
         }
         return collection.stream().map(function).filter(Objects::nonNull).collect(Collectors.toSet());
+    }
+
+    /**
+     * 将collection转化为List集合，但是两者的泛型不同<br>
+     * <B>{@code Collection<E>  ------>  List<T> } </B>
+     *
+     * @param collection 需要转化的集合
+     * @param generator   collection中的泛型转化为list泛型的lambda表达式
+     * @param <E>        collection中的泛型
+     * @return 转化后的list
+     */
+    public static <E> E[] toArray(Collection<E> collection, IntFunction<E[]> generator) {
+        if (CollUtil.isEmpty(collection)) {
+            return generator.apply(0);
+        }
+        return collection.stream().toArray(generator);
     }
 
     /**
