@@ -20,12 +20,9 @@
 >
 >   **[gitee地址](https://gitee.com/warm_4/warm-flow.git  )** |**[github地址](https://github.com/minliuhua/warm-flow.git)**
 
-## 联系方式
 
-![输入图片说明](https://gitee.com/warm_4/warm-flow-doc/raw/main/image.png)
-
-## 使用文档 
-[使用文档](https://warm_4.gitee.io/warm-flow-doc/#/)
+## 使用文档与联系方式
+http://warm_4.gitee.io/warm-flow-doc
 
 
 **demo项目**：  
