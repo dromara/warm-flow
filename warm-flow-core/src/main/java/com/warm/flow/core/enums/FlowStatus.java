@@ -49,8 +49,17 @@ public enum FlowStatus {
         return null;
     }
 
+    public static FlowStatus getByKey(String key) {
+        for (FlowStatus item : FlowStatus.values()) {
+            if (item.getKey().equals(key)) {
+                return item;
+            }
+        }
+        return null;
+    }
+
     /**
-     * 判断是否开始节点
+     * 判断是否结束节点
      *
      * @param Key
      * @return

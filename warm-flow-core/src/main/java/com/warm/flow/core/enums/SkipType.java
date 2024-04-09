@@ -45,6 +45,15 @@ public enum SkipType {
         return null;
     }
 
+    public static SkipType getByKey(String key) {
+        for (SkipType item : SkipType.values()) {
+            if (item.getKey().equals(key)) {
+                return item;
+            }
+        }
+        return null;
+    }
+
     /**
      * 判断是否通过类型
      *

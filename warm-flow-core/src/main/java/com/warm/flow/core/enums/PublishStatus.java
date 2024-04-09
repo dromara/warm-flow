@@ -43,4 +43,13 @@ public enum PublishStatus {
         }
         return null;
     }
+
+    public static PublishStatus getByKey(String key) {
+        for (PublishStatus item : PublishStatus.values()) {
+            if (item.getKey().equals(key)) {
+                return item;
+            }
+        }
+        return null;
+    }
 }

@@ -65,6 +65,15 @@ public enum NodeType {
         return null;
     }
 
+    public static NodeType getByKey(String key) {
+        for (NodeType item : NodeType.values()) {
+            if (item.getKey().equals(key)) {
+                return item;
+            }
+        }
+        return null;
+    }
+
     /**
      * 判断是否开始节点
      *
