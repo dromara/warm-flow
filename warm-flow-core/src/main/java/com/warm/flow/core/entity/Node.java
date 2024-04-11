@@ -30,6 +30,10 @@ public interface Node extends RootEntity {
 
     public Node setPermissionFlag(String permissionFlag);
 
+    public String getDynamicPermissionFlag();
+
+    public Node setDynamicPermissionFlag(String permissionFlag);
+
     public String getCoordinate();
 
     public Node setCoordinate(String coordinate);

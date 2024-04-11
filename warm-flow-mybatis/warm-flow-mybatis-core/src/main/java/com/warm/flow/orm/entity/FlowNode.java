@@ -56,6 +56,11 @@ public class FlowNode implements Node {
     private String permissionFlag;
 
     /**
+     * 动态权限标识（权限类型:权限标识，可以多个，如role:1,role:2)
+     */
+    private String dynamicPermissionFlag;
+
+    /**
      * 流程节点坐标
      */
     private String coordinate;
@@ -170,6 +175,17 @@ public class FlowNode implements Node {
     @Override
     public FlowNode setPermissionFlag(String permissionFlag) {
         this.permissionFlag = permissionFlag;
+        return this;
+    }
+
+    @Override
+    public String getDynamicPermissionFlag() {
+        return dynamicPermissionFlag;
+    }
+
+    @Override
+    public FlowNode setDynamicPermissionFlag(String dynamicPermissionFlag) {
+        this.dynamicPermissionFlag = dynamicPermissionFlag;
         return this;
     }
 

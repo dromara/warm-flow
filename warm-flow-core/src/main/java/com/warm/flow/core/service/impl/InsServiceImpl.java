@@ -132,7 +132,8 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
                 .setNodeCode(startNode.getNodeCode())
                 .setNodeName(startNode.getNodeName())
                 .setNodeType(startNode.getNodeType())
-                .setPermissionFlag(startNode.getPermissionFlag())
+                .setPermissionFlag(StringUtils.isNotEmpty(startNode.getDynamicPermissionFlag())
+                        ? startNode.getDynamicPermissionFlag(): startNode.getPermissionFlag())
                 .setId(IdUtils.nextId());
         HisTask hisTask = setSkipInsHis(startTask, Collections.singletonList(firstBetweenNode), flowParams);
         FlowFactory.hisTaskService().save(hisTask);
@@ -631,7 +632,8 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         addTask.setNodeCode(node.getNodeCode());
         addTask.setNodeName(node.getNodeName());
         addTask.setNodeType(node.getNodeType());
-        addTask.setPermissionFlag(node.getPermissionFlag());
+        addTask.setPermissionFlag(StringUtils.isNotEmpty(node.getDynamicPermissionFlag())
+                ? node.getDynamicPermissionFlag(): node.getPermissionFlag());
         addTask.setApprover(flowParams.getCreateBy());
         addTask.setFlowStatus(setFlowStatus(node.getNodeType(), flowParams.getSkipType()));
         addTask.setCreateTime(date);
@@ -653,9 +655,15 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         }
         List<String> permissionFlags = flowParams.getPermissionFlag();
         AssertUtil.isTrue(ObjectUtil.isNull(NowNode), ExceptionCons.NOT_NODE_DATA);
-
-        AssertUtil.isTrue(StringUtils.isNotEmpty(NowNode.getPermissionFlag()) && (CollUtil.isEmpty(permissionFlags)
-                || !CollUtil.containsAny(permissionFlags, ArrayUtil.strToArrAy(NowNode.getPermissionFlag(),
+        // 如果有动态权限标识，则优先使用动态权限标识
+        String permissionFlag = "";
+        if (StringUtils.isNotEmpty(NowNode.getDynamicPermissionFlag())) {
+            permissionFlag = NowNode.getDynamicPermissionFlag();
+        } else if (StringUtils.isNotEmpty(task.getPermissionFlag())) {
+            permissionFlag = task.getPermissionFlag();
+        }
+        AssertUtil.isTrue(StringUtils.isNotEmpty(permissionFlag) && (CollUtil.isEmpty(permissionFlags)
+                || !CollUtil.containsAny(permissionFlags, ArrayUtil.strToArrAy(permissionFlag,
                 ","))), ExceptionCons.NULL_ROLE_NODE);
 
 
@@ -689,7 +697,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
                 if (variable != null && CollUtil.isNotEmpty(variable.getNodePermissionList())) {
                     NodePermission permissionByNode = variable.getPermissionByNode(node.getNodeCode());
                     if (ObjectUtil.isNotNull(permissionByNode) && StringUtils.isNotEmpty(permissionByNode.getPermissionFlag())) {
-                        node.setPermissionFlag(permissionByNode.getPermissionFlag());
+                        node.setDynamicPermissionFlag(permissionByNode.getPermissionFlag());
                     }
                 }
             }
