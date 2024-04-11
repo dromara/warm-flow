@@ -2,13 +2,30 @@ package com.warm.flow.orm.entity;
 
 import com.warm.flow.core.entity.Instance;
 
+import java.util.Date;
+
 /**
  * 流程实例对象 flow_instance
  *
  * @author warm
  * @date 2023-03-29
  */
-public class FlowInstance extends FlowEntity implements Instance {
+public class FlowInstance implements Instance {
+
+    /**
+     * 主键
+     */
+    private Long id;
+
+    /**
+     * 创建时间
+     */
+    private Date createTime;
+
+    /**
+     * 更新时间
+     */
+    private Date updateTime;
 
     /**
      * 对应flow_definition表的id
@@ -74,6 +91,39 @@ public class FlowInstance extends FlowEntity implements Instance {
      * 扩展字段
      */
     private String ext;
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public FlowInstance setId(Long id) {
+        this.id = id;
+        return this;
+    }
+
+    @Override
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    @Override
+    public FlowInstance setCreateTime(Date createTime) {
+        this.createTime = createTime;
+        return this;
+    }
+
+    @Override
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    @Override
+    public FlowInstance setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+        return this;
+    }
 
     @Override
     public Long getDefinitionId() {
@@ -221,7 +271,10 @@ public class FlowInstance extends FlowEntity implements Instance {
     @Override
     public String toString() {
         return "FlowInstance{" +
-                "definitionId=" + definitionId +
+                "id=" + id +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                ", definitionId=" + definitionId +
                 ", flowName='" + flowName + '\'' +
                 ", businessId='" + businessId + '\'' +
                 ", tenantId='" + tenantId + '\'' +

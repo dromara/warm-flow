@@ -1,5 +1,6 @@
 package com.warm.flow.core.entity;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -9,6 +10,18 @@ import java.util.List;
  * @date 2023-03-29
  */
 public interface Task extends RootEntity {
+
+    public Long getId();
+
+    public Task setId(Long id);
+
+    public Date getCreateTime();
+
+    public Task setCreateTime(Date createTime);
+
+    public Date getUpdateTime();
+
+    public Task setUpdateTime(Date updateTime);
 
     public Long getDefinitionId();
 

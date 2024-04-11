@@ -132,8 +132,8 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
                 .setNodeCode(startNode.getNodeCode())
                 .setNodeName(startNode.getNodeName())
                 .setNodeType(startNode.getNodeType())
-                .setPermissionFlag(startNode.getPermissionFlag());
-        startTask.setId(IdUtils.nextId());
+                .setPermissionFlag(startNode.getPermissionFlag())
+                .setId(IdUtils.nextId());
         HisTask hisTask = setSkipInsHis(startTask, Collections.singletonList(firstBetweenNode), flowParams);
         FlowFactory.hisTaskService().save(hisTask);
 

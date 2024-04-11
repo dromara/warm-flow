@@ -2,13 +2,30 @@ package com.warm.flow.orm.entity;
 
 import com.warm.flow.core.entity.Skip;
 
+import java.util.Date;
+
 /**
  * 节点跳转关联对象 flow_skip
  *
  * @author warm
  * @date 2023-03-29
  */
-public class FlowSkip extends FlowEntity implements Skip {
+public class FlowSkip implements Skip {
+
+    /**
+     * 主键
+     */
+    private Long id;
+
+    /**
+     * 创建时间
+     */
+    private Date createTime;
+
+    /**
+     * 更新时间
+     */
+    private Date updateTime;
 
     /**
      * 流程id
@@ -59,6 +76,39 @@ public class FlowSkip extends FlowEntity implements Skip {
      * 流程跳转坐标
      */
     private String coordinate;
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public FlowSkip setId(Long id) {
+        this.id = id;
+        return this;
+    }
+
+    @Override
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    @Override
+    public FlowSkip setCreateTime(Date createTime) {
+        this.createTime = createTime;
+        return this;
+    }
+
+    @Override
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    @Override
+    public FlowSkip setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+        return this;
+    }
 
     @Override
     public Long getDefinitionId() {
@@ -173,7 +223,10 @@ public class FlowSkip extends FlowEntity implements Skip {
     @Override
     public String toString() {
         return "FlowSkip{" +
-                "definitionId=" + definitionId +
+                "id=" + id +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                ", definitionId=" + definitionId +
                 ", nodeId=" + nodeId +
                 ", nowNodeCode='" + nowNodeCode + '\'' +
                 ", nowNodeType=" + nowNodeType +

@@ -2,6 +2,7 @@ package com.warm.flow.orm.entity;
 
 import com.warm.flow.core.entity.Task;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -10,7 +11,22 @@ import java.util.List;
  * @author warm
  * @date 2023-03-29
  */
-public class FlowTask extends FlowEntity implements Task {
+public class FlowTask implements Task {
+
+    /**
+     * 主键
+     */
+    private Long id;
+
+    /**
+     * 创建时间
+     */
+    private Date createTime;
+
+    /**
+     * 更新时间
+     */
+    private Date updateTime;
 
     /**
      * 对应flow_definition表的id
@@ -89,10 +105,44 @@ public class FlowTask extends FlowEntity implements Task {
     private String fromPath;
 
     @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public FlowTask setId(Long id) {
+        this.id = id;
+        return this;
+    }
+
+    @Override
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    @Override
+    public FlowTask setCreateTime(Date createTime) {
+        this.createTime = createTime;
+        return this;
+    }
+
+    @Override
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    @Override
+    public FlowTask setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+        return this;
+    }
+
+    @Override
     public Long getDefinitionId() {
         return definitionId;
     }
 
+    @Override
     public FlowTask setDefinitionId(Long definitionId) {
         this.definitionId = definitionId;
         return this;
@@ -255,7 +305,10 @@ public class FlowTask extends FlowEntity implements Task {
     @Override
     public String toString() {
         return "FlowTask{" +
-                "definitionId=" + definitionId +
+                "id=" + id +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                ", definitionId=" + definitionId +
                 ", instanceId=" + instanceId +
                 ", tenantId='" + tenantId + '\'' +
                 ", flowName='" + flowName + '\'' +

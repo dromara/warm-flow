@@ -4,6 +4,7 @@ import com.warm.flow.core.entity.Definition;
 import com.warm.flow.core.entity.Node;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -12,7 +13,22 @@ import java.util.List;
  * @author warm
  * @date 2023-03-29
  */
-public class FlowDefinition extends FlowEntity implements Definition {
+public class FlowDefinition implements Definition {
+
+    /**
+     * 主键
+     */
+    private Long id;
+
+    /**
+     * 创建时间
+     */
+    private Date createTime;
+
+    /**
+     * 更新时间
+     */
+    private Date updateTime;
 
     /**
      * 流程编码
@@ -52,12 +68,45 @@ public class FlowDefinition extends FlowEntity implements Definition {
     private List<Node> nodeList = new ArrayList<>();
 
     @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public FlowDefinition setId(Long id) {
+        this.id = id;
+        return this;
+    }
+
+    @Override
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    @Override
+    public FlowDefinition setCreateTime(Date createTime) {
+        this.createTime = createTime;
+        return this;
+    }
+
+    @Override
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    @Override
+    public FlowDefinition setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+        return this;
+    }
+
+    @Override
     public String getFlowCode() {
         return flowCode;
     }
 
     @Override
-    public Definition setFlowCode(String flowCode) {
+    public FlowDefinition setFlowCode(String flowCode) {
         this.flowCode = flowCode;
         return this;
     }
@@ -68,7 +117,7 @@ public class FlowDefinition extends FlowEntity implements Definition {
     }
 
     @Override
-    public Definition setFlowName(String flowName) {
+    public FlowDefinition setFlowName(String flowName) {
         this.flowName = flowName;
         return this;
     }
@@ -79,7 +128,7 @@ public class FlowDefinition extends FlowEntity implements Definition {
     }
 
     @Override
-    public Definition setVersion(String version) {
+    public FlowDefinition setVersion(String version) {
         this.version = version;
         return this;
     }
@@ -90,7 +139,7 @@ public class FlowDefinition extends FlowEntity implements Definition {
     }
 
     @Override
-    public Definition setIsPublish(Integer isPublish) {
+    public FlowDefinition setIsPublish(Integer isPublish) {
         this.isPublish = isPublish;
         return this;
     }
@@ -101,7 +150,7 @@ public class FlowDefinition extends FlowEntity implements Definition {
     }
 
     @Override
-    public Definition setFromCustom(String fromCustom) {
+    public FlowDefinition setFromCustom(String fromCustom) {
         this.fromCustom = fromCustom;
         return this;
     }
@@ -112,19 +161,8 @@ public class FlowDefinition extends FlowEntity implements Definition {
     }
 
     @Override
-    public Definition setFromPath(String fromPath) {
+    public FlowDefinition setFromPath(String fromPath) {
         this.fromPath = fromPath;
-        return this;
-    }
-
-    @Override
-    public List<Node> getNodeList() {
-        return nodeList;
-    }
-
-    @Override
-    public Definition setNodeList(List<Node> nodeList) {
-        this.nodeList = nodeList;
         return this;
     }
 
@@ -134,15 +172,29 @@ public class FlowDefinition extends FlowEntity implements Definition {
     }
 
     @Override
-    public Definition setXmlString(String xmsString) {
-        this.xmlString = xmsString;
+    public FlowDefinition setXmlString(String xmlString) {
+        this.xmlString = xmlString;
+        return this;
+    }
+
+    @Override
+    public List<Node> getNodeList() {
+        return nodeList;
+    }
+
+    @Override
+    public FlowDefinition setNodeList(List<Node> nodeList) {
+        this.nodeList = nodeList;
         return this;
     }
 
     @Override
     public String toString() {
         return "FlowDefinition{" +
-                "flowCode='" + flowCode + '\'' +
+                "id=" + id +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                ", flowCode='" + flowCode + '\'' +
                 ", flowName='" + flowName + '\'' +
                 ", version='" + version + '\'' +
                 ", isPublish=" + isPublish +
@@ -150,6 +202,6 @@ public class FlowDefinition extends FlowEntity implements Definition {
                 ", fromPath='" + fromPath + '\'' +
                 ", xmlString='" + xmlString + '\'' +
                 ", nodeList=" + nodeList +
-                "} " + super.toString();
+                '}';
     }
 }

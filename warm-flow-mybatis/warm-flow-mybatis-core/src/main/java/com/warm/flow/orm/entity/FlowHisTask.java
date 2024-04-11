@@ -2,6 +2,7 @@ package com.warm.flow.orm.entity;
 
 import com.warm.flow.core.entity.HisTask;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -10,7 +11,22 @@ import java.util.List;
  * @author warm
  * @date 2023-03-29
  */
-public class FlowHisTask extends FlowEntity implements HisTask {
+public class FlowHisTask implements HisTask {
+
+    /**
+     * 主键
+     */
+    private Long id;
+
+    /**
+     * 创建时间
+     */
+    private Date createTime;
+
+    /**
+     * 更新时间
+     */
+    private Date updateTime;
 
     /**
      * 对应flow_definition表的id
@@ -102,6 +118,39 @@ public class FlowHisTask extends FlowEntity implements HisTask {
      * 审批表单是否自定义（Y是 2否）
      */
     private String fromPath;
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public FlowHisTask setId(Long id) {
+        this.id = id;
+        return this;
+    }
+
+    @Override
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    @Override
+    public FlowHisTask setCreateTime(Date createTime) {
+        this.createTime = createTime;
+        return this;
+    }
+
+    @Override
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    @Override
+    public FlowHisTask setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+        return this;
+    }
 
     @Override
     public Long getDefinitionId() {
@@ -304,7 +353,10 @@ public class FlowHisTask extends FlowEntity implements HisTask {
     @Override
     public String toString() {
         return "FlowHisTask{" +
-                "definitionId=" + definitionId +
+                "id=" + id +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                ", definitionId=" + definitionId +
                 ", flowName='" + flowName + '\'' +
                 ", instanceId=" + instanceId +
                 ", tenantId='" + tenantId + '\'' +

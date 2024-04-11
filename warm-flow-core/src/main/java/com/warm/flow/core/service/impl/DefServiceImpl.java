@@ -147,8 +147,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao, Definitio
     public boolean unPublish(Long id) {
         List<Task> tasks = FlowFactory.taskService().list(FlowFactory.newTask().setDefinitionId(id));
         AssertUtil.isTrue(CollUtil.isNotEmpty(tasks), ExceptionCons.NOT_PUBLISH_TASK);
-        Definition definition = FlowFactory.newDef();
-        definition.setId(id);
+        Definition definition = FlowFactory.newDef().setId(id);
         definition.setIsPublish(PublishStatus.UNPUBLISHED.getKey());
         return updateById(definition);
     }

@@ -4,6 +4,7 @@ import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.Skip;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -12,7 +13,22 @@ import java.util.List;
  * @author warm
  * @date 2023-03-29
  */
-public class FlowNode extends FlowEntity implements Node {
+public class FlowNode implements Node {
+
+    /**
+     * 主键
+     */
+    private Long id;
+
+    /**
+     * 创建时间
+     */
+    private Date createTime;
+
+    /**
+     * 更新时间
+     */
+    private Date updateTime;
 
     /**
      * 节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）
@@ -68,6 +84,39 @@ public class FlowNode extends FlowEntity implements Node {
      * 跳转条件
      */
     List<Skip> skipList = new ArrayList<>();
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public FlowNode setId(Long id) {
+        this.id = id;
+        return this;
+    }
+
+    @Override
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    @Override
+    public FlowNode setCreateTime(Date createTime) {
+        this.createTime = createTime;
+        return this;
+    }
+
+    @Override
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    @Override
+    public FlowNode setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+        return this;
+    }
 
     @Override
     public Integer getNodeType() {
@@ -136,6 +185,17 @@ public class FlowNode extends FlowEntity implements Node {
     }
 
     @Override
+    public String getVersion() {
+        return version;
+    }
+
+    @Override
+    public FlowNode setVersion(String version) {
+        this.version = version;
+        return this;
+    }
+
+    @Override
     public String getSkipAnyNode() {
         return skipAnyNode;
     }
@@ -169,23 +229,12 @@ public class FlowNode extends FlowEntity implements Node {
     }
 
     @Override
-    public String getVersion() {
-        return version;
-    }
-
-    @Override
-    public FlowNode setVersion(String version) {
-        this.version = version;
-        return this;
-    }
-
-    @Override
     public List<Skip> getSkipList() {
         return skipList;
     }
 
     @Override
-    public Node setSkipList(List<Skip> skipList) {
+    public FlowNode setSkipList(List<Skip> skipList) {
         this.skipList = skipList;
         return this;
     }
@@ -193,7 +242,10 @@ public class FlowNode extends FlowEntity implements Node {
     @Override
     public String toString() {
         return "FlowNode{" +
-                "nodeType=" + nodeType +
+                "id=" + id +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                ", nodeType=" + nodeType +
                 ", definitionId=" + definitionId +
                 ", nodeCode='" + nodeCode + '\'' +
                 ", nodeName='" + nodeName + '\'' +
@@ -201,6 +253,8 @@ public class FlowNode extends FlowEntity implements Node {
                 ", coordinate='" + coordinate + '\'' +
                 ", version='" + version + '\'' +
                 ", skipAnyNode='" + skipAnyNode + '\'' +
+                ", listenerType='" + listenerType + '\'' +
+                ", listenerPath='" + listenerPath + '\'' +
                 ", skipList=" + skipList +
                 "} " + super.toString();
     }
