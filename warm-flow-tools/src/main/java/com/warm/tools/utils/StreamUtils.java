@@ -230,7 +230,7 @@ public class StreamUtils {
      * <B>{@code Collection<E>  ------>  List<T> } </B>
      *
      * @param collection 需要转化的集合
-     * @param generator   collection中的泛型转化为list泛型的lambda表达式
+     * @param generator  collection中的泛型转化为list泛型的lambda表达式
      * @param <E>        collection中的泛型
      * @return 转化后的list
      */

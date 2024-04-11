@@ -119,6 +119,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
 
     /**
      * 开启流程，保存流程信息
+     *
      * @param flowParams
      * @param startNode
      * @param firstBetweenNode
@@ -133,7 +134,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
                 .setNodeName(startNode.getNodeName())
                 .setNodeType(startNode.getNodeType())
                 .setPermissionFlag(StringUtils.isNotEmpty(startNode.getDynamicPermissionFlag())
-                        ? startNode.getDynamicPermissionFlag(): startNode.getPermissionFlag())
+                        ? startNode.getDynamicPermissionFlag() : startNode.getPermissionFlag())
                 .setId(IdUtils.nextId());
         HisTask hisTask = setSkipInsHis(startTask, Collections.singletonList(firstBetweenNode), flowParams);
         FlowFactory.hisTaskService().save(hisTask);
@@ -143,6 +144,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
 
         save(instance);
     }
+
     private Instance skip(FlowParams flowParams, Task task, Instance instance) {
         // TODO min 后续考虑并发问题，待办任务和实例表不同步，可给代办任务id加锁，抽取所接口，方便后续兼容分布式锁
         // 非第一个记得跳转类型必传
@@ -633,7 +635,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         addTask.setNodeName(node.getNodeName());
         addTask.setNodeType(node.getNodeType());
         addTask.setPermissionFlag(StringUtils.isNotEmpty(node.getDynamicPermissionFlag())
-                ? node.getDynamicPermissionFlag(): node.getPermissionFlag());
+                ? node.getDynamicPermissionFlag() : node.getPermissionFlag());
         addTask.setApprover(flowParams.getCreateBy());
         addTask.setFlowStatus(setFlowStatus(node.getNodeType(), flowParams.getSkipType()));
         addTask.setCreateTime(date);

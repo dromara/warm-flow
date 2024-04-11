@@ -2,13 +2,11 @@ package com.warm.flow.spring.boot.config;
 
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.dao.*;
-import com.warm.flow.core.entity.Task;
-import com.warm.flow.orm.entity.FlowTask;
-import com.warm.flow.orm.invoker.EntityInvoker;
 import com.warm.flow.core.invoker.BeanInvoker;
 import com.warm.flow.core.service.*;
 import com.warm.flow.core.service.impl.*;
 import com.warm.flow.orm.dao.*;
+import com.warm.flow.orm.invoker.EntityInvoker;
 import com.warm.flow.spring.boot.utils.SpringUtil;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.io.Resources;
@@ -19,7 +17,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -47,6 +44,7 @@ public class FlowAutoConfig {
     public FlowNodeDao nodeDao() {
         return new FlowNodeDaoImpl();
     }
+
     @Bean
     public NodeService nodeService(FlowNodeDao nodeDao) {
         return new NodeServiceImpl().setDao(nodeDao);

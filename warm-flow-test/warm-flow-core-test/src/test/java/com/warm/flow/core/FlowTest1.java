@@ -6,7 +6,7 @@ public class FlowTest1 {
 
     @Test
     public void configuration() throws InterruptedException {
-        int n =0 ;
+        int n = 0;
         while (true) {
             n = b(n);
             n = c(n);
@@ -19,6 +19,7 @@ public class FlowTest1 {
         ++n;
         return n;
     }
+
     public int c(int n) {
         System.out.println("c" + n);
         ++n;

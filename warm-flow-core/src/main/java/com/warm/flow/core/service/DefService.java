@@ -26,6 +26,7 @@ public interface DefService extends IWarmService<Definition> {
 
     /**
      * 根据xml字符串保持流程定义
+     *
      * @param def
      * @throws Exception
      */
@@ -73,6 +74,7 @@ public interface DefService extends IWarmService<Definition> {
 
     /**
      * 复制流程定义
+     *
      * @param id
      * @return
      */

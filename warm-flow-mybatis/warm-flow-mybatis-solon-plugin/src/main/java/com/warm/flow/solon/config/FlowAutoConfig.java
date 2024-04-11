@@ -2,11 +2,11 @@ package com.warm.flow.solon.config;
 
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.dao.*;
-import com.warm.flow.orm.invoker.EntityInvoker;
 import com.warm.flow.core.invoker.BeanInvoker;
 import com.warm.flow.core.service.*;
 import com.warm.flow.core.service.impl.*;
 import com.warm.flow.orm.dao.*;
+import com.warm.flow.orm.invoker.EntityInvoker;
 import org.noear.solon.Solon;
 import org.noear.solon.annotation.Bean;
 import org.noear.solon.annotation.Configuration;
@@ -34,6 +34,7 @@ public class FlowAutoConfig {
     public FlowNodeDao nodeDao() {
         return new FlowNodeDaoImpl();
     }
+
     @Bean
     public NodeService nodeService(FlowNodeDao nodeDao) {
         return new NodeServiceImpl().setDao(nodeDao);

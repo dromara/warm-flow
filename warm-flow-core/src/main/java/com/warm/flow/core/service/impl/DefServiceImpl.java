@@ -291,12 +291,12 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao, Definitio
                     flowChartChain.addFlowChart(new OvalChart(nodeX, nodeY, Color.GREEN, textChart));
                 } else if (NodeType.isBetween(node.getNodeType())) {
                     flowChartChain.addFlowChart(new BetweenChart(nodeX, nodeY, c, textChart));
-                }  else if (NodeType.isGateWaySerial(node.getNodeType())) {
+                } else if (NodeType.isGateWaySerial(node.getNodeType())) {
                     flowChartChain.addFlowChart(new SerialChart(nodeX, nodeY, c));
-                }  else if (NodeType.isGateWayParallel(node.getNodeType())) {
+                } else if (NodeType.isGateWayParallel(node.getNodeType())) {
                     flowChartChain.addFlowChart(new ParallelChart(nodeX, nodeY, c));
                 } else if (NodeType.isEnd(node.getNodeType())) {
-                    flowChartChain.addFlowChart(new OvalChart(nodeX, nodeY,  c, textChart));
+                    flowChartChain.addFlowChart(new OvalChart(nodeX, nodeY, c, textChart));
                 }
             }
         }
@@ -305,6 +305,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao, Definitio
 
     /**
      * 流程图渲染，过滤掉当前任务后的节点
+     *
      * @param instance
      * @param allSkips
      * @param nodeList
@@ -325,8 +326,8 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao, Definitio
     }
 
     /**
-     *
      * 获取代办任务节点后的所有节点
+     *
      * @param nextkips
      * @param allNextNode
      */
@@ -335,7 +336,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao, Definitio
             for (Skip nextSkip : nextkips) {
                 allNextNode.add(nextSkip.getNextNodeCode());
                 List<Skip> nextNextSkips = skipMap.get(nextSkip.getNextNodeCode());
-                getAllNextNode(nextNextSkips, allNextNode,skipMap);
+                getAllNextNode(nextNextSkips, allNextNode, skipMap);
             }
         }
     }
@@ -350,7 +351,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao, Definitio
      * @return
      */
     public void setColorMap(Map<String, Color> colorMap, Instance instance, List<Skip> allSkips
-        , List<Node> nodeList) {
+            , List<Node> nodeList) {
         final Color color = new Color(255, 145, 158);
         Map<String, List<Skip>> skipLastMap = StreamUtils.groupByKey(allSkips, Skip::getNextNodeCode);
         Map<String, List<Skip>> skipNextMap = StreamUtils.groupByKey(allSkips, Skip::getNowNodeCode);
@@ -393,7 +394,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao, Definitio
                             if (task != null) {
                                 c = color;
                                 colorPut(colorMap, "skip:" + oneLastSkip.getId().toString(), Color.GREEN);
-                            } else  {
+                            } else {
                                 if (curHisTask != null && ObjectUtil.isNotNull(twoLastHisTask) && twoLastHisTask.getCreateTime()
                                         .before(curHisTask.getCreateTime())) {
                                     c = Color.GREEN;
@@ -429,6 +430,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao, Definitio
 
     /**
      * 设置下个节点的颜色
+     *
      * @param colorMap
      * @param oneNextSkips
      * @param c
@@ -447,6 +449,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao, Definitio
 
     /**
      * 优先绿色
+     *
      * @param colorMap
      * @param key
      * @param c

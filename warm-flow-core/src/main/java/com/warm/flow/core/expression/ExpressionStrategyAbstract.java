@@ -16,7 +16,6 @@ import java.util.Map;
 public abstract class ExpressionStrategyAbstract implements ExpressionStrategy {
 
     /**
-     *
      * @param expression @@eq@@|flag@@eq@@4
      * @param variable
      * @return
@@ -26,7 +25,7 @@ public abstract class ExpressionStrategyAbstract implements ExpressionStrategy {
         String[] split = expression.split(FlowCons.splitAt);
         preEval(split, variable);
         String variableValue = String.valueOf(variable.get(split[0].trim()));
-        return afterEval(split, variableValue );
+        return afterEval(split, variableValue);
     }
 
     public void preEval(String[] split, Map<String, Object> variable) {

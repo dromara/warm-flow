@@ -31,6 +31,7 @@ public interface Instance extends RootEntity {
     public String getNodeCode();
 
     public Instance setNodeCode(String nodeCode);
+
     public String getNodeName();
 
     public Instance setNodeName(String nodeName);
@@ -50,6 +51,7 @@ public interface Instance extends RootEntity {
     public String getFromCustom();
 
     public Instance setFromCustom(String fromCustom);
+
     public String getFromPath();
 
     public Instance setFromPath(String fromPath);

@@ -50,7 +50,8 @@
 
     <sql id="select_parameter">
         <where>
-            <if test="entity.businessId != null  and entity.businessId != ''">and t.business_id = #{entity.businessId}</if>
+            <if test="entity.businessId != null  and entity.businessId != ''">and t.business_id = #{entity.businessId}
+            </if>
             <if test="entity.definitionId != null ">and t.definition_id = #{entity.definitionId}</if>
             <if test="entity.tenantId != null ">and t.tenant_id = #{tenantId}</if>
             <if test="entity.createBy != null  and entity.createBy != ''">and t.create_by = #{entity.createBy}</if>

@@ -41,12 +41,13 @@ public interface NodeService extends IWarmService<Node> {
     /**
      * 根据流程定义和当前节点code获取下一节点,如是网关跳过取下一节点,并行网关返回多个节点
      * skipAnyNode为Y可跳转任意节点时,返回下一节点
+     *
      * @param definitionId 流程定义id
-     * @param nowNodeCode 当前节点code
+     * @param nowNodeCode  当前节点code
      * @param nextNodeCode 下一节点code,skipAnyNode为Y可跳转任意节点时,需传,返回下一节点
-     * @param skipType 跳转类型（PASS审批通过 REJECT驳回）不传默认取审批通过的下一节点
-     * @param variable 流程变量 下一节点是网关需要判断跳转条件,并行网关返回多个节点
+     * @param skipType     跳转类型（PASS审批通过 REJECT驳回）不传默认取审批通过的下一节点
+     * @param variable     流程变量 下一节点是网关需要判断跳转条件,并行网关返回多个节点
      * @return
      */
-    List<Node> getNextNodeByNodeCode(Long definitionId, String nowNodeCode, String skipType, Map<String, Object> variable,String nextNodeCode);
+    List<Node> getNextNodeByNodeCode(Long definitionId, String nowNodeCode, String skipType, Map<String, Object> variable, String nextNodeCode);
 }

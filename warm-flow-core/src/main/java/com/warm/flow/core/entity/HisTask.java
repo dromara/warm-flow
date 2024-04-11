@@ -13,6 +13,7 @@ public interface HisTask extends RootEntity {
     public Long getDefinitionId();
 
     public HisTask setDefinitionId(Long definitionId);
+
     public String getFlowName();
 
     public HisTask setFlowName(String flowName);
@@ -78,5 +79,6 @@ public interface HisTask extends RootEntity {
     public HisTask setFromCustom(String fromCustom);
 
     public String getFromPath();
+
     public HisTask setFromPath(String fromPath);
 }

@@ -9,10 +9,12 @@ import java.math.BigDecimal;
  */
 public class MathUtil {
 
-    private MathUtil(){}
+    private MathUtil() {
+    }
 
     /**
      * 判断是否为数字
+     *
      * @param str 字符串
      */
     public static boolean isNumeric(String str) {
@@ -29,6 +31,7 @@ public class MathUtil {
 
     /**
      * 判断数字大小
+     *
      * @param n1 字符串
      * @param n2 字符串
      */
@@ -38,7 +41,4 @@ public class MathUtil {
         return a.compareTo(b);
     }
 
-    public static void main(String[] args) {
-        System.out.println(determineSize("", "3"));
-    }
 }

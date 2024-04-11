@@ -48,7 +48,7 @@ public class FlowConfigUtil {
         AssertUtil.isNull(is, "文件不存在！");
         // 获取流程节点
         Element definitionElement = new SAXReader().read(is).getRootElement();
-        AssertUtil.isTrue(ObjectUtil.isNull(definitionElement),"流程为空！");
+        AssertUtil.isTrue(ObjectUtil.isNull(definitionElement), "流程为空！");
 
         // 读取流程定义
         Definition definition = FlowFactory.newDef();

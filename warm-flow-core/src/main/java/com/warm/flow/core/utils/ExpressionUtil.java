@@ -28,12 +28,12 @@ public class ExpressionUtil {
         setExpression(new ExpressionStrategyNe());
         setExpression(new ExpressionStrategyNotLike());
     }
+
     public static void setExpression(ExpressionStrategy expressionStrategy) {
         map.put(expressionStrategy.getType(), expressionStrategy);
     }
 
     /**
-     *
      * @param expression 条件表达式，比如“@@eq@@|flag@@eq@@4” ，或者自定义策略
      * @param variable
      * @return

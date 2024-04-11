@@ -11,7 +11,7 @@ import com.warm.tools.utils.MathUtil;
 public class ExpressionStrategyEq extends ExpressionStrategyAbstract {
 
     public String getType() {
-        return FlowCons.splitAt +"eq" + FlowCons.splitAt;
+        return FlowCons.splitAt + "eq" + FlowCons.splitAt;
     }
 
     @Override

@@ -58,6 +58,7 @@ public interface Task extends RootEntity {
     public String getApprover();
 
     public Task setApprover(String approver);
+
     public String getAssignee();
 
     public Task setAssignee(String assignee);

@@ -55,18 +55,18 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao, Node> implemen
 
     @Override
     public List<Node> getNextNodeByNodeCode(Long definitionId, String nowNodeCode, String skipType
-            , Map<String, Object> variable,String nextNodeCode) {
-        AssertUtil.isNull(definitionId ,ExceptionCons.NOT_DEFINITION_ID);
+            , Map<String, Object> variable, String nextNodeCode) {
+        AssertUtil.isNull(definitionId, ExceptionCons.NOT_DEFINITION_ID);
         AssertUtil.isBlank(nowNodeCode, ExceptionCons.LOST_NODE_CODE);
         //不传,默认取通过的条件
-        if (StringUtils.isEmpty(skipType)){
-            skipType= SkipType.PASS.getKey();
+        if (StringUtils.isEmpty(skipType)) {
+            skipType = SkipType.PASS.getKey();
         }
         //查询当前节点
         Node nowNode = FlowFactory.nodeService().getByNodeCode(nowNodeCode, definitionId);
-        AssertUtil.isNull(nowNode ,ExceptionCons.LOST_DEST_NODE);
+        AssertUtil.isNull(nowNode, ExceptionCons.LOST_DEST_NODE);
         //是否可以跳转任意节点,如是,返回nextNodeCode的节点
-        if (FlowCons.SKIP_ANY_Y.equals(nowNode.getSkipAnyNode())){
+        if (FlowCons.SKIP_ANY_Y.equals(nowNode.getSkipAnyNode())) {
             AssertUtil.isBlank(nextNodeCode, ExceptionCons.LOST_NEXT_NODE_CODE);
 
             Node nextNode = FlowFactory.nodeService().getByNodeCode(nextNodeCode, definitionId);
@@ -77,13 +77,14 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao, Node> implemen
         //获取跳转关系
         List<Skip> skips = FlowFactory.skipService()
                 .queryByDefAndCode(definitionId, nowNodeCode);
-        AssertUtil.isNull(skips ,ExceptionCons.NULL_CONDITIONVALUE_NODE);
+        AssertUtil.isNull(skips, ExceptionCons.NULL_CONDITIONVALUE_NODE);
 
-        return  getNextSkips(nowNode,skips,skipType,variable);
+        return getNextSkips(nowNode, skips, skipType, variable);
     }
 
     /**
      * 获取下一节点的跳转关系
+     *
      * @param node
      * @param skips
      */
@@ -105,6 +106,8 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao, Node> implemen
         // 如果是网关节点，则重新获取后续节点
         FlowParams flowParams = FlowParams.build().variable(variable);
         return checkGateWay(flowParams, nextNode);
-    };
+    }
+
+    ;
 
 }

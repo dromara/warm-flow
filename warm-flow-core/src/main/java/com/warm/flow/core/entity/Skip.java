@@ -9,6 +9,7 @@ package com.warm.flow.core.entity;
 public interface Skip extends RootEntity {
 
     public Long getDefinitionId();
+
     public Skip setDefinitionId(Long definitionId);
 
     public Long getNodeId();
@@ -40,6 +41,7 @@ public interface Skip extends RootEntity {
     public Skip setSkipType(String skipType);
 
     public String getSkipCondition();
+
     public Skip setSkipCondition(String skipCondition);
 
     public String getCoordinate();

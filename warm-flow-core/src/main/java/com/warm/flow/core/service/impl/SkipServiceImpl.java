@@ -4,7 +4,6 @@ import com.warm.flow.core.dao.FlowSkipDao;
 import com.warm.flow.core.entity.Skip;
 import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.SkipService;
-import com.warm.flow.core.utils.SqlHelper;
 
 import java.util.List;
 

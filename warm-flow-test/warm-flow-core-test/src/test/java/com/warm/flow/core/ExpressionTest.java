@@ -26,6 +26,7 @@ public class ExpressionTest {
         System.out.println(ExpressionUtil.eval(expression, variable));
 
     }
+
     @Test
     public void test2() {
         String expression = "@@gt@@|flag@@gt@@4".replace("@@gt@@|", "");
@@ -38,7 +39,7 @@ public class ExpressionTest {
 //            4
         }
         Map<String, Object> variable = new HashMap<>();
-        variable.put("flag","2");
+        variable.put("flag", "2");
         // 打印 variable 的类型
         Object o = variable.get(split[0].trim());
 
