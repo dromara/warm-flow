@@ -19,14 +19,6 @@ public enum SkipType {
         this.value = value;
     }
 
-    public String getKey() {
-        return key;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
     public static String getKeyByValue(String value) {
         for (SkipType item : SkipType.values()) {
             if (item.getValue().equals(value)) {
@@ -72,5 +64,13 @@ public enum SkipType {
      */
     public static Boolean isReject(String Key) {
         return StringUtils.isNotEmpty(Key) && (SkipType.REJECT.getKey().equals(Key));
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public String getValue() {
+        return value;
     }
 }

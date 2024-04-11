@@ -18,14 +18,6 @@ public enum PublishStatus {
         this.value = value;
     }
 
-    public Integer getKey() {
-        return key;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
     public static Integer getKeyByValue(String value) {
         for (PublishStatus item : PublishStatus.values()) {
             if (item.getValue().equals(value)) {
@@ -51,5 +43,13 @@ public enum PublishStatus {
             }
         }
         return null;
+    }
+
+    public Integer getKey() {
+        return key;
+    }
+
+    public String getValue() {
+        return value;
     }
 }

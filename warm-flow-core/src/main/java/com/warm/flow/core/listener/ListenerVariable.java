@@ -89,16 +89,16 @@ public class ListenerVariable {
         return nodePermissionList;
     }
 
+    public void setNodePermissionList(List<NodePermission> nodePermissionList) {
+        this.nodePermissionList = nodePermissionList;
+    }
+
     public NodePermission getPermissionByNode(String nodeCode) {
         NodePermission nodePermission = nodePermissionList.stream().filter(t -> t.getNodeCode().equals(nodeCode))
                 .findFirst()
                 .orElse(null);
 
         return nodePermission;
-    }
-
-    public void setNodePermissionList(List<NodePermission> nodePermissionList) {
-        this.nodePermissionList = nodePermissionList;
     }
 
     @Override

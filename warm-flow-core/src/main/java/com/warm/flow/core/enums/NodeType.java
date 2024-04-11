@@ -39,14 +39,6 @@ public enum NodeType {
         this.value = value;
     }
 
-    public Integer getKey() {
-        return key;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
     public static Integer getKeyByValue(String value) {
         for (NodeType item : NodeType.values()) {
             if (item.getValue().equals(value)) {
@@ -133,5 +125,13 @@ public enum NodeType {
      */
     public static Boolean isGateWayParallel(Integer Key) {
         return ObjectUtil.isNotNull(Key) && NodeType.PARALLEL.getKey().equals(Key);
+    }
+
+    public Integer getKey() {
+        return key;
+    }
+
+    public String getValue() {
+        return value;
     }
 }

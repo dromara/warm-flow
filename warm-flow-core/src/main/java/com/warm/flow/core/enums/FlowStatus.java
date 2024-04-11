@@ -23,14 +23,6 @@ public enum FlowStatus {
         this.value = value;
     }
 
-    public Integer getKey() {
-        return key;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
     public static Integer getKeyByValue(String value) {
         for (FlowStatus item : FlowStatus.values()) {
             if (item.getValue().equals(value)) {
@@ -66,5 +58,13 @@ public enum FlowStatus {
      */
     public static Boolean isFinished(Integer Key) {
         return ObjectUtil.isNotNull(Key) && (FlowStatus.FINISHED.getKey().equals(Key));
+    }
+
+    public Integer getKey() {
+        return key;
+    }
+
+    public String getValue() {
+        return value;
     }
 }

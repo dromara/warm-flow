@@ -42,13 +42,14 @@ public final class FlowException extends RuntimeException {
         return detailMessage;
     }
 
+    public FlowException setDetailMessage(String detailMessage) {
+        this.detailMessage = detailMessage;
+        return this;
+    }
+
     @Override
     public String getMessage() {
         return message;
-    }
-
-    public Integer getCode() {
-        return code;
     }
 
     public FlowException setMessage(String message) {
@@ -56,8 +57,7 @@ public final class FlowException extends RuntimeException {
         return this;
     }
 
-    public FlowException setDetailMessage(String detailMessage) {
-        this.detailMessage = detailMessage;
-        return this;
+    public Integer getCode() {
+        return code;
     }
 }
