@@ -1,5 +1,7 @@
 package com.warm.flow.core.entity;
 
+import java.util.Date;
+
 /**
  * 节点跳转关联对象 flow_skip
  *
@@ -7,6 +9,18 @@ package com.warm.flow.core.entity;
  * @date 2023-03-29
  */
 public interface Skip extends RootEntity {
+
+    public Long getId();
+
+    public Skip setId(Long id);
+
+    public Date getCreateTime();
+
+    public Skip setCreateTime(Date createTime);
+
+    public Date getUpdateTime();
+
+    public Skip setUpdateTime(Date updateTime);
 
     public Long getDefinitionId();
 

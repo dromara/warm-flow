@@ -119,6 +119,13 @@ public interface IWarmService<T> {
     void updateBatch(List<T> list);
 
     /**
+     * id设置正序排列
+     *
+     * @return 集合
+     */
+    WarmQuery<T> orderById();
+
+    /**
      * 创建时间设置正序排列
      *
      * @return 集合

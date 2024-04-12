@@ -127,6 +127,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
      */
     private void saveFlowInfo(FlowParams flowParams, Node startNode, Node firstBetweenNode, Instance instance) {
         Task startTask = FlowFactory.newTask()
+                .setId(IdUtils.nextId())
                 .setInstanceId(instance.getId())
                 .setTenantId(flowParams.getTenantId())
                 .setDefinitionId(instance.getDefinitionId())
@@ -135,7 +136,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
                 .setNodeType(startNode.getNodeType())
                 .setPermissionFlag(StringUtils.isNotEmpty(startNode.getDynamicPermissionFlag())
                         ? startNode.getDynamicPermissionFlag() : startNode.getPermissionFlag())
-                .setId(IdUtils.nextId());
+                .setFlowStatus(FlowStatus.PASS.getKey());
         HisTask hisTask = setSkipInsHis(startTask, Collections.singletonList(firstBetweenNode), flowParams);
         FlowFactory.hisTaskService().save(hisTask);
 
@@ -171,14 +172,17 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         //判断下一结点是否有权限监听器,有执行权限监听器nextNode.setPermissionFlag,无走数据库的权限标识符
         executeGetNodePermission(instance, flowParams, StreamUtils.toArray(nextNodes, Node[]::new));
 
-        // 构建代办任务
+        // 构建增代办任务和设置结束任务历史记录
         List<Task> addTasks = buildAddTasks(flowParams, task, instance, nextNodes, nextNode);
 
         // 设置流程历史任务信息
         insHisList.add(setSkipInsHis(task, nextNodes, flowParams));
 
+        // 设置结束节点相关信息
+        setEndInfo(instance, addTasks, flowParams, insHisList, task);
+
         // 设置流程实例信息
-        setSkipInstance(instance, nextNodes, addTasks, flowParams);
+        setSkipInstance(instance, addTasks, flowParams);
 
         // 一票否决（谨慎使用），如果驳回，驳回指向节点后还存在其他正在执行的代办任务，转历史任务，状态都为失效,重走流程。
         oneVoteVeto(task, flowParams.getSkipType(), nextNode.getNodeCode());
@@ -377,12 +381,9 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         if (buildFlag) {
             List<Task> addTasks = new ArrayList<>();
             for (Node node : nextNodes) {
-                // 结束节点不生成代办任务
-                if (!NodeType.isEnd(node.getNodeType())) {
-                    Task flowTask = addTask(node, instance, flowParams);
-                    flowTask.setTenantId(task.getTenantId());
-                    addTasks.add(flowTask);
-                }
+                Task flowTask = addTask(node, instance, flowParams);
+                flowTask.setTenantId(task.getTenantId());
+                addTasks.add(flowTask);
             }
             return addTasks;
         }
@@ -396,16 +397,8 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
      * @param nextNodes
      */
     private void handUndoneTask(Instance instance, List<Node> nextNodes) {
-        Long endInstanceId = null;
-        for (Node nextNode : nextNodes) {
-            // 结束节点不生成代办任务
-            if (NodeType.isEnd(nextNode.getNodeType())) {
-                endInstanceId = instance.getId();
-                break;
-            }
-        }
-        if (ObjectUtil.isNotNull(endInstanceId)) {
-            List<Task> taskList = FlowFactory.taskService().getByInsId(endInstanceId);
+        if (FlowStatus.isFinished(instance.getFlowStatus())) {
+            List<Task> taskList = FlowFactory.taskService().getByInsId(instance.getId());
             if (CollUtil.isNotEmpty(taskList)) {
                 convertHisTask(taskList, FlowStatus.FINISHED.getKey());
             }
@@ -455,8 +448,36 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         updateById(instance);
     }
 
-    private void setSkipInstance(Instance instance, List<Node> nextNodes, List<Task> addTasks
-            , FlowParams flowParams) {
+    // 设置结束节点相关信息
+    private void setEndInfo(Instance instance, List<Task> addTasks, FlowParams flowParams
+            , List<HisTask> insHisList, Task task) {
+        if (CollUtil.isNotEmpty(addTasks)) {
+            addTasks.removeIf(addTask -> {
+                if (NodeType.isEnd(addTask.getNodeType())) {
+                    HisTask insHis = FlowFactory.newHisTask()
+                            .setInstanceId(addTask.getInstanceId())
+                            .setNodeCode(addTask.getNodeCode())
+                            .setNodeName(addTask.getNodeName())
+                            .setNodeType(addTask.getNodeType())
+                            .setPermissionFlag(task.getPermissionFlag())
+                            .setTenantId(addTask.getTenantId())
+                            .setDefinitionId(addTask.getDefinitionId())
+                            .setFlowStatus(FlowStatus.FINISHED.getKey())
+                            .setCreateTime(new Date())
+                            .setApprover(flowParams.getCreateBy());
+                    insHisList.add(insHis);
+                    instance.setNodeType(addTask.getNodeType());
+                    instance.setNodeCode(addTask.getNodeCode());
+                    instance.setNodeName(addTask.getNodeName());
+                    instance.setFlowStatus(FlowStatus.FINISHED.getKey());
+                    return true;
+                }
+               return false;
+            });
+        }
+    }
+
+    private void setSkipInstance(Instance instance, List<Task> addTasks, FlowParams flowParams) {
         instance.setUpdateTime(new Date());
         Map<String, Object> variable = flowParams.getVariable();
         if (MapUtil.isNotEmpty(variable)) {
@@ -467,20 +488,13 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
             }
             instance.setVariable(ONode.serialize(variable));
         }
-        for (Node node : nextNodes) {
-            // 结束节点不生成代办任务
-            if (NodeType.isEnd(node.getNodeType())) {
-                instance.setFlowStatus(FlowStatus.FINISHED.getKey());
-                return;
-            }
-        }
-        // 如果是汇聚并行网关，不是最后一个执行的分支，addTasks会为空
-        if (CollUtil.isNotEmpty(addTasks)) {
-            Task task = getNextTask(addTasks);
-            instance.setNodeType(task.getNodeType());
-            instance.setNodeCode(task.getNodeCode());
-            instance.setNodeName(task.getNodeName());
-            instance.setFlowStatus(setFlowStatus(task.getNodeType(), flowParams.getSkipType()));
+        // 流程未完成，存在后续任务，才重新设置流程信息
+        if (!FlowStatus.isFinished(instance.getFlowStatus()) && CollUtil.isNotEmpty(addTasks)) {
+            Task nextTask = getNextTask(addTasks);
+            instance.setNodeType(nextTask.getNodeType());
+            instance.setNodeCode(nextTask.getNodeCode());
+            instance.setNodeName(nextTask.getNodeName());
+            instance.setFlowStatus(setFlowStatus(nextTask.getNodeType(), flowParams.getSkipType()));
         }
     }
 
@@ -503,32 +517,13 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         insHis.setDefinitionId(task.getDefinitionId());
         insHis.setTargetNodeCode(StreamUtils.join(nextNodes, Node::getNodeCode));
         insHis.setTargetNodeName(StreamUtils.join(nextNodes, Node::getNodeName));
-        insHis.setFlowStatus(setHisFlowStatus(getNextNode(nextNodes).getNodeType(), flowParams.getSkipType()));
+        insHis.setFlowStatus(SkipType.isReject(flowParams.getSkipType())
+                ? FlowStatus.REJECT.getKey() : FlowStatus.PASS.getKey());
         insHis.setMessage(flowParams.getMessage());
         insHis.setCreateTime(new Date());
         insHis.setApprover(flowParams.getCreateBy());
 
         return insHis;
-    }
-
-    /**
-     * 下个节点是结束节点，取结束节点类型，否则随便取id最大的
-     *
-     * @param nextNodes
-     * @return
-     */
-    private Node getNextNode(List<Node> nextNodes) {
-        // 通过lambda方式获取nextNodes中id最大的
-        if (nextNodes.size() == 1) {
-            return nextNodes.get(0);
-        }
-        for (Node nextNode : nextNodes) {
-            if (NodeType.isEnd(nextNode.getNodeType())) {
-                return nextNode;
-            }
-        }
-        nextNodes.sort(Comparator.comparing(Node::getId));
-        return nextNodes.get(nextNodes.size() - 1);
     }
 
     /**
@@ -546,8 +541,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
                 return task;
             }
         }
-        tasks.sort(Comparator.comparing(Task::getId));
-        return tasks.get(tasks.size() - 1);
+       return tasks.stream().max(Comparator.comparingLong(Task::getId)).orElse(null);
     }
 
     /**
@@ -566,22 +560,6 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
             return FlowStatus.REJECT.getKey();
         } else {
             return FlowStatus.APPROVAL.getKey();
-        }
-    }
-
-    /**
-     * 设置流程实例和代码任务流程状态
-     *
-     * @param skipType 流程条件
-     */
-    private Integer setHisFlowStatus(Integer nodeType, String skipType) {
-        // 根据审批动作确定流程状态
-        if (NodeType.isEnd(nodeType)) {
-            return FlowStatus.FINISHED.getKey();
-        } else if (SkipType.isReject(skipType)) {
-            return FlowStatus.REJECT.getKey();
-        } else {
-            return FlowStatus.PASS.getKey();
         }
     }
 
@@ -862,13 +840,13 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         }
     }
 
-    public static void main(String[] args) {
-        String input = "listenerPath({\"name\": \"John Doe\", \"age\": 30})";
-        String input3 = "listenerPath";
-        ValueHolder valueHolder = new ValueHolder();
-        getListenerPath(input, valueHolder);
-        System.out.println(valueHolder);
-    }
+//    public static void main(String[] args) {
+//        String input = "listenerPath({\"name\": \"John Doe\", \"age\": 30})";
+//        String input3 = "listenerPath";
+//        ValueHolder valueHolder = new ValueHolder();
+//        getListenerPath(input, valueHolder);
+//        System.out.println(valueHolder);
+//    }
 
 
     //    public static void main(String[] args) {

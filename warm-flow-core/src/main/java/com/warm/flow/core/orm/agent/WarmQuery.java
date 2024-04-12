@@ -68,6 +68,16 @@ public class WarmQuery<T> {
     }
 
     /**
+     * id设置正序排列
+     *
+     * @return 集合
+     */
+    public WarmQuery<T> orderById() {
+        this.orderBy = "id";
+        return this;
+    }
+
+    /**
      * 创建时间设置正序排列
      *
      * @return 集合

@@ -110,6 +110,11 @@ public abstract class WarmServiceImpl<M extends WarmDao<T>, T> implements IWarmS
     }
 
     @Override
+    public WarmQuery<T> orderById() {
+        return new WarmQuery<T>(this).orderById();
+    }
+
+    @Override
     public WarmQuery<T> orderByCreateTime() {
         return new WarmQuery<T>(this).orderByCreateTime();
     }

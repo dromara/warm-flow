@@ -46,6 +46,7 @@ public interface HisTaskService extends IWarmService<HisTask> {
      * @param page
      * @return
      */
+    @Deprecated
     Page<HisTask> donePage(HisTask hisTask, Page<HisTask> page);
 
 }
