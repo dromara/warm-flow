@@ -2,7 +2,7 @@ package com.warm.flow.orm.dao;
 
 import com.warm.flow.core.dao.FlowTaskDao;
 import com.warm.flow.core.entity.Task;
-import com.warm.flow.core.invoker.BeanInvoker;
+import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.orm.mapper.FlowTaskMapper;
 import com.warm.tools.utils.page.Page;
 
@@ -18,7 +18,7 @@ public class FlowTaskDaoImpl extends WarmDaoImpl<Task> implements FlowTaskDao {
 
     @Override
     public FlowTaskMapper getMapper() {
-        return BeanInvoker.getBean(FlowTaskMapper.class);
+        return FrameInvoker.getBean(FlowTaskMapper.class);
     }
 
     @Override

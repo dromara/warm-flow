@@ -2,7 +2,7 @@ package com.warm.flow.spring.boot.config;
 
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.dao.*;
-import com.warm.flow.core.invoker.BeanInvoker;
+import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.core.service.*;
 import com.warm.flow.core.service.impl.*;
 import com.warm.flow.orm.dao.*;
@@ -15,7 +15,9 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.env.Environment;
 
+import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.List;
 
@@ -90,6 +92,9 @@ public class FlowAutoConfig {
         return new HisTaskServiceImpl().setDao(hisTaskDao);
     }
 
+    @Resource
+    private Environment environment;
+
     @Bean
     public FlowFactory initFlowServer(DefService definitionService, HisTaskService hisTaskService
             , InsService instanceService, NodeService nodeService, SkipService skipService
@@ -98,7 +103,8 @@ public class FlowAutoConfig {
         List<String> mapperList = Arrays.asList("warm/flow/FlowDefinitionMapper.xml", "warm/flow/FlowHisTaskMapper.xml"
                 , "warm/flow/FlowInstanceMapper.xml", "warm/flow/FlowNodeMapper.xml"
                 , "warm/flow/FlowSkipMapper.xml", "warm/flow/FlowTaskMapper.xml");
-
+        String property = environment.getProperty("warm-flow.flow.config-path");
+        System.out.println(property);
         org.apache.ibatis.session.Configuration configuration = sqlSessionFactory.getConfiguration();
         try {
             for (String mapper : mapperList) {
@@ -109,8 +115,8 @@ public class FlowAutoConfig {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
-        BeanInvoker.setBeanFunction(SpringUtil::getBean);
+        FrameInvoker.setCfgFunction((key) -> environment.getProperty(key));
+        FrameInvoker.setBeanFunction(SpringUtil::getBean);
         return new FlowFactory(definitionService, hisTaskService, instanceService
                 , nodeService, skipService, taskService);
     }

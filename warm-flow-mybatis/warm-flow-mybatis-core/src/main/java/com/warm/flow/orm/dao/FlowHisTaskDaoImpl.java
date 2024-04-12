@@ -2,7 +2,7 @@ package com.warm.flow.orm.dao;
 
 import com.warm.flow.core.dao.FlowHisTaskDao;
 import com.warm.flow.core.entity.HisTask;
-import com.warm.flow.core.invoker.BeanInvoker;
+import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.orm.mapper.FlowHisTaskMapper;
 import com.warm.tools.utils.page.Page;
 import org.apache.ibatis.annotations.Param;
@@ -19,7 +19,7 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<HisTask> implements FlowHisT
 
     @Override
     public FlowHisTaskMapper getMapper() {
-        return BeanInvoker.getBean(FlowHisTaskMapper.class);
+        return FrameInvoker.getBean(FlowHisTaskMapper.class);
     }
 
     /**

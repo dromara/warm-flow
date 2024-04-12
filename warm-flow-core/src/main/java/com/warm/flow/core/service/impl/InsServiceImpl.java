@@ -10,7 +10,7 @@ import com.warm.flow.core.enums.FlowStatus;
 import com.warm.flow.core.enums.NodeType;
 import com.warm.flow.core.enums.SkipType;
 import com.warm.flow.core.exception.FlowException;
-import com.warm.flow.core.invoker.BeanInvoker;
+import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.core.listener.Listener;
 import com.warm.flow.core.listener.ListenerVariable;
 import com.warm.flow.core.listener.NodePermission;
@@ -803,7 +803,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
                         getListenerPath(listenerPath, valueHolder);
                         Class<?> clazz = ClassUtil.getClazz(valueHolder.getPath());
                         AssertUtil.isTrue(ObjectUtil.isNull(clazz), ExceptionCons.NOT_LISTENER);
-                        Listener listener = (Listener) BeanInvoker.getBean(clazz);
+                        Listener listener = (Listener) FrameInvoker.getBean(clazz);
                         ListenerVariable variable = new ListenerVariable(instance, node, flowParams.getVariable(), valueHolder.getParams());
                         listener.notify(variable);
                         return variable;

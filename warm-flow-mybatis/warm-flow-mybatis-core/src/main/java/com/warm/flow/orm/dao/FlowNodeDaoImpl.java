@@ -2,7 +2,7 @@ package com.warm.flow.orm.dao;
 
 import com.warm.flow.core.dao.FlowNodeDao;
 import com.warm.flow.core.entity.Node;
-import com.warm.flow.core.invoker.BeanInvoker;
+import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.orm.mapper.FlowNodeMapper;
 
 import java.util.List;
@@ -18,7 +18,7 @@ public class FlowNodeDaoImpl extends WarmDaoImpl<Node> implements FlowNodeDao {
 
     @Override
     public FlowNodeMapper getMapper() {
-        return BeanInvoker.getBean(FlowNodeMapper.class);
+        return FrameInvoker.getBean(FlowNodeMapper.class);
     }
 
     /**

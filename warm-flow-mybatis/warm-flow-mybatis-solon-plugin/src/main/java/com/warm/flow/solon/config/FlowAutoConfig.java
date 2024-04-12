@@ -2,7 +2,7 @@ package com.warm.flow.solon.config;
 
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.dao.*;
-import com.warm.flow.core.invoker.BeanInvoker;
+import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.core.service.*;
 import com.warm.flow.core.service.impl.*;
 import com.warm.flow.orm.dao.*;
@@ -85,7 +85,8 @@ public class FlowAutoConfig {
             , InsService instanceService, NodeService nodeService, SkipService skipService
             , TaskService taskService) {
         EntityInvoker.setEntity();
-        BeanInvoker.setBeanFunction(Solon.context()::getBean);
+        FrameInvoker.setCfgFunction((key) -> Solon.cfg().get(key));
+        FrameInvoker.setBeanFunction(Solon.context()::getBean);
         return new FlowFactory(definitionService, hisTaskService, instanceService
                 , nodeService, skipService, taskService);
     }
