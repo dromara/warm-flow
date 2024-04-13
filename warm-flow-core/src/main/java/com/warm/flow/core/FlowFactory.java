@@ -1,5 +1,6 @@
 package com.warm.flow.core;
 
+import com.warm.flow.core.config.WarmFlowConfig;
 import com.warm.flow.core.entity.*;
 import com.warm.flow.core.service.*;
 
@@ -16,6 +17,7 @@ public class FlowFactory {
     private static DefService defService = null;
     private static HisTaskService hisTaskService = null;
     private static InsService insService = null;
+
     private static NodeService nodeService = null;
     private static SkipService skipService = null;
     private static TaskService taskService = null;
@@ -28,6 +30,9 @@ public class FlowFactory {
     private static Supplier<Skip> skipSupplier;
     private static Supplier<Task> taskSupplier;
 
+    private static WarmFlowConfig flowConfig;
+
+
     public FlowFactory(DefService defService, HisTaskService hisTaskService
             , InsService insService, NodeService nodeService
             , SkipService skipService, TaskService taskService) {
@@ -36,6 +41,30 @@ public class FlowFactory {
         FlowFactory.insService = insService;
         FlowFactory.nodeService = nodeService;
         FlowFactory.skipService = skipService;
+        FlowFactory.taskService = taskService;
+    }
+
+    public static void setDefService(DefService defService) {
+        FlowFactory.defService = defService;
+    }
+
+    public static void setHisTaskService(HisTaskService hisTaskService) {
+        FlowFactory.hisTaskService = hisTaskService;
+    }
+
+    public static void setInsService(InsService insService) {
+        FlowFactory.insService = insService;
+    }
+
+    public static void setNodeService(NodeService nodeService) {
+        FlowFactory.nodeService = nodeService;
+    }
+
+    public static void setSkipService(SkipService skipService) {
+        FlowFactory.skipService = skipService;
+    }
+
+    public static void setTaskService(TaskService taskService) {
         FlowFactory.taskService = taskService;
     }
 
@@ -63,7 +92,7 @@ public class FlowFactory {
         return taskService;
     }
 
-    public static void setDefSupplier(Supplier<Definition> supplier) {
+    public static void setNewDef(Supplier<Definition> supplier) {
         FlowFactory.defSupplier = supplier;
     }
 
@@ -71,7 +100,7 @@ public class FlowFactory {
         return defSupplier.get();
     }
 
-    public static void setHisTaskSupplier(Supplier<HisTask> supplier) {
+    public static void setNewHisTask(Supplier<HisTask> supplier) {
         FlowFactory.hisTaskSupplier = supplier;
     }
 
@@ -79,7 +108,7 @@ public class FlowFactory {
         return hisTaskSupplier.get();
     }
 
-    public static void setInsSupplier(Supplier<Instance> supplier) {
+    public static void setNewIns(Supplier<Instance> supplier) {
         FlowFactory.insSupplier = supplier;
     }
 
@@ -87,7 +116,7 @@ public class FlowFactory {
         return insSupplier.get();
     }
 
-    public static void setNodeSupplier(Supplier<Node> supplier) {
+    public static void setNewNode(Supplier<Node> supplier) {
         FlowFactory.nodeSupplier = supplier;
     }
 
@@ -95,7 +124,7 @@ public class FlowFactory {
         return nodeSupplier.get();
     }
 
-    public static void setSkipSupplier(Supplier<Skip> supplier) {
+    public static void setNewSkip(Supplier<Skip> supplier) {
         FlowFactory.skipSupplier = supplier;
     }
 
@@ -103,11 +132,18 @@ public class FlowFactory {
         return skipSupplier.get();
     }
 
-    public static void setTaskSupplier(Supplier<Task> supplier) {
+    public static void setNewTask(Supplier<Task> supplier) {
         FlowFactory.taskSupplier = supplier;
     }
 
     public static Task newTask() {
         return taskSupplier.get();
+    }
+
+    public static void setFlowConfig(WarmFlowConfig flowConfig) {
+        FlowFactory.flowConfig = flowConfig;
+    }
+    public static WarmFlowConfig getFlowConfig() {
+        return FlowFactory.flowConfig;
     }
 }

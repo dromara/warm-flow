@@ -1,6 +1,7 @@
 package com.warm.flow.solon.config;
 
 import com.warm.flow.core.FlowFactory;
+import com.warm.flow.core.config.WarmFlowConfig;
 import com.warm.flow.core.dao.*;
 import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.core.service.*;
@@ -81,14 +82,28 @@ public class FlowAutoConfig {
     }
 
     @Bean
-    public FlowFactory initFlowServer(DefService definitionService, HisTaskService hisTaskService
+    public WarmFlowConfig initFlowConfig(DefService definitionService, HisTaskService hisTaskService
             , InsService instanceService, NodeService nodeService, SkipService skipService
             , TaskService taskService) {
-        EntityInvoker.setEntity();
+        // 设置创建对象方法
+        EntityInvoker.setNewEntity();
+        initFlowService(definitionService, hisTaskService, instanceService
+                , nodeService, skipService, taskService);
         FrameInvoker.setCfgFunction((key) -> Solon.cfg().get(key));
         FrameInvoker.setBeanFunction(Solon.context()::getBean);
-        return new FlowFactory(definitionService, hisTaskService, instanceService
-                , nodeService, skipService, taskService);
+
+        FlowFactory.setFlowConfig(WarmFlowConfig.init());
+        return FlowFactory.getFlowConfig();
+    }
+
+    public void initFlowService(DefService definitionService, HisTaskService hisTaskService, InsService instanceService
+            , NodeService nodeService, SkipService skipService, TaskService taskService) {
+        FlowFactory.setDefService(definitionService);
+        FlowFactory.setHisTaskService(hisTaskService);
+        FlowFactory.setInsService(instanceService);
+        FlowFactory.setNodeService(nodeService);
+        FlowFactory.setSkipService(skipService);
+        FlowFactory.setTaskService(taskService);
     }
 
 }

@@ -11,33 +11,35 @@ public class FrameInvoker<M> {
 
     public static FrameInvoker frameInvoker = new FrameInvoker<>();
 
-    private Function<Class<M>, M> beanFunction = null;
+    private Function<Class<M>, M> beanFunction;
 
-    private Function<String, String> cfgFunction = null;
+    private Function<String, String> cfgFunction;
 
     public FrameInvoker() {
     }
 
+    /**
+     * 设置获取beanfunction
+     * @param function
+     * @param <M>
+     */
     public static <M> void setBeanFunction(Function<Class<M>, M> function) {
         frameInvoker.beanFunction = function;
     }
 
     public static <M> M getBean(Class<M> tClass) {
-        Object apply = frameInvoker.beanFunction.apply(tClass);
-        if (apply == null) {
-            throw new NullPointerException("bean is null");
-        }
-        return (M) apply;
+        return (M) frameInvoker.beanFunction.apply(tClass);
     }
 
+    /**
+     * 设置获取配置function
+     * @param function
+     */
     public static void setCfgFunction(Function<String, String> function) {
-        frameInvoker.beanFunction = function;
+        frameInvoker.cfgFunction = function;
     }
     public static String getCfg(String key) {
-        Object apply = frameInvoker.cfgFunction.apply(key);
-        if (apply == null) {
-            throw new NullPointerException("value is null");
-        }
-        return (String) apply;
+        return (String) frameInvoker.cfgFunction.apply(key);
     }
+
 }

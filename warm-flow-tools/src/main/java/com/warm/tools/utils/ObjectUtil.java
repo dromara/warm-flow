@@ -8,7 +8,7 @@ package com.warm.tools.utils;
 public class ObjectUtil {
 
     /**
-     * * 判断一个对象是否为空
+     * 判断一个对象是否为空
      *
      * @param object Object
      * @return true：为空 false：非空
@@ -18,7 +18,7 @@ public class ObjectUtil {
     }
 
     /**
-     * * 判断一个对象是否非空
+     * 判断一个对象是否非空
      *
      * @param object Object
      * @return true：非空 false：空
@@ -30,5 +30,14 @@ public class ObjectUtil {
     @SuppressWarnings("unchecked")
     public static <T> T cast(Object obj) {
         return (T) obj;
+    }
+
+    /**
+     * 判断字符串是否为true
+     * @param str
+     * @return
+     */
+    public static boolean isStrTrue(String str) {
+        return !StringUtils.isEmpty(str) && "true".equals(str);
     }
 }

@@ -4,18 +4,18 @@ import com.warm.flow.core.FlowFactory;
 import com.warm.flow.orm.entity.*;
 
 /**
- * 执行mapper方法
+ * 设置创建对象方法
  *
  * @author warm
  */
 public class EntityInvoker {
 
-    public static void setEntity() {
-        FlowFactory.setDefSupplier(FlowDefinition::new);
-        FlowFactory.setInsSupplier(FlowInstance::new);
-        FlowFactory.setHisTaskSupplier(FlowHisTask::new);
-        FlowFactory.setNodeSupplier(FlowNode::new);
-        FlowFactory.setSkipSupplier(FlowSkip::new);
-        FlowFactory.setTaskSupplier(FlowTask::new);
+    public static void setNewEntity() {
+        FlowFactory.setNewDef(FlowDefinition::new);
+        FlowFactory.setNewIns(FlowInstance::new);
+        FlowFactory.setNewHisTask(FlowHisTask::new);
+        FlowFactory.setNewNode(FlowNode::new);
+        FlowFactory.setNewSkip(FlowSkip::new);
+        FlowFactory.setNewTask(FlowTask::new);
     }
 }
