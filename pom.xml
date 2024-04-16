@@ -61,6 +61,7 @@
         <junit.version>4.13.2</junit.version>
         <solon.version>2.5.3</solon.version>
         <snack3.version>3.2.88</snack3.version>
+        <slf4j-api.version>2.0.9</slf4j-api.version>
     </properties>
 
     <dependencyManagement>
@@ -157,6 +158,11 @@
                 <version>${snack3.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j-api.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

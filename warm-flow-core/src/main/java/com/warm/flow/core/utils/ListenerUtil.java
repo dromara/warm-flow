@@ -119,12 +119,8 @@ public class ListenerUtil {
         if (matcher.find()) {
             path = matcher.group(1).replaceAll("[\\(\\)]", "");
             params = matcher.group(2).replaceAll("[\\(\\)]", "");
-            System.out.println("监听器path:" + path);
-            System.out.println("监听器params:" + params);
             valueHolder.setPath(path);
             valueHolder.setParams(params);
-        } else {
-            System.out.println("else");
         }
     }
 }

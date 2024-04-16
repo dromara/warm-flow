@@ -16,6 +16,8 @@ import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.annotation.MapperScan;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -34,6 +36,8 @@ import java.util.List;
 @MapperScan("com.warm.flow.orm.mapper")
 @Import(SpringUtil.class)
 public class FlowAutoConfig {
+
+    private static final Logger log = LoggerFactory.getLogger(FlowAutoConfig.class);
 
     @Resource
     private Environment environment;
@@ -108,6 +112,7 @@ public class FlowAutoConfig {
     public WarmFlowConfig initFlowConfig(DefService definitionService, HisTaskService hisTaskService
             , InsService instanceService, NodeService nodeService, SkipService skipService, TaskService taskService
             ,SqlSessionFactory sqlSessionFactory) {
+        log.info("warm-flow初始化");
         loadXml(sqlSessionFactory);
         initFlowService(definitionService, hisTaskService, instanceService
                 , nodeService, skipService, taskService);
