@@ -1,8 +1,5 @@
 package com.warm.flow.orm.mapper;
 
-import com.warm.flow.orm.handler.DataFillHandler;
-import com.warm.flow.orm.handler.DataFillHandlerFactory;
-import com.warm.tools.utils.ObjectUtil;
 import com.warm.tools.utils.page.Page;
 import org.apache.ibatis.annotations.Param;
 
@@ -71,34 +68,12 @@ public interface WarmMapper<T> {
     long selectCount(@Param("entity") T entity);
 
     /**
-     * 新增 通过继承DataFillHandler支持填充
-     *
-     * @param entity 实体
-     * @return 结果
-     */
-    default int save(T entity) {
-        insertFill(entity);
-        return insert(entity);
-    }
-
-    /**
      * 新增
      *
      * @param entity 实体
      * @return 结果
      */
     int insert(T entity);
-
-    /**
-     * 根据id修改 通过继承DataFillHandler支持填充
-     *
-     * @param entity 实体
-     * @return 结果
-     */
-    default int modifyById(T entity) {
-        updateFill(entity);
-        return updateById(entity);
-    }
 
     /**
      * 根据id修改
@@ -132,17 +107,4 @@ public interface WarmMapper<T> {
      */
     int deleteByIds(Collection<? extends Serializable> ids);
 
-    default void insertFill(T entity) {
-        DataFillHandler dataFillHandler = DataFillHandlerFactory.get();
-        if (ObjectUtil.isNotNull(dataFillHandler)) {
-            dataFillHandler.insertFill(entity);
-        }
-    }
-
-    default void updateFill(T entity) {
-        DataFillHandler dataFillHandler = DataFillHandlerFactory.get();
-        if (ObjectUtil.isNotNull(dataFillHandler)) {
-            dataFillHandler.updateFill(entity);
-        }
-    }
 }

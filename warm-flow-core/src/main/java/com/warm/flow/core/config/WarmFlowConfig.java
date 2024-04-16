@@ -13,12 +13,34 @@ import com.warm.tools.utils.StringUtils;
 public class WarmFlowConfig {
     private boolean banner = true;
 
+    private String dataFillHandlerPath;
+
+
+    public boolean isBanner() {
+        return banner;
+    }
+
+    public WarmFlowConfig setBanner(boolean banner) {
+        this.banner = banner;
+        return this;
+    }
+
+    public String getDataFillHandlerPath() {
+        return dataFillHandlerPath;
+    }
+
+    public WarmFlowConfig setDataFillHandlerPath(String dataFillHandlerPath) {
+        this.dataFillHandlerPath = dataFillHandlerPath;
+        return this;
+    }
+
     public static WarmFlowConfig init() {
         WarmFlowConfig flowConfig = new WarmFlowConfig();
         String banner = FrameInvoker.getCfg(FlowConfigCons.BANNER);
         if (StringUtils.isNotEmpty(banner)) {
             flowConfig.setBanner(ObjectUtil.isStrTrue(banner));
         }
+        flowConfig.setDataFillHandlerPath(FrameInvoker.getCfg(FlowConfigCons.DATAFILLHANDLEPATH));
         printBanner(flowConfig);
         return flowConfig;
     }
@@ -31,14 +53,5 @@ public class WarmFlowConfig {
                     " ██ ██▀ ▄▀▀▀█   █     █ █ █  █        █    █   █  █▄█▄█\n" +
                     " █   █  ▀▄▄▀█   █     █ █ █  █        ▀▄▄  ▀█▄█▀   █ █");
         }
-    }
-
-    public boolean isBanner() {
-        return banner;
-    }
-
-    public WarmFlowConfig setBanner(boolean banner) {
-        this.banner = banner;
-        return this;
     }
 }

@@ -192,7 +192,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao, Task> implemen
     public Task addTask(Node node, Instance instance, FlowParams flowParams) {
         Task addTask = FlowFactory.newTask();
         Date date = new Date();
-        addTask.setId(IdUtils.nextId());
+        FlowFactory.dataFillHandler().idFill(addTask);
         addTask.setDefinitionId(instance.getDefinitionId());
         addTask.setInstanceId(instance.getId());
         addTask.setNodeCode(node.getNodeCode());

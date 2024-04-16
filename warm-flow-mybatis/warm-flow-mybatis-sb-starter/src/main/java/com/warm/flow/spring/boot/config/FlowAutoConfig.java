@@ -3,9 +3,12 @@ package com.warm.flow.spring.boot.config;
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.config.WarmFlowConfig;
 import com.warm.flow.core.dao.*;
+import com.warm.flow.core.handler.DataFillHandler;
+import com.warm.flow.core.handler.DefaultDataFillHandler;
 import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.core.service.*;
 import com.warm.flow.core.service.impl.*;
+import com.warm.flow.core.utils.ClassUtil;
 import com.warm.flow.orm.dao.*;
 import com.warm.flow.orm.invoker.EntityInvoker;
 import com.warm.flow.spring.boot.utils.SpringUtil;
@@ -96,6 +99,11 @@ public class FlowAutoConfig {
         return new HisTaskServiceImpl().setDao(hisTaskDao);
     }
 
+    @Bean("defaultDataFillHandler")
+    public DefaultDataFillHandler defaultDataFillHandler() {
+        return new DefaultDataFillHandler();
+    }
+
     @Bean
     public WarmFlowConfig initFlowConfig(DefService definitionService, HisTaskService hisTaskService
             , InsService instanceService, NodeService nodeService, SkipService skipService, TaskService taskService
@@ -109,6 +117,17 @@ public class FlowAutoConfig {
         FrameInvoker.setBeanFunction(SpringUtil::getBean);
         FlowFactory.setFlowConfig(WarmFlowConfig.init());
         return FlowFactory.getFlowConfig();
+    }
+
+    @Bean
+    public DataFillHandler dataFillHandler(WarmFlowConfig flowConfig) throws InstantiationException, IllegalAccessException {
+        DataFillHandler o = null;
+        String dataFillHandlerPath = flowConfig.getDataFillHandlerPath();
+        Class<?> clazz = ClassUtil.getClazz(dataFillHandlerPath);
+        if (clazz != null) {
+            o = (DataFillHandler) clazz.newInstance();
+        }
+        return o;
     }
 
     public void initFlowService(DefService definitionService, HisTaskService hisTaskService, InsService instanceService

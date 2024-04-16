@@ -1,8 +1,8 @@
 package com.warm.flow.orm.dao;
 
+import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.dao.WarmDao;
-import com.warm.flow.orm.handler.DataFillHandler;
-import com.warm.flow.orm.handler.DataFillHandlerFactory;
+import com.warm.flow.core.handler.DataFillHandler;
 import com.warm.flow.orm.mapper.WarmMapper;
 import com.warm.tools.utils.ObjectUtil;
 import com.warm.tools.utils.page.Page;
@@ -144,14 +144,15 @@ public abstract class WarmDaoImpl<T> implements WarmDao<T> {
     }
 
     public void insertFill(T entity) {
-        DataFillHandler dataFillHandler = DataFillHandlerFactory.get();
+        DataFillHandler dataFillHandler = FlowFactory.dataFillHandler();
         if (ObjectUtil.isNotNull(dataFillHandler)) {
+            dataFillHandler.idFill(entity);
             dataFillHandler.insertFill(entity);
         }
     }
 
     public void updateFill(T entity) {
-        DataFillHandler dataFillHandler = DataFillHandlerFactory.get();
+        DataFillHandler dataFillHandler = FlowFactory.dataFillHandler();
         if (ObjectUtil.isNotNull(dataFillHandler)) {
             dataFillHandler.updateFill(entity);
         }

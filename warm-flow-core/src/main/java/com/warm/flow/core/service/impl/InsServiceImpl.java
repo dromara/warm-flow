@@ -2,29 +2,27 @@ package com.warm.flow.core.service.impl;
 
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.constant.ExceptionCons;
-import com.warm.flow.core.constant.FlowCons;
 import com.warm.flow.core.dao.FlowInstanceDao;
 import com.warm.flow.core.dto.FlowParams;
 import com.warm.flow.core.entity.*;
 import com.warm.flow.core.enums.FlowStatus;
 import com.warm.flow.core.enums.NodeType;
-import com.warm.flow.core.enums.SkipType;
 import com.warm.flow.core.exception.FlowException;
-import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.core.listener.Listener;
-import com.warm.flow.core.listener.ListenerVariable;
-import com.warm.flow.core.listener.NodePermission;
-import com.warm.flow.core.listener.ValueHolder;
 import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.InsService;
 import com.warm.flow.core.utils.AssertUtil;
-import com.warm.flow.core.utils.ClassUtil;
-import com.warm.flow.core.utils.ExpressionUtil;
 import com.warm.flow.core.utils.ListenerUtil;
-import com.warm.tools.utils.*;
+import com.warm.tools.utils.CollUtil;
+import com.warm.tools.utils.MapUtil;
+import com.warm.tools.utils.ObjectUtil;
+import com.warm.tools.utils.StringUtils;
 import org.noear.snack.ONode;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 流程实例Service业务层处理
@@ -117,7 +115,6 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
      */
     private void saveFlowInfo(FlowParams flowParams, Node startNode, Node firstBetweenNode, Instance instance) {
         Task startTask = FlowFactory.newTask()
-                .setId(IdUtils.nextId())
                 .setInstanceId(instance.getId())
                 .setTenantId(flowParams.getTenantId())
                 .setDefinitionId(instance.getDefinitionId())
@@ -127,6 +124,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
                 .setPermissionFlag(StringUtils.isNotEmpty(startNode.getDynamicPermissionFlag())
                         ? startNode.getDynamicPermissionFlag() : startNode.getPermissionFlag())
                 .setFlowStatus(FlowStatus.PASS.getKey());
+        FlowFactory.dataFillHandler().idFill(startTask);
         HisTask hisTask = FlowFactory.hisTaskService().setSkipInsHis(startTask
                 , Collections.singletonList(firstBetweenNode), flowParams);
         FlowFactory.hisTaskService().save(hisTask);
@@ -148,8 +146,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
             , FlowParams flowParams) {
         Instance instance = FlowFactory.newIns();
         Date now = new Date();
-        Long id = IdUtils.nextId();
-        instance.setId(id);
+        FlowFactory.dataFillHandler().idFill(instance);
         instance.setDefinitionId(firstBetweenNode.getDefinitionId());
         instance.setBusinessId(businessId);
         instance.setTenantId(flowParams.getTenantId());

@@ -12,5 +12,11 @@ public class FlowConfigCons {
      */
     public static final String BANNER = "warm-flow.banner";
 
+    /**
+     * 是否支持任意跳转
+     */
+    public static final String DATAFILLHANDLEPATH = "warm-flow.data-fill-handler-path";
+
+
 
 }

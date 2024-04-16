@@ -8,7 +8,10 @@ import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.Skip;
 import com.warm.flow.core.enums.NodeType;
 import com.warm.flow.core.enums.SkipType;
-import com.warm.tools.utils.*;
+import com.warm.tools.utils.CollUtil;
+import com.warm.tools.utils.ObjectUtil;
+import com.warm.tools.utils.StreamUtils;
+import com.warm.tools.utils.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -174,11 +177,10 @@ public class FlowConfigUtil {
         String flowName = definition.getFlowName();
         AssertUtil.isBlank(definition.getFlowCode(), "【" + flowName + "】流程flowCode为空!");
         AssertUtil.isBlank(definition.getVersion(), "【" + flowName + "】流程version为空!");
-        Long id = IdUtils.nextId();
         // 发布
         definition.setIsPublish(0);
         definition.setUpdateTime(new Date());
-        definition.setId(id);
+        FlowFactory.dataFillHandler().idFill(definition);
 
         List<Node> nodeList = definition.getNodeList();
 
@@ -187,7 +189,7 @@ public class FlowConfigUtil {
         Set<String> nodeCodeSet = new HashSet<String>();
         // 便利一个流程中的各个节点
         for (Node node : nodeList) {
-            initNodeAndCondition(node, id, definition.getVersion());
+            initNodeAndCondition(node, definition.getId(), definition.getVersion());
             if (NodeType.isStart(node.getNodeType())) {
                 startNum++;
                 AssertUtil.isTrue(startNum > 1, "[" + flowName + "]" + ExceptionCons.MUL_START_NODE);
@@ -289,7 +291,7 @@ public class FlowConfigUtil {
         }
         AssertUtil.isBlank(nodeCode, "[" + nodeName + "]" + ExceptionCons.LOST_NODE_CODE);
 
-        node.setId(IdUtils.nextId());
+        FlowFactory.dataFillHandler().idFill(node);
         node.setVersion(version);
         node.setDefinitionId(definitionId);
         node.setUpdateTime(new Date());
@@ -306,7 +308,7 @@ public class FlowConfigUtil {
                 AssertUtil.isTrue(skipNum > 1, "[" + node.getNodeName() + "]" + ExceptionCons.MUL_START_SKIP);
             }
             AssertUtil.isBlank(skip.getNextNodeCode(), "【" + nodeName + "】" + ExceptionCons.LOST_DEST_NODE);
-            skip.setId(IdUtils.nextId());
+            FlowFactory.dataFillHandler().idFill(skip);
             // 流程id
             skip.setDefinitionId(definitionId);
             // 节点id

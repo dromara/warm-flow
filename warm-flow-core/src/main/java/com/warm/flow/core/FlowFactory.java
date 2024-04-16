@@ -2,7 +2,11 @@ package com.warm.flow.core;
 
 import com.warm.flow.core.config.WarmFlowConfig;
 import com.warm.flow.core.entity.*;
+import com.warm.flow.core.handler.DataFillHandler;
+import com.warm.flow.core.handler.DefaultDataFillHandler;
+import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.core.service.*;
+import com.warm.tools.utils.ObjectUtil;
 
 import java.util.function.Supplier;
 
@@ -146,5 +150,16 @@ public class FlowFactory {
 
     public static void setFlowConfig(WarmFlowConfig flowConfig) {
         FlowFactory.flowConfig = flowConfig;
+    }
+
+    /**
+     * 获取填充类
+     */
+    public static DataFillHandler dataFillHandler() {
+        DataFillHandler dataFillHandler = FrameInvoker.getBean(DataFillHandler.class);
+        if (ObjectUtil.isNull(dataFillHandler)) {
+            dataFillHandler = FrameInvoker.getBean(DefaultDataFillHandler.class);
+        }
+        return dataFillHandler;
     }
 }

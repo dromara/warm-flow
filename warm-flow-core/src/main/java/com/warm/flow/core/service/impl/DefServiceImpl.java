@@ -157,7 +157,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao, Definitio
         Definition definition = getById(id);
         List<Node> nodeList = FlowFactory.nodeService().list(FlowFactory.newNode().setDefinitionId(id));
         List<Skip> skipList = FlowFactory.skipService().list(FlowFactory.newSkip().setDefinitionId(id));
-        definition.setId(IdUtils.nextId());
+        FlowFactory.dataFillHandler().idFill(definition);
         definition.setVersion(definition.getVersion() + "_copy");
         definition.setIsPublish(PublishStatus.UNPUBLISHED.getKey());
         definition.setCreateTime(null);

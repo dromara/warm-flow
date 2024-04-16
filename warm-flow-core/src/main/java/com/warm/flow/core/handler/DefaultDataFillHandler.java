@@ -1,4 +1,4 @@
-package com.warm.flow.orm.handler;
+package com.warm.flow.core.handler;
 
 import com.warm.flow.core.entity.RootEntity;
 import com.warm.tools.utils.IdUtils;
@@ -12,15 +12,22 @@ import java.util.Objects;
  * @description: 数据填充handler
  * @date: 2023/4/1 15:37
  */
-public class DataFillHandlerImpl implements DataFillHandler {
+public class DefaultDataFillHandler implements DataFillHandler {
 
     @Override
-    public void insertFill(Object object) {
+    public void idFill(Object object) {
         RootEntity entity = (RootEntity) object;
         if (ObjectUtil.isNotNull(entity)) {
             if (Objects.isNull(entity.getId())) {
                 entity.setId(IdUtils.nextId());
             }
+        }
+    }
+
+    @Override
+    public void insertFill(Object object) {
+        RootEntity entity = (RootEntity) object;
+        if (ObjectUtil.isNotNull(entity)) {
             Date date = ObjectUtil.isNotNull(entity.getCreateTime())
                     ? entity.getCreateTime() : new Date();
             entity.setCreateTime(date);
