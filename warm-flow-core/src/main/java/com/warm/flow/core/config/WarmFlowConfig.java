@@ -13,16 +13,6 @@ import com.warm.tools.utils.StringUtils;
 public class WarmFlowConfig {
     private boolean banner = true;
 
-
-    public boolean isBanner() {
-        return banner;
-    }
-
-    public WarmFlowConfig setBanner(boolean banner) {
-        this.banner = banner;
-        return this;
-    }
-
     public static WarmFlowConfig init() {
         WarmFlowConfig flowConfig = new WarmFlowConfig();
         String banner = FrameInvoker.getCfg(FlowConfigCons.BANNER);
@@ -41,5 +31,14 @@ public class WarmFlowConfig {
                     " ██ ██▀ ▄▀▀▀█   █     █ █ █  █        █    █   █  █▄█▄█\n" +
                     " █   █  ▀▄▄▀█   █     █ █ █  █        ▀▄▄  ▀█▄█▀   █ █");
         }
+    }
+
+    public boolean isBanner() {
+        return banner;
+    }
+
+    public WarmFlowConfig setBanner(boolean banner) {
+        this.banner = banner;
+        return this;
     }
 }

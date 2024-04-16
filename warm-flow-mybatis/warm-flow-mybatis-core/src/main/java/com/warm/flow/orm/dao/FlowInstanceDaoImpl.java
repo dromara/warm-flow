@@ -20,9 +20,4 @@ public class FlowInstanceDaoImpl extends WarmDaoImpl<Instance> implements FlowIn
         return FrameInvoker.getBean(FlowInstanceMapper.class);
     }
 
-    @Override
-    public List<Instance> getByIdWithLock(List<Long> ids) {
-        return getMapper().getByIdWithLock(ids);
-    }
-
 }

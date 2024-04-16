@@ -16,79 +16,65 @@ import java.util.List;
 public class FlowNode implements Node {
 
     /**
+     * 跳转条件
+     */
+    List<Skip> skipList = new ArrayList<>();
+    /**
      * 主键
      */
     private Long id;
-
     /**
      * 创建时间
      */
     private Date createTime;
-
     /**
      * 更新时间
      */
     private Date updateTime;
-
     /**
      * 节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）
      */
     private Integer nodeType;
-
     /**
      * 流程id
      */
     private Long definitionId;
-
     /**
      * 流程节点编码   每个流程的nodeCode是唯一的,即definitionId+nodeCode唯一,在数据库层面做了控制
      */
     private String nodeCode;
-
     /**
      * 流程节点名称
      */
     private String nodeName;
-
     /**
      * 权限标识（权限类型:权限标识，可以多个，如role:1,role:2)
      */
     private String permissionFlag;
-
     /**
      * 动态权限标识（权限类型:权限标识，可以多个，如role:1,role:2)
      */
     private String dynamicPermissionFlag;
-
     /**
      * 流程节点坐标
      */
     private String coordinate;
-
     /**
      * 版本
      */
     private String version;
-
     /**
      * 是否可以跳转任意节点（Y是 N否）
      */
     private String skipAnyNode;
-
     /**
      * 监听器类型
      */
     private String listenerType;
-
     /**
      * 监听器路径
      */
     private String listenerPath;
-
-    /**
-     * 跳转条件
-     */
-    List<Skip> skipList = new ArrayList<>();
 
     @Override
     public Long getId() {

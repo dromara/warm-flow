@@ -12,6 +12,4 @@ import java.util.List;
  */
 public interface FlowInstanceMapper extends WarmMapper<Instance> {
 
-    List<Instance> getByIdWithLock(List<Long> ids);
-
 }

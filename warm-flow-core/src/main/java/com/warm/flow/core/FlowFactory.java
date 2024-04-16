@@ -140,10 +140,11 @@ public class FlowFactory {
         return taskSupplier.get();
     }
 
-    public static void setFlowConfig(WarmFlowConfig flowConfig) {
-        FlowFactory.flowConfig = flowConfig;
-    }
     public static WarmFlowConfig getFlowConfig() {
         return FlowFactory.flowConfig;
+    }
+
+    public static void setFlowConfig(WarmFlowConfig flowConfig) {
+        FlowFactory.flowConfig = flowConfig;
     }
 }

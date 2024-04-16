@@ -20,6 +20,7 @@ public class FrameInvoker<M> {
 
     /**
      * 设置获取beanfunction
+     *
      * @param function
      * @param <M>
      */
@@ -33,11 +34,13 @@ public class FrameInvoker<M> {
 
     /**
      * 设置获取配置function
+     *
      * @param function
      */
     public static void setCfgFunction(Function<String, String> function) {
         frameInvoker.cfgFunction = function;
     }
+
     public static String getCfg(String key) {
         return (String) frameInvoker.cfgFunction.apply(key);
     }

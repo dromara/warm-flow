@@ -21,8 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.warm.flow.core.service.impl.InsServiceImpl.checkGateWay;
-
 /**
  * 流程节点Service业务层处理
  *
@@ -105,9 +103,7 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao, Node> implemen
         Node nextNode = FlowFactory.nodeService().getByNodeCode(skip.getNextNodeCode(), skip.getDefinitionId());
         // 如果是网关节点，则重新获取后续节点
         FlowParams flowParams = FlowParams.build().variable(variable);
-        return checkGateWay(flowParams, nextNode);
+        return FlowFactory.taskService().getNextByCheckGateWay(flowParams, nextNode);
     }
-
-    ;
 
 }

@@ -84,15 +84,6 @@
         where id = #{id}
     </select>
 
-    <select id="getByIdWithLock" resultMap="FlowInstanceResult">
-        <include refid="selectVo"/>
-        where t.id in
-        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
-            #{item}
-        </foreach>
-        for update
-    </select>
-
     <insert id="insert" parameterType="com.warm.flow.orm.entity.FlowInstance">
         insert into flow_instance
         <trim prefix="(" suffix=")" suffixOverrides=",">

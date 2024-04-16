@@ -15,14 +15,6 @@ import java.util.List;
 public interface InsService extends IWarmService<Instance> {
 
     /**
-     * 根据id集合进行查询 行锁
-     *
-     * @param ids: 流程实例集合[必传]
-     * @return
-     */
-    List<Instance> getByIdWithLock(List<Long> ids);
-
-    /**
      * 根据开始的节点,业务id集合开启流程
      *
      * @param businessId: 业务id[必传]
@@ -67,6 +59,7 @@ public interface InsService extends IWarmService<Instance> {
      *                               - variable:流程变量[按需传输,跳转条件放入流程变量<互斥网关必传>]
      *                               - variableTask:任务变量[按需传输]     * @return
      */
+    @Deprecated
     Instance skip(Long taskId, FlowParams flowParams);
 
     /**

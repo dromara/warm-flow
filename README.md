@@ -127,24 +127,26 @@ public void startFlow() {
 #### 流程流转
 
 ```java
+    @Test
 public void skipFlow() throws Exception {
         // 通过实例id流转
-        Instance instance = insService.skipByInsId(1219286332141080576L, getUser().skipType(SkipType.PASS.getKey())
-                .permissionFlag(Arrays.asList("role:1", "role:2")));
-        System.out.println("流转后流程实例：" + instance.toString());
-
-//        // 通过任务id流转
-//        Instance instance = insService.skip(1219286332145274880L, getUser().skipType(SkipType.PASS.getKey())
+//        Instance instance = insService.skipByInsId(1219286332141080576L, getUser().skipType(SkipType.PASS.getKey())
 //                .permissionFlag(Arrays.asList("role:1", "role:2")));
 //        System.out.println("流转后流程实例：" + instance.toString());
-    }
 
- public void skipAnyNode() throws Exception {
-        // 跳转到指定节点
-        Instance instance = insService.skip(1219286332145274880L, getUser().skipType(SkipType.PASS.getKey())
-                .permissionFlag(Arrays.asList("role:1", "role:2")).nodeCode("4"));
+//        // 通过任务id流转
+        Instance instance = taskService.skip(1219286332145274880L, getUser().skipType(SkipType.PASS.getKey())
+            .permissionFlag(Arrays.asList("role:1", "role:2")));
         System.out.println("流转后流程实例：" + instance.toString());
-    }
+}
+
+@Test
+public void skipAnyNode() throws Exception {
+        // 跳转到指定节点
+        Instance instance = taskService.skip(1219286332145274880L, getUser().skipType(SkipType.PASS.getKey())
+            .permissionFlag(Arrays.asList("role:1", "role:2")).nodeCode("4"));
+        System.out.println("流转后流程实例：" + instance.toString());
+}
 ```
 
 

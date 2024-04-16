@@ -12,6 +12,4 @@ import java.util.List;
  */
 public interface FlowInstanceDao extends WarmDao<Instance> {
 
-    List<Instance> getByIdWithLock(List<Long> ids);
-
 }
