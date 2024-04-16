@@ -155,12 +155,6 @@
         <include refid="paging_end"/>
     </select>
 
-    <select id="getByInsId" resultMap="FlowHisTaskResult">
-        <include refid="selectVo"/>
-        where t.instance_id = #{instanceId}
-        order by t.create_time desc
-    </select>
-
     <select id="getNoReject" resultMap="FlowHisTaskResult">
         <include refid="selectVo"/>
         where t.node_code = #{nodeCode}

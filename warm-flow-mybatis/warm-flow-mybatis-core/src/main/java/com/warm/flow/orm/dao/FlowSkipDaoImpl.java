@@ -20,16 +20,5 @@ public class FlowSkipDaoImpl extends WarmDaoImpl<Skip> implements FlowSkipDao {
         return FrameInvoker.getBean(FlowSkipMapper.class);
     }
 
-    /**
-     * 获取当前节点跳转
-     *
-     * @param definitionId
-     * @param nowNodeCode
-     * @return
-     */
-    @Override
-    public List<Skip> queryByDefAndCode(Long definitionId, String nowNodeCode) {
-        return getMapper().queryByDefAndCode(definitionId, nowNodeCode);
-    }
 
 }

@@ -15,14 +15,6 @@ import java.util.List;
 public interface HisTaskService extends IWarmService<HisTask> {
 
     /**
-     * 根据instanceId查询出流程相关的记录(根据时间逆序)
-     *
-     * @param instanceId
-     * @return
-     */
-    List<HisTask> getByInsIds(Long instanceId);
-
-    /**
      * 根据nodeCode获取未驳回的历史记录
      *
      * @param nodeCode

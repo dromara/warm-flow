@@ -15,14 +15,6 @@ import java.util.List;
 public interface TaskService extends IWarmService<Task> {
 
     /**
-     * 根据实例ids获取待办任务
-     *
-     * @param instanceId
-     * @return
-     */
-    List<Task> getByInsId(Long instanceId);
-
-    /**
      * 分页查询待办任务
      *
      * @param task 条件实体

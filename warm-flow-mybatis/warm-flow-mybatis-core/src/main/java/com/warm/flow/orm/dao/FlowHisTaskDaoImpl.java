@@ -23,17 +23,6 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<HisTask> implements FlowHisT
     }
 
     /**
-     * 根据实例id获取历史记录集合
-     *
-     * @param instanceId
-     * @return
-     */
-    @Override
-    public List<HisTask> getByInsId(Long instanceId) {
-        return getMapper().getByInsId(instanceId);
-    }
-
-    /**
      * 根据nodeCode获取未驳回的历史记录
      *
      * @param nodeCode

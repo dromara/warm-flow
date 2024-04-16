@@ -90,7 +90,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         AssertUtil.isTrue(ObjectUtil.isNull(instance), ExceptionCons.NOT_FOUNT_INSTANCE);
         AssertUtil.isTrue(FlowStatus.isFinished(instance.getFlowStatus()), ExceptionCons.FLOW_FINISH);
         // 获取待办任务
-        List<Task> taskList = FlowFactory.taskService().getByInsId(instanceId);
+        List<Task> taskList = FlowFactory.taskService().list(FlowFactory.newTask().setInstanceId(instanceId));
         AssertUtil.isTrue(CollUtil.isEmpty(taskList), ExceptionCons.NOT_FOUNT_TASK);
         AssertUtil.isTrue(taskList.size() > 1, ExceptionCons.TASK_NOT_ONE);
         Task task = taskList.get(0);
@@ -191,7 +191,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         updateFlowInfo(task, instance, insHisList, addTasks);
 
         // 处理未完成的任务，当流程完成，还存在代办任务未完成，转历史任务，状态完成。
-        handUndoneTask(instance, nextNodes);
+        handUndoneTask(instance);
 
         // 最后判断是否存在监听器，存在执行监听器
         executeListener(instance, NowNode, nextNodes, flowParams);
@@ -269,7 +269,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
     private void oneVoteVeto(Task task, String skipType, String nextNodeCode) {
         // 一票否决（谨慎使用），如果驳回，驳回指向节点后还存在其他正在执行的代办任务，转历史任务，状态失效,重走流程。
         if (SkipType.isReject(skipType)) {
-            List<Task> tasks = FlowFactory.taskService().getByInsId(task.getInstanceId());
+            List<Task> tasks = FlowFactory.taskService().list(FlowFactory.newTask().setInstanceId(task.getInstanceId()));
             List<Skip> allSkips = FlowFactory.skipService().list(FlowFactory.newSkip()
                     .setDefinitionId(task.getDefinitionId()));
             // 排除执行当前节点的流程跳转
@@ -323,9 +323,8 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
     public static List<Node> checkGateWay(FlowParams flowParams, Node nextNode) {
         List<Node> nextNodes = new ArrayList<>();
         if (NodeType.isGateWay(nextNode.getNodeType())) {
-            List<Skip> skipsGateway = FlowFactory.skipService()
-                    .queryByDefAndCode(nextNode.getDefinitionId(), nextNode.getNodeCode());
-
+            List<Skip> skipsGateway = FlowFactory.skipService().list(FlowFactory.newSkip()
+                    .setDefinitionId(nextNode.getDefinitionId()).setNextNodeCode(nextNode.getNodeCode()));
             if (CollUtil.isEmpty(skipsGateway)) {
                 return null;
             }
@@ -394,11 +393,10 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
      * 处理未完成的任务，当流程完成，还存在代办任务未完成，转历史任务，状态完成。
      *
      * @param instance
-     * @param nextNodes
      */
-    private void handUndoneTask(Instance instance, List<Node> nextNodes) {
+    private void handUndoneTask(Instance instance) {
         if (FlowStatus.isFinished(instance.getFlowStatus())) {
-            List<Task> taskList = FlowFactory.taskService().getByInsId(instance.getId());
+            List<Task> taskList = FlowFactory.taskService().list(FlowFactory.newTask().setInstanceId(instance.getId()));
             if (CollUtil.isNotEmpty(taskList)) {
                 convertHisTask(taskList, FlowStatus.FINISHED.getKey());
             }
@@ -724,8 +722,8 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         if (StringUtils.isNotEmpty(flowParams.getNodeCode())) {
             return checkSkipAppointAuth(task, flowParams);
         }
-        List<Skip> skips = FlowFactory.skipService()
-                .queryByDefAndCode(task.getDefinitionId(), task.getNodeCode());
+        List<Skip> skips = FlowFactory.skipService().list(FlowFactory.newSkip()
+                .setDefinitionId(task.getDefinitionId()).setNowNodeCode(task.getNodeCode()));
         Skip nextSkip = checkAuthAndCondition(NowNode, task, skips, flowParams);
         AssertUtil.isTrue(ObjectUtil.isNull(nextSkip), ExceptionCons.NULL_DEST_NODE);
         List<Node> nodes = FlowFactory.nodeService()
@@ -746,7 +744,8 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
     private Node getFirstBetween(List<Node> nodes) {
         for (Node node : nodes) {
             if (NodeType.isStart(node.getNodeType())) {
-                List<Skip> skips = FlowFactory.skipService().queryByDefAndCode(node.getDefinitionId(), node.getNodeCode());
+                List<Skip> skips = FlowFactory.skipService().list(FlowFactory.newSkip()
+                        .setDefinitionId(node.getDefinitionId()).setNowNodeCode(node.getNodeCode()));
                 Skip skip = skips.get(0);
                 return FlowFactory.nodeService().getByNodeCode(skip.getNextNodeCode(), skip.getDefinitionId());
             }
@@ -822,7 +821,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
      * @param listenerStr
      * @param valueHolder
      */
-    public static void getListenerPath(String listenerStr, ValueHolder valueHolder) {
+    public void getListenerPath(String listenerStr, ValueHolder valueHolder) {
         String path;
         String params;
 
@@ -839,33 +838,5 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
             System.out.println("else");
         }
     }
-
-//    public static void main(String[] args) {
-//        String input = "listenerPath({\"name\": \"John Doe\", \"age\": 30})";
-//        String input3 = "listenerPath";
-//        ValueHolder valueHolder = new ValueHolder();
-//        getListenerPath(input, valueHolder);
-//        System.out.println(valueHolder);
-//    }
-
-
-    //    public static void main(String[] args) {
-//        // Map序列化示例
-//        Map<String, Object> map = new HashMap<>();
-//        Map<String, Object> v = new HashMap<>();
-//        Map<String, Object> vt = new HashMap<>();
-//        ListenerVariable variable = new ListenerVariable(null, v, vt);
-//        map.put("name", "张三");
-//        map.put("variable", variable);
-//        v.put("name", new FlowParams());
-//        String stringify = ONode.serialize(map);
-//        System.out.println(stringify);
-//        Map<String, Object> map1 = ONode.deserialize(stringify);
-//        System.out.println(map1);
-//        System.out.println(((ListenerVariable) map1.get("variable")));
-//
-//        Map<String, Object> map2 = ONode.deserialize("");
-//        System.out.println(map2);
-//    }
 
 }

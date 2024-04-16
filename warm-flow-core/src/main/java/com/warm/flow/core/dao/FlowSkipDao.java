@@ -12,13 +12,4 @@ import java.util.List;
  */
 public interface FlowSkipDao extends WarmDao<Skip> {
 
-    /**
-     * 获取当前节点跳转
-     *
-     * @param definitionId
-     * @param nowNodeCode
-     * @return
-     */
-    List<Skip> queryByDefAndCode(Long definitionId, String nowNodeCode);
-
 }

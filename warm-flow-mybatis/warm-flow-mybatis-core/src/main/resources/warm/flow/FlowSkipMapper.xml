@@ -83,12 +83,6 @@
         where id = #{id}
     </select>
 
-    <select id="queryByDefAndCode" resultMap="FlowSkipResult">
-        <include refid="selectVo"/>
-        where t.definition_id = #{definitionId} and t.now_node_code = #{nowNodeCode}
-
-    </select>
-
     <insert id="insert" parameterType="com.warm.flow.orm.entity.FlowSkip">
         insert into flow_skip
         <trim prefix="(" suffix=")" suffixOverrides=",">

@@ -21,9 +21,4 @@ public class SkipServiceImpl extends WarmServiceImpl<FlowSkipDao, Skip> implemen
         return this;
     }
 
-
-    @Override
-    public List<Skip> queryByDefAndCode(Long definitionId, String nowNodeCode) {
-        return getDao().queryByDefAndCode(definitionId, nowNodeCode);
-    }
 }

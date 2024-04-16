@@ -26,11 +26,6 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao, HisTask>
     }
 
     @Override
-    public List<HisTask> getByInsIds(Long instanceId) {
-        return getDao().getByInsId(instanceId);
-    }
-
-    @Override
     public List<HisTask> getNoReject(String nodeCode, Long instanceId) {
         return getDao().getNoReject(nodeCode, instanceId);
     }

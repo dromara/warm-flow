@@ -21,11 +21,6 @@ public class FlowTaskDaoImpl extends WarmDaoImpl<Task> implements FlowTaskDao {
         return FrameInvoker.getBean(FlowTaskMapper.class);
     }
 
-    @Override
-    public List<Task> getByInsId(Long instanceId) {
-        return getMapper().getByInsId(instanceId);
-    }
-
     /**
      * 分页查询待办任务数量
      *

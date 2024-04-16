@@ -89,11 +89,6 @@
         where id = #{id}
     </select>
 
-    <select id="getByInsId" resultMap="FlowTaskResult">
-        <include refid="selectVo"/>
-        where t.instance_id = #{item}
-    </select>
-
     <sql id="select_toDo_parameter">
         <where>
             t.node_type = 1

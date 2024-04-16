@@ -42,16 +42,6 @@ public class FlowDefinitionDaoImpl extends WarmDaoImpl<Definition> implements Fl
     }
 
     /**
-     * 通过流程定义主键删除流程节点信息
-     *
-     * @param id 流程定义ID
-     * @return 结果
-     */
-    public int deleteNodeByDefId(Serializable id) {
-        return getMapper().deleteNodeByDefId(id);
-    }
-
-    /**
      * 批量删除节点跳转关联
      *
      * @param ids 需要删除的数据主键集合
@@ -59,17 +49,6 @@ public class FlowDefinitionDaoImpl extends WarmDaoImpl<Definition> implements Fl
      */
     public int deleteSkipByDefIds(Collection<? extends Serializable> ids) {
         return getMapper().deleteSkipByDefIds(ids);
-    }
-
-
-    /**
-     * 通过流程定义主键删除节点跳转关联信息
-     *
-     * @param id 流程定义ID
-     * @return 结果
-     */
-    public int deleteSkipByDefId(Serializable id) {
-        return getMapper().deleteSkipByDefId(id);
     }
 
 }

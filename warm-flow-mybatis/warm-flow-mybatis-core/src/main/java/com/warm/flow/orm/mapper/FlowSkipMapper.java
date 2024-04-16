@@ -13,13 +13,4 @@ import java.util.List;
  */
 public interface FlowSkipMapper extends WarmMapper<Skip> {
 
-    /**
-     * 获取当前节点跳转
-     *
-     * @param definitionId
-     * @param nowNodeCode
-     * @return
-     */
-    List<Skip> queryByDefAndCode(@Param("definitionId") Long definitionId, @Param("nowNodeCode") String nowNodeCode);
-
 }

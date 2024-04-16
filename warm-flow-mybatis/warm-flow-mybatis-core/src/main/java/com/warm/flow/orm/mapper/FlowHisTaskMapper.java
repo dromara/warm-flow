@@ -15,14 +15,6 @@ import java.util.List;
 public interface FlowHisTaskMapper extends WarmMapper<HisTask> {
 
     /**
-     * 根据实例id获取历史记录集合
-     *
-     * @param instanceId
-     * @return
-     */
-    List<HisTask> getByInsId(Long instanceId);
-
-    /**
      * 根据nodeCode获取未驳回的历史记录
      *
      * @param nodeCode

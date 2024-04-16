@@ -75,8 +75,8 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao, Node> implemen
             return arrayList;
         }
         //获取跳转关系
-        List<Skip> skips = FlowFactory.skipService()
-                .queryByDefAndCode(definitionId, nowNodeCode);
+        List<Skip> skips = FlowFactory.skipService().list(FlowFactory.newSkip().setDefinitionId(definitionId)
+                .setNowNodeCode(nowNodeCode));
         AssertUtil.isNull(skips, ExceptionCons.NULL_CONDITIONVALUE_NODE);
 
         return getNextSkips(nowNode, skips, skipType, variable);

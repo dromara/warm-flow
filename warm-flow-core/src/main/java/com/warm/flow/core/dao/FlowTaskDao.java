@@ -13,8 +13,6 @@ import java.util.List;
  */
 public interface FlowTaskDao extends WarmDao<Task> {
 
-    List<Task> getByInsId(Long instanceId);
-
     /**
      * 分页查询待办任务数量
      *

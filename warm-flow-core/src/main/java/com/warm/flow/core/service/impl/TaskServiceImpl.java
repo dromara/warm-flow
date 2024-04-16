@@ -28,12 +28,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao, Task> implemen
     }
 
     @Override
-    public List<Task> getByInsId(Long instanceId) {
-        AssertUtil.isTrue(ObjectUtil.isNull(instanceId), ExceptionCons.NOT_FOUNT_INSTANCE_ID);
-        return getDao().getByInsId(instanceId);
-    }
-
-    @Override
     public Page<Task> toDoPage(Task task, Page<Task> page) {
         // 根据权限标识符过滤
         List<String> permissionFlagD = CollUtil.strToColl(task.getPermissionFlag(), ",");

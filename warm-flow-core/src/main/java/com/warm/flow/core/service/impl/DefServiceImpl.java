@@ -323,7 +323,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao, Definitio
         if (FlowStatus.isFinished(instance.getFlowStatus())) {
             return nodeList;
         }
-        List<Task> curTasks = FlowFactory.taskService().getByInsId(instance.getId());
+        List<Task> curTasks = FlowFactory.taskService().list(FlowFactory.newTask().setInstanceId(instance.getId()));
         for (Task curTask : curTasks) {
             List<Skip> nextSkips = skipNextMap.get(curTask.getNodeCode());
             getAllNextNode(nextSkips, allNextNode, skipNextMap);
