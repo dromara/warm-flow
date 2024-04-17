@@ -9,6 +9,21 @@ public class IdUtils {
 
     private volatile static SnowFlake instance;
 
+    public static String nextIdStr() {
+        return nextId().toString();
+    }
+
+    public static String nextIdStr(long workerId, long datacenterId) {
+        if (instance == null) {
+            synchronized (SnowFlake.class) {
+                if (instance == null) {
+                    instance = new SnowFlake(workerId, datacenterId);
+                }
+            }
+        }
+        return nextId(workerId, datacenterId).toString();
+    }
+
     public static Long nextId() {
         if (instance == null) {
             synchronized (SnowFlake.class) {

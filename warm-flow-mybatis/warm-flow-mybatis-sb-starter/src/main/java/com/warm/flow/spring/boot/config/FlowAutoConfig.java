@@ -12,10 +12,12 @@ import com.warm.flow.core.utils.ClassUtil;
 import com.warm.flow.orm.dao.*;
 import com.warm.flow.orm.invoker.EntityInvoker;
 import com.warm.flow.spring.boot.utils.SpringUtil;
+import com.warm.tools.utils.ObjectUtil;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.annotation.MapperScan;
+import org.noear.snack.core.utils.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -103,16 +105,10 @@ public class FlowAutoConfig {
         return new HisTaskServiceImpl().setDao(hisTaskDao);
     }
 
-    @Bean("defaultDataFillHandler")
-    public DefaultDataFillHandler defaultDataFillHandler() {
-        return new DefaultDataFillHandler();
-    }
-
     @Bean
     public WarmFlowConfig initFlowConfig(DefService definitionService, HisTaskService hisTaskService
             , InsService instanceService, NodeService nodeService, SkipService skipService, TaskService taskService
-            ,SqlSessionFactory sqlSessionFactory) {
-        log.info("warm-flow初始化");
+            ,SqlSessionFactory sqlSessionFactory) throws InstantiationException, IllegalAccessException {
         loadXml(sqlSessionFactory);
         initFlowService(definitionService, hisTaskService, instanceService
                 , nodeService, skipService, taskService);
@@ -120,17 +116,30 @@ public class FlowAutoConfig {
         EntityInvoker.setNewEntity();
         FrameInvoker.setCfgFunction((key) -> environment.getProperty(key));
         FrameInvoker.setBeanFunction(SpringUtil::getBean);
-        FlowFactory.setFlowConfig(WarmFlowConfig.init());
+        WarmFlowConfig flowConfig = WarmFlowConfig.init();
+        FlowFactory.setFlowConfig(flowConfig);
+        FlowFactory.setDataFillHandler(dataFillHandler(flowConfig));
+        log.info("warm-flow初始化结束");
         return FlowFactory.getFlowConfig();
     }
 
-    @Bean
     public DataFillHandler dataFillHandler(WarmFlowConfig flowConfig) throws InstantiationException, IllegalAccessException {
         DataFillHandler o = null;
         String dataFillHandlerPath = flowConfig.getDataFillHandlerPath();
-        Class<?> clazz = ClassUtil.getClazz(dataFillHandlerPath);
-        if (clazz != null) {
-            o = (DataFillHandler) clazz.newInstance();
+        if (!StringUtil.isEmpty(dataFillHandlerPath)) {
+            Class<?> clazz = ClassUtil.getClazz(dataFillHandlerPath);
+            if (clazz != null) {
+                o = (DataFillHandler) clazz.newInstance();
+            }
+        } else {
+            try {
+                o = FrameInvoker.getBean(DataFillHandler.class);
+            } catch (Exception e) {
+
+            }
+            if (ObjectUtil.isNull(o)) {
+                o = new DefaultDataFillHandler();
+            }
         }
         return o;
     }

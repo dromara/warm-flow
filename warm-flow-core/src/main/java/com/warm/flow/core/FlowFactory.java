@@ -36,6 +36,7 @@ public class FlowFactory {
 
     private static WarmFlowConfig flowConfig;
 
+    private static DataFillHandler dataFillHandler;
 
     public FlowFactory(DefService defService, HisTaskService hisTaskService
             , InsService insService, NodeService nodeService
@@ -155,11 +156,14 @@ public class FlowFactory {
     /**
      * 获取填充类
      */
+    public static void setDataFillHandler(DataFillHandler dataFillHandler) {
+        FlowFactory.dataFillHandler = dataFillHandler;
+    }
+
+    /**
+     * 获取填充类
+     */
     public static DataFillHandler dataFillHandler() {
-        DataFillHandler dataFillHandler = FrameInvoker.getBean(DataFillHandler.class);
-        if (ObjectUtil.isNull(dataFillHandler)) {
-            dataFillHandler = FrameInvoker.getBean(DefaultDataFillHandler.class);
-        }
-        return dataFillHandler;
+        return FlowFactory.dataFillHandler;
     }
 }
