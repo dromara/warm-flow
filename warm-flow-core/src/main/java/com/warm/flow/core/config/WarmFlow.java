@@ -11,7 +11,7 @@ import com.warm.tools.utils.StringUtils;
  *
  * @author warm
  */
-public class WarmFlowConfig {
+public class WarmFlow {
     private boolean banner = true;
 
     private String dataFillHandlerPath;
@@ -21,33 +21,30 @@ public class WarmFlowConfig {
         return banner;
     }
 
-    public WarmFlowConfig setBanner(boolean banner) {
+    public void setBanner(boolean banner) {
         this.banner = banner;
-        return this;
     }
 
     public String getDataFillHandlerPath() {
         return dataFillHandlerPath;
     }
 
-    public WarmFlowConfig setDataFillHandlerPath(String dataFillHandlerPath) {
+    public void setDataFillHandlerPath(String dataFillHandlerPath) {
         this.dataFillHandlerPath = dataFillHandlerPath;
-        return this;
     }
 
-    public static WarmFlowConfig init() throws InstantiationException, IllegalAccessException {
-        WarmFlowConfig flowConfig = new WarmFlowConfig();
+    public static WarmFlow init() {
+        WarmFlow flowConfig = new WarmFlow();
         String banner = FrameInvoker.getCfg(FlowConfigCons.BANNER);
         if (StringUtils.isNotEmpty(banner)) {
             flowConfig.setBanner(ObjectUtil.isStrTrue(banner));
         }
         flowConfig.setDataFillHandlerPath(FrameInvoker.getCfg(FlowConfigCons.DATAFILLHANDLEPATH));
-        FlowFactory.setDataFillHandler(flowConfig);
         printBanner(flowConfig);
         return flowConfig;
     }
 
-    private static void printBanner(WarmFlowConfig flowConfig) {
+    private static void printBanner(WarmFlow flowConfig) {
         if (flowConfig.isBanner()) {
             System.out.println("\n" +
                     "▄     ▄                      ▄▄▄▄▄▄   ▄                \n" +

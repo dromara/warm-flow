@@ -1,7 +1,7 @@
 package com.warm.flow.spring.boot.config;
 
 import com.warm.flow.core.FlowFactory;
-import com.warm.flow.core.config.WarmFlowConfig;
+import com.warm.flow.core.config.WarmFlow;
 import com.warm.flow.core.dao.*;
 import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.core.service.*;
@@ -101,7 +101,7 @@ public class FlowAutoConfig {
     }
 
     @Bean
-    public WarmFlowConfig initFlow(DefService definitionService, HisTaskService hisTaskService
+    public WarmFlow initFlow(DefService definitionService, HisTaskService hisTaskService
             , InsService instanceService, NodeService nodeService, SkipService skipService, TaskService taskService
             , SqlSessionFactory sqlSessionFactory) throws InstantiationException, IllegalAccessException {
         loadXml(sqlSessionFactory);
@@ -111,7 +111,7 @@ public class FlowAutoConfig {
                 , nodeService, skipService, taskService);
         FrameInvoker.setCfgFunction((key) -> environment.getProperty(key));
         FrameInvoker.setBeanFunction(SpringUtil::getBean);
-        WarmFlowConfig flowConfig = WarmFlowConfig.init();
+        WarmFlow flowConfig = WarmFlow.init();
         FlowFactory.setFlowConfig(flowConfig);
         log.info("warm-flow初始化结束");
         return FlowFactory.getFlowConfig();

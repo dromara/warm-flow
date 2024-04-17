@@ -1,7 +1,7 @@
 package com.warm.flow.solon.config;
 
 import com.warm.flow.core.FlowFactory;
-import com.warm.flow.core.config.WarmFlowConfig;
+import com.warm.flow.core.config.WarmFlow;
 import com.warm.flow.core.dao.*;
 import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.core.service.*;
@@ -86,7 +86,7 @@ public class FlowAutoConfig {
     }
 
     @Bean
-    public WarmFlowConfig initFlow(DefService definitionService, HisTaskService hisTaskService
+    public WarmFlow initFlow(DefService definitionService, HisTaskService hisTaskService
             , InsService instanceService, NodeService nodeService, SkipService skipService
             , TaskService taskService) throws InstantiationException, IllegalAccessException {
         // 设置创建对象方法
@@ -95,7 +95,7 @@ public class FlowAutoConfig {
                 , nodeService, skipService, taskService);
         FrameInvoker.setCfgFunction((key) -> Solon.cfg().get(key));
         FrameInvoker.setBeanFunction(Solon.context()::getBean);
-        WarmFlowConfig flowConfig = WarmFlowConfig.init();
+        WarmFlow flowConfig = WarmFlow.init();
         FlowFactory.setFlowConfig(flowConfig);
         log.info("warm-flow初始化结束");
         return FlowFactory.getFlowConfig();

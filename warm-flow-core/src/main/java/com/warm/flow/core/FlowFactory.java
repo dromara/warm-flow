@@ -1,6 +1,6 @@
 package com.warm.flow.core;
 
-import com.warm.flow.core.config.WarmFlowConfig;
+import com.warm.flow.core.config.WarmFlow;
 import com.warm.flow.core.entity.*;
 import com.warm.flow.core.handler.DataFillHandler;
 import com.warm.flow.core.handler.DefaultDataFillHandler;
@@ -36,7 +36,7 @@ public class FlowFactory {
     private static Supplier<Skip> skipSupplier;
     private static Supplier<Task> taskSupplier;
 
-    private static WarmFlowConfig flowConfig;
+    private static WarmFlow flowConfig;
 
     private static DataFillHandler dataFillHandler;
 
@@ -146,42 +146,40 @@ public class FlowFactory {
         return taskSupplier.get();
     }
 
-    public static WarmFlowConfig getFlowConfig() {
+    public static WarmFlow getFlowConfig() {
         return FlowFactory.flowConfig;
     }
 
-    public static void setFlowConfig(WarmFlowConfig flowConfig) {
+    public static void setFlowConfig(WarmFlow flowConfig) {
         FlowFactory.flowConfig = flowConfig;
     }
 
     /**
      * 获取填充类
      */
-    public static void setDataFillHandler(WarmFlowConfig flowConfig) throws InstantiationException, IllegalAccessException {
+    public static DataFillHandler dataFillHandler() {
+        if (ObjectUtil.isNotNull(FlowFactory.dataFillHandler)) {
+            return FlowFactory.dataFillHandler;
+        }
         DataFillHandler o = null;
-        String dataFillHandlerPath = flowConfig.getDataFillHandlerPath();
-        if (!StringUtil.isEmpty(dataFillHandlerPath)) {
-            Class<?> clazz = ClassUtil.getClazz(dataFillHandlerPath);
-            if (clazz != null) {
-                o = (DataFillHandler) clazz.newInstance();
-            }
-        } else {
-            try {
+        try {
+            String dataFillHandlerPath = flowConfig.getDataFillHandlerPath();
+            if (!StringUtil.isEmpty(dataFillHandlerPath)) {
+                Class<?> clazz = ClassUtil.getClazz(dataFillHandlerPath);
+                if (clazz != null) {
+                    o = (DataFillHandler) clazz.newInstance();
+                }
+            } else {
                 o = FrameInvoker.getBean(DataFillHandler.class);
-            } catch (Exception e) {
-
+                if (ObjectUtil.isNull(o)) {
+                    o = new DefaultDataFillHandler();
+                }
             }
+        } catch (Exception e) {
             if (ObjectUtil.isNull(o)) {
                 o = new DefaultDataFillHandler();
             }
         }
-        FlowFactory.dataFillHandler = o;
-    }
-
-    /**
-     * 获取填充类
-     */
-    public static DataFillHandler dataFillHandler() {
-        return FlowFactory.dataFillHandler;
+        return FlowFactory.dataFillHandler = o;
     }
 }
