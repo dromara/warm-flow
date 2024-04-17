@@ -6,7 +6,9 @@ import com.warm.flow.core.handler.DataFillHandler;
 import com.warm.flow.core.handler.DefaultDataFillHandler;
 import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.core.service.*;
+import com.warm.flow.core.utils.ClassUtil;
 import com.warm.tools.utils.ObjectUtil;
+import org.noear.snack.core.utils.StringUtil;
 
 import java.util.function.Supplier;
 
@@ -38,15 +40,14 @@ public class FlowFactory {
 
     private static DataFillHandler dataFillHandler;
 
-    public FlowFactory(DefService defService, HisTaskService hisTaskService
-            , InsService insService, NodeService nodeService
-            , SkipService skipService, TaskService taskService) {
-        FlowFactory.defService = defService;
-        FlowFactory.hisTaskService = hisTaskService;
-        FlowFactory.insService = insService;
-        FlowFactory.nodeService = nodeService;
-        FlowFactory.skipService = skipService;
-        FlowFactory.taskService = taskService;
+    public static void initFlowService(DefService definitionService, HisTaskService hisTaskService, InsService instanceService
+            , NodeService nodeService, SkipService skipService, TaskService taskService) {
+        FlowFactory.setDefService(definitionService);
+        FlowFactory.setHisTaskService(hisTaskService);
+        FlowFactory.setInsService(instanceService);
+        FlowFactory.setNodeService(nodeService);
+        FlowFactory.setSkipService(skipService);
+        FlowFactory.setTaskService(taskService);
     }
 
     public static void setDefService(DefService defService) {
@@ -156,8 +157,25 @@ public class FlowFactory {
     /**
      * 获取填充类
      */
-    public static void setDataFillHandler(DataFillHandler dataFillHandler) {
-        FlowFactory.dataFillHandler = dataFillHandler;
+    public static void setDataFillHandler(WarmFlowConfig flowConfig) throws InstantiationException, IllegalAccessException {
+        DataFillHandler o = null;
+        String dataFillHandlerPath = flowConfig.getDataFillHandlerPath();
+        if (!StringUtil.isEmpty(dataFillHandlerPath)) {
+            Class<?> clazz = ClassUtil.getClazz(dataFillHandlerPath);
+            if (clazz != null) {
+                o = (DataFillHandler) clazz.newInstance();
+            }
+        } else {
+            try {
+                o = FrameInvoker.getBean(DataFillHandler.class);
+            } catch (Exception e) {
+
+            }
+            if (ObjectUtil.isNull(o)) {
+                o = new DefaultDataFillHandler();
+            }
+        }
+        FlowFactory.dataFillHandler = o;
     }
 
     /**

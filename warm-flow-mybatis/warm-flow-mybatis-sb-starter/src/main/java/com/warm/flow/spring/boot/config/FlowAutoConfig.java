@@ -3,21 +3,16 @@ package com.warm.flow.spring.boot.config;
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.config.WarmFlowConfig;
 import com.warm.flow.core.dao.*;
-import com.warm.flow.core.handler.DataFillHandler;
-import com.warm.flow.core.handler.DefaultDataFillHandler;
 import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.core.service.*;
 import com.warm.flow.core.service.impl.*;
-import com.warm.flow.core.utils.ClassUtil;
 import com.warm.flow.orm.dao.*;
 import com.warm.flow.orm.invoker.EntityInvoker;
 import com.warm.flow.spring.boot.utils.SpringUtil;
-import com.warm.tools.utils.ObjectUtil;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.annotation.MapperScan;
-import org.noear.snack.core.utils.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -106,52 +101,20 @@ public class FlowAutoConfig {
     }
 
     @Bean
-    public WarmFlowConfig initFlowConfig(DefService definitionService, HisTaskService hisTaskService
+    public WarmFlowConfig initFlow(DefService definitionService, HisTaskService hisTaskService
             , InsService instanceService, NodeService nodeService, SkipService skipService, TaskService taskService
-            ,SqlSessionFactory sqlSessionFactory) throws InstantiationException, IllegalAccessException {
+            , SqlSessionFactory sqlSessionFactory) throws InstantiationException, IllegalAccessException {
         loadXml(sqlSessionFactory);
-        initFlowService(definitionService, hisTaskService, instanceService
-                , nodeService, skipService, taskService);
         // 设置创建对象方法
         EntityInvoker.setNewEntity();
+        FlowFactory.initFlowService(definitionService, hisTaskService, instanceService
+                , nodeService, skipService, taskService);
         FrameInvoker.setCfgFunction((key) -> environment.getProperty(key));
         FrameInvoker.setBeanFunction(SpringUtil::getBean);
         WarmFlowConfig flowConfig = WarmFlowConfig.init();
         FlowFactory.setFlowConfig(flowConfig);
-        FlowFactory.setDataFillHandler(dataFillHandler(flowConfig));
         log.info("warm-flow初始化结束");
         return FlowFactory.getFlowConfig();
-    }
-
-    public DataFillHandler dataFillHandler(WarmFlowConfig flowConfig) throws InstantiationException, IllegalAccessException {
-        DataFillHandler o = null;
-        String dataFillHandlerPath = flowConfig.getDataFillHandlerPath();
-        if (!StringUtil.isEmpty(dataFillHandlerPath)) {
-            Class<?> clazz = ClassUtil.getClazz(dataFillHandlerPath);
-            if (clazz != null) {
-                o = (DataFillHandler) clazz.newInstance();
-            }
-        } else {
-            try {
-                o = FrameInvoker.getBean(DataFillHandler.class);
-            } catch (Exception e) {
-
-            }
-            if (ObjectUtil.isNull(o)) {
-                o = new DefaultDataFillHandler();
-            }
-        }
-        return o;
-    }
-
-    public void initFlowService(DefService definitionService, HisTaskService hisTaskService, InsService instanceService
-            , NodeService nodeService, SkipService skipService, TaskService taskService) {
-        FlowFactory.setDefService(definitionService);
-        FlowFactory.setHisTaskService(hisTaskService);
-        FlowFactory.setInsService(instanceService);
-        FlowFactory.setNodeService(nodeService);
-        FlowFactory.setSkipService(skipService);
-        FlowFactory.setTaskService(taskService);
     }
 
     private void loadXml(SqlSessionFactory sqlSessionFactory) {

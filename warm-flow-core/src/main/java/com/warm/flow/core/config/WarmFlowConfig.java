@@ -1,5 +1,6 @@
 package com.warm.flow.core.config;
 
+import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.constant.FlowConfigCons;
 import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.tools.utils.ObjectUtil;
@@ -34,20 +35,22 @@ public class WarmFlowConfig {
         return this;
     }
 
-    public static WarmFlowConfig init() {
+    public static WarmFlowConfig init() throws InstantiationException, IllegalAccessException {
         WarmFlowConfig flowConfig = new WarmFlowConfig();
         String banner = FrameInvoker.getCfg(FlowConfigCons.BANNER);
         if (StringUtils.isNotEmpty(banner)) {
             flowConfig.setBanner(ObjectUtil.isStrTrue(banner));
         }
         flowConfig.setDataFillHandlerPath(FrameInvoker.getCfg(FlowConfigCons.DATAFILLHANDLEPATH));
+        FlowFactory.setDataFillHandler(flowConfig);
         printBanner(flowConfig);
         return flowConfig;
     }
 
     private static void printBanner(WarmFlowConfig flowConfig) {
         if (flowConfig.isBanner()) {
-            System.out.println("▄     ▄                      ▄▄▄▄▄▄ ▀▀█                 \n" +
+            System.out.println("\n" +
+                    "▄     ▄                      ▄▄▄▄▄▄   ▄                \n" +
                     "█  █  █  ▄▄▄    ▄ ▄▄  ▄▄▄▄▄  █        █     ▄▄▄  ▄     ▄\n" +
                     "▀ █▀█ █ ▀   █   █▀  ▀ █ █ █  █▄▄▄▄▄   █    █▀ ▀█ ▀▄ ▄ ▄▀\n" +
                     " ██ ██▀ ▄▀▀▀█   █     █ █ █  █        █    █   █  █▄█▄█\n" +

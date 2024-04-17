@@ -86,28 +86,18 @@ public class FlowAutoConfig {
     }
 
     @Bean
-    public WarmFlowConfig initFlowConfig(DefService definitionService, HisTaskService hisTaskService
+    public WarmFlowConfig initFlow(DefService definitionService, HisTaskService hisTaskService
             , InsService instanceService, NodeService nodeService, SkipService skipService
-            , TaskService taskService) {
+            , TaskService taskService) throws InstantiationException, IllegalAccessException {
         // 设置创建对象方法
         EntityInvoker.setNewEntity();
-        initFlowService(definitionService, hisTaskService, instanceService
+        FlowFactory.initFlowService(definitionService, hisTaskService, instanceService
                 , nodeService, skipService, taskService);
         FrameInvoker.setCfgFunction((key) -> Solon.cfg().get(key));
         FrameInvoker.setBeanFunction(Solon.context()::getBean);
-
-        FlowFactory.setFlowConfig(WarmFlowConfig.init());
+        WarmFlowConfig flowConfig = WarmFlowConfig.init();
+        FlowFactory.setFlowConfig(flowConfig);
+        log.info("warm-flow初始化结束");
         return FlowFactory.getFlowConfig();
     }
-
-    public void initFlowService(DefService definitionService, HisTaskService hisTaskService, InsService instanceService
-            , NodeService nodeService, SkipService skipService, TaskService taskService) {
-        FlowFactory.setDefService(definitionService);
-        FlowFactory.setHisTaskService(hisTaskService);
-        FlowFactory.setInsService(instanceService);
-        FlowFactory.setNodeService(nodeService);
-        FlowFactory.setSkipService(skipService);
-        FlowFactory.setTaskService(taskService);
-    }
-
 }
