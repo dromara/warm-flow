@@ -2,7 +2,6 @@ package com.warm.flow.orm.entity;
 
 import com.warm.flow.core.entity.Instance;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -11,9 +10,8 @@ import java.util.Date;
  * @author warm
  * @date 2023-03-29
  */
-public class FlowInstance implements Instance, Serializable {
+public class FlowInstance implements Instance {
 
-    private static final long serialVersionUID = -7759473048540854590L;
     /**
      * 主键
      */

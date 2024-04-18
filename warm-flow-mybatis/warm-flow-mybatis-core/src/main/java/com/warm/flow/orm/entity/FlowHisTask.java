@@ -2,7 +2,6 @@ package com.warm.flow.orm.entity;
 
 import com.warm.flow.core.entity.HisTask;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -12,9 +11,8 @@ import java.util.List;
  * @author warm
  * @date 2023-03-29
  */
-public class FlowHisTask implements HisTask, Serializable {
+public class FlowHisTask implements HisTask {
 
-    private static final long serialVersionUID = -1196023490535739840L;
     /**
      * 主键
      */
