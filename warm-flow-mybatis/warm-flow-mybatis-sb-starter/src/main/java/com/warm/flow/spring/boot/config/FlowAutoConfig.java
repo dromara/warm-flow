@@ -109,7 +109,7 @@ public class FlowAutoConfig {
         EntityInvoker.setNewEntity();
         FlowFactory.initFlowService(definitionService, hisTaskService, instanceService
                 , nodeService, skipService, taskService);
-        FrameInvoker.setCfgFunction((key) -> environment.getProperty(key));
+        FrameInvoker.setCfgFunction((key) -> SpringUtil.getBean(Environment.class).getProperty(key));
         FrameInvoker.setBeanFunction(SpringUtil::getBean);
         WarmFlow flowConfig = WarmFlow.init();
         FlowFactory.setFlowConfig(flowConfig);

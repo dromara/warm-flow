@@ -1,5 +1,6 @@
 package com.warm.flow.core.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -7,7 +8,7 @@ import java.util.Date;
  * @description: 流程基础entity
  * @date: 2023/5/17 17:23
  */
-public interface RootEntity {
+public interface RootEntity extends Serializable {
 
     public Long getId();
 
