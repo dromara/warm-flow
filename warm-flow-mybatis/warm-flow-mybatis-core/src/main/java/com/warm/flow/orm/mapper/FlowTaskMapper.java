@@ -15,24 +15,6 @@ import java.util.List;
 public interface FlowTaskMapper extends WarmMapper<Task> {
 
     /**
-     * 分页查询待办任务数量
-     *
-     * @param task 条件实体
-     * @param page
-     * @return
-     */
-    long countTodo(@Param("task") Task task, @Param("page") Page<Task> page);
-
-    /**
-     * 分页查询待办任务
-     *
-     * @param task 条件实体
-     * @param page
-     */
-    List<Task> toDoPage(@Param("task") Task task
-            , @Param("page") Page<Task> page);
-
-    /**
      * 根据instanceIds删除
      *
      * @param instanceIds 主键

@@ -45,42 +45,4 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<HisTask> implements FlowHisT
         return getMapper().deleteByInsIds(instanceIds);
     }
 
-    /**
-     * 获取已办任务数量
-     *
-     * @param hisTask
-     * @param page
-     * @return
-     */
-    @Override
-    public long countDone(HisTask hisTask, Page<HisTask> page) {
-        return getMapper().countDone(hisTask, page);
-    }
-
-    /**
-     * 获取最新的已办任务
-     *
-     * @param hisTask
-     * @param page
-     * @return
-     */
-    @Override
-    public List<HisTask> donePage(@Param("flowHisTask") HisTask hisTask
-            , @Param("page") Page<HisTask> page) {
-        return getMapper().donePage(hisTask, page);
-    }
-
-    /**
-     * 获取已办任务
-     *
-     * @param hisTask
-     * @param page
-     * @return
-     */
-    @Override
-    public List<HisTask> doneAllPage(@Param("flowHisTask") HisTask hisTask
-            , @Param("page") Page<HisTask> page) {
-        return getMapper().doneAllPage(hisTask, page);
-    }
-
 }

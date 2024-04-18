@@ -88,7 +88,7 @@ public class FlowAutoConfig {
     @Bean
     public WarmFlow initFlow(DefService definitionService, HisTaskService hisTaskService
             , InsService instanceService, NodeService nodeService, SkipService skipService
-            , TaskService taskService) throws InstantiationException, IllegalAccessException {
+            , TaskService taskService) {
         // 设置创建对象方法
         EntityInvoker.setNewEntity();
         FlowFactory.initFlowService(definitionService, hisTaskService, instanceService

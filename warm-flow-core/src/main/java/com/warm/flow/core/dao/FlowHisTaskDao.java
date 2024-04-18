@@ -30,31 +30,4 @@ public interface FlowHisTaskDao extends WarmDao<HisTask> {
      */
     int deleteByInsIds(List<Long> instanceIds);
 
-    /**
-     * 获取已办任务数量
-     *
-     * @param hisTask
-     * @param page
-     * @return
-     */
-    long countDone(HisTask hisTask, Page<HisTask> page);
-
-    /**
-     * 获取最新的已办任务
-     *
-     * @param hisTask
-     * @param page
-     * @return
-     */
-    List<HisTask> donePage(HisTask hisTask, Page<HisTask> page);
-
-    /**
-     * 获取已办任务
-     *
-     * @param hisTask
-     * @param page
-     * @return
-     */
-    List<HisTask> doneAllPage(HisTask hisTask, Page<HisTask> page);
-
 }

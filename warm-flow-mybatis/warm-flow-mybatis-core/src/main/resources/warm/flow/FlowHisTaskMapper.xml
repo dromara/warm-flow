@@ -100,61 +100,6 @@
         where id = #{id}
     </select>
 
-    <sql id="select_done_parameter">
-        <where>
-            <if test="hisTask.nodeCode != null  and hisTask.nodeCode != ''">and t.node_code =
-                #{hisTask.nodeCode}
-            </if>
-            <if test="hisTask.nodeName != null  and hisTask.nodeName != ''">and t.node_name like concat('%',
-                #{hisTask.nodeName}, '%')
-            </if>
-            <if test="hisTask.approver != null  and hisTask.approver != ''">and t.approver =
-                #{hisTask.approver}
-            </if>
-            <if test="hisTask.instanceId != null ">and t.instance_id = #{hisTask.instanceId}</if>
-            <if test="hisTask.tenantId != null  and hisTask.tenantId != ''">and t.tenant_id = #{hisTask.tenantId}</if>
-            <if test="hisTask.permissionList != null and hisTask.permissionList.size > 0">
-                AND (t.permission_flag is null OR
-                <foreach item="permission" collection="hisTask.permissionList" open="(" separator="or" close=")">
-                    t.permission_flag like concat ('%', #{permission}, '%')
-                </foreach>)
-            </if>
-        </where>
-    </sql>
-
-    <select id="countDone" resultType="long">
-        select count(*) from flow_his_task t
-        <include refid="donePageQuery"/>
-    </select>
-
-    <select id="donePage" resultMap="FlowHisTaskResult">
-        select t.id, t.node_code, t.node_name, t.node_type, t.target_node_code, t.target_node_name, t.approver
-        , t.definition_id, t.instance_id, i.flow_status, t.message, t.create_time, t.update_time
-        ,t.permission_flag, t.tenant_id, i.business_id, d.flow_name from flow_his_task t
-        <include refid="donePageQuery"/>
-        order by t.create_time desc
-        <include refid="paging_end"/>
-    </select>
-
-    <sql id="donePageQuery">
-        LEFT JOIN flow_definition d on t.definition_id = d.id
-        LEFT JOIN flow_instance i on t.instance_id = i.id
-        RIGHT JOIN ( SELECT MAX(id) as id FROM flow_his_task GROUP BY instance_id ) tmp ON t.id = tmp.id
-        and t.flow_status <![CDATA[<> '10']]>
-        <include refid="select_done_parameter"/>
-    </sql>
-
-    <select id="doneAllPage" resultMap="FlowHisTaskResult">
-        select t.id, t.node_code, t.node_name, t.node_type, t.target_node_code, t.target_node_name, t.approver
-        , t.definition_id, t.instance_id, t.flow_status, t.message, t.create_time, t.update_time
-        ,t.permission_flag, t.tenant_id, i.business_id, d.flow_name from flow_his_task t
-        LEFT JOIN flow_definition d on t.definition_id = d.id
-        LEFT JOIN flow_instance i on t.instance_id = i.id
-        <include refid="select_done_parameter"/>
-        order by t.create_time desc
-        <include refid="paging_end"/>
-    </select>
-
     <select id="getNoReject" resultMap="FlowHisTaskResult">
         <include refid="selectVo"/>
         where t.node_code = #{nodeCode}

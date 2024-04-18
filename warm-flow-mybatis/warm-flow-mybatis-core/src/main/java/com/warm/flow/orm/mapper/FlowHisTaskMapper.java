@@ -31,34 +31,4 @@ public interface FlowHisTaskMapper extends WarmMapper<HisTask> {
      */
     int deleteByInsIds(List<Long> instanceIds);
 
-    /**
-     * 获取已办任务数量
-     *
-     * @param hisTask
-     * @param page
-     * @return
-     */
-    long countDone(@Param("hisTask") HisTask hisTask
-            , @Param("page") Page<HisTask> page);
-
-    /**
-     * 获取最新的已办任务
-     *
-     * @param hisTask
-     * @param page
-     * @return
-     */
-    List<HisTask> donePage(@Param("hisTask") HisTask hisTask
-            , @Param("page") Page<HisTask> page);
-
-    /**
-     * 获取已办任务
-     *
-     * @param hisTask
-     * @param page
-     * @return
-     */
-    List<HisTask> doneAllPage(@Param("hisTask") HisTask hisTask
-            , @Param("page") Page<HisTask> page);
-
 }

@@ -103,7 +103,7 @@ public class FlowAutoConfig {
     @Bean
     public WarmFlow initFlow(DefService definitionService, HisTaskService hisTaskService
             , InsService instanceService, NodeService nodeService, SkipService skipService, TaskService taskService
-            , SqlSessionFactory sqlSessionFactory) throws InstantiationException, IllegalAccessException {
+            , SqlSessionFactory sqlSessionFactory) {
         loadXml(sqlSessionFactory);
         // 设置创建对象方法
         EntityInvoker.setNewEntity();

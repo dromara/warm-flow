@@ -64,20 +64,4 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao, HisTask>
     public boolean deleteByInsIds(List<Long> instanceIds) {
         return SqlHelper.retBool(getDao().deleteByInsIds(instanceIds));
     }
-
-    @Override
-    public Page<HisTask> donePage(HisTask hisTask, Page<HisTask> page) {
-        // 根据权限标识符过滤
-        List<String> permissionFlagD = CollUtil.strToColl(hisTask.getPermissionFlag(), ",");
-        if (ObjectUtil.isNull(permissionFlagD)) {
-            hisTask.setPermissionList(hisTask.getPermissionList());
-        }
-        long count = getDao().countDone(hisTask, page);
-        if (count > 0) {
-            List<HisTask> list = getDao().donePage(hisTask, page);
-            return new Page<>(list, count);
-        }
-        return Page.empty();
-    }
-
 }

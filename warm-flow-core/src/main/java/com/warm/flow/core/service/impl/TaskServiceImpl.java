@@ -104,21 +104,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao, Task> implemen
     }
 
     @Override
-    public Page<Task> toDoPage(Task task, Page<Task> page) {
-        // 根据权限标识符过滤
-        List<String> permissionFlagD = CollUtil.strToColl(task.getPermissionFlag(), ",");
-        if (ObjectUtil.isNull(permissionFlagD)) {
-            task.setPermissionList(task.getPermissionList());
-        }
-        long count = getDao().countTodo(task, page);
-        if (count > 0) {
-            List<Task> list = getDao().toDoPage(task, page);
-            return new Page<>(list, count);
-        }
-        return Page.empty();
-    }
-
-    @Override
     public boolean deleteByInsIds(List<Long> instanceIds) {
         return SqlHelper.retBool(getDao().deleteByInsIds(instanceIds));
     }
@@ -219,6 +204,11 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao, Task> implemen
         } else {
             return FlowStatus.APPROVAL.getKey();
         }
+    }
+
+    @Override
+    public boolean transfer(Long taskId, String permissionFlag) {
+        return updateById(getById(taskId).setPermissionFlag(permissionFlag));
     }
 
     /**

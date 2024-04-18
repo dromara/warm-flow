@@ -43,14 +43,4 @@ public interface HisTaskService extends IWarmService<HisTask> {
      */
     boolean deleteByInsIds(List<Long> instanceIds);
 
-    /**
-     * 获取已办任务
-     *
-     * @param hisTask
-     * @param page
-     * @return
-     */
-    @Deprecated
-    Page<HisTask> donePage(HisTask hisTask, Page<HisTask> page);
-
 }

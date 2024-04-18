@@ -22,29 +22,6 @@ public class FlowTaskDaoImpl extends WarmDaoImpl<Task> implements FlowTaskDao {
     }
 
     /**
-     * 分页查询待办任务数量
-     *
-     * @param task 条件实体
-     * @param page
-     * @return
-     */
-    @Override
-    public long countTodo(Task task, Page<Task> page) {
-        return getMapper().countTodo(task, page);
-    }
-
-    /**
-     * 分页查询待办任务
-     *
-     * @param task 条件实体
-     * @param page
-     */
-    @Override
-    public List<Task> toDoPage(Task task, Page<Task> page) {
-        return getMapper().toDoPage(task, page);
-    }
-
-    /**
      * 根据instanceIds删除
      *
      * @param instanceIds 主键

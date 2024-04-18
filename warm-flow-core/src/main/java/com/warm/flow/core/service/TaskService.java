@@ -49,16 +49,6 @@ public interface TaskService extends IWarmService<Task> {
     Instance skip(FlowParams flowParams, Task task, Instance instance);
 
     /**
-     * 分页查询待办任务
-     *
-     * @param task 条件实体
-     * @param page
-     * @return
-     */
-    @Deprecated
-    Page<Task> toDoPage(Task task, Page<Task> page);
-
-    /**
      * 根据instanceIds删除
      *
      * @param instanceIds
@@ -92,4 +82,11 @@ public interface TaskService extends IWarmService<Task> {
      * @param skipType 流程条件
      */
     Integer setFlowStatus(Integer nodeType, String skipType);
+
+    /**
+     * 转办任务
+     * @param taskId 任务id
+     * @param permissionFlag 重新指定的权限标识（办理人）
+     */
+    boolean transfer(Long taskId, String permissionFlag);
 }

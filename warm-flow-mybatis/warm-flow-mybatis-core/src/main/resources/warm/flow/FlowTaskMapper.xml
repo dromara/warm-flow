@@ -89,45 +89,6 @@
         where id = #{id}
     </select>
 
-    <sql id="select_toDo_parameter">
-        <where>
-            t.node_type = 1
-            <if test="task.nodeCode != null and task.nodeCode != ''">and t.node_code = #{task.nodeCode}</if>
-            <if test="task.nodeName != null and task.nodeName != ''">and t.node_name like concat('%',
-                #{task.nodeName}, '%')
-            </if>
-            <if test="task.approver != null and task.approver != ''">and t.approver = #{task.approver}</if>
-            <if test="task.instanceId != null ">and t.instance_id = #{task.instanceId}</if>
-            <if test="task.tenantId != null and task.tenantId != ''">and t.tenant_id = #{task.tenantId}</if>
-            <if test="task.permissionList != null and task.permissionList.size > 0">
-                AND (t.permission_flag is null OR
-                <foreach item="permission" collection="task.permissionList" open="(" separator="or" close=")">
-                    t.permission_flag like concat ('%', #{permission}, '%')
-                </foreach>)
-            </if>
-        </where>
-    </sql>
-
-    <select id="countTodo" resultType="long">
-        select count(*) from flow_task t
-        <include refid="donePageQuery"/>
-    </select>
-
-    <select id="toDoPage" resultMap="FlowTaskResult">
-        select t.id, t.node_code, t.node_name, t.node_type, t.approver, t.definition_id, t.instance_id, t.flow_status
-        ,t.permission_flag, t.create_time, t.update_time,t.tenant_id,
-        i.business_id, d.flow_name, d.from_custom, d.from_path from flow_task t
-        <include refid="donePageQuery"/>
-        order by t.create_time desc
-        <include refid="paging_end"/>
-    </select>
-
-    <sql id="donePageQuery">
-        LEFT JOIN flow_definition d on t.definition_id = d.id
-        LEFT JOIN flow_instance i on t.instance_id = i.id
-        <include refid="select_toDo_parameter"/>
-    </sql>
-
     <insert id="insert" parameterType="com.warm.flow.orm.entity.FlowTask">
         insert into flow_task
         <trim prefix="(" suffix=")" suffixOverrides=",">
