@@ -25,10 +25,13 @@
 http://warm_4.gitee.io/warm-flow-doc
 
 
-**demo项目**：  
+## 集成项目示例 
 
-springboot：[RuoYi-Vue-Warm-Flow](https://gitee.com/min290/hh-vue) ｜[演示地址](http://www.hhzai.top:81)  
-solon：[warm-sun](https://gitee.com/min290/warm-sun.git) ｜[演示地址](http://www.warm-sun.vip)
+| 版本           | 项目名称           | 源码地址              | 
+|--------------|--------------|-----------------------------------------|
+| springboot2+vue2  |RuoYi-Vue-Warm-Flow| https://gitee.com/min290/hh-vue        |
+| springboot3+React |quick-boot         | https://github.com/csx-bill/quick-boot |
+| solon+vue3        |warm-sun           | https://gitee.com/min290/warm-sun.git  |
 
 
 
