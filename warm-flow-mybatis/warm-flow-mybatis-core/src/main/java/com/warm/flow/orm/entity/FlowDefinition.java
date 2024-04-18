@@ -3,7 +3,6 @@ package com.warm.flow.orm.entity;
 import com.warm.flow.core.entity.Definition;
 import com.warm.flow.core.entity.Node;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -14,9 +13,8 @@ import java.util.List;
  * @author warm
  * @date 2023-03-29
  */
-public class FlowDefinition implements Definition, Serializable {
+public class FlowDefinition implements Definition {
 
-    private static final long serialVersionUID = -5481202456975752152L;
     /**
      * 主键
      */
