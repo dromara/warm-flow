@@ -180,7 +180,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao, Task> implemen
         List<Node> nextNodes = new ArrayList<>();
         if (NodeType.isGateWay(nextNode.getNodeType())) {
             List<Skip> skipsGateway = FlowFactory.skipService().list(FlowFactory.newSkip()
-                    .setDefinitionId(nextNode.getDefinitionId()).setNextNodeCode(nextNode.getNodeCode()));
+                    .setDefinitionId(nextNode.getDefinitionId()).setNowNodeCode(nextNode.getNodeCode()));
             if (CollUtil.isEmpty(skipsGateway)) {
                 return null;
             }
