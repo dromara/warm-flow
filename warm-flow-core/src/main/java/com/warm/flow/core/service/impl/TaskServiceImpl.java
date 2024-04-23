@@ -17,7 +17,6 @@ import com.warm.flow.core.utils.ExpressionUtil;
 import com.warm.flow.core.utils.ListenerUtil;
 import com.warm.flow.core.utils.SqlHelper;
 import com.warm.tools.utils.*;
-import com.warm.tools.utils.page.Page;
 import org.noear.snack.ONode;
 
 import java.util.*;
@@ -42,12 +41,12 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao, Task> implemen
         AssertUtil.isTrue(StringUtils.isNotEmpty(flowParams.getMessage())
                 && flowParams.getMessage().length() > 500, ExceptionCons.MSG_OVER_LENGTH);
         // 获取待办任务
-        Task task = FlowFactory.taskService().getById(taskId);
+        Task task = getById(taskId);
         AssertUtil.isTrue(ObjectUtil.isNull(task), ExceptionCons.NOT_FOUNT_TASK);
         // 获取当前流程
         Instance instance = FlowFactory.insService().getById(task.getInstanceId());
         AssertUtil.isTrue(ObjectUtil.isNull(instance), ExceptionCons.NOT_FOUNT_INSTANCE);
-        return FlowFactory.taskService().skip(flowParams, task, instance);
+        return skip(flowParams, task, instance);
     }
 
     @Override
@@ -72,7 +71,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao, Task> implemen
         Node nextNode = getNextNode(NowNode, task, flowParams);
 
         // 如果是网关节点，则重新获取后续节点
-        List<Node> nextNodes = FlowFactory.taskService().getNextByCheckGateWay(flowParams, nextNode);
+        List<Node> nextNodes = getNextByCheckGateWay(flowParams, nextNode);
 
         //判断下一结点是否有权限监听器,有执行权限监听器nextNode.setPermissionFlag,无走数据库的权限标识符
         ListenerUtil.executeGetNodePermission(instance, flowParams, StreamUtils.toArray(nextNodes, Node[]::new));
@@ -96,10 +95,49 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao, Task> implemen
         updateFlowInfo(task, instance, insHisList, addTasks);
 
         // 处理未完成的任务，当流程完成，还存在代办任务未完成，转历史任务，状态完成。
-        handUndoneTask(instance);
+        handUndoneTask(instance, null);
 
         // 最后判断是否存在监听器，存在执行监听器
         ListenerUtil.executeListener(instance, NowNode, nextNodes, flowParams);
+        return instance;
+    }
+
+    @Override
+    public Instance termination(Long taskId, FlowParams flowParams) {
+        // 获取待办任务
+        Task task = getById(taskId);
+        AssertUtil.isTrue(ObjectUtil.isNull(task), ExceptionCons.NOT_FOUNT_TASK);
+        // 获取当前流程
+        Instance instance = FlowFactory.insService().getById(task.getInstanceId());
+        AssertUtil.isTrue(ObjectUtil.isNull(instance), ExceptionCons.NOT_FOUNT_INSTANCE);
+        // 所有代办转历史
+        List<Node> nodeList = FlowFactory.nodeService().list(FlowFactory.newNode()
+                .setDefinitionId(instance.getDefinitionId()).setNodeType(NodeType.END.getKey()));
+        Node endNode = nodeList.get(0);
+        List<HisTask> insHisList = new ArrayList<>();
+        insHisList.add(FlowFactory.hisTaskService().setSkipInsHis(task, nodeList, flowParams));
+        insHisList.add(FlowFactory.newHisTask()
+                .setInstanceId(task.getInstanceId())
+                .setNodeCode(endNode.getNodeCode())
+                .setNodeName(endNode.getNodeName())
+                .setNodeType(endNode.getNodeType())
+                .setPermissionFlag(task.getPermissionFlag())
+                .setTenantId(task.getTenantId())
+                .setDefinitionId(task.getDefinitionId())
+                .setFlowStatus(FlowStatus.FINISHED.getKey())
+                .setCreateTime(new Date())
+                .setApprover(flowParams.getCreateBy()));
+        FlowFactory.hisTaskService().saveBatch(insHisList);
+
+        removeById(taskId);
+        handUndoneTask(instance, taskId);
+
+        // 流程实例完成
+        instance.setNodeType(endNode.getNodeType());
+        instance.setNodeCode(endNode.getNodeCode());
+        instance.setNodeName(endNode.getNodeName());
+        instance.setFlowStatus(FlowStatus.FINISHED.getKey());
+        FlowFactory.insService().updateById(instance);
         return instance;
     }
 
@@ -183,8 +221,17 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao, Task> implemen
         addTask.setNodeCode(node.getNodeCode());
         addTask.setNodeName(node.getNodeName());
         addTask.setNodeType(node.getNodeType());
-        addTask.setPermissionFlag(StringUtils.isNotEmpty(node.getDynamicPermissionFlag())
-                ? node.getDynamicPermissionFlag() : node.getPermissionFlag());
+        String permissionFlag;
+        if (StringUtils.isNotEmpty(node.getDynamicPermissionFlag())) {
+            permissionFlag = node.getDynamicPermissionFlag();
+        } else {
+            permissionFlag = node.getPermissionFlag();
+            // 如果设置了发起人审批，则需要动态替换权限标识
+            if (StringUtils.isNotEmpty(permissionFlag) && permissionFlag.contains(FlowCons.WARMFLOWINITIATOR)) {
+                permissionFlag = permissionFlag.replace(FlowCons.WARMFLOWINITIATOR, instance.getCreateBy());
+            }
+        }
+        addTask.setPermissionFlag(permissionFlag);
         addTask.setApprover(flowParams.getCreateBy());
         addTask.setFlowStatus(setFlowStatus(node.getNodeType(), flowParams.getSkipType()));
         addTask.setCreateTime(date);
@@ -412,7 +459,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao, Task> implemen
             instance.setNodeType(nextTask.getNodeType());
             instance.setNodeCode(nextTask.getNodeCode());
             instance.setNodeName(nextTask.getNodeName());
-            instance.setFlowStatus(FlowFactory.taskService().setFlowStatus(nextTask.getNodeType()
+            instance.setFlowStatus(setFlowStatus(nextTask.getNodeType()
                     , flowParams.getSkipType()));
         }
     }
@@ -446,7 +493,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao, Task> implemen
     private void oneVoteVeto(Task task, String skipType, String nextNodeCode) {
         // 一票否决（谨慎使用），如果驳回，驳回指向节点后还存在其他正在执行的代办任务，转历史任务，状态失效,重走流程。
         if (SkipType.isReject(skipType)) {
-            List<Task> tasks = FlowFactory.taskService().list(FlowFactory.newTask().setInstanceId(task.getInstanceId()));
+            List<Task> tasks = list(FlowFactory.newTask().setInstanceId(task.getInstanceId()));
             List<Skip> allSkips = FlowFactory.skipService().list(FlowFactory.newSkip()
                     .setDefinitionId(task.getDefinitionId()));
             // 排除执行当前节点的流程跳转
@@ -463,7 +510,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao, Task> implemen
                 }
             }
             if (CollUtil.isNotEmpty(noDoneTasks)) {
-                convertHisTask(noDoneTasks, FlowStatus.INVALID.getKey());
+                convertHisTask(noDoneTasks, FlowStatus.INVALID.getKey(), null);
             }
         }
     }
@@ -495,12 +542,13 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao, Task> implemen
      * 处理未完成的任务，当流程完成，还存在代办任务未完成，转历史任务，状态完成。
      *
      * @param instance
+     * @param taskId 排除此任务
      */
-    private void handUndoneTask(Instance instance) {
+    private void handUndoneTask(Instance instance, Long taskId) {
         if (FlowStatus.isFinished(instance.getFlowStatus())) {
-            List<Task> taskList = FlowFactory.taskService().list(FlowFactory.newTask().setInstanceId(instance.getId()));
+            List<Task> taskList = list(FlowFactory.newTask().setInstanceId(instance.getId()));
             if (CollUtil.isNotEmpty(taskList)) {
-                convertHisTask(taskList, FlowStatus.FINISHED.getKey());
+                convertHisTask(taskList, FlowStatus.FINISHED.getKey(), taskId);
             }
         }
     }
@@ -510,23 +558,25 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao, Task> implemen
      *
      * @param taskList
      */
-    private void convertHisTask(List<Task> taskList, Integer flowStatus) {
+    private void convertHisTask(List<Task> taskList, Integer flowStatus, Long taskId) {
         List<HisTask> insHisList = new ArrayList<>();
         for (Task task : taskList) {
-            HisTask insHis = FlowFactory.newHisTask();
-            insHis.setId(task.getId());
-            insHis.setInstanceId(task.getInstanceId());
-            insHis.setDefinitionId(task.getDefinitionId());
-            insHis.setNodeCode(task.getNodeCode());
-            insHis.setNodeName(task.getNodeName());
-            insHis.setNodeType(task.getNodeType());
-            insHis.setPermissionFlag(task.getPermissionFlag());
-            insHis.setFlowStatus(flowStatus);
-            insHis.setCreateTime(new Date());
-            insHis.setTenantId(task.getTenantId());
-            insHisList.add(insHis);
+            if (ObjectUtil.isNotNull(taskId) && !task.getId().equals(taskId)) {
+                HisTask insHis = FlowFactory.newHisTask();
+                insHis.setId(task.getId());
+                insHis.setInstanceId(task.getInstanceId());
+                insHis.setDefinitionId(task.getDefinitionId());
+                insHis.setNodeCode(task.getNodeCode());
+                insHis.setNodeName(task.getNodeName());
+                insHis.setNodeType(task.getNodeType());
+                insHis.setPermissionFlag(task.getPermissionFlag());
+                insHis.setFlowStatus(flowStatus);
+                insHis.setCreateTime(new Date());
+                insHis.setTenantId(task.getTenantId());
+                insHisList.add(insHis);
+            }
         }
-        FlowFactory.taskService().removeByIds(StreamUtils.toList(taskList, Task::getId));
+        removeByIds(StreamUtils.toList(taskList, Task::getId));
         FlowFactory.hisTaskService().saveBatch(insHisList);
     }
 
@@ -540,10 +590,10 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao, Task> implemen
      */
     private void updateFlowInfo(Task task, Instance instance, List<HisTask> insHisList
             , List<Task> addTasks) {
-        FlowFactory.taskService().removeById(task.getId());
+        removeById(task.getId());
         FlowFactory.hisTaskService().saveBatch(insHisList);
         if (CollUtil.isNotEmpty(addTasks)) {
-            FlowFactory.taskService().saveBatch(addTasks);
+            saveBatch(addTasks);
         }
         FlowFactory.insService().updateById(instance);
     }

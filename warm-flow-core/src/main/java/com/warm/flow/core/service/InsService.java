@@ -47,22 +47,6 @@ public interface InsService extends IWarmService<Instance> {
     Instance skipByInsId(Long instanceId, FlowParams flowParams);
 
     /**
-     * 根据任务id，流程跳转
-     *
-     * @param taskId:流程任务id[必传]
-     * @param flowParams:包含流程相关参数的对象 - skipType:跳转类型(PASS审批通过 REJECT驳回) [必传]
-     *                               - nodeCode:节点编码 [如果指定跳转节点,必传]
-     *                               - permissionFlag:办理人权限标识[按需传输]
-     *                               - message:审批意见  [按需传输]
-     *                               - createBy:办理人帐号[建议传]
-     *                               - nickname:办理人昵称[按需传输]
-     *                               - variable:流程变量[按需传输,跳转条件放入流程变量<互斥网关必传>]
-     *                               - variableTask:任务变量[按需传输]     * @return
-     */
-    @Deprecated
-    Instance skip(Long taskId, FlowParams flowParams);
-
-    /**
      * 根据实例id，删除流程
      *
      * @param instanceIds: 流程实例集合[必传]

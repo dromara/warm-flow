@@ -86,20 +86,6 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
     }
 
     @Override
-    public Instance skip(Long taskId, FlowParams flowParams) {
-        AssertUtil.isTrue(StringUtils.isNotEmpty(flowParams.getMessage())
-                && flowParams.getMessage().length() > 500, ExceptionCons.MSG_OVER_LENGTH);
-        // 获取待办任务
-        Task task = FlowFactory.taskService().getById(taskId);
-        AssertUtil.isTrue(ObjectUtil.isNull(task), ExceptionCons.NOT_FOUNT_TASK);
-        // 获取当前流程
-        Instance instance = getById(task.getInstanceId());
-        AssertUtil.isTrue(ObjectUtil.isNull(instance), ExceptionCons.NOT_FOUNT_INSTANCE);
-        return FlowFactory.taskService().skip(flowParams, task, instance);
-    }
-
-
-    @Override
     public boolean remove(List<Long> instanceIds) {
         return toRemoveTask(instanceIds);
     }

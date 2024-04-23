@@ -1,14 +1,14 @@
 ## 介绍
 
-🎉国产自研工作流，其特点简洁(只有6张表)但又不简陋，五脏俱全，组件独立，可扩展，可满足中小项目的组件。
+🎉国产自研工作流，其特点简洁(只有6张表)但又不简单，五脏俱全，组件独立，可扩展，可满足中小项目的组件。
 
-1. 支持简单的流程流转，比如跳转、回退、审批
-2. 业务项目可不依赖流程设计器，组件会生成流程图片
-3. 支持角色、部门和用户等权限配置
-4. 支持增加监听器，参数传递，动态权限
-5. 支持多租户
-6. 支持互斥网关，并行网关（或签）
-7. 可跳转任意节点
+1. 支持常规的流程流转，比如跳转、回退、审批和任意跳转
+2. 或签（会签和票签开发中）
+3. 业务项目可不依赖流程设计器，组件会生成流程图片
+4. 支持角色、部门和用户等权限配置
+5. 支持监听器，参数传递，动态权限
+6. 支持多租户
+7. 支持互斥网关，并行网关
 8. 支持条件表达式，可扩展
 9. 支持不同orm框架和数据库扩展
 10. 同时支持spring和solon
@@ -99,96 +99,6 @@ http://warm_4.gitee.io/warm-flow-doc
 ### 代码示例
 
 https://gitee.com/min290/hh-vue/blob/master/ruoyi-admin/src/test/java/com/ruoyi/system/service/impl/FlowTest.java
-
-
-
-#### 部署流程
-
-```java
-public void deployFlow() throws Exception {
-        String path = "/Users/minliuhua/Desktop/mdata/file/IdeaProjects/min/hh-vue/hh-admin/src/main/resources/leaveFlow-serial.xml";
-        System.out.println("已部署流程的id：" + defService.importXml(new FileInputStream(path)).getId());
-    }
-```
-
-#### 发布流程
-
-```java
-public void publish() throws Exception {
-        defService.publish(1212437969554771968L);
-    }
-```
-
-#### 开启流程
-
-```java
-public void startFlow() {
-        System.out.println("已开启的流程实例id：" + insService.start("1", getUser()).getId());
-    }
-```
-
-#### 流程流转
-
-```java
-    @Test
-public void skipFlow() throws Exception {
-        // 通过实例id流转
-//        Instance instance = insService.skipByInsId(1219286332141080576L, getUser().skipType(SkipType.PASS.getKey())
-//                .permissionFlag(Arrays.asList("role:1", "role:2")));
-//        System.out.println("流转后流程实例：" + instance.toString());
-
-//        // 通过任务id流转
-        Instance instance = taskService.skip(1219286332145274880L, getUser().skipType(SkipType.PASS.getKey())
-            .permissionFlag(Arrays.asList("role:1", "role:2")));
-        System.out.println("流转后流程实例：" + instance.toString());
-}
-
-@Test
-public void skipAnyNode() throws Exception {
-        // 跳转到指定节点
-        Instance instance = taskService.skip(1219286332145274880L, getUser().skipType(SkipType.PASS.getKey())
-            .permissionFlag(Arrays.asList("role:1", "role:2")).nodeCode("4"));
-        System.out.println("流转后流程实例：" + instance.toString());
-}
-```
-
-
-#### 参数传递
-
-```java
-// 流程变量
-Map<String, Object> variable = new HashMap<>();
-variable.put("testLeave", testLeave);
-flowParams.variable(variable);
-Instance instance = insService.skip(taskId, flowParams);
-```
-
-#### 监听器
-实现Listener接口，然后在设计器中配置好监听器
-```java
-public class FinishListener implements Listener {
-
-    @Resource
-    private TestLeaveMapper testLeaveMapper;
-
-    private static final Logger log = LoggerFactory.getLogger(StartListener.class);
-
-    @Override
-    public void notify(ListenerVariable variable) {
-        log.info("完成监听器:{}", variable);
-        Instance instance = variable.getInstance();
-        Map<String, Object> testLeaveMap = variable.getVariable();
-        TestLeave testLeave = (TestLeave) testLeaveMap.get("testLeave");
-        /** 如果{@link com.ruoyi.system.service.impl.TestLeaveServiceImpl}中更新了，这里就不用更新了*/
-//        testLeave.setNodeCode(instance.getNodeCode());
-//        testLeave.setNodeName(instance.getNodeName());
-//        testLeave.setFlowStatus(instance.getFlowStatus());
-//        testLeave.setUpdateTime(DateUtils.getNowDate());
-//        testLeaveMapper.updateTestLeave(testLeave);
-        log.info("完成监听器结束;{}", "任务完成");
-    }
-}
-```
 
 
 ## 你可以请作者喝杯咖啡表示鼓励

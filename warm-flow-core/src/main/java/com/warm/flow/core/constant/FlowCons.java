@@ -23,4 +23,9 @@ public class FlowCons {
 
     public static final Pattern listenerPattern = Pattern.compile("^([^()]*)(.*)$");
 
+    /**
+     * 权限标识中的发起人标识符，办理过程中进行替换
+     */
+    public static final String WARMFLOWINITIATOR = "warmFlowInitiator";
+
 }
