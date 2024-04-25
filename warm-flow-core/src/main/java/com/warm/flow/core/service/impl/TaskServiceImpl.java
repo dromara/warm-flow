@@ -132,15 +132,16 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao, Task> implemen
                 .setApprover(flowParams.getCreateBy()));
         FlowFactory.hisTaskService().saveBatch(insHisList);
 
-        removeById(task.getId());
-        handUndoneTask(instance, task.getId());
-
         // 流程实例完成
         instance.setNodeType(endNode.getNodeType());
         instance.setNodeCode(endNode.getNodeCode());
         instance.setNodeName(endNode.getNodeName());
         instance.setFlowStatus(FlowStatus.FINISHED.getKey());
         FlowFactory.insService().updateById(instance);
+
+        // 处理未完成的任务，当流程完成，还存在代办任务未完成，转历史任务，状态完成。
+        handUndoneTask(instance, task.getId());
+
         return instance;
     }
 
