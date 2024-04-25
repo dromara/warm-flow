@@ -50,12 +50,22 @@ public interface TaskService extends IWarmService<Task> {
 
     /**
      * 终止流程，提前结束流程，将所有代办任务转历史
-     * @param taskId
+     * @param taskId 流程任务id[必传]
      * @param flowParams:包含流程相关参数的对象
      *                               - message:审批意见  [按需传输]
      *                               - createBy:办理人帐号[建议传]
      */
     Instance termination(Long taskId, FlowParams flowParams);
+
+    /**
+     * 终止流程，提前结束流程，将所有代办任务转历史
+     * @param instance 流程实例
+     * @param task 流程任务
+     * @param flowParams:包含流程相关参数的对象
+     *                               - message:审批意见  [按需传输]
+     *                               - createBy:办理人帐号[建议传]
+     */
+    Instance termination(Instance instance, Task task, FlowParams flowParams);
 
     /**
      * 根据instanceIds删除

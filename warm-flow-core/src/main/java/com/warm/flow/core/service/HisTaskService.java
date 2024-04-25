@@ -24,7 +24,7 @@ public interface HisTaskService extends IWarmService<HisTask> {
      * @param nextNodes
      * @return
      */
-    HisTask setSkipInsHis(Task task, List<Node> nextNodes, FlowParams flowParams);
+    List<HisTask> setSkipInsHis(Task task, List<Node> nextNodes, FlowParams flowParams);
 
     /**
      * 根据nodeCode获取未驳回的历史记录

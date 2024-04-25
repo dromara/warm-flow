@@ -16,6 +16,7 @@ import com.warm.tools.utils.ObjectUtil;
 import com.warm.tools.utils.StreamUtils;
 import com.warm.tools.utils.page.Page;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -34,25 +35,29 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao, HisTask>
     }
 
     @Override
-    public HisTask setSkipInsHis(Task task, List<Node> nextNodes, FlowParams flowParams) {
-        HisTask insHis = FlowFactory.newHisTask();
-        insHis.setId(task.getId());
-        insHis.setInstanceId(task.getInstanceId());
-        insHis.setNodeCode(task.getNodeCode());
-        insHis.setNodeName(task.getNodeName());
-        insHis.setNodeType(task.getNodeType());
-        insHis.setPermissionFlag(task.getPermissionFlag());
-        insHis.setTenantId(task.getTenantId());
-        insHis.setDefinitionId(task.getDefinitionId());
-        insHis.setTargetNodeCode(StreamUtils.join(nextNodes, Node::getNodeCode));
-        insHis.setTargetNodeName(StreamUtils.join(nextNodes, Node::getNodeName));
-        insHis.setFlowStatus(SkipType.isReject(flowParams.getSkipType())
-                ? FlowStatus.REJECT.getKey() : FlowStatus.PASS.getKey());
-        insHis.setMessage(flowParams.getMessage());
-        insHis.setCreateTime(new Date());
-        insHis.setApprover(flowParams.getCreateBy());
+    public List<HisTask> setSkipInsHis(Task task, List<Node> nextNodes, FlowParams flowParams) {
+        List<HisTask> hisTasks = new ArrayList<>();
+        for (Node nextNode : nextNodes) {
+            HisTask insHis = FlowFactory.newHisTask();
+            insHis.setInstanceId(task.getInstanceId());
+            insHis.setNodeCode(task.getNodeCode());
+            insHis.setNodeName(task.getNodeName());
+            insHis.setNodeType(task.getNodeType());
+            insHis.setPermissionFlag(task.getPermissionFlag());
+            insHis.setTenantId(task.getTenantId());
+            insHis.setDefinitionId(task.getDefinitionId());
+            insHis.setTargetNodeCode(nextNode.getNodeCode());
+            insHis.setTargetNodeName(nextNode.getNodeName());
+            insHis.setFlowStatus(SkipType.isReject(flowParams.getSkipType())
+                    ? FlowStatus.REJECT.getKey() : FlowStatus.PASS.getKey());
+            insHis.setMessage(flowParams.getMessage());
+            insHis.setCreateTime(new Date());
+            insHis.setApprover(flowParams.getCreateBy());
+            hisTasks.add(insHis);
+        }
 
-        return insHis;
+
+        return hisTasks;
     }
 
     @Override

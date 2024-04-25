@@ -57,7 +57,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao, Task> implemen
             AssertUtil.isFalse(StringUtils.isNotEmpty(flowParams.getSkipType()), ExceptionCons.NULL_CONDITIONVALUE);
         }
 
-        List<HisTask> insHisList = new ArrayList<>();
         Node NowNode = CollUtil.getOne(FlowFactory.nodeService()
                 .getByNodeCodes(Collections.singletonList(task.getNodeCode()), task.getDefinitionId()));
 
@@ -80,7 +79,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao, Task> implemen
         List<Task> addTasks = buildAddTasks(flowParams, task, instance, nextNodes, nextNode);
 
         // 设置流程历史任务信息
-        insHisList.add(FlowFactory.hisTaskService().setSkipInsHis(task, nextNodes, flowParams));
+        List<HisTask> insHisList = FlowFactory.hisTaskService().setSkipInsHis(task, nextNodes, flowParams);
 
         // 设置结束节点相关信息
         setEndInfo(instance, addTasks, flowParams, insHisList, task);
@@ -110,12 +109,16 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao, Task> implemen
         // 获取当前流程
         Instance instance = FlowFactory.insService().getById(task.getInstanceId());
         AssertUtil.isTrue(ObjectUtil.isNull(instance), ExceptionCons.NOT_FOUNT_INSTANCE);
+        return termination(instance, task, flowParams);
+    }
+
+    @Override
+    public Instance termination(Instance instance, Task task, FlowParams flowParams) {
         // 所有代办转历史
         List<Node> nodeList = FlowFactory.nodeService().list(FlowFactory.newNode()
                 .setDefinitionId(instance.getDefinitionId()).setNodeType(NodeType.END.getKey()));
         Node endNode = nodeList.get(0);
-        List<HisTask> insHisList = new ArrayList<>();
-        insHisList.add(FlowFactory.hisTaskService().setSkipInsHis(task, nodeList, flowParams));
+        List<HisTask> insHisList = FlowFactory.hisTaskService().setSkipInsHis(task, nodeList, flowParams);
         insHisList.add(FlowFactory.newHisTask()
                 .setInstanceId(task.getInstanceId())
                 .setNodeCode(endNode.getNodeCode())
@@ -129,8 +132,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao, Task> implemen
                 .setApprover(flowParams.getCreateBy()));
         FlowFactory.hisTaskService().saveBatch(insHisList);
 
-        removeById(taskId);
-        handUndoneTask(instance, taskId);
+        removeById(task.getId());
+        handUndoneTask(instance, task.getId());
 
         // 流程实例完成
         instance.setNodeType(endNode.getNodeType());

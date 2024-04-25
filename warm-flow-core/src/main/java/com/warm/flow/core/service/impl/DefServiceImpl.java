@@ -395,12 +395,17 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao, Definitio
                         for (Skip twoLastSkip : twoLastSkips) {
                             List<HisTask> twoLastHisTasks = FlowFactory.hisTaskService()
                                     .getNoReject(twoLastSkip.getNowNodeCode(), instance.getId());
-                            HisTask twoLastHisTask = CollUtil.getOne(twoLastHisTasks);
+                            Map<String, HisTask> twoLastHisTaskMap = StreamUtils.toMap(twoLastHisTasks
+                                    , HisTask::getTargetNodeCode, hisTask -> hisTask);
+                            HisTask twoLastHisTask = twoLastHisTaskMap.get(node.getNodeCode());
+
                             Color c;
                             // 前前置节点完成时间是否早于前置节点，如果是串行网关，那前前置节点必须只有一个完成，如果是并行网关都要完成
                             if (task != null) {
                                 c = color;
-                                colorPut(colorMap, "skip:" + oneLastSkip.getId().toString(), Color.GREEN);
+                                if (ObjectUtil.isNotNull(twoLastHisTask)) {
+                                    colorPut(colorMap, "skip:" + oneLastSkip.getId().toString(), Color.GREEN);
+                                }
                             } else {
                                 if (curHisTask != null && ObjectUtil.isNotNull(twoLastHisTask) && twoLastHisTask.getCreateTime()
                                         .before(curHisTask.getCreateTime())) {
@@ -408,20 +413,19 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao, Definitio
                                 } else {
                                     c = Color.BLACK;
                                 }
-                                Map<String, String> twoLastHisTaskMap = StreamUtils.toMap(twoLastHisTasks
-                                        , HisTask::getTargetNodeCode, HisTask::getNodeCode);
-                                if (MapUtil.isNotEmpty(twoLastHisTaskMap) && StringUtils.isNotEmpty(twoLastHisTaskMap.get(node.getNodeCode()))) {
+                                if (ObjectUtil.isNotNull(twoLastHisTask)) {
                                     colorPut(colorMap, "skip:" + oneLastSkip.getId().toString(), c);
                                 }
                             }
-
                             colorPut(colorMap, "node:" + node.getNodeCode(), c);
                             setNextColorMap(colorMap, oneNextSkips, c, skipNextMap);
                         }
                     } else {
                         List<HisTask> oneLastHisTasks = FlowFactory.hisTaskService()
                                 .getNoReject(oneLastSkip.getNowNodeCode(), instance.getId());
-                        HisTask oneLastHisTask = CollUtil.getOne(oneLastHisTasks);
+                        Map<String, HisTask> oneLastHisTaskMap = StreamUtils.toMap(oneLastHisTasks
+                                , HisTask::getTargetNodeCode, hisTask -> hisTask);
+                        HisTask oneLastHisTask = oneLastHisTaskMap.get(node.getNodeCode());
                         Color c;
                         // 前前置节点完成时间是否早于前置节点，如果是串行网关，那前前置节点必须只有一个完成，如果是并行网关都要完成
                         if (task != null) {
@@ -432,12 +436,11 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao, Definitio
                         } else {
                             c = Color.BLACK;
                         }
-                        colorPut(colorMap, "node:" + node.getNodeCode(), c);
-                        Map<String, String> oneLastHisTaskMap = StreamUtils.toMap(oneLastHisTasks
-                                , HisTask::getTargetNodeCode, HisTask::getNodeCode);
-                        if (MapUtil.isNotEmpty(oneLastHisTaskMap) &&  StringUtils.isNotEmpty(oneLastHisTaskMap.get(node.getNodeCode()))) {
+
+                        if (ObjectUtil.isNotNull(oneLastHisTask)) {
                             colorPut(colorMap, "skip:" + oneLastSkip.getId().toString(), c);
                         }
+                        colorPut(colorMap, "node:" + node.getNodeCode(), c);
                         setNextColorMap(colorMap, oneNextSkips, c, skipNextMap);
                     }
                 }

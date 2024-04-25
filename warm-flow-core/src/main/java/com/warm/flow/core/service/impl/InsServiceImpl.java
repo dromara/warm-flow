@@ -57,14 +57,14 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
                 , StreamUtils.toArray(CollUtil.listAddToNew(nextNodes, startNode), Node[]::new));
 
         // 设置历史任务
-        HisTask hisTask = setHisTask(nextNodes, flowParams, startNode, instance.getId());
+        List<HisTask> hisTasks = setHisTask(nextNodes, flowParams, startNode, instance.getId());
 
         // 设置新增任务
         List<Task> addTasks = StreamUtils.toList(nextNodes, node -> FlowFactory.taskService()
                 .addTask(node, instance, flowParams));
 
         // 开启流程，保存流程信息
-        saveFlowInfo(instance, addTasks, hisTask);
+        saveFlowInfo(instance, addTasks, hisTasks);
 
         // 执行结束监听器和下一节点的开始监听器
         ListenerUtil.executeListener(instance, startNode, nextNodes, flowParams);
@@ -88,6 +88,22 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
     }
 
     @Override
+    public Instance termination(Long instanceId, FlowParams flowParams) {
+        // 获取当前流程
+        Instance instance = getById(instanceId);
+        AssertUtil.isTrue(ObjectUtil.isNull(instance), ExceptionCons.NOT_FOUNT_INSTANCE);
+        AssertUtil.isTrue(FlowStatus.isFinished(instance.getFlowStatus()), ExceptionCons.FLOW_FINISH);
+
+        // 获取待办任务
+        List<Task> taskList = FlowFactory.taskService().list(FlowFactory.newTask().setInstanceId(instanceId));
+        AssertUtil.isTrue(CollUtil.isEmpty(taskList), ExceptionCons.NOT_FOUNT_TASK);
+
+        // 获取待办任务
+        Task task = taskList.get(0);
+        return FlowFactory.taskService().termination(instance, task, flowParams);
+    }
+
+    @Override
     public boolean remove(List<Long> instanceIds) {
         return toRemoveTask(instanceIds);
     }
@@ -101,7 +117,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
      * @param startNode
      * @param instanceId
      */
-    private HisTask setHisTask(List<Node> nextNodes, FlowParams flowParams, Node startNode, Long instanceId) {
+    private List<HisTask> setHisTask(List<Node> nextNodes, FlowParams flowParams, Node startNode, Long instanceId) {
         Task startTask = FlowFactory.newTask()
                 .setInstanceId(instanceId)
                 .setTenantId(flowParams.getTenantId())
@@ -123,10 +139,10 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
      *
      * @param instance
      * @param addTasks
-     * @param hisTask
+     * @param hisTasks
      */
-    private void saveFlowInfo(Instance instance, List<Task> addTasks, HisTask hisTask) {
-        FlowFactory.hisTaskService().save(hisTask);
+    private void saveFlowInfo(Instance instance, List<Task> addTasks, List<HisTask> hisTasks) {
+        FlowFactory.hisTaskService().saveBatch(hisTasks);
         FlowFactory.taskService().saveBatch(addTasks);
         save(instance);
     }
