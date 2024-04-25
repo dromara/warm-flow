@@ -53,7 +53,7 @@ public class WarmFlow {
                     "    ██ ██▀ ▄▀▀▀█   █     █ █ █  █        █    █   █  █▄█▄█     \n" +
                     "    █   █  ▀▄▄▀█   █     █ █ █  █        ▀▄▄  ▀█▄█▀   █ █      \n" +
                     "\n" +
-                    "\033[32m   \uD83D\uDC4D Warm-Flow \uD83D\uDC4D      (v" + WarmFlow.class.getPackage()
+                    "\033[32m   :: Warm-Flow ::     (v" + WarmFlow.class.getPackage()
                         .getImplementationVersion() + ")\033[0m\n");
         }
     }

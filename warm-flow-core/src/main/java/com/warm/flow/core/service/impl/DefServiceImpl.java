@@ -157,7 +157,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao, Definitio
         Definition definition = getById(id);
         List<Node> nodeList = FlowFactory.nodeService().list(FlowFactory.newNode().setDefinitionId(id));
         List<Skip> skipList = FlowFactory.skipService().list(FlowFactory.newSkip().setDefinitionId(id));
-        FlowFactory.dataFillHandler().idFill(definition);
+        FlowFactory.dataFillHandler().idFill(definition.setId(null));
         definition.setVersion(definition.getVersion() + "_copy");
         definition.setIsPublish(PublishStatus.UNPUBLISHED.getKey());
         definition.setCreateTime(null);
@@ -379,10 +379,10 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao, Definitio
             }
             Task task = FlowFactory.taskService()
                     .getOne(FlowFactory.newTask().setNodeCode(node.getNodeCode()).setInstanceId(instance.getId()));
-            List<Skip> oneLastSkips = skipLastMap.get(node.getNodeCode());
             HisTask curHisTask = CollUtil.getOne(FlowFactory.hisTaskService()
                     .getNoReject(node.getNodeCode(), instance.getId()));
 
+            List<Skip> oneLastSkips = skipLastMap.get(node.getNodeCode());
             if (CollUtil.isNotEmpty(oneLastSkips)) {
                 for (Skip oneLastSkip : oneLastSkips) {
                     if (NodeType.isStart(oneLastSkip.getNowNodeType()) && task == null) {
@@ -393,8 +393,9 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao, Definitio
                         // 如果前置节点是网关，那网关前任意一个任务完成就算完成
                         List<Skip> twoLastSkips = skipLastMap.get(oneLastSkip.getNowNodeCode());
                         for (Skip twoLastSkip : twoLastSkips) {
-                            HisTask twoLastHisTask = CollUtil.getOne(FlowFactory.hisTaskService()
-                                    .getNoReject(twoLastSkip.getNowNodeCode(), instance.getId()));
+                            List<HisTask> twoLastHisTasks = FlowFactory.hisTaskService()
+                                    .getNoReject(twoLastSkip.getNowNodeCode(), instance.getId());
+                            HisTask twoLastHisTask = CollUtil.getOne(twoLastHisTasks);
                             Color c;
                             // 前前置节点完成时间是否早于前置节点，如果是串行网关，那前前置节点必须只有一个完成，如果是并行网关都要完成
                             if (task != null) {
@@ -407,26 +408,36 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao, Definitio
                                 } else {
                                     c = Color.BLACK;
                                 }
-                                colorPut(colorMap, "skip:" + oneLastSkip.getId().toString(), c);
+                                Map<String, String> twoLastHisTaskMap = StreamUtils.toMap(twoLastHisTasks
+                                        , HisTask::getTargetNodeCode, HisTask::getNodeCode);
+                                if (MapUtil.isNotEmpty(twoLastHisTaskMap) && StringUtils.isNotEmpty(twoLastHisTaskMap.get(node.getNodeCode()))) {
+                                    colorPut(colorMap, "skip:" + oneLastSkip.getId().toString(), c);
+                                }
                             }
+
                             colorPut(colorMap, "node:" + node.getNodeCode(), c);
                             setNextColorMap(colorMap, oneNextSkips, c, skipNextMap);
                         }
                     } else {
-                        HisTask twoLastHisTask = CollUtil.getOne(FlowFactory.hisTaskService()
-                                .getNoReject(oneLastSkip.getNowNodeCode(), instance.getId()));
+                        List<HisTask> oneLastHisTasks = FlowFactory.hisTaskService()
+                                .getNoReject(oneLastSkip.getNowNodeCode(), instance.getId());
+                        HisTask oneLastHisTask = CollUtil.getOne(oneLastHisTasks);
                         Color c;
                         // 前前置节点完成时间是否早于前置节点，如果是串行网关，那前前置节点必须只有一个完成，如果是并行网关都要完成
                         if (task != null) {
                             c = color;
-                        } else if (curHisTask != null && ObjectUtil.isNotNull(twoLastHisTask) && twoLastHisTask.getCreateTime()
+                        } else if (curHisTask != null && ObjectUtil.isNotNull(oneLastHisTask) && oneLastHisTask.getCreateTime()
                                 .before(curHisTask.getCreateTime())) {
                             c = Color.GREEN;
                         } else {
                             c = Color.BLACK;
                         }
                         colorPut(colorMap, "node:" + node.getNodeCode(), c);
-                        colorPut(colorMap, "skip:" + oneLastSkip.getId().toString(), c);
+                        Map<String, String> oneLastHisTaskMap = StreamUtils.toMap(oneLastHisTasks
+                                , HisTask::getTargetNodeCode, HisTask::getNodeCode);
+                        if (MapUtil.isNotEmpty(oneLastHisTaskMap) &&  StringUtils.isNotEmpty(oneLastHisTaskMap.get(node.getNodeCode()))) {
+                            colorPut(colorMap, "skip:" + oneLastSkip.getId().toString(), c);
+                        }
                         setNextColorMap(colorMap, oneNextSkips, c, skipNextMap);
                     }
                 }

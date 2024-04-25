@@ -7,22 +7,15 @@ import com.warm.flow.core.dto.FlowParams;
 import com.warm.flow.core.entity.*;
 import com.warm.flow.core.enums.FlowStatus;
 import com.warm.flow.core.enums.NodeType;
-import com.warm.flow.core.exception.FlowException;
 import com.warm.flow.core.listener.Listener;
 import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.InsService;
 import com.warm.flow.core.utils.AssertUtil;
 import com.warm.flow.core.utils.ListenerUtil;
-import com.warm.tools.utils.CollUtil;
-import com.warm.tools.utils.MapUtil;
-import com.warm.tools.utils.ObjectUtil;
-import com.warm.tools.utils.StringUtils;
+import com.warm.tools.utils.*;
 import org.noear.snack.ONode;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 流程实例Service业务层处理
@@ -46,26 +39,35 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         List<Node> nodes = FlowFactory.nodeService().getByFlowCode(flowParams.getFlowCode());
         AssertUtil.isTrue(CollUtil.isEmpty(nodes), ExceptionCons.NOT_PUBLISH_NODE);
         // 获取开始节点
-        Node startNode = nodes.stream().filter(t -> NodeType.isStart(t.getNodeType()))
-                .findFirst().orElse(null);
+        Node startNode = nodes.stream().filter(t -> NodeType.isStart(t.getNodeType())).findFirst().orElse(null);
         AssertUtil.isNull(startNode, ExceptionCons.LOST_START_NODE);
 
-        // 获取开始节点的第一个中间节点
-        Node firstBetweenNode = getFirstBetween(nodes);
+        // 获取下一个节点，如果是网关节点，则重新获取后续节点
+        List<Node> nextNodes = FlowFactory.taskService().getNextByCheckGateWay(flowParams, getFirstBetween(startNode));
+
         AssertUtil.isBlank(businessId, ExceptionCons.NULL_BUSINESS_ID);
         // 设置流程实例对象
-        Instance instance = setStartInstance(firstBetweenNode, businessId, flowParams);
+        Instance instance = setStartInstance(nextNodes.get(0), businessId, flowParams);
 
         //执行开始节点 开始监听器
         ListenerUtil.executeListener(instance, startNode, Listener.LISTENER_START, flowParams);
+
         //判断开始结点和下一结点是否有权限监听器,有执行权限监听器node.setPermissionFlag,无走数据库的权限标识符
-        ListenerUtil.executeGetNodePermission(instance, flowParams, startNode, firstBetweenNode);
+        ListenerUtil.executeGetNodePermission(instance, flowParams
+                , StreamUtils.toArray(CollUtil.listAddToNew(nextNodes, startNode), Node[]::new));
+
+        // 设置历史任务
+        HisTask hisTask = setHisTask(nextNodes, flowParams, startNode, instance.getId());
+
+        // 设置新增任务
+        List<Task> addTasks = StreamUtils.toList(nextNodes, node -> FlowFactory.taskService()
+                .addTask(node, instance, flowParams));
 
         // 开启流程，保存流程信息
-        saveFlowInfo(flowParams, startNode, firstBetweenNode, instance);
+        saveFlowInfo(instance, addTasks, hisTask);
 
         // 执行结束监听器和下一节点的开始监听器
-        ListenerUtil.executeListener(instance, startNode, Collections.singletonList(firstBetweenNode), flowParams);
+        ListenerUtil.executeListener(instance, startNode, nextNodes, flowParams);
         return instance;
     }
 
@@ -92,18 +94,18 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
 
 
     /**
-     * 开启流程，保存流程信息
+     * 设置历史任务
      *
+     * @param nextNodes
      * @param flowParams
      * @param startNode
-     * @param firstBetweenNode
-     * @param instance
+     * @param instanceId
      */
-    private void saveFlowInfo(FlowParams flowParams, Node startNode, Node firstBetweenNode, Instance instance) {
+    private HisTask setHisTask(List<Node> nextNodes, FlowParams flowParams, Node startNode, Long instanceId) {
         Task startTask = FlowFactory.newTask()
-                .setInstanceId(instance.getId())
+                .setInstanceId(instanceId)
                 .setTenantId(flowParams.getTenantId())
-                .setDefinitionId(instance.getDefinitionId())
+                .setDefinitionId(startNode.getDefinitionId())
                 .setNodeCode(startNode.getNodeCode())
                 .setNodeName(startNode.getNodeName())
                 .setNodeType(startNode.getNodeType())
@@ -111,13 +113,21 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
                         ? startNode.getDynamicPermissionFlag() : startNode.getPermissionFlag())
                 .setFlowStatus(FlowStatus.PASS.getKey());
         FlowFactory.dataFillHandler().idFill(startTask);
-        HisTask hisTask = FlowFactory.hisTaskService().setSkipInsHis(startTask
-                , Collections.singletonList(firstBetweenNode), flowParams);
+        // 开始任务转历史任务
+        return FlowFactory.hisTaskService().setSkipInsHis(startTask, nextNodes, flowParams);
+    }
+
+    /**
+     *
+     * 开启流程，保存流程信息
+     *
+     * @param instance
+     * @param addTasks
+     * @param hisTask
+     */
+    private void saveFlowInfo(Instance instance, List<Task> addTasks, HisTask hisTask) {
         FlowFactory.hisTaskService().save(hisTask);
-
-        Task task = FlowFactory.taskService().addTask(firstBetweenNode, instance, flowParams);
-        FlowFactory.taskService().save(task);
-
+        FlowFactory.taskService().saveBatch(addTasks);
         save(instance);
     }
 
@@ -155,19 +165,15 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
     /**
      * 有且只能有一个开始节点
      *
-     * @param nodes
+     * @param startNode
      * @return
      */
-    private Node getFirstBetween(List<Node> nodes) {
-        for (Node node : nodes) {
-            if (NodeType.isStart(node.getNodeType())) {
-                List<Skip> skips = FlowFactory.skipService().list(FlowFactory.newSkip()
-                        .setDefinitionId(node.getDefinitionId()).setNowNodeCode(node.getNodeCode()));
-                Skip skip = skips.get(0);
-                return FlowFactory.nodeService().getByNodeCode(skip.getNextNodeCode(), skip.getDefinitionId());
-            }
-        }
-        throw new FlowException(ExceptionCons.LOST_START_NODE);
+    private Node getFirstBetween(Node startNode) {
+        List<Skip> skips = FlowFactory.skipService().list(FlowFactory.newSkip()
+                .setDefinitionId(startNode.getDefinitionId()).setNowNodeCode(startNode.getNodeCode()));
+        Skip skip = skips.get(0);
+        return FlowFactory.nodeService().getOne(FlowFactory.newNode().setDefinitionId(startNode.getDefinitionId())
+                .setNodeCode(skip.getNextNodeCode()));
     }
 
     private boolean toRemoveTask(List<Long> instanceIds) {

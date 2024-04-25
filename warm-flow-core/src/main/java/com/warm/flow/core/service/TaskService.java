@@ -66,6 +66,17 @@ public interface TaskService extends IWarmService<Task> {
     boolean deleteByInsIds(List<Long> instanceIds);
 
     /**
+     * 根据流程id+当前流程节点编码获取与之直接关联(其为源节点)的节点。 definitionId:流程id nodeCode:当前流程状态
+     * skipType:跳转条件,没有填写的话不做校验
+     *
+     * @param NowNode
+     * @param task
+     * @param flowParams
+     * @return
+     */
+    Node getNextNode(Node NowNode, Task task, FlowParams flowParams);
+
+    /**
      * 校验是否网关节点,如果是重新获取新的后面的节点
      *
      * @param flowParams
@@ -98,4 +109,12 @@ public interface TaskService extends IWarmService<Task> {
      * @param permissionFlag 重新指定的权限标识（办理人）
      */
     boolean transfer(Long taskId, String permissionFlag);
+
+    /**
+     * 并行网关，取结束节点类型，否则随便取id最大的
+     *
+     * @param tasks
+     * @return
+     */
+    Task getNextTask(List<Task> tasks);
 }

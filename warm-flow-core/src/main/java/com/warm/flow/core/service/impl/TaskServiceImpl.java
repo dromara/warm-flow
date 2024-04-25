@@ -146,16 +146,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao, Task> implemen
         return SqlHelper.retBool(getDao().deleteByInsIds(instanceIds));
     }
 
-    /**
-     * 根据流程id+当前流程节点编码获取与之直接关联(其为源节点)的节点。 definitionId:流程id nodeCode:当前流程状态
-     * skipType:跳转条件,没有填写的话不做校验
-     *
-     * @param NowNode
-     * @param task
-     * @param flowParams
-     * @return
-     */
-    private Node getNextNode(Node NowNode, Task task, FlowParams flowParams) {
+    @Override
+    public Node getNextNode(Node NowNode, Task task, FlowParams flowParams) {
         AssertUtil.isNull(task.getDefinitionId(), ExceptionCons.NOT_DEFINITION_ID);
         AssertUtil.isBlank(task.getNodeCode(), ExceptionCons.LOST_NODE_CODE);
         // 如果指定了跳转节点，则判断权限，直接获取节点
@@ -256,6 +248,19 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao, Task> implemen
     @Override
     public boolean transfer(Long taskId, String permissionFlag) {
         return updateById(getById(taskId).setPermissionFlag(permissionFlag));
+    }
+
+    @Override
+    public Task getNextTask(List<Task> tasks) {
+        if (tasks.size() == 1) {
+            return tasks.get(0);
+        }
+        for (Task task : tasks) {
+            if (NodeType.isEnd(task.getNodeType())) {
+                return task;
+            }
+        }
+        return tasks.stream().max(Comparator.comparingLong(Task::getId)).orElse(null);
     }
 
     /**
@@ -462,24 +467,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao, Task> implemen
             instance.setFlowStatus(setFlowStatus(nextTask.getNodeType()
                     , flowParams.getSkipType()));
         }
-    }
-
-    /**
-     * 并行网关，取结束节点类型，否则随便取id最大的
-     *
-     * @param tasks
-     * @return
-     */
-    private Task getNextTask(List<Task> tasks) {
-        if (tasks.size() == 1) {
-            return tasks.get(0);
-        }
-        for (Task task : tasks) {
-            if (NodeType.isEnd(task.getNodeType())) {
-                return task;
-            }
-        }
-        return tasks.stream().max(Comparator.comparingLong(Task::getId)).orElse(null);
     }
 
     /**

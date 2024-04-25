@@ -1,8 +1,6 @@
 package com.warm.tools.utils;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author minliuhua
@@ -88,5 +86,30 @@ public class CollUtil {
      */
     public static List<String> strToColl(String str, String sep) {
         return StringUtils.isEmpty(str) ? null : Arrays.asList(str.split(sep));
+    }
+
+    /**
+     * 集合add新的对象，返回新的集合
+     *
+     * @param list 集合
+     * @param t 对象
+     * @return
+     */
+    public static <T> List<T> listAddToNew(List<T> list,  T t) {
+        return listAddToNew(list, Collections.singletonList(t));
+    }
+
+    /**
+     * 集合add新的对象，返回新的集合
+     *
+     * @param list 集合
+     * @param listA 对象
+     * @return
+     */
+    public static <T> List<T> listAddToNew(List<T> list,  List<T> listA) {
+        List<T> newList = new ArrayList<>();
+        newList.addAll(listA);
+        newList.addAll(list);
+        return newList;
     }
 }

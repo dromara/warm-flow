@@ -2,6 +2,7 @@ package com.warm.flow.core.listener;
 
 import com.warm.flow.core.entity.Instance;
 import com.warm.flow.core.entity.Node;
+import com.warm.flow.core.entity.Task;
 
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,17 @@ public class ListenerVariable {
      * 当前节点
      */
     private Node node;
+
+    /**
+     * 当前节点
+     */
+    private Task task;
+
+    /**
+     * 后续节点
+     */
+    private List<Task> nextTasks;
+
     /**
      * 流程变量
      */
@@ -36,6 +48,8 @@ public class ListenerVariable {
      */
     private List<NodePermission> nodePermissionList;
 
+    public ListenerVariable() {}
+
     public ListenerVariable(Instance instance, Node node, Map<String, Object> variable) {
         this.instance = instance;
         this.node = node;
@@ -48,7 +62,6 @@ public class ListenerVariable {
         this.variable = variable;
         this.params = params;
     }
-
 
     public Instance getInstance() {
         return instance;
@@ -65,6 +78,24 @@ public class ListenerVariable {
 
     public ListenerVariable setNode(Node node) {
         this.node = node;
+        return this;
+    }
+
+    public Task getTask() {
+        return task;
+    }
+
+    public ListenerVariable setTask(Task task) {
+        this.task = task;
+        return this;
+    }
+
+    public List<Task> getNextTasks() {
+        return nextTasks;
+    }
+
+    public ListenerVariable setNextTasks(List<Task> nextTasks) {
+        this.nextTasks = nextTasks;
         return this;
     }
 
