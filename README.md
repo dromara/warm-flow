@@ -106,6 +106,8 @@ http://warm_4.gitee.io/warm-flow-doc
 
 https://gitee.com/min290/hh-vue/blob/master/ruoyi-admin/src/test/java/com/ruoyi/system/service/impl/FlowTest.java
 
+### 加入warm-flow团队
+完成一个功能开发，即可申请加入
 
 ## 你可以请作者喝杯咖啡表示鼓励
 

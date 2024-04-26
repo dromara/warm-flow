@@ -8,6 +8,7 @@ import com.warm.flow.core.entity.*;
 import com.warm.flow.core.enums.FlowStatus;
 import com.warm.flow.core.enums.NodeType;
 import com.warm.flow.core.listener.Listener;
+import com.warm.flow.core.listener.ListenerVariable;
 import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.InsService;
 import com.warm.flow.core.utils.AssertUtil;
@@ -50,10 +51,11 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         Instance instance = setStartInstance(nextNodes.get(0), businessId, flowParams);
 
         //执行开始节点 开始监听器
-        ListenerUtil.executeListener(instance, startNode, Listener.LISTENER_START, flowParams);
+        ListenerUtil.executeListener(new ListenerVariable(instance, startNode, flowParams.getVariable())
+                , Listener.LISTENER_START);
 
         //判断开始结点和下一结点是否有权限监听器,有执行权限监听器node.setPermissionFlag,无走数据库的权限标识符
-        ListenerUtil.executeGetNodePermission(instance, flowParams
+        ListenerUtil.executeGetNodePermission(new ListenerVariable(instance, flowParams.getVariable())
                 , StreamUtils.toArray(CollUtil.listAddToNew(nextNodes, startNode), Node[]::new));
 
         // 设置历史任务
@@ -67,7 +69,8 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> i
         saveFlowInfo(instance, addTasks, hisTasks);
 
         // 执行结束监听器和下一节点的开始监听器
-        ListenerUtil.executeListener(instance, startNode, nextNodes, flowParams);
+        ListenerUtil.executeListener(new ListenerVariable(instance, flowParams.getVariable(), null, addTasks)
+                , startNode, nextNodes);
         return instance;
     }
 

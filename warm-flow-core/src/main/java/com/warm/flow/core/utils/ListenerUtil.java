@@ -2,8 +2,6 @@ package com.warm.flow.core.utils;
 
 import com.warm.flow.core.constant.ExceptionCons;
 import com.warm.flow.core.constant.FlowCons;
-import com.warm.flow.core.dto.FlowParams;
-import com.warm.flow.core.entity.Instance;
 import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.core.listener.Listener;
@@ -30,21 +28,19 @@ public class ListenerUtil {
 
     /**
      * 执行节点的权限监听器,并赋值权限值集合
-     *
-     * @param instance
-     * @param flowParams
+     * @param listenerVariable
      * @param nodes
-     * @return
      */
-    public static void executeGetNodePermission(Instance instance, FlowParams flowParams, Node... nodes) {
+    public static void executeGetNodePermission(ListenerVariable listenerVariable, Node... nodes) {
         for (Node node : nodes) {
             if (StringUtils.isNotEmpty(node.getListenerType()) && node.getListenerType().contains(Listener.LISTENER_PERMISSION)) {
                 //执行权限监听器
-                ListenerVariable variable = executeListener(instance, node, Listener.LISTENER_PERMISSION, flowParams);
-                //拿到监听器内的权限标识 给NowNode.的PermissionFlag 赋值
+                listenerVariable.setNode(node);
+                executeListener(listenerVariable, Listener.LISTENER_PERMISSION);
 
-                if (variable != null && CollUtil.isNotEmpty(variable.getNodePermissionList())) {
-                    NodePermission permissionByNode = variable.getPermissionByNode(node.getNodeCode());
+                //拿到监听器内的权限标识 给NowNode.的PermissionFlag 赋值
+                if (CollUtil.isNotEmpty(listenerVariable.getNodePermissionList())) {
+                    NodePermission permissionByNode = listenerVariable.getPermissionByNode(node.getNodeCode());
                     if (ObjectUtil.isNotNull(permissionByNode) && StringUtils.isNotEmpty(permissionByNode.getPermissionFlag())) {
                         node.setDynamicPermissionFlag(permissionByNode.getPermissionFlag());
                     }
@@ -56,32 +52,30 @@ public class ListenerUtil {
     /**
      * 执行结束监听器和下一节点的开始监听器
      *
-     * @param instance
+     * @param listenerVariable
      * @param NowNode
      * @param nextNodes
-     * @param flowParams
      */
-    public static void executeListener(Instance instance, Node NowNode, List<Node> nextNodes, FlowParams flowParams) {
+    public static void executeListener(ListenerVariable listenerVariable,Node NowNode, List<Node> nextNodes) {
+        // 执行任务完成监听器
+        executeListener(listenerVariable.setNode(NowNode), Listener.LISTENER_END);
         // 执行任务开始监听器
         nextNodes.forEach(node -> {
-            executeListener(instance, node, Listener.LISTENER_CREATE, flowParams);
+            executeListener(listenerVariable.setNode(node), Listener.LISTENER_CREATE);
         });
-
-        // 执行任务完成监听器
-        executeListener(instance, NowNode, Listener.LISTENER_END, flowParams);
     }
 
-    public static ListenerVariable executeListener(Instance instance, Node node, String lisType, FlowParams flowParams) {
+    public static void executeListener(ListenerVariable listenerVariable, String lisType) {
         // 执行监听器
         //listenerPath({"name": "John Doe", "age": 30})@@listenerPath@@listenerPath
-        String listenerType = node.getListenerType();
+        String listenerType = listenerVariable.getNode().getListenerType();
         if (StringUtils.isNotEmpty(listenerType)) {
             String[] listenerTypeArr = listenerType.split(",");
             for (int i = 0; i < listenerTypeArr.length; i++) {
                 String listenerTypeStr = listenerTypeArr[i].trim();
                 if (listenerTypeStr.equals(lisType)) {
                     //"listenerPath1({\"name\": \"John Doe\", \"age\": 30})@@listenerPath2";
-                    String listenerPathStr = node.getListenerPath();
+                    String listenerPathStr = listenerVariable.getNode().getListenerPath();
                     if (StringUtils.isNotEmpty(listenerPathStr)) {
                         //"listenerPath1({\"name\": \"John Doe\", \"age\": 30})";
                         //listenerPath2
@@ -93,15 +87,11 @@ public class ListenerUtil {
                         Class<?> clazz = ClassUtil.getClazz(valueHolder.getPath());
                         AssertUtil.isTrue(ObjectUtil.isNull(clazz), ExceptionCons.NOT_LISTENER);
                         Listener listener = (Listener) FrameInvoker.getBean(clazz);
-                        ListenerVariable variable = new ListenerVariable(instance, node, flowParams.getVariable(), valueHolder.getParams());
-                        listener.notify(variable);
-                        return variable;
+                        listener.notify(listenerVariable.setParams(valueHolder.getParams()));
                     }
-
                 }
             }
         }
-        return null;
     }
 
     /**

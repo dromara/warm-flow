@@ -25,12 +25,12 @@ public class ListenerVariable {
     private Node node;
 
     /**
-     * 当前节点
+     * 当前任务（启动流程时开始和权限监听器不会传入）
      */
     private Task task;
 
     /**
-     * 后续节点
+     * 新创建任务集合（只有完成监听器和创建监听器会传入）
      */
     private List<Task> nextTasks;
 
@@ -50,10 +50,35 @@ public class ListenerVariable {
 
     public ListenerVariable() {}
 
+    public ListenerVariable(Instance instance, Map<String, Object> variable) {
+        this.instance = instance;
+        this.variable = variable;
+    }
+
     public ListenerVariable(Instance instance, Node node, Map<String, Object> variable) {
         this.instance = instance;
         this.node = node;
         this.variable = variable;
+    }
+
+    public ListenerVariable(Instance instance, Map<String, Object> variable, Task task) {
+        this.instance = instance;
+        this.variable = variable;
+        this.task = task;
+    }
+
+    public ListenerVariable(Instance instance, Node node, Map<String, Object> variable, Task task) {
+        this.instance = instance;
+        this.node = node;
+        this.variable = variable;
+        this.task = task;
+    }
+
+    public ListenerVariable(Instance instance, Map<String, Object> variable, Task task, List<Task> nextTasks) {
+        this.instance = instance;
+        this.variable = variable;
+        this.task = task;
+        this.nextTasks = nextTasks;
     }
 
     public ListenerVariable(Instance instance, Node node, Map<String, Object> variable, String params) {
@@ -112,8 +137,9 @@ public class ListenerVariable {
         return params;
     }
 
-    public void setParams(String params) {
+    public ListenerVariable setParams(String params) {
         this.params = params;
+        return this;
     }
 
     public List<NodePermission> getNodePermissionList() {
@@ -125,11 +151,10 @@ public class ListenerVariable {
     }
 
     public NodePermission getPermissionByNode(String nodeCode) {
-        NodePermission nodePermission = nodePermissionList.stream().filter(t -> t.getNodeCode().equals(nodeCode))
+
+        return nodePermissionList.stream().filter(t -> t.getNodeCode().equals(nodeCode))
                 .findFirst()
                 .orElse(null);
-
-        return nodePermission;
     }
 
     @Override

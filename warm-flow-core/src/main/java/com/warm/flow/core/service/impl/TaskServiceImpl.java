@@ -10,6 +10,7 @@ import com.warm.flow.core.enums.FlowStatus;
 import com.warm.flow.core.enums.NodeType;
 import com.warm.flow.core.enums.SkipType;
 import com.warm.flow.core.listener.Listener;
+import com.warm.flow.core.listener.ListenerVariable;
 import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.TaskService;
 import com.warm.flow.core.utils.AssertUtil;
@@ -61,10 +62,11 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao, Task> implemen
                 .getByNodeCodes(Collections.singletonList(task.getNodeCode()), task.getDefinitionId()));
 
         //执行开始节点 开始监听器
-        ListenerUtil.executeListener(instance, NowNode, Listener.LISTENER_START, flowParams);
+        ListenerUtil.executeListener(new ListenerVariable(instance, NowNode, flowParams.getVariable(), task)
+                , Listener.LISTENER_START);
 
         //判断结点是否有权限监听器,有执行权限监听器NowNode.setPermissionFlag,无走数据库的权限标识符
-        ListenerUtil.executeGetNodePermission(instance, flowParams, NowNode);
+        ListenerUtil.executeGetNodePermission(new ListenerVariable(instance, NowNode, flowParams.getVariable(), task));
 
         // 获取关联的节点
         Node nextNode = getNextNode(NowNode, task, flowParams);
@@ -73,7 +75,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao, Task> implemen
         List<Node> nextNodes = getNextByCheckGateWay(flowParams, nextNode);
 
         //判断下一结点是否有权限监听器,有执行权限监听器nextNode.setPermissionFlag,无走数据库的权限标识符
-        ListenerUtil.executeGetNodePermission(instance, flowParams, StreamUtils.toArray(nextNodes, Node[]::new));
+        ListenerUtil.executeGetNodePermission(new ListenerVariable(instance, flowParams.getVariable(), task)
+                , StreamUtils.toArray(nextNodes, Node[]::new));
 
         // 构建增代办任务和设置结束任务历史记录
         List<Task> addTasks = buildAddTasks(flowParams, task, instance, nextNodes, nextNode);
@@ -97,7 +100,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao, Task> implemen
         handUndoneTask(instance, null);
 
         // 最后判断是否存在监听器，存在执行监听器
-        ListenerUtil.executeListener(instance, NowNode, nextNodes, flowParams);
+        ListenerUtil.executeListener(new ListenerVariable(instance, flowParams.getVariable(), task, addTasks)
+                , NowNode, nextNodes);
         return instance;
     }
 
