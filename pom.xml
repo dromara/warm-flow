@@ -42,6 +42,7 @@
         <module>warm-flow-core</module>
         <module>warm-flow-tools</module>
         <module>warm-flow-mybatis</module>
+        <module>warm-flow-mybatis-plus</module>
         <module>warm-flow-test</module>
     </modules>
 
@@ -55,6 +56,7 @@
         <dom4j.version>2.1.1</dom4j.version>
         <mybatis.version>3.5.13</mybatis.version>
         <mybatis-spring-boot>2.3.0</mybatis-spring-boot>
+        <mybatis-plus.version>3.5.4</mybatis-plus.version>
         <flatten-maven-plugin.version>1.3.0</flatten-maven-plugin.version>
         <mysql.version>8.0.33</mysql.version>
         <HikariCP.version>4.0.3</HikariCP.version>
@@ -87,38 +89,57 @@
                 <artifactId>dom4j</artifactId>
                 <version>${dom4j.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.mybatis</groupId>
                 <artifactId>mybatis</artifactId>
                 <version>${mybatis.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.mybatis.spring.boot</groupId>
                 <artifactId>mybatis-spring-boot-starter</artifactId>
                 <version>${mybatis-spring-boot}</version>
                 <optional>true</optional>
             </dependency>
+
             <dependency>
                 <groupId>org.noear</groupId>
                 <artifactId>mybatis-solon-plugin</artifactId>
                 <version>${solon.version}</version>
                 <optional>true</optional>
             </dependency>
+
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.noear</groupId>
+                <artifactId>mybatis-plus-solon-plugin</artifactId>
+                <version>${solon.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-tools</artifactId>
                 <version>${revision}</version>
             </dependency>
+
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-core</artifactId>
                 <version>${revision}</version>
             </dependency>
-            <dependency>
-                <groupId>io.github.minliuhua</groupId>
-                <artifactId>warm-flow-mybatis-sb-starter</artifactId>
-                <version>${revision}</version>
-            </dependency>
+
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-mybatis-core</artifactId>
@@ -127,7 +148,31 @@
 
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
+                <artifactId>warm-flow-mybatis-sb-starter</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-mybatis-solon-plugin</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.minliuhua</groupId>
+                <artifactId>warm-flow-mybatis-plus-core</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.minliuhua</groupId>
+                <artifactId>warm-flow-mybatis-plus-sb-starter</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.minliuhua</groupId>
+                <artifactId>warm-flow-mybatis-plus-solon-plugin</artifactId>
                 <version>${revision}</version>
             </dependency>
 

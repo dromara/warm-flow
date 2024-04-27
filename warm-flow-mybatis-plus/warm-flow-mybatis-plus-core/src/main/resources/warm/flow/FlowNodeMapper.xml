@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.warm.flow.orm.mapper.FlowNodeMapper">
+
+    <resultMap type="com.warm.flow.orm.entity.FlowNode" id="FlowNodeResult">
+        <result property="id" column="id"/>
+        <result property="nodeType" column="node_type"/>
+        <result property="definitionId" column="definition_id"/>
+        <result property="nodeCode" column="node_code"/>
+        <result property="nodeName" column="node_name"/>
+        <result property="permissionFlag" column="permission_flag"/>
+        <result property="coordinate" column="coordinate"/>
+        <result property="skipAnyNode" column="skip_any_node"/>
+        <result property="listenerType" column="listener_type"/>
+        <result property="listenerPath" column="listener_path"/>
+        <result property="version" column="version"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="selectVo">
+        select t.id,
+               t.node_type,
+               t.definition_id,
+               t.node_code,
+               t.node_name,
+               t.permission_flag,
+               t.coordinate,
+               t.skip_any_node,
+               t.listener_type,
+               t.listener_path,
+               t.version,
+               t.create_time,
+               t.update_time
+        from flow_node t
+    </sql>
+
+    <sql id="paging_end">
+        <if test="page !=null and page.pageNum != null and page.pageSize != null">LIMIT
+            #{page.pageNum},#{page.pageSize}
+        </if>
+    </sql>
+
+    <sql id="order_by">
+        <if test="order != null and order != ''">order by ${order}</if>
+    </sql>
+
+    <sql id="select_parameter">
+        <where>
+            <if test="entity.nodeType != null">and t.node_type = #{entity.nodeType}</if>
+            <if test="entity.definitionId != null">and t.definition_id = #{entity.definitionId}</if>
+            <if test="entity.nodeCode != null and entity.nodeCode != ''">and t.node_code = #{entity.nodeCode}</if>
+            <if test="entity.nodeName != null and entity.nodeName != ''">and t.node_name like
+                concat('%',#{entity.nodeName}, '%')
+            </if>
+            <if test="entity.permissionFlag != null and entity.permissionFlag != ''">and t.permission_flag =
+                #{entity.permissionFlag}
+            </if>
+            <if test="entity.version != null and entity.version != ''">and t.version = #{entity.version}</if>
+        </where>
+    </sql>
+
+    <select id="selectCount" parameterType="com.warm.flow.orm.entity.FlowNode" resultType="java.lang.Long">
+        select count(*) from flow_node t
+        <include refid="select_parameter"/>
+    </select>
+
+    <select id="selectList" parameterType="com.warm.flow.orm.entity.FlowNode" resultMap="FlowNodeResult">
+        <include refid="selectVo"/>
+        <include refid="select_parameter"/>
+        <include refid="order_by"/>
+        <include refid="paging_end"/>
+    </select>
+
+    <select id="selectByIds" parameterType="Long" resultMap="FlowNodeResult">
+        <include refid="selectVo"/>
+        where t.id in
+        <foreach item="id" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="selectById" parameterType="Long" resultMap="FlowNodeResult">
+        <include refid="selectVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="getByFlowCode" resultMap="FlowNodeResult" parameterType="java.lang.String">
+        select a.id,
+               a.definition_id,
+               a.node_code,
+               a.node_name,
+               a.permission_flag,
+               a.update_time,
+               a.node_type,
+               a.coordinate,
+               a.skip_any_node,
+               a.listener_type,
+               a.listener_path,
+               a.create_time,
+               b.version
+        from flow_node a
+                 INNER JOIN
+             flow_definition b
+             on b.flow_code = #{value} and a.definition_id = b.id and b.is_publish = 1
+    </select>
+
+    <select id="getByNodeCodes" resultMap="FlowNodeResult" parameterType="java.lang.String">
+        <include refid="selectVo"/>
+        where t.definition_id = #{definitionId} and t.node_code in
+        <foreach collection="nodeCodes" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <insert id="insert" parameterType="com.warm.flow.orm.entity.FlowNode">
+        insert into flow_node
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="nodeType != null">node_type,</if>
+            <if test="definitionId != null">definition_id,</if>
+            <if test="nodeCode != null and nodeCode != ''">node_code,</if>
+            <if test="nodeName != null and nodeName != ''">node_name,</if>
+            <if test="permissionFlag != null">permission_flag,</if>
+            <if test="coordinate != null and coordinate != ''">coordinate,</if>
+            <if test="skipAnyNode != null and skipAnyNode != ''">skip_any_node,</if>
+            <if test="listenerType != null and listenerType != ''">listener_type,</if>
+            <if test="listenerPath != null and listenerPath != ''">listener_path,</if>
+            <if test="version != null and version != ''">version,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="nodeType != null">#{nodeType},</if>
+            <if test="definitionId != null">#{definitionId},</if>
+            <if test="nodeCode != null and nodeCode != ''">#{nodeCode},</if>
+            <if test="nodeName != null and nodeName != ''">#{nodeName},</if>
+            <if test="permissionFlag != null">#{permissionFlag},</if>
+            <if test="coordinate != null and coordinate != ''">#{coordinate},</if>
+            <if test="skipAnyNode != null and skipAnyNode != ''">#{skipAnyNode},</if>
+            <if test="listenerType != null and listenerType != ''">#{listenerType},</if>
+            <if test="listenerPath != null and listenerPath != ''">#{listenerPath},</if>
+            <if test="version != null and version != ''">#{version},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateById" parameterType="com.warm.flow.orm.entity.FlowNode">
+        update flow_node
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="nodeType != null">node_type = #{nodeType},</if>
+            <if test="definitionId != null">definition_id = #{definitionId},</if>
+            <if test="nodeCode != null and nodeCode != ''">node_code = #{nodeCode},</if>
+            <if test="nodeName != null and nodeName != ''">node_name = #{nodeName},</if>
+            <if test="permissionFlag != null">permission_flag = #{permissionFlag},</if>
+            <if test="coordinate != null and coordinate != ''">coordinate = #{coordinate},</if>
+            <if test="skipAnyNode != null and skipAnyNode != ''">skip_any_node = #{skipAnyNode},</if>
+            <if test="listenerType != null and listenerType != ''">listener_type = #{listenerType},</if>
+            <if test="listenerPath != null and listenerPath != ''">listener_path = #{listenerPath},</if>
+            <if test="version != null and version != ''">version = #{version},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="Long">
+        delete
+        from flow_node
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteByIds" parameterType="Long">
+        delete from flow_node where id in
+        <foreach item="id" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="delete" parameterType="com.warm.flow.orm.entity.FlowNode">
+        delete from flow_node
+        <where>
+            <if test="id != null">and id = #{id}</if>
+            <if test="nodeType != null">and node_type = #{nodeType}</if>
+            <if test="definitionId != null">and definition_id = #{definitionId}</if>
+            <if test="nodeCode != null and nodeCode != ''">and node_code = #{nodeCode}</if>
+            <if test="nodeName != null and nodeName != ''">and node_name = #{nodeName}</if>
+            <if test="permissionFlag != null">and permission_flag = #{permissionFlag}</if>
+            <if test="coordinate != null and coordinate != ''">and coordinate = #{coordinate}</if>
+            <if test="skipAnyNode != null and skipAnyNode != ''">and skip_any_node = #{skipAnyNode}</if>
+            <if test="listenerType != null and listenerType != ''">and listener_type = #{listenerType}</if>
+            <if test="listenerPath != null and listenerPath != ''">and listener_path = #{listenerPath}</if>
+            <if test="version != null and version != ''">and version = #{version}</if>
+            <if test="createTime != null">and create_time = #{createTime}</if>
+            <if test="updateTime != null">and update_time = #{updateTime}</if>
+        </where>
+    </delete>
+</mapper>
