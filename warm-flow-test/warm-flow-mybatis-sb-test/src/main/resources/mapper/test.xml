@@ -1,0 +1,16 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.mybatisplusdemo.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="org.example.mybatisplusdemo.entity.User">
+        <id column="id" property="id" jdbcType="BIGINT" />
+    </resultMap>
+
+    <select id="selectUserById" resultMap="BaseResultMap">
+        SELECT * FROM user WHERE id = #{id}
+    </select>
+
+    <insert id="insertUser">
+        INSERT INTO user (username, password) VALUES (#{username}, #{password})
+    </insert>
+
+</mapper>

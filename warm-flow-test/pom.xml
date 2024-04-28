@@ -14,5 +14,6 @@
 
     <modules>
         <module>warm-flow-core-test</module>
+        <module>warm-flow-mybatis-sb-test</module>
     </modules>
 </project>
