@@ -39,29 +39,29 @@ public abstract class WarmServiceImpl<M extends WarmDao<T>, T> implements IWarmS
     }
 
     @Override
-    public Page<T> page(T entity, Page<T> page, String order) {
-        long total = getDao().selectCount(entity);
-        if (total > 0) {
-            List<T> list = getDao().selectList(entity, page, order);
-            return new Page<>(list, total);
-        }
-        return Page.empty();
+    public Page<T> page(T entity, Page<T> page) {
+        return getDao().selectPage(entity, page);
     }
 
     @Override
     public List<T> list(T entity) {
-        return getDao().selectList(entity);
+        return getDao().selectList(entity, null);
     }
 
     @Override
-    public List<T> list(T entity, String order) {
-        return getDao().selectList(entity, null, order);
+    public List<T> list(T entity, WarmQuery<T> query) {
+        return getDao().selectList(entity, query);
     }
 
     @Override
     public T getOne(T entity) {
-        List<T> list = getDao().selectList(entity);
+        List<T> list = getDao().selectList(entity, null);
         return CollUtil.getOne(list);
+    }
+
+    @Override
+    public long selectCount(T entity) {
+        return getDao().selectCount(entity);
     }
 
     @Override
@@ -111,31 +111,31 @@ public abstract class WarmServiceImpl<M extends WarmDao<T>, T> implements IWarmS
 
     @Override
     public WarmQuery<T> orderById() {
-        return new WarmQuery<T>(this).orderById();
+        return new WarmQuery<>(this).orderById();
     }
 
     @Override
     public WarmQuery<T> orderByCreateTime() {
-        return new WarmQuery<T>(this).orderByCreateTime();
+        return new WarmQuery<>(this).orderByCreateTime();
     }
 
     @Override
     public WarmQuery<T> orderByUpdateTime() {
-        return new WarmQuery<T>(this).orderByUpdateTime();
+        return new WarmQuery<>(this).orderByUpdateTime();
     }
 
     @Override
     public WarmQuery<T> orderByAsc(String orderByField) {
-        return new WarmQuery<T>(this).orderByAsc(orderByField);
+        return new WarmQuery<>(this).orderByAsc(orderByField);
     }
 
     @Override
     public WarmQuery<T> orderByDesc(String orderByField) {
-        return new WarmQuery<T>(this).orderByDesc(orderByField);
+        return new WarmQuery<>(this).orderByDesc(orderByField);
     }
 
     @Override
     public WarmQuery<T> orderBy(String orderByField) {
-        return new WarmQuery<T>(this).orderBy(orderByField);
+        return new WarmQuery<>(this).orderBy(orderByField);
     }
 }

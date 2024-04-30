@@ -1,5 +1,6 @@
 package com.warm.flow.orm.entity;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.warm.flow.core.entity.Task;
 
 import java.util.Date;
@@ -11,6 +12,7 @@ import java.util.List;
  * @author warm
  * @date 2023-03-29
  */
+@TableName("flow_task")
 public class FlowTask implements Task {
 
     /**

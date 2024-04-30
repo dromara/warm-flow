@@ -28,53 +28,6 @@
         from flow_definition t
     </sql>
 
-    <sql id="paging_end">
-        <if test="page !=null and page.pageNum != null and page.pageSize != null">LIMIT
-            #{page.pageNum},#{page.pageSize}
-        </if>
-    </sql>
-
-    <sql id="order_by">
-        <if test="order != null and order != ''">order by ${order}</if>
-    </sql>
-
-    <sql id="select_parameter">
-        <where>
-            <if test="entity.flowCode != null  and entity.flowCode != ''">and t.flow_code = #{entity.flowCode}</if>
-            <if test="entity.flowName != null  and entity.flowName != ''">and t.flow_name like concat('%',
-                #{entity.flowName}, '%')
-            </if>
-            <if test="entity.version != null  and entity.version != ''">and t.version = #{entity.version}</if>
-            <if test="entity.isPublish != null ">and t.is_publish = #{entity.isPublish}</if>
-        </where>
-    </sql>
-
-    <select id="selectList" parameterType="com.warm.flow.orm.entity.FlowDefinition"
-            resultMap="FlowDefinitionResult">
-        <include refid="selectVo"/>
-        <include refid="select_parameter"/>
-        <include refid="order_by"/>
-        <include refid="paging_end"/>
-    </select>
-
-    <select id="selectCount" parameterType="com.warm.flow.orm.entity.FlowDefinition"
-            resultType="java.lang.Long">
-        select count(*) from flow_definition t
-        <include refid="select_parameter"/>
-    </select>
-
-    <select id="selectById" parameterType="Long" resultMap="FlowDefinitionResult">
-        <include refid="selectVo"/>
-        where id = #{id}
-    </select>
-
-    <select id="selectByIds" parameterType="Long" resultMap="FlowDefinitionResult">
-        <include refid="selectVo"/>
-        where t.id in
-        <foreach item="id" collection="list" open="(" separator="," close=")">
-            #{id}
-        </foreach>
-    </select>
 
     <select id="queryByCodeList" resultMap="FlowDefinitionResult" parameterType="java.util.List">
         <include refid="selectVo"/>
@@ -84,47 +37,6 @@
         </foreach>
     </select>
 
-    <insert id="insert" parameterType="com.warm.flow.orm.entity.FlowDefinition">
-        insert into flow_definition
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id != null">id,</if>
-            <if test="flowCode != null and flowCode != ''">flow_code,</if>
-            <if test="flowName != null and flowName != ''">flow_name,</if>
-            <if test="version != null and version != ''">version,</if>
-            <if test="isPublish != null">is_publish,</if>
-            <if test="fromCustom != null">from_custom,</if>
-            <if test="fromPath != null">from_path,</if>
-            <if test="createTime != null">create_time,</if>
-            <if test="updateTime != null">update_time,</if>
-        </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="id != null">#{id},</if>
-            <if test="flowCode != null and flowCode != ''">#{flowCode},</if>
-            <if test="flowName != null and flowName != ''">#{flowName},</if>
-            <if test="version != null and version != ''">#{version},</if>
-            <if test="isPublish != null">#{isPublish},</if>
-            <if test="fromCustom != null">#{fromCustom},</if>
-            <if test="fromPath != null">#{fromPath},</if>
-            <if test="createTime != null">#{createTime},</if>
-            <if test="updateTime != null">#{updateTime},</if>
-        </trim>
-    </insert>
-
-    <update id="updateById" parameterType="com.warm.flow.orm.entity.FlowDefinition">
-        update flow_definition
-        <trim prefix="SET" suffixOverrides=",">
-            <if test="flowCode != null and flowCode != ''">flow_code = #{flowCode},</if>
-            <if test="flowName != null and flowName != ''">flow_name = #{flowName},</if>
-            <if test="version != null and version != ''">version = #{version},</if>
-            <if test="isPublish != null">is_publish = #{isPublish},</if>
-            <if test="fromCustom != null">from_custom = #{fromCustom},</if>
-            <if test="fromPath != null">from_path = #{fromPath},</if>
-            <if test="createTime != null">create_time = #{createTime},</if>
-            <if test="updateTime != null">update_time = #{updateTime},</if>
-        </trim>
-        where id = #{id}
-    </update>
-
     <update id="closeFlowByCodeList" parameterType="java.util.List">
         update flow_definition set is_publish = 9
         where flow_code in
@@ -132,19 +44,6 @@
             #{item}
         </foreach>
     </update>
-
-    <delete id="deleteById" parameterType="Long">
-        delete
-        from flow_definition
-        where id = #{id}
-    </delete>
-
-    <delete id="deleteByIds" parameterType="Long">
-        delete from flow_definition where id in
-        <foreach item="id" collection="list" open="(" separator="," close=")">
-            #{id}
-        </foreach>
-    </delete>
 
     <delete id="deleteNodeByDefIds" parameterType="Long">
         delete from flow_node where definition_id in
@@ -160,18 +59,4 @@
         </foreach>
     </delete>
 
-    <delete id="delete" parameterType="com.warm.flow.orm.entity.FlowDefinition">
-        delete from flow_definition
-        <where>
-            <if test="id != null">and id = #{id}</if>
-            <if test="flowCode != null and flowCode != ''">and flow_code = #{flowCode}</if>
-            <if test="flowName != null and flowName != ''">and flow_name = #{flowName}</if>
-            <if test="version != null and version != ''">and version = #{version}</if>
-            <if test="isPublish != null">and is_publish = #{isPublish}</if>
-            <if test="fromCustom != null">and from_custom = #{fromCustom}</if>
-            <if test="fromPath != null">and from_path = #{fromPath}</if>
-            <if test="createTime != null">and create_time = #{createTime}</if>
-            <if test="updateTime != null">and update_time = #{updateTime}</if>
-        </where>
-    </delete>
 </mapper>

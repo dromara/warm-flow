@@ -1,5 +1,6 @@
 package com.warm.flow.core.dao;
 
+import com.warm.flow.core.orm.agent.WarmQuery;
 import com.warm.tools.utils.page.Page;
 
 import java.io.Serializable;
@@ -31,32 +32,21 @@ public interface WarmDao<T> {
     List<T> selectByIds(Collection<? extends Serializable> ids);
 
     /**
-     * 查询列表
-     *
-     * @param entity 实体列表
-     * @return 集合
-     */
-    default List<T> selectList(T entity) {
-        return selectList(entity, null);
-    }
-
-    /**
      * 分页查询
      *
      * @param entity 实体列表
      * @return 集合
      */
-    default List<T> selectList(T entity, Page<T> page) {
-        return selectList(entity, page, null);
-    }
+    Page<T> selectPage(T entity, Page<T> page);
 
     /**
      * 分页查询
      *
      * @param entity 实体列表
+     * @param query
      * @return 集合
      */
-    List<T> selectList(T entity, Page<T> page, String order);
+    List<T> selectList(T entity, WarmQuery<T> query);
 
     /**
      * 查询数量

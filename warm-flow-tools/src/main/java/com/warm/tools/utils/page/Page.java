@@ -50,6 +50,13 @@ public class Page<T> {
         this.pageSize = pageSize;
     }
 
+    public Page(int pageNum, int pageSize, String orderBy, String isAsc) {
+        this.pageNum = pageNum;
+        this.pageSize = pageSize;
+        this.orderBy = orderBy;
+        this.isAsc = isAsc;
+    }
+
     public Page(List<T> list, long total) {
         this.list = list;
         this.total = total;
@@ -111,15 +118,17 @@ public class Page<T> {
         return orderBy;
     }
 
-    public void setOrderBy(String orderBy) {
+    public Page<T> setOrderBy(String orderBy) {
         this.orderBy = orderBy;
+        return this;
     }
 
     public String getIsAsc() {
         return isAsc;
     }
 
-    public void setIsAsc(String isAsc) {
+    public Page<T> setIsAsc(String isAsc) {
         this.isAsc = isAsc;
+        return this;
     }
 }

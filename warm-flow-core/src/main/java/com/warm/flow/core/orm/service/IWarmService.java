@@ -38,7 +38,7 @@ public interface IWarmService<T> {
      * @param entity 实体列表
      * @return 集合
      */
-    Page<T> page(T entity, Page<T> page, String order);
+    Page<T> page(T entity, Page<T> page);
 
     /**
      * 查询列表
@@ -52,9 +52,10 @@ public interface IWarmService<T> {
      * 查询列表并排序
      *
      * @param entity 实体列表
+     * @param query
      * @return 集合
      */
-    List<T> list(T entity, String order);
+    List<T> list(T entity, WarmQuery<T> query);
 
     /**
      * 查询一条记录
@@ -63,6 +64,13 @@ public interface IWarmService<T> {
      * @return 结果
      */
     T getOne(T entity);
+
+    /**
+     * 获取总数量
+     * @param entity
+     * @return
+     */
+    long selectCount(T entity);
 
     /**
      * 新增

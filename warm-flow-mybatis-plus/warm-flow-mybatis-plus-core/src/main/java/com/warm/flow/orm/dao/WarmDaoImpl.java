@@ -1,10 +1,14 @@
 package com.warm.flow.orm.dao;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.dao.WarmDao;
 import com.warm.flow.core.handler.DataFillHandler;
+import com.warm.flow.core.orm.agent.WarmQuery;
 import com.warm.flow.orm.mapper.WarmMapper;
 import com.warm.tools.utils.ObjectUtil;
+import com.warm.tools.utils.StringUtils;
 import com.warm.tools.utils.page.Page;
 
 import java.io.Serializable;
@@ -41,106 +45,75 @@ public abstract class WarmDaoImpl<T> implements WarmDao<T> {
      */
     @Override
     public List<T> selectByIds(Collection<? extends Serializable> ids) {
-        return getMapper().selectByIds(ids);
+        return getMapper().selectBatchIds(ids);
     }
 
-    /**
-     * 分页查询
-     *
-     * @param entity 实体列表
-     * @return 集合
-     */
     @Override
-    public List<T> selectList(T entity, Page<T> page, String order) {
-        return getMapper().selectList(entity, page, order);
+    public Page<T> selectPage(T entity, Page<T> page) {
+        com.baomidou.mybatisplus.extension.plugins.pagination.Page<T> pagePlus =
+                new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(page.getPageNum(), page.getPageSize());
+
+        QueryWrapper<T> queryWrapper = new QueryWrapper<>();
+//        queryWrapper.orderBy(StringUtils.isNotEmpty(page.getOrderBy())
+//                , page.getIsAsc().equals(SqlKeyword.ASC.getSqlSegment()), page.getOrderBy());
+
+        com.baomidou.mybatisplus.extension.plugins.pagination.Page<T> tPage
+                = getMapper().selectPage(pagePlus, queryWrapper);
+
+        if (ObjectUtil.isNotNull(tPage)) {
+            return new Page<>(tPage.getRecords(), tPage.getTotal());
+        }
+        return Page.empty();
     }
 
-    /**
-     * 查询数量
-     *
-     * @param entity 实体列表
-     * @return 集合
-     */
+    @Override
+    public List<T> selectList(T entity, WarmQuery<T> query) {
+        QueryWrapper<T> queryWrapper = new QueryWrapper<>(entity);
+        if (ObjectUtil.isNotNull(query)) {
+            queryWrapper.orderBy(StringUtils.isNotEmpty(query.getOrderBy())
+                    , query.getIsAsc().equals(SqlKeyword.ASC.getSqlSegment()), query.getOrderBy());
+        }
+        return getMapper().selectList(queryWrapper);
+    }
+
     @Override
     public long selectCount(T entity) {
-        return getMapper().selectCount(entity);
+        return getMapper().selectCount(new QueryWrapper<>(entity));
     }
 
-    /**
-     * 新增 通过继承DataFillHandler支持填充
-     *
-     * @param entity 实体
-     * @return 结果
-     */
     @Override
     public int save(T entity) {
         insertFill(entity);
         return insert(entity);
     }
 
-    /**
-     * 新增
-     *
-     * @param entity 实体
-     * @return 结果
-     */
     public int insert(T entity) {
         return getMapper().insert(entity);
     }
 
-    /**
-     * 根据id修改 通过继承DataFillHandler支持填充
-     *
-     * @param entity 实体
-     * @return 结果
-     */
     @Override
     public int modifyById(T entity) {
         updateFill(entity);
         return updateById(entity);
     }
 
-    /**
-     * 根据id修改
-     *
-     * @param entity 实体
-     * @return 结果
-     */
     public int updateById(T entity) {
         return getMapper().updateById(entity);
     }
 
-    /**
-     * 根据entity删除
-     *
-     * @param entity 实体
-     * @return 结果
-     */
     @Override
     public int delete(T entity) {
-        return getMapper().delete(entity);
+        return getMapper().deleteById(entity);
     }
 
-    /**
-     * 根据id删除
-     *
-     * @param id 主键
-     * @return 结果
-     */
     @Override
     public int deleteById(Serializable id) {
         return getMapper().deleteById(id);
     }
 
-    /**
-     * 根据ids批量删除
-     *
-     * @param ids 需要删除的数据主键集合
-     * @return 结果
-     */
     @Override
     public int deleteByIds(Collection<? extends Serializable> ids) {
-        return getMapper().deleteByIds(ids);
+        return getMapper().deleteBatchIds(ids);
     }
 
     public void insertFill(T entity) {

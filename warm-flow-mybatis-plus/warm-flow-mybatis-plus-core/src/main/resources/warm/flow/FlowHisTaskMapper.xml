@@ -44,62 +44,6 @@
         from flow_his_task t
     </sql>
 
-    <sql id="paging_end">
-        <if test="page !=null and page.pageNum != null and page.pageSize != null">LIMIT
-            #{page.pageNum},#{page.pageSize}
-        </if>
-    </sql>
-
-    <sql id="order_by">
-        <if test="order != null and order != ''">order by ${order}</if>
-    </sql>
-
-    <sql id="select_parameter">
-        <where>
-            <if test="entity.nodeCode != null  and entity.nodeCode != ''">and t.node_code = #{entity.nodeCode}</if>
-            <if test="entity.nodeName != null  and entity.nodeName != ''">and t.node_name like concat('%',
-                #{entity.nodeName}, '%')
-            </if>
-            <if test="entity.targetNodeCode != null  and entity.targetNodeCode != ''">and t.target_node_code =
-                #{entity.targetNodeCode}
-            </if>
-            <if test="entity.targetNodeName != null  and entity.targetNodeName != ''">and t.target_node_name like
-                concat('%', #{entity.targetNodeName}, '%')
-            </if>
-            <if test="entity.approver != null  and entity.approver != ''">and t.approver = #{entity.approver}</if>
-            <if test="entity.definitionId != null ">and t.definition_id = #{entity.definitionId}</if>
-            <if test="entity.instanceId != null ">and t.instance_id = #{entity.instanceId}</if>
-            <if test="entity.tenantId != null ">and t.tenant_id = #{tenantId}</if>
-            <if test="entity.message != null  and entity.message != ''">and t.message = #{entity.message}</if>
-            <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
-        </where>
-    </sql>
-
-    <select id="selectCount" parameterType="com.warm.flow.orm.entity.FlowHisTask" resultType="java.lang.Long">
-        select count(*) from flow_his_task t
-        <include refid="select_parameter"/>
-    </select>
-
-    <select id="selectList" parameterType="com.warm.flow.orm.entity.FlowHisTask" resultMap="FlowHisTaskResult">
-        <include refid="selectVo"/>
-        <include refid="select_parameter"/>
-        <include refid="order_by"/>
-        <include refid="paging_end"/>
-    </select>
-
-    <select id="selectByIds" parameterType="Long" resultMap="FlowHisTaskResult">
-        <include refid="selectVo"/>
-        where t.id in
-        <foreach item="id" collection="list" open="(" separator="," close=")">
-            #{id}
-        </foreach>
-    </select>
-
-    <select id="selectById" parameterType="Long" resultMap="FlowHisTaskResult">
-        <include refid="selectVo"/>
-        where id = #{id}
-    </select>
-
     <select id="getNoReject" resultMap="FlowHisTaskResult">
         <include refid="selectVo"/>
         where t.node_code = #{nodeCode}
@@ -108,71 +52,6 @@
         order by t.create_time desc
     </select>
 
-    <insert id="insert" parameterType="com.warm.flow.orm.entity.FlowHisTask">
-        insert into flow_his_task
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id != null">id,</if>
-            <if test="nodeCode != null and nodeCode != ''">node_code,</if>
-            <if test="nodeName != null and nodeName != ''">node_name,</if>
-            <if test="nodeType != null">node_type,</if>
-            <if test="targetNodeCode != null and targetNodeCode != ''">target_node_code,</if>
-            <if test="targetNodeName != null and targetNodeName != ''">target_node_name,</if>
-            <if test="approver != null and approver != ''">approver,</if>
-            <if test="definitionId != null">definition_id,</if>
-            <if test="instanceId != null">instance_id,</if>
-            <if test="flowStatus != null">flow_status,</if>
-            <if test="permissionFlag != null">permission_flag,</if>
-            <if test="message != null">message,</if>
-            <if test="createTime != null">create_time,</if>
-            <if test="updateTime != null">update_time,</if>
-            <if test="tenantId != null and tenantId != ''">tenant_id,</if>
-        </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="id != null">#{id},</if>
-            <if test="nodeCode != null and nodeCode != ''">#{nodeCode},</if>
-            <if test="nodeName != null and nodeName != ''">#{nodeName},</if>
-            <if test="nodeType != null">#{nodeType},</if>
-            <if test="targetNodeCode != null and targetNodeCode != ''">#{targetNodeCode},</if>
-            <if test="targetNodeName != null and targetNodeName != ''">#{targetNodeName},</if>
-            <if test="approver != null and approver != ''">#{approver},</if>
-            <if test="definitionId != null">#{definitionId},</if>
-            <if test="instanceId != null">#{instanceId},</if>
-            <if test="flowStatus != null">#{flowStatus},</if>
-            <if test="permissionFlag != null">#{permissionFlag},</if>
-            <if test="message != null">#{message},</if>
-            <if test="createTime != null">#{createTime},</if>
-            <if test="updateTime != null">#{updateTime},</if>
-            <if test="tenantId != null and tenantId != ''">#{tenantId},</if>
-        </trim>
-    </insert>
-
-    <update id="updateById" parameterType="com.warm.flow.orm.entity.FlowHisTask">
-        update flow_his_task
-        <trim prefix="SET" suffixOverrides=",">
-            <if test="nodeCode != null and nodeCode != ''">node_code = #{nodeCode},</if>
-            <if test="nodeName != null and nodeName != ''">node_name = #{nodeName},</if>
-            <if test="nodeType != null">node_type = #{nodeType},</if>
-            <if test="targetNodeCode != null and targetNodeCode != ''">target_node_code = #{targetNodeCode},</if>
-            <if test="targetNodeName != null and targetNodeName != ''">target_node_name = #{targetNodeName},</if>
-            <if test="approver != null and approver != ''">approver = #{approver},</if>
-            <if test="definitionId != null">definition_id = #{definitionId},</if>
-            <if test="instanceId != null">instance_id = #{instanceId},</if>
-            <if test="flowStatus != null">flow_status = #{flowStatus},</if>
-            <if test="permissionFlag != null">permission_flag = #{permissionFlag},</if>
-            <if test="message != null">message = #{message},</if>
-            <if test="createTime != null">create_time = #{createTime},</if>
-            <if test="updateTime != null">update_time = #{updateTime},</if>
-            <if test="tenantId != null and tenantId != ''">tenant_id = #{tenantId},</if>
-        </trim>
-        where id = #{id}
-    </update>
-
-    <delete id="deleteById" parameterType="Long">
-        delete
-        from flow_his_task
-        where id = #{id}
-    </delete>
-
     <delete id="deleteByInsIds" parameterType="Long">
         delete from flow_his_task where instance_id in
         <foreach item="instanceIds" collection="list" open="(" separator="," close=")">
@@ -180,31 +59,4 @@
         </foreach>
     </delete>
 
-    <delete id="deleteByIds" parameterType="Long">
-        delete from flow_his_task where id in
-        <foreach item="id" collection="list" open="(" separator="," close=")">
-            #{id}
-        </foreach>
-    </delete>
-
-    <delete id="delete" parameterType="com.warm.flow.orm.entity.FlowHisTask">
-        delete from flow_his_task
-        <where>
-            <if test="id != null">and id = #{id}</if>
-            <if test="nodeCode != null and nodeCode != ''">and node_code = #{nodeCode}</if>
-            <if test="nodeName != null and nodeName != ''">and node_name = #{nodeName}</if>
-            <if test="nodeType != null">and node_type = #{nodeType}</if>
-            <if test="targetNodeCode != null and targetNodeCode != ''">and target_node_code = #{targetNodeCode}</if>
-            <if test="targetNodeName != null and targetNodeName != ''">and target_node_name = #{targetNodeName}</if>
-            <if test="approver != null and approver != ''">and approver = #{approver}</if>
-            <if test="definitionId != null">and definition_id = #{definitionId}</if>
-            <if test="instanceId != null">and instance_id = #{instanceId}</if>
-            <if test="flowStatus != null">and flow_status = #{flowStatus}</if>
-            <if test="permissionFlag != null">and permission_flag = #{permissionFlag}</if>
-            <if test="message != null">and message = #{message}</if>
-            <if test="createTime != null">and create_time = #{createTime}</if>
-            <if test="updateTime != null">and update_time = #{updateTime}</if>
-            <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
-        </where>
-    </delete>
 </mapper>

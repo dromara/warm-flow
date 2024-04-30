@@ -16,16 +16,14 @@ import java.util.List;
 public class WarmQuery<T> {
 
     /**
-     * 当前记录起始索引
+     * 排序字段
      */
-    private int pageNum = 0;
+    private String orderBy;
 
     /**
-     * 每页显示记录数
+     * 排序的方向desc或者asc
      */
-    private int pageSize = 10;
-
-    private String orderBy;
+    private String isAsc = "desc";
 
     private IWarmService<T> warmService;
 
@@ -41,9 +39,9 @@ public class WarmQuery<T> {
      */
     public Page<T> page(T entity, Page<T> page) {
         if (ObjectUtil.isNull(page)) {
-            page = Page.pageOf(pageNum, pageSize);
+            page = new Page<>(1, 10, orderBy, isAsc);
         }
-        return warmService.page(entity, page, orderBy);
+        return warmService.page(entity, page.setOrderBy(orderBy).setIsAsc(isAsc));
     }
 
     /**
@@ -53,7 +51,7 @@ public class WarmQuery<T> {
      * @return 集合
      */
     public List<T> list(T entity) {
-        return warmService.list(entity, orderBy);
+        return warmService.list(entity, this);
     }
 
     /**
@@ -63,7 +61,7 @@ public class WarmQuery<T> {
      * @return 集合
      */
     public T getOne(T entity) {
-        List<T> list = warmService.list(entity, orderBy);
+        List<T> list = warmService.list(entity, this);
         return CollUtil.getOne(list);
     }
 
@@ -103,7 +101,7 @@ public class WarmQuery<T> {
      * @return 集合
      */
     public WarmQuery<T> desc() {
-        this.orderBy = this.orderBy + " desc";
+        this.isAsc = "desc";
         return this;
     }
 
@@ -114,7 +112,8 @@ public class WarmQuery<T> {
      * @return 集合
      */
     public WarmQuery<T> orderByAsc(String orderByField) {
-        this.orderBy = orderByField + " asc";
+        this.orderBy = orderByField;
+        this.isAsc = "asc";
         return this;
     }
 
@@ -125,7 +124,8 @@ public class WarmQuery<T> {
      * @return 集合
      */
     public WarmQuery<T> orderByDesc(String orderByField) {
-        this.orderBy = orderByField + " desc";
+        this.orderBy = orderByField;
+        this.isAsc = "desc";
         return this;
     }
 
@@ -140,28 +140,21 @@ public class WarmQuery<T> {
         return this;
     }
 
-    public int getPageNum() {
-        return pageNum;
-    }
-
-    public void setPageNum(int pageNum) {
-        this.pageNum = pageNum;
-    }
-
-    public int getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
-    }
-
     public String getOrderBy() {
         return orderBy;
     }
 
     public void setOrderBy(String orderBy) {
         this.orderBy = orderBy;
+    }
+
+    public String getIsAsc() {
+        return isAsc;
+    }
+
+    public WarmQuery<T> setIsAsc(String isAsc) {
+        this.isAsc = isAsc;
+        return this;
     }
 
     public IWarmService<T> getWarmService() {
