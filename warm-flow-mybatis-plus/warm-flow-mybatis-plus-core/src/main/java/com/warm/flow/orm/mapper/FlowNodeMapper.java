@@ -1,12 +1,6 @@
 package com.warm.flow.orm.mapper;
 
-import com.warm.flow.core.entity.Node;
 import com.warm.flow.orm.entity.FlowNode;
-import org.apache.ibatis.annotations.Param;
-
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.List;
 
 
 /**

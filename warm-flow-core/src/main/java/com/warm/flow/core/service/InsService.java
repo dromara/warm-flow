@@ -48,9 +48,9 @@ public interface InsService extends IWarmService<Instance> {
 
     /**
      * 终止流程，提前结束流程，将所有代办任务转历史
-     * @param instanceId 流程实例id[必传]
-     * @param flowParams:包含流程相关参数的对象
-     *                               - message:审批意见  [按需传输]
+     *
+     * @param instanceId:流程实例id[必传]
+     * @param flowParams:包含流程相关参数的对象 - message:审批意见  [按需传输]
      *                               - createBy:办理人帐号[建议传]
      */
     Instance termination(Long instanceId, FlowParams flowParams);

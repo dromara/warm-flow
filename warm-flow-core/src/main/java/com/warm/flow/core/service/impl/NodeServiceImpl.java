@@ -6,7 +6,6 @@ import com.warm.flow.core.constant.FlowCons;
 import com.warm.flow.core.dao.FlowNodeDao;
 import com.warm.flow.core.dto.FlowParams;
 import com.warm.flow.core.entity.Definition;
-import com.warm.flow.core.entity.Instance;
 import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.Skip;
 import com.warm.flow.core.enums.NodeType;

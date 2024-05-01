@@ -19,18 +19,6 @@ import java.util.List;
 
 public class FlowTest {
 
-    @Test
-    public void configuration() {
-        Configuration configuration = getConfiguration();
-
-        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
-        try (SqlSession session = sqlSessionFactory.openSession()) {
-            FlowDefinitionMapper mapper = session.getMapper(FlowDefinitionMapper.class);
-            Definition definition = mapper.selectById(1148442523895730176L);
-            System.out.println(definition);
-        }
-    }
-
     private static Configuration getConfiguration() {
         HikariDataSource dataSource = new HikariDataSource();
         dataSource.setUsername("root");     // 用户名
@@ -56,5 +44,17 @@ public class FlowTest {
             throw new RuntimeException(e);
         }
         return configuration;
+    }
+
+    @Test
+    public void configuration() {
+        Configuration configuration = getConfiguration();
+
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            FlowDefinitionMapper mapper = session.getMapper(FlowDefinitionMapper.class);
+            Definition definition = mapper.selectById(1148442523895730176L);
+            System.out.println(definition);
+        }
     }
 }

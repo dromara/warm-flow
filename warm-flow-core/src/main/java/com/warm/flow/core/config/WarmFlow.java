@@ -1,6 +1,5 @@
 package com.warm.flow.core.config;
 
-import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.constant.FlowConfigCons;
 import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.tools.utils.ObjectUtil;
@@ -15,23 +14,6 @@ public class WarmFlow {
     private boolean banner = true;
 
     private String dataFillHandlerPath;
-
-
-    public boolean isBanner() {
-        return banner;
-    }
-
-    public void setBanner(boolean banner) {
-        this.banner = banner;
-    }
-
-    public String getDataFillHandlerPath() {
-        return dataFillHandlerPath;
-    }
-
-    public void setDataFillHandlerPath(String dataFillHandlerPath) {
-        this.dataFillHandlerPath = dataFillHandlerPath;
-    }
 
     public static WarmFlow init() {
         WarmFlow flowConfig = new WarmFlow();
@@ -54,7 +36,23 @@ public class WarmFlow {
                     "    █   █  ▀▄▄▀█   █     █ █ █  █        ▀▄▄  ▀█▄█▀   █ █      \n" +
                     "\n" +
                     "\033[32m   :: Warm-Flow ::     (v" + WarmFlow.class.getPackage()
-                        .getImplementationVersion() + ")\033[0m\n");
+                    .getImplementationVersion() + ")\033[0m\n");
         }
+    }
+
+    public boolean isBanner() {
+        return banner;
+    }
+
+    public void setBanner(boolean banner) {
+        this.banner = banner;
+    }
+
+    public String getDataFillHandlerPath() {
+        return dataFillHandlerPath;
+    }
+
+    public void setDataFillHandlerPath(String dataFillHandlerPath) {
+        this.dataFillHandlerPath = dataFillHandlerPath;
     }
 }

@@ -1,7 +1,6 @@
 package com.warm.flow.orm.dao;
 
 import com.warm.flow.core.dao.FlowNodeDao;
-import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.orm.entity.FlowNode;
 import com.warm.flow.orm.mapper.FlowNodeMapper;

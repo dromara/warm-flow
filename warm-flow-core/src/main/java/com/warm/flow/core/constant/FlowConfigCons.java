@@ -18,5 +18,4 @@ public class FlowConfigCons {
     public static final String DATAFILLHANDLEPATH = "warm-flow.data-fill-handler-path";
 
 
-
 }

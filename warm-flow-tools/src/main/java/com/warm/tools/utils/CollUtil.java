@@ -92,21 +92,21 @@ public class CollUtil {
      * 集合add新的对象，返回新的集合
      *
      * @param list 集合
-     * @param t 对象
+     * @param t    对象
      * @return
      */
-    public static <T> List<T> listAddToNew(List<T> list,  T t) {
+    public static <T> List<T> listAddToNew(List<T> list, T t) {
         return listAddToNew(list, Collections.singletonList(t));
     }
 
     /**
      * 集合add新的对象，返回新的集合
      *
-     * @param list 集合
+     * @param list  集合
      * @param listA 对象
      * @return
      */
-    public static <T> List<T> listAddToNew(List<T> list,  List<T> listA) {
+    public static <T> List<T> listAddToNew(List<T> list, List<T> listA) {
         List<T> newList = new ArrayList<>();
         newList.addAll(listA);
         newList.addAll(list);

@@ -7,7 +7,6 @@ import com.warm.flow.core.service.SkipService;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * 节点跳转关联Service业务层处理

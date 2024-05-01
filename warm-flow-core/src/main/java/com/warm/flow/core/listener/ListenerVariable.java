@@ -48,7 +48,8 @@ public class ListenerVariable {
      */
     private List<NodePermission> nodePermissionList;
 
-    public ListenerVariable() {}
+    public ListenerVariable() {
+    }
 
     public ListenerVariable(Instance instance, Map<String, Object> variable) {
         this.instance = instance;

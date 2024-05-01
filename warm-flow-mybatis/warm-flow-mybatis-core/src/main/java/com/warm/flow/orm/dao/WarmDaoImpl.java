@@ -60,7 +60,7 @@ public abstract class WarmDaoImpl<T> implements WarmDao<T> {
         if (ObjectUtil.isNull(query)) {
             return getMapper().selectList(entity, null, null);
         }
-        return getMapper().selectList(entity, null,query.getOrderBy() + " " + query.getIsAsc());
+        return getMapper().selectList(entity, null, query.getOrderBy() + " " + query.getIsAsc());
     }
 
     @Override

@@ -28,6 +28,7 @@ public class ListenerUtil {
 
     /**
      * 执行节点的权限监听器,并赋值权限值集合
+     *
      * @param listenerVariable
      * @param nodes
      */
@@ -56,7 +57,7 @@ public class ListenerUtil {
      * @param NowNode
      * @param nextNodes
      */
-    public static void executeListener(ListenerVariable listenerVariable,Node NowNode, List<Node> nextNodes) {
+    public static void executeListener(ListenerVariable listenerVariable, Node NowNode, List<Node> nextNodes) {
         // 执行任务完成监听器
         executeListener(listenerVariable.setNode(NowNode), Listener.LISTENER_END);
         // 执行任务开始监听器

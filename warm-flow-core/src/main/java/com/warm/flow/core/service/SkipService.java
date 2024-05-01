@@ -5,7 +5,6 @@ import com.warm.flow.core.orm.service.IWarmService;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * 节点跳转关联Service接口

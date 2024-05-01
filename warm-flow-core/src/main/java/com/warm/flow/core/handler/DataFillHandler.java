@@ -9,6 +9,7 @@ public interface DataFillHandler {
 
     /**
      * id填充
+     *
      * @param object
      */
     void idFill(Object object);

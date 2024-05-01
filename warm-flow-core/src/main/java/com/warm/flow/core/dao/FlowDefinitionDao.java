@@ -2,8 +2,6 @@ package com.warm.flow.core.dao;
 
 import com.warm.flow.core.entity.Definition;
 
-import java.io.Serializable;
-import java.util.Collection;
 import java.util.List;
 
 /**

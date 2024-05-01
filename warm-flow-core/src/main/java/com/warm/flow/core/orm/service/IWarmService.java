@@ -67,6 +67,7 @@ public interface IWarmService<T> {
 
     /**
      * 获取总数量
+     *
      * @param entity
      * @return
      */

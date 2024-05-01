@@ -1,10 +1,7 @@
 package com.warm.flow.orm.mapper;
 
-import com.warm.flow.core.entity.Definition;
 import com.warm.flow.orm.entity.FlowDefinition;
 
-import java.io.Serializable;
-import java.util.Collection;
 import java.util.List;
 
 /**

@@ -4,7 +4,6 @@ import com.warm.flow.core.entity.Skip;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * 节点跳转关联Mapper接口

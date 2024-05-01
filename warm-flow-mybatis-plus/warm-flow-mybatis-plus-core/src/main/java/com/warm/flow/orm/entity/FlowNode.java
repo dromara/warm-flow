@@ -19,6 +19,11 @@ import java.util.List;
 public class FlowNode implements Node {
 
     /**
+     * 跳转条件
+     */
+    @TableField(exist = false)
+    List<Skip> skipList = new ArrayList<>();
+    /**
      * 主键
      */
     private Long id;
@@ -75,12 +80,6 @@ public class FlowNode implements Node {
      * 监听器路径
      */
     private String listenerPath;
-
-    /**
-     * 跳转条件
-     */
-    @TableField(exist = false)
-    List<Skip> skipList = new ArrayList<>();
 
     @Override
     public Long getId() {
