@@ -5,10 +5,12 @@ import com.warm.flow.core.constant.ExceptionCons;
 import com.warm.flow.core.constant.FlowCons;
 import com.warm.flow.core.dao.FlowNodeDao;
 import com.warm.flow.core.dto.FlowParams;
+import com.warm.flow.core.entity.Definition;
 import com.warm.flow.core.entity.Instance;
 import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.Skip;
 import com.warm.flow.core.enums.NodeType;
+import com.warm.flow.core.enums.PublishStatus;
 import com.warm.flow.core.enums.SkipType;
 import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.NodeService;
@@ -16,10 +18,8 @@ import com.warm.flow.core.utils.AssertUtil;
 import com.warm.tools.utils.CollUtil;
 import com.warm.tools.utils.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.io.Serializable;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -38,7 +38,9 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
 
     @Override
     public List<Node> getByFlowCode(String flowCode) {
-        return getDao().getByFlowCode(flowCode);
+        Definition definition = FlowFactory.defService().getOne(FlowFactory.newDef()
+                .setFlowCode(flowCode).setIsPublish(PublishStatus.PUBLISHED.getKey()));
+        return list(FlowFactory.newNode().setDefinitionId(definition.getId()));
     }
 
     @Override
@@ -79,6 +81,11 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
         AssertUtil.isNull(skips, ExceptionCons.NULL_CONDITIONVALUE_NODE);
 
         return getNextSkips(nowNode, skips, skipType, variable);
+    }
+
+    @Override
+    public int deleteNodeByDefIds(Collection<? extends Serializable> ids) {
+        return getDao().deleteNodeByDefIds(ids);
     }
 
     /**

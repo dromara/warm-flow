@@ -28,35 +28,4 @@
         from flow_definition t
     </sql>
 
-
-    <select id="queryByCodeList" resultMap="FlowDefinitionResult" parameterType="java.util.List">
-        <include refid="selectVo"/>
-        where t.flow_code in
-        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
-            #{item}
-        </foreach>
-    </select>
-
-    <update id="closeFlowByCodeList" parameterType="java.util.List">
-        update flow_definition set is_publish = 9
-        where flow_code in
-        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
-            #{item}
-        </foreach>
-    </update>
-
-    <delete id="deleteNodeByDefIds" parameterType="Long">
-        delete from flow_node where definition_id in
-        <foreach item="definitionId" collection="list" open="(" separator="," close=")">
-            #{definitionId}
-        </foreach>
-    </delete>
-
-    <delete id="deleteSkipByDefIds" parameterType="Long">
-        delete from flow_skip where definition_id in
-        <foreach item="definitionId" collection="list" open="(" separator="," close=")">
-            #{definitionId}
-        </foreach>
-    </delete>
-
 </mapper>

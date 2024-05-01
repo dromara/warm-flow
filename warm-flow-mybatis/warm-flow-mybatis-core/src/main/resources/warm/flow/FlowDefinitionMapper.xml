@@ -146,20 +146,6 @@
         </foreach>
     </delete>
 
-    <delete id="deleteNodeByDefIds" parameterType="Long">
-        delete from flow_node where definition_id in
-        <foreach item="definitionId" collection="list" open="(" separator="," close=")">
-            #{definitionId}
-        </foreach>
-    </delete>
-
-    <delete id="deleteSkipByDefIds" parameterType="Long">
-        delete from flow_skip where definition_id in
-        <foreach item="definitionId" collection="list" open="(" separator="," close=")">
-            #{definitionId}
-        </foreach>
-    </delete>
-
     <delete id="delete" parameterType="com.warm.flow.orm.entity.FlowDefinition">
         delete from flow_definition
         <where>

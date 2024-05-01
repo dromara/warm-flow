@@ -22,7 +22,7 @@ public abstract class WarmServiceImpl<M extends WarmDao<T>, T> implements IWarmS
 
     protected M warmDao;
 
-    protected M getDao() {
+    public M getDao() {
         return warmDao;
     }
 

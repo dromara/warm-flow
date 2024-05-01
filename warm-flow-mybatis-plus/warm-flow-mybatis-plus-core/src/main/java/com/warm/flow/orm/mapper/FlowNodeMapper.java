@@ -4,6 +4,8 @@ import com.warm.flow.core.entity.Node;
 import com.warm.flow.orm.entity.FlowNode;
 import org.apache.ibatis.annotations.Param;
 
+import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 
@@ -14,15 +16,5 @@ import java.util.List;
  * @date 2023-03-29
  */
 public interface FlowNodeMapper extends WarmMapper<FlowNode> {
-
-    /**
-     * 跟进流程编码获取流程节点集合
-     *
-     * @param flowCode
-     * @return
-     */
-    List<FlowNode> getByFlowCode(String flowCode);
-
-    List<FlowNode> getByNodeCodes(@Param("nodeCodes") List<String> nodeCodes, @Param("definitionId") Long definitionId);
 
 }

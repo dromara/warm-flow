@@ -3,6 +3,8 @@ package com.warm.flow.core.service;
 import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.orm.service.IWarmService;
 
+import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +17,7 @@ import java.util.Map;
 public interface NodeService extends IWarmService<Node> {
 
     /**
-     * 跟进流程编码获取流程节点集合
+     * 根据流程编码获取流程节点集合
      *
      * @param flowCode
      * @return
@@ -50,4 +52,12 @@ public interface NodeService extends IWarmService<Node> {
      * @return
      */
     List<Node> getNextNodeByNodeCode(Long definitionId, String nowNodeCode, String skipType, Map<String, Object> variable, String nextNodeCode);
+
+    /**
+     * 批量删除流程节点
+     *
+     * @param ids 需要删除的数据主键集合
+     * @return 结果
+     */
+    public int deleteNodeByDefIds(Collection<? extends Serializable> ids);
 }

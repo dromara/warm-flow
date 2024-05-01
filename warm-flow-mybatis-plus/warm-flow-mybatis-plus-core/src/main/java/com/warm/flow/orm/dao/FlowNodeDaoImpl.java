@@ -1,11 +1,14 @@
 package com.warm.flow.orm.dao;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.warm.flow.core.dao.FlowNodeDao;
 import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.orm.entity.FlowNode;
 import com.warm.flow.orm.mapper.FlowNodeMapper;
 
+import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 
@@ -22,20 +25,25 @@ public class FlowNodeDaoImpl extends WarmDaoImpl<FlowNode> implements FlowNodeDa
         return FrameInvoker.getBean(FlowNodeMapper.class);
     }
 
-    /**
-     * 跟进流程编码获取流程节点集合
-     *
-     * @param flowCode
-     * @return
-     */
-    @Override
-    public List<FlowNode> getByFlowCode(String flowCode) {
-        return getMapper().getByFlowCode(flowCode);
-    }
-
     @Override
     public List<FlowNode> getByNodeCodes(List<String> nodeCodes, Long definitionId) {
-        return getMapper().getByNodeCodes(nodeCodes, definitionId);
+        LambdaQueryWrapper<FlowNode> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(FlowNode::getNodeCode, nodeCodes)
+                .eq(FlowNode::getDefinitionId, definitionId);
+        return getMapper().selectList(queryWrapper);
+    }
+
+    /**
+     * 批量删除流程节点
+     *
+     * @param ids 需要删除的数据主键集合
+     * @return 结果
+     */
+    @Override
+    public int deleteNodeByDefIds(Collection<? extends Serializable> ids) {
+        LambdaQueryWrapper<FlowNode> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(FlowNode::getDefinitionId, ids);
+        return getMapper().delete(queryWrapper);
     }
 
 }

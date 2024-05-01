@@ -4,6 +4,7 @@ import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.chart.*;
 import com.warm.flow.core.constant.ExceptionCons;
 import com.warm.flow.core.dao.FlowDefinitionDao;
+import com.warm.flow.core.dao.FlowNodeDao;
 import com.warm.flow.core.dto.FlowCombine;
 import com.warm.flow.core.entity.*;
 import com.warm.flow.core.enums.FlowStatus;
@@ -125,8 +126,8 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
      */
     @Override
     public boolean removeDef(List<Long> ids) {
-        getDao().deleteNodeByDefIds(ids);
-        getDao().deleteSkipByDefIds(ids);
+        FlowFactory.nodeService().deleteNodeByDefIds(ids);
+        FlowFactory.skipService().deleteSkipByDefIds(ids);
         return removeByIds(ids);
     }
 

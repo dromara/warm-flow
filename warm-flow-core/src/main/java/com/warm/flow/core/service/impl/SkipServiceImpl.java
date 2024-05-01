@@ -5,6 +5,8 @@ import com.warm.flow.core.entity.Skip;
 import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.SkipService;
 
+import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -21,4 +23,8 @@ public class SkipServiceImpl extends WarmServiceImpl<FlowSkipDao<Skip>, Skip> im
         return this;
     }
 
+    @Override
+    public int deleteSkipByDefIds(Collection<? extends Serializable> ids) {
+        return getDao().deleteSkipByDefIds(ids);
+    }
 }

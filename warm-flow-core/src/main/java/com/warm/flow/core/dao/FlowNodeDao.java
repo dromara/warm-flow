@@ -2,6 +2,8 @@ package com.warm.flow.core.dao;
 
 import com.warm.flow.core.entity.Node;
 
+import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 
@@ -13,14 +15,13 @@ import java.util.List;
  */
 public interface FlowNodeDao<T extends Node> extends WarmDao<T> {
 
-    /**
-     * 跟进流程编码获取流程节点集合
-     *
-     * @param flowCode
-     * @return
-     */
-    List<T> getByFlowCode(String flowCode);
-
     List<T> getByNodeCodes(List<String> nodeCodes, Long definitionId);
 
+    /**
+     * 批量删除流程节点
+     *
+     * @param ids 需要删除的数据主键集合
+     * @return 结果
+     */
+    public int deleteNodeByDefIds(Collection<? extends Serializable> ids);
 }

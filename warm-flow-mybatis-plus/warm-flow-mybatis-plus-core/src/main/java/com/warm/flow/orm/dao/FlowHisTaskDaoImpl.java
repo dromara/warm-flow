@@ -1,8 +1,11 @@
 package com.warm.flow.orm.dao;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.warm.flow.core.dao.FlowHisTaskDao;
 import com.warm.flow.core.entity.HisTask;
+import com.warm.flow.core.enums.PublishStatus;
 import com.warm.flow.core.invoker.FrameInvoker;
+import com.warm.flow.orm.entity.FlowDefinition;
 import com.warm.flow.orm.entity.FlowHisTask;
 import com.warm.flow.orm.mapper.FlowHisTaskMapper;
 
@@ -30,7 +33,12 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask> implements Flow
      */
     @Override
     public List<FlowHisTask> getNoReject(String nodeCode, Long instanceId) {
-        return getMapper().getNoReject(nodeCode, instanceId);
+        LambdaQueryWrapper<FlowHisTask> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(FlowHisTask::getNodeCode, nodeCode)
+                .eq(FlowHisTask::getInstanceId, instanceId)
+                .ne(FlowHisTask::getFlowStatus, PublishStatus.EXPIRED.getKey())
+                .orderByDesc(FlowHisTask::getCreateTime);
+        return getMapper().selectList(queryWrapper);
     }
 
     /**
@@ -41,7 +49,9 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask> implements Flow
      */
     @Override
     public int deleteByInsIds(List<Long> instanceIds) {
-        return getMapper().deleteByInsIds(instanceIds);
+        LambdaQueryWrapper<FlowHisTask> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(FlowHisTask::getInstanceId, instanceIds);
+        return getMapper().delete(queryWrapper);
     }
 
 }

@@ -2,6 +2,8 @@ package com.warm.flow.core.dao;
 
 import com.warm.flow.core.entity.Skip;
 
+import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -12,4 +14,11 @@ import java.util.List;
  */
 public interface FlowSkipDao<T extends Skip> extends WarmDao<T> {
 
+    /**
+     * 批量删除节点跳转关联
+     *
+     * @param ids 需要删除的数据主键集合
+     * @return 结果
+     */
+    public int deleteSkipByDefIds(Collection<? extends Serializable> ids);
 }

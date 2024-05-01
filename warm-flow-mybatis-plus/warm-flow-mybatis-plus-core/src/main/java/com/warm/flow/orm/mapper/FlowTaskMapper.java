@@ -15,11 +15,4 @@ import java.util.List;
  */
 public interface FlowTaskMapper extends WarmMapper<FlowTask> {
 
-    /**
-     * 根据instanceIds删除
-     *
-     * @param instanceIds 主键
-     * @return 结果
-     */
-    int deleteByInsIds(List<Long> instanceIds);
 }

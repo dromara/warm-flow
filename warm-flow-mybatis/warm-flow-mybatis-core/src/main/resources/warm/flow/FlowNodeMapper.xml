@@ -199,4 +199,11 @@
             <if test="updateTime != null">and update_time = #{updateTime}</if>
         </where>
     </delete>
+
+    <delete id="deleteNodeByDefIds" parameterType="Long">
+        delete from flow_node where definition_id in
+        <foreach item="definitionId" collection="list" open="(" separator="," close=")">
+            #{definitionId}
+        </foreach>
+    </delete>
 </mapper>

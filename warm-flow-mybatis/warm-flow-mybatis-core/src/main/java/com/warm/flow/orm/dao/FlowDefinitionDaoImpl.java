@@ -32,24 +32,4 @@ public class FlowDefinitionDaoImpl extends WarmDaoImpl<FlowDefinition> implement
         getMapper().closeFlowByCodeList(flowCodeList);
     }
 
-    /**
-     * 批量删除流程节点
-     *
-     * @param ids 需要删除的数据主键集合
-     * @return 结果
-     */
-    public int deleteNodeByDefIds(Collection<? extends Serializable> ids) {
-        return getMapper().deleteNodeByDefIds(ids);
-    }
-
-    /**
-     * 批量删除节点跳转关联
-     *
-     * @param ids 需要删除的数据主键集合
-     * @return 结果
-     */
-    public int deleteSkipByDefIds(Collection<? extends Serializable> ids) {
-        return getMapper().deleteSkipByDefIds(ids);
-    }
-
 }

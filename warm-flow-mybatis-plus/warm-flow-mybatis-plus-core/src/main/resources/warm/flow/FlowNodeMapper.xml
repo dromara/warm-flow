@@ -36,33 +36,4 @@
                t.update_time
         from flow_node t
     </sql>
-
-    <select id="getByFlowCode" resultMap="FlowNodeResult" parameterType="java.lang.String">
-        select a.id,
-               a.definition_id,
-               a.node_code,
-               a.node_name,
-               a.permission_flag,
-               a.update_time,
-               a.node_type,
-               a.coordinate,
-               a.skip_any_node,
-               a.listener_type,
-               a.listener_path,
-               a.create_time,
-               b.version
-        from flow_node a
-                 INNER JOIN
-             flow_definition b
-             on b.flow_code = #{flowCode} and a.definition_id = b.id and b.is_publish = 1
-    </select>
-
-    <select id="getByNodeCodes" resultMap="FlowNodeResult" parameterType="java.lang.String">
-        <include refid="selectVo"/>
-        where t.definition_id = #{definitionId} and t.node_code in
-        <foreach collection="nodeCodes" index="index" item="item" open="(" separator="," close=")">
-            #{item}
-        </foreach>
-    </select>
-
 </mapper>

@@ -40,10 +40,4 @@
         from flow_task t
     </sql>
 
-    <delete id="deleteByInsIds" parameterType="Long">
-        delete from flow_task where instance_id in
-        <foreach item="instanceIds" collection="list" open="(" separator="," close=")">
-            #{instanceIds}
-        </foreach>
-    </delete>
 </mapper>

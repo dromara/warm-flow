@@ -3,6 +3,8 @@ package com.warm.flow.core.service;
 import com.warm.flow.core.entity.Skip;
 import com.warm.flow.core.orm.service.IWarmService;
 
+import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -13,4 +15,11 @@ import java.util.List;
  */
 public interface SkipService extends IWarmService<Skip> {
 
+    /**
+     * 批量删除节点跳转关联
+     *
+     * @param ids 需要删除的数据主键集合
+     * @return 结果
+     */
+    public int deleteSkipByDefIds(Collection<? extends Serializable> ids);
 }

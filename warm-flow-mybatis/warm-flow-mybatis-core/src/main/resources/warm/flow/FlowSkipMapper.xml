@@ -164,4 +164,11 @@
             <if test="updateTime != null">and update_time = #{updateTime}</if>
         </where>
     </delete>
+
+    <delete id="deleteSkipByDefIds" parameterType="Long">
+        delete from flow_skip where definition_id in
+        <foreach item="definitionId" collection="list" open="(" separator="," close=")">
+            #{definitionId}
+        </foreach>
+    </delete>
 </mapper>
