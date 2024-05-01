@@ -1,5 +1,6 @@
 package com.warm.flow.orm.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.warm.flow.core.entity.Task;
 
@@ -48,11 +49,13 @@ public class FlowTask implements Task {
     /**
      * 流程名称
      */
+    @TableField(exist = false)
     private String flowName;
 
     /**
      * 业务id
      */
+    @TableField(exist = false)
     private String businessId;
 
     /**
@@ -82,7 +85,7 @@ public class FlowTask implements Task {
     private String assignee;
 
     /**
-     * 流程状态（0待提交 1审批中 2 审批通过 8已完成 9已驳回 10失效）
+     * 流程状态（0待提交 1审批中 2 审批通过 8已完成 9已退回 10失效）
      */
     private Integer flowStatus;
 
@@ -94,16 +97,19 @@ public class FlowTask implements Task {
     /**
      * 权限标识 permissionFlag的list形式
      */
+    @TableField(exist = false)
     private List<String> permissionList;
 
     /**
      * 审批表单是否自定义（Y是 2否）
      */
+    @TableField(exist = false)
     private String fromCustom;
 
     /**
      * 审批表单是否自定义（Y是 2否）
      */
+    @TableField(exist = false)
     private String fromPath;
 
     @Override

@@ -24,10 +24,10 @@ import java.util.*;
  * @author warm
  * @date 2023-03-29
  */
-public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao, Instance> implements InsService {
+public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, Instance> implements InsService {
 
     @Override
-    public InsService setDao(FlowInstanceDao warmDao) {
+    public InsService setDao(FlowInstanceDao<Instance> warmDao) {
         this.warmDao = warmDao;
         return this;
     }

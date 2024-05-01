@@ -1,6 +1,7 @@
 package com.warm.flow.orm.mapper;
 
 import com.warm.flow.core.entity.Node;
+import com.warm.flow.orm.entity.FlowNode;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
  * @author warm
  * @date 2023-03-29
  */
-public interface FlowNodeMapper extends WarmMapper<Node> {
+public interface FlowNodeMapper extends WarmMapper<FlowNode> {
 
     /**
      * 跟进流程编码获取流程节点集合
@@ -20,8 +21,8 @@ public interface FlowNodeMapper extends WarmMapper<Node> {
      * @param flowCode
      * @return
      */
-    List<Node> getByFlowCode(String flowCode);
+    List<FlowNode> getByFlowCode(String flowCode);
 
-    List<Node> getByNodeCodes(@Param("nodeCodes") List<String> nodeCodes, @Param("definitionId") Long definitionId);
+    List<FlowNode> getByNodeCodes(@Param("nodeCodes") List<String> nodeCodes, @Param("definitionId") Long definitionId);
 
 }

@@ -1,4 +1,4 @@
-package com.warm.flow.mybstis.sb;
+package com.warm.flow.mybatis.sb;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

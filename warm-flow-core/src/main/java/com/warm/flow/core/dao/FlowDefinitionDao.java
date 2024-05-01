@@ -12,10 +12,10 @@ import java.util.List;
  * @author warm
  * @date 2023-03-29
  */
-public interface FlowDefinitionDao extends WarmDao<Definition> {
+public interface FlowDefinitionDao<T extends Definition> extends WarmDao<T> {
 
 
-    List<Definition> queryByCodeList(List<String> flowCodeList);
+    List<T> queryByCodeList(List<String> flowCodeList);
 
     void closeFlowByCodeList(List<String> flowCodeList);
 

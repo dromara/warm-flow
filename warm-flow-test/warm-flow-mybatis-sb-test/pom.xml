@@ -2,11 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.example</groupId>
+    <parent>
+        <groupId>io.github.minliuhua</groupId>
+        <artifactId>warm-flow-test</artifactId>
+        <version>${revision}</version>
+    </parent>
     <artifactId>warm-flow-mybatis-sb-test</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>mybatis-plus-demo</name>
-    <description>mybatis-plus-demo</description>
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -27,12 +28,10 @@
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
-            <version>2.2.0</version>
         </dependency>
         <dependency>
             <groupId>io.github.minliuhua</groupId>
             <artifactId>warm-flow-mybatis-sb-starter</artifactId>
-            <version>1.1.7</version>
         </dependency>
 
         <dependency>
@@ -40,11 +39,6 @@
             <artifactId>mysql-connector-j</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>runtime</scope>
-        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -79,10 +73,6 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
-                <configuration>
-                    <mainClass>com.warm.flow.mybstis.sb.MybatisTestApplication</mainClass>
-                    <skip>true</skip>
-                </configuration>
                 <executions>
                     <execution>
                         <id>repackage</id>

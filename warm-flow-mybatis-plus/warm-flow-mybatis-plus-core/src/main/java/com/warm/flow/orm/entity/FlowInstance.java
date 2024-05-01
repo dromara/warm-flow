@@ -1,5 +1,6 @@
 package com.warm.flow.orm.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.warm.flow.core.entity.Instance;
 
@@ -37,6 +38,7 @@ public class FlowInstance implements Instance {
     /**
      * 流程名称
      */
+    @TableField(exist = false)
     private String flowName;
 
     /**
@@ -70,7 +72,7 @@ public class FlowInstance implements Instance {
     private String variable;
 
     /**
-     * 流程状态（0待提交 1审批中 2 审批通过 8已完成 9已驳回 10失效）
+     * 流程状态（0待提交 1审批中 2 审批通过 8已完成 9已退回 10失效）
      */
     private Integer flowStatus;
 
@@ -82,11 +84,13 @@ public class FlowInstance implements Instance {
     /**
      * 审批表单是否自定义（Y是 2否）
      */
+    @TableField(exist = false)
     private String fromCustom;
 
     /**
      * 审批表单是否自定义（Y是 2否）
      */
+    @TableField(exist = false)
     private String fromPath;
 
     /**

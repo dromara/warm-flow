@@ -54,8 +54,8 @@ public abstract class WarmDaoImpl<T> implements WarmDao<T> {
                 new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(page.getPageNum(), page.getPageSize());
 
         QueryWrapper<T> queryWrapper = new QueryWrapper<>();
-//        queryWrapper.orderBy(StringUtils.isNotEmpty(page.getOrderBy())
-//                , page.getIsAsc().equals(SqlKeyword.ASC.getSqlSegment()), page.getOrderBy());
+        queryWrapper.orderBy(StringUtils.isNotEmpty(page.getOrderBy())
+                , page.getIsAsc().equals(SqlKeyword.ASC.getSqlSegment()), page.getOrderBy());
 
         com.baomidou.mybatisplus.extension.plugins.pagination.Page<T> tPage
                 = getMapper().selectPage(pagePlus, queryWrapper);

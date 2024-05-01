@@ -1,6 +1,7 @@
 package com.warm.flow.orm.mapper;
 
 import com.warm.flow.core.entity.HisTask;
+import com.warm.flow.orm.entity.FlowHisTask;
 import com.warm.tools.utils.page.Page;
 import org.apache.ibatis.annotations.Param;
 
@@ -12,16 +13,16 @@ import java.util.List;
  * @author warm
  * @date 2023-03-29
  */
-public interface FlowHisTaskMapper extends WarmMapper<HisTask> {
+public interface FlowHisTaskMapper extends WarmMapper<FlowHisTask> {
 
     /**
-     * 根据nodeCode获取未驳回的历史记录
+     * 根据nodeCode获取未退回的历史记录
      *
      * @param nodeCode
      * @param instanceId
      * @return
      */
-    List<HisTask> getNoReject(@Param("nodeCode") String nodeCode, @Param("instanceId") Long instanceId);
+    List<FlowHisTask> getNoReject(@Param("nodeCode") String nodeCode, @Param("instanceId") Long instanceId);
 
     /**
      * 根据instanceIds删除

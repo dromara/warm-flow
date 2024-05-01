@@ -104,7 +104,7 @@
         from flow_node a
                  INNER JOIN
              flow_definition b
-             on b.flow_code = #{value} and a.definition_id = b.id and b.is_publish = 1
+             on b.flow_code = #{flowCode} and a.definition_id = b.id and b.is_publish = 1
     </select>
 
     <select id="getByNodeCodes" resultMap="FlowNodeResult" parameterType="java.lang.String">

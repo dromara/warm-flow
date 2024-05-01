@@ -36,9 +36,6 @@ public class FlowAutoConfig {
 
     private static final Logger log = LoggerFactory.getLogger(FlowAutoConfig.class);
 
-    @Resource
-    private Environment environment;
-
     @Bean
     public FlowDefinitionDao definitionDao() {
         return new FlowDefinitionDaoImpl();

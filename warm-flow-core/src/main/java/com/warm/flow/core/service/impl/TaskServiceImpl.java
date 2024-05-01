@@ -29,10 +29,10 @@ import java.util.stream.Collectors;
  * @author warm
  * @date 2023-03-29
  */
-public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao, Task> implements TaskService {
+public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> implements TaskService {
 
     @Override
-    public TaskService setDao(FlowTaskDao warmDao) {
+    public TaskService setDao(FlowTaskDao<Task> warmDao) {
         this.warmDao = warmDao;
         return this;
     }
@@ -90,7 +90,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao, Task> implemen
         // 设置流程实例信息
         setSkipInstance(instance, addTasks, flowParams);
 
-        // 一票否决（谨慎使用），如果驳回，驳回指向节点后还存在其他正在执行的代办任务，转历史任务，状态都为失效,重走流程。
+        // 一票否决（谨慎使用），如果退回，退回指向节点后还存在其他正在执行的代办任务，转历史任务，状态都为失效,重走流程。
         oneVoteVeto(task, flowParams.getSkipType(), nextNode.getNodeCode());
 
         // 更新流程信息
@@ -478,7 +478,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao, Task> implemen
     }
 
     /**
-     * 一票否决（谨慎使用），如果驳回，驳回指向节点后还存在其他正在执行的代办任务，转历史任务，状态都为驳回,重走流程。
+     * 一票否决（谨慎使用），如果退回，退回指向节点后还存在其他正在执行的代办任务，转历史任务，状态都为退回,重走流程。
      *
      * @param task
      * @param skipType
@@ -486,7 +486,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao, Task> implemen
      * @return
      */
     private void oneVoteVeto(Task task, String skipType, String nextNodeCode) {
-        // 一票否决（谨慎使用），如果驳回，驳回指向节点后还存在其他正在执行的代办任务，转历史任务，状态失效,重走流程。
+        // 一票否决（谨慎使用），如果退回，退回指向节点后还存在其他正在执行的代办任务，转历史任务，状态失效,重走流程。
         if (SkipType.isReject(skipType)) {
             List<Task> tasks = list(FlowFactory.newTask().setInstanceId(task.getInstanceId()));
             List<Skip> allSkips = FlowFactory.skipService().list(FlowFactory.newSkip()
@@ -494,7 +494,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao, Task> implemen
             // 排除执行当前节点的流程跳转
             Map<String, List<Skip>> skipMap = StreamUtils.groupByKeyFilter(skip ->
                     !task.getNodeCode().equals(skip.getNextNodeCode()), allSkips, Skip::getNextNodeCode);
-            // 属于驳回指向节点的后置未完成的任务
+            // 属于退回指向节点的后置未完成的任务
             List<Task> noDoneTasks = new ArrayList<>();
             for (Task flowTask : tasks) {
                 if (!task.getNodeCode().equals(flowTask.getNodeCode())) {
@@ -512,7 +512,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao, Task> implemen
 
 
     /**
-     * 判断是否属于驳回指向节点的后置未完成的任务
+     * 判断是否属于退回指向节点的后置未完成的任务
      *
      * @param nextNodeCode
      * @param lastSkips

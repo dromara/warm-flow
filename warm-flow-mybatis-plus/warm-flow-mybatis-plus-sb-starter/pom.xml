@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>warm-flow-mybatis-plus-sb-starter</artifactId>
-    <description>warm-flow orm为mybatis的springboot starter</description>
+    <description>warm-flow orm为mybatis-plus的springboot starter</description>
 
     <dependencies>
         <dependency>

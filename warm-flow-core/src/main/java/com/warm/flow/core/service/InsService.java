@@ -34,7 +34,7 @@ public interface InsService extends IWarmService<Instance> {
      * 根据实例id，流程跳转，一般是开始节点后第一个节点，用来提交申请，此时不可有同时两个代办任务
      *
      * @param instanceId:流程实例id[必传]
-     * @param flowParams:包含流程相关参数的对象 - skipType:跳转类型(PASS审批通过 REJECT驳回) [必传]
+     * @param flowParams:包含流程相关参数的对象 - skipType:跳转类型(PASS审批通过 REJECT退回) [必传]
      *                               - nodeCode:节点编码 [如果指定跳转节点,必传]
      *                               - permissionFlag:办理人权限标识[按需传输]
      *                               - message:审批意见  [按需传输]

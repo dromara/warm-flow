@@ -13,10 +13,10 @@ import java.util.List;
  * @author warm
  * @date 2023-03-29
  */
-public class SkipServiceImpl extends WarmServiceImpl<FlowSkipDao, Skip> implements SkipService {
+public class SkipServiceImpl extends WarmServiceImpl<FlowSkipDao<Skip>, Skip> implements SkipService {
 
     @Override
-    public SkipService setDao(FlowSkipDao warmDao) {
+    public SkipService setDao(FlowSkipDao<Skip> warmDao) {
         this.warmDao = warmDao;
         return this;
     }

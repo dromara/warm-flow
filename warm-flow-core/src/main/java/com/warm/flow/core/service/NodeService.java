@@ -45,7 +45,7 @@ public interface NodeService extends IWarmService<Node> {
      * @param definitionId 流程定义id
      * @param nowNodeCode  当前节点code
      * @param nextNodeCode 下一节点code,skipAnyNode为Y可跳转任意节点时,需传,返回下一节点
-     * @param skipType     跳转类型（PASS审批通过 REJECT驳回）不传默认取审批通过的下一节点
+     * @param skipType     跳转类型（PASS审批通过 REJECT退回）不传默认取审批通过的下一节点
      * @param variable     流程变量 下一节点是网关需要判断跳转条件,并行网关返回多个节点
      * @return
      */

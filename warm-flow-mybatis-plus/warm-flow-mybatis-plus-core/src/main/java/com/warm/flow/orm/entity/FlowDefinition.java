@@ -1,5 +1,6 @@
 package com.warm.flow.orm.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.warm.flow.core.entity.Definition;
 import com.warm.flow.core.entity.Node;
@@ -65,8 +66,10 @@ public class FlowDefinition implements Definition {
     /**
      * 审批表单是否自定义（Y是 2否）
      */
+    @TableField(exist = false)
     private String xmlString;
 
+    @TableField(exist = false)
     private List<Node> nodeList = new ArrayList<>();
 
     @Override

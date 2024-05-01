@@ -37,10 +37,10 @@ import java.util.stream.Collectors;
  * @author warm
  * @date 2023-03-29
  */
-public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao, Definition> implements DefService {
+public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition>, Definition> implements DefService {
 
     @Override
-    public DefService setDao(FlowDefinitionDao warmDao) {
+    public DefService setDao(FlowDefinitionDao<Definition> warmDao) {
         this.warmDao = warmDao;
         return this;
     }

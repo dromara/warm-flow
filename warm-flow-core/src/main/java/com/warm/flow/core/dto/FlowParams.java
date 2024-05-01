@@ -37,7 +37,7 @@ public class FlowParams {
     private List<String> permissionFlag;
 
     /**
-     * 跳转类型（PASS审批通过 REJECT驳回）
+     * 跳转类型（PASS审批通过 REJECT退回）
      */
     private String skipType;
 

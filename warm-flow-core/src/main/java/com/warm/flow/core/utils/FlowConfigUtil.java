@@ -227,7 +227,7 @@ public class FlowConfigUtil {
         //     if (NodeType.isGateWay(allSkip.getNowNodeType())) {
         //         gatewaySkips.add(allSkip);
         //     }
-        //     // 中间节点不可驳回到网关节点
+        //     // 中间节点不可退回到网关节点
         //     AssertUtil.isTrue(!NodeType.isGateWay(allSkip.getNowNodeType())
         //                     && SkipType.isReject(allSkip.getSkipType())
         //                     && NodeType.isGateWay(allSkip.getNextNodeType())
@@ -243,7 +243,7 @@ public class FlowConfigUtil {
                 }
             }
         }
-        // 不可同时通过或者驳回到多个中间节点，必须先流转到网关节点
+        // 不可同时通过或者退回到多个中间节点，必须先流转到网关节点
         allSkipMap.forEach((key, values) -> {
             AtomicInteger passNum = new AtomicInteger();
             AtomicInteger rejectNum = new AtomicInteger();

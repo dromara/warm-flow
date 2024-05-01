@@ -9,7 +9,7 @@ import com.warm.tools.utils.StringUtils;
  */
 public enum SkipType {
     PASS("PASS", "审批通过"),
-    REJECT("REJECT", "驳回");
+    REJECT("REJECT", "退回");
 
     private String key;
     private String value;
@@ -57,7 +57,7 @@ public enum SkipType {
     }
 
     /**
-     * 判断是否驳回类型
+     * 判断是否退回类型
      *
      * @param Key
      * @return

@@ -63,7 +63,7 @@ public class FlowSkip implements Skip {
     private String skipName;
 
     /**
-     * 跳转类型（PASS审批通过 REJECT驳回）
+     * 跳转类型（PASS审批通过 REJECT退回）
      */
     private String skipType;
 

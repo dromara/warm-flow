@@ -3,6 +3,7 @@ package com.warm.flow.orm.dao;
 import com.warm.flow.core.dao.FlowDefinitionDao;
 import com.warm.flow.core.entity.Definition;
 import com.warm.flow.core.invoker.FrameInvoker;
+import com.warm.flow.orm.entity.FlowDefinition;
 import com.warm.flow.orm.mapper.FlowDefinitionMapper;
 
 import java.io.Serializable;
@@ -15,7 +16,7 @@ import java.util.List;
  * @author warm
  * @date 2023-03-29
  */
-public class FlowDefinitionDaoImpl extends WarmDaoImpl<Definition> implements FlowDefinitionDao {
+public class FlowDefinitionDaoImpl extends WarmDaoImpl<FlowDefinition> implements FlowDefinitionDao<FlowDefinition> {
 
     @Override
     public FlowDefinitionMapper getMapper() {
@@ -23,7 +24,7 @@ public class FlowDefinitionDaoImpl extends WarmDaoImpl<Definition> implements Fl
     }
 
     @Override
-    public List<Definition> queryByCodeList(List<String> flowCodeList) {
+    public List<FlowDefinition> queryByCodeList(List<String> flowCodeList) {
         return getMapper().queryByCodeList(flowCodeList);
     }
 

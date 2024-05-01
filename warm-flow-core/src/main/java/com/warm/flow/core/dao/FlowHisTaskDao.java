@@ -11,16 +11,16 @@ import java.util.List;
  * @author warm
  * @date 2023-03-29
  */
-public interface FlowHisTaskDao extends WarmDao<HisTask> {
+public interface FlowHisTaskDao<T extends HisTask> extends WarmDao<T> {
 
     /**
-     * 根据nodeCode获取未驳回的历史记录
+     * 根据nodeCode获取未退回的历史记录
      *
      * @param nodeCode
      * @param instanceId
      * @return
      */
-    List<HisTask> getNoReject(String nodeCode, Long instanceId);
+    List<T> getNoReject(String nodeCode, Long instanceId);
 
     /**
      * 根据instanceIds删除

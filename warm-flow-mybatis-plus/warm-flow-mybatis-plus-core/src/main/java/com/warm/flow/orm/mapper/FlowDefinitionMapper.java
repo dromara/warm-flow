@@ -1,6 +1,7 @@
 package com.warm.flow.orm.mapper;
 
 import com.warm.flow.core.entity.Definition;
+import com.warm.flow.orm.entity.FlowDefinition;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -12,10 +13,10 @@ import java.util.List;
  * @author warm
  * @date 2023-03-29
  */
-public interface FlowDefinitionMapper extends WarmMapper<Definition> {
+public interface FlowDefinitionMapper extends WarmMapper<FlowDefinition> {
 
 
-    List<Definition> queryByCodeList(List<String> flowCodeList);
+    List<FlowDefinition> queryByCodeList(List<String> flowCodeList);
 
     void closeFlowByCodeList(List<String> flowCodeList);
 

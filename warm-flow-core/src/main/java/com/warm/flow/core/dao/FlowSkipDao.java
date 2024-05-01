@@ -10,6 +10,6 @@ import java.util.List;
  * @author warm
  * @date 2023-03-29
  */
-public interface FlowSkipDao extends WarmDao<Skip> {
+public interface FlowSkipDao<T extends Skip> extends WarmDao<T> {
 
 }

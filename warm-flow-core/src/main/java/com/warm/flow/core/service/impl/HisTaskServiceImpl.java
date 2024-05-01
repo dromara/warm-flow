@@ -26,10 +26,10 @@ import java.util.List;
  * @author warm
  * @date 2023-03-29
  */
-public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao, HisTask> implements HisTaskService {
+public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>, HisTask> implements HisTaskService {
 
     @Override
-    public HisTaskService setDao(FlowHisTaskDao warmDao) {
+    public HisTaskService setDao(FlowHisTaskDao<HisTask> warmDao) {
         this.warmDao = warmDao;
         return this;
     }

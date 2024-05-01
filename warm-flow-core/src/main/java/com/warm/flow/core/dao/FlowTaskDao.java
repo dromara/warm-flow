@@ -11,7 +11,7 @@ import java.util.List;
  * @author warm
  * @date 2023-03-29
  */
-public interface FlowTaskDao extends WarmDao<Task> {
+public interface FlowTaskDao<T extends Task> extends WarmDao<T> {
 
     /**
      * 根据instanceIds删除

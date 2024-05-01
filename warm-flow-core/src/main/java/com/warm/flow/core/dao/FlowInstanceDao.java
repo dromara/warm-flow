@@ -10,6 +10,6 @@ import java.util.List;
  * @author warm
  * @date 2023-03-29
  */
-public interface FlowInstanceDao extends WarmDao<Instance> {
+public interface FlowInstanceDao<T extends Instance> extends WarmDao<T> {
 
 }

@@ -5,6 +5,7 @@ import com.warm.flow.core.constant.ExceptionCons;
 import com.warm.flow.core.constant.FlowCons;
 import com.warm.flow.core.dao.FlowNodeDao;
 import com.warm.flow.core.dto.FlowParams;
+import com.warm.flow.core.entity.Instance;
 import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.Skip;
 import com.warm.flow.core.enums.NodeType;
@@ -27,10 +28,10 @@ import java.util.stream.Collectors;
  * @author warm
  * @date 2023-03-29
  */
-public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao, Node> implements NodeService {
+public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> implements NodeService {
 
     @Override
-    public NodeService setDao(FlowNodeDao warmDao) {
+    public NodeService setDao(FlowNodeDao<Node> warmDao) {
         this.warmDao = warmDao;
         return this;
     }

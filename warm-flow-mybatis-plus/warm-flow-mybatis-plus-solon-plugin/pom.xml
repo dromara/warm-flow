@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>warm-flow-mybatis-plus-solon-plugin</artifactId>
-    <description>warm-flow orm为mybatis的solon plugin</description>
+    <description>warm-flow orm为mybatis-plus的solon plugin</description>
 
     <dependencies>
         <dependency>

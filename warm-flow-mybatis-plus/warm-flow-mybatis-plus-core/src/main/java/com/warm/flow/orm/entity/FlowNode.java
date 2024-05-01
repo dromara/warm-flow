@@ -1,5 +1,6 @@
 package com.warm.flow.orm.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.Skip;
@@ -17,10 +18,6 @@ import java.util.List;
 @TableName("flow_node")
 public class FlowNode implements Node {
 
-    /**
-     * 跳转条件
-     */
-    List<Skip> skipList = new ArrayList<>();
     /**
      * 主键
      */
@@ -56,6 +53,7 @@ public class FlowNode implements Node {
     /**
      * 动态权限标识（权限类型:权限标识，可以多个，如role:1,role:2)
      */
+    @TableField(exist = false)
     private String dynamicPermissionFlag;
     /**
      * 流程节点坐标
@@ -77,6 +75,12 @@ public class FlowNode implements Node {
      * 监听器路径
      */
     private String listenerPath;
+
+    /**
+     * 跳转条件
+     */
+    @TableField(exist = false)
+    List<Skip> skipList = new ArrayList<>();
 
     @Override
     public Long getId() {

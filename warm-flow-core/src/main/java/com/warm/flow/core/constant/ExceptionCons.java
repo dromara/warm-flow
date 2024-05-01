@@ -17,7 +17,7 @@ public class ExceptionCons {
 
     public static final String MUL_START_NODE = "开始节点不能超过1个!";
 
-    public static final String MUL_SKIP_BETWEEN = "不可同时通过或者驳回到多个中间节点，必须先流转到网关节点!";
+    public static final String MUL_SKIP_BETWEEN = "不可同时通过或者退回到多个中间节点，必须先流转到网关节点!";
 
     public static final String MUL_START_SKIP = "节点流转条件不能超过1个!";
 
@@ -42,7 +42,7 @@ public class ExceptionCons {
 
     public static final String NULL_EXPRESSION_STRATEGY = "条件表达式不能为空!";
 
-    public static final String FRIST_FORBID_BACK = "禁止驳回到第一个节点";
+    public static final String FRIST_FORBID_BACK = "禁止退回到第一个节点";
 
     public static final String NULL_ROLE_NODE = "无法跳转到该节点,请检查当前用户是否有权限!";
 

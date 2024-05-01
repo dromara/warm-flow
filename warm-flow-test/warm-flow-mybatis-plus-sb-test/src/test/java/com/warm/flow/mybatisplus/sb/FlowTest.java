@@ -1,4 +1,4 @@
-package com.warm.flow.mybstis.sb;
+package com.warm.flow.mybatisplus.sb;
 
 
 import com.warm.flow.core.dto.FlowParams;

@@ -80,7 +80,7 @@ public class FlowTask implements Task {
     private String assignee;
 
     /**
-     * 流程状态（0待提交 1审批中 2 审批通过 8已完成 9已驳回 10失效）
+     * 流程状态（0待提交 1审批中 2 审批通过 8已完成 9已退回 10失效）
      */
     private Integer flowStatus;
 

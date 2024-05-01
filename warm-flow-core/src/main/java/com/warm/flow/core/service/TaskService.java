@@ -21,7 +21,7 @@ public interface TaskService extends IWarmService<Task> {
      * 根据任务id，流程跳转
      *
      * @param taskId:流程任务id[必传]
-     * @param flowParams:包含流程相关参数的对象 - skipType:跳转类型(PASS审批通过 REJECT驳回) [必传]
+     * @param flowParams:包含流程相关参数的对象 - skipType:跳转类型(PASS审批通过 REJECT退回) [必传]
      *                               - nodeCode:节点编码 [如果指定跳转节点,必传]
      *                               - permissionFlag:办理人权限标识[按需传输]
      *                               - message:审批意见  [按需传输]
@@ -35,7 +35,7 @@ public interface TaskService extends IWarmService<Task> {
     /**
      * 流程跳转
      *
-     * @param flowParams:包含流程相关参数的对象 - skipType:跳转类型(PASS审批通过 REJECT驳回) [必传]
+     * @param flowParams:包含流程相关参数的对象 - skipType:跳转类型(PASS审批通过 REJECT退回) [必传]
      *                               - nodeCode:节点编码 [如果指定跳转节点,必传]
      *                               - permissionFlag:办理人权限标识[按需传输]
      *                               - message:审批意见  [按需传输]
