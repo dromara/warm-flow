@@ -13,6 +13,8 @@
         <result property="fromPath" column="from_path"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="tenantId" column="tenant_id"/>
     </resultMap>
 
     <sql id="selectVo">
@@ -24,7 +26,9 @@
                t.from_custom,
                t.from_path,
                t.create_time,
-               t.update_time
+               t.update_time,
+               t.del_flag,
+               t.tenant_id
         from flow_definition t
     </sql>
 
@@ -46,6 +50,8 @@
             </if>
             <if test="entity.version != null  and entity.version != ''">and t.version = #{entity.version}</if>
             <if test="entity.isPublish != null ">and t.is_publish = #{entity.isPublish}</if>
+            <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
+            <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
         </where>
     </sql>
 
@@ -96,6 +102,8 @@
             <if test="fromPath != null">from_path,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null and delFlag != ''">tenant_id,</if>
+            <if test="tenantId != null and tenantId != ''">tenant_id,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -107,6 +115,8 @@
             <if test="fromPath != null">#{fromPath},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null and delFlag != ''">#{delFlag},</if>
+            <if test="tenantId != null and tenantId != ''">#{tenantId},</if>
         </trim>
     </insert>
 
@@ -121,6 +131,8 @@
             <if test="fromPath != null">from_path = #{fromPath},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="delFlag != null and delFlag != ''">tenant_id = #{delFlag},</if>
+            <if test="tenantId != null and tenantId != ''">tenant_id = #{tenantId},</if>
         </trim>
         where id = #{id}
     </update>
@@ -158,6 +170,8 @@
             <if test="fromPath != null">and from_path = #{fromPath}</if>
             <if test="createTime != null">and create_time = #{createTime}</if>
             <if test="updateTime != null">and update_time = #{updateTime}</if>
+            <if test="delFlag != null and delFlag != ''">and tenant_id = #{delFlag}</if>
+            <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
         </where>
     </delete>
 </mapper>

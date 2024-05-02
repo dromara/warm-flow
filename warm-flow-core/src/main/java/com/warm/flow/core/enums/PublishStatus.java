@@ -1,7 +1,7 @@
 package com.warm.flow.core.enums;
 
 /**
- * @author minliuhua
+ * @author warm
  * @description: 节点类型
  * @date: 2023/3/31 12:16
  */

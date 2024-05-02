@@ -2,9 +2,12 @@ package com.warm.flow.orm.dao;
 
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.dao.WarmDao;
+import com.warm.flow.core.entity.RootEntity;
 import com.warm.flow.core.handler.DataFillHandler;
 import com.warm.flow.core.orm.agent.WarmQuery;
 import com.warm.flow.orm.mapper.WarmMapper;
+import com.warm.flow.orm.utils.TenantDeleteUtil;
+import com.warm.tools.utils.CollUtil;
 import com.warm.tools.utils.ObjectUtil;
 import com.warm.tools.utils.page.Page;
 
@@ -18,9 +21,11 @@ import java.util.List;
  * @author warm
  * @date 2023-03-17
  */
-public abstract class WarmDaoImpl<T> implements WarmDao<T> {
+public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
 
     public abstract WarmMapper<T> getMapper();
+
+    public abstract T newEntity();
 
     /**
      * 根据id查询
@@ -30,9 +35,14 @@ public abstract class WarmDaoImpl<T> implements WarmDao<T> {
      */
     @Override
     public T selectById(Serializable id) {
+        T entity = TenantDeleteUtil.getEntity(this::newEntity);
+        if (ObjectUtil.isNotNull(entity)) {
+            entity.setId((Long) id);
+            return CollUtil.getOne(getMapper().selectList(entity, null, null));
+        }
+
         return getMapper().selectById(id);
     }
-
 
     /**
      * 根据ids查询
@@ -42,6 +52,10 @@ public abstract class WarmDaoImpl<T> implements WarmDao<T> {
      */
     @Override
     public List<T> selectByIds(Collection<? extends Serializable> ids) {
+        T entity = TenantDeleteUtil.getEntity(this::newEntity);
+        if (ObjectUtil.isNotNull(entity)) {
+
+        }
         return getMapper().selectByIds(ids);
     }
 

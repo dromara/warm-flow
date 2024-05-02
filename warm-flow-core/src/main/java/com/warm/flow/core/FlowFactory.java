@@ -4,11 +4,14 @@ import com.warm.flow.core.config.WarmFlow;
 import com.warm.flow.core.entity.*;
 import com.warm.flow.core.handler.DataFillHandler;
 import com.warm.flow.core.handler.DefaultDataFillHandler;
+import com.warm.flow.core.handler.TenantHandler;
 import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.core.service.*;
 import com.warm.flow.core.utils.ClassUtil;
 import com.warm.tools.utils.ObjectUtil;
 import org.noear.snack.core.utils.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.function.Supplier;
 
@@ -19,6 +22,7 @@ import java.util.function.Supplier;
  */
 public class FlowFactory {
 
+    private static final Logger log = LoggerFactory.getLogger(FlowFactory.class);
 
     private static DefService defService = null;
     private static HisTaskService hisTaskService = null;
@@ -39,6 +43,8 @@ public class FlowFactory {
     private static WarmFlow flowConfig;
 
     private static DataFillHandler dataFillHandler;
+
+    private static TenantHandler tenantHandler;
 
     public static void initFlowService(DefService definitionService, HisTaskService hisTaskService, InsService instanceService
             , NodeService nodeService, SkipService skipService, TaskService taskService) {
@@ -176,10 +182,36 @@ public class FlowFactory {
                 }
             }
         } catch (Exception e) {
+            log.error("dataFillHandler init error", e);
             if (ObjectUtil.isNull(o)) {
                 o = new DefaultDataFillHandler();
             }
         }
         return FlowFactory.dataFillHandler = o;
     }
+
+    /**
+     * 获取租户数据
+     */
+    public static TenantHandler tenantHandler() {
+        if (ObjectUtil.isNotNull(FlowFactory.tenantHandler)) {
+            return FlowFactory.tenantHandler;
+        }
+        TenantHandler o = null;
+        try {
+            String tenantHandlerPath = flowConfig.getTenantHandlerPath();
+            if (!StringUtil.isEmpty(tenantHandlerPath)) {
+                Class<?> clazz = ClassUtil.getClazz(tenantHandlerPath);
+                if (clazz != null) {
+                    o = (TenantHandler) clazz.newInstance();
+                }
+            } else {
+                o = FrameInvoker.getBean(TenantHandler.class);
+            }
+        } catch (Exception e) {
+            log.error("tenantHandler init error", e);
+        }
+        return FlowFactory.tenantHandler = o;
+    }
+
 }

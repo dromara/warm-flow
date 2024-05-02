@@ -1,7 +1,7 @@
 package com.warm.tools.utils;
 
 /**
- * @author minliuhua
+ * @author warm
  * @description: Object 工具类
  * @date: 2023/5/18 9:42
  */
@@ -39,6 +39,6 @@ public class ObjectUtil {
      * @return
      */
     public static boolean isStrTrue(String str) {
-        return !StringUtils.isEmpty(str) && "true".equals(str);
+        return StringUtils.isNotEmpty(str) && "true".equals(str);
     }
 }

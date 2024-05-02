@@ -22,6 +22,14 @@ public interface Definition extends RootEntity {
 
     public Definition setUpdateTime(Date updateTime);
 
+    public String getTenantId();
+
+    public Definition setTenantId(String tenantId);
+
+    public String getDelFlag();
+
+    public Definition setDelFlag(String delFlag);
+
     public String getFlowCode();
 
     public Definition setFlowCode(String flowCode);

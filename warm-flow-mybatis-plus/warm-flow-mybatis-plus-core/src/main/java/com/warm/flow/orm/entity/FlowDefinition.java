@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.warm.flow.core.entity.Definition;
 import com.warm.flow.core.entity.Node;
+import com.warm.flow.core.entity.RootEntity;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,6 +33,16 @@ public class FlowDefinition implements Definition {
      * 更新时间
      */
     private Date updateTime;
+
+    /**
+     * 租户ID
+     */
+    private String tenantId;
+
+    /**
+     * 删除标记
+     */
+    private String delFlag;
 
     /**
      * 流程编码
@@ -102,6 +113,28 @@ public class FlowDefinition implements Definition {
     @Override
     public FlowDefinition setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+        return this;
+    }
+
+    @Override
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    @Override
+    public FlowDefinition setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+        return this;
+    }
+
+    @Override
+    public String getDelFlag() {
+        return delFlag;
+    }
+
+    @Override
+    public FlowDefinition setDelFlag(String delFlag) {
+        this.delFlag = delFlag;
         return this;
     }
 

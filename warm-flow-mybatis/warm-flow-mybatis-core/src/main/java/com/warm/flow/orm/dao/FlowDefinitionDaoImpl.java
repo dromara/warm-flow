@@ -21,6 +21,11 @@ public class FlowDefinitionDaoImpl extends WarmDaoImpl<FlowDefinition> implement
     }
 
     @Override
+    public FlowDefinition newEntity() {
+        return new FlowDefinition();
+    }
+
+    @Override
     public List<FlowDefinition> queryByCodeList(List<String> flowCodeList) {
         return getMapper().queryByCodeList(flowCodeList);
     }

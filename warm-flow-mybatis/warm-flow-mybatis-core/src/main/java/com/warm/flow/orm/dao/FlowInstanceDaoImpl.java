@@ -2,6 +2,7 @@ package com.warm.flow.orm.dao;
 
 import com.warm.flow.core.dao.FlowInstanceDao;
 import com.warm.flow.core.invoker.FrameInvoker;
+import com.warm.flow.orm.entity.FlowDefinition;
 import com.warm.flow.orm.entity.FlowInstance;
 import com.warm.flow.orm.mapper.FlowInstanceMapper;
 
@@ -18,4 +19,8 @@ public class FlowInstanceDaoImpl extends WarmDaoImpl<FlowInstance> implements Fl
         return FrameInvoker.getBean(FlowInstanceMapper.class);
     }
 
+    @Override
+    public FlowInstance newEntity() {
+        return new FlowInstance();
+    }
 }

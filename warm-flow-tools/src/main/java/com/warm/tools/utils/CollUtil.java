@@ -3,7 +3,7 @@ package com.warm.tools.utils;
 import java.util.*;
 
 /**
- * @author minliuhua
+ * @author warm
  * @description: 集合工具类
  * @date: 2023/5/18 9:39
  */

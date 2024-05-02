@@ -1,7 +1,7 @@
 package com.warm.flow.core.utils;
 
 /**
- * @author minliuhua
+ * @author warm
  * @description: SQL 辅助类
  * @date: 2023/5/3 15:22
  */

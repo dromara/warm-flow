@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author minliuhua
+ * @author warm
  * @description: 工作流bean注册配置
  * @date: 2023/6/5 23:01
  */

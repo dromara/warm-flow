@@ -1,11 +1,15 @@
 package com.warm.flow.orm.dao;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.warm.flow.core.dao.FlowHisTaskDao;
 import com.warm.flow.core.enums.PublishStatus;
 import com.warm.flow.core.invoker.FrameInvoker;
+import com.warm.flow.orm.entity.FlowDefinition;
 import com.warm.flow.orm.entity.FlowHisTask;
 import com.warm.flow.orm.mapper.FlowHisTaskMapper;
+import com.warm.flow.orm.utils.TenantDeleteUtil;
+import com.warm.tools.utils.ObjectUtil;
 
 import java.util.List;
 
@@ -22,6 +26,11 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask> implements Flow
         return FrameInvoker.getBean(FlowHisTaskMapper.class);
     }
 
+    @Override
+    public FlowHisTask newEntity() {
+        return new FlowHisTask();
+    }
+
     /**
      * 根据nodeCode获取未退回的历史记录
      *
@@ -31,7 +40,7 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask> implements Flow
      */
     @Override
     public List<FlowHisTask> getNoReject(String nodeCode, Long instanceId) {
-        LambdaQueryWrapper<FlowHisTask> queryWrapper = new LambdaQueryWrapper<>();
+        LambdaQueryWrapper<FlowHisTask> queryWrapper = TenantDeleteUtil.getLambdaWrapper();
         queryWrapper.eq(FlowHisTask::getNodeCode, nodeCode)
                 .eq(FlowHisTask::getInstanceId, instanceId)
                 .ne(FlowHisTask::getFlowStatus, PublishStatus.EXPIRED.getKey())
@@ -47,9 +56,8 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask> implements Flow
      */
     @Override
     public int deleteByInsIds(List<Long> instanceIds) {
-        LambdaQueryWrapper<FlowHisTask> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.in(FlowHisTask::getInstanceId, instanceIds);
-        return getMapper().delete(queryWrapper);
+        return delete(newEntity(), (luw) -> luw.in(FlowHisTask::getInstanceId, instanceIds)
+                , (lqw) -> lqw.in(FlowHisTask::getInstanceId, instanceIds));
     }
 
 }

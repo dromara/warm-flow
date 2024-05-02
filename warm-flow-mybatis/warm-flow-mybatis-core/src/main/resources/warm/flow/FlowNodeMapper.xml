@@ -18,6 +18,8 @@
         <result property="version" column="version"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="tenantId" column="tenant_id"/>
     </resultMap>
 
     <sql id="selectVo">
@@ -33,7 +35,9 @@
                t.listener_path,
                t.version,
                t.create_time,
-               t.update_time
+               t.update_time,
+               t.del_flag,
+               t.tenant_id
         from flow_node t
     </sql>
 
@@ -59,6 +63,8 @@
                 #{entity.permissionFlag}
             </if>
             <if test="entity.version != null and entity.version != ''">and t.version = #{entity.version}</if>
+            <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
+            <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
         </where>
     </sql>
 
@@ -131,6 +137,8 @@
             <if test="version != null and version != ''">version,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null and delFlag != ''">tenant_id,</if>
+            <if test="tenantId != null and tenantId != ''">tenant_id,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -146,6 +154,8 @@
             <if test="version != null and version != ''">#{version},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null and delFlag != ''">#{delFlag},</if>
+            <if test="tenantId != null and tenantId != ''">#{tenantId},</if>
         </trim>
     </insert>
 
@@ -164,6 +174,8 @@
             <if test="version != null and version != ''">version = #{version},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="delFlag != null and delFlag != ''">tenant_id = #{delFlag},</if>
+            <if test="tenantId != null and tenantId != ''">tenant_id = #{tenantId},</if>
         </trim>
         where id = #{id}
     </update>

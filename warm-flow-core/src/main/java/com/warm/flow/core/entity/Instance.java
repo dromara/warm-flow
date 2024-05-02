@@ -22,6 +22,14 @@ public interface Instance extends RootEntity {
 
     public Instance setUpdateTime(Date updateTime);
 
+    public String getTenantId();
+
+    public Instance setTenantId(String tenantId);
+
+    public String getDelFlag();
+
+    public Instance setDelFlag(String delFlag);
+
     public Long getDefinitionId();
 
     public Instance setDefinitionId(Long definitionId);
@@ -33,10 +41,6 @@ public interface Instance extends RootEntity {
     public String getBusinessId();
 
     public Instance setBusinessId(String businessId);
-
-    String getTenantId();
-
-    Instance setTenantId(String tenantId);
 
     public Integer getNodeType();
 

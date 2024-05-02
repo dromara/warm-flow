@@ -2,6 +2,7 @@ package com.warm.flow.orm.dao;
 
 import com.warm.flow.core.dao.FlowSkipDao;
 import com.warm.flow.core.invoker.FrameInvoker;
+import com.warm.flow.orm.entity.FlowDefinition;
 import com.warm.flow.orm.entity.FlowSkip;
 import com.warm.flow.orm.mapper.FlowSkipMapper;
 
@@ -19,6 +20,11 @@ public class FlowSkipDaoImpl extends WarmDaoImpl<FlowSkip> implements FlowSkipDa
     @Override
     public FlowSkipMapper getMapper() {
         return FrameInvoker.getBean(FlowSkipMapper.class);
+    }
+
+    @Override
+    public FlowSkip newEntity() {
+        return new FlowSkip();
     }
 
     /**

@@ -11,19 +11,69 @@ import com.warm.tools.utils.StringUtils;
  * @author warm
  */
 public class WarmFlow {
+    /**
+     * 启动banner
+     */
     private boolean banner = true;
 
+    /**
+     * 是否开启逻辑删除
+     */
+    private boolean logicDelete = false;
+
+    /**
+     * 逻辑删除字段值
+     */
+    private String logicDeleteValue = "2";
+
+    /**
+     * 逻辑未删除字段
+     */
+    private String logicNotDeleteValue = "0";
+
+    /**
+     * 数据填充处理类路径
+     */
     private String dataFillHandlerPath;
+
+    /**
+     * 租户模式处理类路径
+     */
+    private String tenantHandlerPath;
 
     public static WarmFlow init() {
         WarmFlow flowConfig = new WarmFlow();
+        // 设置banner
         String banner = FrameInvoker.getCfg(FlowConfigCons.BANNER);
         if (StringUtils.isNotEmpty(banner)) {
             flowConfig.setBanner(ObjectUtil.isStrTrue(banner));
         }
+
+        // 设置逻辑删除
+        setLogicDelete(flowConfig);
+
+        // 设置租户模式
+        flowConfig.setTenantHandlerPath(FrameInvoker.getCfg(FlowConfigCons.TENANTHANDLERPATH));
+
+        // 设置数据填充处理类
         flowConfig.setDataFillHandlerPath(FrameInvoker.getCfg(FlowConfigCons.DATAFILLHANDLEPATH));
         printBanner(flowConfig);
         return flowConfig;
+    }
+
+    private static void setLogicDelete(WarmFlow flowConfig) {
+        String logicDelete = FrameInvoker.getCfg(FlowConfigCons.LOGICDELETE);
+        if (ObjectUtil.isStrTrue(logicDelete)) {
+            flowConfig.setLogicDelete(ObjectUtil.isStrTrue(logicDelete));
+            String logicDeleteValue = FrameInvoker.getCfg(FlowConfigCons.LOGICDELETEVALUE);
+            if (StringUtils.isNotEmpty(logicDeleteValue)) {
+                flowConfig.setLogicDeleteValue(logicDeleteValue);
+            }
+            String logicNotDeleteValue = FrameInvoker.getCfg(FlowConfigCons.LOGICNOTDELETEVALUE);
+            if (StringUtils.isNotEmpty(logicNotDeleteValue)) {
+                flowConfig.setLogicNotDeleteValue(logicNotDeleteValue);
+            }
+        }
     }
 
     private static void printBanner(WarmFlow flowConfig) {
@@ -48,11 +98,43 @@ public class WarmFlow {
         this.banner = banner;
     }
 
+    public boolean isLogicDelete() {
+        return logicDelete;
+    }
+
+    public void setLogicDelete(boolean logicDelete) {
+        this.logicDelete = logicDelete;
+    }
+
+    public String getLogicDeleteValue() {
+        return logicDeleteValue;
+    }
+
+    public void setLogicDeleteValue(String logicDeleteValue) {
+        this.logicDeleteValue = logicDeleteValue;
+    }
+
+    public String getLogicNotDeleteValue() {
+        return logicNotDeleteValue;
+    }
+
+    public void setLogicNotDeleteValue(String logicNotDeleteValue) {
+        this.logicNotDeleteValue = logicNotDeleteValue;
+    }
+
     public String getDataFillHandlerPath() {
         return dataFillHandlerPath;
     }
 
     public void setDataFillHandlerPath(String dataFillHandlerPath) {
         this.dataFillHandlerPath = dataFillHandlerPath;
+    }
+
+    public String getTenantHandlerPath() {
+        return tenantHandlerPath;
+    }
+
+    public void setTenantHandlerPath(String tenantHandlerPath) {
+        this.tenantHandlerPath = tenantHandlerPath;
     }
 }

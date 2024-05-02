@@ -1,11 +1,13 @@
 package com.warm.flow.orm.dao;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.warm.flow.core.dao.FlowDefinitionDao;
 import com.warm.flow.core.enums.PublishStatus;
 import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.orm.entity.FlowDefinition;
 import com.warm.flow.orm.mapper.FlowDefinitionMapper;
+import com.warm.flow.orm.utils.TenantDeleteUtil;
 
 import java.util.List;
 
@@ -23,15 +25,20 @@ public class FlowDefinitionDaoImpl extends WarmDaoImpl<FlowDefinition> implement
     }
 
     @Override
+    public FlowDefinition newEntity() {
+        return new FlowDefinition();
+    }
+
+    @Override
     public List<FlowDefinition> queryByCodeList(List<String> flowCodeList) {
-        LambdaQueryWrapper<FlowDefinition> queryWrapper = new LambdaQueryWrapper<>();
+        LambdaQueryWrapper<FlowDefinition> queryWrapper = TenantDeleteUtil.getLambdaWrapper();
         queryWrapper.in(FlowDefinition::getFlowCode, flowCodeList);
         return getMapper().selectList(queryWrapper);
     }
 
     @Override
     public void closeFlowByCodeList(List<String> flowCodeList) {
-        LambdaQueryWrapper<FlowDefinition> queryWrapper = new LambdaQueryWrapper<>();
+        LambdaQueryWrapper<FlowDefinition> queryWrapper = TenantDeleteUtil.getLambdaWrapper();
         queryWrapper.in(FlowDefinition::getFlowCode, flowCodeList);
         getMapper().update(new FlowDefinition().setIsPublish(PublishStatus.EXPIRED.getKey()), queryWrapper);
     }

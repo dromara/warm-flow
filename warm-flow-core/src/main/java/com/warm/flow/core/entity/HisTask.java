@@ -23,6 +23,14 @@ public interface HisTask extends RootEntity {
 
     public HisTask setUpdateTime(Date updateTime);
 
+    public String getTenantId();
+
+    public HisTask setTenantId(String tenantId);
+
+    public String getDelFlag();
+
+    public HisTask setDelFlag(String delFlag);
+
     public Long getDefinitionId();
 
     public HisTask setDefinitionId(Long definitionId);
@@ -34,10 +42,6 @@ public interface HisTask extends RootEntity {
     public Long getInstanceId();
 
     public HisTask setInstanceId(Long instanceId);
-
-    public String getTenantId();
-
-    public HisTask setTenantId(String tenantId);
 
     public String getBusinessId();
 

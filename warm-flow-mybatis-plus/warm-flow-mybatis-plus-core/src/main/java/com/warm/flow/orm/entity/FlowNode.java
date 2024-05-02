@@ -35,6 +35,17 @@ public class FlowNode implements Node {
      * 更新时间
      */
     private Date updateTime;
+
+    /**
+     * 租户ID
+     */
+    private String tenantId;
+
+    /**
+     * 删除标记
+     */
+    private String delFlag;
+
     /**
      * 节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）
      */
@@ -111,6 +122,28 @@ public class FlowNode implements Node {
     @Override
     public FlowNode setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+        return this;
+    }
+
+    @Override
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    @Override
+    public FlowNode setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+        return this;
+    }
+
+    @Override
+    public String getDelFlag() {
+        return delFlag;
+    }
+
+    @Override
+    public FlowNode setDelFlag(String delFlag) {
+        this.delFlag = delFlag;
         return this;
     }
 

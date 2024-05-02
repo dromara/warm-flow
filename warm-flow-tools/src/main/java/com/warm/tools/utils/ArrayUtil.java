@@ -1,7 +1,7 @@
 package com.warm.tools.utils;
 
 /**
- * @author minliuhua
+ * @author warm
  * @description: 数组工具类
  * @date: 2023/5/18 9:45
  */

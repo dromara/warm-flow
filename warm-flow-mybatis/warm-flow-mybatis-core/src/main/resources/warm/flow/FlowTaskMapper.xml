@@ -21,6 +21,7 @@
         <result property="flowName" column="flow_name"/>
         <result property="fromCustom" column="from_custom"/>
         <result property="fromPath" column="from_path"/>
+        <result property="delFlag" column="del_flag"/>
     </resultMap>
 
 
@@ -36,6 +37,7 @@
                t.flow_status,
                t.create_time,
                t.update_time,
+               t.del_flag,
                t.tenant_id
         from flow_task t
     </sql>
@@ -61,6 +63,7 @@
             <if test="entity.definitionId != null ">and t.definition_id = #{entity.definitionId}</if>
             <if test="entity.instanceId != null ">and t.instance_id = #{entity.instanceId}</if>
             <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+            <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
         </where>
     </sql>
 
@@ -104,6 +107,7 @@
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
             <if test="tenantId != null and tenantId != ''">tenant_id,</if>
+            <if test="delFlag != null and delFlag != ''">tenant_id,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -117,6 +121,7 @@
             <if test="permissionFlag != null">#{permissionFlag},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null and delFlag != ''">#{delFlag},</if>
             <if test="tenantId != null and tenantId != ''">#{tenantId},</if>
         </trim>
     </insert>
@@ -134,6 +139,7 @@
             <if test="permissionFlag != null">permission_flag = #{permissionFlag},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="delFlag != null and delFlag != ''">tenant_id = #{delFlag},</if>
             <if test="tenantId != null and tenantId != ''">tenant_id = #{tenantId},</if>
         </trim>
         where id = #{id}
@@ -173,6 +179,8 @@
             <if test="permissionFlag != null">and permission_flag = #{permissionFlag}</if>
             <if test="createTime != null">and create_time = #{createTime}</if>
             <if test="updateTime != null">and update_time = #{updateTime}</if>
+            <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
+            <if test="delFlag != null and delFlag != ''">and tenant_id = #{delFlag}</if>
             <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
         </where>
     </delete>

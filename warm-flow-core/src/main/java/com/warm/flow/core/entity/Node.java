@@ -23,6 +23,14 @@ public interface Node extends RootEntity {
 
     public Node setUpdateTime(Date updateTime);
 
+    public String getTenantId();
+
+    public Node setTenantId(String tenantId);
+
+    public String getDelFlag();
+
+    public Node setDelFlag(String delFlag);
+
     public Integer getNodeType();
 
     public Node setNodeType(Integer nodeType);

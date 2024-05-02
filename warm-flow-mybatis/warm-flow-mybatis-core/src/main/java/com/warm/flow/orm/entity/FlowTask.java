@@ -29,6 +29,16 @@ public class FlowTask implements Task {
     private Date updateTime;
 
     /**
+     * 租户ID
+     */
+    private String tenantId;
+
+    /**
+     * 删除标记
+     */
+    private String delFlag;
+
+    /**
      * 对应flow_definition表的id
      */
     private Long definitionId;
@@ -37,11 +47,6 @@ public class FlowTask implements Task {
      * 流程实例表id
      */
     private Long instanceId;
-
-    /**
-     * 所属租住（企业）id
-     */
-    private String tenantId;
 
     /**
      * 流程名称
@@ -167,6 +172,17 @@ public class FlowTask implements Task {
     @Override
     public FlowTask setTenantId(String tenantId) {
         this.tenantId = tenantId;
+        return this;
+    }
+
+    @Override
+    public String getDelFlag() {
+        return delFlag;
+    }
+
+    @Override
+    public FlowTask setDelFlag(String delFlag) {
+        this.delFlag = delFlag;
         return this;
     }
 

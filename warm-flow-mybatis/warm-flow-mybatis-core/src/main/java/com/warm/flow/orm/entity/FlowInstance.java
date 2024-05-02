@@ -28,6 +28,16 @@ public class FlowInstance implements Instance {
     private Date updateTime;
 
     /**
+     * 租户ID
+     */
+    private String tenantId;
+
+    /**
+     * 删除标记
+     */
+    private String delFlag;
+
+    /**
      * 对应flow_definition表的id
      */
     private Long definitionId;
@@ -41,11 +51,6 @@ public class FlowInstance implements Instance {
      * 业务id
      */
     private String businessId;
-
-    /**
-     * 所属租住（企业）id
-     */
-    private String tenantId;
 
     /**
      * 节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）
@@ -166,6 +171,17 @@ public class FlowInstance implements Instance {
     @Override
     public FlowInstance setTenantId(String tenantId) {
         this.tenantId = tenantId;
+        return this;
+    }
+
+    @Override
+    public String getDelFlag() {
+        return delFlag;
+    }
+
+    @Override
+    public FlowInstance setDelFlag(String delFlag) {
+        this.delFlag = delFlag;
         return this;
     }
 

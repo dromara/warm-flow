@@ -18,4 +18,9 @@ public class FlowInstanceDaoImpl extends WarmDaoImpl<FlowInstance> implements Fl
         return FrameInvoker.getBean(FlowInstanceMapper.class);
     }
 
+    @Override
+    public FlowInstance newEntity() {
+        return new FlowInstance();
+    }
+
 }

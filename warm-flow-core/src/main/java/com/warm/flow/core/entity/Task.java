@@ -23,6 +23,14 @@ public interface Task extends RootEntity {
 
     public Task setUpdateTime(Date updateTime);
 
+    public String getTenantId();
+
+    public Task setTenantId(String tenantId);
+
+    public String getDelFlag();
+
+    public Task setDelFlag(String delFlag);
+
     public Long getDefinitionId();
 
     public Task setDefinitionId(Long definitionId);
@@ -30,10 +38,6 @@ public interface Task extends RootEntity {
     public Long getInstanceId();
 
     public Task setInstanceId(Long instanceId);
-
-    public String getTenantId();
-
-    public Task setTenantId(String tenantId);
 
     public String getFlowName();
 

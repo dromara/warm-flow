@@ -31,6 +31,16 @@ public class FlowSkip implements Skip {
     private Date updateTime;
 
     /**
+     * 租户ID
+     */
+    private String tenantId;
+
+    /**
+     * 删除标记
+     */
+    private String delFlag;
+
+    /**
      * 流程id
      */
     private Long definitionId;
@@ -111,6 +121,28 @@ public class FlowSkip implements Skip {
     @Override
     public FlowSkip setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+        return this;
+    }
+
+    @Override
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    @Override
+    public FlowSkip setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+        return this;
+    }
+
+    @Override
+    public String getDelFlag() {
+        return delFlag;
+    }
+
+    @Override
+    public FlowSkip setDelFlag(String delFlag) {
+        this.delFlag = delFlag;
         return this;
     }
 

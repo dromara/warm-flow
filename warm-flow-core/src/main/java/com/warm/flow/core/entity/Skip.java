@@ -22,6 +22,14 @@ public interface Skip extends RootEntity {
 
     public Skip setUpdateTime(Date updateTime);
 
+    public String getTenantId();
+
+    public Skip setTenantId(String tenantId);
+
+    public String getDelFlag();
+
+    public Skip setDelFlag(String delFlag);
+
     public Long getDefinitionId();
 
     public Skip setDefinitionId(Long definitionId);

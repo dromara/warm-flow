@@ -1,12 +1,21 @@
 package com.warm.flow.orm.dao;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 import com.warm.flow.core.FlowFactory;
+import com.warm.flow.core.config.WarmFlow;
+import com.warm.flow.core.constant.FlowConfigCons;
+import com.warm.flow.core.constant.FlowCons;
 import com.warm.flow.core.dao.WarmDao;
+import com.warm.flow.core.entity.RootEntity;
 import com.warm.flow.core.handler.DataFillHandler;
+import com.warm.flow.core.handler.TenantHandler;
 import com.warm.flow.core.orm.agent.WarmQuery;
 import com.warm.flow.orm.mapper.WarmMapper;
+import com.warm.flow.orm.utils.TenantDeleteUtil;
+import com.warm.tools.utils.CollUtil;
 import com.warm.tools.utils.ObjectUtil;
 import com.warm.tools.utils.StringUtils;
 import com.warm.tools.utils.page.Page;
@@ -14,6 +23,8 @@ import com.warm.tools.utils.page.Page;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * BaseMapper接口
@@ -21,9 +32,11 @@ import java.util.List;
  * @author warm
  * @date 2023-03-17
  */
-public abstract class WarmDaoImpl<T> implements WarmDao<T> {
+public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
 
     public abstract WarmMapper<T> getMapper();
+
+    public abstract T newEntity();
 
     /**
      * 根据id查询
@@ -33,9 +46,13 @@ public abstract class WarmDaoImpl<T> implements WarmDao<T> {
      */
     @Override
     public T selectById(Serializable id) {
+        LambdaQueryWrapper<T> queryWrapper = TenantDeleteUtil.getLambdaWrapper();
+        if (ObjectUtil.isNotNull(queryWrapper)) {
+            queryWrapper.eq(T::getId, id);
+            return getMapper().selectOne(queryWrapper);
+        }
         return getMapper().selectById(id);
     }
-
 
     /**
      * 根据ids查询
@@ -45,6 +62,11 @@ public abstract class WarmDaoImpl<T> implements WarmDao<T> {
      */
     @Override
     public List<T> selectByIds(Collection<? extends Serializable> ids) {
+        LambdaQueryWrapper<T> queryWrapper = TenantDeleteUtil.getLambdaWrapper();
+        if (ObjectUtil.isNotNull(queryWrapper)) {
+            queryWrapper.in(T::getId, ids);
+            return getMapper().selectList(queryWrapper);
+        }
         return getMapper().selectBatchIds(ids);
     }
 
@@ -53,7 +75,11 @@ public abstract class WarmDaoImpl<T> implements WarmDao<T> {
         com.baomidou.mybatisplus.extension.plugins.pagination.Page<T> pagePlus =
                 new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(page.getPageNum(), page.getPageSize());
 
-        QueryWrapper<T> queryWrapper = new QueryWrapper<>();
+        QueryWrapper<T> queryWrapper = TenantDeleteUtil.getQueryWrapper(entity);
+        if (ObjectUtil.isNull(queryWrapper)) {
+            queryWrapper = new QueryWrapper<>(entity);
+        }
+
         queryWrapper.orderBy(StringUtils.isNotEmpty(page.getOrderBy())
                 , page.getIsAsc().equals(SqlKeyword.ASC.getSqlSegment()), page.getOrderBy());
 
@@ -68,7 +94,10 @@ public abstract class WarmDaoImpl<T> implements WarmDao<T> {
 
     @Override
     public List<T> selectList(T entity, WarmQuery<T> query) {
-        QueryWrapper<T> queryWrapper = new QueryWrapper<>(entity);
+        QueryWrapper<T> queryWrapper = TenantDeleteUtil.getQueryWrapper(entity);
+        if (ObjectUtil.isNull(queryWrapper)) {
+            queryWrapper = new QueryWrapper<>(entity);
+        }
         if (ObjectUtil.isNotNull(query)) {
             queryWrapper.orderBy(StringUtils.isNotEmpty(query.getOrderBy())
                     , query.getIsAsc().equals(SqlKeyword.ASC.getSqlSegment()), query.getOrderBy());
@@ -78,7 +107,11 @@ public abstract class WarmDaoImpl<T> implements WarmDao<T> {
 
     @Override
     public long selectCount(T entity) {
-        return getMapper().selectCount(new QueryWrapper<>(entity));
+        QueryWrapper<T> queryWrapper = TenantDeleteUtil.getQueryWrapper(entity);
+        if (ObjectUtil.isNull(queryWrapper)) {
+            queryWrapper = new QueryWrapper<>(entity);
+        }
+        return getMapper().selectCount(queryWrapper);
     }
 
     @Override
@@ -88,6 +121,7 @@ public abstract class WarmDaoImpl<T> implements WarmDao<T> {
     }
 
     public int insert(T entity) {
+        TenantDeleteUtil.getEntity(entity);
         return getMapper().insert(entity);
     }
 
@@ -98,22 +132,38 @@ public abstract class WarmDaoImpl<T> implements WarmDao<T> {
     }
 
     public int updateById(T entity) {
+        TenantDeleteUtil.getEntity(entity);
         return getMapper().updateById(entity);
     }
 
     @Override
     public int delete(T entity) {
-        return getMapper().deleteById(entity);
+        return delete(entity, null, null);
     }
 
     @Override
     public int deleteById(Serializable id) {
-        return getMapper().deleteById(id);
+        return delete(newEntity(), (luw) -> luw.eq(T::getId, id), (lqw) -> lqw.eq(T::getId, id));
     }
 
     @Override
     public int deleteByIds(Collection<? extends Serializable> ids) {
-        return getMapper().deleteBatchIds(ids);
+        return delete(newEntity(), (luw) -> luw.in(T::getId, ids), (lqw) -> lqw.in(T::getId, ids));
+    }
+
+    public int delete(T newEntity, Consumer<LambdaUpdateWrapper<T>> luw, Consumer<LambdaQueryWrapper<T>> qw) {
+        LambdaUpdateWrapper<T> lambdaUpdateWrapper = TenantDeleteUtil.deleteWrapper(newEntity);
+        if (ObjectUtil.isNotNull(lambdaUpdateWrapper)) {
+            if (ObjectUtil.isNotNull(luw)) {
+                luw.accept(lambdaUpdateWrapper);
+            }
+            return getMapper().update(null, lambdaUpdateWrapper);
+        }
+        LambdaQueryWrapper<T> lqw = new LambdaQueryWrapper<>(newEntity);
+        if (ObjectUtil.isNotNull(qw)) {
+            qw.accept(lqw);
+        }
+        return getMapper().delete(lqw);
     }
 
     public void insertFill(T entity) {
