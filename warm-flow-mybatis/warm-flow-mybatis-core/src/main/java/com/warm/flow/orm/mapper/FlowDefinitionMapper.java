@@ -1,6 +1,7 @@
 package com.warm.flow.orm.mapper;
 
 import com.warm.flow.orm.entity.FlowDefinition;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -13,9 +14,9 @@ import java.util.List;
 public interface FlowDefinitionMapper extends WarmMapper<FlowDefinition> {
 
 
-    List<FlowDefinition> queryByCodeList(List<String> flowCodeList);
+    List<FlowDefinition> queryByCodeList(@Param("flowCodeList") List<String> flowCodeList, @Param("entity") FlowDefinition entity);
 
-    void closeFlowByCodeList(List<String> flowCodeList);
+    void closeFlowByCodeList(@Param("flowCodeList") List<String> flowCodeList, @Param("entity") FlowDefinition entity);
 
 
 }

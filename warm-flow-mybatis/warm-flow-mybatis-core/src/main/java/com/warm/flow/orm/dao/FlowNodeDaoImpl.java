@@ -1,10 +1,14 @@
 package com.warm.flow.orm.dao;
 
+import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.dao.FlowNodeDao;
 import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.orm.entity.FlowDefinition;
+import com.warm.flow.orm.entity.FlowHisTask;
 import com.warm.flow.orm.entity.FlowNode;
 import com.warm.flow.orm.mapper.FlowNodeMapper;
+import com.warm.flow.orm.utils.TenantDeleteUtil;
+import com.warm.tools.utils.StringUtils;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -31,17 +35,21 @@ public class FlowNodeDaoImpl extends WarmDaoImpl<FlowNode> implements FlowNodeDa
 
     @Override
     public List<FlowNode> getByNodeCodes(List<String> nodeCodes, Long definitionId) {
-        return getMapper().getByNodeCodes(nodeCodes, definitionId);
+        return getMapper().getByNodeCodes(nodeCodes, definitionId, TenantDeleteUtil.getEntity(newEntity()));
     }
 
     /**
      * 批量删除流程节点
      *
-     * @param ids 需要删除的数据主键集合
+     * @param defIds 需要删除的数据主键集合
      * @return 结果
      */
     @Override
-    public int deleteNodeByDefIds(Collection<? extends Serializable> ids) {
-        return getMapper().deleteNodeByDefIds(ids);
+    public int deleteNodeByDefIds(Collection<? extends Serializable> defIds) {
+        FlowNode entity = TenantDeleteUtil.getEntity(newEntity());
+        if (StringUtils.isNotEmpty(entity.getDelFlag())) {
+            getMapper().updateNodeByDefIdsLogic(defIds, entity, FlowFactory.getFlowConfig().getLogicDeleteValue(), entity.getDelFlag());
+        }
+        return getMapper().deleteNodeByDefIds(defIds, entity);
     }
 }

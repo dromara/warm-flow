@@ -83,8 +83,8 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
     }
 
     @Override
-    public int deleteNodeByDefIds(Collection<? extends Serializable> ids) {
-        return getDao().deleteNodeByDefIds(ids);
+    public int deleteNodeByDefIds(Collection<? extends Serializable> defIds) {
+        return getDao().deleteNodeByDefIds(defIds);
     }
 
     /**

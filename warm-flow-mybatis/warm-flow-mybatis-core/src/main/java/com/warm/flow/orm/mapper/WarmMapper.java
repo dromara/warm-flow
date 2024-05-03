@@ -19,17 +19,19 @@ public interface WarmMapper<T> {
      * 根据id查询
      *
      * @param id 主键
+     * @param entity 查询实体列表
      * @return 实体
      */
-    T selectById(Serializable id);
+    T selectById(@Param("id") Serializable id, @Param("entity") T entity);
 
     /**
      * 根据ids查询
      *
      * @param ids 主键
+     * @param entity 查询实体列表
      * @return 实体
      */
-    List<T> selectByIds(Collection<? extends Serializable> ids);
+    List<T> selectByIds(@Param("ids") Collection<? extends Serializable> ids, @Param("entity") T entity);
 
     /**
      * 分页查询
@@ -72,19 +74,49 @@ public interface WarmMapper<T> {
     int delete(T entity);
 
     /**
+     * 逻辑删除
+     *
+     * @param entity 实体
+     * @return 结果
+     */
+    int updateLogic(@Param("entity") T entity, @Param("logicDeleteValue") String logicDeleteValue
+            , @Param("logicNotDeleteValue") String logicNotDeleteValue);
+
+    /**
      * 根据id删除
+     *
+     * @param id 主键
+     * @param entity 查询实体列表
+     * @return 结果
+     */
+    int deleteById(@Param("id") Serializable id, @Param("entity") T entity);
+
+    /**
+     * 逻辑删除
      *
      * @param id 主键
      * @return 结果
      */
-    int deleteById(Serializable id);
+    int updateByIdLogic(@Param("id") Serializable id, @Param("entity") T entity, @Param("logicDeleteValue") String logicDeleteValue
+            , @Param("logicNotDeleteValue") String logicNotDeleteValue);
 
     /**
      * 根据ids批量删除
      *
      * @param ids 需要删除的数据主键集合
+     * @param entity 查询实体列表
      * @return 结果
      */
-    int deleteByIds(Collection<? extends Serializable> ids);
+    int deleteByIds(@Param("ids") Collection<? extends Serializable> ids, @Param("entity") T entity);
+
+    /**
+     * 逻辑删除
+     *
+     * @param ids 需要删除的数据主键集合
+     * @return 结果
+     */
+    int updateByIdsLogic(@Param("ids") Collection<? extends Serializable> ids, @Param("entity") T entity
+            , @Param("logicDeleteValue") String logicDeleteValue
+            , @Param("logicNotDeleteValue") String logicNotDeleteValue);
 
 }

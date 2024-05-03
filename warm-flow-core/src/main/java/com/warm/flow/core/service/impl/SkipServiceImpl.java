@@ -23,7 +23,7 @@ public class SkipServiceImpl extends WarmServiceImpl<FlowSkipDao<Skip>, Skip> im
     }
 
     @Override
-    public int deleteSkipByDefIds(Collection<? extends Serializable> ids) {
-        return getDao().deleteSkipByDefIds(ids);
+    public int deleteSkipByDefIds(Collection<? extends Serializable> defIds) {
+        return getDao().deleteSkipByDefIds(defIds);
     }
 }

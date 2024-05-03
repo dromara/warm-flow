@@ -19,24 +19,18 @@ public class TenantDeleteUtil {
 
     /**
      * 获取mybatis-plus查询条件, 根据是否租户或者逻辑删除
-     * @return
      * @param <T>
      */
-    public static <T extends RootEntity> T getEntity(Supplier<T> supplier) {
+    public static <T extends RootEntity> T getEntity(T entity) {
         WarmFlow flowConfig = FlowFactory.getFlowConfig();
-        T t = null;
         if (flowConfig.isLogicDelete()) {
-            t = supplier.get();
-            t.setDelFlag(flowConfig.getLogicDeleteValue());
+            entity.setDelFlag(flowConfig.getLogicNotDeleteValue());
         }
 
         if (ObjectUtil.isNotNull(FlowFactory.tenantHandler())) {
             TenantHandler tenantHandler = FlowFactory.tenantHandler();
-            if (ObjectUtil.isNull(t)) {
-                t = supplier.get();;
-            }
-            t.setTenantId(tenantHandler.getTenantId());
+            entity.setTenantId(tenantHandler.getTenantId());
         }
-        return t;
+        return entity;
     }
 }

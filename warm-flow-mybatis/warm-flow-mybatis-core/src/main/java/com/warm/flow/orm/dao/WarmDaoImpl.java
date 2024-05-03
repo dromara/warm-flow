@@ -9,6 +9,7 @@ import com.warm.flow.orm.mapper.WarmMapper;
 import com.warm.flow.orm.utils.TenantDeleteUtil;
 import com.warm.tools.utils.CollUtil;
 import com.warm.tools.utils.ObjectUtil;
+import com.warm.tools.utils.StringUtils;
 import com.warm.tools.utils.page.Page;
 
 import java.io.Serializable;
@@ -35,13 +36,7 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
      */
     @Override
     public T selectById(Serializable id) {
-        T entity = TenantDeleteUtil.getEntity(this::newEntity);
-        if (ObjectUtil.isNotNull(entity)) {
-            entity.setId((Long) id);
-            return CollUtil.getOne(getMapper().selectList(entity, null, null));
-        }
-
-        return getMapper().selectById(id);
+        return getMapper().selectById(id, TenantDeleteUtil.getEntity(newEntity()));
     }
 
     /**
@@ -52,15 +47,12 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
      */
     @Override
     public List<T> selectByIds(Collection<? extends Serializable> ids) {
-        T entity = TenantDeleteUtil.getEntity(this::newEntity);
-        if (ObjectUtil.isNotNull(entity)) {
-
-        }
-        return getMapper().selectByIds(ids);
+        return getMapper().selectByIds(ids, TenantDeleteUtil.getEntity(newEntity()));
     }
 
     @Override
     public Page<T> selectPage(T entity, Page<T> page) {
+        TenantDeleteUtil.getEntity(entity);
         long total = getMapper().selectCount(entity);
         if (total > 0) {
             List<T> list = getMapper().selectList(entity, page, page.getOrderBy() + " " + page.getIsAsc());
@@ -71,6 +63,7 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
 
     @Override
     public List<T> selectList(T entity, WarmQuery<T> query) {
+        TenantDeleteUtil.getEntity(entity);
         if (ObjectUtil.isNull(query)) {
             return getMapper().selectList(entity, null, null);
         }
@@ -79,6 +72,7 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
 
     @Override
     public long selectCount(T entity) {
+        TenantDeleteUtil.getEntity(entity);
         return getMapper().selectCount(entity);
     }
 
@@ -89,6 +83,7 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
     }
 
     public int insert(T entity) {
+        TenantDeleteUtil.getEntity(entity);
         return getMapper().insert(entity);
     }
 
@@ -99,22 +94,35 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
     }
 
     public int updateById(T entity) {
+        TenantDeleteUtil.getEntity(entity);
         return getMapper().updateById(entity);
     }
 
     @Override
     public int delete(T entity) {
+        TenantDeleteUtil.getEntity(entity);
+        if (StringUtils.isNotEmpty(entity.getDelFlag())) {
+            getMapper().updateLogic(entity, FlowFactory.getFlowConfig().getLogicDeleteValue(), entity.getDelFlag());
+        }
         return getMapper().delete(entity);
     }
 
     @Override
     public int deleteById(Serializable id) {
-        return getMapper().deleteById(id);
+        T entity = TenantDeleteUtil.getEntity(newEntity());
+        if (StringUtils.isNotEmpty(entity.getDelFlag())) {
+            getMapper().updateByIdLogic(id, entity, FlowFactory.getFlowConfig().getLogicDeleteValue(), entity.getDelFlag());
+        }
+        return getMapper().deleteById(id, entity);
     }
 
     @Override
     public int deleteByIds(Collection<? extends Serializable> ids) {
-        return getMapper().deleteByIds(ids);
+        T entity = TenantDeleteUtil.getEntity(newEntity());
+        if (StringUtils.isNotEmpty(entity.getDelFlag())) {
+            getMapper().updateByIdsLogic(ids, entity, FlowFactory.getFlowConfig().getLogicDeleteValue(), entity.getDelFlag());
+        }
+        return getMapper().deleteByIds(ids, entity);
     }
 
     public void insertFill(T entity) {

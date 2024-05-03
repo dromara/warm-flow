@@ -1,6 +1,7 @@
 package com.warm.flow.orm.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.warm.flow.core.entity.Instance;
 
@@ -18,6 +19,7 @@ public class FlowInstance implements Instance {
     /**
      * 主键
      */
+    @TableId
     private Long id;
 
     /**

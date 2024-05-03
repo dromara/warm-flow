@@ -1,10 +1,13 @@
 package com.warm.flow.orm.dao;
 
+import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.dao.FlowHisTaskDao;
 import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.orm.entity.FlowDefinition;
 import com.warm.flow.orm.entity.FlowHisTask;
 import com.warm.flow.orm.mapper.FlowHisTaskMapper;
+import com.warm.flow.orm.utils.TenantDeleteUtil;
+import com.warm.tools.utils.StringUtils;
 
 import java.util.List;
 
@@ -35,7 +38,7 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask> implements Flow
      */
     @Override
     public List<FlowHisTask> getNoReject(String nodeCode, Long instanceId) {
-        return getMapper().getNoReject(nodeCode, instanceId);
+        return getMapper().getNoReject(nodeCode, instanceId, TenantDeleteUtil.getEntity(newEntity()));
     }
 
     /**
@@ -46,7 +49,11 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask> implements Flow
      */
     @Override
     public int deleteByInsIds(List<Long> instanceIds) {
-        return getMapper().deleteByInsIds(instanceIds);
+        FlowHisTask entity = TenantDeleteUtil.getEntity(newEntity());
+        if (StringUtils.isNotEmpty(entity.getDelFlag())) {
+            getMapper().updateByInsIdsLogic(instanceIds, entity, FlowFactory.getFlowConfig().getLogicDeleteValue(), entity.getDelFlag());
+        }
+        return getMapper().deleteByInsIds(instanceIds, entity);
     }
 
 }

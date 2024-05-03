@@ -1,6 +1,7 @@
 package com.warm.flow.orm.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.warm.flow.core.entity.HisTask;
 
@@ -19,6 +20,7 @@ public class FlowHisTask implements HisTask {
     /**
      * 主键
      */
+    @TableId
     private Long id;
 
     /**

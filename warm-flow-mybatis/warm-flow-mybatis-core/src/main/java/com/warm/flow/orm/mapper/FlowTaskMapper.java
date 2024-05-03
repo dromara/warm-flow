@@ -1,7 +1,11 @@
 package com.warm.flow.orm.mapper;
 
+import com.warm.flow.orm.entity.FlowSkip;
 import com.warm.flow.orm.entity.FlowTask;
+import org.apache.ibatis.annotations.Param;
 
+import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -18,5 +22,17 @@ public interface FlowTaskMapper extends WarmMapper<FlowTask> {
      * @param instanceIds 主键
      * @return 结果
      */
-    int deleteByInsIds(List<Long> instanceIds);
+    int deleteByInsIds(@Param("instanceIds") Collection<? extends Serializable> instanceIds
+            , @Param("entity") FlowTask entity);
+
+    /**
+     * 逻辑删除
+     *
+     * @param instanceIds 需要删除的数据主键集合
+     * @return 结果
+     */
+    int updateByInsIdsLogic(@Param("instanceIds") Collection<? extends Serializable> instanceIds
+            , @Param("entity") FlowTask entity
+            , @Param("logicDeleteValue") String logicDeleteValue
+            , @Param("logicNotDeleteValue") String logicNotDeleteValue);
 }

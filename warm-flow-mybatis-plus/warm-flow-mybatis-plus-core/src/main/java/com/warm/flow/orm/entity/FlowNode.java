@@ -1,6 +1,7 @@
 package com.warm.flow.orm.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.Skip;
@@ -26,6 +27,7 @@ public class FlowNode implements Node {
     /**
      * 主键
      */
+    @TableId
     private Long id;
     /**
      * 创建时间

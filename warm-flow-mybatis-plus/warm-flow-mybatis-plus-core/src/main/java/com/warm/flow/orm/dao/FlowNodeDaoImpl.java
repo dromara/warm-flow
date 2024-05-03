@@ -42,13 +42,13 @@ public class FlowNodeDaoImpl extends WarmDaoImpl<FlowNode> implements FlowNodeDa
     /**
      * 批量删除流程节点
      *
-     * @param ids 需要删除的数据主键集合
+     * @param defIds 需要删除的数据主键集合
      * @return 结果
      */
     @Override
-    public int deleteNodeByDefIds(Collection<? extends Serializable> ids) {
-        return delete(newEntity(), (luw) -> luw.in(FlowNode::getDefinitionId, ids)
-                , (lqw) -> lqw.in(FlowNode::getDefinitionId, ids));
+    public int deleteNodeByDefIds(Collection<? extends Serializable> defIds) {
+        return delete(newEntity(), (luw) -> luw.in(FlowNode::getDefinitionId, defIds)
+                , (lqw) -> lqw.in(FlowNode::getDefinitionId, defIds));
     }
 
 }

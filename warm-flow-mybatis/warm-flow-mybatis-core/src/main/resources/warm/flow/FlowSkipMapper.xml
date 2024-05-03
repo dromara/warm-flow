@@ -51,14 +51,21 @@
 
     <sql id="select_parameter">
         <where>
+            <if test="entity.id != null">and t.id = #{entity.id}</if>
             <if test="entity.definitionId != null">and t.definition_id = #{entity.definitionId}</if>
             <if test="entity.nowNodeCode != null">and t.now_node_code = #{entity.nowNodeCode}</if>
+            <if test="entity.nowNodeType != null">and t.now_node_type = #{entity.nowNodeType}</if>
             <if test="entity.nextNodeCode != null and entity.nextNodeCode != ''">and t.next_node_code =
                 #{entity.nextNodeCode}
             </if>
+            <if test="entity.nextNodeType != null">and t.next_node_type = #{entity.nextNodeType}</if>
+            <if test="entity.skipName != null and entity.skipName != ''">and t.skip_name = #{entity.skip}</if>
             <if test="entity.skipType != null and entity.skipType != ''">and t.skip_type =
                 #{entity.skipType}
             </if>
+            <if test="entity.skipCondition != null and entity.skipCondition != ''">and t.skip_condition =#{skipCondition}</if>
+            <if test="entity.createTime != null">and t.create_time = #{entity.createTime}</if>
+            <if test="entity.updateTime != null">and t.update_time = #{entity.updateTime}</if>
             <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
             <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
         </where>
@@ -76,36 +83,40 @@
         <include refid="paging_end"/>
     </select>
 
-    <select id="selectByIds" parameterType="Long" resultMap="FlowSkipResult">
+    <select id="selectByIds" resultMap="FlowSkipResult">
         <include refid="selectVo"/>
         where t.id in
-        <foreach item="id" collection="list" open="(" separator="," close=")">
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
             #{id}
         </foreach>
+        <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
     </select>
 
-    <select id="selectById" parameterType="Long" resultMap="FlowSkipResult">
+    <select id="selectById" resultMap="FlowSkipResult">
         <include refid="selectVo"/>
-        where id = #{id}
+        where t.id = #{id}
+        <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
     </select>
 
     <insert id="insert" parameterType="com.warm.flow.orm.entity.FlowSkip">
-        insert into flow_skip
+        insert into flow_skip t
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id != null">id,</if>
-            <if test="definitionId != null">definition_id,</if>
-            <if test="nowNodeCode != null and nowNodeCode != ''">now_node_code,</if>
-            <if test="nowNodeType != null">now_node_type,</if>
-            <if test="nextNodeCode != null and nextNodeCode != ''">next_node_code,</if>
-            <if test="nextNodeType != null">next_node_type,</if>
-            <if test="skipName != null and skipName != ''">skip_name,</if>
-            <if test="skipType != null">skip_type,</if>
-            <if test="skipCondition != null">skip_condition,</if>
-            <if test="coordinate != null and coordinate != ''">coordinate,</if>
-            <if test="createTime != null">create_time,</if>
-            <if test="updateTime != null">update_time,</if>
-            <if test="delFlag != null and delFlag != ''">tenant_id,</if>
-            <if test="tenantId != null and tenantId != ''">tenant_id,</if>
+            <if test="id != null">t.id,</if>
+            <if test="definitionId != null">t.definition_id,</if>
+            <if test="nowNodeCode != null and nowNodeCode != ''">t.now_node_code,</if>
+            <if test="nowNodeType != null">t.now_node_type,</if>
+            <if test="nextNodeCode != null and nextNodeCode != ''">t.next_node_code,</if>
+            <if test="nextNodeType != null">t.next_node_type,</if>
+            <if test="skipName != null and skipName != ''">t.skip_name,</if>
+            <if test="skipType != null">t.skip_type,</if>
+            <if test="skipCondition != null and skipCondition != ''">t.skip_condition,</if>
+            <if test="coordinate != null and coordinate != ''">t.coordinate,</if>
+            <if test="createTime != null">t.create_time,</if>
+            <if test="updateTime != null">t.update_time,</if>
+            <if test="delFlag != null and delFlag != ''">t.del_flag,</if>
+            <if test="tenantId != null and tenantId != ''">t.tenant_id,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -114,9 +125,9 @@
             <if test="nowNodeType != null">#{nowNodeType},</if>
             <if test="nextNodeCode != null and nextNodeCode != ''">#{nextNodeCode},</if>
             <if test="nextNodeType != null">#{nextNodeType},</if>
-            <if test="skipName != null">#{skipName},</if>
+            <if test="skipName != null and skipName != ''">#{skipName},</if>
             <if test="skipType != null">#{skipType},</if>
-            <if test="skipCondition != null">#{skipCondition},</if>
+            <if test="skipCondition != null and skipCondition != ''">#{skipCondition},</if>
             <if test="coordinate != null and coordinate != ''">#{coordinate},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
@@ -126,61 +137,115 @@
     </insert>
 
     <update id="updateById" parameterType="com.warm.flow.orm.entity.FlowSkip">
-        update flow_skip
+        update flow_skip t
         <trim prefix="SET" suffixOverrides=",">
-            <if test="definitionId != null">definition_id = #{definitionId},</if>
-            <if test="nowNodeCode != null and nowNodeCode != ''">now_node_code = #{nowNodeCode},</if>
-            <if test="nowNodeType != null">now_node_type = #{nowNodeType},</if>
-            <if test="nextNodeCode != null and nextNodeCode != ''">next_node_code = #{nextNodeCode},</if>
-            <if test="nextNodeType != null">next_node_type = #{nextNodeType},</if>
-            <if test="skipName != null">skip_name = #{skipName},</if>
-            <if test="skipType != null">skip_type = #{skipType},</if>
-            <if test="skipCondition != null">skip_condition = #{skipCondition},</if>
-            <if test="coordinate != null and coordinate != ''">coordinate = #{coordinate},</if>
-            <if test="createTime != null">create_time = #{createTime},</if>
-            <if test="updateTime != null">update_time = #{updateTime},</if>
-            <if test="delFlag != null and delFlag != ''">tenant_id = #{delFlag},</if>
-            <if test="tenantId != null and tenantId != ''">tenant_id = #{tenantId},</if>
+            <if test="definitionId != null">t.definition_id = #{definitionId},</if>
+            <if test="nowNodeCode != null and nowNodeCode != ''">t.now_node_code = #{nowNodeCode},</if>
+            <if test="nowNodeType != null">t.now_node_type = #{nowNodeType},</if>
+            <if test="nextNodeCode != null and nextNodeCode != ''">t.next_node_code = #{nextNodeCode},</if>
+            <if test="nextNodeType != null">t.next_node_type = #{nextNodeType},</if>
+            <if test="skipName != null and skipName != ''">t.skip_name = #{skipName},</if>
+            <if test="skipType != null">t.skip_type = #{skipType},</if>
+            <if test="skipCondition != null and skipCondition != ''">t.skip_condition = #{skipCondition},</if>
+            <if test="coordinate != null and coordinate != ''">t.coordinate = #{coordinate},</if>
+            <if test="createTime != null">t.create_time = #{createTime},</if>
+            <if test="updateTime != null">t.update_time = #{updateTime},</if>
+            <if test="delFlag != null and delFlag != ''">t.del_flag = #{delFlag},</if>
         </trim>
         where id = #{id}
     </update>
 
-    <delete id="deleteById" parameterType="Long">
+    <delete id="deleteById">
         delete
-        from flow_skip
-        where id = #{id}
+        from flow_skip t
+        where t.id = #{id}
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
     </delete>
 
-    <delete id="deleteByIds" parameterType="Long">
-        delete from flow_skip where id in
-        <foreach item="id" collection="list" open="(" separator="," close=")">
+    <update id="updateByIdLogic">
+        update flow_skip t
+        set t.del_flag = #{logicDeleteValue}
+        where t.id = #{id}
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag = #{logicNotDeleteValue}</if>
+    </update>
+
+    <delete id="deleteByIds">
+        delete from flow_skip t where t.id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
             #{id}
         </foreach>
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
     </delete>
+
+    <update id="updateByIdsLogic">
+        update flow_skip t
+        set t.del_flag = #{logicDeleteValue}
+        where t.id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag = #{logicNotDeleteValue}</if>
+    </update>
 
 
     <delete id="delete" parameterType="com.warm.flow.orm.entity.FlowSkip">
-        delete from flow_skip
+        delete from flow_skip t
         <where>
-            <if test="id != null">and id = #{id}</if>
-            <if test="definitionId != null">and definition_id = #{definitionId}</if>
-            <if test="nowNodeCode != null and nowNodeCode != ''">and now_node_code = #{nowNodeCode}</if>
-            <if test="nowNodeType != null">and now_node_type = #{nowNodeType}</if>
-            <if test="nextNodeCode != null and nextNodeCode != ''">and next_node_code = #{nextNodeCode}</if>
-            <if test="nextNodeType != null">and next_node_type = #{nextNodeType}</if>
-            <if test="skipName != null">and skip_name = #{skipName}</if>
-            <if test="skipType != null">and skip_type = #{skipType}</if>
-            <if test="coordinate != null and coordinate != ''">and coordinate = #{coordinate}</if>
-            <if test="skipCondition != null">and skip_condition = #{skipCondition}</if>
-            <if test="createTime != null">and create_time = #{createTime}</if>
-            <if test="updateTime != null">and update_time = #{updateTime}</if>
+            <if test="id != null">and t.id = #{id}</if>
+            <if test="definitionId != null">and t.definition_id = #{definitionId}</if>
+            <if test="nowNodeCode != null and nowNodeCode != ''">and t.now_node_code = #{nowNodeCode}</if>
+            <if test="nowNodeType != null">and t.now_node_type = #{nowNodeType}</if>
+            <if test="nextNodeCode != null and nextNodeCode != ''">and t.next_node_code = #{nextNodeCode}</if>
+            <if test="nextNodeType != null">and t.next_node_type = #{nextNodeType}</if>
+            <if test="skipName != null and skipName != ''">and t.skip_name = #{skipName}</if>
+            <if test="skipType != null">and t.skip_type = #{skipType}</if>
+            <if test="coordinate != null and coordinate != ''">and t.coordinate = #{coordinate}</if>
+            <if test="skipCondition != null and skipCondition != ''">and t.skip_condition = #{skipCondition}</if>
+            <if test="createTime != null">and t.create_time = #{createTime}</if>
+            <if test="updateTime != null">and t.update_time = #{updateTime}</if>
+            <if test="tenantId != null and tenantId != ''">and t.tenant_id = #{tenantId}</if>
         </where>
     </delete>
 
-    <delete id="deleteSkipByDefIds" parameterType="Long">
-        delete from flow_skip where definition_id in
-        <foreach item="definitionId" collection="list" open="(" separator="," close=")">
+    <update id="updateLogic">
+        update flow_skip t
+        set t.del_flag = #{logicDeleteValue}
+        <where>
+            <if test="id != null">and t.id = #{id}</if>
+            <if test="definitionId != null">and t.definition_id = #{definitionId}</if>
+            <if test="nowNodeCode != null and nowNodeCode != ''">and t.now_node_code = #{nowNodeCode}</if>
+            <if test="nowNodeType != null">and t.now_node_type = #{nowNodeType}</if>
+            <if test="nextNodeCode != null and nextNodeCode != ''">and t.next_node_code = #{nextNodeCode}</if>
+            <if test="nextNodeType != null">and t.next_node_type = #{nextNodeType}</if>
+            <if test="skipName != null and skipName != ''">and t.skip_name = #{skipName}</if>
+            <if test="skipType != null">and t.skip_type = #{skipType}</if>
+            <if test="coordinate != null and coordinate != ''">and t.coordinate = #{coordinate}</if>
+            <if test="skipCondition != null and skipCondition != ''">and t.skip_condition = #{skipCondition}</if>
+            <if test="createTime != null">and t.create_time = #{createTime}</if>
+            <if test="updateTime != null">and t.update_time = #{updateTime}</if>
+            <if test="tenantId != null and tenantId != ''">and t.tenant_id = #{tenantId}</if>
+            <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag = #{logicNotDeleteValue}</if>
+        </where>
+    </update>
+
+    <delete id="deleteSkipByDefIds">
+        delete from flow_skip t where t.definition_id in
+        <foreach item="definitionId" collection="defIds" open="(" separator="," close=")">
             #{definitionId}
         </foreach>
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
     </delete>
+
+    <update id="updateSkipByDefIdsLogic">
+        update flow_skip t
+        set t.del_flag = #{logicDeleteValue}
+        where t.definition_id in
+        <foreach item="definitionId" collection="defIds" open="(" separator="," close=")">
+            #{definitionId}
+        </foreach>
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag = #{logicNotDeleteValue}</if>
+    </update>
 </mapper>

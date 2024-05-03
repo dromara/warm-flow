@@ -32,12 +32,12 @@ public class FlowSkipDaoImpl extends WarmDaoImpl<FlowSkip> implements FlowSkipDa
     /**
      * 批量删除节点跳转关联
      *
-     * @param ids 需要删除的数据主键集合
+     * @param defIds 需要删除的数据主键集合
      * @return 结果
      */
     @Override
-    public int deleteSkipByDefIds(Collection<? extends Serializable> ids) {
-        return delete(newEntity(), (luw) -> luw.in(FlowSkip::getDefinitionId, ids)
-                , (lqw) -> lqw.in(FlowSkip::getDefinitionId, ids));
+    public int deleteSkipByDefIds(Collection<? extends Serializable> defIds) {
+        return delete(newEntity(), (luw) -> luw.in(FlowSkip::getDefinitionId, defIds)
+                , (lqw) -> lqw.in(FlowSkip::getDefinitionId, defIds));
     }
 }

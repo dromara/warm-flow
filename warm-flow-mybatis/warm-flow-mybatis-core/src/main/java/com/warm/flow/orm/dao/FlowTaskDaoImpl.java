@@ -1,10 +1,14 @@
 package com.warm.flow.orm.dao;
 
+import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.dao.FlowTaskDao;
 import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.orm.entity.FlowDefinition;
+import com.warm.flow.orm.entity.FlowSkip;
 import com.warm.flow.orm.entity.FlowTask;
 import com.warm.flow.orm.mapper.FlowTaskMapper;
+import com.warm.flow.orm.utils.TenantDeleteUtil;
+import com.warm.tools.utils.StringUtils;
 
 import java.util.List;
 
@@ -34,6 +38,10 @@ public class FlowTaskDaoImpl extends WarmDaoImpl<FlowTask> implements FlowTaskDa
      */
     @Override
     public int deleteByInsIds(List<Long> instanceIds) {
-        return getMapper().deleteByInsIds(instanceIds);
+        FlowTask entity = TenantDeleteUtil.getEntity(newEntity());
+        if (StringUtils.isNotEmpty(entity.getDelFlag())) {
+            getMapper().updateByInsIdsLogic(instanceIds, entity, FlowFactory.getFlowConfig().getLogicDeleteValue(), entity.getDelFlag());
+        }
+        return getMapper().deleteByInsIds(instanceIds, entity);
     }
 }

@@ -1,6 +1,7 @@
 package com.warm.flow.orm.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.warm.flow.core.entity.Task;
 
@@ -19,6 +20,7 @@ public class FlowTask implements Task {
     /**
      * 主键
      */
+    @TableId
     private Long id;
 
     /**
@@ -50,11 +52,6 @@ public class FlowTask implements Task {
      * 流程实例表id
      */
     private Long instanceId;
-
-    /**
-     * 所属租住（企业）id
-     */
-    private String tenantId;
 
     /**
      * 流程名称

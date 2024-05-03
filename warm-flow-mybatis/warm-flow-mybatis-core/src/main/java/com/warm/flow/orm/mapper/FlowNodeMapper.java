@@ -16,21 +16,24 @@ import java.util.List;
  */
 public interface FlowNodeMapper extends WarmMapper<FlowNode> {
 
-    /**
-     * 根据流程编码获取流程节点集合
-     *
-     * @param flowCode
-     * @return
-     */
-    List<FlowNode> getByFlowCode(String flowCode);
-
-    List<FlowNode> getByNodeCodes(@Param("nodeCodes") List<String> nodeCodes, @Param("definitionId") Long definitionId);
+    List<FlowNode> getByNodeCodes(@Param("nodeCodes") List<String> nodeCodes, @Param("definitionId") Long definitionId
+            , @Param("entity") FlowNode entity);
 
     /**
      * 批量删除流程节点
      *
-     * @param ids 需要删除的数据主键集合
+     * @param defIds 需要删除的数据主键集合
      * @return 结果
      */
-    public int deleteNodeByDefIds(Collection<? extends Serializable> ids);
+    public int deleteNodeByDefIds(@Param("defIds") Collection<? extends Serializable> defIds, @Param("entity") FlowNode entity);
+
+    /**
+     * 逻辑删除
+     *
+     * @param defIds 需要删除的数据主键集合
+     * @return 结果
+     */
+    int updateNodeByDefIdsLogic(@Param("defIds") Collection<? extends Serializable> defIds, @Param("entity") FlowNode entity
+            , @Param("logicDeleteValue") String logicDeleteValue
+            , @Param("logicNotDeleteValue") String logicNotDeleteValue);
 }

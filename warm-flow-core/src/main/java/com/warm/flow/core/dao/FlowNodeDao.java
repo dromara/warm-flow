@@ -20,8 +20,8 @@ public interface FlowNodeDao<T extends Node> extends WarmDao<T> {
     /**
      * 批量删除流程节点
      *
-     * @param ids 需要删除的数据主键集合
+     * @param defIds 需要删除的数据主键集合
      * @return 结果
      */
-    public int deleteNodeByDefIds(Collection<? extends Serializable> ids);
+    public int deleteNodeByDefIds(Collection<? extends Serializable> defIds);
 }

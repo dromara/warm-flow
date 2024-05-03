@@ -4,6 +4,7 @@ import com.warm.flow.core.dao.FlowDefinitionDao;
 import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.orm.entity.FlowDefinition;
 import com.warm.flow.orm.mapper.FlowDefinitionMapper;
+import com.warm.flow.orm.utils.TenantDeleteUtil;
 
 import java.util.List;
 
@@ -27,11 +28,11 @@ public class FlowDefinitionDaoImpl extends WarmDaoImpl<FlowDefinition> implement
 
     @Override
     public List<FlowDefinition> queryByCodeList(List<String> flowCodeList) {
-        return getMapper().queryByCodeList(flowCodeList);
+        return getMapper().queryByCodeList(flowCodeList, TenantDeleteUtil.getEntity(newEntity()));
     }
 
     public void closeFlowByCodeList(List<String> flowCodeList) {
-        getMapper().closeFlowByCodeList(flowCodeList);
+        getMapper().closeFlowByCodeList(flowCodeList, TenantDeleteUtil.getEntity(newEntity()));
     }
 
 }
