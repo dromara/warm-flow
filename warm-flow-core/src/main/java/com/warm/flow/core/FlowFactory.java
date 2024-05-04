@@ -160,6 +160,10 @@ public class FlowFactory {
         FlowFactory.flowConfig = flowConfig;
     }
 
+    public static boolean isLogicDelete() {
+        return FlowFactory.flowConfig.isLogicDelete();
+    }
+
     /**
      * 获取填充类
      */

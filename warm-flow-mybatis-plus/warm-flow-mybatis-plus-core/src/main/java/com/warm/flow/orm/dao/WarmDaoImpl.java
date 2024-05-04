@@ -5,17 +5,12 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 import com.warm.flow.core.FlowFactory;
-import com.warm.flow.core.config.WarmFlow;
-import com.warm.flow.core.constant.FlowConfigCons;
-import com.warm.flow.core.constant.FlowCons;
 import com.warm.flow.core.dao.WarmDao;
 import com.warm.flow.core.entity.RootEntity;
 import com.warm.flow.core.handler.DataFillHandler;
-import com.warm.flow.core.handler.TenantHandler;
 import com.warm.flow.core.orm.agent.WarmQuery;
 import com.warm.flow.orm.mapper.WarmMapper;
 import com.warm.flow.orm.utils.TenantDeleteUtil;
-import com.warm.tools.utils.CollUtil;
 import com.warm.tools.utils.ObjectUtil;
 import com.warm.tools.utils.StringUtils;
 import com.warm.tools.utils.page.Page;
@@ -24,7 +19,6 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 /**
  * BaseMapper接口
@@ -46,7 +40,7 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
      */
     @Override
     public T selectById(Serializable id) {
-        LambdaQueryWrapper<T> queryWrapper = TenantDeleteUtil.getLambdaWrapper();
+        LambdaQueryWrapper<T> queryWrapper = TenantDeleteUtil.getLambdaWrapper(newEntity());
         if (ObjectUtil.isNotNull(queryWrapper)) {
             queryWrapper.eq(T::getId, id);
             return getMapper().selectOne(queryWrapper);
@@ -62,7 +56,7 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
      */
     @Override
     public List<T> selectByIds(Collection<? extends Serializable> ids) {
-        LambdaQueryWrapper<T> queryWrapper = TenantDeleteUtil.getLambdaWrapper();
+        LambdaQueryWrapper<T> queryWrapper = TenantDeleteUtil.getLambdaWrapper(newEntity());
         if (ObjectUtil.isNotNull(queryWrapper)) {
             queryWrapper.in(T::getId, ids);
             return getMapper().selectList(queryWrapper);
@@ -75,10 +69,7 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
         com.baomidou.mybatisplus.extension.plugins.pagination.Page<T> pagePlus =
                 new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(page.getPageNum(), page.getPageSize());
 
-        QueryWrapper<T> queryWrapper = TenantDeleteUtil.getQueryWrapper(entity);
-        if (ObjectUtil.isNull(queryWrapper)) {
-            queryWrapper = new QueryWrapper<>(entity);
-        }
+        QueryWrapper<T> queryWrapper = TenantDeleteUtil.getQueryWrapperDefault(entity);
 
         queryWrapper.orderBy(StringUtils.isNotEmpty(page.getOrderBy())
                 , page.getIsAsc().equals(SqlKeyword.ASC.getSqlSegment()), page.getOrderBy());
@@ -94,10 +85,7 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
 
     @Override
     public List<T> selectList(T entity, WarmQuery<T> query) {
-        QueryWrapper<T> queryWrapper = TenantDeleteUtil.getQueryWrapper(entity);
-        if (ObjectUtil.isNull(queryWrapper)) {
-            queryWrapper = new QueryWrapper<>(entity);
-        }
+        QueryWrapper<T> queryWrapper = TenantDeleteUtil.getQueryWrapperDefault(entity);
         if (ObjectUtil.isNotNull(query)) {
             queryWrapper.orderBy(StringUtils.isNotEmpty(query.getOrderBy())
                     , query.getIsAsc().equals(SqlKeyword.ASC.getSqlSegment()), query.getOrderBy());
@@ -107,10 +95,7 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
 
     @Override
     public long selectCount(T entity) {
-        QueryWrapper<T> queryWrapper = TenantDeleteUtil.getQueryWrapper(entity);
-        if (ObjectUtil.isNull(queryWrapper)) {
-            queryWrapper = new QueryWrapper<>(entity);
-        }
+        QueryWrapper<T> queryWrapper = TenantDeleteUtil.getQueryWrapperDefault(entity);
         return getMapper().selectCount(queryWrapper);
     }
 

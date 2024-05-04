@@ -110,8 +110,9 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     public boolean checkAndSave(Definition definition) {
         List<String> flowCodeList = Collections.singletonList(definition.getFlowCode());
         List<Definition> definitions = queryByCodeList(flowCodeList);
-        for (Definition beforeDefinition : definitions) {
-            if (definition.getFlowCode().equals(beforeDefinition.getFlowCode()) && definition.getVersion().equals(beforeDefinition.getVersion())) {
+        for (Definition otherDef : definitions) {
+            if (definition.getFlowCode().equals(otherDef.getFlowCode())
+                    && definition.getVersion().equals(otherDef.getVersion())) {
                 throw new FlowException(definition.getFlowCode() + "(" + definition.getVersion() + ")" + ExceptionCons.ALREADY_EXIST);
             }
         }
@@ -513,8 +514,9 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         List<String> flowCodeList = Collections.singletonList(definition.getFlowCode());
         List<Definition> definitions = getDao().queryByCodeList(flowCodeList);
         for (int j = 0; j < definitions.size(); j++) {
-            Definition beforeDefinition = definitions.get(j);
-            if (definition.getFlowCode().equals(beforeDefinition.getFlowCode()) && definition.getVersion().equals(beforeDefinition.getVersion())) {
+            Definition otherDef = definitions.get(j);
+            if (definition.getFlowCode().equals(otherDef.getFlowCode())
+                    && definition.getVersion().equals(otherDef.getVersion())) {
                 throw new FlowException(definition.getFlowCode() + "(" + definition.getVersion() + ")" + ExceptionCons.ALREADY_EXIST);
             }
         }

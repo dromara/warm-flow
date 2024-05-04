@@ -7,11 +7,8 @@ import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.config.WarmFlow;
 import com.warm.flow.core.entity.RootEntity;
 import com.warm.flow.core.handler.TenantHandler;
-import com.warm.flow.orm.mapper.WarmMapper;
 import com.warm.tools.utils.ObjectUtil;
 import com.warm.tools.utils.StringUtils;
-
-import java.util.function.Consumer;
 
 /**
  * mybatis-plus 租户和逻辑删除工具类
@@ -22,13 +19,21 @@ public class TenantDeleteUtil {
 
     private TenantDeleteUtil() {}
 
+
     /**
-     * 获取mybatis-plus查询条件, 根据是否租户或者逻辑删除
+     * 获取mybatis-plus查询条件, 根据是否租户或者逻辑删除，有默认值
+     * @param entity
      * @return
      * @param <T>
      */
-    public static <T extends RootEntity> LambdaQueryWrapper<T> getLambdaWrapper() {
-        return getLambdaWrapper(null);
+    public static <T extends RootEntity> LambdaQueryWrapper<T> getLambdaWrapperDefault(T entity) {
+        LambdaQueryWrapper<T> queryWrapper = getLambdaWrapper(entity);
+        if (ObjectUtil.isNull(queryWrapper))
+        {
+            queryWrapper = new LambdaQueryWrapper<>(entity);
+        }
+        queryWrapper.setEntityClass((Class<T>) entity.getClass());
+        return queryWrapper;
     }
 
     /**
@@ -42,23 +47,15 @@ public class TenantDeleteUtil {
         LambdaQueryWrapper<T> queryWrapper = null;
 
         if (flowConfig.isLogicDelete()) {
-            if (ObjectUtil.isNull(entity)) {
-                queryWrapper = new LambdaQueryWrapper<>();
-            } else {
-                queryWrapper = new LambdaQueryWrapper<>(entity);
-            }
-            queryWrapper.eq(StringUtils.isNotEmpty(flowConfig.getLogicNotDeleteValue()), T::getDelFlag
-                    , flowConfig.getLogicNotDeleteValue());
+            queryWrapper = new LambdaQueryWrapper<>(entity)
+                    .eq(StringUtils.isNotEmpty(flowConfig.getLogicNotDeleteValue()), T::getDelFlag
+                            , flowConfig.getLogicNotDeleteValue());
         }
 
         if (ObjectUtil.isNotNull(FlowFactory.tenantHandler())) {
             TenantHandler tenantHandler = FlowFactory.tenantHandler();
             if (ObjectUtil.isNull(queryWrapper)) {
-                if (ObjectUtil.isNull(entity)) {
-                    queryWrapper = new LambdaQueryWrapper<>();
-                } else {
-                    queryWrapper = new LambdaQueryWrapper<>(entity);
-                }
+                queryWrapper = new LambdaQueryWrapper<>(entity);
             }
             queryWrapper.eq(StringUtils.isNotEmpty(tenantHandler.getTenantId()), T::getTenantId
                     , tenantHandler.getTenantId());
@@ -67,12 +64,19 @@ public class TenantDeleteUtil {
     }
 
     /**
-     * 获取mybatis-plus查询条件, 根据是否租户或者逻辑删除
+     * 获取mybatis-plus查询条件, 根据是否租户或者逻辑删除，有默认值
+     * @param entity
      * @return
      * @param <T>
      */
-    public static <T> QueryWrapper<T> getQueryWrapper() {
-        return getQueryWrapper(null);
+    public static <T> QueryWrapper<T> getQueryWrapperDefault(T entity) {
+        QueryWrapper<T> queryWrapper = getQueryWrapper(entity);
+        if (ObjectUtil.isNull(queryWrapper))
+        {
+            queryWrapper = new QueryWrapper<>(entity);
+        }
+        queryWrapper.setEntityClass((Class<T>) entity.getClass());
+        return queryWrapper;
     }
 
     /**
@@ -86,23 +90,15 @@ public class TenantDeleteUtil {
         QueryWrapper<T> queryWrapper = null;
 
         if (flowConfig.isLogicDelete()) {
-            if (ObjectUtil.isNull(entity)) {
-                queryWrapper = new QueryWrapper<>();
-            } else {
-                queryWrapper = new QueryWrapper<>(entity);
-            }
-            queryWrapper.eq(StringUtils.isNotEmpty(flowConfig.getLogicNotDeleteValue()), "del_flag"
-                    , flowConfig.getLogicNotDeleteValue());
+            queryWrapper = new QueryWrapper<>(entity)
+                    .eq(StringUtils.isNotEmpty(flowConfig.getLogicNotDeleteValue()), "del_flag"
+                            , flowConfig.getLogicNotDeleteValue());
         }
 
         if (ObjectUtil.isNotNull(FlowFactory.tenantHandler())) {
             TenantHandler tenantHandler = FlowFactory.tenantHandler();
             if (ObjectUtil.isNull(queryWrapper)) {
-                if (ObjectUtil.isNull(entity)) {
-                    queryWrapper = new QueryWrapper<>();
-                } else {
-                    queryWrapper = new QueryWrapper<>(entity);
-                }
+                queryWrapper = new QueryWrapper<>(entity);
             }
             queryWrapper.eq(StringUtils.isNotEmpty(tenantHandler.getTenantId()), "tenant_id"
                     , tenantHandler.getTenantId());

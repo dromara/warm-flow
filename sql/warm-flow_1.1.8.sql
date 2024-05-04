@@ -20,3 +20,9 @@ ALTER TABLE `flow_task` ADD COLUMN `del_flag` char(1)  DEFAULT NULL COMMENT '删
 ALTER TABLE `flow_definition` ADD COLUMN `tenant_id` varchar(40)  DEFAULT NULL COMMENT '租户id' AFTER `del_flag`;
 ALTER TABLE `flow_node` ADD COLUMN `tenant_id` varchar(40)  DEFAULT NULL COMMENT '租户id' AFTER `del_flag`;
 ALTER TABLE `flow_skip` ADD COLUMN `tenant_id` varchar(40)  DEFAULT NULL COMMENT '租户id' AFTER `del_flag`;
+
+ALTER TABLE `flow_definition` DROP INDEX `flow_code_version`;
+
+ALTER TABLE `flow_task` MODIFY COLUMN `tenant_id` varchar(40) DEFAULT NULL COMMENT '租户id' AFTER `del_flag`;
+ALTER TABLE `flow_instance` MODIFY COLUMN `tenant_id` varchar(40) DEFAULT NULL COMMENT '租户id' AFTER `del_flag`;
+ALTER TABLE `flow_his_task` MODIFY COLUMN `tenant_id` varchar(40) DEFAULT NULL COMMENT '租户id' AFTER `del_flag`;

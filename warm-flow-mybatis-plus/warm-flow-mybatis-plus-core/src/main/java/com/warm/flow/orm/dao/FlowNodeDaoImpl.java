@@ -3,7 +3,6 @@ package com.warm.flow.orm.dao;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.warm.flow.core.dao.FlowNodeDao;
 import com.warm.flow.core.invoker.FrameInvoker;
-import com.warm.flow.orm.entity.FlowHisTask;
 import com.warm.flow.orm.entity.FlowNode;
 import com.warm.flow.orm.mapper.FlowNodeMapper;
 import com.warm.flow.orm.utils.TenantDeleteUtil;
@@ -33,7 +32,7 @@ public class FlowNodeDaoImpl extends WarmDaoImpl<FlowNode> implements FlowNodeDa
 
     @Override
     public List<FlowNode> getByNodeCodes(List<String> nodeCodes, Long definitionId) {
-        LambdaQueryWrapper<FlowNode> queryWrapper = TenantDeleteUtil.getLambdaWrapper();
+        LambdaQueryWrapper<FlowNode> queryWrapper = TenantDeleteUtil.getLambdaWrapperDefault(newEntity());
         queryWrapper.in(FlowNode::getNodeCode, nodeCodes)
                 .eq(FlowNode::getDefinitionId, definitionId);
         return getMapper().selectList(queryWrapper);

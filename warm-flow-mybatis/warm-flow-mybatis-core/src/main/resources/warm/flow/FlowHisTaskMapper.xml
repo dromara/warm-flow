@@ -119,24 +119,24 @@
     </select>
 
     <insert id="insert" parameterType="com.warm.flow.orm.entity.FlowHisTask">
-        insert into flow_his_task t
+        insert into flow_his_task
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id != null">t.id,</if>
-            <if test="nodeCode != null and nodeCode != ''">t.node_code,</if>
-            <if test="nodeName != null and nodeName != ''">t.node_name,</if>
-            <if test="nodeType != null">t.node_type,</if>
-            <if test="targetNodeCode != null and targetNodeCode != ''">t.target_node_code,</if>
-            <if test="targetNodeName != null and targetNodeName != ''">t.target_node_name,</if>
-            <if test="approver != null and approver != ''">t.approver,</if>
-            <if test="definitionId != null">t.definition_id,</if>
-            <if test="instanceId != null">t.instance_id,</if>
-            <if test="flowStatus != null">t.flow_status,</if>
-            <if test="permissionFlag != null">t.permission_flag,</if>
-            <if test="message != null">t.message,</if>
-            <if test="createTime != null">t.create_time,</if>
-            <if test="updateTime != null">t.update_time,</if>
-            <if test="tenantId != null and tenantId != ''">t.tenant_id,</if>
-            <if test="delFlag != null and delFlag != ''">t.del_flag,</if>
+            <if test="id != null">id,</if>
+            <if test="nodeCode != null and nodeCode != ''">node_code,</if>
+            <if test="nodeName != null and nodeName != ''">node_name,</if>
+            <if test="nodeType != null">node_type,</if>
+            <if test="targetNodeCode != null and targetNodeCode != ''">target_node_code,</if>
+            <if test="targetNodeName != null and targetNodeName != ''">target_node_name,</if>
+            <if test="approver != null and approver != ''">approver,</if>
+            <if test="definitionId != null">definition_id,</if>
+            <if test="instanceId != null">instance_id,</if>
+            <if test="flowStatus != null">flow_status,</if>
+            <if test="permissionFlag != null">permission_flag,</if>
+            <if test="message != null">message,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="tenantId != null and tenantId != ''">tenant_id,</if>
+            <if test="delFlag != null and delFlag != ''">del_flag,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -174,16 +174,17 @@
             <if test="message != null">t.message = #{message},</if>
             <if test="createTime != null">t.create_time = #{createTime},</if>
             <if test="updateTime != null">t.update_time = #{updateTime},</if>
-            <if test="tenantId != null and tenantId != ''">t.tenant_id = #{tenantId},</if>
         </trim>
         where t.id = #{id}
+        <if test="delFlag != null  and delFlag != ''">and del_flag = #{delFlag}</if>
+        <if test="tenantId != null  and tenantId != ''">and tenant_id = #{tenantId}</if>
     </update>
 
     <delete id="deleteById">
         delete
-        from flow_his_task t
-        where t.id = #{id}
-        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+        from flow_his_task
+        where id = #{id}
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and tenant_id = #{entity.tenantId}</if>
     </delete>
 
     <update id="updateByIdLogic">
@@ -195,11 +196,11 @@
     </update>
 
     <delete id="deleteByInsIds">
-        delete from flow_his_task t where t.instance_id in
+        delete from flow_his_task where instance_id in
         <foreach item="instanceId" collection="instanceIds" open="(" separator="," close=")">
             #{instanceId}
         </foreach>
-        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and tenant_id = #{entity.tenantId}</if>
     </delete>
 
     <update id="updateByInsIdsLogic">
@@ -214,11 +215,11 @@
     </update>
 
     <delete id="deleteByIds">
-        delete from flow_his_task t where id in
+        delete from flow_his_task where id in
         <foreach item="id" collection="ids" open="(" separator="," close=")">
             #{id}
         </foreach>
-        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and tenant_id = #{entity.tenantId}</if>
     </delete>
 
     <update id="updateByIdsLogic">
@@ -233,23 +234,23 @@
     </update>
 
     <delete id="delete" parameterType="com.warm.flow.orm.entity.FlowHisTask">
-        delete from flow_his_task t
+        delete from flow_his_task
         <where>
-            <if test="id != null">and t.id = #{id}</if>
-            <if test="nodeCode != null and nodeCode != ''">and t.node_code = #{nodeCode}</if>
-            <if test="nodeName != null and nodeName != ''">and t.node_name = #{nodeName}</if>
-            <if test="nodeType != null">and t.node_type = #{nodeType}</if>
-            <if test="targetNodeCode != null and targetNodeCode != ''">and t.target_node_code = #{targetNodeCode}</if>
-            <if test="targetNodeName != null and targetNodeName != ''">and t.target_node_name = #{targetNodeName}</if>
-            <if test="approver != null and approver != ''">and t.approver = #{approver}</if>
-            <if test="definitionId != null">and t.definition_id = #{definitionId}</if>
-            <if test="instanceId != null">and t.instance_id = #{instanceId}</if>
-            <if test="flowStatus != null">and t.flow_status = #{flowStatus}</if>
-            <if test="permissionFlag != null">and t.permission_flag = #{permissionFlag}</if>
-            <if test="message != null">and t.message = #{message}</if>
-            <if test="createTime != null">and t.create_time = #{createTime}</if>
-            <if test="updateTime != null">and t.update_time = #{updateTime}</if>
-            <if test="tenantId != null and tenantId != ''">and t.tenant_id = #{tenantId}</if>
+            <if test="id != null">and id = #{id}</if>
+            <if test="nodeCode != null and nodeCode != ''">and node_code = #{nodeCode}</if>
+            <if test="nodeName != null and nodeName != ''">and node_name = #{nodeName}</if>
+            <if test="nodeType != null">and node_type = #{nodeType}</if>
+            <if test="targetNodeCode != null and targetNodeCode != ''">and target_node_code = #{targetNodeCode}</if>
+            <if test="targetNodeName != null and targetNodeName != ''">and target_node_name = #{targetNodeName}</if>
+            <if test="approver != null and approver != ''">and approver = #{approver}</if>
+            <if test="definitionId != null">and definition_id = #{definitionId}</if>
+            <if test="instanceId != null">and instance_id = #{instanceId}</if>
+            <if test="flowStatus != null">and flow_status = #{flowStatus}</if>
+            <if test="permissionFlag != null">and permission_flag = #{permissionFlag}</if>
+            <if test="message != null">and message = #{message}</if>
+            <if test="createTime != null">and create_time = #{createTime}</if>
+            <if test="updateTime != null">and update_time = #{updateTime}</if>
+            <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
         </where>
     </delete>
 
@@ -257,21 +258,21 @@
         update flow_his_task t
             set t.del_flag = #{logicDeleteValue}
         <where>
-            <if test="id != null">and t.id = #{id}</if>
-            <if test="nodeCode != null and nodeCode != ''">and t.node_code = #{nodeCode}</if>
-            <if test="nodeName != null and nodeName != ''">and t.node_name = #{nodeName}</if>
-            <if test="nodeType != null">and t.node_type = #{nodeType}</if>
-            <if test="targetNodeCode != null and targetNodeCode != ''">and t.target_node_code = #{targetNodeCode}</if>
-            <if test="targetNodeName != null and targetNodeName != ''">and t.target_node_name = #{targetNodeName}</if>
-            <if test="approver != null and approver != ''">and t.approver = #{approver}</if>
-            <if test="definitionId != null">and t.definition_id = #{definitionId}</if>
-            <if test="instanceId != null">and t.instance_id = #{instanceId}</if>
-            <if test="flowStatus != null">and t.flow_status = #{flowStatus}</if>
-            <if test="permissionFlag != null">and t.permission_flag = #{permissionFlag}</if>
-            <if test="message != null">and t.message = #{message}</if>
-            <if test="createTime != null">and t.create_time = #{createTime}</if>
-            <if test="updateTime != null">and t.update_time = #{updateTime}</if>
-            <if test="tenantId != null and tenantId != ''">and t.tenant_id = #{tenantId}</if>
+            <if test="entity.id != null">and t.id = #{entity.id}</if>
+            <if test="entity.nodeCode != null and entity.nodeCode != ''">and t.node_code = #{entity.nodeCode}</if>
+            <if test="entity.nodeName != null and entity.nodeName != ''">and t.node_name = #{entity.nodeName}</if>
+            <if test="entity.nodeType != null">and t.node_type = #{entity.nodeType}</if>
+            <if test="entity.targetNodeCode != null and entity.targetNodeCode != ''">and t.target_node_code = #{entity.targetNodeCode}</if>
+            <if test="entity.targetNodeName != null and entity.targetNodeName != ''">and t.target_node_name = #{entity.targetNodeName}</if>
+            <if test="entity.approver != null and entity.approver != ''">and t.approver = #{entity.approver}</if>
+            <if test="entity.definitionId != null">and t.definition_id = #{entity.definitionId}</if>
+            <if test="entity.instanceId != null">and t.instance_id = #{entity.instanceId}</if>
+            <if test="entity.flowStatus != null">and t.flow_status = #{entity.flowStatus}</if>
+            <if test="entity.permissionFlag != null">and t.permission_flag = #{entity.permissionFlag}</if>
+            <if test="entity.message != null">and t.message = #{entity.message}</if>
+            <if test="entity.createTime != null">and t.create_time = #{entity.createTime}</if>
+            <if test="entity.updateTime != null">and t.update_time = #{entity.updateTime}</if>
+            <if test="entity.tenantId != null and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
             <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag = #{logicNotDeleteValue}</if>
         </where>
     </update>

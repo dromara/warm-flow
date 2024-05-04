@@ -92,7 +92,7 @@
     <select id="queryByCodeList" resultMap="FlowDefinitionResult">
         <include refid="selectVo"/>
         where t.flow_code in
-        <foreach collection="list" index="flowCodeList" item="item" open="(" separator="," close=")">
+        <foreach item="item" collection="flowCodeList" open="(" separator="," close=")">
             #{item}
         </foreach>
         <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
@@ -100,19 +100,19 @@
     </select>
 
     <insert id="insert" parameterType="com.warm.flow.orm.entity.FlowDefinition">
-        insert into flow_definition t
+        insert into flow_definition
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id != null">t.id,</if>
-            <if test="flowCode != null and flowCode != ''">t.flow_code,</if>
-            <if test="flowName != null and flowName != ''">t.flow_name,</if>
-            <if test="version != null and version != ''">t.version,</if>
-            <if test="isPublish != null">t.is_publish,</if>
-            <if test="fromCustom != null">t.from_custom,</if>
-            <if test="fromPath != null">t.from_path,</if>
-            <if test="createTime != null">t.create_time,</if>
-            <if test="updateTime != null">t.update_time,</if>
-            <if test="delFlag != null and delFlag != ''">t.del_flag,</if>
-            <if test="tenantId != null and tenantId != ''">t.tenant_id,</if>
+            <if test="id != null">id,</if>
+            <if test="flowCode != null and flowCode != ''">flow_code,</if>
+            <if test="flowName != null and flowName != ''">flow_name,</if>
+            <if test="version != null and version != ''">version,</if>
+            <if test="isPublish != null">is_publish,</if>
+            <if test="fromCustom != null">from_custom,</if>
+            <if test="fromPath != null">from_path,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null and delFlag != ''">del_flag,</if>
+            <if test="tenantId != null and tenantId != ''">tenant_id,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -142,12 +142,14 @@
             <if test="updateTime != null">t.update_time = #{updateTime},</if>
         </trim>
         where t.id = #{id}
+        <if test="delFlag != null  and delFlag != ''">and del_flag = #{delFlag}</if>
+        <if test="tenantId != null  and tenantId != ''">and tenant_id = #{tenantId}</if>
     </update>
 
     <update id="closeFlowByCodeList" parameterType="java.util.List">
         update flow_definition t set t.is_publish = 9
         where t.flow_code in
-        <foreach collection="list" index="flowCodeList" item="item" open="(" separator="," close=")">
+        <foreach item="item" collection="flowCodeList" open="(" separator="," close=")">
             #{item}
         </foreach>
         <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
@@ -156,9 +158,9 @@
 
     <delete id="deleteById">
         delete
-        from flow_definition t
-        where t.id = #{id}
-        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+        from flow_definition
+        where id = #{id}
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and tenant_id = #{entity.tenantId}</if>
     </delete>
 
     <update id="updateByIdLogic">
@@ -170,11 +172,11 @@
     </update>
 
     <delete id="deleteByIds">
-        delete from flow_definition t where t.id in
+        delete from flow_definition where id in
         <foreach item="id" collection="ids" open="(" separator="," close=")">
             #{id}
         </foreach>
-        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and tenant_id = #{entity.tenantId}</if>
     </delete>
 
     <update id="updateByIdsLogic">
@@ -189,18 +191,18 @@
     </update>
 
     <delete id="delete" parameterType="com.warm.flow.orm.entity.FlowDefinition">
-        delete from flow_definition t
+        delete from flow_definition
         <where>
-            <if test="id != null">and t.id = #{id}</if>
-            <if test="flowCode != null and flowCode != ''">and t.flow_code = #{flowCode}</if>
-            <if test="flowName != null and flowName != ''">and t.flow_name = #{flowName}</if>
-            <if test="version != null and version != ''">and t.version = #{version}</if>
-            <if test="isPublish != null">and t.is_publish = #{isPublish}</if>
-            <if test="fromCustom != null">and t.from_custom = #{fromCustom}</if>
-            <if test="fromPath != null">and t.from_path = #{fromPath}</if>
-            <if test="createTime != null">and t.create_time = #{createTime}</if>
-            <if test="updateTime != null">and t.update_time = #{updateTime}</if>
-            <if test="tenantId != null and tenantId != ''">and t.tenant_id = #{tenantId}</if>
+            <if test="id != null">and id = #{id}</if>
+            <if test="flowCode != null and flowCode != ''">and flow_code = #{flowCode}</if>
+            <if test="flowName != null and flowName != ''">and flow_name = #{flowName}</if>
+            <if test="version != null and version != ''">and version = #{version}</if>
+            <if test="isPublish != null">and is_publish = #{isPublish}</if>
+            <if test="fromCustom != null">and from_custom = #{fromCustom}</if>
+            <if test="fromPath != null">and from_path = #{fromPath}</if>
+            <if test="createTime != null">and create_time = #{createTime}</if>
+            <if test="updateTime != null">and update_time = #{updateTime}</if>
+            <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
         </where>
     </delete>
 
@@ -208,7 +210,7 @@
         update flow_definition t
             set t.del_flag = #{logicDeleteValue}
         <where>
-            <if test="entity.id != null">and t.id = #{id}</if>
+            <if test="entity.id != null">and t.id = #{entity.id}</if>
             <if test="entity.flowCode != null and entity.flowCode != ''">and t.flow_code = #{entity.flowCode}</if>
             <if test="entity.flowName != null and entity.flowName != ''">and t.flow_name = #{entity.flowName}</if>
             <if test="entity.version != null and entity.version != ''">and t.version = #{entity.version}</if>
