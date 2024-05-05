@@ -28,7 +28,7 @@ public class FlowTest {
     private TaskService taskService;
 
     public FlowParams getUser() {
-        FlowParams flowParams = FlowParams.build().flowCode("leaveFlow-serial3")
+        FlowParams flowParams = FlowParams.build().flowCode("leaveFlow-serial-test")
                 .createBy("1")
                 .nickName("张三")
                 .skipType(SkipType.PASS.getKey())
@@ -38,13 +38,13 @@ public class FlowTest {
 
     @Test
     public void deployFlow() throws Exception {
-        String path = "/Users/minliuhua/Desktop/mdata/file/IdeaProjects/min/warm-flow/warm-flow-test/warm-flow-mybatis-sb-test/src/main/resources/leaveFlow-serial.xml";
+        String path = "D:\\IdeaProjects\\min\\warm-flow\\warm-flow-test\\warm-flow-core-test\\src\\main\\resources\\leaveFlow-serial.xml";
         System.out.println("已部署流程的id：" + defService.importXml(new FileInputStream(path)).getId());
     }
 
     @Test
     public void publish() {
-        defService.publish(1234277429141442560L);
+        defService.publish(1236588057516445696L);
     }
 
     @Test
@@ -55,7 +55,7 @@ public class FlowTest {
     @Test
     public void skipFlow() {
         // 通过实例id流转
-        Instance instance = insService.skipByInsId(1234277672293634048L, getUser().skipType(SkipType.PASS.getKey())
+        Instance instance = insService.skipByInsId(1236585090532904960L, getUser().skipType(SkipType.PASS.getKey())
                 .permissionFlag(Arrays.asList("role:1", "role:2")));
         System.out.println("流转后流程实例：" + instance.toString());
 

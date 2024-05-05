@@ -44,6 +44,8 @@ public class FlowFactory {
 
     private static DataFillHandler dataFillHandler;
 
+    private static boolean tenantHandlerFlag;
+
     private static TenantHandler tenantHandler;
 
     public static void initFlowService(DefService definitionService, HisTaskService hisTaskService, InsService instanceService
@@ -177,19 +179,14 @@ public class FlowFactory {
             if (!StringUtil.isEmpty(dataFillHandlerPath)) {
                 Class<?> clazz = ClassUtil.getClazz(dataFillHandlerPath);
                 if (clazz != null) {
-                    o = (DataFillHandler) clazz.newInstance();
-                }
-            } else {
-                o = FrameInvoker.getBean(DataFillHandler.class);
-                if (ObjectUtil.isNull(o)) {
-                    o = new DefaultDataFillHandler();
+                    return FlowFactory.dataFillHandler = o = (DataFillHandler) clazz.newInstance();
                 }
             }
-        } catch (Exception e) {
-            log.error("dataFillHandler init error", e);
-            if (ObjectUtil.isNull(o)) {
-                o = new DefaultDataFillHandler();
-            }
+            o = FrameInvoker.getBean(DataFillHandler.class);
+        } catch (Exception ignored) {
+        }
+        if (ObjectUtil.isNotNull(o)) {
+            return FlowFactory.dataFillHandler = o = new DefaultDataFillHandler();
         }
         return FlowFactory.dataFillHandler = o;
     }
@@ -198,7 +195,7 @@ public class FlowFactory {
      * 获取租户数据
      */
     public static TenantHandler tenantHandler() {
-        if (ObjectUtil.isNotNull(FlowFactory.tenantHandler)) {
+        if (ObjectUtil.isNotNull(FlowFactory.tenantHandler) || tenantHandlerFlag) {
             return FlowFactory.tenantHandler;
         }
         TenantHandler o = null;
@@ -207,14 +204,13 @@ public class FlowFactory {
             if (!StringUtil.isEmpty(tenantHandlerPath)) {
                 Class<?> clazz = ClassUtil.getClazz(tenantHandlerPath);
                 if (clazz != null) {
-                    o = (TenantHandler) clazz.newInstance();
+                    return FlowFactory.tenantHandler = o = (TenantHandler) clazz.newInstance();
                 }
-            } else {
-                o = FrameInvoker.getBean(TenantHandler.class);
             }
-        } catch (Exception e) {
-            log.error("tenantHandler init error", e);
+            o = FrameInvoker.getBean(TenantHandler.class);
+        } catch (Exception ignored) {
         }
+        tenantHandlerFlag = true;
         return FlowFactory.tenantHandler = o;
     }
 

@@ -28,7 +28,7 @@ public class FlowTest {
     private TaskService taskService;
 
     public FlowParams getUser() {
-        FlowParams flowParams = FlowParams.build().flowCode("leaveFlow-serial3")
+        FlowParams flowParams = FlowParams.build().flowCode("leaveFlow-serial-test")
                 .createBy("1")
                 .nickName("张三")
                 .skipType(SkipType.PASS.getKey())
@@ -38,7 +38,7 @@ public class FlowTest {
 
     @Test
     public void deployFlow() throws Exception {
-        String path = "/Users/minliuhua/Desktop/mdata/file/IdeaProjects/min/warm-flow/warm-flow-test/warm-flow-mybatis-sb-test/src/main/resources/leaveFlow-serial.xml";
+        String path = "D:\\IdeaProjects\\min\\warm-flow\\warm-flow-test\\warm-flow-core-test\\src\\main\\resources\\leaveFlow-serial.xml";
         System.out.println("已部署流程的id：" + defService.importXml(new FileInputStream(path)).getId());
     }
 

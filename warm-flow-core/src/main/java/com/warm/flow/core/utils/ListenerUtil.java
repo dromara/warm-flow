@@ -1,6 +1,5 @@
 package com.warm.flow.core.utils;
 
-import com.warm.flow.core.constant.ExceptionCons;
 import com.warm.flow.core.constant.FlowCons;
 import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.invoker.FrameInvoker;
@@ -86,9 +85,13 @@ public class ListenerUtil {
                         //截取出path 和params
                         getListenerPath(listenerPath, valueHolder);
                         Class<?> clazz = ClassUtil.getClazz(valueHolder.getPath());
-                        AssertUtil.isTrue(ObjectUtil.isNull(clazz), ExceptionCons.NOT_LISTENER);
-                        Listener listener = (Listener) FrameInvoker.getBean(clazz);
-                        listener.notify(listenerVariable.setParams(valueHolder.getParams()));
+                        if (ObjectUtil.isNotNull(clazz)) {
+                            Listener listener = (Listener) FrameInvoker.getBean(clazz);
+                            if (ObjectUtil.isNotNull(listener)) {
+                                listener.notify(listenerVariable.setParams(valueHolder.getParams()));
+                            }
+
+                        }
                     }
                 }
             }

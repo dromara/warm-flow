@@ -14,26 +14,6 @@
     <dependencies>
         <dependency>
             <groupId>io.github.minliuhua</groupId>
-            <artifactId>warm-flow-tools</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP</artifactId>
-        </dependency>
-        <!-- Mysql驱动包 -->
-        <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.github.minliuhua</groupId>
-            <artifactId>warm-flow-mybatis-sb-starter</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.github.minliuhua</groupId>
             <artifactId>warm-flow-mybatis-core</artifactId>
         </dependency>
 
