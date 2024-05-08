@@ -38,7 +38,7 @@ public class FlowTest {
 
     @Test
     public void deployFlow() throws Exception {
-        String path = "D:\\IdeaProjects\\min\\warm-flow\\warm-flow-test\\warm-flow-core-test\\src\\main\\resources\\leaveFlow-serial.xml";
+        String path = "/Users/minliuhua/Desktop/mdata/file/IdeaProjects/min/warm-flow/warm-flow-test/warm-flow-core-test/src/main/resources/leaveFlow-serial.xml";
         System.out.println("已部署流程的id：" + defService.importXml(new FileInputStream(path)).getId());
     }
 

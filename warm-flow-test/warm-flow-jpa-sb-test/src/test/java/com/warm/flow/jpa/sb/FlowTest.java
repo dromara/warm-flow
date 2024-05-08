@@ -1,4 +1,4 @@
-package com.warm.flow.mybatis.sb;
+package com.warm.flow.jpa.sb;
 
 
 import com.warm.flow.core.dto.FlowParams;
@@ -7,12 +7,20 @@ import com.warm.flow.core.enums.SkipType;
 import com.warm.flow.core.service.DefService;
 import com.warm.flow.core.service.InsService;
 import com.warm.flow.core.service.TaskService;
+import com.warm.flow.jpa.sb.repository.YourEntityRepository;
+import com.warm.flow.jpa.sb.entity.FlowDefinition;
+import com.warm.flow.jpa.sb.service.TransactionalTest;
+import com.warm.flow.orm.entity.FlowInstance;
+import com.warm.flow.spring.boot.utils.SpringUtil;
+import com.warm.tools.utils.IdUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.FileInputStream;
 import java.util.Arrays;
+import java.util.List;
 
 
 @SpringBootTest
@@ -27,13 +35,32 @@ public class FlowTest {
     @Resource
     private TaskService taskService;
 
+    @Resource
+    private YourEntityRepository entityRepository;
+
+    @Resource
+    private TransactionalTest transactionalTest;
+
+
     public FlowParams getUser() {
-        FlowParams flowParams = FlowParams.build().flowCode("leaveFlow-serial-test")
+        return FlowParams.build().flowCode("leaveFlow-serial-test")
                 .createBy("1")
                 .nickName("张三")
                 .skipType(SkipType.PASS.getKey())
                 .permissionFlag(Arrays.asList("role:1", "role:2"));
-        return flowParams;
+    }
+
+    @Test
+    public void transactionalTest() {
+        System.out.println("新增前数量：" + entityRepository.findAll().size());
+        System.out.println("新增前数量：" + insService.list(new FlowInstance()).size());
+        try {
+            transactionalTest.transactional();
+        } catch (Exception e) {
+            System.out.println("异常：" + e);
+        }
+        System.out.println("新增后数量：" + entityRepository.findAll().size());
+        System.out.println("新增后数量：" + insService.list(new FlowInstance()).size());
     }
 
     @Test
@@ -44,10 +71,11 @@ public class FlowTest {
 
     @Test
     public void publish() {
-        defService.publish(1237767792086880256L);
+        defService.publish(1234277429141442560L);
     }
 
     @Test
+    @Transactional(rollbackFor = Exception.class)
     public void startFlow() {
         System.out.println("已开启的流程实例id：" + insService.start("2", getUser()).getId());
     }
@@ -55,7 +83,7 @@ public class FlowTest {
     @Test
     public void skipFlow() {
         // 通过实例id流转
-        Instance instance = insService.skipByInsId(1236585090532904960L, getUser().skipType(SkipType.PASS.getKey())
+        Instance instance = insService.skipByInsId(1234277672293634048L, getUser().skipType(SkipType.PASS.getKey())
                 .permissionFlag(Arrays.asList("role:1", "role:2")));
         System.out.println("流转后流程实例：" + instance.toString());
 

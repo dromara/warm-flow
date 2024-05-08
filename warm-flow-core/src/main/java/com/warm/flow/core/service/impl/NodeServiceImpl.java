@@ -15,6 +15,7 @@ import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.NodeService;
 import com.warm.flow.core.utils.AssertUtil;
 import com.warm.tools.utils.CollUtil;
+import com.warm.tools.utils.ObjectUtil;
 import com.warm.tools.utils.StringUtils;
 
 import java.io.Serializable;
@@ -39,7 +40,10 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
     public List<Node> getByFlowCode(String flowCode) {
         Definition definition = FlowFactory.defService().getOne(FlowFactory.newDef()
                 .setFlowCode(flowCode).setIsPublish(PublishStatus.PUBLISHED.getKey()));
-        return list(FlowFactory.newNode().setDefinitionId(definition.getId()));
+        if (ObjectUtil.isNotNull(definition)) {
+            return list(FlowFactory.newNode().setDefinitionId(definition.getId()));
+        }
+        return Collections.emptyList();
     }
 
     @Override

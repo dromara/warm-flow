@@ -14,7 +14,18 @@
 
     <modules>
         <module>warm-flow-core-test</module>
+        <module>warm-flow-jpa-sb-test</module>
         <module>warm-flow-mybatis-sb-test</module>
         <module>warm-flow-mybatis-plus-sb-test</module>
     </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.github.minliuhua</groupId>
+                <artifactId>warm-flow-core-test</artifactId>
+                <version>${revision}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>

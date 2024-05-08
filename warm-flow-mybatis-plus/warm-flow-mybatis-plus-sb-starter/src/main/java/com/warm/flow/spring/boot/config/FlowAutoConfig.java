@@ -22,6 +22,7 @@ import org.springframework.core.env.Environment;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author warm
@@ -105,7 +106,7 @@ public class FlowAutoConfig {
         EntityInvoker.setNewEntity();
         FlowFactory.initFlowService(definitionService, hisTaskService, instanceService
                 , nodeService, skipService, taskService);
-        FrameInvoker.setCfgFunction((key) -> SpringUtil.getBean(Environment.class).getProperty(key));
+        FrameInvoker.setCfgFunction((key) -> Objects.requireNonNull(SpringUtil.getBean(Environment.class)).getProperty(key));
         FrameInvoker.setBeanFunction(SpringUtil::getBean);
         WarmFlow flowConfig = WarmFlow.init();
         FlowFactory.setFlowConfig(flowConfig);
