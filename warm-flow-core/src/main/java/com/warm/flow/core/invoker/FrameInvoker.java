@@ -29,7 +29,11 @@ public class FrameInvoker<M> {
     }
 
     public static <M> M getBean(Class<M> tClass) {
-        return (M) frameInvoker.beanFunction.apply(tClass);
+        try {
+            return (M) frameInvoker.beanFunction.apply(tClass);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /**
@@ -42,7 +46,11 @@ public class FrameInvoker<M> {
     }
 
     public static String getCfg(String key) {
-        return (String) frameInvoker.cfgFunction.apply(key);
+        try {
+            return (String) frameInvoker.cfgFunction.apply(key);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 }

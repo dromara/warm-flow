@@ -1,38 +1,39 @@
 package com.warm.flow.spring.boot.utils;
 
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
-
-import static org.springframework.core.ResolvableType.forRawClass;
 
 /**
  * @author PMB
  */
 @Component
-public class SpringUtil implements BeanFactoryPostProcessor {
+public class SpringUtil implements ApplicationContextAware {
 
+    private static ApplicationContext applicationContext;
 
     /**
-     * Spring应用上下文环境
+     * 获取applicationContext，应用上下文
+     *
+     * @return
      */
-    private static ConfigurableListableBeanFactory beanFactory;
-
-
-    @Override
-    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-        SpringUtil.beanFactory = beanFactory;
+    public static ApplicationContext getApplicationContext() {
+        return applicationContext;
     }
 
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        if (SpringUtil.applicationContext == null) {
+            SpringUtil.applicationContext = applicationContext;
+        }
+    }
 
     /**
      * 通过class获取Bean
      */
     public static <M> M getBean(Class<M> clazz) {
-        ObjectProvider<M> objectProvider = beanFactory.getBeanProvider(forRawClass(clazz), false);
-        return objectProvider.getIfAvailable();
+        return getApplicationContext().getBean(clazz);
     }
 
 }
