@@ -80,26 +80,10 @@ public class FlowTask implements Task {
      */
     private Integer nodeType;
 
-
-    /**
-     * 审批者
-     */
-    private String approver;
-
-    /**
-     * 转办人
-     */
-    private String assignee;
-
     /**
      * 流程状态（0待提交 1审批中 2 审批通过 8已完成 9已退回 10失效）
      */
     private Integer flowStatus;
-
-    /**
-     * 权限标识（权限类型:权限标识，可以多个，如role:1,role:2)
-     */
-    private String permissionFlag;
 
     /**
      * 权限标识 permissionFlag的list形式
@@ -252,28 +236,6 @@ public class FlowTask implements Task {
     }
 
     @Override
-    public String getApprover() {
-        return approver;
-    }
-
-    @Override
-    public FlowTask setApprover(String approver) {
-        this.approver = approver;
-        return this;
-    }
-
-    @Override
-    public String getAssignee() {
-        return assignee;
-    }
-
-    @Override
-    public FlowTask setAssignee(String assignee) {
-        this.assignee = assignee;
-        return this;
-    }
-
-    @Override
     public Integer getFlowStatus() {
         return flowStatus;
     }
@@ -281,17 +243,6 @@ public class FlowTask implements Task {
     @Override
     public FlowTask setFlowStatus(Integer flowStatus) {
         this.flowStatus = flowStatus;
-        return this;
-    }
-
-    @Override
-    public String getPermissionFlag() {
-        return permissionFlag;
-    }
-
-    @Override
-    public FlowTask setPermissionFlag(String permissionFlag) {
-        this.permissionFlag = permissionFlag;
         return this;
     }
 
@@ -342,10 +293,7 @@ public class FlowTask implements Task {
                 ", nodeCode='" + nodeCode + '\'' +
                 ", nodeName='" + nodeName + '\'' +
                 ", nodeType=" + nodeType +
-                ", approver='" + approver + '\'' +
-                ", assignee='" + assignee + '\'' +
                 ", flowStatus=" + flowStatus +
-                ", permissionFlag='" + permissionFlag + '\'' +
                 ", permissionList=" + permissionList +
                 ", fromCustom='" + fromCustom + '\'' +
                 ", fromPath='" + fromPath + '\'' +
