@@ -25,7 +25,7 @@ SELECT
 FROM (select id,permission_flag,create_time,update_time,del_flag,tenant_id from flow_task) a
          INNER JOIN mysql.help_topic b
                     ON b.help_topic_id < (length( a.permission_flag ) - length(REPLACE ( a.permission_flag, ',', '' )) + 1)
-         left join (Select (@rowNum :=0) ) c ON 1=1
+         left join (Select (@rowNum :=0) ) c ON 1=1;
 
 -- 去掉flow_task表废弃字段sql
 ALTER TABLE `flow_task` DROP COLUMN approver;
