@@ -98,14 +98,10 @@ public class FlowAutoConfig {
     }
 
     @Bean
-    public WarmFlow initFlow(DefService definitionService, HisTaskService hisTaskService
-            , InsService instanceService, NodeService nodeService, SkipService skipService, TaskService taskService
-            , SqlSessionFactory sqlSessionFactory) {
+    public WarmFlow initFlow(SqlSessionFactory sqlSessionFactory) {
         loadXml(sqlSessionFactory);
         // 设置创建对象方法
         EntityInvoker.setNewEntity();
-        FlowFactory.initFlowService(definitionService, hisTaskService, instanceService
-                , nodeService, skipService, taskService);
         FrameInvoker.setCfgFunction((key) -> Objects.requireNonNull(SpringUtil.getBean(Environment.class)).getProperty(key));
         FrameInvoker.setBeanFunction(SpringUtil::getBean);
         WarmFlow flowConfig = WarmFlow.init();

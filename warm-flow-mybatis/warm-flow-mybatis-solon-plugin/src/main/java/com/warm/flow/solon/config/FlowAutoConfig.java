@@ -86,13 +86,9 @@ public class FlowAutoConfig {
     }
 
     @Bean
-    public WarmFlow initFlow(DefService definitionService, HisTaskService hisTaskService
-            , InsService instanceService, NodeService nodeService, SkipService skipService
-            , TaskService taskService) {
+    public WarmFlow initFlow() {
         // 设置创建对象方法
         EntityInvoker.setNewEntity();
-        FlowFactory.initFlowService(definitionService, hisTaskService, instanceService
-                , nodeService, skipService, taskService);
         FrameInvoker.setCfgFunction((key) -> Solon.cfg().get(key));
         FrameInvoker.setBeanFunction(Solon.context()::getBean);
         WarmFlow flowConfig = WarmFlow.init();
