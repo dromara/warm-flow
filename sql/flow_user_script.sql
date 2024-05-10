@@ -8,23 +8,24 @@ CREATE TABLE `flow_user`
     `create_time`     datetime     DEFAULT NULL COMMENT '创建时间',
     `update_time`     datetime     DEFAULT NULL COMMENT '更新时间',
     `del_flag`        char(1)      DEFAULT NULL COMMENT '删除标志',
-    `tenant_id`       varchar(40)  DEFAULT NULL COMMENT '租户id'
-    PRIMARY KEY (`id`) USING BTREE,
+    `tenant_id`       varchar(40)  DEFAULT NULL COMMENT '租户id',
+    PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB  COMMENT='流程用户表';
 
 -- flow_his_task 历史数据迁移脚本sql
-insert into `flow_user` (id,user_type,associated,processed_by,create_time,update_time,del_flag,tenant_id)
+insert into `flow_user` (id,type,associated,processed_by,create_time,update_time,del_flag,tenant_id)
 select id,'4',id,approver,create_time,update_time,del_flag,tenant_id
 from `flow_his_task`;
 -- flow_task 历史数据迁移脚本sql
-insert into `flow_user` (id,user_type,associated,processed_by,create_time,update_time,del_flag,tenant_id)
+insert into `flow_user` (id,type,associated,processed_by,create_time,update_time,del_flag,tenant_id)
 SELECT
-    a.id,'1',a.id,
+    a.id+CONVERT((@rowNum:=@rowNum+1),SIGNED),'1',a.id,
     substring_index( substring_index( a.permission_flag, ',', b.help_topic_id + 1 ), ',', - 1 ),
     a.create_time,a.update_time,a.del_flag,a.tenant_id
-FROM (select id,permission_flag,create_time,update_time,del_flag,tenant_id from flow_his_task) a
-INNER JOIN mysql.help_topic b
-    ON b.help_topic_id < (length( a.permission_flag ) - length(REPLACE ( a.permission_flag, ',', '' )) + 1)
+FROM (select id,permission_flag,create_time,update_time,del_flag,tenant_id from flow_task) a
+         INNER JOIN mysql.help_topic b
+                    ON b.help_topic_id < (length( a.permission_flag ) - length(REPLACE ( a.permission_flag, ',', '' )) + 1)
+         left join (Select (@rowNum :=0) ) c ON 1=1
 
 -- 去掉flow_task表废弃字段sql
 ALTER TABLE `flow_task` DROP COLUMN approver;
