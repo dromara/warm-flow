@@ -91,6 +91,11 @@ public class FlowHisTask implements HisTask {
     private String targetNodeName;
 
     /**
+     * 权限标识（权限类型:权限标识，可以多个，如role:1,role:2)
+     */
+    private String permissionFlag;
+
+    /**
      * 权限标识 permissionFlag的list形式
      */
     @TableField(exist = false)
@@ -276,6 +281,17 @@ public class FlowHisTask implements HisTask {
     @Override
     public FlowHisTask setTargetNodeName(String targetNodeName) {
         this.targetNodeName = targetNodeName;
+        return this;
+    }
+
+    @Override
+    public String getPermissionFlag() {
+        return permissionFlag;
+    }
+
+    @Override
+    public FlowHisTask setPermissionFlag(String permissionFlag) {
+        this.permissionFlag = permissionFlag;
         return this;
     }
 

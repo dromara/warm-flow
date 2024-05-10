@@ -31,6 +31,7 @@ public class FlowFactory {
     private static NodeService nodeService = null;
     private static SkipService skipService = null;
     private static TaskService taskService = null;
+    private static UserService userService = null;
 
 
     private static Supplier<Definition> defSupplier;
@@ -39,6 +40,7 @@ public class FlowFactory {
     private static Supplier<Node> nodeSupplier;
     private static Supplier<Skip> skipSupplier;
     private static Supplier<Task> taskSupplier;
+    private static Supplier<User> userSupplier;
 
     private static WarmFlow flowConfig;
 
@@ -49,13 +51,14 @@ public class FlowFactory {
     private static TenantHandler tenantHandler;
 
     public static void initFlowService(DefService definitionService, HisTaskService hisTaskService, InsService instanceService
-            , NodeService nodeService, SkipService skipService, TaskService taskService) {
+            , NodeService nodeService, SkipService skipService, TaskService taskService, UserService userService) {
         FlowFactory.setDefService(definitionService);
         FlowFactory.setHisTaskService(hisTaskService);
         FlowFactory.setInsService(instanceService);
         FlowFactory.setNodeService(nodeService);
         FlowFactory.setSkipService(skipService);
         FlowFactory.setTaskService(taskService);
+
     }
 
     public static void setDefService(DefService defService) {
@@ -82,6 +85,10 @@ public class FlowFactory {
         FlowFactory.taskService = taskService;
     }
 
+    public static void setUserService(UserService userService) {
+        FlowFactory.userService = userService;
+    }
+
     public static DefService defService() {
         return defService;
     }
@@ -104,6 +111,10 @@ public class FlowFactory {
 
     public static TaskService taskService() {
         return taskService;
+    }
+
+    public static UserService userService() {
+        return userService;
     }
 
     public static void setNewDef(Supplier<Definition> supplier) {
@@ -152,6 +163,10 @@ public class FlowFactory {
 
     public static Task newTask() {
         return taskSupplier.get();
+    }
+
+    public static User newUser() {
+        return userSupplier.get();
     }
 
     public static WarmFlow getFlowConfig() {

@@ -132,8 +132,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 .setTenantId(task.getTenantId())
                 .setDefinitionId(task.getDefinitionId())
                 .setFlowStatus(FlowStatus.FINISHED.getKey())
-                .setCreateTime(new Date())
-                .setApprover(flowParams.getCreateBy()));
+                .setCreateTime(new Date()));
+                // ??? .setApprover(flowParams.getCreateBy()));
         FlowFactory.hisTaskService().saveBatch(insHisList);
 
         // 流程实例完成
@@ -221,6 +221,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         addTask.setNodeCode(node.getNodeCode());
         addTask.setNodeName(node.getNodeName());
         addTask.setNodeType(node.getNodeType());
+        addTask.setFlowStatus(setFlowStatus(node.getNodeType(), flowParams.getSkipType()));
+        addTask.setCreateTime(date);
         String permissionFlag;
         if (StringUtils.isNotEmpty(node.getDynamicPermissionFlag())) {
             permissionFlag = node.getDynamicPermissionFlag();
@@ -232,9 +234,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             }
         }
         addTask.setPermissionFlag(permissionFlag);
-        addTask.setApprover(flowParams.getCreateBy());
-        addTask.setFlowStatus(setFlowStatus(node.getNodeType(), flowParams.getSkipType()));
-        addTask.setCreateTime(date);
         addTask.setTenantId(flowParams.getTenantId());
         return addTask;
     }
@@ -442,7 +441,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                             .setDefinitionId(addTask.getDefinitionId())
                             .setFlowStatus(FlowStatus.FINISHED.getKey())
                             .setCreateTime(new Date())
-                            .setApprover(flowParams.getCreateBy());
+                            // ??? .setApprover(flowParams.getCreateBy())
+                            ;
                     insHisList.add(insHis);
                     instance.setNodeType(addTask.getNodeType());
                     instance.setNodeCode(addTask.getNodeCode());
