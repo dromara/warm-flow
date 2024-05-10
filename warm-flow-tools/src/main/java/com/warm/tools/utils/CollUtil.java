@@ -108,11 +108,46 @@ public class CollUtil {
      */
     public static <T> List<T> listAddToNew(List<T> list, List<T> listA) {
         List<T> newList = new ArrayList<>();
-        if(CollUtil.isNotEmpty(list)){
-            newList.addAll(list);
+        newList.addAll(listA);
+        newList.addAll(list);
+        return newList;
+    }
+    /**
+     * 几个元素生成一个集合
+     *
+     * @param paramArr 对象数组
+     * @param <T> 泛型
+     * @author xiar
+     * @date 2024/5/10 15:45
+     */
+    public static <T> List<T> toList(T... paramArr) {
+        if (ArrayUtil.isEmpty(paramArr)) {
+            return new ArrayList<>();
         }
-        if(CollUtil.isNotEmpty(listA)){
-            newList.addAll(listA);
+        List<T> arrayList = new ArrayList<>(paramArr.length);
+        arrayList.addAll(Arrays.asList(paramArr));
+        return arrayList;
+    }
+    /**
+     * 将collection转化为List集合，其中一个List集合中包含多个集合<br>
+     * <B>{@code Collection<T>和Collection<Collection<T>> ------>  List<T> } </B>
+     *
+     * @param list 需要合并得集合
+     * @param lists 需要合并得包含多个集合得集合
+     * @param <T>        List中的泛型
+     * @return List<T>
+     * @author xiarg
+     * @date 2024/5/10 15:45
+     */
+    public static <T> List<T> listAddListsToNew(List<T> list, List<List<T>> lists) {
+        List<T> newList = new ArrayList<>();
+        for (List<T> ts : lists) {
+            if(isNotEmpty(ts)){
+                newList.addAll(ts);
+            }
+        }
+        if(isNotEmpty(list)){
+            newList.addAll(list);
         }
         return newList;
     }

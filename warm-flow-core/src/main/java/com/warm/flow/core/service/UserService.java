@@ -25,9 +25,8 @@ public interface UserService extends IWarmService<User> {
      * @date 2024/5/10 13:59
      */
     List<User> setUser(List<HisTask> hisTasks, List<Task> addTasks, FlowParams flowParams);
-
     /**
-     * 历史人物增加流程人员
+     * 历史任务增加流程人员
      *
      * @param hisTask 历史任务信息
      * @param flowParams 工作流内置参数
@@ -38,13 +37,21 @@ public interface UserService extends IWarmService<User> {
     User hisTaskAddUser(HisTask hisTask, FlowParams flowParams);
 
     /**
-     * 历史人物增加流程人员
+     * 代办任务增加流程人员
      *
      * @param task 代办任务任务信息
      * @param flowParams 工作流内置参数
-     * @return User
+     * @return List<User>
      * @author xiarg
      * @date 2024/5/10 15:45
      */
-    User taskAddUser(Task task, FlowParams flowParams);
+    List<User> taskAddUser(Task task, FlowParams flowParams);
+    /**
+     * 根据任务id删除流程用户
+     *
+     * @param taskIds 任务id集合
+     * @author xiarg
+     * @date 2024/5/10 13:59
+     */
+    void delUser(List<Long> taskIds);
 }

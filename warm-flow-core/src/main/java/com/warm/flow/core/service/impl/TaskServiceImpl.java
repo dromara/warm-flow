@@ -84,6 +84,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 设置流程历史任务信息
         List<HisTask> insHisList = FlowFactory.hisTaskService().setSkipInsHis(task, nextNodes, flowParams);
 
+        // 历史任务 和 代办任务设置处理人
+        List<User> users = FlowFactory.userService().setUser(insHisList, addTasks, flowParams);
+
         // 设置结束节点相关信息
         setEndInfo(instance, addTasks, flowParams, insHisList, task);
 
@@ -94,7 +97,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         oneVoteVeto(task, flowParams.getSkipType(), nextNode.getNodeCode());
 
         // 更新流程信息
-        updateFlowInfo(task, instance, insHisList, addTasks);
+        updateFlowInfo(task, instance, insHisList, addTasks, users);
 
         // 处理未完成的任务，当流程完成，还存在代办任务未完成，转历史任务，状态完成。
         handUndoneTask(instance, null);
@@ -573,6 +576,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         }
         removeByIds(StreamUtils.toList(taskList, Task::getId));
         FlowFactory.hisTaskService().saveBatch(insHisList);
+        // 删除所有代办任务的权限人
+        FlowFactory.userService().delUser(StreamUtils.toList(taskList, Task::getId));
     }
 
     /**
@@ -584,12 +589,16 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
      * @param addTasks
      */
     private void updateFlowInfo(Task task, Instance instance, List<HisTask> insHisList
-            , List<Task> addTasks) {
+            , List<Task> addTasks, List<User> users) {
         removeById(task.getId());
         FlowFactory.hisTaskService().saveBatch(insHisList);
         if (CollUtil.isNotEmpty(addTasks)) {
             saveBatch(addTasks);
         }
         FlowFactory.insService().updateById(instance);
+        // 保存下一个代办任务的权限人和历史任务的处理人
+        FlowFactory.userService().saveBatch(users);
+        // 删除当前处理的代办任务的权限人
+        FlowFactory.userService().delUser(CollUtil.toList(task.getId()));
     }
 }

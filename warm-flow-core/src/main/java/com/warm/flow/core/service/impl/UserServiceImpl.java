@@ -1,6 +1,7 @@
 package com.warm.flow.core.service.impl;
 
 import com.warm.flow.core.FlowFactory;
+import com.warm.flow.core.constant.ExceptionCons;
 import com.warm.flow.core.dao.FlowUserDao;
 import com.warm.flow.core.dto.FlowParams;
 import com.warm.flow.core.entity.HisTask;
@@ -10,9 +11,12 @@ import com.warm.flow.core.enums.UserType;
 import com.warm.flow.core.handler.DataFillHandler;
 import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.UserService;
+import com.warm.flow.core.utils.AssertUtil;
+import com.warm.tools.utils.ArrayUtil;
 import com.warm.tools.utils.CollUtil;
 import com.warm.tools.utils.StreamUtils;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -32,15 +36,15 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
 
     @Override
     public List<User> setUser(List<HisTask> hisTasks, List<Task> addTasks, FlowParams flowParams) {
-        List<User> hisTaskUser = null;
+        List<User> hisTaskUserList = null;
         if(CollUtil.isNotEmpty(hisTasks)){
-            hisTaskUser = StreamUtils.toList(hisTasks, hisTask -> hisTaskAddUser(hisTask, flowParams));
+            hisTaskUserList = StreamUtils.toList(hisTasks, hisTask -> hisTaskAddUser(hisTask, flowParams));
         }
-        List<User> taskUser = null;
+        List<List<User>> taskUserList = null;
         if(CollUtil.isNotEmpty(addTasks)){
-            taskUser = StreamUtils.toList(addTasks, task -> taskAddUser(task, flowParams));
+            taskUserList = StreamUtils.toList(addTasks, task -> taskAddUser(task, flowParams));
         }
-        return CollUtil.listAddToNew(hisTaskUser, taskUser);
+        return CollUtil.listAddListsToNew(hisTaskUserList, taskUserList);
     }
 
     @Override
@@ -54,12 +58,27 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
     }
 
     @Override
-    public User taskAddUser(Task task, FlowParams flowParams) {
-        User user = FlowFactory.newUser()
-                .setType(UserType.APPROVAL.getKey())
-                .setProcessedBy(flowParams.getCreateBy())
-                .setAssociated(task.getId());
-        FlowFactory.dataFillHandler().idFill(user);
-        return user;
+    public List<User> taskAddUser(Task task, FlowParams flowParams) {
+        List<User> userList = new ArrayList<>();
+        // 后去审批人权限集合
+        List<String> permissionList = CollUtil.strToColl(task.getPermissionFlag(), ";");
+        // 审批人权限不能为空
+        AssertUtil.isTrue(CollUtil.isEmpty(permissionList), ExceptionCons.LOST_APPROVAL_PERMISSION);
+        // 遍历权限集合，生成流程用户
+        User user;
+        for (String permission : permissionList) {
+            user = FlowFactory.newUser()
+                    .setType(UserType.APPROVAL.getKey())
+                    .setProcessedBy(permission)
+                    .setAssociated(task.getId());
+            FlowFactory.dataFillHandler().idFill(user);
+            userList.add(user);
+        }
+        return userList;
+    }
+
+    @Override
+    public void delUser(List<Long> taskIds) {
+        getDao().deleteByTaskIds(taskIds);
     }
 }

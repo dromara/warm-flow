@@ -58,7 +58,7 @@ public class FlowFactory {
         FlowFactory.setNodeService(nodeService);
         FlowFactory.setSkipService(skipService);
         FlowFactory.setTaskService(taskService);
-
+        FlowFactory.setUserService(userService);
     }
 
     public static void setDefService(DefService defService) {
@@ -163,6 +163,10 @@ public class FlowFactory {
 
     public static Task newTask() {
         return taskSupplier.get();
+    }
+
+    public static void setNewUser(Supplier<User> supplier) {
+        FlowFactory.userSupplier = supplier;
     }
 
     public static User newUser() {

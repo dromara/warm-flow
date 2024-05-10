@@ -5,6 +5,8 @@ import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.orm.entity.FlowUser;
 import com.warm.flow.orm.mapper.FlowUserMapper;
 
+import java.util.List;
+
 /**
  * 流程用户Mapper接口
  *
@@ -24,8 +26,8 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser> implements FlowUserDa
     }
 
     @Override
-    public int deleteByTaskId(Long taskId) {
-        return delete(newEntity(), (luw) -> luw.eq(FlowUser::getAssociated, taskId)
-                , (lqw) -> lqw.eq(FlowUser::getAssociated, taskId));
+    public int deleteByTaskIds(List<Long> taskIdList) {
+        return delete(newEntity(), (luw) -> luw.in(FlowUser::getAssociated, taskIdList)
+                , (lqw) -> lqw.in(FlowUser::getAssociated, taskIdList));
     }
 }

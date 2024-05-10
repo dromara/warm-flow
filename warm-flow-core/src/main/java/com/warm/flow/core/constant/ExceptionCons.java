@@ -79,4 +79,6 @@ public class ExceptionCons {
     public static final String FLOW_FINISH = "流程已完成！";
 
     public static final String NOT_LISTENER = "监听器不存在";
+
+    public static final String LOST_APPROVAL_PERMISSION = "下一节点审批人权限缺失";
 }
