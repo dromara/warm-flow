@@ -30,19 +30,21 @@ public interface UserService extends IWarmService<User> {
      * 历史人物增加流程人员
      *
      * @param hisTask 历史任务信息
+     * @param flowParams 工作流内置参数
      * @return User
      * @author xiarg
      * @date 2024/5/10 15:45
      */
-    User hisTaskAddUser(HisTask hisTask);
+    User hisTaskAddUser(HisTask hisTask, FlowParams flowParams);
 
     /**
      * 历史人物增加流程人员
      *
      * @param task 代办任务任务信息
+     * @param flowParams 工作流内置参数
      * @return User
      * @author xiarg
      * @date 2024/5/10 15:45
      */
-    User taskAddUser(Task task);
+    User taskAddUser(Task task, FlowParams flowParams);
 }

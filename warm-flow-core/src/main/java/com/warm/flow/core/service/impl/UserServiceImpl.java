@@ -7,11 +7,13 @@ import com.warm.flow.core.entity.HisTask;
 import com.warm.flow.core.entity.Task;
 import com.warm.flow.core.entity.User;
 import com.warm.flow.core.enums.UserType;
+import com.warm.flow.core.handler.DataFillHandler;
 import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.UserService;
 import com.warm.tools.utils.CollUtil;
 import com.warm.tools.utils.StreamUtils;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -30,24 +32,33 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
 
     @Override
     public List<User> setUser(List<HisTask> hisTasks, List<Task> addTasks, FlowParams flowParams) {
-        List<User> hisTaskUser = StreamUtils.toList(hisTasks, this::hisTaskAddUser);
-        List<User> taskUser = StreamUtils.toList(addTasks, this::taskAddUser);
+        List<User> hisTaskUser = null;
+        if(CollUtil.isNotEmpty(hisTasks)){
+            hisTaskUser = StreamUtils.toList(hisTasks, hisTask -> hisTaskAddUser(hisTask, flowParams));
+        }
+        List<User> taskUser = null;
+        if(CollUtil.isNotEmpty(addTasks)){
+            taskUser = StreamUtils.toList(addTasks, task -> taskAddUser(task, flowParams));
+        }
         return CollUtil.listAddToNew(hisTaskUser, taskUser);
     }
 
     @Override
-    public User hisTaskAddUser(HisTask hisTask) {
+    public User hisTaskAddUser(HisTask hisTask, FlowParams flowParams) {
         User user = FlowFactory.newUser()
-                        .setType(UserType.APPROVER.getKey());
+                        .setType(UserType.APPROVER.getKey())
+                        .setProcessedBy(flowParams.getCreateBy())
+                        .setAssociated(hisTask.getId());
         FlowFactory.dataFillHandler().idFill(user);
-
         return user;
     }
 
     @Override
-    public User taskAddUser(Task task) {
+    public User taskAddUser(Task task, FlowParams flowParams) {
         User user = FlowFactory.newUser()
-                .setType(UserType.APPROVAL.getKey());
+                .setType(UserType.APPROVAL.getKey())
+                .setProcessedBy(flowParams.getCreateBy())
+                .setAssociated(task.getId());
         FlowFactory.dataFillHandler().idFill(user);
         return user;
     }

@@ -108,8 +108,12 @@ public class CollUtil {
      */
     public static <T> List<T> listAddToNew(List<T> list, List<T> listA) {
         List<T> newList = new ArrayList<>();
-        newList.addAll(listA);
-        newList.addAll(list);
+        if(CollUtil.isNotEmpty(list)){
+            newList.addAll(list);
+        }
+        if(CollUtil.isNotEmpty(listA)){
+            newList.addAll(listA);
+        }
         return newList;
     }
 }
