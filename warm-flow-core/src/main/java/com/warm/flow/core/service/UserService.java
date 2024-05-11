@@ -59,11 +59,11 @@ public interface UserService extends IWarmService<User> {
      */
     List<User> taskAddUser(Task task, FlowParams flowParams);
     /**
-     * 根据任务id删除流程用户
+     * 根据(代办任务，实例，历史表，节点)id删除流程用户
      *
-     * @param taskIds 任务id集合
+     * @param Ids (代办任务，实例，历史表，节点)id集合
      * @author xiarg
      * @date 2024/5/10 13:59
      */
-    void delUser(List<Long> taskIds);
+    void delUser(List<Long> Ids);
 }

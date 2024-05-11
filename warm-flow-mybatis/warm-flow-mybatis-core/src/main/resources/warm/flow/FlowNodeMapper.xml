@@ -104,10 +104,13 @@
 
     <select id="getByNodeCodes" resultMap="FlowNodeResult">
         <include refid="selectVo"/>
-        where t.definition_id = #{definitionId} and t.node_code in
-        <foreach item="item" collection="nodeCodes" open="(" separator="," close=")">
-            #{item}
-        </foreach>
+        where t.definition_id = #{definitionId}
+        <if test="nodeCodes != null and nodeCodes.size() > 0">
+            and t.node_code in
+            <foreach item="item" collection="nodeCodes" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
         <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
         <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
     </select>

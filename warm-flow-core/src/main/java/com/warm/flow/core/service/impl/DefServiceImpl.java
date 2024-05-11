@@ -67,6 +67,14 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     @Override
     public void saveXml(Definition def) throws Exception {
         if (StringUtils.isEmpty(def.getXmlString())) {
+            // 先删除节点的权限人
+            FlowFactory.userService().delUser(
+                    FlowFactory.nodeService()
+                            .getByNodeCodes(null, def.getId())
+                            .stream()
+                            .map(Node::getId)
+                            .collect(Collectors.toList())
+            );
             FlowFactory.nodeService().remove(FlowFactory.newNode().setDefinitionId(def.getId()));
             FlowFactory.skipService().remove(FlowFactory.newSkip().setDefinitionId(def.getId()));
             return;
@@ -75,14 +83,27 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                 .getBytes(StandardCharsets.UTF_8)));
         // 所有的流程节点
         List<Node> allNodes = combine.getAllNodes();
+        // 所有的流程节点的权限人
+        List<User> allUsers = combine.getAllUsers();
         // 所有的流程连线
         List<Skip> allSkips = combine.getAllSkips();
+
+        // 删除节点的权限人，节点，流程连线
+        FlowFactory.userService().delUser(
+                FlowFactory.nodeService()
+                        .getByNodeCodes(null, def.getId())
+                        .stream()
+                        .map(Node::getId)
+                        .collect(Collectors.toList())
+        );
         FlowFactory.nodeService().remove(FlowFactory.newNode().setDefinitionId(def.getId()));
         FlowFactory.skipService().remove(FlowFactory.newSkip().setDefinitionId(def.getId()));
         allNodes.forEach(node -> node.setDefinitionId(def.getId()));
         allSkips.forEach(skip -> skip.setDefinitionId(def.getId()));
+        // 保存节点，流程连线，权利人
         FlowFactory.nodeService().saveBatch(allNodes);
         FlowFactory.skipService().saveBatch(allSkips);
+        FlowFactory.userService().saveBatch(allUsers);
     }
 
     @Override
