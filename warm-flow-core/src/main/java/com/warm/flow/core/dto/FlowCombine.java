@@ -5,6 +5,7 @@ import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.entity.Definition;
 import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.Skip;
+import com.warm.flow.core.entity.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,11 @@ public class FlowCombine {
     private List<Node> allNodes = new ArrayList<>();
 
     /**
+     * 所有的流程节点的权限用户
+     */
+    private List<User> allUsers = new ArrayList<>();
+
+    /**
      * 所有的流程节点跳转关联
      */
     private List<Skip> allSkips = new ArrayList<>();
@@ -45,6 +51,14 @@ public class FlowCombine {
 
     public void setAllNodes(List<Node> allNodes) {
         this.allNodes = allNodes;
+    }
+
+    public List<User> getAllUsers() {
+        return allUsers;
+    }
+
+    public void setAllUsers(List<User> allUsers) {
+        this.allUsers = allUsers;
     }
 
     public List<Skip> getAllSkips() {

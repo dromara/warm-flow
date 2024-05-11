@@ -55,10 +55,12 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         Definition definition = combine.getDefinition();
         // 所有的流程节点
         List<Node> allNodes = combine.getAllNodes();
+        // 所有节点的权限
+        List<User> allUsers = combine.getAllUsers();
         // 所有的流程连线
         List<Skip> allSkips = combine.getAllSkips();
         // 根据不同策略进行新增或者更新
-        updateFlow(definition, allNodes, allSkips);
+        updateFlow(definition, allNodes, allSkips, allUsers);
         return definition;
     }
 
@@ -510,7 +512,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
      * @param allNodes
      * @param allSkips
      */
-    private void updateFlow(Definition definition, List<Node> allNodes, List<Skip> allSkips) {
+    private void updateFlow(Definition definition, List<Node> allNodes, List<Skip> allSkips, List<User> allUsers) {
         List<String> flowCodeList = Collections.singletonList(definition.getFlowCode());
         List<Definition> definitions = getDao().queryByCodeList(flowCodeList);
         for (int j = 0; j < definitions.size(); j++) {
@@ -522,6 +524,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         }
         FlowFactory.defService().save(definition);
         FlowFactory.nodeService().saveBatch(allNodes);
+        FlowFactory.userService().saveBatch(allUsers);
         FlowFactory.skipService().saveBatch(allSkips);
     }
 }

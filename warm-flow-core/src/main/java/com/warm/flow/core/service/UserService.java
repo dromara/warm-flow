@@ -1,7 +1,10 @@
 package com.warm.flow.core.service;
 
 import com.warm.flow.core.dto.FlowParams;
-import com.warm.flow.core.entity.*;
+import com.warm.flow.core.entity.HisTask;
+import com.warm.flow.core.entity.Node;
+import com.warm.flow.core.entity.Task;
+import com.warm.flow.core.entity.User;
 import com.warm.flow.core.orm.service.IWarmService;
 
 import java.util.List;
@@ -25,6 +28,15 @@ public interface UserService extends IWarmService<User> {
      * @date 2024/5/10 13:59
      */
     List<User> setUser(List<HisTask> hisTasks, List<Task> addTasks, FlowParams flowParams);
+    /**
+     * 流程定义设置流程计划审批用户
+     *
+     * @param allNodes 节点集合
+     * @return List<User>
+     * @author xiarg
+     * @date 2024/5/10 13:59
+     */
+    List<User> setUser(List<Node> allNodes);
     /**
      * 历史任务增加流程人员
      *

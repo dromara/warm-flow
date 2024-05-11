@@ -6,8 +6,10 @@ import com.warm.flow.core.dto.FlowCombine;
 import com.warm.flow.core.entity.Definition;
 import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.Skip;
+import com.warm.flow.core.entity.User;
 import com.warm.flow.core.enums.NodeType;
 import com.warm.flow.core.enums.SkipType;
+import com.warm.flow.core.enums.UserType;
 import com.warm.tools.utils.CollUtil;
 import com.warm.tools.utils.ObjectUtil;
 import com.warm.tools.utils.StreamUtils;
@@ -64,9 +66,15 @@ public class FlowConfigUtil {
         List<Element> nodesElement = definitionElement.elements();
         // 遍历一个流程中的各个节点
         List<Node> nodeList = definition.getNodeList();
+        List<User> userList = definition.getUserList();
         for (Element nodeElement : nodesElement) {
             Node node = initNodeAndCondition(nodeElement);
             nodeList.add(node);
+            // 初始化节点的权限用户
+            List<User> users = initUser(nodeElement, node);
+            if (CollUtil.isNotEmpty(users)){
+                userList.addAll(users);
+            }
         }
         try {
             if (is != null) {
@@ -89,11 +97,11 @@ public class FlowConfigUtil {
         node.setNodeType(NodeType.getKeyByValue(nodeElement.attributeValue("nodeType")));
         node.setNodeCode(nodeElement.attributeValue("nodeCode"));
         node.setNodeName(nodeElement.attributeValue("nodeName"));
-        node.setPermissionFlag(nodeElement.attributeValue("permissionFlag"));
         node.setCoordinate(nodeElement.attributeValue("coordinate"));
         node.setSkipAnyNode(nodeElement.attributeValue("skipAnyNode"));
         node.setListenerType(nodeElement.attributeValue("listenerType"));
         node.setListenerPath(nodeElement.attributeValue("listenerPath"));
+        FlowFactory.dataFillHandler().idFill(node);
 
         List<Element> skipsElement = nodeElement.elements();
         List<Skip> skips = node.getSkipList();
@@ -113,6 +121,23 @@ public class FlowConfigUtil {
             }
         }
         return node;
+    }
+
+    private static List<User> initUser(Element nodeElement, Node node){
+        List<User> users = null;
+        List<String> permissions = CollUtil.strToColl(nodeElement.attributeValue("permissionFlag"), ";");
+        if(CollUtil.isNotEmpty(permissions)){
+            users = new ArrayList<>();
+            for (String permission : permissions) {
+                User user = FlowFactory.newUser()
+                        .setType(UserType.PROPOSE.getKey())
+                        .setProcessedBy(permission)
+                        .setAssociated(node.getId());
+                FlowFactory.dataFillHandler().idFill(user);
+                users.add(user);
+            }
+        }
+        return users;
     }
 
     @SuppressWarnings("unchecked")
@@ -171,6 +196,8 @@ public class FlowConfigUtil {
         combine.setDefinition(definition);
         // 所有的流程节点
         List<Node> allNodes = combine.getAllNodes();
+        // 所有的流程节点权限人
+        List<User> allUsers = combine.getAllUsers();
         // 所有的流程连线
         List<Skip> allSkips = combine.getAllSkips();
 
@@ -182,8 +209,11 @@ public class FlowConfigUtil {
         definition.setUpdateTime(new Date());
         FlowFactory.dataFillHandler().idFill(definition);
 
-        List<Node> nodeList = definition.getNodeList();
+        // 处理节点权限人
+        List<User> userList = definition.getUserList();
+        allUsers.addAll(userList);
 
+        List<Node> nodeList = definition.getNodeList();
         // 每一个流程的开始节点个数
         int startNum = 0;
         Set<String> nodeCodeSet = new HashSet<String>();
@@ -291,7 +321,6 @@ public class FlowConfigUtil {
         }
         AssertUtil.isBlank(nodeCode, "[" + nodeName + "]" + ExceptionCons.LOST_NODE_CODE);
 
-        FlowFactory.dataFillHandler().idFill(node);
         node.setVersion(version);
         node.setDefinitionId(definitionId);
         node.setUpdateTime(new Date());
