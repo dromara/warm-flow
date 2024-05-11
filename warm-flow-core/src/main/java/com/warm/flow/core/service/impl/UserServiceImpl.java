@@ -46,6 +46,13 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
     }
 
     @Override
+    public List<User> setSkipUser(List<HisTask> hisTasks, List<Task> addTasks, FlowParams flowParams) {
+        // 删除已执行的代办任务的权限人
+        delUser(CollUtil.toList(flowParams.getTaskId()));
+        return setUser(hisTasks, addTasks, flowParams);
+    }
+
+    @Override
     public User hisTaskAddUser(HisTask hisTask, FlowParams flowParams) {
         User user = FlowFactory.newUser()
                         .setType(UserType.APPROVER.getKey())
@@ -59,7 +66,7 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
     public List<User> taskAddUser(Task task, FlowParams flowParams) {
         List<User> userList = new ArrayList<>();
         // 后去审批人权限集合
-        List<String> permissionList = CollUtil.strToColl(task.getPermissionFlag(), ";");
+        List<String> permissionList = task.getPermissionList();
         // 审批人权限不能为空
         AssertUtil.isTrue(CollUtil.isEmpty(permissionList), ExceptionCons.LOST_APPROVAL_PERMISSION);
         // 遍历权限集合，生成流程用户
@@ -81,7 +88,7 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
     }
 
     @Override
-    public void delUser(List<Long> taskIds) {
-        getDao().deleteByTaskIds(taskIds);
+    public void delUser(List<Long> Ids) {
+        getDao().deleteByTaskIds(Ids);
     }
 }

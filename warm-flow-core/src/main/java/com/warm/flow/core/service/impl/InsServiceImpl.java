@@ -133,8 +133,6 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
                 .setNodeCode(startNode.getNodeCode())
                 .setNodeName(startNode.getNodeName())
                 .setNodeType(startNode.getNodeType())
-                .setPermissionFlag(StringUtils.isNotEmpty(startNode.getDynamicPermissionFlag())
-                        ? startNode.getDynamicPermissionFlag() : startNode.getPermissionFlag())
                 .setFlowStatus(FlowStatus.PASS.getKey());
         FlowFactory.dataFillHandler().idFill(startTask);
         // 开始任务转历史任务

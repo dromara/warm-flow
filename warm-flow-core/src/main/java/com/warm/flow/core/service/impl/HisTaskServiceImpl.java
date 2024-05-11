@@ -48,7 +48,10 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
                     ? FlowStatus.REJECT.getKey() : FlowStatus.PASS.getKey());
             insHis.setMessage(flowParams.getMessage());
             insHis.setCreateTime(new Date());
+            FlowFactory.dataFillHandler().idFill(insHis);
             hisTasks.add(insHis);
+            // FlowParams 记录当前任务id，用于删除已处理待办任务的权限人
+            flowParams.setTaskId(task.getId());
         }
 
 

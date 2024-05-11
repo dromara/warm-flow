@@ -67,6 +67,7 @@ public class FlowNode implements Node {
     /**
      * 权限标识（权限类型:权限标识，可以多个，如role:1,role:2)
      */
+    @TableField(exist = false)
     private String permissionFlag;
     /**
      * 动态权限标识（权限类型:权限标识，可以多个，如role:1,role:2)

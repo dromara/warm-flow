@@ -130,12 +130,12 @@ public class FlowUser implements User{
     }
 
     @Override
-    public long getAssociated() {
+    public Long getAssociated() {
         return associated;
     }
 
     @Override
-    public FlowUser setAssociated(long associated) {
+    public FlowUser setAssociated(Long associated) {
         this.associated = associated;
         return this;
     }

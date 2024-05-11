@@ -38,7 +38,7 @@ public interface User extends RootEntity{
 
     public User setProcessedBy(String processedBy);
 
-    public long getAssociated();
+    public Long getAssociated();
 
-    public User setAssociated(long associated);
+    public User setAssociated(Long associated);
 }

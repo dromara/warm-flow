@@ -34,7 +34,7 @@ public class FlowNodeDaoImpl extends WarmDaoImpl<FlowNode> implements FlowNodeDa
     @Override
     public List<FlowNode> getByNodeCodes(List<String> nodeCodes, Long definitionId) {
         LambdaQueryWrapper<FlowNode> queryWrapper = TenantDeleteUtil.getLambdaWrapperDefault(newEntity());
-        queryWrapper.in(CollUtil.isEmpty(nodeCodes), FlowNode::getNodeCode, nodeCodes)
+        queryWrapper.in(CollUtil.isNotEmpty(nodeCodes), FlowNode::getNodeCode, nodeCodes)
                 .eq(FlowNode::getDefinitionId, definitionId);
         return getMapper().selectList(queryWrapper);
     }

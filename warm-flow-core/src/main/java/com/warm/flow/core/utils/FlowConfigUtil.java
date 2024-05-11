@@ -125,7 +125,7 @@ public class FlowConfigUtil {
 
     private static List<User> initUser(Element nodeElement, Node node){
         List<User> users = null;
-        List<String> permissions = CollUtil.strToColl(nodeElement.attributeValue("permissionFlag"), ";");
+        List<String> permissions = CollUtil.strToColl(nodeElement.attributeValue("permissionFlag"), ",");
         if(CollUtil.isNotEmpty(permissions)){
             users = new ArrayList<>();
             for (String permission : permissions) {

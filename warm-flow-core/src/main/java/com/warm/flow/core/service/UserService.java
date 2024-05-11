@@ -29,6 +29,17 @@ public interface UserService extends IWarmService<User> {
      */
     List<User> setUser(List<HisTask> hisTasks, List<Task> addTasks, FlowParams flowParams);
     /**
+     * 设置流程用户
+     *
+     * @param hisTasks 历史任务
+     * @param addTasks 代办任务
+     * @param flowParams 流程参数
+     * @return List<User>
+     * @author xiarg
+     * @date 2024/5/10 13:59
+     */
+    List<User> setSkipUser(List<HisTask> hisTasks, List<Task> addTasks, FlowParams flowParams);
+    /**
      * 流程定义设置流程计划审批用户
      *
      * @param allNodes 节点集合

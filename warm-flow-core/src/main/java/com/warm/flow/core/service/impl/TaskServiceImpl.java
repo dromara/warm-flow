@@ -94,7 +94,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         oneVoteVeto(task, flowParams.getSkipType(), nextNode.getNodeCode());
 
         // 历史任务 和 代办任务设置处理人
-        List<User> users = FlowFactory.userService().setUser(insHisList, addTasks, flowParams);
+        List<User> users = FlowFactory.userService().setSkipUser(insHisList, addTasks, flowParams);
 
         // 更新流程信息
         updateFlowInfo(task, instance, insHisList, addTasks, users);
@@ -131,12 +131,10 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 .setNodeCode(endNode.getNodeCode())
                 .setNodeName(endNode.getNodeName())
                 .setNodeType(endNode.getNodeType())
-                .setPermissionFlag(task.getPermissionFlag())
                 .setTenantId(task.getTenantId())
                 .setDefinitionId(task.getDefinitionId())
                 .setFlowStatus(FlowStatus.FINISHED.getKey())
                 .setCreateTime(new Date()));
-                // ??? .setApprover(flowParams.getCreateBy()));
         FlowFactory.hisTaskService().saveBatch(insHisList);
 
         // 流程实例完成
@@ -148,7 +146,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
         // 处理未完成的任务，当流程完成，还存在代办任务未完成，转历史任务，状态完成。
         handUndoneTask(instance, task.getId());
-
         return instance;
     }
 
@@ -226,17 +223,24 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         addTask.setNodeType(node.getNodeType());
         addTask.setFlowStatus(setFlowStatus(node.getNodeType(), flowParams.getSkipType()));
         addTask.setCreateTime(date);
-        String permissionFlag;
+        List<String> permissionList = null;
         if (StringUtils.isNotEmpty(node.getDynamicPermissionFlag())) {
-            permissionFlag = node.getDynamicPermissionFlag();
+            permissionList = CollUtil.strToColl(node.getDynamicPermissionFlag(), ",");
         } else {
-            permissionFlag = node.getPermissionFlag();
+            // 查询下一节点权限人
+            permissionList = FlowFactory.userService()
+                    .list(FlowFactory.newUser().setAssociated(node.getId()))
+                    .stream()
+                    .map(User::getProcessedBy)
+                    .collect(Collectors.toList());
             // 如果设置了发起人审批，则需要动态替换权限标识
-            if (StringUtils.isNotEmpty(permissionFlag) && permissionFlag.contains(FlowCons.WARMFLOWINITIATOR)) {
-                permissionFlag = permissionFlag.replace(FlowCons.WARMFLOWINITIATOR, instance.getCreateBy());
+            for (int i = 0; i < permissionList.size(); i++) {
+                if (StringUtils.isNotEmpty(permissionList.get(i)) && FlowCons.WARMFLOWINITIATOR.equals(permissionList.get(i))) {
+                    permissionList.set(i, instance.getCreateBy());
+                }
             }
         }
-        addTask.setPermissionFlag(permissionFlag);
+        addTask.setPermissionList(permissionList);
         addTask.setTenantId(flowParams.getTenantId());
         return addTask;
     }
