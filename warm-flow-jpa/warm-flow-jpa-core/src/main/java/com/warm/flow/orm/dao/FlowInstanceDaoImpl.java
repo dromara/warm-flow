@@ -1,20 +1,26 @@
 package com.warm.flow.orm.dao;
 
 import com.warm.flow.core.dao.FlowInstanceDao;
-import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.orm.entity.FlowInstance;
+
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 
 /**
  * 流程实例Mapper接口
  *
- * @author warm
- * @date 2023-03-29
+ * @author vanlin
+ * @date 2024-05-12
  */
 public class FlowInstanceDaoImpl extends WarmDaoImpl<FlowInstance> implements FlowInstanceDao<FlowInstance> {
-
-
     @Override
     public FlowInstance newEntity() {
         return new FlowInstance();
+    }
+
+    @Override
+    public Class<FlowInstance> entityClass() {
+        return FlowInstance.class;
     }
 }

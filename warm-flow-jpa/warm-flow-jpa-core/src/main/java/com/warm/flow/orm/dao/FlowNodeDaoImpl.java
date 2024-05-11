@@ -1,13 +1,16 @@
 package com.warm.flow.orm.dao;
 
-import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.dao.FlowNodeDao;
-import com.warm.flow.core.invoker.FrameInvoker;
+import com.warm.flow.orm.entity.FlowDefinition;
 import com.warm.flow.orm.entity.FlowNode;
-import com.warm.flow.orm.utils.TenantDeleteUtil;
-import com.warm.tools.utils.StringUtils;
 
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -15,15 +18,19 @@ import java.util.List;
 /**
  * 流程节点Mapper接口
  *
- * @author warm
- * @date 2023-03-29
+ * @author vanlin
+ * @date 2024-05-12
  */
 public class FlowNodeDaoImpl extends WarmDaoImpl<FlowNode> implements FlowNodeDao<FlowNode> {
-
 
     @Override
     public FlowNode newEntity() {
         return new FlowNode();
+    }
+
+    @Override
+    public Class<FlowNode> entityClass() {
+        return FlowNode.class;
     }
 
     @Override
@@ -47,4 +54,5 @@ public class FlowNodeDaoImpl extends WarmDaoImpl<FlowNode> implements FlowNodeDa
         return getMapper().deleteNodeByDefIds(defIds, entity);*/
         return 0;
     }
+
 }

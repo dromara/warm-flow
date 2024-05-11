@@ -2,10 +2,20 @@ package com.warm.flow.orm.entity;
 
 import com.warm.flow.core.entity.Definition;
 import com.warm.flow.core.entity.Node;
+import com.warm.flow.core.orm.agent.WarmQuery;
+import com.warm.flow.core.utils.AssertUtil;
+import com.warm.flow.orm.utils.JPAUtil;
+import com.warm.tools.utils.StringUtils;
 
 import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 流程定义对象 flow_definition
@@ -15,8 +25,43 @@ import java.util.List;
  */
 @Entity
 @Table(name = "flow_definition")
-public class FlowDefinition extends AbstractRootEntity<FlowDefinition> implements Definition {
+public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Definition {
 
+    public final static HashMap<String, String> MAPPING = new HashMap<>();
+
+    static {
+        JPAUtil.initMapping(FlowDefinition.class, MAPPING);
+        MAPPING.putAll(JPARootEntity.JPA_ROOT_ENTITY_MAPPING);
+    }
+
+    @Override
+    protected void customPredicates(CriteriaBuilder criteriaBuilder,
+                                  Root<FlowDefinition> root,
+                                  List<Predicate> predicates) {
+        if (StringUtils.isNotEmpty(this.flowCode)) {
+            predicates.add(criteriaBuilder.equal(root.get("flowCode"), this.flowCode));
+        }
+        if (StringUtils.isNotEmpty(this.flowName)) {
+            predicates.add(criteriaBuilder.equal(root.get("flowName"), this.flowName));
+        }
+        if (StringUtils.isNotEmpty(this.version)) {
+            predicates.add(criteriaBuilder.equal(root.get("version"), this.version));
+        }
+        if (Objects.nonNull(this.isPublish)) {
+            predicates.add(criteriaBuilder.equal(root.get("version"), this.isPublish));
+        }
+        if  (Objects.nonNull(this.fromCustom)) {
+            predicates.add(criteriaBuilder.equal(root.get("fromCustom"), this.fromCustom));
+        }
+        if (Objects.nonNull(this.fromPath)) {
+            predicates.add(criteriaBuilder.equal(root.get("fromPath"), this.fromPath));
+        }
+    }
+
+    @Override
+    protected String customOrderByField(String orderByColumn) {
+        return MAPPING.get(orderByColumn);
+    }
 
     /**
      * 流程编码
@@ -61,8 +106,6 @@ public class FlowDefinition extends AbstractRootEntity<FlowDefinition> implement
 
     @Transient
     private List<Node> nodeList = new ArrayList<>();
-
-
 
     @Override
     public String getFlowCode() {

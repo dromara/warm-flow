@@ -1,9 +1,18 @@
 package com.warm.flow.orm.entity;
 
 import com.warm.flow.core.entity.Skip;
+import com.warm.flow.core.orm.agent.WarmQuery;
+import com.warm.flow.orm.utils.JPAUtil;
+import com.warm.tools.utils.StringUtils;
 
 import javax.persistence.*;
-import java.util.Date;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * 节点跳转关联对象 flow_skip
@@ -13,7 +22,48 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "flow_skip")
-public class FlowSkip extends AbstractRootEntity<FlowSkip> implements Skip {
+public class FlowSkip extends JPARootEntity<FlowSkip> implements Skip {
+    public final static HashMap<String, String> MAPPING = new HashMap<>();
+
+    static {
+        JPAUtil.initMapping(FlowSkip.class, MAPPING);
+        MAPPING.putAll(JPARootEntity.JPA_ROOT_ENTITY_MAPPING);
+    }
+
+    @Override
+    protected void customPredicates(CriteriaBuilder criteriaBuilder,
+                                    Root<FlowSkip> root,
+                                    List<Predicate> predicates) {
+        if  (Objects.nonNull(this.definitionId)) {
+            predicates.add(criteriaBuilder.equal(root.get("definitionId"), this.definitionId));
+        }
+        if  (Objects.nonNull(this.nowNodeCode)) {
+            predicates.add(criteriaBuilder.equal(root.get("nowNodeCode"), this.nowNodeCode));
+        }
+        if  (Objects.nonNull(this.nowNodeType)) {
+            predicates.add(criteriaBuilder.equal(root.get("nowNodeType"), this.nowNodeType));
+        }
+        if (StringUtils.isNotEmpty(this.nextNodeCode)) {
+            predicates.add(criteriaBuilder.equal(root.get("nextNodeCode"), this.nextNodeCode));
+        }
+        if  (Objects.nonNull(this.nextNodeType)) {
+            predicates.add(criteriaBuilder.equal(root.get("nextNodeType"), this.nextNodeType));
+        }
+        if (StringUtils.isNotEmpty(this.skipName)) {
+            predicates.add(criteriaBuilder.equal(root.get("skipName"), this.skipName));
+        }
+        if (StringUtils.isNotEmpty(this.skipType)) {
+            predicates.add(criteriaBuilder.equal(root.get("skipType"), this.skipType));
+        }
+        if (StringUtils.isNotEmpty(this.skipCondition)) {
+            predicates.add(criteriaBuilder.equal(root.get("skipCondition"), this.skipCondition));
+        }
+    }
+
+    @Override
+    protected String customOrderByField(String orderByColumn) {
+        return MAPPING.get(orderByColumn);
+    }
 
     /**
      * 流程id

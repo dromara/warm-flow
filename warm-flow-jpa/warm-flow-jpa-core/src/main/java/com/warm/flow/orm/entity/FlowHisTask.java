@@ -1,10 +1,18 @@
 package com.warm.flow.orm.entity;
 
 import com.warm.flow.core.entity.HisTask;
+import com.warm.flow.core.orm.agent.WarmQuery;
+import com.warm.flow.orm.utils.JPAUtil;
+import com.warm.tools.utils.StringUtils;
 
 import javax.persistence.*;
-import java.util.Date;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 历史任务记录对象 flow_his_task
@@ -14,7 +22,55 @@ import java.util.List;
  */
 @Entity
 @Table(name = "flow_his_task")
-public class FlowHisTask extends AbstractRootEntity<FlowHisTask> implements HisTask {
+public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
+
+    public final static HashMap<String, String> MAPPING = new HashMap<>();
+
+    static {
+        JPAUtil.initMapping(FlowHisTask.class, MAPPING);
+        MAPPING.putAll(JPARootEntity.JPA_ROOT_ENTITY_MAPPING);
+    }
+
+    @Override
+    protected void customPredicates(CriteriaBuilder criteriaBuilder,
+                                    Root<FlowHisTask> root,
+                                    List<Predicate> predicates) {
+        if (StringUtils.isNotEmpty(this.nodeCode)) {
+            predicates.add(criteriaBuilder.equal(root.get("nodeCode"), this.nodeCode));
+        }
+        if (StringUtils.isNotEmpty(this.nodeName)) {
+            predicates.add(criteriaBuilder.equal(root.get("nodeName"), this.nodeName));
+        }
+        if (StringUtils.isNotEmpty(this.targetNodeCode)) {
+            predicates.add(criteriaBuilder.equal(root.get("targetNodeCode"), this.targetNodeCode));
+        }
+        if (StringUtils.isNotEmpty(this.targetNodeName)) {
+            predicates.add(criteriaBuilder.equal(root.get("targetNodeName"), this.targetNodeName));
+        }
+        if (StringUtils.isNotEmpty(this.approver)) {
+            predicates.add(criteriaBuilder.equal(root.get("targetNodeName"), this.approver));
+        }
+        if (Objects.nonNull(this.definitionId)) {
+            predicates.add(criteriaBuilder.equal(root.get("definitionId"), this.definitionId));
+        }
+        if (Objects.nonNull(this.instanceId)) {
+            predicates.add(criteriaBuilder.equal(root.get("instanceId"), this.instanceId));
+        }
+        if  (Objects.nonNull(this.flowStatus)) {
+            predicates.add(criteriaBuilder.equal(root.get("flowStatus"), this.flowStatus));
+        }
+        if  (Objects.nonNull(this.permissionFlag)) {
+            predicates.add(criteriaBuilder.equal(root.get("permissionFlag"), this.permissionFlag));
+        }
+        if (Objects.nonNull(this.message)) {
+            predicates.add(criteriaBuilder.equal(root.get("message"), this.message));
+        }
+    }
+
+    @Override
+    protected String customOrderByField(String orderByColumn) {
+        return MAPPING.get(orderByColumn);
+    }
 
     /**
      * 对应flow_definition表的id

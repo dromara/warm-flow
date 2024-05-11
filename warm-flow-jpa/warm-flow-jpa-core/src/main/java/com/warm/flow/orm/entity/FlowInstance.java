@@ -1,9 +1,18 @@
 package com.warm.flow.orm.entity;
 
 import com.warm.flow.core.entity.Instance;
+import com.warm.flow.core.orm.agent.WarmQuery;
+import com.warm.flow.orm.utils.JPAUtil;
+import com.warm.tools.utils.StringUtils;
 
 import javax.persistence.*;
-import java.util.Date;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * 流程实例对象 flow_instance
@@ -13,7 +22,48 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "flow_instance")
-public class FlowInstance extends AbstractRootEntity<FlowInstance> implements Instance {
+public class FlowInstance extends JPARootEntity<FlowInstance> implements Instance {
+    public final static HashMap<String, String> MAPPING = new HashMap<>();
+
+    static {
+        JPAUtil.initMapping(FlowInstance.class, MAPPING);
+        MAPPING.putAll(JPARootEntity.JPA_ROOT_ENTITY_MAPPING);
+    }
+
+    @Override
+    protected void customPredicates(CriteriaBuilder criteriaBuilder,
+                                    Root<FlowInstance> root,
+                                    List<Predicate> predicates) {
+        if (StringUtils.isNotEmpty(this.businessId)) {
+            predicates.add(criteriaBuilder.equal(root.get("businessId"), this.businessId));
+        }
+        if (StringUtils.isNotEmpty(this.nodeCode)) {
+            predicates.add(criteriaBuilder.equal(root.get("nodeCode"), this.nodeCode));
+        }
+        if (StringUtils.isNotEmpty(this.nodeName)) {
+            predicates.add(criteriaBuilder.equal(root.get("nodeName"), this.nodeName));
+        }
+        if (StringUtils.isNotEmpty(this.createBy)) {
+            predicates.add(criteriaBuilder.equal(root.get("createBy"), this.createBy));
+        }
+        if (Objects.nonNull(this.definitionId)) {
+            predicates.add(criteriaBuilder.equal(root.get("definitionId"), this.definitionId));
+        }
+        if (Objects.nonNull(this.variable)) {
+            predicates.add(criteriaBuilder.equal(root.get("variable"), this.variable));
+        }
+        if (Objects.nonNull(this.flowStatus)) {
+            predicates.add(criteriaBuilder.equal(root.get("flowStatus"), this.flowStatus));
+        }
+        if (Objects.nonNull(this.ext)) {
+            predicates.add(criteriaBuilder.equal(root.get("ext"), this.ext));
+        }
+    }
+
+    @Override
+    protected String customOrderByField(String orderByColumn) {
+        return MAPPING.get(orderByColumn);
+    }
 
     /**
      * 对应flow_definition表的id

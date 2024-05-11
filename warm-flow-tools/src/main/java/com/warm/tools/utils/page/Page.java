@@ -8,7 +8,7 @@ import java.util.List;
  * @description: 分页
  * @date: 2023/5/17 1:28
  */
-public class Page<T> {
+public class Page<T> implements OrderBy {
 
     /**
      * 当前记录起始索引
@@ -114,6 +114,7 @@ public class Page<T> {
         this.total = total;
     }
 
+    @Override
     public String getOrderBy() {
         return orderBy;
     }
@@ -123,6 +124,7 @@ public class Page<T> {
         return this;
     }
 
+    @Override
     public String getIsAsc() {
         return isAsc;
     }

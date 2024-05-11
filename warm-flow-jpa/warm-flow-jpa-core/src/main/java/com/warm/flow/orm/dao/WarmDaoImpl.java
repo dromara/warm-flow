@@ -2,14 +2,18 @@ package com.warm.flow.orm.dao;
 
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.dao.WarmDao;
-import com.warm.flow.core.entity.RootEntity;
 import com.warm.flow.core.handler.DataFillHandler;
 import com.warm.flow.core.orm.agent.WarmQuery;
+import com.warm.flow.orm.entity.JPARootEntity;
 import com.warm.flow.orm.utils.TenantDeleteUtil;
+import com.warm.tools.utils.CollUtil;
 import com.warm.tools.utils.ObjectUtil;
-import com.warm.tools.utils.StringUtils;
 import com.warm.tools.utils.page.Page;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
@@ -17,12 +21,17 @@ import java.util.List;
 /**
  * BaseMapper接口
  *
- * @author warm
- * @date 2023-03-17
+ * @author vanlin
+ * @date 2024-05-12
  */
-public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
+public abstract class WarmDaoImpl<T extends JPARootEntity<T>> implements WarmDao<T> {
+
+    @PersistenceContext(unitName = "warm-flow-jpa")
+    protected EntityManager entityManager;
 
     public abstract T newEntity();
+
+    public abstract Class<T> entityClass();
 
     /**
      * 根据id查询
@@ -32,8 +41,11 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
      */
     @Override
     public T selectById(Serializable id) {
-        //return getMapper().selectById(id, TenantDeleteUtil.getEntity(newEntity()));
-        return null;
+        final T entity = TenantDeleteUtil.getEntity(newEntity());
+        entity.setId((Long) id);
+        final CriteriaQuery<T> criteriaQuery = entity.criteriaQuery(entityManager, null);
+
+        return CollUtil.getOne(entityManager.createQuery(criteriaQuery).getResultList());
     }
 
     /**
@@ -44,65 +56,67 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
      */
     @Override
     public List<T> selectByIds(Collection<? extends Serializable> ids) {
-        //return getMapper().selectByIds(ids, TenantDeleteUtil.getEntity(newEntity()));
-        return null;
+        final T entity = TenantDeleteUtil.getEntity(newEntity());
+
+        final CriteriaQuery<T> criteriaQuery = entity.criteriaQuery(entityManager, null,
+                (criteriaBuilder, root, predicates) -> {
+                    predicates.add(criteriaBuilder.in(root.get("id").in(ids)));
+                });
+        return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
     @Override
     public Page<T> selectPage(T entity, Page<T> page) {
-        /*TenantDeleteUtil.getEntity(entity);
-        long total = getMapper().selectCount(entity);
-        if (total > 0) {
-            List<T> list = getMapper().selectList(entity, page, page.getOrderBy() + " " + page.getIsAsc());
-            return new Page<>(list, total);
+        TenantDeleteUtil.getEntity(entity);
+        final CriteriaQuery<Long> criteriaCountQuery = entity.criteriaCountQuery(entityManager, page);
+        Long total = entityManager.createQuery(criteriaCountQuery).getSingleResult();
+        if (ObjectUtil.isNotNull(total) && total > 0) {
+            final CriteriaQuery<T> criteriaQuery = entity.criteriaQuery(entityManager, page);
+            return new Page<>(entityManager.createQuery(criteriaQuery).getResultList(), total);
         }
-        return Page.empty();*/
-        return null;
+
+        return Page.empty();
     }
 
     @Override
     public List<T> selectList(T entity, WarmQuery<T> query) {
-        /*TenantDeleteUtil.getEntity(entity);
-        if (ObjectUtil.isNull(query)) {
-            return getMapper().selectList(entity, null, null);
-        }
-        return getMapper().selectList(entity, null, query.getOrderBy() + " " + query.getIsAsc());*/
-        return null;
+        TenantDeleteUtil.getEntity(entity);
+        final CriteriaQuery<T> criteriaQuery = entity.criteriaQuery(entityManager, query);
+
+        return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
     @Override
     public long selectCount(T entity) {
-        /*TenantDeleteUtil.getEntity(entity);
-        return getMapper().selectCount(entity);*/
-        return 0;
+        TenantDeleteUtil.getEntity(entity);
+        final CriteriaQuery<Long> criteriaCountQuery = entity.criteriaCountQuery(entityManager, null);
+        return entityManager.createQuery(criteriaCountQuery).getSingleResult();
     }
 
     @Override
     public int save(T entity) {
-       /* insertFill(entity);
-        return insert(entity);*/
-        return 0;
+        insertFill(entity);
+        entityManager.persist(entity);
+        return 1;
     }
 
     public int insert(T entity) {
-     /*   TenantDeleteUtil.getEntity(entity);
-        return getMapper().insert(entity);*/
-
-        return 0;
+        TenantDeleteUtil.getEntity(entity);
+        entityManager.persist(entity);
+        return 1;
     }
 
     @Override
     public int modifyById(T entity) {
-       /* updateFill(entity);
-        return updateById(entity);*/
-
-        return 0;
+        updateFill(entity);
+        entityManager.persist(entity);
+        return 1;
     }
 
     public int updateById(T entity) {
-        /*TenantDeleteUtil.getEntity(entity);
-        return getMapper().updateById(entity);*/
-        return 0;
+        TenantDeleteUtil.getEntity(entity);
+        entityManager.persist(entity);
+        return 1;
     }
 
     @Override

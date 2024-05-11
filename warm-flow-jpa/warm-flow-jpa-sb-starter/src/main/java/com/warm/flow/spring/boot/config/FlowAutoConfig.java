@@ -9,13 +9,19 @@ import com.warm.flow.core.service.impl.*;
 import com.warm.flow.orm.dao.*;
 import com.warm.flow.orm.invoker.EntityInvoker;
 import com.warm.flow.spring.boot.utils.SpringUtil;
+import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
+import javax.persistence.EntityManager;
+import javax.sql.DataSource;
 import java.util.Arrays;
 import java.util.List;
 
@@ -39,7 +45,6 @@ public class FlowAutoConfig {
     public DefService definitionService(FlowDefinitionDao definitionDao) {
         return new DefServiceImpl().setDao(definitionDao);
     }
-
 
     @Bean
     public FlowNodeDao nodeDao() {
@@ -89,6 +94,18 @@ public class FlowAutoConfig {
     @Bean
     public HisTaskService hisTaskService(FlowHisTaskDao hisTaskDao) {
         return new HisTaskServiceImpl().setDao(hisTaskDao);
+    }
+
+    @Bean(name="entityManagerFactoryWarmFlow")
+    public LocalContainerEntityManagerFactoryBean primaryEntityManagerFactory(DataSource dataSource, JpaProperties jpaProperties) {
+        LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
+        factory.setDataSource(dataSource);
+        factory.setJpaPropertyMap(jpaProperties.getProperties());
+        factory.setPackagesToScan("com.warm.flow.orm.entity");
+        factory.setPersistenceProviderClass(HibernatePersistenceProvider.class);
+        factory.setPersistenceUnitName("warm-flow-jpa");
+        factory.afterPropertiesSet();
+        return factory;
     }
 
     @Bean

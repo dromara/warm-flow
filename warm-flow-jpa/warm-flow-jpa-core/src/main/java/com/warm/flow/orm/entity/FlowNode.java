@@ -2,10 +2,19 @@ package com.warm.flow.orm.entity;
 
 import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.Skip;
+import com.warm.flow.core.orm.agent.WarmQuery;
+import com.warm.flow.orm.utils.JPAUtil;
+import com.warm.tools.utils.StringUtils;
 
 import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 流程节点对象 flow_node
@@ -15,11 +24,54 @@ import java.util.List;
  */
 @Entity
 @Table(name = "flow_node")
-@NamedQueries({
-        @NamedQuery(name = "FlowNode.selectById", query = "SELECT u FROM FlowNode u WHERE u.id = ?1")
+public class FlowNode extends JPARootEntity<FlowNode> implements Node {
+    public final static HashMap<String, String> MAPPING = new HashMap<>();
 
-})
-public class FlowNode extends AbstractRootEntity<FlowNode> implements Node {
+    static {
+        JPAUtil.initMapping(FlowNode.class, MAPPING);
+        MAPPING.putAll(JPARootEntity.JPA_ROOT_ENTITY_MAPPING);
+    }
+
+    @Override
+    protected void customPredicates(CriteriaBuilder criteriaBuilder,
+                                    Root<FlowNode> root,
+                                    List<Predicate> predicates) {
+        if  (Objects.nonNull(this.nodeType)) {
+            predicates.add(criteriaBuilder.equal(root.get("nodeType"), this.nodeType));
+        }
+        if  (Objects.nonNull(this.definitionId)) {
+            predicates.add(criteriaBuilder.equal(root.get("definitionId"), this.definitionId));
+        }
+        if (StringUtils.isNotEmpty(this.nodeCode)) {
+            predicates.add(criteriaBuilder.equal(root.get("nodeCode"), this.nodeCode));
+        }
+        if (StringUtils.isNotEmpty(this.nodeName)) {
+            predicates.add(criteriaBuilder.equal(root.get("nodeName"), this.nodeName));
+        }
+        if (StringUtils.isNotEmpty(this.permissionFlag)) {
+            predicates.add(criteriaBuilder.equal(root.get("permissionFlag"), this.permissionFlag));
+        }
+        if (StringUtils.isNotEmpty(this.coordinate)) {
+            predicates.add(criteriaBuilder.equal(root.get("coordinate"), this.coordinate));
+        }
+        if (StringUtils.isNotEmpty(this.skipAnyNode)) {
+            predicates.add(criteriaBuilder.equal(root.get("skipAnyNode"), this.skipAnyNode));
+        }
+        if (StringUtils.isNotEmpty(this.listenerType)) {
+            predicates.add(criteriaBuilder.equal(root.get("listenerType"), this.listenerType));
+        }
+        if (StringUtils.isNotEmpty(this.listenerPath)) {
+            predicates.add(criteriaBuilder.equal(root.get("listenerPath"), this.listenerPath));
+        }
+        if (StringUtils.isNotEmpty(this.version)) {
+            predicates.add(criteriaBuilder.equal(root.get("version"), this.version));
+        }
+    }
+
+    @Override
+    protected String customOrderByField(String orderByColumn) {
+        return MAPPING.get(orderByColumn);
+    }
 
     /**
      * 跳转条件
