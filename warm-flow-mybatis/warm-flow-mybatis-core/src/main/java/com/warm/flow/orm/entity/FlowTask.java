@@ -242,28 +242,6 @@ public class FlowTask implements Task {
     }
 
     @Override
-    public String getApprover() {
-        return approver;
-    }
-
-    @Override
-    public FlowTask setApprover(String approver) {
-        this.approver = approver;
-        return this;
-    }
-
-    @Override
-    public String getAssignee() {
-        return assignee;
-    }
-
-    @Override
-    public FlowTask setAssignee(String assignee) {
-        this.assignee = assignee;
-        return this;
-    }
-
-    @Override
     public Integer getFlowStatus() {
         return flowStatus;
     }

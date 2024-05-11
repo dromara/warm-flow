@@ -84,9 +84,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 设置流程历史任务信息
         List<HisTask> insHisList = FlowFactory.hisTaskService().setSkipInsHis(task, nextNodes, flowParams);
 
-        // 历史任务 和 代办任务设置处理人
-        List<User> users = FlowFactory.userService().setUser(insHisList, addTasks, flowParams);
-
         // 设置结束节点相关信息
         setEndInfo(instance, addTasks, flowParams, insHisList, task);
 
@@ -95,6 +92,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
         // 一票否决（谨慎使用），如果退回，退回指向节点后还存在其他正在执行的代办任务，转历史任务，状态都为失效,重走流程。
         oneVoteVeto(task, flowParams.getSkipType(), nextNode.getNodeCode());
+
+        // 历史任务 和 代办任务设置处理人
+        List<User> users = FlowFactory.userService().setUser(insHisList, addTasks, flowParams);
 
         // 更新流程信息
         updateFlowInfo(task, instance, insHisList, addTasks, users);
@@ -443,9 +443,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                             .setTenantId(addTask.getTenantId())
                             .setDefinitionId(addTask.getDefinitionId())
                             .setFlowStatus(FlowStatus.FINISHED.getKey())
-                            .setCreateTime(new Date())
-                            // ??? .setApprover(flowParams.getCreateBy())
-                            ;
+                            .setCreateTime(new Date());
                     insHisList.add(insHis);
                     instance.setNodeType(addTask.getNodeType());
                     instance.setNodeCode(addTask.getNodeCode());

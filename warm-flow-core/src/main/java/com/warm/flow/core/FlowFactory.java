@@ -93,7 +93,10 @@ public class FlowFactory {
     }
 
     public static UserService userService() {
-        return userService;
+        if (ObjectUtil.isNotNull(userService)) {
+            return userService;
+        }
+        return userService = FrameInvoker.getBean(UserService.class);
     }
 
     public static void setNewDef(Supplier<Definition> supplier) {

@@ -27,4 +27,22 @@
         from flow_user t
     </sql>
 
+    <delete id="deleteByTaskIds">
+        delete from flow_user where associated in
+        <foreach item="taskId" collection="taskIds" open="(" separator="," close=")">
+            #{taskId}
+        </foreach>
+    </delete>
+
+    <update id="updateByTaskIdsLogic">
+        update flow_user t
+        set t.del_flag = #{logicDeleteValue}
+        where t.associated in
+        <foreach item="taskId" collection="taskIds" open="(" separator="," close=")">
+            #{taskId}
+        </foreach>
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag = #{logicNotDeleteValue}</if>
+    </update>
+
 </mapper>
