@@ -27,6 +27,164 @@
         from flow_user t
     </sql>
 
+    <sql id="paging_end">
+        <if test="page !=null and page.pageNum != null and page.pageSize != null">LIMIT
+            #{page.pageNum},#{page.pageSize}
+        </if>
+    </sql>
+
+    <sql id="order_by">
+        <if test="order != null and order != ''">order by ${order}</if>
+    </sql>
+
+    <sql id="select_parameter">
+        <where>
+            <if test="entity.id != null">and t.id = #{entity.id}</if>
+            <if test="entity.type != null  and entity.type != ''">and t.type = #{entity.type}</if>
+            <if test="entity.processedBy != null  and entity.processedBy != ''">and t.processed_by = #{entity.processedBy}</if>
+            <if test="entity.associated != null">and t.associated = #{entity.associated}</if>
+            <if test="entity.createTime != null">and t.create_time = #{entity.createTime}</if>
+            <if test="entity.updateTime != null">and t.update_time = #{entity.updateTime}</if>
+            <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+            <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
+        </where>
+    </sql>
+
+    <select id="selectList" parameterType="com.warm.flow.orm.entity.FlowUser" resultMap="FlowUserResult">
+        <include refid="selectVo"/>
+        <include refid="select_parameter"/>
+        <include refid="order_by"/>
+        <include refid="paging_end"/>
+    </select>
+
+    <select id="selectByIds" resultMap="FlowUserResult">
+        <include refid="selectVo"/>
+        where t.id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+    </select>
+
+    <select id="selectById" resultMap="FlowUserResult">
+        <include refid="selectVo"/>
+        where t.id = #{id}
+        <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+    </select>
+
+    <select id="selectCount" parameterType="com.warm.flow.orm.entity.FlowUser" resultType="java.lang.Long">
+        select count(*) from flow_user t
+        <include refid="select_parameter"/>
+    </select>
+
+    <insert id="insert" parameterType="com.warm.flow.orm.entity.FlowUser">
+        insert into flow_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="type != null and type != ''">type,</if>
+            <if test="processedBy != null and processedBy != ''">processed_by,</if>
+            <if test="associated != null">associated,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null and delFlag != ''">del_flag,</if>
+            <if test="tenantId != null and tenantId != ''">tenant_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="type != null and type != ''">#{type},</if>
+            <if test="processedBy != null and processedBy != ''">#{processedBy},</if>
+            <if test="associated != null">#{associated},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null and delFlag != ''">#{delFlag},</if>
+            <if test="tenantId != null and tenantId != ''">#{tenantId},</if>
+        </trim>
+    </insert>
+
+    <update id="updateById" parameterType="com.warm.flow.orm.entity.FlowUser">
+        update flow_user t
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="type != null and type != ''">t.type = #{type},</if>
+            <if test="processedBy != null and processedBy != ''">t.processed_by = #{processedBy},</if>
+            <if test="associated != null">t.associated = #{associated},</if>
+            <if test="createTime != null">t.create_time = #{createTime},</if>
+            <if test="updateTime != null">t.update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+        <if test="delFlag != null  and delFlag != ''">and del_flag = #{delFlag}</if>
+        <if test="tenantId != null  and tenantId != ''">and tenant_id = #{tenantId}</if>
+    </update>
+
+    <delete id="deleteById">
+        delete
+        from flow_user
+        where id = #{id}
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and tenant_id = #{entity.tenantId}</if>
+    </delete>
+
+    <update id="updateByIdLogic">
+        update flow_user t
+        set t.del_flag = #{logicDeleteValue}
+        where t.id = #{id}
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag = #{logicNotDeleteValue}</if>
+    </update>
+
+    <delete id="deleteByIds">
+        delete from flow_user where id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and tenant_id = #{entity.tenantId}</if>
+    </delete>
+
+    <update id="updateByIdsLogic">
+        update flow_user t
+        set t.del_flag = #{logicDeleteValue}
+        where t.id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag = #{logicNotDeleteValue}</if>
+    </update>
+
+    <delete id="delete" parameterType="com.warm.flow.orm.entity.FlowUser">
+        delete from flow_task t
+        <where>
+            <if test="id != null">and t.id = #{id}</if>
+            <if test="type != null  and type != ''">and t.type = #{type}</if>
+            <if test="processedBy != null  and processedBy != ''">and t.processed_by = #{processedBy}</if>
+            <if test="associated != null">and t.associated = #{associated}</if>
+            <if test="createTime != null">and t.create_time = #{createTime}</if>
+            <if test="updateTime != null">and t.update_time = #{updateTime}</if>
+            <if test="tenantId != null  and tenantId != ''">and t.tenant_id = #{tenantId}</if>
+            <if test="delFlag != null  and delFlag != ''">and t.del_flag = #{delFlag}</if>
+        </where>
+    </delete>
+
+    <update id="updateLogic">
+        update flow_task t
+        set t.del_flag = #{logicDeleteValue}
+        <where>
+            <if test="entity.id != null">and t.id = #{entity.id}</if>
+            <if test="entity.nodeCode != null  and entity.nodeCode != ''">and t.node_code = #{entity.nodeCode}</if>
+            <if test="entity.nodeName != null  and entity.nodeName != ''">and t.node_name = #{entity.nodeName}</if>
+            <if test="entity.nodeType != null">and t.node_type = #{entity.nodeCode}</if>
+            <if test="entity.approver != null  and entity.approver != ''">and t.approver = #{entity.approver}</if>
+            <if test="entity.definitionId != null ">and t.definition_id = #{entity.definitionId}</if>
+            <if test="entity.instanceId != null ">and t.instance_id = #{entity.instanceId}</if>
+            <if test="entity.flowStatus != null">and t.flow_status = #{entity.flowStatus}</if>
+            <if test="entity.permissionFlag != null">and t.permission_flag = #{entity.permissionFlag}</if>
+            <if test="entity.createTime != null">and t.create_time = #{entity.createTime}</if>
+            <if test="entity.updateTime != null">and t.update_time = #{entity.updateTime}</if>
+            <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+            <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
+        </where>
+    </update>
+
     <delete id="deleteByTaskIds">
         delete from flow_user where associated in
         <foreach item="taskId" collection="taskIds" open="(" separator="," close=")">
