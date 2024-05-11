@@ -23,10 +23,19 @@ SELECT
     substring_index( substring_index( a.permission_flag, ',', b.help_topic_id + 1 ), ',', - 1 ),
     a.create_time,a.update_time,a.del_flag,a.tenant_id
 FROM (select id,permission_flag,create_time,update_time,del_flag,tenant_id from flow_task) a
-     INNER JOIN mysql.help_topic b
-            ON b.help_topic_id < (length( a.permission_flag ) - length(REPLACE ( a.permission_flag, ',', '' )) + 1)
-     left join (Select (@rowNum :=0) ) c ON 1=1;
+INNER JOIN mysql.help_topic b
+    ON b.help_topic_id < (length( a.permission_flag ) - length(REPLACE ( a.permission_flag, ',', '' )) + 1)
+left join (Select (@rowNum :=0) ) c ON 1=1;
 -- flow_node 节点历史数据迁移脚本sql
+insert into `flow_user` (id,type,associated,processed_by,create_time,update_time,del_flag,tenant_id)
+SELECT
+    a.id+CONVERT((@rowNum:=@rowNum+1),SIGNED),'5',a.id,
+    substring_index( substring_index( a.permission_flag, ',', b.help_topic_id + 1 ), ',', - 1 ),
+    a.create_time,a.update_time,a.del_flag,a.tenant_id
+FROM (select id,permission_flag,create_time,update_time,del_flag,tenant_id from flow_node) a
+INNER JOIN mysql.help_topic b
+    ON b.help_topic_id < (length( a.permission_flag ) - length(REPLACE ( a.permission_flag, ',', '' )) + 1)
+left join (Select (@rowNum :=0) ) c ON 1=1;
 
 -- 去掉 flow_task 表废弃字段sql
 ALTER TABLE `flow_task` DROP COLUMN approver;
