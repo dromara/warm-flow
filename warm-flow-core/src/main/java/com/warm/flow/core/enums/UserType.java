@@ -11,7 +11,8 @@ public enum UserType {
     APPROVAL("1", "审批人权限"),
     ASSIGNEE("2", "转办人权限"),
     CARBON("3", "抄送人权限"),
-    APPROVER("4", "已审批人");
+    APPROVER("4", "已审批人"),
+    PROPOSE("5", "计划审批人");
 
     private String key;
     private String value;
