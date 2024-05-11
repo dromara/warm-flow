@@ -43,11 +43,12 @@
         <module>warm-flow-tools</module>
         <module>warm-flow-mybatis</module>
         <module>warm-flow-mybatis-plus</module>
+        <module>warm-flow-jpa</module>
         <module>warm-flow-test</module>
     </modules>
 
     <properties>
-        <revision>1.1.90</revision>
+        <revision>1.1.90-SNAPSHOT</revision>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -171,6 +172,18 @@
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-mybatis-plus-solon-plugin</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.minliuhua</groupId>
+                <artifactId>warm-flow-jpa-core</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.minliuhua</groupId>
+                <artifactId>warm-flow-jpa-sb-starter</artifactId>
                 <version>${revision}</version>
             </dependency>
 
