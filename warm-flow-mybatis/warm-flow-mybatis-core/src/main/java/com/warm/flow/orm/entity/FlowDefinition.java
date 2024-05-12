@@ -2,6 +2,7 @@ package com.warm.flow.orm.entity;
 
 import com.warm.flow.core.entity.Definition;
 import com.warm.flow.core.entity.Node;
+import com.warm.flow.core.entity.User;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -76,6 +77,11 @@ public class FlowDefinition implements Definition {
     private String xmlString;
 
     private List<Node> nodeList = new ArrayList<>();
+
+    /**
+     * 流程权限人
+     */
+    private List<User> userList = new ArrayList<>();
 
     @Override
     public Long getId() {
@@ -221,11 +227,24 @@ public class FlowDefinition implements Definition {
     }
 
     @Override
+    public List<User> getUserList() {
+        return userList;
+    }
+
+    @Override
+    public Definition setUserList(List<User> userList) {
+        this.userList = userList;
+        return this;
+    }
+
+    @Override
     public String toString() {
         return "FlowDefinition{" +
                 "id=" + id +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
+                ", tenantId='" + tenantId + '\'' +
+                ", delFlag='" + delFlag + '\'' +
                 ", flowCode='" + flowCode + '\'' +
                 ", flowName='" + flowName + '\'' +
                 ", version='" + version + '\'' +
@@ -234,6 +253,7 @@ public class FlowDefinition implements Definition {
                 ", fromPath='" + fromPath + '\'' +
                 ", xmlString='" + xmlString + '\'' +
                 ", nodeList=" + nodeList +
+                ", userList=" + userList +
                 '}';
     }
 }
