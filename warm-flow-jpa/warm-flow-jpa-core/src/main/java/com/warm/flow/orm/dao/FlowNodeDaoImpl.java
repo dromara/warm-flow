@@ -1,18 +1,20 @@
 package com.warm.flow.orm.dao;
 
+import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.dao.FlowNodeDao;
 import com.warm.flow.orm.entity.FlowDefinition;
+import com.warm.flow.orm.entity.FlowHisTask;
 import com.warm.flow.orm.entity.FlowNode;
+import com.warm.flow.orm.utils.TenantDeleteUtil;
+import com.warm.tools.utils.StringUtils;
 
 import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -35,8 +37,15 @@ public class FlowNodeDaoImpl extends WarmDaoImpl<FlowNode> implements FlowNodeDa
 
     @Override
     public List<FlowNode> getByNodeCodes(List<String> nodeCodes, Long definitionId) {
-//        return getMapper().getByNodeCodes(nodeCodes, definitionId, TenantDeleteUtil.getEntity(newEntity()));
-        return null;
+        FlowNode entity = TenantDeleteUtil.getEntity(newEntity());
+
+        final CriteriaQuery<FlowNode> criteriaQuery = createCriteriaQuery((criteriaBuilder, root, predicates, innerCriteriaQuery) -> {
+            entity.commonPredicate().process(criteriaBuilder, root, predicates);
+
+            predicates.add(criteriaBuilder.equal(root.get("definitionId"), definitionId));
+            predicates.add(criteriaBuilder.in(root.get("nodeCode").in(nodeCodes)));
+        });
+        return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
     /**
@@ -47,12 +56,29 @@ public class FlowNodeDaoImpl extends WarmDaoImpl<FlowNode> implements FlowNodeDa
      */
     @Override
     public int deleteNodeByDefIds(Collection<? extends Serializable> defIds) {
-       /* FlowNode entity = TenantDeleteUtil.getEntity(newEntity());
+        FlowNode entity = TenantDeleteUtil.getEntity(newEntity());
         if (StringUtils.isNotEmpty(entity.getDelFlag())) {
-            getMapper().updateNodeByDefIdsLogic(defIds, entity, FlowFactory.getFlowConfig().getLogicDeleteValue(), entity.getDelFlag());
+            CriteriaUpdate<FlowNode> criteriaUpdate = createCriteriaUpdate((criteriaBuilder, root, predicates, innerCriteriaUpdate) -> {
+
+                entity.commonPredicate().process(criteriaBuilder, root, predicates);
+
+                predicates.add(criteriaBuilder.in(root.get("definitionId").in(defIds)));
+
+                // 更新值
+                innerCriteriaUpdate.set(root.get("delFlag"),  FlowFactory.getFlowConfig().getLogicDeleteValue());
+            });
+
+            return entityManager.createQuery(criteriaUpdate).executeUpdate();
+        } else {
+            CriteriaDelete<FlowNode> criteriaDelete = createCriteriaDelete((criteriaBuilder, root, predicates) -> {
+                predicates.add(criteriaBuilder.in(root.get("definitionId").in(defIds)));
+
+                if (Objects.nonNull(entity.getTenantId())) {
+                    predicates.add(criteriaBuilder.equal(root.get("tenantId"), entity.getTenantId()));
+                }
+            });
+            return entityManager.createQuery(criteriaDelete).executeUpdate();
         }
-        return getMapper().deleteNodeByDefIds(defIds, entity);*/
-        return 0;
     }
 
 }

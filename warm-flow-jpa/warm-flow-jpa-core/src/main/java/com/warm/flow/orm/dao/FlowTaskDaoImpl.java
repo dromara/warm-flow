@@ -1,12 +1,19 @@
 package com.warm.flow.orm.dao;
 
+import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.dao.FlowTaskDao;
+import com.warm.flow.orm.entity.FlowSkip;
 import com.warm.flow.orm.entity.FlowTask;
+import com.warm.flow.orm.utils.TenantDeleteUtil;
+import com.warm.tools.utils.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.CriteriaUpdate;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 待办任务Mapper接口
@@ -34,12 +41,29 @@ public class FlowTaskDaoImpl extends WarmDaoImpl<FlowTask> implements FlowTaskDa
      */
     @Override
     public int deleteByInsIds(List<Long> instanceIds) {
-       /* FlowTask entity = TenantDeleteUtil.getEntity(newEntity());
+        FlowTask entity = TenantDeleteUtil.getEntity(newEntity());
         if (StringUtils.isNotEmpty(entity.getDelFlag())) {
-            getMapper().updateByInsIdsLogic(instanceIds, entity, FlowFactory.getFlowConfig().getLogicDeleteValue(), entity.getDelFlag());
+            CriteriaUpdate<FlowTask> criteriaUpdate = createCriteriaUpdate((criteriaBuilder, root, predicates, innerCriteriaUpdate) -> {
+
+                entity.commonPredicate().process(criteriaBuilder, root, predicates);
+
+                predicates.add(criteriaBuilder.in(root.get("instanceId").in(instanceIds)));
+
+                // 更新值
+                innerCriteriaUpdate.set(root.get("delFlag"),  FlowFactory.getFlowConfig().getLogicDeleteValue());
+            });
+
+            return entityManager.createQuery(criteriaUpdate).executeUpdate();
+        } else {
+            CriteriaDelete<FlowTask> criteriaDelete = createCriteriaDelete((criteriaBuilder, root, predicates) -> {
+                predicates.add(criteriaBuilder.in(root.get("instanceId").in(instanceIds)));
+
+                if (Objects.nonNull(entity.getTenantId())) {
+                    predicates.add(criteriaBuilder.equal(root.get("tenantId"), entity.getTenantId()));
+                }
+            });
+            return entityManager.createQuery(criteriaDelete).executeUpdate();
         }
-        return getMapper().deleteByInsIds(instanceIds, entity);*/
-        return 0;
     }
 
 }

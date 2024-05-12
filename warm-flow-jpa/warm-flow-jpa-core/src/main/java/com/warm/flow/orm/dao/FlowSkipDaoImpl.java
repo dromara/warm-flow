@@ -1,13 +1,20 @@
 package com.warm.flow.orm.dao;
 
+import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.dao.FlowSkipDao;
+import com.warm.flow.orm.entity.FlowNode;
 import com.warm.flow.orm.entity.FlowSkip;
+import com.warm.flow.orm.utils.TenantDeleteUtil;
+import com.warm.tools.utils.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.CriteriaUpdate;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * 节点跳转关联Mapper接口
@@ -35,13 +42,29 @@ public class FlowSkipDaoImpl extends WarmDaoImpl<FlowSkip> implements FlowSkipDa
      */
     @Override
     public int deleteSkipByDefIds(Collection<? extends Serializable> defIds) {
-       /* FlowSkip entity = TenantDeleteUtil.getEntity(newEntity());
+        FlowSkip entity = TenantDeleteUtil.getEntity(newEntity());
         if (StringUtils.isNotEmpty(entity.getDelFlag())) {
-            getMapper().updateSkipByDefIdsLogic(defIds, entity, FlowFactory.getFlowConfig().getLogicDeleteValue(), entity.getDelFlag());
-        }
-        return getMapper().deleteSkipByDefIds(defIds, entity);*/
+            CriteriaUpdate<FlowSkip> criteriaUpdate = createCriteriaUpdate((criteriaBuilder, root, predicates, innerCriteriaUpdate) -> {
 
-        return 0;
+                entity.commonPredicate().process(criteriaBuilder, root, predicates);
+
+                predicates.add(criteriaBuilder.in(root.get("definitionId").in(defIds)));
+
+                // 更新值
+                innerCriteriaUpdate.set(root.get("delFlag"),  FlowFactory.getFlowConfig().getLogicDeleteValue());
+            });
+
+            return entityManager.createQuery(criteriaUpdate).executeUpdate();
+        } else {
+            CriteriaDelete<FlowSkip> criteriaDelete = createCriteriaDelete((criteriaBuilder, root, predicates) -> {
+                predicates.add(criteriaBuilder.in(root.get("definitionId").in(defIds)));
+
+                if (Objects.nonNull(entity.getTenantId())) {
+                    predicates.add(criteriaBuilder.equal(root.get("tenantId"), entity.getTenantId()));
+                }
+            });
+            return entityManager.createQuery(criteriaDelete).executeUpdate();
+        }
     }
 
 }

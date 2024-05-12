@@ -45,7 +45,7 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
                     predicates.add(criteriaBuilder.equal(root.get("version"), this.version));
                 }
                 if (Objects.nonNull(this.isPublish)) {
-                    predicates.add(criteriaBuilder.equal(root.get("version"), this.isPublish));
+                    predicates.add(criteriaBuilder.equal(root.get("isPublish"), this.isPublish));
                 }
                 if  (Objects.nonNull(this.fromCustom)) {
                     predicates.add(criteriaBuilder.equal(root.get("fromCustom"), this.fromCustom));

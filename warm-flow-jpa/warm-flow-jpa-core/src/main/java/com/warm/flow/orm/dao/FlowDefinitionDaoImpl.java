@@ -2,12 +2,10 @@ package com.warm.flow.orm.dao;
 
 import com.warm.flow.core.dao.FlowDefinitionDao;
 import com.warm.flow.orm.entity.FlowDefinition;
+import com.warm.flow.orm.utils.TenantDeleteUtil;
 
 import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,12 +29,29 @@ public class FlowDefinitionDaoImpl extends WarmDaoImpl<FlowDefinition> implement
 
     @Override
     public List<FlowDefinition> queryByCodeList(List<String> flowCodeList) {
-//        return getMapper().queryByCodeList(flowCodeList, TenantDeleteUtil.getEntity(newEntity()));
-        return null;
+        final FlowDefinition entity = TenantDeleteUtil.getEntity(newEntity());
+
+        final CriteriaQuery<FlowDefinition> criteriaQuery = createCriteriaQuery((criteriaBuilder, root, predicates, innerCriteriaQuery) -> {
+            entity.commonPredicate().process(criteriaBuilder, root, predicates);
+
+            predicates.add(criteriaBuilder.in(root.get("flowCode").in(flowCodeList)));
+        });
+        return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
     public void closeFlowByCodeList(List<String> flowCodeList) {
-//        getMapper().closeFlowByCodeList(flowCodeList, TenantDeleteUtil.getEntity(newEntity()));
+        final FlowDefinition entity = TenantDeleteUtil.getEntity(newEntity());
+
+        final CriteriaUpdate<FlowDefinition> criteriaUpdate = createCriteriaUpdate((criteriaBuilder, root, predicates, innerCriteriaUpdate) -> {
+            entity.commonPredicate().process(criteriaBuilder, root, predicates);
+
+            predicates.add(criteriaBuilder.in(root.get("flowCode").in(flowCodeList)));
+
+            // 是否发布（0未发布 1已发布 9失效）
+            innerCriteriaUpdate.set(root.get("isPublish"), 9);
+        });
+
+        entityManager.createQuery(criteriaUpdate).executeUpdate();
     }
 
 }

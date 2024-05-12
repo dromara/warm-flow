@@ -154,13 +154,24 @@ public abstract class WarmDaoImpl<T extends JPARootEntity<T>> implements WarmDao
 
     @Override
     public int delete(T entity) {
-        /*TenantDeleteUtil.getEntity(entity);
         if (StringUtils.isNotEmpty(entity.getDelFlag())) {
-            getMapper().updateLogic(entity, FlowFactory.getFlowConfig().getLogicDeleteValue(), entity.getDelFlag());
-        }
-        return getMapper().delete(entity);*/
+            CriteriaUpdate<T> criteriaUpdate = createCriteriaUpdate((criteriaBuilder, root, predicates, innerCriteriaUpdate) -> {
+                entity.commonPredicate().process(criteriaBuilder, root, predicates);
+                entity.entityPredicate().process(criteriaBuilder, root, predicates);
 
-        return 0;
+                // 更新值
+                innerCriteriaUpdate.set(root.get("delFlag"), FlowFactory.getFlowConfig().getLogicDeleteValue());
+            });
+
+            return entityManager.createQuery(criteriaUpdate).executeUpdate();
+        } else {
+            CriteriaDelete<T> criteriaDelete = createCriteriaDelete((criteriaBuilder, root, predicates) -> {
+                entity.commonPredicate().process(criteriaBuilder, root, predicates);
+                entity.entityPredicate().process(criteriaBuilder, root, predicates);
+            });
+
+            return entityManager.createQuery(criteriaDelete).executeUpdate();
+        }
     }
 
     @Override
@@ -175,7 +186,7 @@ public abstract class WarmDaoImpl<T extends JPARootEntity<T>> implements WarmDao
                 }
 
                 // 更新值
-                innerCriteriaUpdate.set(root.get("delFlag"), entity.getDelFlag());
+                innerCriteriaUpdate.set(root.get("delFlag"), FlowFactory.getFlowConfig().getLogicDeleteValue());
             });
 
             return entityManager.createQuery(criteriaUpdate).executeUpdate();
@@ -203,7 +214,7 @@ public abstract class WarmDaoImpl<T extends JPARootEntity<T>> implements WarmDao
                 }
 
                 // 更新值
-                innerCriteriaUpdate.set(root.get("delFlag"), entity.getDelFlag());
+                innerCriteriaUpdate.set(root.get("delFlag"), FlowFactory.getFlowConfig().getLogicDeleteValue());
             });
 
             return entityManager.createQuery(criteriaUpdate).executeUpdate();
@@ -220,7 +231,7 @@ public abstract class WarmDaoImpl<T extends JPARootEntity<T>> implements WarmDao
         }
     }
 
-    protected CriteriaQuery<T> createCriteriaQuery(JPAOrderByQueryFunction<CriteriaBuilder, Root<T>, List<Predicate>, CriteriaQuery<T>> JPAOrderByQueryFunction) {
+    protected CriteriaQuery<T> createCriteriaQuery(JPAOrderByQueryFunction<CriteriaBuilder, Root<T>, List<Predicate>, CriteriaQuery<T>> orderByQueryFunction) {
         final Class<T> entityClass = entityClass();
         final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(entityClass);
@@ -228,13 +239,13 @@ public abstract class WarmDaoImpl<T extends JPARootEntity<T>> implements WarmDao
 
         final List<Predicate> predicates = new ArrayList<Predicate>();
 
-        JPAOrderByQueryFunction.process(criteriaBuilder, root, predicates, criteriaQuery);
+        orderByQueryFunction.process(criteriaBuilder, root, predicates, criteriaQuery);
 
         criteriaQuery.where(predicates.toArray(new Predicate[0]));
         return criteriaQuery;
     }
 
-    protected CriteriaQuery<Long> createCriteriaCountQuery(JPAPredicateFunction<CriteriaBuilder, Root<T>, List<Predicate>> JPAPredicateFunction) {
+    protected CriteriaQuery<Long> createCriteriaCountQuery(JPAPredicateFunction<CriteriaBuilder, Root<T>, List<Predicate>> predicateFunction) {
         final Class<T> entityClass = entityClass();
         final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
@@ -242,7 +253,7 @@ public abstract class WarmDaoImpl<T extends JPARootEntity<T>> implements WarmDao
 
         final List<Predicate> predicates = new ArrayList<Predicate>();
 
-        JPAPredicateFunction.process(criteriaBuilder, rootCount, predicates);
+        predicateFunction.process(criteriaBuilder, rootCount, predicates);
 
         criteriaQuery.select(criteriaBuilder.count(rootCount));
         criteriaQuery.where(predicates.toArray(new Predicate[0]));
@@ -250,7 +261,7 @@ public abstract class WarmDaoImpl<T extends JPARootEntity<T>> implements WarmDao
         return criteriaQuery;
     }
 
-    private void orderBy(CriteriaBuilder criteriaBuilder,
+    protected void orderBy(CriteriaBuilder criteriaBuilder,
                          Root<T> root,
                          CriteriaQuery<T> criteriaQuery,
                          T entity,
@@ -268,27 +279,27 @@ public abstract class WarmDaoImpl<T extends JPARootEntity<T>> implements WarmDao
         }
     }
 
-    protected CriteriaUpdate<T> createCriteriaUpdate(JPAUpdateFunction<CriteriaBuilder, Root<T>, List<Predicate>, CriteriaUpdate<T>> JPAUpdateFunction) {
+    protected CriteriaUpdate<T> createCriteriaUpdate(JPAUpdateFunction<CriteriaBuilder, Root<T>, List<Predicate>, CriteriaUpdate<T>> updateFunction) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         Class<T> entityClass = entityClass();
         CriteriaUpdate<T> criteriaUpdate = criteriaBuilder.createCriteriaUpdate(entityClass);
         Root<T> root = criteriaUpdate.from(entityClass);
         List<Predicate> predicates = new ArrayList<>();
 
-        JPAUpdateFunction.process(criteriaBuilder, root, predicates, criteriaUpdate);
+        updateFunction.process(criteriaBuilder, root, predicates, criteriaUpdate);
 
         criteriaUpdate.where(predicates.toArray(new Predicate[0]));
         return criteriaUpdate;
     }
 
-    protected CriteriaDelete<T> createCriteriaDelete(JPAPredicateFunction<CriteriaBuilder, Root<T>, List<Predicate>> JPAPredicateFunction) {
+    protected CriteriaDelete<T> createCriteriaDelete(JPAPredicateFunction<CriteriaBuilder, Root<T>, List<Predicate>> predicateFunction) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         Class<T> entityClass = entityClass();
         CriteriaDelete<T> criteriaDelete = criteriaBuilder.createCriteriaDelete(entityClass);
         Root<T> root = criteriaDelete.from(entityClass);
         List<Predicate> predicates = new ArrayList<>();
 
-        JPAPredicateFunction.process(criteriaBuilder, root, predicates);
+        predicateFunction.process(criteriaBuilder, root, predicates);
 
         criteriaDelete.where(predicates.toArray(new Predicate[0]));
         return criteriaDelete;
