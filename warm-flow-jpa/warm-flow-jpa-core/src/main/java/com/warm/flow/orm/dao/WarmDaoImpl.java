@@ -83,19 +83,26 @@ public abstract class WarmDaoImpl<T extends JPARootEntity<T>> implements WarmDao
     public Page<T> selectPage(T entity, Page<T> page) {
         TenantDeleteUtil.getEntity(entity);
 
-        JPAPredicateFunction<CriteriaBuilder, Root<T>, List<Predicate>> JPAPredicateFunction = (criteriaBuilder, root, predicates) -> {
+        JPAPredicateFunction<CriteriaBuilder, Root<T>, List<Predicate>> predicateFunction = (criteriaBuilder, root, predicates) -> {
             entity.commonPredicate().process(criteriaBuilder, root, predicates);
             entity.entityPredicate().process(criteriaBuilder, root, predicates);
         };
 
-        final CriteriaQuery<Long> criteriaCountQuery = createCriteriaCountQuery(JPAPredicateFunction);
+        final CriteriaQuery<Long> criteriaCountQuery = createCriteriaCountQuery(predicateFunction);
         Long total = entityManager.createQuery(criteriaCountQuery).getSingleResult();
         if (ObjectUtil.isNotNull(total) && total > 0) {
             final CriteriaQuery<T> criteriaQuery = createCriteriaQuery((criteriaBuilder, root, predicates, innerCriteriaQuery) -> {
-                JPAPredicateFunction.process(criteriaBuilder, root, predicates);
+                predicateFunction.process(criteriaBuilder, root, predicates);
 
                 orderBy(criteriaBuilder, root, innerCriteriaQuery, entity, page);
             });
+            // page 处理
+            if (ObjectUtil.isNotNull(page)) {
+                return new Page<>(entityManager.createQuery(criteriaQuery)
+                        .setFirstResult(page.getPageNum())
+                        .setMaxResults(page.getPageSize())
+                        .getResultList(), total);
+            }
             return new Page<>(entityManager.createQuery(criteriaQuery).getResultList(), total);
         }
 
