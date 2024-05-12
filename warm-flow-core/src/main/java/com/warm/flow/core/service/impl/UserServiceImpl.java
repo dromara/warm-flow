@@ -96,4 +96,21 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
                 .map(User::getProcessedBy)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public boolean updatePermissionByTaskId(Long taskId, List<String> permissions) {
+        // 先删除当前任务的权限人
+        delUser(CollUtil.toList(taskId));
+        // 再新增权限人
+        List<User> userList = new ArrayList<>();
+        for (String permission : permissions) {
+            User user = FlowFactory.newUser()
+                    .setType(UserType.ASSIGNEE.getKey())
+                    .setProcessedBy(permission)
+                    .setAssociated(taskId);
+            userList.add(user);
+        }
+        saveBatch(userList);
+        return true;
+    }
 }

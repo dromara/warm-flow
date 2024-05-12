@@ -116,9 +116,9 @@ public interface TaskService extends IWarmService<Task> {
      * 转办任务
      *
      * @param taskId         任务id
-     * @param permissionFlag 重新指定的权限标识（办理人）
+     * @param flowParams 流程参数(包含当前处理人的权限，重新指定的权限标识（办理人）)
      */
-    boolean transfer(Long taskId, String permissionFlag);
+    boolean transfer(Long taskId, FlowParams flowParams);
 
     /**
      * 并行网关，取结束节点类型，否则随便取id最大的

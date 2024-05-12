@@ -83,4 +83,8 @@ public class ExceptionCons {
     public static final String LOST_NEXT_PERMISSION = "下一节点审批人权限缺失";
 
     public static final String LOST_NODE_PERMISSION = "当前节点审批人权限缺失";
+
+    public static final String ASSIGNEE_NULL_ROLE_NODE = "无法转办,请检查当前用户是否有权限!";
+
+    public static final String LOST_ASSIGNEE_PERMISSION = "转办人权限缺失";
 }

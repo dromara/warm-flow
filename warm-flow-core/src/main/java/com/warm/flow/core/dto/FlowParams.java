@@ -35,7 +35,10 @@ public class FlowParams {
      * 权限标识 例如：role:admin,user:2
      */
     private List<String> permissionFlag;
-
+    /**
+     * 转办人权限标识 例如：role:admin,user:2
+     */
+    private List<String> assigneePermission;
     /**
      * 跳转类型（PASS审批通过 REJECT退回）
      */
@@ -129,6 +132,15 @@ public class FlowParams {
         return this;
     }
 
+    public List<String> getAssigneePermission() {
+        return assigneePermission;
+    }
+
+    public FlowParams assigneePermission(List<String> assigneePermission) {
+        this.assigneePermission = assigneePermission;
+        return this;
+    }
+
     public String getFlowCode() {
         return flowCode;
     }
@@ -168,4 +180,5 @@ public class FlowParams {
     public void setTaskId(Long taskId) {
         this.taskId = taskId;
     }
+
 }

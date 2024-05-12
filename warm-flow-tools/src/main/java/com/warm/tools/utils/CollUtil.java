@@ -76,6 +76,16 @@ public class CollUtil {
             return false;
         }
     }
+    /**
+     * 判断给定的collection1列表中是否包含collection2 判断给定的collection2中是否完全不包含给定的元素value
+     *
+     * @param collection1 给定的集合1
+     * @param collection2 给定的集合2
+     * @return boolean 结果
+     */
+    public static boolean notContainsAny(Collection<String> collection1, Collection<String> collection2) {
+        return !containsAny(collection1, collection2);
+    }
 
     /**
      * 字符串转数组
@@ -152,5 +162,24 @@ public class CollUtil {
             newList.addAll(list);
         }
         return newList;
+    }
+    /**
+     * 字符串集合拼接字符串
+     *
+     * @param list 字符串集合
+     * @param sep 分隔符
+     * @return String
+     * @author xiar
+     * @date 2024/5/10 15:45
+     */
+    public static String strListToString(List<String> list, String sep) {
+        StringBuilder sb = new StringBuilder();
+        if (isNotEmpty(list)) {
+            for (String str : list) {
+                sb.append(str).append(sep);
+            }
+            sb.deleteCharAt(sb.length() - 1);
+        }
+        return sb.toString();
     }
 }

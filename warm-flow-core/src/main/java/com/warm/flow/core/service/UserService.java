@@ -76,4 +76,14 @@ public interface UserService extends IWarmService<User> {
      * @date 2024/5/120 13:59
      */
     List<String> getPermission(long id);
+    /**
+     * 根据任务id更新权限人
+     *
+     * @param taskId 任务id
+     * @param permissions 权限人
+     * @return 结果
+     * @author xiarg
+     * @date 2024/5/10 11:19
+     */
+    boolean updatePermissionByTaskId(Long taskId, List<String> permissions);
 }

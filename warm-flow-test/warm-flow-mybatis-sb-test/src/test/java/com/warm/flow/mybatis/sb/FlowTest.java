@@ -28,12 +28,12 @@ public class FlowTest {
     private TaskService taskService;
 
     public FlowParams getUser() {
-        FlowParams flowParams = FlowParams.build().flowCode("leaveFlow-serial1")
+        return FlowParams.build().flowCode("leaveFlow-serial1")
                 .createBy("1")
                 .nickName("张三")
                 .skipType(SkipType.PASS.getKey())
+                .assigneePermission(Arrays.asList("role:100", "role:101"))
                 .permissionFlag(Arrays.asList("role:1", "role:2"));
-        return flowParams;
     }
 
     @Test
@@ -80,5 +80,9 @@ public class FlowTest {
                 .permissionFlag(Arrays.asList("role:1", "role:2")).nodeCode("9edc9b26-cab4-4fd4-9a30-c89f11626911"));
         System.out.println("流转后流程实例：" + instance.toString());
     }
-
+    @Test
+    public void assignee() {
+        // 转办
+        System.out.println("转办：" + taskService.transfer(1239301524417548289L, getUser()));
+    }
 }

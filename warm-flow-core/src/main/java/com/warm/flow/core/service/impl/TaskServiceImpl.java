@@ -270,8 +270,32 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     @Override
-    public boolean transfer(Long taskId, String permissionFlag) {
-        return updateById(getById(taskId).setPermissionFlag(permissionFlag));
+    public boolean transfer(Long taskId, FlowParams flowParams) {
+        // 获取转办给谁的权限
+        List<String> permissions = flowParams.getAssigneePermission();
+        AssertUtil.isTrue(CollUtil.isEmpty(permissions),ExceptionCons.LOST_ASSIGNEE_PERMISSION);
+        // 判断当前处理人是否有权限转办 获取当前转办人的权限
+        List<String> assigneePermission = flowParams.getPermissionFlag();
+        // 获取任务权限人
+        List<String> taskPermissions = FlowFactory.userService()
+                .list(FlowFactory.newUser().setAssociated(taskId))
+                .stream()
+                .map(User::getProcessedBy).
+                collect(Collectors.toList());
+        AssertUtil.isTrue(CollUtil.isNotEmpty(assigneePermission) &&
+                CollUtil.notContainsAny(assigneePermission, taskPermissions),
+                ExceptionCons.ASSIGNEE_NULL_ROLE_NODE);
+        // 增减流程参数 跳转类型和审批意见（留存记录的消息）
+        flowParams.skipType(SkipType.PASS.getKey())
+                .message("user:"+flowParams.getCreateBy()+" assignee " +CollUtil.strListToString(permissions, ","));
+        // 转办留存历史记录
+        Task task = FlowFactory.taskService().getById(taskId);
+        Node node = FlowFactory.nodeService().getOne(FlowFactory.newNode().setNodeCode(task.getNodeCode()));
+        List<HisTask> hisTasks = FlowFactory.hisTaskService().setSkipInsHis(task, CollUtil.toList(node), flowParams);
+        HisTask hisTask = hisTasks.get(0);
+        FlowFactory.hisTaskService().save(hisTask);
+        // 更新任务的权限人
+        return FlowFactory.userService().updatePermissionByTaskId(taskId ,permissions);
     }
 
     @Override
