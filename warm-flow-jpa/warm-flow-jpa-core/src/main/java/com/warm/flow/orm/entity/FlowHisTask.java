@@ -46,7 +46,7 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
                     predicates.add(criteriaBuilder.equal(root.get("targetNodeName"), this.targetNodeName));
                 }
                 if (StringUtils.isNotEmpty(this.approver)) {
-                    predicates.add(criteriaBuilder.equal(root.get("targetNodeName"), this.approver));
+                    predicates.add(criteriaBuilder.equal(root.get("approver"), this.approver));
                 }
                 if (Objects.nonNull(this.definitionId)) {
                     predicates.add(criteriaBuilder.equal(root.get("definitionId"), this.definitionId));

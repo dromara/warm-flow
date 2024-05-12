@@ -53,7 +53,6 @@ public abstract class WarmDaoImpl<T extends JPARootEntity<T>> implements WarmDao
 
         final CriteriaQuery<T> criteriaQuery = createCriteriaQuery((criteriaBuilder, root, predicates, innerCriteriaQuery) -> {
             entity.commonPredicate().process(criteriaBuilder, root, predicates);
-            entity.entityPredicate().process(criteriaBuilder, root, predicates);
         });
 
         return CollUtil.getOne(entityManager.createQuery(criteriaQuery).getResultList());
@@ -71,7 +70,6 @@ public abstract class WarmDaoImpl<T extends JPARootEntity<T>> implements WarmDao
 
         final CriteriaQuery<T> criteriaQuery = createCriteriaQuery((criteriaBuilder, root, predicates, innerCriteriaQuery) -> {
             entity.commonPredicate().process(criteriaBuilder, root, predicates);
-            entity.entityPredicate().process(criteriaBuilder, root, predicates);
 
             predicates.add(criteriaBuilder.in(root.get("id").in(ids)));
         });
