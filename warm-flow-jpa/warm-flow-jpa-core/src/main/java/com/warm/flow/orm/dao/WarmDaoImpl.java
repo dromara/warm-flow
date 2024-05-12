@@ -276,7 +276,7 @@ public abstract class WarmDaoImpl<T extends JPARootEntity<T>> implements WarmDao
         if (Objects.nonNull(orderBy)) {
             if (StringUtils.isNotEmpty(orderBy.getOrderBy())) {
                 String field = entity.orderByField(orderBy.getOrderBy());
-                AssertUtil.isTrue(StringUtils.isNotEmpty(field), "OrderBy 字段不能为空");
+                AssertUtil.isTrue(StringUtils.isEmpty(field), "OrderBy 字段不能为空");
                 if(orderBy.getIsAsc().equals(OrderBy.ASC)) {
                     criteriaQuery.orderBy(criteriaBuilder.asc(root.get(field)));
                 } else {
