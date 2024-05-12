@@ -67,7 +67,7 @@ public class FlowTest {
 
     @Test
     public void termination() {
-        // 终止流程实例 ？？？ 流程终止权限人如何处理？
+        // 终止流程实例
         FlowParams flowParams = new FlowParams();
         flowParams.message("终止流程").createBy("1");
         taskService.termination(1239001243721011200L, flowParams);
