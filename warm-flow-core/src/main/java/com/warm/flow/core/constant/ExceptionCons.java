@@ -80,5 +80,7 @@ public class ExceptionCons {
 
     public static final String NOT_LISTENER = "监听器不存在";
 
-    public static final String LOST_APPROVAL_PERMISSION = "下一节点审批人权限缺失";
+    public static final String LOST_NEXT_PERMISSION = "下一节点审批人权限缺失";
+
+    public static final String LOST_NODE_PERMISSION = "当前节点审批人权限缺失";
 }

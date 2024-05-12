@@ -40,15 +40,6 @@ public interface UserService extends IWarmService<User> {
      */
     List<User> setSkipUser(List<HisTask> hisTasks, List<Task> addTasks, FlowParams flowParams);
     /**
-     * 流程定义设置流程计划审批用户
-     *
-     * @param allNodes 节点集合
-     * @return List<User>
-     * @author xiarg
-     * @date 2024/5/10 13:59
-     */
-    List<User> setUser(List<Node> allNodes);
-    /**
      * 历史任务增加流程人员
      *
      * @param hisTask 历史任务信息
@@ -72,9 +63,17 @@ public interface UserService extends IWarmService<User> {
     /**
      * 根据(代办任务，实例，历史表，节点)id删除流程用户
      *
-     * @param Ids (代办任务，实例，历史表，节点)id集合
+     * @param ids (代办任务，实例，历史表，节点)id集合
      * @author xiarg
      * @date 2024/5/10 13:59
      */
-    void delUser(List<Long> Ids);
+    void delUser(List<Long> ids);
+    /**
+     * 根据(代办任务，实例，历史表，节点)id查询权限人或者处理人
+     *
+     * @param id (代办任务，实例，历史表，节点)id集合
+     * @author xiarg
+     * @date 2024/5/120 13:59
+     */
+    List<String> getPermission(long id);
 }

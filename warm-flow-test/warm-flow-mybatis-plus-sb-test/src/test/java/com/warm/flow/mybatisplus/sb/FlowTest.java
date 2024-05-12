@@ -44,7 +44,7 @@ public class FlowTest {
 
     @Test
     public void publish() {
-        defService.publish(1238996504514007040L);
+        defService.publish(1239204746879963154L);
     }
 
     @Test
@@ -55,7 +55,7 @@ public class FlowTest {
     @Test
     public void skipFlow() {
         // 通过实例id流转
-        Instance instance = insService.skipByInsId(1238996630175354880L, getUser().skipType(SkipType.PASS.getKey())
+        Instance instance = insService.skipByInsId(1239204950244986880L, getUser().skipType(SkipType.PASS.getKey())
                 .permissionFlag(Arrays.asList("role:1", "role:2")));
         System.out.println("流转后流程实例：" + instance.toString());
 
@@ -70,14 +70,14 @@ public class FlowTest {
         // 终止流程实例
         FlowParams flowParams = new FlowParams();
         flowParams.message("终止流程").createBy("1");
-        taskService.termination(1239001243721011200L, flowParams);
+        taskService.termination(1239217703449923584L, flowParams);
     }
 
     @Test
     public void skipAnyNode() {
-        // 跳转到指定节点 ？？？ 跳转到指定节点权限人如何处理？
-        Instance instance = taskService.skip(1219286332145274880L, getUser().skipType(SkipType.PASS.getKey())
-                .permissionFlag(Arrays.asList("role:1", "role:2")));
+        // 跳转到指定节点 跳转到结束节点
+        Instance instance = taskService.skip(1239216494752174080L, getUser().skipType(SkipType.PASS.getKey())
+                .permissionFlag(Arrays.asList("role:1", "role:2")).nodeCode("9edc9b26-cab4-4fd4-9a30-c89f11626911"));
         System.out.println("流转后流程实例：" + instance.toString());
     }
 

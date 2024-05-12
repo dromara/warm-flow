@@ -141,9 +141,11 @@ public class CollUtil {
      */
     public static <T> List<T> listAddListsToNew(List<T> list, List<List<T>> lists) {
         List<T> newList = new ArrayList<>();
-        for (List<T> ts : lists) {
-            if(isNotEmpty(ts)){
-                newList.addAll(ts);
+        if(isNotEmpty(lists)){
+            for (List<T> ts : lists) {
+                if(isNotEmpty(ts)){
+                    newList.addAll(ts);
+                }
             }
         }
         if(isNotEmpty(list)){

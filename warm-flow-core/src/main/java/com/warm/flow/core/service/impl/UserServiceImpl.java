@@ -17,6 +17,7 @@ import com.warm.tools.utils.StreamUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 流程用户Service业务层处理
@@ -65,10 +66,10 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
     @Override
     public List<User> taskAddUser(Task task, FlowParams flowParams) {
         List<User> userList = new ArrayList<>();
-        // 后去审批人权限集合
+        // 获取审批人权限集合
         List<String> permissionList = task.getPermissionList();
         // 审批人权限不能为空
-        AssertUtil.isTrue(CollUtil.isEmpty(permissionList), ExceptionCons.LOST_APPROVAL_PERMISSION);
+        AssertUtil.isTrue(CollUtil.isEmpty(permissionList), ExceptionCons.LOST_NEXT_PERMISSION);
         // 遍历权限集合，生成流程用户
         User user;
         for (String permission : permissionList) {
@@ -83,12 +84,16 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
     }
 
     @Override
-    public List<User> setUser(List<Node> allNodes) {
-        return null;
+    public void delUser(List<Long> ids) {
+        getDao().deleteByTaskIds(ids);
     }
 
     @Override
-    public void delUser(List<Long> Ids) {
-        getDao().deleteByTaskIds(Ids);
+    public List<String> getPermission(long id) {
+        return FlowFactory.userService()
+                .list(FlowFactory.newUser().setAssociated(id))
+                .stream()
+                .map(User::getProcessedBy)
+                .collect(Collectors.toList());
     }
 }
