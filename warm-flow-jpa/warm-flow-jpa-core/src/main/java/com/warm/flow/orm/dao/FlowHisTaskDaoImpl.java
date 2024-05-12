@@ -73,7 +73,7 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask> implements Flow
             CriteriaUpdate<FlowHisTask> criteriaUpdate = createCriteriaUpdate((criteriaBuilder, root, predicates, innerCriteriaUpdate) -> {
 
                 entity.commonPredicate().process(criteriaBuilder, root, predicates);
-                predicates.add(criteriaBuilder.in(root.get("instanceId").in(instanceIds)));
+                predicates.add(createIn(criteriaBuilder, root, "instanceId", instanceIds));
 
                 // 更新值
                 innerCriteriaUpdate.set(root.get("delFlag"),  FlowFactory.getFlowConfig().getLogicDeleteValue());
@@ -82,7 +82,7 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask> implements Flow
             return entityManager.createQuery(criteriaUpdate).executeUpdate();
         } else {
             CriteriaDelete<FlowHisTask> criteriaDelete = createCriteriaDelete((criteriaBuilder, root, predicates) -> {
-                predicates.add(criteriaBuilder.in(root.get("instanceId").in(instanceIds)));
+                predicates.add(createIn(criteriaBuilder, root, "instanceId", instanceIds));
 
                 if (Objects.nonNull(entity.getTenantId())) {
                     predicates.add(criteriaBuilder.equal(root.get("tenantId"), entity.getTenantId()));

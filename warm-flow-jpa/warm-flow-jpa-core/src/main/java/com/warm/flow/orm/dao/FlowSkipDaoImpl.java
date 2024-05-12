@@ -48,7 +48,7 @@ public class FlowSkipDaoImpl extends WarmDaoImpl<FlowSkip> implements FlowSkipDa
 
                 entity.commonPredicate().process(criteriaBuilder, root, predicates);
 
-                predicates.add(criteriaBuilder.in(root.get("definitionId").in(defIds)));
+                predicates.add(createIn(criteriaBuilder, root, "definitionId", defIds));
 
                 // 更新值
                 innerCriteriaUpdate.set(root.get("delFlag"),  FlowFactory.getFlowConfig().getLogicDeleteValue());
@@ -57,7 +57,7 @@ public class FlowSkipDaoImpl extends WarmDaoImpl<FlowSkip> implements FlowSkipDa
             return entityManager.createQuery(criteriaUpdate).executeUpdate();
         } else {
             CriteriaDelete<FlowSkip> criteriaDelete = createCriteriaDelete((criteriaBuilder, root, predicates) -> {
-                predicates.add(criteriaBuilder.in(root.get("definitionId").in(defIds)));
+                predicates.add(createIn(criteriaBuilder, root, "definitionId", defIds));
 
                 if (Objects.nonNull(entity.getTenantId())) {
                     predicates.add(criteriaBuilder.equal(root.get("tenantId"), entity.getTenantId()));

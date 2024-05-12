@@ -34,7 +34,7 @@ public class FlowDefinitionDaoImpl extends WarmDaoImpl<FlowDefinition> implement
         final CriteriaQuery<FlowDefinition> criteriaQuery = createCriteriaQuery((criteriaBuilder, root, predicates, innerCriteriaQuery) -> {
             entity.commonPredicate().process(criteriaBuilder, root, predicates);
 
-            predicates.add(criteriaBuilder.in(root.get("flowCode").in(flowCodeList)));
+            predicates.add(createIn(criteriaBuilder, root, "flowCode", flowCodeList));
         });
         return entityManager.createQuery(criteriaQuery).getResultList();
     }
@@ -45,7 +45,7 @@ public class FlowDefinitionDaoImpl extends WarmDaoImpl<FlowDefinition> implement
         final CriteriaUpdate<FlowDefinition> criteriaUpdate = createCriteriaUpdate((criteriaBuilder, root, predicates, innerCriteriaUpdate) -> {
             entity.commonPredicate().process(criteriaBuilder, root, predicates);
 
-            predicates.add(criteriaBuilder.in(root.get("flowCode").in(flowCodeList)));
+            predicates.add(createIn(criteriaBuilder, root, "flowCode", flowCodeList));
 
             // 是否发布（0未发布 1已发布 9失效）
             innerCriteriaUpdate.set(root.get("isPublish"), 9);

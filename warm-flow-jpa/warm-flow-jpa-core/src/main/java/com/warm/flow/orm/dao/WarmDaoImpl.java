@@ -215,7 +215,8 @@ public abstract class WarmDaoImpl<T extends JPARootEntity<T>> implements WarmDao
         T entity = TenantDeleteUtil.getEntity(newEntity());
         if (StringUtils.isNotEmpty(entity.getDelFlag())) {
             CriteriaUpdate<T> criteriaUpdate = createCriteriaUpdate((criteriaBuilder, root, predicates, innerCriteriaUpdate) -> {
-                predicates.add(criteriaBuilder.in(root.get("id").in(ids)));
+                predicates.add(createIn(criteriaBuilder, root, "id", ids));
+
                 if (StringUtils.isNotEmpty(entity.getTenantId())) {
                     predicates.add(criteriaBuilder.equal(root.get("tenantId"), entity.getTenantId()));
                 }
@@ -227,7 +228,7 @@ public abstract class WarmDaoImpl<T extends JPARootEntity<T>> implements WarmDao
             return entityManager.createQuery(criteriaUpdate).executeUpdate();
         } else {
             CriteriaDelete<T> criteriaDelete = createCriteriaDelete((criteriaBuilder, root, predicates) -> {
-                predicates.add(criteriaBuilder.in(root.get("id").in(ids)));
+                predicates.add(createIn(criteriaBuilder, root, "id", ids));
 
                 if (StringUtils.isNotEmpty(entity.getTenantId())) {
                     predicates.add(criteriaBuilder.equal(root.get("tenantId"), entity.getTenantId()));
@@ -284,6 +285,15 @@ public abstract class WarmDaoImpl<T extends JPARootEntity<T>> implements WarmDao
                 }
             }
         }
+    }
+
+    protected <F extends Serializable> CriteriaBuilder.In<F> createIn(CriteriaBuilder criteriaBuilder, Root<T> root,
+                                            String fieldName, Collection<F> values) {
+        CriteriaBuilder.In<F> in = criteriaBuilder.in(root.get(fieldName));
+        for (F value : values) {
+            in.value(value);
+        }
+        return in;
     }
 
     protected CriteriaUpdate<T> createCriteriaUpdate(JPAUpdateFunction<CriteriaBuilder, Root<T>, List<Predicate>, CriteriaUpdate<T>> updateFunction) {

@@ -43,7 +43,7 @@ public class FlowNodeDaoImpl extends WarmDaoImpl<FlowNode> implements FlowNodeDa
             entity.commonPredicate().process(criteriaBuilder, root, predicates);
 
             predicates.add(criteriaBuilder.equal(root.get("definitionId"), definitionId));
-            predicates.add(criteriaBuilder.in(root.get("nodeCode").in(nodeCodes)));
+            predicates.add(createIn(criteriaBuilder, root, "nodeCode", nodeCodes));
         });
         return entityManager.createQuery(criteriaQuery).getResultList();
     }
@@ -62,7 +62,7 @@ public class FlowNodeDaoImpl extends WarmDaoImpl<FlowNode> implements FlowNodeDa
 
                 entity.commonPredicate().process(criteriaBuilder, root, predicates);
 
-                predicates.add(criteriaBuilder.in(root.get("definitionId").in(defIds)));
+                predicates.add(createIn(criteriaBuilder, root, "definitionId", defIds));
 
                 // 更新值
                 innerCriteriaUpdate.set(root.get("delFlag"),  FlowFactory.getFlowConfig().getLogicDeleteValue());
@@ -71,7 +71,7 @@ public class FlowNodeDaoImpl extends WarmDaoImpl<FlowNode> implements FlowNodeDa
             return entityManager.createQuery(criteriaUpdate).executeUpdate();
         } else {
             CriteriaDelete<FlowNode> criteriaDelete = createCriteriaDelete((criteriaBuilder, root, predicates) -> {
-                predicates.add(criteriaBuilder.in(root.get("definitionId").in(defIds)));
+                predicates.add(createIn(criteriaBuilder, root, "definitionId", defIds));
 
                 if (Objects.nonNull(entity.getTenantId())) {
                     predicates.add(criteriaBuilder.equal(root.get("tenantId"), entity.getTenantId()));
