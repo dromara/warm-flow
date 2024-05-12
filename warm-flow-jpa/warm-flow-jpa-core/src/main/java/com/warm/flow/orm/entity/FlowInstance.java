@@ -1,13 +1,12 @@
 package com.warm.flow.orm.entity;
 
 import com.warm.flow.core.entity.Instance;
-import com.warm.flow.core.orm.agent.WarmQuery;
 import com.warm.flow.orm.utils.JPAUtil;
+import com.warm.flow.orm.utils.JPAPredicateFunction;
 import com.warm.tools.utils.StringUtils;
 
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.HashMap;
@@ -30,38 +29,42 @@ public class FlowInstance extends JPARootEntity<FlowInstance> implements Instanc
         MAPPING.putAll(JPARootEntity.JPA_ROOT_ENTITY_MAPPING);
     }
 
+    @Transient
+    private JPAPredicateFunction<CriteriaBuilder, Root<FlowInstance>, List<Predicate>> entityPredicate =
+            (criteriaBuilder, root, predicates) -> {
+                if (StringUtils.isNotEmpty(this.businessId)) {
+                    predicates.add(criteriaBuilder.equal(root.get("businessId"), this.businessId));
+                }
+                if (StringUtils.isNotEmpty(this.nodeCode)) {
+                    predicates.add(criteriaBuilder.equal(root.get("nodeCode"), this.nodeCode));
+                }
+                if (StringUtils.isNotEmpty(this.nodeName)) {
+                    predicates.add(criteriaBuilder.equal(root.get("nodeName"), this.nodeName));
+                }
+                if (StringUtils.isNotEmpty(this.createBy)) {
+                    predicates.add(criteriaBuilder.equal(root.get("createBy"), this.createBy));
+                }
+                if (Objects.nonNull(this.definitionId)) {
+                    predicates.add(criteriaBuilder.equal(root.get("definitionId"), this.definitionId));
+                }
+                if (Objects.nonNull(this.variable)) {
+                    predicates.add(criteriaBuilder.equal(root.get("variable"), this.variable));
+                }
+                if (Objects.nonNull(this.flowStatus)) {
+                    predicates.add(criteriaBuilder.equal(root.get("flowStatus"), this.flowStatus));
+                }
+                if (Objects.nonNull(this.ext)) {
+                    predicates.add(criteriaBuilder.equal(root.get("ext"), this.ext));
+                }
+            };
+
     @Override
-    protected void customPredicates(CriteriaBuilder criteriaBuilder,
-                                    Root<FlowInstance> root,
-                                    List<Predicate> predicates) {
-        if (StringUtils.isNotEmpty(this.businessId)) {
-            predicates.add(criteriaBuilder.equal(root.get("businessId"), this.businessId));
-        }
-        if (StringUtils.isNotEmpty(this.nodeCode)) {
-            predicates.add(criteriaBuilder.equal(root.get("nodeCode"), this.nodeCode));
-        }
-        if (StringUtils.isNotEmpty(this.nodeName)) {
-            predicates.add(criteriaBuilder.equal(root.get("nodeName"), this.nodeName));
-        }
-        if (StringUtils.isNotEmpty(this.createBy)) {
-            predicates.add(criteriaBuilder.equal(root.get("createBy"), this.createBy));
-        }
-        if (Objects.nonNull(this.definitionId)) {
-            predicates.add(criteriaBuilder.equal(root.get("definitionId"), this.definitionId));
-        }
-        if (Objects.nonNull(this.variable)) {
-            predicates.add(criteriaBuilder.equal(root.get("variable"), this.variable));
-        }
-        if (Objects.nonNull(this.flowStatus)) {
-            predicates.add(criteriaBuilder.equal(root.get("flowStatus"), this.flowStatus));
-        }
-        if (Objects.nonNull(this.ext)) {
-            predicates.add(criteriaBuilder.equal(root.get("ext"), this.ext));
-        }
+    public JPAPredicateFunction<CriteriaBuilder, Root<FlowInstance>, List<Predicate>> entityPredicate() {
+        return this.entityPredicate;
     }
 
     @Override
-    protected String customOrderByField(String orderByColumn) {
+    public String orderByField(String orderByColumn) {
         return MAPPING.get(orderByColumn);
     }
 

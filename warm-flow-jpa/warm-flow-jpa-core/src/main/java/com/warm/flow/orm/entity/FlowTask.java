@@ -1,13 +1,12 @@
 package com.warm.flow.orm.entity;
 
 import com.warm.flow.core.entity.Task;
-import com.warm.flow.core.orm.agent.WarmQuery;
 import com.warm.flow.orm.utils.JPAUtil;
+import com.warm.flow.orm.utils.JPAPredicateFunction;
 import com.warm.tools.utils.StringUtils;
 
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.HashMap;
@@ -30,38 +29,42 @@ public class FlowTask extends JPARootEntity<FlowTask> implements Task {
         MAPPING.putAll(JPARootEntity.JPA_ROOT_ENTITY_MAPPING);
     }
 
+    @Transient
+    private JPAPredicateFunction<CriteriaBuilder, Root<FlowTask>, List<Predicate>> entityPredicate =
+            (criteriaBuilder, root, predicates) -> {
+                if (StringUtils.isNotEmpty(this.nodeCode)) {
+                    predicates.add(criteriaBuilder.equal(root.get("nodeCode"), this.nodeCode));
+                }
+                if (StringUtils.isNotEmpty(this.nodeName)) {
+                    predicates.add(criteriaBuilder.equal(root.get("nodeName"), this.nodeName));
+                }
+                if  (Objects.nonNull(this.nodeType)) {
+                    predicates.add(criteriaBuilder.equal(root.get("nodeType"), this.nodeType));
+                }
+                if (StringUtils.isNotEmpty(this.approver)) {
+                    predicates.add(criteriaBuilder.equal(root.get("approver"), this.approver));
+                }
+                if  (Objects.nonNull(this.definitionId)) {
+                    predicates.add(criteriaBuilder.equal(root.get("definitionId"), this.definitionId));
+                }
+                if  (Objects.nonNull(this.instanceId)) {
+                    predicates.add(criteriaBuilder.equal(root.get("instanceId"), this.instanceId));
+                }
+                if  (Objects.nonNull(this.flowStatus)) {
+                    predicates.add(criteriaBuilder.equal(root.get("flowStatus"), this.flowStatus));
+                }
+                if  (Objects.nonNull(this.permissionFlag)) {
+                    predicates.add(criteriaBuilder.equal(root.get("permissionFlag"), this.permissionFlag));
+                }
+            };
+
     @Override
-    protected void customPredicates(CriteriaBuilder criteriaBuilder,
-                                    Root<FlowTask> root,
-                                    List<Predicate> predicates) {
-        if (StringUtils.isNotEmpty(this.nodeCode)) {
-            predicates.add(criteriaBuilder.equal(root.get("nodeCode"), this.nodeCode));
-        }
-        if (StringUtils.isNotEmpty(this.nodeName)) {
-            predicates.add(criteriaBuilder.equal(root.get("nodeName"), this.nodeName));
-        }
-        if  (Objects.nonNull(this.nodeType)) {
-            predicates.add(criteriaBuilder.equal(root.get("nodeType"), this.nodeType));
-        }
-        if (StringUtils.isNotEmpty(this.approver)) {
-            predicates.add(criteriaBuilder.equal(root.get("approver"), this.approver));
-        }
-        if  (Objects.nonNull(this.definitionId)) {
-            predicates.add(criteriaBuilder.equal(root.get("definitionId"), this.definitionId));
-        }
-        if  (Objects.nonNull(this.instanceId)) {
-            predicates.add(criteriaBuilder.equal(root.get("instanceId"), this.instanceId));
-        }
-        if  (Objects.nonNull(this.flowStatus)) {
-            predicates.add(criteriaBuilder.equal(root.get("flowStatus"), this.flowStatus));
-        }
-        if  (Objects.nonNull(this.permissionFlag)) {
-            predicates.add(criteriaBuilder.equal(root.get("permissionFlag"), this.permissionFlag));
-        }
+    public JPAPredicateFunction<CriteriaBuilder, Root<FlowTask>, List<Predicate>> entityPredicate() {
+        return this.entityPredicate;
     }
 
     @Override
-    protected String customOrderByField(String orderByColumn) {
+    public String orderByField(String orderByColumn) {
         return MAPPING.get(orderByColumn);
     }
 

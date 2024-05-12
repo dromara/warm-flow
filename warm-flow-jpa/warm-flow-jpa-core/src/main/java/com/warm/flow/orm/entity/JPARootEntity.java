@@ -1,19 +1,11 @@
 package com.warm.flow.orm.entity;
 
 import com.warm.flow.core.entity.RootEntity;
-import com.warm.flow.core.orm.agent.WarmQuery;
-import com.warm.flow.core.utils.AssertUtil;
 import com.warm.flow.orm.utils.JPAUtil;
-import com.warm.flow.orm.utils.PredictesFunction;
-import com.warm.tools.utils.StringUtils;
-import com.warm.tools.utils.page.OrderBy;
+import com.warm.flow.orm.utils.JPAPredicateFunction;
 
-import javax.persistence.Column;
-import javax.persistence.EntityManager;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.*;
@@ -32,90 +24,34 @@ public abstract class JPARootEntity<T extends RootEntity> implements RootEntity 
         JPAUtil.initMapping(JPARootEntity.class, JPA_ROOT_ENTITY_MAPPING);
     }
 
-    private void commonPredicates(CriteriaBuilder criteriaBuilder,
-                                     Root<T> root,
-                                     List<Predicate> predicates) {
-        if (Objects.nonNull(this.id)) {
-            predicates.add(criteriaBuilder.equal(root.get("id"), this.id));
-        }
-        if (Objects.nonNull(this.createTime)) {
-            predicates.add(criteriaBuilder.equal(root.get("createTime"), this.createTime));
-        }
-        if (Objects.nonNull(this.updateTime)) {
-            predicates.add(criteriaBuilder.equal(root.get("updateTime"), this.updateTime));
-        }
-        if (Objects.nonNull(this.delFlag)) {
-            predicates.add(criteriaBuilder.equal(root.get("delFlag"), this.delFlag));
-        }
-        if (Objects.nonNull(this.tenantId)) {
-            predicates.add(criteriaBuilder.equal(root.get("tenantId"), this.tenantId));
-        }
-    }
-
-    protected abstract void customPredicates(CriteriaBuilder criteriaBuilder,
-                                    Root<T> root,
-                                    List<Predicate> predicates);
-
-    protected abstract String customOrderByField(String orderByColumn);
-
-    public CriteriaQuery<T> criteriaQuery(EntityManager entityManager, OrderBy orderBy) {
-        return criteriaQuery(entityManager, orderBy, null);
-    }
-    @SuppressWarnings("unchecked")
-    public CriteriaQuery<T> criteriaQuery(EntityManager entityManager, OrderBy orderBy,
-                                          PredictesFunction<CriteriaBuilder, Root<T>, List<Predicate>> outerPredictesFunction) {
-        final Class<T> entityClass = (Class<T>) this.getClass();
-        final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        final CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(entityClass);
-        final Root<T> root = criteriaQuery.from(entityClass);
-
-        final List<Predicate> predicates = new ArrayList<Predicate>();
-
-        this.commonPredicates(criteriaBuilder, root, predicates);
-        this.customPredicates(criteriaBuilder, root, predicates);
-
-        if (Objects.nonNull(outerPredictesFunction)) {
-            outerPredictesFunction.predictes(criteriaBuilder, root, predicates);
-        }
-
-        criteriaQuery.where(predicates.toArray(new Predicate[0]));
-        if (Objects.nonNull(orderBy)) {
-            if (StringUtils.isNotEmpty(orderBy.getOrderBy())) {
-                String field = customOrderByField(orderBy.getOrderBy());
-                AssertUtil.isTrue(StringUtils.isNotEmpty(field), "OrderBy 字段不能为空");
-                if(orderBy.getIsAsc().equals(OrderBy.ASC)) {
-                    criteriaQuery.orderBy(criteriaBuilder.asc(root.get(field)));
-                } else {
-                    criteriaQuery.orderBy(criteriaBuilder.desc(root.get(field)));
+    @Transient
+    private JPAPredicateFunction<CriteriaBuilder, Root<T>, List<Predicate>> commonPredicate =
+            (criteriaBuilder, root, predicates) -> {
+                if (Objects.nonNull(this.id)) {
+                    predicates.add(criteriaBuilder.equal(root.get("id"), this.id));
                 }
-            }
-        }
-        return criteriaQuery;
-    }
-    public CriteriaQuery<Long> criteriaCountQuery(EntityManager entityManager, OrderBy orderBy) {
-        return criteriaCountQuery(entityManager, orderBy, null);
-    }
-    @SuppressWarnings("unchecked")
-    public CriteriaQuery<Long> criteriaCountQuery(EntityManager entityManager, OrderBy orderBy,
-                                                  PredictesFunction<CriteriaBuilder, Root<T>, List<Predicate>> outerPredictesFunction) {
-        final Class<T> entityClass = (Class<T>) this.getClass();
-        final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        final CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
-        final Root<T> rootCount = criteriaQuery.from(entityClass);
+                if (Objects.nonNull(this.createTime)) {
+                    predicates.add(criteriaBuilder.equal(root.get("createTime"), this.createTime));
+                }
+                if (Objects.nonNull(this.updateTime)) {
+                    predicates.add(criteriaBuilder.equal(root.get("updateTime"), this.updateTime));
+                }
+                if (Objects.nonNull(this.delFlag)) {
+                    predicates.add(criteriaBuilder.equal(root.get("delFlag"), this.delFlag));
+                }
+                if (Objects.nonNull(this.tenantId)) {
+                    predicates.add(criteriaBuilder.equal(root.get("tenantId"), this.tenantId));
+                }
+            };
 
-        final List<Predicate> predicates = new ArrayList<Predicate>();
 
-        this.commonPredicates(criteriaBuilder, rootCount, predicates);
-        this.customPredicates(criteriaBuilder, rootCount, predicates);
-        if (Objects.nonNull(outerPredictesFunction)) {
-            outerPredictesFunction.predictes(criteriaBuilder, rootCount, predicates);
-        }
+    public abstract String orderByField(String orderByColumn);
 
-        criteriaQuery.select(criteriaBuilder.count(rootCount));
-        criteriaQuery.where(predicates.toArray(new Predicate[0]));
+    public abstract JPAPredicateFunction<CriteriaBuilder, Root<T>, List<Predicate>> entityPredicate();
 
-        return criteriaQuery;
-    }
+    public JPAPredicateFunction<CriteriaBuilder, Root<T>, List<Predicate>> commonPredicate() {
+        return this.commonPredicate;
+    };
 
     /**
      * 主键

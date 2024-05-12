@@ -1,13 +1,12 @@
 package com.warm.flow.orm.entity;
 
 import com.warm.flow.core.entity.Skip;
-import com.warm.flow.core.orm.agent.WarmQuery;
 import com.warm.flow.orm.utils.JPAUtil;
+import com.warm.flow.orm.utils.JPAPredicateFunction;
 import com.warm.tools.utils.StringUtils;
 
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.HashMap;
@@ -30,38 +29,42 @@ public class FlowSkip extends JPARootEntity<FlowSkip> implements Skip {
         MAPPING.putAll(JPARootEntity.JPA_ROOT_ENTITY_MAPPING);
     }
 
+    @Transient
+    private JPAPredicateFunction<CriteriaBuilder, Root<FlowSkip>, List<Predicate>> entityPredicate =
+            (criteriaBuilder, root, predicates) -> {
+                if  (Objects.nonNull(this.definitionId)) {
+                    predicates.add(criteriaBuilder.equal(root.get("definitionId"), this.definitionId));
+                }
+                if  (Objects.nonNull(this.nowNodeCode)) {
+                    predicates.add(criteriaBuilder.equal(root.get("nowNodeCode"), this.nowNodeCode));
+                }
+                if  (Objects.nonNull(this.nowNodeType)) {
+                    predicates.add(criteriaBuilder.equal(root.get("nowNodeType"), this.nowNodeType));
+                }
+                if (StringUtils.isNotEmpty(this.nextNodeCode)) {
+                    predicates.add(criteriaBuilder.equal(root.get("nextNodeCode"), this.nextNodeCode));
+                }
+                if  (Objects.nonNull(this.nextNodeType)) {
+                    predicates.add(criteriaBuilder.equal(root.get("nextNodeType"), this.nextNodeType));
+                }
+                if (StringUtils.isNotEmpty(this.skipName)) {
+                    predicates.add(criteriaBuilder.equal(root.get("skipName"), this.skipName));
+                }
+                if (StringUtils.isNotEmpty(this.skipType)) {
+                    predicates.add(criteriaBuilder.equal(root.get("skipType"), this.skipType));
+                }
+                if (StringUtils.isNotEmpty(this.skipCondition)) {
+                    predicates.add(criteriaBuilder.equal(root.get("skipCondition"), this.skipCondition));
+                }
+            };
+
     @Override
-    protected void customPredicates(CriteriaBuilder criteriaBuilder,
-                                    Root<FlowSkip> root,
-                                    List<Predicate> predicates) {
-        if  (Objects.nonNull(this.definitionId)) {
-            predicates.add(criteriaBuilder.equal(root.get("definitionId"), this.definitionId));
-        }
-        if  (Objects.nonNull(this.nowNodeCode)) {
-            predicates.add(criteriaBuilder.equal(root.get("nowNodeCode"), this.nowNodeCode));
-        }
-        if  (Objects.nonNull(this.nowNodeType)) {
-            predicates.add(criteriaBuilder.equal(root.get("nowNodeType"), this.nowNodeType));
-        }
-        if (StringUtils.isNotEmpty(this.nextNodeCode)) {
-            predicates.add(criteriaBuilder.equal(root.get("nextNodeCode"), this.nextNodeCode));
-        }
-        if  (Objects.nonNull(this.nextNodeType)) {
-            predicates.add(criteriaBuilder.equal(root.get("nextNodeType"), this.nextNodeType));
-        }
-        if (StringUtils.isNotEmpty(this.skipName)) {
-            predicates.add(criteriaBuilder.equal(root.get("skipName"), this.skipName));
-        }
-        if (StringUtils.isNotEmpty(this.skipType)) {
-            predicates.add(criteriaBuilder.equal(root.get("skipType"), this.skipType));
-        }
-        if (StringUtils.isNotEmpty(this.skipCondition)) {
-            predicates.add(criteriaBuilder.equal(root.get("skipCondition"), this.skipCondition));
-        }
+    public JPAPredicateFunction<CriteriaBuilder, Root<FlowSkip>, List<Predicate>> entityPredicate() {
+        return this.entityPredicate;
     }
 
     @Override
-    protected String customOrderByField(String orderByColumn) {
+    public String orderByField(String orderByColumn) {
         return MAPPING.get(orderByColumn);
     }
 

@@ -2,14 +2,12 @@ package com.warm.flow.orm.entity;
 
 import com.warm.flow.core.entity.Definition;
 import com.warm.flow.core.entity.Node;
-import com.warm.flow.core.orm.agent.WarmQuery;
-import com.warm.flow.core.utils.AssertUtil;
 import com.warm.flow.orm.utils.JPAUtil;
+import com.warm.flow.orm.utils.JPAPredicateFunction;
 import com.warm.tools.utils.StringUtils;
 
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
@@ -34,32 +32,36 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
         MAPPING.putAll(JPARootEntity.JPA_ROOT_ENTITY_MAPPING);
     }
 
+    @Transient
+    private JPAPredicateFunction<CriteriaBuilder, Root<FlowDefinition>, List<Predicate>> entityPredicate =
+            (criteriaBuilder, root, predicates) -> {
+                if (StringUtils.isNotEmpty(this.flowCode)) {
+                    predicates.add(criteriaBuilder.equal(root.get("flowCode"), this.flowCode));
+                }
+                if (StringUtils.isNotEmpty(this.flowName)) {
+                    predicates.add(criteriaBuilder.equal(root.get("flowName"), this.flowName));
+                }
+                if (StringUtils.isNotEmpty(this.version)) {
+                    predicates.add(criteriaBuilder.equal(root.get("version"), this.version));
+                }
+                if (Objects.nonNull(this.isPublish)) {
+                    predicates.add(criteriaBuilder.equal(root.get("version"), this.isPublish));
+                }
+                if  (Objects.nonNull(this.fromCustom)) {
+                    predicates.add(criteriaBuilder.equal(root.get("fromCustom"), this.fromCustom));
+                }
+                if (Objects.nonNull(this.fromPath)) {
+                    predicates.add(criteriaBuilder.equal(root.get("fromPath"), this.fromPath));
+                }
+    };
+
     @Override
-    protected void customPredicates(CriteriaBuilder criteriaBuilder,
-                                  Root<FlowDefinition> root,
-                                  List<Predicate> predicates) {
-        if (StringUtils.isNotEmpty(this.flowCode)) {
-            predicates.add(criteriaBuilder.equal(root.get("flowCode"), this.flowCode));
-        }
-        if (StringUtils.isNotEmpty(this.flowName)) {
-            predicates.add(criteriaBuilder.equal(root.get("flowName"), this.flowName));
-        }
-        if (StringUtils.isNotEmpty(this.version)) {
-            predicates.add(criteriaBuilder.equal(root.get("version"), this.version));
-        }
-        if (Objects.nonNull(this.isPublish)) {
-            predicates.add(criteriaBuilder.equal(root.get("version"), this.isPublish));
-        }
-        if  (Objects.nonNull(this.fromCustom)) {
-            predicates.add(criteriaBuilder.equal(root.get("fromCustom"), this.fromCustom));
-        }
-        if (Objects.nonNull(this.fromPath)) {
-            predicates.add(criteriaBuilder.equal(root.get("fromPath"), this.fromPath));
-        }
+    public JPAPredicateFunction<CriteriaBuilder, Root<FlowDefinition>, List<Predicate>> entityPredicate() {
+        return this.entityPredicate;
     }
 
     @Override
-    protected String customOrderByField(String orderByColumn) {
+    public String orderByField(String orderByColumn) {
         return MAPPING.get(orderByColumn);
     }
 

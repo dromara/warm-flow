@@ -43,15 +43,4 @@ public class JPAUtil {
         }
     }
 
-
-
-
-    public static void main(String[] args) {
-        System.out.println(FlowDefinition.MAPPING);
-        System.out.println(FlowHisTask.MAPPING);
-        System.out.println(FlowInstance.MAPPING);
-        System.out.println(FlowNode.MAPPING);
-        System.out.println(FlowSkip.MAPPING);
-        System.out.println(FlowTask.MAPPING);
-    }
 }
