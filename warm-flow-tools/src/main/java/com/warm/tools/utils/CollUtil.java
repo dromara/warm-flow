@@ -76,6 +76,16 @@ public class CollUtil {
             return false;
         }
     }
+    /**
+     * 判断给定的collection1列表中是否包含collection2 判断给定的collection2中是否完全不包含给定的元素value
+     *
+     * @param collection1 给定的集合1
+     * @param collection2 给定的集合2
+     * @return boolean 结果
+     */
+    public static boolean notContainsAny(Collection<String> collection1, Collection<String> collection2) {
+        return !containsAny(collection1, collection2);
+    }
 
     /**
      * 字符串转数组
@@ -111,5 +121,65 @@ public class CollUtil {
         newList.addAll(listA);
         newList.addAll(list);
         return newList;
+    }
+    /**
+     * 几个元素生成一个集合
+     *
+     * @param paramArr 对象数组
+     * @param <T> 泛型
+     * @author xiar
+     * @date 2024/5/10 15:45
+     */
+    public static <T> List<T> toList(T... paramArr) {
+        if (ArrayUtil.isEmpty(paramArr)) {
+            return new ArrayList<>();
+        }
+        List<T> arrayList = new ArrayList<>(paramArr.length);
+        arrayList.addAll(Arrays.asList(paramArr));
+        return arrayList;
+    }
+    /**
+     * 将collection转化为List集合，其中一个List集合中包含多个集合<br>
+     * <B>{@code Collection<T>和Collection<Collection<T>> ------>  List<T> } </B>
+     *
+     * @param list 需要合并得集合
+     * @param lists 需要合并得包含多个集合得集合
+     * @param <T>        List中的泛型
+     * @return List<T>
+     * @author xiarg
+     * @date 2024/5/10 15:45
+     */
+    public static <T> List<T> listAddListsToNew(List<T> list, List<List<T>> lists) {
+        List<T> newList = new ArrayList<>();
+        if(isNotEmpty(lists)){
+            for (List<T> ts : lists) {
+                if(isNotEmpty(ts)){
+                    newList.addAll(ts);
+                }
+            }
+        }
+        if(isNotEmpty(list)){
+            newList.addAll(list);
+        }
+        return newList;
+    }
+    /**
+     * 字符串集合拼接字符串
+     *
+     * @param list 字符串集合
+     * @param sep 分隔符
+     * @return String
+     * @author xiar
+     * @date 2024/5/10 15:45
+     */
+    public static String strListToStr(List<String> list, String sep) {
+        StringBuilder sb = new StringBuilder();
+        if (isNotEmpty(list)) {
+            for (String str : list) {
+                sb.append(str).append(sep);
+            }
+            sb.deleteCharAt(sb.length() - 1);
+        }
+        return sb.toString();
     }
 }

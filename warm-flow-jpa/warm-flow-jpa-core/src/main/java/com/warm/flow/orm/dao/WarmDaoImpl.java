@@ -6,7 +6,7 @@ import com.warm.flow.core.handler.DataFillHandler;
 import com.warm.flow.core.orm.agent.WarmQuery;
 import com.warm.flow.core.utils.AssertUtil;
 import com.warm.flow.orm.entity.JPARootEntity;
-import com.warm.flow.orm.utils.JPAOrderByQueryFunction;
+import com.warm.flow.orm.utils.JPAQueryFunction;
 import com.warm.flow.orm.utils.JPAPredicateFunction;
 import com.warm.flow.orm.utils.TenantDeleteUtil;
 import com.warm.flow.orm.utils.JPAUpdateFunction;
@@ -237,7 +237,7 @@ public abstract class WarmDaoImpl<T extends JPARootEntity<T>> implements WarmDao
         }
     }
 
-    protected CriteriaQuery<T> createCriteriaQuery(JPAOrderByQueryFunction<CriteriaBuilder, Root<T>, List<Predicate>, CriteriaQuery<T>> orderByQueryFunction) {
+    protected CriteriaQuery<T> createCriteriaQuery(JPAQueryFunction<CriteriaBuilder, Root<T>, List<Predicate>, CriteriaQuery<T>> orderByQueryFunction) {
         final Class<T> entityClass = entityClass();
         final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(entityClass);

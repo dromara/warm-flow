@@ -45,9 +45,6 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
                 if (StringUtils.isNotEmpty(this.targetNodeName)) {
                     predicates.add(criteriaBuilder.equal(root.get("targetNodeName"), this.targetNodeName));
                 }
-                if (StringUtils.isNotEmpty(this.approver)) {
-                    predicates.add(criteriaBuilder.equal(root.get("approver"), this.approver));
-                }
                 if (Objects.nonNull(this.definitionId)) {
                     predicates.add(criteriaBuilder.equal(root.get("definitionId"), this.definitionId));
                 }
@@ -56,9 +53,6 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
                 }
                 if  (Objects.nonNull(this.flowStatus)) {
                     predicates.add(criteriaBuilder.equal(root.get("flowStatus"), this.flowStatus));
-                }
-                if  (Objects.nonNull(this.permissionFlag)) {
-                    predicates.add(criteriaBuilder.equal(root.get("permissionFlag"), this.permissionFlag));
                 }
                 if (Objects.nonNull(this.message)) {
                     predicates.add(criteriaBuilder.equal(root.get("message"), this.message));
@@ -134,18 +128,6 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
      */
     @Column(name="target_node_name")
     private String targetNodeName;
-
-    /**
-     * 审批者
-     */
-    @Column(name="approver")
-    private String approver;
-
-    /**
-     * 权限标识（权限类型:权限标识，可以多个，如role:1,role:2)
-     */
-    @Column(name="permission_flag")
-    private String permissionFlag;
 
     /**
      * 权限标识 permissionFlag的list形式
@@ -285,28 +267,6 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
     }
 
     @Override
-    public String getApprover() {
-        return approver;
-    }
-
-    @Override
-    public FlowHisTask setApprover(String approver) {
-        this.approver = approver;
-        return this;
-    }
-
-    @Override
-    public String getPermissionFlag() {
-        return permissionFlag;
-    }
-
-    @Override
-    public FlowHisTask setPermissionFlag(String permissionFlag) {
-        this.permissionFlag = permissionFlag;
-        return this;
-    }
-
-    @Override
     public List<String> getPermissionList() {
         return permissionList;
     }
@@ -388,8 +348,6 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
                 ", nodeType=" + nodeType +
                 ", targetNodeCode='" + targetNodeCode + '\'' +
                 ", targetNodeName='" + targetNodeName + '\'' +
-                ", approver='" + approver + '\'' +
-                ", permissionFlag='" + permissionFlag + '\'' +
                 ", permissionList=" + permissionList +
                 ", flowStatus=" + flowStatus +
                 ", message='" + message + '\'' +

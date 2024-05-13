@@ -67,8 +67,11 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         List<Task> addTasks = StreamUtils.toList(nextNodes, node -> FlowFactory.taskService()
                 .addTask(node, instance, flowParams));
 
+        // 历史任务 和 代办任务设置处理人
+        List<User> users = FlowFactory.userService().setUser(hisTasks, addTasks, flowParams);
+
         // 开启流程，保存流程信息
-        saveFlowInfo(instance, addTasks, hisTasks);
+        saveFlowInfo(instance, addTasks, hisTasks, users);
 
         // 执行结束监听器和下一节点的开始监听器
         ListenerUtil.executeListener(new ListenerVariable(instance, flowParams.getVariable(), null, addTasks)
@@ -130,8 +133,6 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
                 .setNodeCode(startNode.getNodeCode())
                 .setNodeName(startNode.getNodeName())
                 .setNodeType(startNode.getNodeType())
-                .setPermissionFlag(StringUtils.isNotEmpty(startNode.getDynamicPermissionFlag())
-                        ? startNode.getDynamicPermissionFlag() : startNode.getPermissionFlag())
                 .setFlowStatus(FlowStatus.PASS.getKey());
         FlowFactory.dataFillHandler().idFill(startTask);
         // 开始任务转历史任务
@@ -144,10 +145,12 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
      * @param instance
      * @param addTasks
      * @param hisTasks
+     * @param users
      */
-    private void saveFlowInfo(Instance instance, List<Task> addTasks, List<HisTask> hisTasks) {
+    private void saveFlowInfo(Instance instance, List<Task> addTasks, List<HisTask> hisTasks, List<User> users) {
         FlowFactory.hisTaskService().saveBatch(hisTasks);
         FlowFactory.taskService().saveBatch(addTasks);
+        FlowFactory.userService().saveBatch(users);
         save(instance);
     }
 

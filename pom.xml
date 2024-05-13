@@ -48,7 +48,7 @@
     </modules>
 
     <properties>
-        <revision>1.1.90-SNAPSHOT</revision>
+        <revision>1.2.0-SNAPSHOT</revision>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -65,6 +65,7 @@
         <solon.version>2.5.3</solon.version>
         <snack3.version>3.2.88</snack3.version>
         <slf4j-api.version>1.7.36</slf4j-api.version>
+        <oracle.version>11.2.0.4</oracle.version>
     </properties>
 
     <dependencyManagement>
@@ -218,6 +219,12 @@
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j-api.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.oracle.database.jdbc</groupId>
+                <artifactId>ojdbc6</artifactId>
+                <version>${oracle.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

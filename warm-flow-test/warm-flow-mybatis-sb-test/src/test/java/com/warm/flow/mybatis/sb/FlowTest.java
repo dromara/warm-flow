@@ -28,23 +28,23 @@ public class FlowTest {
     private TaskService taskService;
 
     public FlowParams getUser() {
-        FlowParams flowParams = FlowParams.build().flowCode("leaveFlow-serial-test")
+        return FlowParams.build().flowCode("leaveFlow-serial1")
                 .createBy("1")
                 .nickName("张三")
                 .skipType(SkipType.PASS.getKey())
+                .assigneePermission(Arrays.asList("role:100", "role:101"))
                 .permissionFlag(Arrays.asList("role:1", "role:2"));
-        return flowParams;
     }
 
     @Test
     public void deployFlow() throws Exception {
-        String path = "/Users/minliuhua/Desktop/mdata/file/IdeaProjects/min/warm-flow/warm-flow-test/warm-flow-core-test/src/main/resources/leaveFlow-serial.xml";
+        String path = "D:\\java\\warm-flow\\warm-flow-doc\\leaveFlow-serial1_1.0.xml";
         System.out.println("已部署流程的id：" + defService.importXml(new FileInputStream(path)).getId());
     }
 
     @Test
     public void publish() {
-        defService.publish(1237767792086880256L);
+        defService.publish(1239250377455570962L);
     }
 
     @Test
@@ -55,7 +55,7 @@ public class FlowTest {
     @Test
     public void skipFlow() {
         // 通过实例id流转
-        Instance instance = insService.skipByInsId(1236585090532904960L, getUser().skipType(SkipType.PASS.getKey())
+        Instance instance = insService.skipByInsId(1239250784500191232L, getUser().skipType(SkipType.PASS.getKey())
                 .permissionFlag(Arrays.asList("role:1", "role:2")));
         System.out.println("流转后流程实例：" + instance.toString());
 
@@ -70,15 +70,19 @@ public class FlowTest {
         // 终止流程实例
         FlowParams flowParams = new FlowParams();
         flowParams.message("终止流程").createBy("1");
-        taskService.termination(1232001396254052352L, flowParams);
+        taskService.termination(1239251891997773824L, flowParams);
     }
 
     @Test
     public void skipAnyNode() {
-        // 跳转到指定节点
-        Instance instance = taskService.skip(1219286332145274880L, getUser().skipType(SkipType.PASS.getKey())
-                .permissionFlag(Arrays.asList("role:1", "role:2")));
+        // 跳转到指定节点 跳转到结束节点
+        Instance instance = taskService.skip(1239251185018474496L, getUser().skipType(SkipType.PASS.getKey())
+                .permissionFlag(Arrays.asList("role:1", "role:2")).nodeCode("9edc9b26-cab4-4fd4-9a30-c89f11626911"));
         System.out.println("流转后流程实例：" + instance.toString());
     }
-
+    @Test
+    public void assignee() {
+        // 转办
+        System.out.println("转办：" + taskService.transfer(1239301524417548289L, getUser()));
+    }
 }

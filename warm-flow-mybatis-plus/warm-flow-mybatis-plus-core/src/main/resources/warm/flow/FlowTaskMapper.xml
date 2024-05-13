@@ -9,11 +9,9 @@
         <result property="nodeCode" column="node_code"/>
         <result property="nodeName" column="node_name"/>
         <result property="nodeType" column="node_type"/>
-        <result property="approver" column="approver"/>
         <result property="definitionId" column="definition_id"/>
         <result property="instanceId" column="instance_id"/>
         <result property="flowStatus" column="flow_status"/>
-        <result property="permissionFlag" column="permission_flag"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
         <result property="tenantId" column="tenant_id"/>
@@ -29,9 +27,7 @@
                t.node_code,
                t.node_name,
                t.node_type,
-               t.approver,
                t.definition_id,
-               t.permission_flag,
                t.instance_id,
                t.flow_status,
                t.create_time,

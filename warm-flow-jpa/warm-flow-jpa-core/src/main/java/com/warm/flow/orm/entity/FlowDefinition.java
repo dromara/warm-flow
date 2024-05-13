@@ -2,6 +2,7 @@ package com.warm.flow.orm.entity;
 
 import com.warm.flow.core.entity.Definition;
 import com.warm.flow.core.entity.Node;
+import com.warm.flow.core.entity.User;
 import com.warm.flow.core.enums.PublishStatus;
 import com.warm.flow.orm.utils.JPAUtil;
 import com.warm.flow.orm.utils.JPAPredicateFunction;
@@ -120,6 +121,9 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
     @Transient
     private List<Node> nodeList = new ArrayList<>();
 
+    @Transient
+    private List<User> userList = new ArrayList<>();
+
     @Override
     public String getFlowCode() {
         return flowCode;
@@ -205,6 +209,17 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
     @Override
     public FlowDefinition setNodeList(List<Node> nodeList) {
         this.nodeList = nodeList;
+        return this;
+    }
+
+    @Override
+    public List<User> getUserList() {
+        return userList;
+    }
+
+    @Override
+    public Definition setUserList(List<User> userList) {
+        this.userList = userList;
         return this;
     }
 

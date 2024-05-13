@@ -10,7 +10,6 @@
         <result property="definitionId" column="definition_id"/>
         <result property="nodeCode" column="node_code"/>
         <result property="nodeName" column="node_name"/>
-        <result property="permissionFlag" column="permission_flag"/>
         <result property="coordinate" column="coordinate"/>
         <result property="skipAnyNode" column="skip_any_node"/>
         <result property="listenerType" column="listener_type"/>
@@ -28,7 +27,6 @@
                t.definition_id,
                t.node_code,
                t.node_name,
-               t.permission_flag,
                t.coordinate,
                t.skip_any_node,
                t.listener_type,
@@ -58,9 +56,6 @@
             <if test="entity.definitionId != null">and t.definition_id = #{entity.definitionId}</if>
             <if test="entity.nodeCode != null and entity.nodeCode != ''">and t.node_code = #{entity.nodeCode}</if>
             <if test="entity.nodeName != null and entity.nodeName != ''">and t.node_name = #{entity.nodeName}</if>
-            <if test="entity.permissionFlag != null and entity.permissionFlag != ''">and t.permission_flag =
-                #{entity.permissionFlag}
-            </if>
             <if test="entity.coordinate != null and entity.coordinate != ''">and t.coordinate = #{entity.coordinate}</if>
             <if test="entity.skipAnyNode != null and entity.skipAnyNode != ''">and t.skip_any_node = #{entity.skipAnyNode}</if>
             <if test="entity.listenerType != null and entity.listenerType != ''">and t.listener_type = #{entity.listenerType}</if>
@@ -104,10 +99,13 @@
 
     <select id="getByNodeCodes" resultMap="FlowNodeResult">
         <include refid="selectVo"/>
-        where t.definition_id = #{definitionId} and t.node_code in
-        <foreach item="item" collection="nodeCodes" open="(" separator="," close=")">
-            #{item}
-        </foreach>
+        where t.definition_id = #{definitionId}
+        <if test="nodeCodes != null and nodeCodes.size() > 0">
+            and t.node_code in
+            <foreach item="item" collection="nodeCodes" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
         <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
         <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
     </select>
@@ -120,7 +118,6 @@
             <if test="definitionId != null">definition_id,</if>
             <if test="nodeCode != null and nodeCode != ''">node_code,</if>
             <if test="nodeName != null and nodeName != ''">node_name,</if>
-            <if test="permissionFlag != null">permission_flag,</if>
             <if test="coordinate != null and coordinate != ''">coordinate,</if>
             <if test="skipAnyNode != null and skipAnyNode != ''">skip_any_node,</if>
             <if test="listenerType != null and listenerType != ''">listener_type,</if>
@@ -137,7 +134,6 @@
             <if test="definitionId != null">#{definitionId},</if>
             <if test="nodeCode != null and nodeCode != ''">#{nodeCode},</if>
             <if test="nodeName != null and nodeName != ''">#{nodeName},</if>
-            <if test="permissionFlag != null">#{permissionFlag},</if>
             <if test="coordinate != null and coordinate != ''">#{coordinate},</if>
             <if test="skipAnyNode != null and skipAnyNode != ''">#{skipAnyNode},</if>
             <if test="listenerType != null and listenerType != ''">#{listenerType},</if>
@@ -157,7 +153,6 @@
             <if test="definitionId != null">t.definition_id = #{definitionId},</if>
             <if test="nodeCode != null and nodeCode != ''">t.node_code = #{nodeCode},</if>
             <if test="nodeName != null and nodeName != ''">t.node_name = #{nodeName},</if>
-            <if test="permissionFlag != null">t.permission_flag = #{permissionFlag},</if>
             <if test="coordinate != null and coordinate != ''">t.coordinate = #{coordinate},</if>
             <if test="skipAnyNode != null and skipAnyNode != ''">t.skip_any_node = #{skipAnyNode},</if>
             <if test="listenerType != null and listenerType != ''">t.listener_type = #{listenerType},</if>
@@ -213,7 +208,6 @@
             <if test="definitionId != null">and definition_id = #{definitionId}</if>
             <if test="nodeCode != null and nodeCode != ''">and node_code = #{nodeCode}</if>
             <if test="nodeName != null and nodeName != ''">and node_name = #{nodeName}</if>
-            <if test="permissionFlag != null">and permission_flag = #{permissionFlag}</if>
             <if test="coordinate != null and coordinate != ''">and coordinate = #{coordinate}</if>
             <if test="skipAnyNode != null and skipAnyNode != ''">and skip_any_node = #{skipAnyNode}</if>
             <if test="listenerType != null and listenerType != ''">and listener_type = #{listenerType}</if>
@@ -234,7 +228,6 @@
             <if test="entity.definitionId != null">and t.definition_id = #{entity.definitionId}</if>
             <if test="entity.nodeCode != null and entity.nodeCode != ''">and t.node_code = #{entity.nodeCode}</if>
             <if test="entity.nodeName != null and entity.nodeName != ''">and t.node_name = #{entity.nodeName}</if>
-            <if test="entity.permissionFlag != null">and t.permission_flag = #{entity.permissionFlag}</if>
             <if test="entity.coordinate != null and entity.coordinate != ''">and t.coordinate = #{entity.coordinate}</if>
             <if test="entity.skipAnyNode != null and entity.skipAnyNode != ''">and t.skip_any_node = #{entity.skipAnyNode}</if>
             <if test="entity.listenerType != null and entity.listenerType != ''">and t.listener_type = #{entity.listenerType}</if>

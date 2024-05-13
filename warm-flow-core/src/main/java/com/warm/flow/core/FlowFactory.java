@@ -31,6 +31,7 @@ public class FlowFactory {
     private static NodeService nodeService = null;
     private static SkipService skipService = null;
     private static TaskService taskService = null;
+    private static UserService userService = null;
 
 
     private static Supplier<Definition> defSupplier;
@@ -39,6 +40,7 @@ public class FlowFactory {
     private static Supplier<Node> nodeSupplier;
     private static Supplier<Skip> skipSupplier;
     private static Supplier<Task> taskSupplier;
+    private static Supplier<User> userSupplier;
 
     private static WarmFlow flowConfig;
 
@@ -48,62 +50,53 @@ public class FlowFactory {
 
     private static TenantHandler tenantHandler;
 
-    public static void initFlowService(DefService definitionService, HisTaskService hisTaskService, InsService instanceService
-            , NodeService nodeService, SkipService skipService, TaskService taskService) {
-        FlowFactory.setDefService(definitionService);
-        FlowFactory.setHisTaskService(hisTaskService);
-        FlowFactory.setInsService(instanceService);
-        FlowFactory.setNodeService(nodeService);
-        FlowFactory.setSkipService(skipService);
-        FlowFactory.setTaskService(taskService);
-    }
-
-    public static void setDefService(DefService defService) {
-        FlowFactory.defService = defService;
-    }
-
-    public static void setHisTaskService(HisTaskService hisTaskService) {
-        FlowFactory.hisTaskService = hisTaskService;
-    }
-
-    public static void setInsService(InsService insService) {
-        FlowFactory.insService = insService;
-    }
-
-    public static void setNodeService(NodeService nodeService) {
-        FlowFactory.nodeService = nodeService;
-    }
-
-    public static void setSkipService(SkipService skipService) {
-        FlowFactory.skipService = skipService;
-    }
-
-    public static void setTaskService(TaskService taskService) {
-        FlowFactory.taskService = taskService;
-    }
-
     public static DefService defService() {
-        return defService;
+        if (ObjectUtil.isNotNull(defService)) {
+            return defService;
+        }
+        return defService = FrameInvoker.getBean(DefService.class);
     }
 
     public static HisTaskService hisTaskService() {
-        return hisTaskService;
+        if (ObjectUtil.isNotNull(hisTaskService)) {
+            return hisTaskService;
+        }
+        return hisTaskService = FrameInvoker.getBean(HisTaskService.class);
     }
 
     public static InsService insService() {
-        return insService;
+        if (ObjectUtil.isNotNull(insService)) {
+            return insService;
+        }
+        return insService = FrameInvoker.getBean(InsService.class);
     }
 
     public static NodeService nodeService() {
-        return nodeService;
+        if (ObjectUtil.isNotNull(nodeService)) {
+            return nodeService;
+        }
+        return nodeService = FrameInvoker.getBean(NodeService.class);
     }
 
     public static SkipService skipService() {
-        return skipService;
+        if (ObjectUtil.isNotNull(skipService)) {
+            return skipService;
+        }
+        return skipService = FrameInvoker.getBean(SkipService.class);
     }
 
     public static TaskService taskService() {
-        return taskService;
+        if (ObjectUtil.isNotNull(taskService)) {
+            return taskService;
+        }
+        return taskService = FrameInvoker.getBean(TaskService.class);
+    }
+
+    public static UserService userService() {
+        if (ObjectUtil.isNotNull(userService)) {
+            return userService;
+        }
+        return userService = FrameInvoker.getBean(UserService.class);
     }
 
     public static void setNewDef(Supplier<Definition> supplier) {
@@ -152,6 +145,14 @@ public class FlowFactory {
 
     public static Task newTask() {
         return taskSupplier.get();
+    }
+
+    public static void setNewUser(Supplier<User> supplier) {
+        FlowFactory.userSupplier = supplier;
+    }
+
+    public static User newUser() {
+        return userSupplier.get();
     }
 
     public static WarmFlow getFlowConfig() {

@@ -67,14 +67,6 @@ public interface HisTask extends RootEntity {
 
     public HisTask setTargetNodeName(String targetNodeName);
 
-    public String getApprover();
-
-    public HisTask setApprover(String approver);
-
-    public String getPermissionFlag();
-
-    public HisTask setPermissionFlag(String permissionFlag);
-
     public List<String> getPermissionList();
 
     public HisTask setPermissionList(List<String> permissionList);

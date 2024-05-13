@@ -97,14 +97,20 @@ public class FlowAutoConfig {
     }
 
     @Bean
-    public WarmFlow initFlow(DefService definitionService, HisTaskService hisTaskService
-            , InsService instanceService, NodeService nodeService, SkipService skipService, TaskService taskService
-            , SqlSessionFactory sqlSessionFactory) {
+    public FlowUserDao userDao() {
+        return new FlowUserDaoImpl();
+    }
+
+    @Bean
+    public UserService userService(FlowUserDao userDao) {
+        return new UserServiceImpl().setDao(userDao);
+    }
+
+    @Bean
+    public WarmFlow initFlow(SqlSessionFactory sqlSessionFactory) {
         loadXml(sqlSessionFactory);
         // 设置创建对象方法
         EntityInvoker.setNewEntity();
-        FlowFactory.initFlowService(definitionService, hisTaskService, instanceService
-                , nodeService, skipService, taskService);
         FrameInvoker.setCfgFunction((key) -> SpringUtil.getBean(Environment.class).getProperty(key));
         FrameInvoker.setBeanFunction(SpringUtil::getBean);
         WarmFlow flowConfig = WarmFlow.init();
@@ -116,7 +122,7 @@ public class FlowAutoConfig {
     private void loadXml(SqlSessionFactory sqlSessionFactory) {
         List<String> mapperList = Arrays.asList("warm/flow/FlowDefinitionMapper.xml", "warm/flow/FlowHisTaskMapper.xml"
                 , "warm/flow/FlowInstanceMapper.xml", "warm/flow/FlowNodeMapper.xml"
-                , "warm/flow/FlowSkipMapper.xml", "warm/flow/FlowTaskMapper.xml");
+                , "warm/flow/FlowSkipMapper.xml", "warm/flow/FlowTaskMapper.xml","warm/flow/FlowUserMapper.xml");
         org.apache.ibatis.session.Configuration configuration = sqlSessionFactory.getConfiguration();
         try {
             for (String mapper : mapperList) {

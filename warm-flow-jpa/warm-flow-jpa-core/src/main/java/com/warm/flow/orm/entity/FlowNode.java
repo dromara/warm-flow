@@ -46,9 +46,6 @@ public class FlowNode extends JPARootEntity<FlowNode> implements Node {
                 if (StringUtils.isNotEmpty(this.nodeName)) {
                     predicates.add(criteriaBuilder.equal(root.get("nodeName"), this.nodeName));
                 }
-                if (StringUtils.isNotEmpty(this.permissionFlag)) {
-                    predicates.add(criteriaBuilder.equal(root.get("permissionFlag"), this.permissionFlag));
-                }
                 if (StringUtils.isNotEmpty(this.coordinate)) {
                     predicates.add(criteriaBuilder.equal(root.get("coordinate"), this.coordinate));
                 }
@@ -109,16 +106,13 @@ public class FlowNode extends JPARootEntity<FlowNode> implements Node {
      */
     @Column(name="node_name")
     private String nodeName;
-    /**
-     * 权限标识（权限类型:权限标识，可以多个，如role:1,role:2)
-     */
-    @Column(name="permission_flag")
-    private String permissionFlag;
+
     /**
      * 动态权限标识（权限类型:权限标识，可以多个，如role:1,role:2)
      */
     @Transient
-    private String dynamicPermissionFlag;
+    private List<String> dynamicPermissionFlagList;
+
     /**
      * 流程节点坐标
      */
@@ -188,24 +182,13 @@ public class FlowNode extends JPARootEntity<FlowNode> implements Node {
     }
 
     @Override
-    public String getPermissionFlag() {
-        return permissionFlag;
+    public List<String> getDynamicPermissionFlagList() {
+        return dynamicPermissionFlagList;
     }
 
     @Override
-    public FlowNode setPermissionFlag(String permissionFlag) {
-        this.permissionFlag = permissionFlag;
-        return this;
-    }
-
-    @Override
-    public String getDynamicPermissionFlag() {
-        return dynamicPermissionFlag;
-    }
-
-    @Override
-    public FlowNode setDynamicPermissionFlag(String dynamicPermissionFlag) {
-        this.dynamicPermissionFlag = dynamicPermissionFlag;
+    public FlowNode setDynamicPermissionFlagList(List<String> dynamicPermissionFlagList) {
+        this.dynamicPermissionFlagList = dynamicPermissionFlagList;
         return this;
     }
 
@@ -285,7 +268,7 @@ public class FlowNode extends JPARootEntity<FlowNode> implements Node {
                 ", definitionId=" + definitionId +
                 ", nodeCode='" + nodeCode + '\'' +
                 ", nodeName='" + nodeName + '\'' +
-                ", permissionFlag='" + permissionFlag + '\'' +
+                ", dynamicPermissionFlagList='" + dynamicPermissionFlagList + '\'' +
                 ", coordinate='" + coordinate + '\'' +
                 ", version='" + version + '\'' +
                 ", skipAnyNode='" + skipAnyNode + '\'' +
