@@ -68,6 +68,12 @@ public class FlowSkip extends JPARootEntity<FlowSkip> implements Skip {
         return MAPPING.get(orderByColumn);
     }
 
+
+    @Override
+    public void initDefaultValue() {
+
+    }
+
     /**
      * 流程id
      */

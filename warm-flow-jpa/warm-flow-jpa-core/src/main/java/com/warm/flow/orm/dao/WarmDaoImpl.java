@@ -321,6 +321,8 @@ public abstract class WarmDaoImpl<T extends JPARootEntity<T>> implements WarmDao
     }
 
     public void insertFill(T entity) {
+        // 新增时处理默认值填充
+        entity.initDefaultValue();
         DataFillHandler dataFillHandler = FlowFactory.dataFillHandler();
         if (ObjectUtil.isNotNull(dataFillHandler)) {
             dataFillHandler.idFill(entity);

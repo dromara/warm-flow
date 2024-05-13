@@ -75,6 +75,12 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
         return MAPPING.get(orderByColumn);
     }
 
+
+    @Override
+    public void initDefaultValue() {
+
+    }
+
     /**
      * 对应flow_definition表的id
      */

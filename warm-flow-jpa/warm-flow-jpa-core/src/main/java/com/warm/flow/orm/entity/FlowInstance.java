@@ -68,6 +68,12 @@ public class FlowInstance extends JPARootEntity<FlowInstance> implements Instanc
         return MAPPING.get(orderByColumn);
     }
 
+
+    @Override
+    public void initDefaultValue() {
+
+    }
+
     /**
      * 对应flow_definition表的id
      */

@@ -2,6 +2,7 @@ package com.warm.flow.orm.entity;
 
 import com.warm.flow.core.entity.Definition;
 import com.warm.flow.core.entity.Node;
+import com.warm.flow.core.enums.PublishStatus;
 import com.warm.flow.orm.utils.JPAUtil;
 import com.warm.flow.orm.utils.JPAPredicateFunction;
 import com.warm.tools.utils.StringUtils;
@@ -63,6 +64,16 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
     @Override
     public String orderByField(String orderByColumn) {
         return MAPPING.get(orderByColumn);
+    }
+
+    @Override
+    public void initDefaultValue() {
+        if (Objects.isNull(this.isPublish)) {
+            this.isPublish = PublishStatus.UNPUBLISHED.getKey();
+        }
+        if (Objects.isNull(this.fromCustom)) {
+            this.fromCustom = "N";
+        }
     }
 
     /**

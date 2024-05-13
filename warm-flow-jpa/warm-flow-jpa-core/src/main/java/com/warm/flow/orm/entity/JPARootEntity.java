@@ -49,6 +49,8 @@ public abstract class JPARootEntity<T extends RootEntity> implements RootEntity 
 
     public abstract JPAPredicateFunction<CriteriaBuilder, Root<T>, List<Predicate>> entityPredicate();
 
+    public abstract void initDefaultValue();
+
     public JPAPredicateFunction<CriteriaBuilder, Root<T>, List<Predicate>> commonPredicate() {
         return this.commonPredicate;
     };

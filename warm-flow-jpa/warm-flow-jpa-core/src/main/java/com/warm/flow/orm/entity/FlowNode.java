@@ -76,6 +76,13 @@ public class FlowNode extends JPARootEntity<FlowNode> implements Node {
         return MAPPING.get(orderByColumn);
     }
 
+    @Override
+    public void initDefaultValue() {
+        if (Objects.isNull(this.skipAnyNode)) {
+            this.skipAnyNode = "N";
+        }
+    }
+
     /**
      * 跳转条件
      */
