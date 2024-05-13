@@ -5,6 +5,7 @@ import com.warm.flow.orm.utils.JPAPredicateFunction;
 import com.warm.flow.orm.utils.JPAUtil;
 import com.warm.tools.utils.StringUtils;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -69,6 +70,7 @@ public class FlowUser extends JPARootEntity<FlowUser> implements User{
     /**
      * 权限(role:1/user:1)/已审批人(用户id)
      */
+    @Column(name = "processed_by")
     private String processedBy;
 
     /**
