@@ -65,11 +65,6 @@ public class FlowNode implements Node {
      */
     private String nodeName;
     /**
-     * 权限标识（权限类型:权限标识，可以多个，如role:1,role:2)
-     */
-    @TableField(exist = false)
-    private String permissionFlag;
-    /**
      * 动态权限标识（权限类型:权限标识，可以多个，如role:1,role:2)
      */
     @TableField(exist = false)
@@ -195,17 +190,6 @@ public class FlowNode implements Node {
     }
 
     @Override
-    public String getPermissionFlag() {
-        return permissionFlag;
-    }
-
-    @Override
-    public FlowNode setPermissionFlag(String permissionFlag) {
-        this.permissionFlag = permissionFlag;
-        return this;
-    }
-
-    @Override
     public List<String> getDynamicPermissionFlagList() {
         return dynamicPermissionFlagList;
     }
@@ -295,7 +279,6 @@ public class FlowNode implements Node {
                 ", definitionId=" + definitionId +
                 ", nodeCode='" + nodeCode + '\'' +
                 ", nodeName='" + nodeName + '\'' +
-                ", permissionFlag='" + permissionFlag + '\'' +
                 ", dynamicPermissionFlagList=" + dynamicPermissionFlagList +
                 ", coordinate='" + coordinate + '\'' +
                 ", version='" + version + '\'' +

@@ -73,17 +73,6 @@ public class FlowTask implements Task {
      */
     private Integer nodeType;
 
-
-    /**
-     * 审批者
-     */
-    private String approver;
-
-    /**
-     * 转办人
-     */
-    private String assignee;
-
     /**
      * 流程状态（0待提交 1审批中 2 审批通过 8已完成 9已退回 10失效）
      */
@@ -310,8 +299,6 @@ public class FlowTask implements Task {
                 ", nodeCode='" + nodeCode + '\'' +
                 ", nodeName='" + nodeName + '\'' +
                 ", nodeType=" + nodeType +
-                ", approver='" + approver + '\'' +
-                ", assignee='" + assignee + '\'' +
                 ", flowStatus=" + flowStatus +
                 ", permissionFlag='" + permissionFlag + '\'' +
                 ", permissionList=" + permissionList +

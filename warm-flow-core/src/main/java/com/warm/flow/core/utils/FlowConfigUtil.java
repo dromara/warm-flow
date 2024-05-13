@@ -152,7 +152,10 @@ public class FlowConfigUtil {
             nodeElement.addAttribute("nodeType", NodeType.getValueByKey(node.getNodeType()));
             nodeElement.addAttribute("nodeCode", node.getNodeCode());
             nodeElement.addAttribute("nodeName", node.getNodeName());
-            nodeElement.addAttribute("permissionFlag", node.getPermissionFlag());
+            List<String> permission = FlowFactory.userService().getPermission(node.getId());
+            if (CollUtil.isNotEmpty(permission)) {
+                nodeElement.addAttribute("permissionFlag", CollUtil.strListToStr(permission, ","));
+            }
             nodeElement.addAttribute("coordinate", node.getCoordinate());
             nodeElement.addAttribute("skipAnyNode", node.getSkipAnyNode());
             nodeElement.addAttribute("listenerType", node.getListenerType());

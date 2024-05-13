@@ -47,10 +47,6 @@ public interface Node extends RootEntity {
 
     public Node setNodeName(String nodeName);
 
-    public String getPermissionFlag();
-
-    public Node setPermissionFlag(String permissionFlag);
-
     public List<String> getDynamicPermissionFlagList();
 
     public Node setDynamicPermissionFlagList(List<String> permissionFlagList);
