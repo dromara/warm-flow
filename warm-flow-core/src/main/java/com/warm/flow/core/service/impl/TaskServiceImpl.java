@@ -276,7 +276,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 获取转办给谁的权限
         List<String> assigneePermission = flowParams.getAssigneePermission();
         AssertUtil.isTrue(CollUtil.isEmpty(assigneePermission), ExceptionCons.LOST_ASSIGNEE_PERMISSION);
-        if (ignore) {
+        if (!ignore) {
             // 判断当前处理人是否有权限转办 获取当前转办人的权限
             List<String> permissions = flowParams.getPermissionFlag();
             // 获取任务权限人
