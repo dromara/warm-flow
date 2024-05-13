@@ -10,7 +10,7 @@ CREATE TABLE `flow_definition`
     `create_time` datetime     DEFAULT NULL COMMENT '创建时间',
     `update_time` datetime     DEFAULT NULL COMMENT '更新时间',
     `del_flag`    char(1)      DEFAULT NULL COMMENT '删除标志',
-
+    `tenant_id` varchar(40)  DEFAULT NULL COMMENT '租户id',
     PRIMARY KEY (`id`) USING BTREE,
     UNIQUE KEY `flow_code_version` (`flow_code`,`version`) USING BTREE
 ) ENGINE=InnoDB  COMMENT='流程定义表';
@@ -20,7 +20,6 @@ CREATE TABLE `flow_his_task`
     `id`               bigint unsigned NOT NULL COMMENT '主键id',
     `definition_id`    bigint NOT NULL COMMENT '对应flow_definition表的id',
     `instance_id`      bigint NOT NULL COMMENT '对应flow_instance表的id',
-    `tenant_id`        varchar(40)  DEFAULT NULL COMMENT '租户id',
     `node_code`        varchar(100) DEFAULT NULL COMMENT '开始节点编码',
     `node_name`        varchar(100) DEFAULT NULL COMMENT '开始节点名称',
     `node_type`        tinyint(1) DEFAULT NULL COMMENT '开始节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）',
@@ -33,6 +32,7 @@ CREATE TABLE `flow_his_task`
     `create_time`      datetime     DEFAULT NULL COMMENT '创建时间',
     `update_time`      datetime     DEFAULT NULL COMMENT '更新时间',
     `del_flag`    char(1)      DEFAULT NULL COMMENT '删除标志',
+    `tenant_id` varchar(40)  DEFAULT NULL COMMENT '租户id',
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB  COMMENT='历史任务记录表';
 
@@ -41,7 +41,6 @@ CREATE TABLE `flow_instance`
     `id`            bigint      NOT NULL COMMENT '主键id',
     `definition_id` bigint      NOT NULL COMMENT '对应flow_definition表的id',
     `business_id`   varchar(40) NOT NULL COMMENT '业务id',
-    `tenant_id`     varchar(40)  DEFAULT NULL COMMENT '租户id',
     `node_type`     tinyint(1) NOT NULL COMMENT '结点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）',
     `node_code`     varchar(40) NOT NULL COMMENT '流程节点编码',
     `node_name`     varchar(100) DEFAULT NULL COMMENT '流程节点名称',
@@ -52,6 +51,7 @@ CREATE TABLE `flow_instance`
     `update_time`   datetime     DEFAULT NULL COMMENT '更新时间',
     `ext`           varchar(500) DEFAULT NULL COMMENT '扩展字段',
     `del_flag`    char(1)      DEFAULT NULL COMMENT '删除标志',
+    `tenant_id`     varchar(40)  DEFAULT NULL COMMENT '租户id',
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB  COMMENT='流程实例表';
 
@@ -71,6 +71,7 @@ CREATE TABLE `flow_node`
     `create_time`     datetime     DEFAULT NULL COMMENT '创建时间',
     `update_time`     datetime     DEFAULT NULL COMMENT '更新时间',
     `del_flag`    char(1)      DEFAULT NULL COMMENT '删除标志',
+    `tenant_id`     varchar(40)  DEFAULT NULL COMMENT '租户id',
     PRIMARY KEY (`id`) USING BTREE,
     UNIQUE KEY `info_id_code` (`definition_id`,`node_code`) USING BTREE COMMENT '保证一个流程中node_code是唯一的'
 ) ENGINE=InnoDB  COMMENT='流程结点表';
@@ -90,6 +91,7 @@ CREATE TABLE `flow_skip`
     `create_time`    datetime     DEFAULT NULL COMMENT '创建时间',
     `update_time`    datetime     DEFAULT NULL COMMENT '更新时间',
     `del_flag`    char(1)      DEFAULT NULL COMMENT '删除标志',
+    `tenant_id`     varchar(40)  DEFAULT NULL COMMENT '租户id',
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB  COMMENT='结点跳转关联表';
 
@@ -98,7 +100,6 @@ CREATE TABLE `flow_task`
     `id`              bigint       NOT NULL COMMENT '主键id',
     `definition_id`   bigint       NOT NULL COMMENT '对应flow_definition表的id',
     `instance_id`     bigint       NOT NULL COMMENT '对应flow_instance表的id',
-    `tenant_id`       varchar(40)  DEFAULT NULL COMMENT '租户id',
     `node_code`       varchar(100) NOT NULL COMMENT '节点编码',
     `node_name`       varchar(100) DEFAULT NULL COMMENT '节点名称',
     `node_type`       tinyint(1) NOT NULL COMMENT '节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）',
@@ -109,6 +110,7 @@ CREATE TABLE `flow_task`
     `create_time`     datetime     DEFAULT NULL COMMENT '创建时间',
     `update_time`     datetime     DEFAULT NULL COMMENT '更新时间',
     `del_flag`    char(1)      DEFAULT NULL COMMENT '删除标志',
+    `tenant_id`     varchar(40)  DEFAULT NULL COMMENT '租户id',
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB  COMMENT='待办任务表';
 
