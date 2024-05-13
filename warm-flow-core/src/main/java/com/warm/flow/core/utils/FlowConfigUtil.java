@@ -124,20 +124,12 @@ public class FlowConfigUtil {
     }
 
     private static List<User> initUser(Element nodeElement, Node node){
-        List<User> users = null;
         List<String> permissions = CollUtil.strToColl(nodeElement.attributeValue("permissionFlag"), ",");
         if(CollUtil.isNotEmpty(permissions)){
-            users = new ArrayList<>();
-            for (String permission : permissions) {
-                User user = FlowFactory.newUser()
-                        .setType(UserType.PROPOSE.getKey())
-                        .setProcessedBy(permission)
-                        .setAssociated(node.getId());
-                FlowFactory.dataFillHandler().idFill(user);
-                users.add(user);
-            }
+            return StreamUtils.toList(permissions, permission -> FlowFactory.userService()
+                    .getUser(node.getId(), permission, UserType.PROPOSE.getKey()));
         }
-        return users;
+        return Collections.emptyList();
     }
 
     @SuppressWarnings("unchecked")

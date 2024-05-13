@@ -2,7 +2,6 @@ package com.warm.flow.core.service;
 
 import com.warm.flow.core.dto.FlowParams;
 import com.warm.flow.core.entity.HisTask;
-import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.Task;
 import com.warm.flow.core.entity.User;
 import com.warm.flow.core.orm.service.IWarmService;
@@ -34,21 +33,22 @@ public interface UserService extends IWarmService<User> {
      * @param hisTasks 历史任务
      * @param addTasks 代办任务
      * @param flowParams 流程参数
+     * @param taskId 任务id
      * @return List<User>
      * @author xiarg
      * @date 2024/5/10 13:59
      */
-    List<User> setSkipUser(List<HisTask> hisTasks, List<Task> addTasks, FlowParams flowParams);
+    List<User> setSkipUser(List<HisTask> hisTasks, List<Task> addTasks, FlowParams flowParams, Long taskId);
     /**
      * 历史任务增加流程人员
      *
-     * @param hisTask 历史任务信息
+     * @param hisTaskId 历史任务信息id
      * @param flowParams 工作流内置参数
      * @return User
      * @author xiarg
      * @date 2024/5/10 15:45
      */
-    User hisTaskAddUser(HisTask hisTask, FlowParams flowParams);
+    User hisTaskAddUser(Long hisTaskId, FlowParams flowParams);
 
     /**
      * 代办任务增加流程人员
@@ -77,13 +77,23 @@ public interface UserService extends IWarmService<User> {
      */
     List<String> getPermission(long id);
     /**
-     * 根据任务id更新权限人
+     * 根据关联id更新权限人
      *
-     * @param taskId 任务id
+     * @param associated 关联人id
      * @param permissions 权限人
+     * @param type 权限人
      * @return 结果
      * @author xiarg
      * @date 2024/5/10 11:19
      */
-    boolean updatePermissionByTaskId(Long taskId, List<String> permissions);
+    boolean updatePermissionByAssociated(Long associated, List<String> permissions, String type);
+
+    /**
+     * 构造用户比表信息
+     * @param associated 关联id
+     * @param permission 权限标识
+     * @param type 用户类型
+     * @return 结果
+     */
+    User getUser(Long associated, String permission, String type);
 }

@@ -64,12 +64,6 @@ public class FlowParams {
      */
     private String tenantId;
 
-    /**
-     * 当前处理的任务的Id
-     */
-    private Long taskId;
-
-
     public static FlowParams build() {
         return new FlowParams();
     }
@@ -171,14 +165,6 @@ public class FlowParams {
 
     public String getTenantId() {
         return tenantId;
-    }
-
-    public Long getTaskId() {
-        return taskId;
-    }
-
-    public void setTaskId(Long taskId) {
-        this.taskId = taskId;
     }
 
 }

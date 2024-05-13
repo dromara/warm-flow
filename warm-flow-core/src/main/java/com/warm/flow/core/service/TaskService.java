@@ -113,12 +113,21 @@ public interface TaskService extends IWarmService<Task> {
     Integer setFlowStatus(Integer nodeType, String skipType);
 
     /**
-     * 转办任务
+     * 转办任务 ignore默认为true，比如管理员权限
      *
      * @param taskId         任务id
      * @param flowParams 流程参数(包含当前处理人的权限，重新指定的权限标识（办理人）)
      */
     boolean transfer(Long taskId, FlowParams flowParams);
+
+    /**
+     * 转办任务
+     *
+     * @param taskId         任务id
+     * @param flowParams 流程参数(包含当前处理人的权限，重新指定的权限标识（办理人）)
+     * @param ignore 为true忽略权限判断，可直接转办
+     */
+    boolean transfer(Long taskId, FlowParams flowParams, boolean ignore);
 
     /**
      * 并行网关，取结束节点类型，否则随便取id最大的

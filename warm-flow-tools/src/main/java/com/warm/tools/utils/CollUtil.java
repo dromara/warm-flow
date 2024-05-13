@@ -172,7 +172,7 @@ public class CollUtil {
      * @author xiar
      * @date 2024/5/10 15:45
      */
-    public static String strListToString(List<String> list, String sep) {
+    public static String strListToStr(List<String> list, String sep) {
         StringBuilder sb = new StringBuilder();
         if (isNotEmpty(list)) {
             for (String str : list) {

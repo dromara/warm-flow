@@ -86,6 +86,16 @@ public class FlowAutoConfig {
     }
 
     @Bean
+    public FlowUserDao userDao() {
+        return new FlowUserDaoImpl();
+    }
+
+    @Bean
+    public UserService userService(FlowUserDao userDao) {
+        return new UserServiceImpl().setDao(userDao);
+    }
+
+    @Bean
     public WarmFlow initFlow() {
         // 设置创建对象方法
         EntityInvoker.setNewEntity();

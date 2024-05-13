@@ -5,7 +5,6 @@ import com.warm.flow.core.constant.ExceptionCons;
 import com.warm.flow.core.dao.FlowUserDao;
 import com.warm.flow.core.dto.FlowParams;
 import com.warm.flow.core.entity.HisTask;
-import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.Task;
 import com.warm.flow.core.entity.User;
 import com.warm.flow.core.enums.UserType;
@@ -15,9 +14,7 @@ import com.warm.flow.core.utils.AssertUtil;
 import com.warm.tools.utils.CollUtil;
 import com.warm.tools.utils.StreamUtils;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 流程用户Service业务层处理
@@ -37,7 +34,7 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
     public List<User> setUser(List<HisTask> hisTasks, List<Task> addTasks, FlowParams flowParams) {
         List<User> hisTaskUserList = null;
         if(CollUtil.isNotEmpty(hisTasks)){
-            hisTaskUserList = StreamUtils.toList(hisTasks, hisTask -> hisTaskAddUser(hisTask, flowParams));
+            hisTaskUserList = StreamUtils.toList(hisTasks, hisTask -> hisTaskAddUser(hisTask.getId(), flowParams));
         }
         List<List<User>> taskUserList = null;
         if(CollUtil.isNotEmpty(addTasks)){
@@ -47,40 +44,24 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
     }
 
     @Override
-    public List<User> setSkipUser(List<HisTask> hisTasks, List<Task> addTasks, FlowParams flowParams) {
+    public List<User> setSkipUser(List<HisTask> hisTasks, List<Task> addTasks, FlowParams flowParams, Long taskId) {
         // 删除已执行的代办任务的权限人
-        delUser(CollUtil.toList(flowParams.getTaskId()));
+        delUser(CollUtil.toList(taskId));
         return setUser(hisTasks, addTasks, flowParams);
     }
 
     @Override
-    public User hisTaskAddUser(HisTask hisTask, FlowParams flowParams) {
-        User user = FlowFactory.newUser()
-                        .setType(UserType.APPROVER.getKey())
-                        .setProcessedBy(flowParams.getCreateBy())
-                        .setAssociated(hisTask.getId());
-        FlowFactory.dataFillHandler().idFill(user);
-        return user;
+    public User hisTaskAddUser(Long hisTaskId, FlowParams flowParams) {
+        return getUser(hisTaskId, flowParams.getCreateBy(), UserType.APPROVER.getKey());
     }
 
     @Override
     public List<User> taskAddUser(Task task, FlowParams flowParams) {
-        List<User> userList = new ArrayList<>();
-        // 获取审批人权限集合
-        List<String> permissionList = task.getPermissionList();
         // 审批人权限不能为空
-        AssertUtil.isTrue(CollUtil.isEmpty(permissionList), ExceptionCons.LOST_NEXT_PERMISSION);
+        AssertUtil.isTrue(CollUtil.isEmpty(task.getPermissionList()), ExceptionCons.LOST_NEXT_PERMISSION);
         // 遍历权限集合，生成流程用户
-        User user;
-        for (String permission : permissionList) {
-            user = FlowFactory.newUser()
-                    .setType(UserType.APPROVAL.getKey())
-                    .setProcessedBy(permission)
-                    .setAssociated(task.getId());
-            FlowFactory.dataFillHandler().idFill(user);
-            userList.add(user);
-        }
-        return userList;
+        return StreamUtils.toList(task.getPermissionList()
+                , permission -> getUser(task.getId(), permission, UserType.APPROVAL.getKey()));
     }
 
     @Override
@@ -90,27 +71,25 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
 
     @Override
     public List<String> getPermission(long id) {
-        return FlowFactory.userService()
-                .list(FlowFactory.newUser().setAssociated(id))
-                .stream()
-                .map(User::getProcessedBy)
-                .collect(Collectors.toList());
+        return StreamUtils.toList(list(FlowFactory.newUser().setAssociated(id)), User::getProcessedBy);
     }
 
     @Override
-    public boolean updatePermissionByTaskId(Long taskId, List<String> permissions) {
-        // 先删除当前任务的权限人
-        delUser(CollUtil.toList(taskId));
+    public boolean updatePermissionByAssociated(Long associated, List<String> permissions, String type) {
+        // 先删除当前关联id用户数据
+        delUser(CollUtil.toList(associated));
         // 再新增权限人
-        List<User> userList = new ArrayList<>();
-        for (String permission : permissions) {
-            User user = FlowFactory.newUser()
-                    .setType(UserType.ASSIGNEE.getKey())
-                    .setProcessedBy(permission)
-                    .setAssociated(taskId);
-            userList.add(user);
-        }
-        saveBatch(userList);
+        saveBatch(StreamUtils.toList(permissions, permission -> getUser(associated, permission, type)));
         return true;
+    }
+
+    @Override
+    public User getUser(Long associated, String permission, String type) {
+        User user = FlowFactory.newUser()
+                .setType(type)
+                .setProcessedBy(permission)
+                .setAssociated(associated);
+        FlowFactory.dataFillHandler().idFill(user);
+        return user;
     }
 }

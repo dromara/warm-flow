@@ -51,9 +51,9 @@ public interface Node extends RootEntity {
 
     public Node setPermissionFlag(String permissionFlag);
 
-    public String getDynamicPermissionFlag();
+    public List<String> getDynamicPermissionFlagList();
 
-    public Node setDynamicPermissionFlag(String permissionFlag);
+    public Node setDynamicPermissionFlagList(List<String> permissionFlagList);
 
     public String getCoordinate();
 

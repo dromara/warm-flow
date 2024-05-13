@@ -73,7 +73,7 @@ public class FlowNode implements Node {
      * 动态权限标识（权限类型:权限标识，可以多个，如role:1,role:2)
      */
     @TableField(exist = false)
-    private String dynamicPermissionFlag;
+    private List<String> dynamicPermissionFlagList;
     /**
      * 流程节点坐标
      */
@@ -206,13 +206,13 @@ public class FlowNode implements Node {
     }
 
     @Override
-    public String getDynamicPermissionFlag() {
-        return dynamicPermissionFlag;
+    public List<String> getDynamicPermissionFlagList() {
+        return dynamicPermissionFlagList;
     }
 
     @Override
-    public FlowNode setDynamicPermissionFlag(String dynamicPermissionFlag) {
-        this.dynamicPermissionFlag = dynamicPermissionFlag;
+    public FlowNode setDynamicPermissionFlagList(List<String> dynamicPermissionFlagList) {
+        this.dynamicPermissionFlagList = dynamicPermissionFlagList;
         return this;
     }
 
@@ -285,20 +285,23 @@ public class FlowNode implements Node {
     @Override
     public String toString() {
         return "FlowNode{" +
-                "id=" + id +
+                "skipList=" + skipList +
+                ", id=" + id +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
+                ", tenantId='" + tenantId + '\'' +
+                ", delFlag='" + delFlag + '\'' +
                 ", nodeType=" + nodeType +
                 ", definitionId=" + definitionId +
                 ", nodeCode='" + nodeCode + '\'' +
                 ", nodeName='" + nodeName + '\'' +
                 ", permissionFlag='" + permissionFlag + '\'' +
+                ", dynamicPermissionFlagList=" + dynamicPermissionFlagList +
                 ", coordinate='" + coordinate + '\'' +
                 ", version='" + version + '\'' +
                 ", skipAnyNode='" + skipAnyNode + '\'' +
                 ", listenerType='" + listenerType + '\'' +
                 ", listenerPath='" + listenerPath + '\'' +
-                ", skipList=" + skipList +
-                "} " + super.toString();
+                '}';
     }
 }
