@@ -102,7 +102,7 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
     public int delete(T entity) {
         TenantDeleteUtil.getEntity(entity);
         if (StringUtils.isNotEmpty(entity.getDelFlag())) {
-            getMapper().updateLogic(entity, FlowFactory.getFlowConfig().getLogicDeleteValue(), entity.getDelFlag());
+            return getMapper().updateLogic(entity, FlowFactory.getFlowConfig().getLogicDeleteValue(), entity.getDelFlag());
         }
         return getMapper().delete(entity);
     }
@@ -111,7 +111,7 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
     public int deleteById(Serializable id) {
         T entity = TenantDeleteUtil.getEntity(newEntity());
         if (StringUtils.isNotEmpty(entity.getDelFlag())) {
-            getMapper().updateByIdLogic(id, entity, FlowFactory.getFlowConfig().getLogicDeleteValue(), entity.getDelFlag());
+            return getMapper().updateByIdLogic(id, entity, FlowFactory.getFlowConfig().getLogicDeleteValue(), entity.getDelFlag());
         }
         return getMapper().deleteById(id, entity);
     }
@@ -120,7 +120,7 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
     public int deleteByIds(Collection<? extends Serializable> ids) {
         T entity = TenantDeleteUtil.getEntity(newEntity());
         if (StringUtils.isNotEmpty(entity.getDelFlag())) {
-            getMapper().updateByIdsLogic(ids, entity, FlowFactory.getFlowConfig().getLogicDeleteValue(), entity.getDelFlag());
+            return getMapper().updateByIdsLogic(ids, entity, FlowFactory.getFlowConfig().getLogicDeleteValue(), entity.getDelFlag());
         }
         return getMapper().deleteByIds(ids, entity);
     }

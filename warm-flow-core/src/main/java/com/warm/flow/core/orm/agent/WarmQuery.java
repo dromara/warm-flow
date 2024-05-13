@@ -3,6 +3,7 @@ package com.warm.flow.core.orm.agent;
 import com.warm.flow.core.orm.service.IWarmService;
 import com.warm.tools.utils.CollUtil;
 import com.warm.tools.utils.ObjectUtil;
+import com.warm.tools.utils.page.OrderBy;
 import com.warm.tools.utils.page.Page;
 
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.List;
  * @author warm
  * @date 2023-03-17
  */
-public class WarmQuery<T> {
+public class WarmQuery<T> implements OrderBy {
 
     /**
      * 排序字段
@@ -140,6 +141,7 @@ public class WarmQuery<T> {
         return this;
     }
 
+    @Override
     public String getOrderBy() {
         return orderBy;
     }
@@ -148,6 +150,7 @@ public class WarmQuery<T> {
         this.orderBy = orderBy;
     }
 
+    @Override
     public String getIsAsc() {
         return isAsc;
     }
