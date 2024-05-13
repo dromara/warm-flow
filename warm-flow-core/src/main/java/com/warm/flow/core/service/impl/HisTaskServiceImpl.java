@@ -39,7 +39,6 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
             insHis.setNodeCode(task.getNodeCode());
             insHis.setNodeName(task.getNodeName());
             insHis.setNodeType(task.getNodeType());
-            insHis.setPermissionFlag(task.getPermissionFlag());
             insHis.setTenantId(task.getTenantId());
             insHis.setDefinitionId(task.getDefinitionId());
             insHis.setTargetNodeCode(nextNode.getNodeCode());

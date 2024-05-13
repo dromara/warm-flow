@@ -63,10 +63,6 @@ public interface Task extends RootEntity {
 
     public Task setFlowStatus(Integer flowStatus);
 
-    public String getPermissionFlag();
-
-    public Task setPermissionFlag(String permissionFlag);
-
     public List<String> getPermissionList();
 
     public Task setPermissionList(List<String> permissionList);

@@ -48,7 +48,7 @@
     </modules>
 
     <properties>
-        <revision>1.1.90-SNAPSHOT</revision>
+        <revision>1.2.0-SNAPSHOT</revision>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

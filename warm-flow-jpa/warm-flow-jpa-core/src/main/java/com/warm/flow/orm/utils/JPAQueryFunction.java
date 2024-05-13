@@ -7,6 +7,6 @@ package com.warm.flow.orm.utils;
  * @since 2024/5/12 11:11
  */
 @FunctionalInterface
-public interface JPAOrderByQueryFunction<CB, ROOT, LIST, CU> {
-    void process(CB cb, ROOT root, LIST list, CU cu);
+public interface JPAQueryFunction<CB, ROOT, LIST, CQ> {
+    void process(CB cb, ROOT root, LIST list, CQ cq);
 }

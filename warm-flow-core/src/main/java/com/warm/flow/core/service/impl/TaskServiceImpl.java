@@ -488,7 +488,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                             .setNodeCode(addTask.getNodeCode())
                             .setNodeName(addTask.getNodeName())
                             .setNodeType(addTask.getNodeType())
-                            .setPermissionFlag(task.getPermissionFlag())
                             .setTenantId(addTask.getTenantId())
                             .setDefinitionId(addTask.getDefinitionId())
                             .setFlowStatus(FlowStatus.FINISHED.getKey())
@@ -614,7 +613,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 insHis.setNodeCode(task.getNodeCode());
                 insHis.setNodeName(task.getNodeName());
                 insHis.setNodeType(task.getNodeType());
-                insHis.setPermissionFlag(task.getPermissionFlag());
                 insHis.setFlowStatus(flowStatus);
                 insHis.setCreateTime(new Date());
                 insHis.setTenantId(task.getTenantId());

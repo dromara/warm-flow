@@ -242,17 +242,6 @@ public class FlowTask implements Task {
     }
 
     @Override
-    public String getPermissionFlag() {
-        return permissionFlag;
-    }
-
-    @Override
-    public FlowTask setPermissionFlag(String permissionFlag) {
-        this.permissionFlag = permissionFlag;
-        return this;
-    }
-
-    @Override
     public List<String> getPermissionList() {
         return permissionList;
     }
