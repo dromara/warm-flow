@@ -31,7 +31,7 @@ public class FlowFactory {
     private static NodeService nodeService = null;
     private static SkipService skipService = null;
     private static TaskService taskService = null;
-    private static FlowUserService FlowUserService = null;
+    private static UserService UserService = null;
 
 
     private static Supplier<Definition> defSupplier;
@@ -92,11 +92,11 @@ public class FlowFactory {
         return taskService = FrameInvoker.getBean(TaskService.class);
     }
 
-    public static FlowUserService userService() {
-        if (ObjectUtil.isNotNull(FlowUserService)) {
-            return FlowUserService;
+    public static UserService userService() {
+        if (ObjectUtil.isNotNull(UserService)) {
+            return UserService;
         }
-        return FlowUserService = FrameInvoker.getBean(FlowUserService.class);
+        return UserService = FrameInvoker.getBean(UserService.class);
     }
 
     public static void setNewDef(Supplier<Definition> supplier) {

@@ -9,7 +9,7 @@ import com.warm.flow.core.entity.Task;
 import com.warm.flow.core.entity.User;
 import com.warm.flow.core.enums.UserType;
 import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
-import com.warm.flow.core.service.FlowUserService;
+import com.warm.flow.core.service.UserService;
 import com.warm.flow.core.utils.AssertUtil;
 import com.warm.tools.utils.CollUtil;
 import com.warm.tools.utils.StreamUtils;
@@ -22,10 +22,10 @@ import java.util.List;
  * @author xiarg
  * @date 2024/5/10 13:57
  */
-public class FlowUserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> implements FlowUserService {
+public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> implements UserService {
 
     @Override
-    public FlowUserService setDao(FlowUserDao<User> warmDao) {
+    public UserService setDao(FlowUserDao<User> warmDao) {
         this.warmDao = warmDao;
         return this;
     }
