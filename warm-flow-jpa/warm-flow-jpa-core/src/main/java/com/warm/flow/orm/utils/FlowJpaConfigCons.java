@@ -10,5 +10,5 @@ public class FlowJpaConfigCons {
     /**
      * 是否开启逻辑删除
      */
-    public static final String JPA_PERSISTENCE_PROVIDER = "warm-flow.jpa.persistence_provider";
+    public static final String JPA_PERSISTENCE_PROVIDER = "warm-flow.jpa_persistence_provider";
 }
