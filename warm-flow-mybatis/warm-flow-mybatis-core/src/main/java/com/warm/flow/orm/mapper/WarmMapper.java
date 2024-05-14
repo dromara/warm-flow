@@ -39,7 +39,8 @@ public interface WarmMapper<T> {
      * @param entity 实体列表
      * @return 集合
      */
-    List<T> selectList(@Param("entity") T entity, @Param("page") Page<T> page, @Param("order") String order);
+    List<T> selectList(@Param("entity") T entity, @Param("page") Page<T> page, @Param("order") String order,
+                       @Param("dataSourceType") String dataSourceType);
 
     /**
      * 查询数量

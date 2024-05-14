@@ -1,9 +1,12 @@
 package com.warm.flow.core.config;
 
 import com.warm.flow.core.constant.FlowConfigCons;
+import com.warm.flow.core.constant.FlowCons;
 import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.tools.utils.ObjectUtil;
 import com.warm.tools.utils.StringUtils;
+
+import java.util.List;
 
 /**
  * WarmFlow属性配置文件
@@ -41,6 +44,11 @@ public class WarmFlow {
      */
     private String tenantHandlerPath;
 
+    /**
+     * 数据库类型
+     */
+    private String dataSourceType;
+
     public static WarmFlow init() {
         WarmFlow flowConfig = new WarmFlow();
         // 设置banner
@@ -57,6 +65,9 @@ public class WarmFlow {
 
         // 设置数据填充处理类
         flowConfig.setDataFillHandlerPath(FrameInvoker.getCfg(FlowConfigCons.DATAFILLHANDLEPATH));
+
+        // 设置数据库类型
+        setDataSourceType(flowConfig);
         printBanner(flowConfig);
         return flowConfig;
     }
@@ -73,6 +84,18 @@ public class WarmFlow {
             if (StringUtils.isNotEmpty(logicNotDeleteValue)) {
                 flowConfig.setLogicNotDeleteValue(logicNotDeleteValue);
             }
+        }
+    }
+
+    private static void setDataSourceType(WarmFlow flowConfig) {
+        String jdbcUrl = FrameInvoker.getCfg(FlowCons.JDBC_URL);
+
+        if (StringUtils.isEmpty(jdbcUrl)) {
+            flowConfig.setDataSourceType("h2");
+        } else {
+            List<Integer> indexList = StringUtils.findStrIndex(jdbcUrl, FlowCons.COLON);
+            String dataSourceType = jdbcUrl.substring(indexList.get(0) + 1, indexList.get(1));
+            flowConfig.setDataSourceType(dataSourceType);
         }
     }
 
@@ -136,5 +159,13 @@ public class WarmFlow {
 
     public void setTenantHandlerPath(String tenantHandlerPath) {
         this.tenantHandlerPath = tenantHandlerPath;
+    }
+
+    public String getDataSourceType() {
+        return dataSourceType;
+    }
+
+    public void setDataSourceType(String dataSourceType) {
+        this.dataSourceType = dataSourceType;
     }
 }

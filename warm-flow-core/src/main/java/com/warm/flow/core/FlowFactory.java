@@ -215,4 +215,10 @@ public class FlowFactory {
         return FlowFactory.tenantHandler = o;
     }
 
+    /**
+     * 获取数据库类型
+     */
+    public static String dataSourceType() {
+        return flowConfig.getDataSourceType();
+    }
 }

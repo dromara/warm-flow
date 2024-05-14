@@ -28,4 +28,14 @@ public class FlowCons {
      */
     public static final String WARMFLOWINITIATOR = "warmFlowInitiator";
 
+    /**
+     * 数据库连接
+     */
+    public static String JDBC_URL = "spring.datasource.url";
+
+    /**
+     * 冒号
+     */
+    public static final String COLON = ":";
+
 }

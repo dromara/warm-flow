@@ -366,4 +366,21 @@ public class StringUtils {
         }
         return sb.toString();
     }
+
+    /**
+     * 查找给定字符串出现的所有下标
+     *
+     * @param jdbcUrl 数据库连接
+     * @param str     给定字符串
+     * @return jdbcUrl中出现 str 的索引下标
+     */
+    public static List<Integer> findStrIndex(String jdbcUrl, String str) {
+        final List<Integer> indexList = new ArrayList<>();
+
+        int index = -1;
+        while ((index = jdbcUrl.indexOf(str, index + 1)) != -1) {
+            indexList.add(index);
+        }
+        return indexList;
+    }
 }

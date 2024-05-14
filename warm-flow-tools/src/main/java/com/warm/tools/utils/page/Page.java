@@ -133,4 +133,20 @@ public class Page<T> implements OrderBy {
         this.isAsc = isAsc;
         return this;
     }
+
+    public Page<T> ifNecessaryChangePage(String dataSourceType) {
+        switch (dataSourceType) {
+            case "oracle":
+                this.pageSize = this.pageSize + this.pageNum;
+                break;
+            case "postgresql":
+                if (pageNum == 0) {
+                    int tmpPageSize = this.pageSize;
+                    this.pageSize = this.pageNum;
+                    this.pageNum = tmpPageSize;
+                }
+                break;
+        }
+        return this;
+    }
 }
