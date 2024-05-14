@@ -90,8 +90,8 @@ public class FlowAutoConfig {
         return new FlowUserDaoImpl();
     }
 
-    @Bean
-    public FlowUserService flowUserService(FlowUserDao userDao) {
+    @Bean("flowUserService")
+    public FlowUserService userService(FlowUserDao userDao) {
         return new FlowUserServiceImpl().setDao(userDao);
     }
 
