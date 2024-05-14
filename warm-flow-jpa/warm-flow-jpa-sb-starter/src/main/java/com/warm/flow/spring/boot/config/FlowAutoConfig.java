@@ -8,17 +8,20 @@ import com.warm.flow.core.service.*;
 import com.warm.flow.core.service.impl.*;
 import com.warm.flow.orm.dao.*;
 import com.warm.flow.orm.invoker.EntityInvoker;
+import com.warm.flow.orm.utils.FlowJpaConfigCons;
 import com.warm.flow.spring.boot.utils.SpringUtil;
-import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
+import javax.persistence.spi.PersistenceProvider;
 import javax.sql.DataSource;
 
 /**
@@ -102,18 +105,27 @@ public class FlowAutoConfig {
         return new UserServiceImpl().setDao(userDao);
     }
 
+    @Bean
+    @ConditionalOnMissingBean
+    public JpaProperties jpaProperties() {
+        return new JpaProperties();
+    }
+
+    @SuppressWarnings({"unchecked"})
     @Bean(name="entityManagerFactoryWarmFlow")
-    public LocalContainerEntityManagerFactoryBean primaryEntityManagerFactory(DataSource dataSource, JpaProperties jpaProperties) {
+    public LocalContainerEntityManagerFactoryBean primaryEntityManagerFactory(DataSource dataSource, JpaProperties jpaProperties) throws ClassNotFoundException {
         LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
         factory.setDataSource(dataSource);
         factory.setJpaPropertyMap(jpaProperties.getProperties());
         factory.setPersistenceXmlLocation("classpath:/META-INF/warn-flow-persistence.xml");
-        factory.setPersistenceProviderClass(HibernatePersistenceProvider.class);
+        String jpaPersistenceProvider = SpringUtil.getBean(Environment.class).getProperty(FlowJpaConfigCons.JPA_PERSISTENCE_PROVIDER);
+        log.info("warm-flow jpa persistence provider: {}", jpaPersistenceProvider);
+        factory.setPersistenceProviderClass((Class<? extends PersistenceProvider>) Class.forName(jpaPersistenceProvider));
         factory.setPersistenceUnitName("warm-flow-jpa");
         return factory;
     }
 
-    @Bean
+    @Bean("warmFlow")
     public WarmFlow initFlow() {
         // 设置创建对象方法
         EntityInvoker.setNewEntity();

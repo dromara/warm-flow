@@ -6,6 +6,7 @@ import com.warm.flow.orm.entity.FlowDefinition;
 import com.warm.flow.orm.entity.FlowHisTask;
 import com.warm.flow.orm.entity.FlowNode;
 import com.warm.flow.orm.utils.TenantDeleteUtil;
+import com.warm.tools.utils.CollUtil;
 import com.warm.tools.utils.StringUtils;
 
 import javax.persistence.EntityManager;
@@ -43,7 +44,10 @@ public class FlowNodeDaoImpl extends WarmDaoImpl<FlowNode> implements FlowNodeDa
             entity.commonPredicate().process(criteriaBuilder, root, predicates);
 
             predicates.add(criteriaBuilder.equal(root.get("definitionId"), definitionId));
-            predicates.add(createIn(criteriaBuilder, root, "nodeCode", nodeCodes));
+
+            if (CollUtil.isNotEmpty(nodeCodes)) {
+                predicates.add(createIn(criteriaBuilder, root, "nodeCode", nodeCodes));
+            }
         });
         return entityManager.createQuery(criteriaQuery).getResultList();
     }
