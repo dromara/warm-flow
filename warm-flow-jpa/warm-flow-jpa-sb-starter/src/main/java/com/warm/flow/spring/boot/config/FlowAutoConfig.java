@@ -16,14 +16,10 @@ import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
-import javax.persistence.EntityManager;
 import javax.sql.DataSource;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * @author warm
@@ -101,9 +97,9 @@ public class FlowAutoConfig {
         return new FlowUserDaoImpl();
     }
 
-    @Bean
-    public UserService userService(FlowUserDao userDao) {
-        return new UserServiceImpl().setDao(userDao);
+    @Bean("flowUserService")
+    public FlowUserService userService(FlowUserDao userDao) {
+        return new FlowUserServiceImpl().setDao(userDao);
     }
 
     @Bean(name="entityManagerFactoryWarmFlow")

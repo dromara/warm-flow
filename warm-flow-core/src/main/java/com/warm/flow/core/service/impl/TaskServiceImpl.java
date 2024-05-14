@@ -86,7 +86,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         List<HisTask> insHisList = FlowFactory.hisTaskService().setSkipInsHis(task, nextNodes, flowParams);
 
         // 设置结束节点相关信息
-        setEndInfo(instance, addTasks, flowParams, insHisList, task);
+        setEndInfo(instance, addTasks, insHisList);
 
         // 设置流程实例信息
         setSkipInstance(instance, addTasks, flowParams);
@@ -276,7 +276,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 获取转办给谁的权限
         List<String> assigneePermission = flowParams.getAssigneePermission();
         AssertUtil.isTrue(CollUtil.isEmpty(assigneePermission), ExceptionCons.LOST_ASSIGNEE_PERMISSION);
-        if (ignore) {
+        if (!ignore) {
             // 判断当前处理人是否有权限转办 获取当前转办人的权限
             List<String> permissions = flowParams.getPermissionFlag();
             // 获取任务权限人
@@ -478,8 +478,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     // 设置结束节点相关信息
-    private void setEndInfo(Instance instance, List<Task> addTasks, FlowParams flowParams
-            , List<HisTask> insHisList, Task task) {
+    private void setEndInfo(Instance instance, List<Task> addTasks, List<HisTask> insHisList) {
         if (CollUtil.isNotEmpty(addTasks)) {
             addTasks.removeIf(addTask -> {
                 if (NodeType.isEnd(addTask.getNodeType())) {
@@ -492,6 +491,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                             .setDefinitionId(addTask.getDefinitionId())
                             .setFlowStatus(FlowStatus.FINISHED.getKey())
                             .setCreateTime(new Date());
+                    FlowFactory.dataFillHandler().idFill(insHis);
                     insHisList.add(insHis);
                     instance.setNodeType(addTask.getNodeType());
                     instance.setNodeCode(addTask.getNodeCode());

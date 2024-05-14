@@ -50,7 +50,7 @@ public class FlowUser implements User{
     /**
      * 关联id（审批人和转办人是代办任务id，抄送人是实例id，已审批人是历史表id）
      */
-    private long associated;
+    private Long associated;
 
     @Override
     public Long getId() {
