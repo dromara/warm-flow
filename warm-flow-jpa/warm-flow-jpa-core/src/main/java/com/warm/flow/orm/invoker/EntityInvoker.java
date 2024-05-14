@@ -17,5 +17,6 @@ public class EntityInvoker {
         FlowFactory.setNewNode(FlowNode::new);
         FlowFactory.setNewSkip(FlowSkip::new);
         FlowFactory.setNewTask(FlowTask::new);
+        FlowFactory.setNewUser(FlowUser::new);
     }
 }

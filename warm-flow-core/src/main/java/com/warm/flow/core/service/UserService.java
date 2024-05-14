@@ -14,7 +14,7 @@ import java.util.List;
  * @author xiarg
  * @date 2024/5/10 13:55
  */
-public interface FlowUserService extends IWarmService<User> {
+public interface UserService extends IWarmService<User> {
 
     /**
      * 设置流程用户
