@@ -41,7 +41,7 @@ public class FlowSkipDaoImpl extends WarmDaoImpl<FlowSkip> implements FlowSkipDa
     public int deleteSkipByDefIds(Collection<? extends Serializable> defIds) {
         FlowSkip entity = TenantDeleteUtil.getEntity(newEntity());
         if (StringUtils.isNotEmpty(entity.getDelFlag())) {
-            getMapper().updateSkipByDefIdsLogic(defIds, entity, FlowFactory.getFlowConfig().getLogicDeleteValue(), entity.getDelFlag());
+            return getMapper().updateSkipByDefIdsLogic(defIds, entity, FlowFactory.getFlowConfig().getLogicDeleteValue(), entity.getDelFlag());
         }
         return getMapper().deleteSkipByDefIds(defIds, entity);
     }

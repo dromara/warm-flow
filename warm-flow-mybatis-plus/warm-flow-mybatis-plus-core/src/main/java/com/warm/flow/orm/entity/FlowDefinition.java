@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.warm.flow.core.entity.Definition;
 import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.RootEntity;
+import com.warm.flow.core.entity.User;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -84,6 +85,9 @@ public class FlowDefinition implements Definition {
 
     @TableField(exist = false)
     private List<Node> nodeList = new ArrayList<>();
+
+    @TableField(exist = false)
+    private List<User> userList = new ArrayList<>();
 
     @Override
     public Long getId() {
@@ -225,6 +229,17 @@ public class FlowDefinition implements Definition {
     @Override
     public FlowDefinition setNodeList(List<Node> nodeList) {
         this.nodeList = nodeList;
+        return this;
+    }
+
+    @Override
+    public List<User> getUserList() {
+        return userList;
+    }
+
+    @Override
+    public Definition setUserList(List<User> userList) {
+        this.userList = userList;
         return this;
     }
 

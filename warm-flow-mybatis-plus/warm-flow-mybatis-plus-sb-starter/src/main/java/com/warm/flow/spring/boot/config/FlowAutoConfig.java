@@ -98,6 +98,16 @@ public class FlowAutoConfig {
     }
 
     @Bean
+    public FlowUserDao userDao() {
+        return new FlowUserDaoImpl();
+    }
+
+    @Bean("flowUserService")
+    public FlowUserService userService(FlowUserDao userDao) {
+        return new FlowUserServiceImpl().setDao(userDao);
+    }
+
+    @Bean
     public WarmFlow initFlow(SqlSessionFactory sqlSessionFactory) {
         loadXml(sqlSessionFactory);
         // 设置创建对象方法

@@ -91,16 +91,6 @@ public class FlowHisTask implements HisTask {
     private String targetNodeName;
 
     /**
-     * 审批者
-     */
-    private String approver;
-
-    /**
-     * 权限标识（权限类型:权限标识，可以多个，如role:1,role:2)
-     */
-    private String permissionFlag;
-
-    /**
      * 权限标识 permissionFlag的list形式
      */
     @TableField(exist = false)
@@ -290,28 +280,6 @@ public class FlowHisTask implements HisTask {
     }
 
     @Override
-    public String getApprover() {
-        return approver;
-    }
-
-    @Override
-    public FlowHisTask setApprover(String approver) {
-        this.approver = approver;
-        return this;
-    }
-
-    @Override
-    public String getPermissionFlag() {
-        return permissionFlag;
-    }
-
-    @Override
-    public FlowHisTask setPermissionFlag(String permissionFlag) {
-        this.permissionFlag = permissionFlag;
-        return this;
-    }
-
-    @Override
     public List<String> getPermissionList() {
         return permissionList;
     }
@@ -393,8 +361,6 @@ public class FlowHisTask implements HisTask {
                 ", nodeType=" + nodeType +
                 ", targetNodeCode='" + targetNodeCode + '\'' +
                 ", targetNodeName='" + targetNodeName + '\'' +
-                ", approver='" + approver + '\'' +
-                ", permissionFlag='" + permissionFlag + '\'' +
                 ", permissionList=" + permissionList +
                 ", flowStatus=" + flowStatus +
                 ", message='" + message + '\'' +

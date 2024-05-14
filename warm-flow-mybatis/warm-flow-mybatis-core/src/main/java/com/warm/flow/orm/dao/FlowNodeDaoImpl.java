@@ -48,7 +48,7 @@ public class FlowNodeDaoImpl extends WarmDaoImpl<FlowNode> implements FlowNodeDa
     public int deleteNodeByDefIds(Collection<? extends Serializable> defIds) {
         FlowNode entity = TenantDeleteUtil.getEntity(newEntity());
         if (StringUtils.isNotEmpty(entity.getDelFlag())) {
-            getMapper().updateNodeByDefIdsLogic(defIds, entity, FlowFactory.getFlowConfig().getLogicDeleteValue(), entity.getDelFlag());
+            return getMapper().updateNodeByDefIdsLogic(defIds, entity, FlowFactory.getFlowConfig().getLogicDeleteValue(), entity.getDelFlag());
         }
         return getMapper().deleteNodeByDefIds(defIds, entity);
     }

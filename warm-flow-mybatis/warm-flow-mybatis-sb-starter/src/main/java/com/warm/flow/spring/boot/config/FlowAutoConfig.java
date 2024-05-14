@@ -97,6 +97,16 @@ public class FlowAutoConfig {
     }
 
     @Bean
+    public FlowUserDao userDao() {
+        return new FlowUserDaoImpl();
+    }
+
+    @Bean("flowUserService")
+    public FlowUserService userService(FlowUserDao userDao) {
+        return new FlowUserServiceImpl().setDao(userDao);
+    }
+
+    @Bean
     public WarmFlow initFlow(SqlSessionFactory sqlSessionFactory) {
         loadXml(sqlSessionFactory);
         // 设置创建对象方法
@@ -112,7 +122,7 @@ public class FlowAutoConfig {
     private void loadXml(SqlSessionFactory sqlSessionFactory) {
         List<String> mapperList = Arrays.asList("warm/flow/FlowDefinitionMapper.xml", "warm/flow/FlowHisTaskMapper.xml"
                 , "warm/flow/FlowInstanceMapper.xml", "warm/flow/FlowNodeMapper.xml"
-                , "warm/flow/FlowSkipMapper.xml", "warm/flow/FlowTaskMapper.xml");
+                , "warm/flow/FlowSkipMapper.xml", "warm/flow/FlowTaskMapper.xml","warm/flow/FlowUserMapper.xml");
         org.apache.ibatis.session.Configuration configuration = sqlSessionFactory.getConfiguration();
         try {
             for (String mapper : mapperList) {

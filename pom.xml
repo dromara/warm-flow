@@ -43,11 +43,12 @@
         <module>warm-flow-tools</module>
         <module>warm-flow-mybatis</module>
         <module>warm-flow-mybatis-plus</module>
+        <module>warm-flow-jpa</module>
         <module>warm-flow-test</module>
     </modules>
 
     <properties>
-        <revision>1.1.90</revision>
+        <revision>1.2.0-SNAPSHOT</revision>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -64,6 +65,7 @@
         <solon.version>2.5.3</solon.version>
         <snack3.version>3.2.88</snack3.version>
         <slf4j-api.version>1.7.36</slf4j-api.version>
+        <oracle.version>11.2.0.4</oracle.version>
     </properties>
 
     <dependencyManagement>
@@ -174,6 +176,18 @@
                 <version>${revision}</version>
             </dependency>
 
+            <dependency>
+                <groupId>io.github.minliuhua</groupId>
+                <artifactId>warm-flow-jpa-core</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.minliuhua</groupId>
+                <artifactId>warm-flow-jpa-sb-starter</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
             <!--for test-->
             <dependency>
                 <groupId>junit</groupId>
@@ -205,6 +219,12 @@
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j-api.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.oracle.database.jdbc</groupId>
+                <artifactId>ojdbc6</artifactId>
+                <version>${oracle.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -53,6 +53,12 @@
             <artifactId>warm-flow-core-test</artifactId>
             <scope>compile</scope>
         </dependency>
+
+        <!-- Oracle数据库时打开 -->
+        <!--<dependency>
+            <groupId>com.oracle.database.jdbc</groupId>
+            <artifactId>ojdbc6</artifactId>
+        </dependency>-->
     </dependencies>
     <dependencyManagement>
         <dependencies>

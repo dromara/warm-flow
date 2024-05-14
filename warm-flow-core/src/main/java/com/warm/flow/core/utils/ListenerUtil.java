@@ -42,7 +42,11 @@ public class ListenerUtil {
                 if (CollUtil.isNotEmpty(listenerVariable.getNodePermissionList())) {
                     NodePermission permissionByNode = listenerVariable.getPermissionByNode(node.getNodeCode());
                     if (ObjectUtil.isNotNull(permissionByNode) && StringUtils.isNotEmpty(permissionByNode.getPermissionFlag())) {
-                        node.setDynamicPermissionFlag(permissionByNode.getPermissionFlag());
+                        if (CollUtil.isNotEmpty(permissionByNode.getPermissionFlagList())) {
+                            node.setDynamicPermissionFlagList(permissionByNode.getPermissionFlagList());
+                        } else if (StringUtils.isNotEmpty(permissionByNode.getPermissionFlag())) {
+                            node.setDynamicPermissionFlagList(CollUtil.strToColl(permissionByNode.getPermissionFlag(), ","));
+                        }
                     }
                 }
             }

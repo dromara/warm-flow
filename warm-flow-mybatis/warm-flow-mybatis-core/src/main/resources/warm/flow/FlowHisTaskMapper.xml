@@ -11,11 +11,9 @@
         <result property="nodeType" column="node_type"/>
         <result property="targetNodeCode" column="target_node_code"/>
         <result property="targetNodeName" column="target_node_name"/>
-        <result property="approver" column="approver"/>
         <result property="definitionId" column="definition_id"/>
         <result property="instanceId" column="instance_id"/>
         <result property="flowStatus" column="flow_status"/>
-        <result property="permissionFlag" column="permission_flag"/>
         <result property="message" column="message"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
@@ -32,9 +30,7 @@
                t.node_type,
                t.target_node_code,
                t.target_node_name,
-               t.approver,
                t.definition_id,
-               t.permission_flag,
                t.instance_id,
                t.flow_status,
                t.message,
@@ -66,11 +62,9 @@
             <if test="entity.targetNodeName != null  and entity.targetNodeName != ''">and t.target_node_name =
                 #{entity.targetNodeName}
             </if>
-            <if test="entity.approver != null  and entity.approver != ''">and t.approver = #{entity.approver}</if>
             <if test="entity.definitionId != null ">and t.definition_id = #{entity.definitionId}</if>
             <if test="entity.instanceId != null ">and t.instance_id = #{entity.instanceId}</if>
             <if test="entity.flowStatus != null">and t.flow_status = #{fentity.flowStatus}</if>
-            <if test="entity.permissionFlag != null">and t.permission_flag = #{entity.permissionFlag}</if>
             <if test="entity.message != null  and entity.message != ''">and t.message = #{entity.message}</if>
             <if test="entity.createTime != null">and t.create_time = #{entity.createTime}</if>
             <if test="entity.updateTime != null">and t.update_time = #{entity.updateTime}</if>
@@ -127,11 +121,9 @@
             <if test="nodeType != null">node_type,</if>
             <if test="targetNodeCode != null and targetNodeCode != ''">target_node_code,</if>
             <if test="targetNodeName != null and targetNodeName != ''">target_node_name,</if>
-            <if test="approver != null and approver != ''">approver,</if>
             <if test="definitionId != null">definition_id,</if>
             <if test="instanceId != null">instance_id,</if>
             <if test="flowStatus != null">flow_status,</if>
-            <if test="permissionFlag != null">permission_flag,</if>
             <if test="message != null">message,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
@@ -145,11 +137,9 @@
             <if test="nodeType != null">#{nodeType},</if>
             <if test="targetNodeCode != null and targetNodeCode != ''">#{targetNodeCode},</if>
             <if test="targetNodeName != null and targetNodeName != ''">#{targetNodeName},</if>
-            <if test="approver != null and approver != ''">#{approver},</if>
             <if test="definitionId != null">#{definitionId},</if>
             <if test="instanceId != null">#{instanceId},</if>
             <if test="flowStatus != null">#{flowStatus},</if>
-            <if test="permissionFlag != null">#{permissionFlag},</if>
             <if test="message != null">#{message},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
@@ -166,11 +156,9 @@
             <if test="nodeType != null">t.node_type = #{nodeType},</if>
             <if test="targetNodeCode != null and targetNodeCode != ''">t.target_node_code = #{targetNodeCode},</if>
             <if test="targetNodeName != null and targetNodeName != ''">t.target_node_name = #{targetNodeName},</if>
-            <if test="approver != null and approver != ''">t.approver = #{approver},</if>
             <if test="definitionId != null">t.definition_id = #{definitionId},</if>
             <if test="instanceId != null">t.instance_id = #{instanceId},</if>
             <if test="flowStatus != null">t.flow_status = #{flowStatus},</if>
-            <if test="permissionFlag != null">t.permission_flag = #{permissionFlag},</if>
             <if test="message != null">t.message = #{message},</if>
             <if test="createTime != null">t.create_time = #{createTime},</if>
             <if test="updateTime != null">t.update_time = #{updateTime},</if>
@@ -242,11 +230,9 @@
             <if test="nodeType != null">and node_type = #{nodeType}</if>
             <if test="targetNodeCode != null and targetNodeCode != ''">and target_node_code = #{targetNodeCode}</if>
             <if test="targetNodeName != null and targetNodeName != ''">and target_node_name = #{targetNodeName}</if>
-            <if test="approver != null and approver != ''">and approver = #{approver}</if>
             <if test="definitionId != null">and definition_id = #{definitionId}</if>
             <if test="instanceId != null">and instance_id = #{instanceId}</if>
             <if test="flowStatus != null">and flow_status = #{flowStatus}</if>
-            <if test="permissionFlag != null">and permission_flag = #{permissionFlag}</if>
             <if test="message != null">and message = #{message}</if>
             <if test="createTime != null">and create_time = #{createTime}</if>
             <if test="updateTime != null">and update_time = #{updateTime}</if>
@@ -264,11 +250,9 @@
             <if test="entity.nodeType != null">and t.node_type = #{entity.nodeType}</if>
             <if test="entity.targetNodeCode != null and entity.targetNodeCode != ''">and t.target_node_code = #{entity.targetNodeCode}</if>
             <if test="entity.targetNodeName != null and entity.targetNodeName != ''">and t.target_node_name = #{entity.targetNodeName}</if>
-            <if test="entity.approver != null and entity.approver != ''">and t.approver = #{entity.approver}</if>
             <if test="entity.definitionId != null">and t.definition_id = #{entity.definitionId}</if>
             <if test="entity.instanceId != null">and t.instance_id = #{entity.instanceId}</if>
             <if test="entity.flowStatus != null">and t.flow_status = #{entity.flowStatus}</if>
-            <if test="entity.permissionFlag != null">and t.permission_flag = #{entity.permissionFlag}</if>
             <if test="entity.message != null">and t.message = #{entity.message}</if>
             <if test="entity.createTime != null">and t.create_time = #{entity.createTime}</if>
             <if test="entity.updateTime != null">and t.update_time = #{entity.updateTime}</if>

@@ -58,6 +58,10 @@ public interface Definition extends RootEntity {
 
     public Definition setNodeList(List<Node> nodeList);
 
+    public List<User> getUserList();
+
+    public Definition setUserList(List<User> userList);
+
     public String getXmlString();
 
     public Definition setXmlString(String xmsString);
