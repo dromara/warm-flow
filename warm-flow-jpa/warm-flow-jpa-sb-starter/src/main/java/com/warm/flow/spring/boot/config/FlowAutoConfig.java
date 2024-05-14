@@ -117,7 +117,7 @@ public class FlowAutoConfig {
         LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
         factory.setDataSource(dataSource);
         factory.setJpaPropertyMap(jpaProperties.getProperties());
-        factory.setPersistenceXmlLocation("classpath:/META-INF/warn-flow-persistence.xml");
+        factory.setPersistenceXmlLocation("classpath:/META-INF/warm-flow-persistence.xml");
         String jpaPersistenceProvider = SpringUtil.getBean(Environment.class).getProperty(FlowJpaConfigCons.JPA_PERSISTENCE_PROVIDER);
         log.info("warm-flow jpa persistence provider: {}", jpaPersistenceProvider);
         factory.setPersistenceProviderClass((Class<? extends PersistenceProvider>) Class.forName(jpaPersistenceProvider));
