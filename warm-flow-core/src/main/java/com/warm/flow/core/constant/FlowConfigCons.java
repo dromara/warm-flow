@@ -36,6 +36,10 @@ public class FlowConfigCons {
      * 租户处理类路径
      */
     public static final String TENANTHANDLERPATH = "warm-flow.tenant_handler_path";
-
-
+    /**
+     * 数据源类型, mybatis模块对orm进一步的封装, 由于各数据库分页语句存在差异,
+     * 当配置此参数时, 以此参数结果为基准, 未配置时, 取DataSource中数据源类型,
+     * 兜底为mysql数据库
+     */
+    public static final String DATA_SOURCE_TYPE = "data_source_type";
 }

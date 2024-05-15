@@ -66,6 +66,7 @@
         <snack3.version>3.2.88</snack3.version>
         <slf4j-api.version>1.7.36</slf4j-api.version>
         <oracle.version>11.2.0.4</oracle.version>
+        <clickhouse.version>0.3.2</clickhouse.version>
     </properties>
 
     <dependencyManagement>
@@ -102,6 +103,12 @@
                 <groupId>org.mybatis.spring.boot</groupId>
                 <artifactId>mybatis-spring-boot-starter</artifactId>
                 <version>${mybatis-spring-boot}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>dynamic-datasource-spring-boot-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
             </dependency>
 
             <dependency>
@@ -226,6 +233,14 @@
                 <artifactId>ojdbc6</artifactId>
                 <version>${oracle.version}</version>
             </dependency>
+
+            <!--JDBC-clickhouse数据库-->
+            <dependency>
+                <groupId>com.clickhouse</groupId>
+                <artifactId>clickhouse-jdbc</artifactId>
+                <version>${clickhouse.version}</version>	<!-- 0.2.4/0.2.5/0.2.6/0.3.0/0.3.2 -->
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 

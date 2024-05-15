@@ -1,12 +1,9 @@
 package com.warm.flow.core.config;
 
 import com.warm.flow.core.constant.FlowConfigCons;
-import com.warm.flow.core.constant.FlowCons;
 import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.tools.utils.ObjectUtil;
 import com.warm.tools.utils.StringUtils;
-
-import java.util.List;
 
 /**
  * WarmFlow属性配置文件
@@ -43,9 +40,10 @@ public class WarmFlow {
      * 租户模式处理类路径
      */
     private String tenantHandlerPath;
-
     /**
-     * 数据库类型
+     * 数据源类型, mybatis模块对orm进一步的封装, 由于各数据库分页语句存在差异,
+     * 当配置此参数时, 以此参数结果为基准, 未配置时, 取DataSource中数据源类型,
+     * 兜底为mysql数据库
      */
     private String dataSourceType;
 
@@ -66,8 +64,8 @@ public class WarmFlow {
         // 设置数据填充处理类
         flowConfig.setDataFillHandlerPath(FrameInvoker.getCfg(FlowConfigCons.DATAFILLHANDLEPATH));
 
-        // 设置数据库类型
-        setDataSourceType(flowConfig);
+        // 设置数据源类型
+        flowConfig.setDataSourceType(FrameInvoker.getCfg(FlowConfigCons.DATA_SOURCE_TYPE));
         printBanner(flowConfig);
         return flowConfig;
     }
@@ -84,18 +82,6 @@ public class WarmFlow {
             if (StringUtils.isNotEmpty(logicNotDeleteValue)) {
                 flowConfig.setLogicNotDeleteValue(logicNotDeleteValue);
             }
-        }
-    }
-
-    private static void setDataSourceType(WarmFlow flowConfig) {
-        String jdbcUrl = FrameInvoker.getCfg(FlowCons.JDBC_URL);
-
-        if (StringUtils.isEmpty(jdbcUrl)) {
-            flowConfig.setDataSourceType("h2");
-        } else {
-            List<Integer> indexList = StringUtils.findStrIndex(jdbcUrl, FlowCons.COLON);
-            String dataSourceType = jdbcUrl.substring(indexList.get(0) + 1, indexList.get(1));
-            flowConfig.setDataSourceType(dataSourceType);
         }
     }
 
