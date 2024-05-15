@@ -9,7 +9,8 @@ CREATE TABLE `flow_user`
     `update_time`     datetime     DEFAULT NULL COMMENT '更新时间',
     `del_flag`        char(1)      DEFAULT NULL COMMENT '删除标志',
     `tenant_id`       varchar(40)  DEFAULT NULL COMMENT '租户id',
-    PRIMARY KEY (`id`) USING BTREE
+    PRIMARY KEY (`id`) USING BTREE,
+    KEY `user_processed_type` (`processed_by`,`type`)
 ) ENGINE=InnoDB  COMMENT='流程用户表';
 
 -- flow_his_task 历史数据迁移脚本sql

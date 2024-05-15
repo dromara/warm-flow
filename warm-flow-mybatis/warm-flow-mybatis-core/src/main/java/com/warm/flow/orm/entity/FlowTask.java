@@ -79,11 +79,6 @@ public class FlowTask implements Task {
     private Integer flowStatus;
 
     /**
-     * 权限标识（权限类型:权限标识，可以多个，如role:1,role:2)
-     */
-    private String permissionFlag;
-
-    /**
      * 权限标识 permissionFlag的list形式
      */
     private List<String> permissionList;
@@ -289,7 +284,6 @@ public class FlowTask implements Task {
                 ", nodeName='" + nodeName + '\'' +
                 ", nodeType=" + nodeType +
                 ", flowStatus=" + flowStatus +
-                ", permissionFlag='" + permissionFlag + '\'' +
                 ", permissionList=" + permissionList +
                 ", fromCustom='" + fromCustom + '\'' +
                 ", fromPath='" + fromPath + '\'' +

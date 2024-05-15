@@ -33,8 +33,7 @@ public class FlowTest {
 
     public FlowParams getUser() {
         return FlowParams.build().flowCode("leaveFlow-serial1")
-                .createBy("1")
-                .nickName("张三")
+                .createBy("user:1")
                 .skipType(SkipType.PASS.getKey())
                 .assigneePermission(Arrays.asList("role:100", "role:101"))
                 .permissionFlag(Arrays.asList("role:1", "role:2"));
@@ -73,7 +72,7 @@ public class FlowTest {
     public void termination() {
         // 终止流程实例
         FlowParams flowParams = new FlowParams();
-        flowParams.message("终止流程").createBy("1");
+        flowParams.message("终止流程").createBy("user:1");
         taskService.termination(1239251891997773824L, flowParams);
     }
 
