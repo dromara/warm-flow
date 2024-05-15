@@ -298,7 +298,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         Node node = FlowFactory.nodeService().getOne(FlowFactory.newNode().setNodeCode(task.getNodeCode()));
         HisTask hisTask = CollUtil.getOne(FlowFactory.hisTaskService().setSkipInsHis(task, CollUtil.toList(node), flowParams));
         FlowFactory.hisTaskService().save(hisTask);
-        // 更新任务的权限人
+        // 更新代办任务的转办人权限
         return FlowFactory.userService().updatePermissionByAssociated(taskId ,assigneePermission, UserType.ASSIGNEE.getKey());
     }
 
