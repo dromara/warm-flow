@@ -71,8 +71,44 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
 
 
     @Override
-    public void initDefaultValue() {
+    public void initDefaultValue() {}
 
+    @Override
+    public void mergeUpdate(FlowHisTask updateEntity) {
+        if (StringUtils.isNotEmpty(updateEntity.nodeCode)) {
+            this.nodeCode = updateEntity.nodeCode;
+        }
+        if (StringUtils.isNotEmpty(updateEntity.nodeName)) {
+            this.nodeName = updateEntity.nodeName;
+        }
+        if (Objects.nonNull(updateEntity.nodeType)) {
+            this.nodeType = updateEntity.nodeType;
+        }
+        if (StringUtils.isNotEmpty(updateEntity.targetNodeCode)) {
+            this.targetNodeCode = updateEntity.targetNodeCode;
+        }
+        if (StringUtils.isNotEmpty(updateEntity.targetNodeName)) {
+            this.targetNodeName = updateEntity.targetNodeName;
+        }
+        if (Objects.nonNull(updateEntity.definitionId)) {
+            this.definitionId = updateEntity.definitionId;
+        }
+        if (Objects.nonNull(updateEntity.instanceId)) {
+            this.instanceId = updateEntity.instanceId;
+        }
+        if (Objects.nonNull(updateEntity.flowStatus)) {
+            this.flowStatus = updateEntity.flowStatus;
+        }
+        if (Objects.nonNull(updateEntity.message)) {
+            this.message = updateEntity.message;
+        }
+
+        if (Objects.nonNull(updateEntity.getCreateTime())) {
+            this.setCreateTime(updateEntity.getCreateTime());
+        }
+        if (Objects.nonNull(updateEntity.getUpdateTime())) {
+            this.setUpdateTime(updateEntity.getUpdateTime());
+        }
     }
 
     /**
