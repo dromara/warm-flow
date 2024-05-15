@@ -36,7 +36,7 @@ public class FlowParams {
      */
     private List<String> permissionFlag;
     /**
-     * 转办人权限标识 例如：role:admin,user:2
+     * 代办任务的转办人权限标识 例如：[role:admin,user:2]
      */
     private List<String> assigneePermission;
     /**

@@ -124,6 +124,7 @@ public class FlowConfigUtil {
     }
 
     private static List<User> initUser(Element nodeElement, Node node){
+        // 初始化流程节点的权限
         List<String> permissions = CollUtil.strToColl(nodeElement.attributeValue("permissionFlag"), ",");
         if(CollUtil.isNotEmpty(permissions)){
             return StreamUtils.toList(permissions, permission -> FlowFactory.userService()

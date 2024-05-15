@@ -65,7 +65,34 @@ public class FlowTask extends JPARootEntity<FlowTask> implements Task {
 
     @Override
     public void initDefaultValue() {
+    }
 
+    @Override
+    public void mergeUpdate(FlowTask updateEntity) {
+        if (StringUtils.isNotEmpty(updateEntity.nodeCode)) {
+            this.nodeCode = updateEntity.nodeCode;
+        }
+        if (StringUtils.isNotEmpty(updateEntity.nodeName)) {
+            this.nodeName = updateEntity.nodeName;
+        }
+        if (Objects.nonNull(updateEntity.nodeType)) {
+            this.nodeType = updateEntity.nodeType;
+        }
+        if (Objects.nonNull(updateEntity.definitionId)) {
+            this.definitionId = updateEntity.definitionId;
+        }
+        if (Objects.nonNull(updateEntity.instanceId)) {
+            this.instanceId = updateEntity.instanceId;
+        }
+        if (Objects.nonNull(updateEntity.flowStatus)) {
+            this.flowStatus = updateEntity.flowStatus;
+        }
+        if (Objects.nonNull(updateEntity.getCreateTime())) {
+            this.setCreateTime(updateEntity.getCreateTime());
+        }
+        if (Objects.nonNull(updateEntity.getUpdateTime())) {
+            this.setUpdateTime(updateEntity.getUpdateTime());
+        }
     }
 
     /**
