@@ -32,7 +32,7 @@ public class FlowTest {
                 .createBy("1")
                 .nickName("张三")
                 .skipType(SkipType.PASS.getKey())
-                .assigneePermission(Arrays.asList("role:100", "role:101"))
+                .permissionList(Arrays.asList("role:100", "role:101"))
                 .permissionFlag(Arrays.asList("role:1", "role:2"));
     }
 

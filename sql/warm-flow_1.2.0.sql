@@ -2,7 +2,7 @@
 CREATE TABLE `flow_user`
 (
     `id`              bigint unsigned NOT NULL COMMENT '主键id',
-    `type`            char(1)  NOT NULL COMMENT '人员类型（1代办任务的审批人权限 2代办任务的转办人权限 3流程实例的抄送人权限 4流程历史的已审批人 5流程节点的权限）',
+    `type`            char(1)  NOT NULL COMMENT '人员类型（1代办任务的审批人权限 2代办任务的转办人权限 3流程实例的抄送人权限 4流程历史的已审批人 5流程节点的权限 6待办任务的委托人权限）',
     `processed_by`    varchar(80) DEFAULT NULL COMMENT '权限 (role:1/user:1)/已审批人(用户id)',
     `associated`      bigint NOT NULL COMMENT '关联id（审批人和转办人是代办任务id，抄送人是实例id，已审批人是历史表id,计划审批人是节点的id）',
     `create_time`     datetime     DEFAULT NULL COMMENT '创建时间',
@@ -46,3 +46,8 @@ ALTER TABLE `flow_his_task` DROP COLUMN approver;
 ALTER TABLE `flow_his_task` DROP COLUMN permission_flag;
 -- 去掉 flow_node 表废弃字段sql
 ALTER TABLE `flow_node` DROP COLUMN permission_flag;
+
+-- 流程用户表新增创建人
+ALTER TABLE `flow_user` ADD COLUMN `create_by` varchar(40) DEFAULT NULL COMMENT '创建人' AFTER `create_time`;
+-- 历史表新增字段，用于存储操作记录(加签和减签，转办，委托，抄送等)
+ALTER TABLE `flow_his_task` ADD COLUMN `record` varchar(500) DEFAULT NULL COMMENT '操作记录' AFTER `flow_status`;

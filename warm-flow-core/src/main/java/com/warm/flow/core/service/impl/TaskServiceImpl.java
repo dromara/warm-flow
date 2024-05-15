@@ -6,10 +6,7 @@ import com.warm.flow.core.constant.FlowCons;
 import com.warm.flow.core.dao.FlowTaskDao;
 import com.warm.flow.core.dto.FlowParams;
 import com.warm.flow.core.entity.*;
-import com.warm.flow.core.enums.FlowStatus;
-import com.warm.flow.core.enums.NodeType;
-import com.warm.flow.core.enums.SkipType;
-import com.warm.flow.core.enums.UserType;
+import com.warm.flow.core.enums.*;
 import com.warm.flow.core.listener.Listener;
 import com.warm.flow.core.listener.ListenerVariable;
 import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
@@ -268,38 +265,88 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     @Override
     public boolean transfer(Long taskId, FlowParams flowParams) {
-        return transfer(taskId, flowParams, true);
+        return transfer(taskId, flowParams, true, false);
     }
 
     @Override
-    public boolean transfer(Long taskId, FlowParams flowParams, boolean ignore) {
+    public boolean transfer(Long taskId, FlowParams flowParams, boolean ignore, boolean clear) {
+        return processedHandle(taskId, flowParams, ignore, clear?CirculationType.CHANGE:CirculationType.TRANSFER);
+    }
+
+    @Override
+    public boolean signature(Long taskId, FlowParams flowParams) {
+        return processedHandle(taskId, flowParams, true, CirculationType.SIGNATURE);
+    }
+
+    @Override
+    public boolean depute(Long taskId, FlowParams flowParams) {
+        return processedHandle(taskId, flowParams, true, CirculationType.DEPUTE);
+    }
+
+    @Override
+    public boolean processedHandle(Long taskId, FlowParams flowParams, boolean ignore, CirculationType circulationType) {
         // 获取转办给谁的权限
-        List<String> assigneePermission = flowParams.getAssigneePermission();
+        List<String> assigneePermission = flowParams.getPermissionList();
         AssertUtil.isTrue(CollUtil.isEmpty(assigneePermission), ExceptionCons.LOST_ASSIGNEE_PERMISSION);
         if (!ignore) {
             // 判断当前处理人是否有权限转办 获取当前转办人的权限
             List<String> permissions = flowParams.getPermissionFlag();
             // 获取任务权限人
-            List<String> taskPermissions = FlowFactory.userService()
-                    .list(FlowFactory.newUser().setAssociated(taskId))
-                    .stream()
-                    .map(User::getProcessedBy).
-                    collect(Collectors.toList());
+            List<String> taskPermissions = StreamUtils.toList(
+                    FlowFactory.userService().list(FlowFactory.newUser().setAssociated(taskId)),
+                    User::getProcessedBy);
             AssertUtil.isTrue(CollUtil.isNotEmpty(permissions) &&
                             CollUtil.notContainsAny(permissions, taskPermissions),
                     ExceptionCons.ASSIGNEE_NULL_ROLE_NODE);
         }
-
         // 增减流程参数 跳转类型和审批意见（留存记录的消息）
         flowParams.skipType(SkipType.PASS.getKey())
-                .message("user:"+flowParams.getCreateBy()+" assignee " + CollUtil.strListToStr(assigneePermission, ","));
+                .record("user:"+flowParams.getCreateBy()+" "+
+                        circulationType.getKey()+" " +
+                        CollUtil.strListToStr(assigneePermission, ","));
         // 转办留存历史记录
         Task task = FlowFactory.taskService().getById(taskId);
         Node node = FlowFactory.nodeService().getOne(FlowFactory.newNode().setNodeCode(task.getNodeCode()));
         HisTask hisTask = CollUtil.getOne(FlowFactory.hisTaskService().setSkipInsHis(task, CollUtil.toList(node), flowParams));
         FlowFactory.hisTaskService().save(hisTask);
-        // 更新代办任务的转办人权限
-        return FlowFactory.userService().updatePermissionByAssociated(taskId ,assigneePermission, UserType.ASSIGNEE.getKey());
+
+        // 处理此任务的权限流转
+        UserType userType = null;
+        switch (circulationType){
+            // 加减签，清空当前的计划审批人，重新设置新的计划审批人
+            case SIGNATURE:
+                userType = UserType.APPROVAL;
+                break;
+            // 转办，不清理原有计划审批人
+            case TRANSFER:
+            // 转办，清理原有计划审批人
+            case CHANGE:
+                userType = UserType.ASSIGNEE;
+                break;
+            // 委派，清理计划审批人，新增被委托人
+            case DEPUTE:
+                userType = UserType.ASSIGNEE;
+                break;
+        }
+        return approval(taskId, flowParams.getPermissionList(), userType, circulationType.getClear(),
+                flowParams.getCreateBy());
+    }
+    /**
+     * 根据关联id更新权限人
+     *
+     * @param taskId 任务id
+     * @param permissionList 权限人
+     * @param userType 权限人类型
+     * @param clear 是否清空代办任务的计划审批人
+     * @param createBy 存储委派时的委派人
+     * @return 结果
+     * @author xiarg
+     * @date 2024/5/10 11:19
+     */
+    private boolean approval(Long taskId, List<String> permissionList,UserType userType, boolean clear,
+                             String createBy) {
+        return FlowFactory.userService().updatePermission(taskId ,permissionList,
+                userType.getKey(), clear, createBy);
     }
 
     @Override

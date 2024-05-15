@@ -13,6 +13,7 @@ import com.warm.flow.core.service.UserService;
 import com.warm.flow.core.utils.AssertUtil;
 import com.warm.tools.utils.CollUtil;
 import com.warm.tools.utils.StreamUtils;
+import com.warm.tools.utils.StringUtils;
 
 import java.util.List;
 
@@ -76,20 +77,31 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
     }
 
     @Override
-    public boolean updatePermissionByAssociated(Long associated, List<String> permissions, String type) {
-        // 先删除当前关联id用户数据
-        delUser(CollUtil.toList(associated));
+    public boolean updatePermission(Long associated, List<String> permissions, String type, boolean clear,
+                                    String createBy) {
+        // 判断是否clear，如果是true，则先删除当前关联id用户数据
+        if(clear){
+            delUser(CollUtil.toList(associated));
+        }
         // 再新增权限人
-        saveBatch(StreamUtils.toList(permissions, permission -> getUser(associated, permission, type)));
+        saveBatch(StreamUtils.toList(permissions, permission ->
+                StringUtils.isEmpty(createBy)?
+                getUser(associated, permission, type):getUser(associated, permission, type, createBy)));
         return true;
     }
 
     @Override
     public User getUser(Long associated, String permission, String type) {
+        return getUser(associated, permission, type, null);
+    }
+
+    @Override
+    public User getUser(Long associated, String permission, String type, String createBy) {
         User user = FlowFactory.newUser()
                 .setType(type)
                 .setProcessedBy(permission)
-                .setAssociated(associated);
+                .setAssociated(associated)
+                .setCreateBy(createBy);
         FlowFactory.dataFillHandler().idFill(user);
         return user;
     }

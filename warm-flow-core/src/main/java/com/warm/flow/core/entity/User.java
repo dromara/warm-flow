@@ -18,6 +18,10 @@ public interface User extends RootEntity{
 
     public User setCreateTime(Date createTime);
 
+    public String getCreateBy();
+
+    public User setCreateBy(String createBy);
+
     public Date getUpdateTime();
 
     public User setUpdateTime(Date updateTime);

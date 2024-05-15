@@ -36,9 +36,9 @@ public class FlowParams {
      */
     private List<String> permissionFlag;
     /**
-     * 代办任务的转办人权限标识 例如：[role:admin,user:2]
+     * 加减签，转办，委托权限标识 例如：[role:admin,user:2]
      */
-    private List<String> assigneePermission;
+    private List<String> permissionList;
     /**
      * 跳转类型（PASS审批通过 REJECT退回）
      */
@@ -63,7 +63,10 @@ public class FlowParams {
      * 租户id
      */
     private String tenantId;
-
+    /**
+     * 任务流转记录
+     */
+    private String record;
     public static FlowParams build() {
         return new FlowParams();
     }
@@ -126,13 +129,17 @@ public class FlowParams {
         return this;
     }
 
-    public List<String> getAssigneePermission() {
-        return assigneePermission;
+    public List<String> getPermissionList() {
+        return permissionList;
     }
 
-    public FlowParams assigneePermission(List<String> assigneePermission) {
-        this.assigneePermission = assigneePermission;
+    public FlowParams permissionList(List<String> permissionList) {
+        this.permissionList = permissionList;
         return this;
+    }
+
+    public void record(String record) {
+        this.record = record;
     }
 
     public String getFlowCode() {
@@ -165,6 +172,10 @@ public class FlowParams {
 
     public String getTenantId() {
         return tenantId;
+    }
+
+    public String getRecord() {
+        return record;
     }
 
 }

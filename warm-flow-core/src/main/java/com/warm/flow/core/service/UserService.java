@@ -81,12 +81,14 @@ public interface UserService extends IWarmService<User> {
      *
      * @param associated 关联人id
      * @param permissions 权限人
-     * @param type 权限人
+     * @param type 权限人类型
+     * @param clear 是否清空代办任务的计划审批人
+     * @param createBy 存储委派时的创建人
      * @return 结果
      * @author xiarg
      * @date 2024/5/10 11:19
      */
-    boolean updatePermissionByAssociated(Long associated, List<String> permissions, String type);
+    boolean updatePermission(Long associated, List<String> permissions, String type, boolean clear, String createBy);
 
     /**
      * 构造用户比表信息
@@ -96,4 +98,13 @@ public interface UserService extends IWarmService<User> {
      * @return 结果
      */
     User getUser(Long associated, String permission, String type);
+    /**
+     * 构造用户比表信息
+     * @param associated 关联id
+     * @param permission 权限标识
+     * @param type 用户类型
+     * @param createBy 创建人（记录委派给别人的人）
+     * @return 结果
+     */
+    User getUser(Long associated, String permission, String type, String createBy);
 }

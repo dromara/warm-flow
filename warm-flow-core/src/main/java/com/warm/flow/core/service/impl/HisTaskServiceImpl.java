@@ -47,6 +47,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
                     ? FlowStatus.REJECT.getKey() : FlowStatus.PASS.getKey());
             insHis.setMessage(flowParams.getMessage());
             insHis.setCreateTime(new Date());
+            insHis.setRecord(flowParams.getRecord());
             FlowFactory.dataFillHandler().idFill(insHis);
             hisTasks.add(insHis);
         }

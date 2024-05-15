@@ -4,6 +4,7 @@ import com.warm.flow.core.dto.FlowParams;
 import com.warm.flow.core.entity.Instance;
 import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.Task;
+import com.warm.flow.core.enums.CirculationType;
 import com.warm.flow.core.orm.service.IWarmService;
 
 import java.util.List;
@@ -121,14 +122,38 @@ public interface TaskService extends IWarmService<Task> {
     boolean transfer(Long taskId, FlowParams flowParams);
 
     /**
+     * 转办任务 ignore默认为true，比如管理员权限
+     *
+     * @param taskId         任务id
+     * @param flowParams 流程参数(包含当前处理人的权限，重新指定的权限标识（办理人）)
+     * @param ignore 转办忽略权限（true - 忽略，false - 不忽略）
+     * @param clear 清理当前任务的计划审批人（true - 清理，false - 不清理）
+     */
+    boolean transfer(Long taskId, FlowParams flowParams, boolean ignore, boolean clear);
+    /**
+     * 加减签
+     *
+     * @param taskId         任务id
+     * @param flowParams 流程参数(包含当前处理人的权限，重新指定的权限标识（办理人）)
+     */
+    boolean signature(Long taskId, FlowParams flowParams);
+
+    /**
+     * 委派
+     *
+     * @param taskId         任务id
+     * @param flowParams 流程参数(包含当前处理人的权限，重新指定的权限标识（办理人）)
+     */
+    boolean depute(Long taskId, FlowParams flowParams);
+    /**
      * 转办任务
      *
      * @param taskId         任务id
      * @param flowParams 流程参数(包含当前处理人的权限，重新指定的权限标识（办理人）)
      * @param ignore 为true忽略权限判断，可直接转办
+     * @param circulationType 一个任务权限流转类型
      */
-    boolean transfer(Long taskId, FlowParams flowParams, boolean ignore);
-
+    boolean processedHandle(Long taskId, FlowParams flowParams, boolean ignore, CirculationType circulationType);
     /**
      * 并行网关，取结束节点类型，否则随便取id最大的
      *
@@ -136,4 +161,6 @@ public interface TaskService extends IWarmService<Task> {
      * @return
      */
     Task getNextTask(List<Task> tasks);
+
+
 }

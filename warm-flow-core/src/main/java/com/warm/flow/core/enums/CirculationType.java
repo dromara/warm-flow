@@ -1,30 +1,30 @@
 package com.warm.flow.core.enums;
 
 /**
- * 流程用户类型
+ * 一个任务权限流转类型
  *
  * @author xiarg
  * @date 2024/5/10 16:04
  */
-public enum UserType {
+public enum CirculationType {
 
-    APPROVAL("1", "代办任务的审批人权限"),
-    ASSIGNEE("2", "代办任务的转办人权限"),
-    CARBON("3", "流程实例的抄送人权限"),
-    APPROVER("4", "流程历史的已审批人"),
-    PROPOSE("5", "流程节点的权限"),
-    DEPUTE("6", "待办任务的委托人权限");
+    SIGNATURE("transfer", "加减签", true),
+    TRANSFER("signature", "转办(不清理待办任务的计划审批人)", false),
+    CHANGE("signature", "转办(清理待办任务的计划审批人)", true),
+    DEPUTE("depute", "委派", true);
 
     private String key;
     private String value;
+    private boolean clear;
 
-    private UserType(String key, String value) {
+    private CirculationType(String key, String value, boolean clear) {
         this.key = key;
         this.value = value;
+        this.clear = clear;
     }
 
     public static String getKeyByValue(String value) {
-        for (UserType item : UserType.values()) {
+        for (CirculationType item : CirculationType.values()) {
             if (item.getValue().equals(value)) {
                 return item.getKey();
             }
@@ -33,7 +33,7 @@ public enum UserType {
     }
 
     public static String getValueByKey(String key) {
-        for (UserType item : UserType.values()) {
+        for (CirculationType item : CirculationType.values()) {
             if (item.getKey().equals(key)) {
                 return item.getValue();
             }
@@ -41,8 +41,8 @@ public enum UserType {
         return null;
     }
 
-    public static UserType getByKey(String key) {
-        for (UserType item : UserType.values()) {
+    public static CirculationType getByKey(String key) {
+        for (CirculationType item : CirculationType.values()) {
             if (item.getKey().equals(key)) {
                 return item;
             }
@@ -56,5 +56,9 @@ public enum UserType {
 
     public String getValue() {
         return value;
+    }
+
+    public boolean getClear() {
+        return clear;
     }
 }

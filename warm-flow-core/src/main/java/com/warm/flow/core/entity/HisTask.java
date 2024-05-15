@@ -90,4 +90,8 @@ public interface HisTask extends RootEntity {
     public String getFromPath();
 
     public HisTask setFromPath(String fromPath);
+
+    public String getRecord();
+
+    public HisTask setRecord(String record);
 }
