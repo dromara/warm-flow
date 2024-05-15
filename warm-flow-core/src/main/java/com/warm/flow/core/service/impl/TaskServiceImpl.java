@@ -328,25 +328,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 userType = UserType.ASSIGNEE;
                 break;
         }
-        return approval(taskId, flowParams.getPermissionList(), userType, circulationType.getClear(),
-                flowParams.getCreateBy());
-    }
-    /**
-     * 根据关联id更新权限人
-     *
-     * @param taskId 任务id
-     * @param permissionList 权限人
-     * @param userType 权限人类型
-     * @param clear 是否清空代办任务的计划审批人
-     * @param createBy 存储委派时的委派人
-     * @return 结果
-     * @author xiarg
-     * @date 2024/5/10 11:19
-     */
-    private boolean approval(Long taskId, List<String> permissionList,UserType userType, boolean clear,
-                             String createBy) {
-        return FlowFactory.userService().updatePermission(taskId ,permissionList,
-                userType.getKey(), clear, createBy);
+        return FlowFactory.userService().updatePermission(taskId, flowParams.getPermissionList(), userType.getKey(),
+                circulationType.getClear(), flowParams.getCreateBy());
     }
 
     @Override
