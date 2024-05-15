@@ -1,11 +1,7 @@
 package com.warm.flow.spring.boot.config;
 
-import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.config.WarmFlow;
-import com.warm.flow.core.constant.FlowCons;
 import com.warm.flow.core.dao.*;
 import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.core.service.*;
@@ -13,8 +9,6 @@ import com.warm.flow.core.service.impl.*;
 import com.warm.flow.orm.dao.*;
 import com.warm.flow.orm.invoker.EntityInvoker;
 import com.warm.flow.spring.boot.utils.SpringUtil;
-import com.warm.tools.utils.ObjectUtil;
-import com.warm.tools.utils.StringUtils;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -140,29 +134,5 @@ public class FlowAutoConfig {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    /**
-     * mybatis-plus 分页插件
-     */
-    @Bean
-    public MybatisPlusInterceptor mybatisPlusInterceptor(Environment environment) {
-        String jdbcUrl = environment.getProperty(FlowCons.JDBC_URL);
-        String dataSource = "";
-        if (StringUtils.isEmpty(jdbcUrl)) {
-            dataSource = "h2";
-            log.warn("数据库连接未配置, 默认采用[{}]", dataSource);
-        } else {
-            List<Integer> indexList = StringUtils.findStrIndex(jdbcUrl, FlowCons.COLON);
-            dataSource = jdbcUrl.substring(indexList.get(0) + 1, indexList.get(1));
-        }
-
-        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-        DbType dbType = DbType.getDbType(dataSource);
-        if (ObjectUtil.isNull(dbType)) {
-            log.warn("数据库连接未匹配到数据库类型, 请检查配置文件!!!");
-        }
-        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(dbType));
-        return interceptor;
     }
 }

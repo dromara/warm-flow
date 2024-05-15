@@ -78,19 +78,21 @@
 
     <select id="selectList" parameterType="com.warm.flow.orm.entity.FlowInstance"
             resultMap="FlowInstanceResult">
-        <if test="dataSourceType == 'mysql'.toString() or dataSourceType == 'postgresql'.toString()">
-            <include refid="includeAll"/>
-            <include refid="paging_end"/>
-        </if>
-        <if test="dataSourceType == 'oracle'.toString()">
-            <if test="page !=null and page.pageNum != null and page.pageSize != null">
-                SELECT * FROM ( SELECT TMP.*, ROWNUM ROW_ID FROM (
-            </if>
-            <include refid="includeAll"/>
-            <if test="page !=null and page.pageNum != null and page.pageSize != null">
-                ) TMP WHERE ROWNUM &lt;= #{page.pageSize}) WHERE ROW_ID &gt; #{page.pageNum}
-            </if>
-        </if>
+        <choose>
+            <when test="dataSourceType == 'oracle'.toString()">
+                <if test="page !=null and page.pageNum != null and page.pageSize != null">
+                    SELECT * FROM ( SELECT TMP.*, ROWNUM ROW_ID FROM (
+                </if>
+                <include refid="includeAll"/>
+                <if test="page !=null and page.pageNum != null and page.pageSize != null">
+                    ) TMP WHERE ROWNUM &lt;= #{page.pageSize}) WHERE ROW_ID &gt; #{page.pageNum}
+                </if>
+            </when>
+            <otherwise>
+                <include refid="includeAll"/>
+                <include refid="paging_end"/>
+            </otherwise>
+        </choose>
     </select>
 
     <sql id="includeAll">

@@ -31,7 +31,7 @@ public class FlowCons {
     /**
      * 数据库连接
      */
-    public static String JDBC_URL = "spring.datasource.url";
+    public static final String JDBC_URL = "spring.datasource.url";
 
     /**
      * 冒号
