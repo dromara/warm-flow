@@ -25,7 +25,7 @@
 
 - admin/admin123
 
-演示地址：http://www.hhzai.top:81
+演示地址：http://www.hhzai.top
 
 ## 使用文档与联系方式
 http://warm-flow.cn
