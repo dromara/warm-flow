@@ -66,7 +66,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         //判断结点是否有权限监听器,有执行权限监听器NowNode.setPermissionFlag,无走数据库的权限标识符
         ListenerUtil.executeGetNodePermission(new ListenerVariable(instance, NowNode, flowParams.getVariable(), task));
 
-        // 获取关联的节点
+        // 获取关联的节点，判断当前处理人是否有权限处理
         Node nextNode = getNextNode(NowNode, task, flowParams);
 
         // 如果是网关节点，则重新获取后续节点
@@ -454,15 +454,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         AssertUtil.isTrue(ObjectUtil.isNull(curNode), ExceptionCons.NOT_NODE_DATA);
         AssertUtil.isFalse(FlowCons.SKIP_ANY_Y.equals(curNode.getSkipAnyNode()), ExceptionCons.SKIP_ANY_NODE);
 
-        // 如果有动态权限标识，则优先使用动态权限标识
-        List<String> permissions;
-        if (CollUtil.isNotEmpty(NowNode.getDynamicPermissionFlagList())) {
-            permissions = NowNode.getDynamicPermissionFlagList();
-        } else {
-            permissions = FlowFactory.userService().getPermission(task.getId());
-        }
-        AssertUtil.isTrue(CollUtil.isNotEmpty(permissions) && CollUtil.notContainsAny(permissionFlags, permissions),
-                        ExceptionCons.NULL_ROLE_NODE);
+        // 判断当前处理人是否有权限处理
+        checkAuth(NowNode, task, permissionFlags);
 
         List<Node> nextNodes = FlowFactory.nodeService()
                 .getByNodeCodes(Collections.singletonList(flowParams.getNodeCode()), task.getDefinitionId());
@@ -483,17 +476,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         }
         List<String> permissionFlags = flowParams.getPermissionFlag();
         AssertUtil.isTrue(ObjectUtil.isNull(NowNode), ExceptionCons.NOT_NODE_DATA);
-        // 如果有动态权限标识，则优先使用动态权限标识
-        List<String> permissions;
-        if (CollUtil.isNotEmpty(NowNode.getDynamicPermissionFlagList())) {
-            permissions = NowNode.getDynamicPermissionFlagList();
-        } else {
-            permissions = FlowFactory.userService().getPermission(task.getId());
-        }
-        // 当前节点
-        AssertUtil.isTrue(CollUtil.isEmpty(permissions), ExceptionCons.LOST_NODE_PERMISSION);
-        AssertUtil.isTrue(CollUtil.isNotEmpty(permissions) && CollUtil.notContainsAny(permissionFlags, permissions)
-                , ExceptionCons.NULL_ROLE_NODE);
+
+        // 判断当前处理人是否有权限处理
+        checkAuth(NowNode, task, permissionFlags);
 
         if (!NodeType.isStart(task.getNodeType())) {
             skips = skips.stream().filter(t -> {
@@ -505,6 +490,27 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         }
         AssertUtil.isTrue(CollUtil.isEmpty(skips), ExceptionCons.NULL_CONDITIONVALUE_NODE);
         return skips.get(0);
+    }
+
+    /**
+     * 判断当前处理人是否有权限处理
+     *
+     * @param NowNode 当前节点权限（动态权限）
+     * @param task 当前任务（任务id）
+     * @param permissionFlags 当前处理人的权限
+     */
+    private static void checkAuth(Node NowNode, Task task, List<String> permissionFlags) {
+        // 如果有动态权限标识，则优先使用动态权限标识
+        List<String> permissions;
+        if (CollUtil.isNotEmpty(NowNode.getDynamicPermissionFlagList())) {
+            permissions = NowNode.getDynamicPermissionFlagList();
+        } else {
+            permissions = FlowFactory.userService().getPermission(task.getId());
+        }
+        // 当前节点
+        AssertUtil.isTrue(CollUtil.isEmpty(permissions), ExceptionCons.LOST_NODE_PERMISSION);
+        AssertUtil.isTrue(CollUtil.isNotEmpty(permissions) && CollUtil.notContainsAny(permissionFlags, permissions)
+                , ExceptionCons.NULL_ROLE_NODE);
     }
 
     // 设置结束节点相关信息
