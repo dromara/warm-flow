@@ -83,15 +83,20 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
     public Instance skipByInsId(Long instanceId, FlowParams flowParams) {
         AssertUtil.isTrue(StringUtils.isNotEmpty(flowParams.getMessage())
                 && flowParams.getMessage().length() > 500, ExceptionCons.MSG_OVER_LENGTH);
-        // 获取当前流程
-        Instance instance = getById(instanceId);
-        AssertUtil.isTrue(ObjectUtil.isNull(instance), ExceptionCons.NOT_FOUNT_INSTANCE);
-        AssertUtil.isTrue(FlowStatus.isFinished(instance.getFlowStatus()), ExceptionCons.FLOW_FINISH);
         // 获取待办任务
         List<Task> taskList = FlowFactory.taskService().list(FlowFactory.newTask().setInstanceId(instanceId));
         AssertUtil.isTrue(CollUtil.isEmpty(taskList), ExceptionCons.NOT_FOUNT_TASK);
         AssertUtil.isTrue(taskList.size() > 1, ExceptionCons.TASK_NOT_ONE);
         Task task = taskList.get(0);
+        // 如果是被别人委派的人在处理任务，需要处理一条委派记录，并且更新委派给别人的人还要回到计划审批人,然后直接返回流程实例
+        if(FlowFactory.userService().haveDepute(task.getId())){
+            return FlowFactory.taskService().handleDepute(task.getId(), flowParams);
+        }
+        // 获取当前流程
+        Instance instance = getById(instanceId);
+        AssertUtil.isTrue(ObjectUtil.isNull(instance), ExceptionCons.NOT_FOUNT_INSTANCE);
+        AssertUtil.isTrue(FlowStatus.isFinished(instance.getFlowStatus()), ExceptionCons.FLOW_FINISH);
+
         return FlowFactory.taskService().skip(flowParams, task, instance);
     }
 

@@ -47,7 +47,15 @@ public interface TaskService extends IWarmService<Task> {
      * @param instance:流程实例[必传]
      */
     Instance skip(FlowParams flowParams, Task task, Instance instance);
-
+    /**
+     * 被别人的委派的人处理任务方法
+     *
+     * @param taskId 任务id
+     * @return flowParams 流程参数
+     * @author xiarg
+     * @date 2024/5/10 11:19
+     */
+    public Instance handleDepute(Long taskId, FlowParams flowParams);
     /**
      * 终止流程，提前结束流程，将所有代办任务转历史
      *
@@ -146,7 +154,7 @@ public interface TaskService extends IWarmService<Task> {
      */
     boolean depute(Long taskId, FlowParams flowParams);
     /**
-     * 转办任务
+     * 转办，委派，加减签等处理
      *
      * @param taskId         任务id
      * @param flowParams 流程参数(包含当前处理人的权限，重新指定的权限标识（办理人）)

@@ -37,6 +37,10 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     @Override
     public Instance skip(Long taskId, FlowParams flowParams) {
+        // 如果是被别人委派的人在处理任务，需要处理一条委派记录，并且更新委派给别人的人还要回到计划审批人,然后直接返回流程实例
+        if(FlowFactory.userService().haveDepute(taskId)){
+            return handleDepute(taskId, flowParams);
+        }
         AssertUtil.isTrue(StringUtils.isNotEmpty(flowParams.getMessage())
                 && flowParams.getMessage().length() > 500, ExceptionCons.MSG_OVER_LENGTH);
         // 获取待办任务
@@ -105,7 +109,35 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 , NowNode, nextNodes);
         return instance;
     }
-
+    @Override
+    public Instance handleDepute(Long taskId, FlowParams flowParams) {
+        // 获取待办任务
+        Task task = getById(taskId);
+        // 获取委托给别人的人
+        List<User> userList = FlowFactory.userService().list(FlowFactory.newUser().setAssociated(taskId));
+        User deputeUser = userList.get(0);
+        // 记录被人别人委托的人处理任务记录
+        HisTask insHis = FlowFactory.newHisTask()
+                .setInstanceId(task.getInstanceId())
+                .setNodeCode(task.getNodeCode())
+                .setNodeName(task.getNodeName())
+                .setNodeType(task.getNodeType())
+                .setTenantId(task.getTenantId())
+                .setDefinitionId(task.getDefinitionId())
+                .setTargetNodeCode(task.getNodeCode())
+                .setTargetNodeName(task.getNodeName())
+                .setFlowStatus(FlowStatus.PASS.getKey())
+                .setMessage(flowParams.getMessage())
+                .setCreateTime(new Date())
+                .setRecord(" deputed "+flowParams.getCreateBy() +" handle task, depute "+deputeUser.getCreateBy());
+        FlowFactory.dataFillHandler().idFill(insHis);
+        FlowFactory.dataFillHandler().idFill(insHis);
+        FlowFactory.hisTaskService().saveBatch(CollUtil.toList(insHis));
+        // 更新当前任务的计划审批人
+        User user = FlowFactory.userService().getUser(taskId, deputeUser.getCreateBy(), UserType.APPROVAL.getKey());
+        FlowFactory.userService().updateById(user);
+        return FlowFactory.insService().getById(task.getInstanceId());
+    }
     @Override
     public Instance termination(Long taskId, FlowParams flowParams) {
         // 获取待办任务

@@ -105,4 +105,15 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
         FlowFactory.dataFillHandler().idFill(user);
         return user;
     }
+
+    @Override
+    public boolean haveDepute(long taskId) {
+        List<User> userList = list(FlowFactory.newUser().setAssociated(taskId));
+        for (User user : userList) {
+            if(UserType.DEPUTE.getKey().equals(user.getType())){
+                return true;
+            }
+        }
+        return false;
+    }
 }
