@@ -36,7 +36,7 @@ public class FlowParams {
      */
     private List<String> permissionFlag;
     /**
-     * 加减签，转办，委托权限标识 例如：[role:admin,user:2]
+     * 加减签，转办，委托，抄送人权限标识 例如：[role:admin,user:2]
      */
     private List<String> permissionList;
     /**

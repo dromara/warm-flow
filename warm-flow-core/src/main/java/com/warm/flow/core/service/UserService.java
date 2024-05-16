@@ -61,6 +61,16 @@ public interface UserService extends IWarmService<User> {
      */
     List<User> taskAddUser(Task task, FlowParams flowParams);
     /**
+     * 流程增加抄送人
+     *
+     * @param instanceId 流程实例id
+     * @param flowParams 工作流内置参数
+     * @return List<User>
+     * @author xiarg
+     * @date 2024/5/10 15:45
+     */
+    List<User> carbonUser(Long instanceId, FlowParams flowParams);
+    /**
      * 根据(代办任务，实例，历史表，节点)id删除流程用户
      *
      * @param ids (代办任务，实例，历史表，节点)id集合

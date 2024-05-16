@@ -67,6 +67,13 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
     }
 
     @Override
+    public List<User> carbonUser(Long instanceId, FlowParams flowParams) {
+        return StreamUtils.toList(
+                    flowParams.getPermissionList(),
+                    permission -> FlowFactory.userService().getUser(instanceId, permission, UserType.CARBON.getKey()));
+    }
+
+    @Override
     public void delUser(List<Long> ids) {
         getDao().deleteByTaskIds(ids);
     }
