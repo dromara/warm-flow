@@ -185,8 +185,8 @@ public class FlowFactory {
             o = FrameInvoker.getBean(DataFillHandler.class);
         } catch (Exception ignored) {
         }
-        if (ObjectUtil.isNotNull(o)) {
-            return FlowFactory.dataFillHandler = o = new DefaultDataFillHandler();
+        if (ObjectUtil.isNull(o)) {
+            return FlowFactory.dataFillHandler = new DefaultDataFillHandler();
         }
         return FlowFactory.dataFillHandler = o;
     }
