@@ -9,7 +9,7 @@ import com.warm.flow.core.service.impl.*;
 import com.warm.flow.orm.dao.*;
 import com.warm.flow.orm.invoker.EntityInvoker;
 import com.warm.flow.spring.boot.utils.SpringUtil;
-import com.warm.tools.utils.StringUtils;
+import com.warm.flow.core.utils.StringUtils;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSessionFactory;

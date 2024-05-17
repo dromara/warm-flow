@@ -1,6 +1,6 @@
 package com.warm.flow.core.chart;
 
-import com.warm.tools.utils.StringUtils;
+import com.warm.flow.core.utils.StringUtils;
 
 import java.awt.*;
 

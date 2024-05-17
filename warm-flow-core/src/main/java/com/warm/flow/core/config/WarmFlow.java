@@ -2,8 +2,8 @@ package com.warm.flow.core.config;
 
 import com.warm.flow.core.constant.FlowConfigCons;
 import com.warm.flow.core.invoker.FrameInvoker;
-import com.warm.tools.utils.ObjectUtil;
-import com.warm.tools.utils.StringUtils;
+import com.warm.flow.core.utils.ObjectUtil;
+import com.warm.flow.core.utils.StringUtils;
 
 /**
  * WarmFlow属性配置文件

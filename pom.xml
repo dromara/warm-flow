@@ -40,7 +40,6 @@
 
     <modules>
         <module>warm-flow-core</module>
-        <module>warm-flow-tools</module>
         <module>warm-flow-mybatis</module>
         <module>warm-flow-mybatis-plus</module>
         <module>warm-flow-jpa</module>
@@ -133,12 +132,6 @@
                 <groupId>org.noear</groupId>
                 <artifactId>mybatis-plus-solon-plugin</artifactId>
                 <version>${solon.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>io.github.minliuhua</groupId>
-                <artifactId>warm-flow-tools</artifactId>
-                <version>${revision}</version>
             </dependency>
 
             <dependency>

@@ -8,11 +8,8 @@ import com.warm.flow.core.service.DefService;
 import com.warm.flow.core.service.InsService;
 import com.warm.flow.core.service.TaskService;
 import com.warm.flow.jpa.sb.repository.YourEntityRepository;
-import com.warm.flow.jpa.sb.entity.FlowDefinition;
 import com.warm.flow.jpa.sb.service.TransactionalTest;
 import com.warm.flow.orm.entity.FlowInstance;
-import com.warm.flow.spring.boot.utils.SpringUtil;
-import com.warm.tools.utils.IdUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.io.FileInputStream;
 import java.util.Arrays;
-import java.util.List;
 
 
 @SpringBootTest

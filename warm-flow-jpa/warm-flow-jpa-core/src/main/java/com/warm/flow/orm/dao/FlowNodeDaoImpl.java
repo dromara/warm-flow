@@ -2,17 +2,13 @@ package com.warm.flow.orm.dao;
 
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.dao.FlowNodeDao;
-import com.warm.flow.orm.entity.FlowDefinition;
-import com.warm.flow.orm.entity.FlowHisTask;
 import com.warm.flow.orm.entity.FlowNode;
 import com.warm.flow.orm.utils.TenantDeleteUtil;
-import com.warm.tools.utils.CollUtil;
-import com.warm.tools.utils.StringUtils;
+import com.warm.flow.core.utils.CollUtil;
+import com.warm.flow.core.utils.StringUtils;
 
-import javax.persistence.EntityManager;
 import javax.persistence.criteria.*;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;

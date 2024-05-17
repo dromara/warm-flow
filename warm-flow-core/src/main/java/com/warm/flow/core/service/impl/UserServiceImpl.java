@@ -11,8 +11,8 @@ import com.warm.flow.core.enums.UserType;
 import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.UserService;
 import com.warm.flow.core.utils.AssertUtil;
-import com.warm.tools.utils.CollUtil;
-import com.warm.tools.utils.StreamUtils;
+import com.warm.flow.core.utils.CollUtil;
+import com.warm.flow.core.utils.StreamUtils;
 
 import java.util.List;
 

@@ -6,7 +6,7 @@ import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.orm.entity.FlowNode;
 import com.warm.flow.orm.mapper.FlowNodeMapper;
 import com.warm.flow.orm.utils.TenantDeleteUtil;
-import com.warm.tools.utils.CollUtil;
+import com.warm.flow.core.utils.CollUtil;
 
 import java.io.Serializable;
 import java.util.Collection;

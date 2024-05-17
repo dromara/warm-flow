@@ -3,7 +3,7 @@ package com.warm.flow.orm.entity;
 import com.warm.flow.core.entity.User;
 import com.warm.flow.orm.utils.JPAPredicateFunction;
 import com.warm.flow.orm.utils.JPAUtil;
-import com.warm.tools.utils.StringUtils;
+import com.warm.flow.core.utils.StringUtils;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

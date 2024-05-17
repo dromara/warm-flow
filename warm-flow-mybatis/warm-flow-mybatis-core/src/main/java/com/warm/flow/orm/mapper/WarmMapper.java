@@ -1,6 +1,6 @@
 package com.warm.flow.orm.mapper;
 
-import com.warm.tools.utils.page.Page;
+import com.warm.flow.core.utils.page.Page;
 import org.apache.ibatis.annotations.Param;
 
 import java.io.Serializable;
