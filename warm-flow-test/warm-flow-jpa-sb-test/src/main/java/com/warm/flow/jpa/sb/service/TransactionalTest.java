@@ -5,7 +5,7 @@ import com.warm.flow.core.enums.SkipType;
 import com.warm.flow.core.service.InsService;
 import com.warm.flow.jpa.sb.entity.FlowDefinition;
 import com.warm.flow.jpa.sb.repository.YourEntityRepository;
-import com.warm.tools.utils.IdUtils;
+import com.warm.flow.core.utils.IdUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,8 +23,7 @@ public class TransactionalTest {
 
     public FlowParams getUser() {
         FlowParams flowParams = FlowParams.build().flowCode("leaveFlow-serial-test")
-                .createBy("1")
-                .nickName("张三")
+                .createBy("user:1")
                 .skipType(SkipType.PASS.getKey())
                 .permissionFlag(Arrays.asList("role:1", "role:2"));
         return flowParams;

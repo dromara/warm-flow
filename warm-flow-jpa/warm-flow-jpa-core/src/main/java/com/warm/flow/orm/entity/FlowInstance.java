@@ -3,7 +3,7 @@ package com.warm.flow.orm.entity;
 import com.warm.flow.core.entity.Instance;
 import com.warm.flow.orm.utils.JPAUtil;
 import com.warm.flow.orm.utils.JPAPredicateFunction;
-import com.warm.tools.utils.StringUtils;
+import com.warm.flow.core.utils.StringUtils;
 
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -71,7 +71,44 @@ public class FlowInstance extends JPARootEntity<FlowInstance> implements Instanc
 
     @Override
     public void initDefaultValue() {
+    }
 
+    @Override
+    public void mergeUpdate(FlowInstance updateEntity) {
+        if (StringUtils.isNotEmpty(updateEntity.businessId)) {
+            this.businessId = updateEntity.businessId;
+        }
+        if (Objects.nonNull(updateEntity.definitionId)) {
+            this.definitionId = updateEntity.definitionId;
+        }
+        if (Objects.nonNull(updateEntity.nodeType)) {
+            this.nodeType = updateEntity.nodeType;
+        }
+        if (StringUtils.isNotEmpty(updateEntity.nodeCode)) {
+            this.nodeCode = updateEntity.nodeCode;
+        }
+        if (StringUtils.isNotEmpty(updateEntity.nodeName)) {
+            this.nodeName = updateEntity.nodeName;
+        }
+        if (Objects.nonNull(updateEntity.variable)) {
+            this.variable = updateEntity.variable;
+        }
+        if (Objects.nonNull(updateEntity.flowStatus)) {
+            this.flowStatus = updateEntity.flowStatus;
+        }
+        if (StringUtils.isNotEmpty(updateEntity.createBy)) {
+            this.createBy = updateEntity.createBy;
+        }
+        if (Objects.nonNull(updateEntity.ext)) {
+            this.ext = updateEntity.ext;
+        }
+
+        if (Objects.nonNull(updateEntity.getCreateTime())) {
+            this.setCreateTime(updateEntity.getCreateTime());
+        }
+        if (Objects.nonNull(updateEntity.getUpdateTime())) {
+            this.setUpdateTime(updateEntity.getUpdateTime());
+        }
     }
 
     /**

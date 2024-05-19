@@ -6,7 +6,7 @@ import com.warm.flow.core.entity.User;
 import com.warm.flow.core.enums.PublishStatus;
 import com.warm.flow.orm.utils.JPAUtil;
 import com.warm.flow.orm.utils.JPAPredicateFunction;
-import com.warm.tools.utils.StringUtils;
+import com.warm.flow.core.utils.StringUtils;
 
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -74,6 +74,34 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
         }
         if (Objects.isNull(this.fromCustom)) {
             this.fromCustom = "N";
+        }
+    }
+
+    @Override
+    public void mergeUpdate(FlowDefinition updateEntity) {
+        if (StringUtils.isNotEmpty(updateEntity.flowCode)) {
+            this.flowCode = updateEntity.flowCode;
+        }
+        if (StringUtils.isNotEmpty(updateEntity.flowName)) {
+            this.flowName = updateEntity.flowName;
+        }
+        if (StringUtils.isNotEmpty(updateEntity.version)) {
+            this.version = updateEntity.version;
+        }
+        if (Objects.nonNull(updateEntity.isPublish)) {
+            this.isPublish = updateEntity.isPublish;
+        }
+        if (Objects.nonNull(updateEntity.fromCustom)) {
+            this.fromCustom = updateEntity.fromCustom;
+        }
+        if (Objects.nonNull(updateEntity.fromPath)) {
+            this.fromPath = updateEntity.fromPath;
+        }
+        if (Objects.nonNull(updateEntity.getCreateTime())) {
+            this.setCreateTime(updateEntity.getCreateTime());
+        }
+        if (Objects.nonNull(updateEntity.getUpdateTime())) {
+            this.setUpdateTime(updateEntity.getUpdateTime());
         }
     }
 

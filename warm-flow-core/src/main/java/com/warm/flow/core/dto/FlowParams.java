@@ -22,11 +22,6 @@ public class FlowParams {
     private String createBy;
 
     /**
-     * 用户昵称
-     */
-    private String nickName;
-
-    /**
      * 节点编码（如果要指定跳转节点，传入）
      */
     private String nodeCode;
@@ -78,11 +73,6 @@ public class FlowParams {
 
     public FlowParams createBy(String createBy) {
         this.createBy = createBy;
-        return this;
-    }
-
-    public FlowParams nickName(String nickName) {
-        this.nickName = nickName;
         return this;
     }
 
@@ -148,10 +138,6 @@ public class FlowParams {
 
     public String getCreateBy() {
         return createBy;
-    }
-
-    public String getNickName() {
-        return nickName;
     }
 
     public List<String> getPermissionFlag() {

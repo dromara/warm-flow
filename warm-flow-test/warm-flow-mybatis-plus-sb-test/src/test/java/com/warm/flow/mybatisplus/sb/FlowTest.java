@@ -2,17 +2,21 @@ package com.warm.flow.mybatisplus.sb;
 
 
 import com.warm.flow.core.dto.FlowParams;
+import com.warm.flow.core.entity.Definition;
 import com.warm.flow.core.entity.Instance;
 import com.warm.flow.core.enums.SkipType;
 import com.warm.flow.core.service.DefService;
 import com.warm.flow.core.service.InsService;
 import com.warm.flow.core.service.TaskService;
+import com.warm.flow.orm.entity.FlowDefinition;
+import com.warm.flow.core.utils.page.Page;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
 import java.io.FileInputStream;
 import java.util.Arrays;
+import java.util.List;
 
 
 @SpringBootTest
@@ -29,8 +33,7 @@ public class FlowTest {
 
     public FlowParams getUser() {
         return FlowParams.build().flowCode("leaveFlow-serial1")
-                .createBy("1")
-                .nickName("张三")
+                .createBy("user:1")
                 .skipType(SkipType.PASS.getKey())
                 .permissionList(Arrays.asList("role:100", "role:101"))
                 .permissionFlag(Arrays.asList("role:1", "role:2"));
@@ -69,7 +72,7 @@ public class FlowTest {
     public void termination() {
         // 终止流程实例
         FlowParams flowParams = new FlowParams();
-        flowParams.message("终止流程").createBy("1");
+        flowParams.message("终止流程").createBy("user:1");
         taskService.termination(1239217703449923584L, flowParams);
     }
 
@@ -84,5 +87,16 @@ public class FlowTest {
     public void assignee() {
         // 转办
         System.out.println("转办：" + taskService.transfer(1239301524417548289L, getUser()));
+    }
+
+    @Test
+    public void page(){
+        FlowDefinition flowDefinition = new FlowDefinition();
+        Page<Definition> page = Page.pageOf(1,10);
+        page = defService.orderByCreateTime().desc().page(flowDefinition, page);
+        List<Definition> list = page.getList();
+        for (Definition definition : list) {
+            System.out.println(definition);
+        }
     }
 }

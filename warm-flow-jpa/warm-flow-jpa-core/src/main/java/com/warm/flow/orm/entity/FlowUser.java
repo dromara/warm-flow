@@ -3,7 +3,7 @@ package com.warm.flow.orm.entity;
 import com.warm.flow.core.entity.User;
 import com.warm.flow.orm.utils.JPAPredicateFunction;
 import com.warm.flow.orm.utils.JPAUtil;
-import com.warm.tools.utils.StringUtils;
+import com.warm.flow.core.utils.StringUtils;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -41,7 +41,7 @@ public class FlowUser extends JPARootEntity<FlowUser> implements User{
                 if (StringUtils.isNotEmpty(this.processedBy)) {
                     predicates.add(criteriaBuilder.equal(root.get("processedBy"), this.processedBy));
                 }
-                if  (Objects.nonNull(this.associated)) {
+                if (Objects.nonNull(this.associated)) {
                     predicates.add(criteriaBuilder.equal(root.get("associated"), this.associated));
                 }
             };
@@ -59,7 +59,25 @@ public class FlowUser extends JPARootEntity<FlowUser> implements User{
 
     @Override
     public void initDefaultValue() {
+    }
 
+    @Override
+    public void mergeUpdate(FlowUser updateEntity) {
+        if (StringUtils.isNotEmpty(updateEntity.type)) {
+            this.type = updateEntity.type;
+        }
+        if (StringUtils.isNotEmpty(updateEntity.processedBy)) {
+            this.processedBy = updateEntity.processedBy;
+        }
+        if (Objects.nonNull(updateEntity.associated)) {
+            this.associated = updateEntity.associated;
+        }
+        if (Objects.nonNull(updateEntity.getCreateTime())) {
+            this.setCreateTime(updateEntity.getCreateTime());
+        }
+        if (Objects.nonNull(updateEntity.getUpdateTime())) {
+            this.setUpdateTime(updateEntity.getUpdateTime());
+        }
     }
 
     /**

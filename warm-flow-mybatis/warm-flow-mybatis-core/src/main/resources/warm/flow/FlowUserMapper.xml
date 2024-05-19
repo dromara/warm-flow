@@ -29,7 +29,7 @@
 
     <sql id="paging_end">
         <if test="page !=null and page.pageNum != null and page.pageSize != null">LIMIT
-            #{page.pageNum},#{page.pageSize}
+            #{page.pageNum} offset #{page.pageSize}
         </if>
     </sql>
 
@@ -51,11 +51,28 @@
     </sql>
 
     <select id="selectList" parameterType="com.warm.flow.orm.entity.FlowUser" resultMap="FlowUserResult">
+        <choose>
+            <when test="dataSourceType == 'oracle'.toString()">
+                <if test="page !=null and page.pageNum != null and page.pageSize != null">
+                    SELECT * FROM ( SELECT TMP.*, ROWNUM ROW_ID FROM (
+                </if>
+                <include refid="includeAll"/>
+                <if test="page !=null and page.pageNum != null and page.pageSize != null">
+                    ) TMP WHERE ROWNUM &lt;= #{page.pageSize}) WHERE ROW_ID &gt; #{page.pageNum}
+                </if>
+            </when>
+            <otherwise>
+                <include refid="includeAll"/>
+                <include refid="paging_end"/>
+            </otherwise>
+        </choose>
+    </select>
+
+    <sql id="includeAll">
         <include refid="selectVo"/>
         <include refid="select_parameter"/>
         <include refid="order_by"/>
-        <include refid="paging_end"/>
-    </select>
+    </sql>
 
     <select id="selectByIds" resultMap="FlowUserResult">
         <include refid="selectVo"/>

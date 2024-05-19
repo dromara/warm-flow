@@ -8,11 +8,8 @@ import com.warm.flow.core.service.DefService;
 import com.warm.flow.core.service.InsService;
 import com.warm.flow.core.service.TaskService;
 import com.warm.flow.jpa.sb.repository.YourEntityRepository;
-import com.warm.flow.jpa.sb.entity.FlowDefinition;
 import com.warm.flow.jpa.sb.service.TransactionalTest;
 import com.warm.flow.orm.entity.FlowInstance;
-import com.warm.flow.spring.boot.utils.SpringUtil;
-import com.warm.tools.utils.IdUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.io.FileInputStream;
 import java.util.Arrays;
-import java.util.List;
 
 
 @SpringBootTest
@@ -44,8 +40,7 @@ public class FlowTest {
 
     public FlowParams getUser() {
         return FlowParams.build().flowCode("leaveFlow-serial-test")
-                .createBy("1")
-                .nickName("张三")
+                .createBy("user:1")
                 .skipType(SkipType.PASS.getKey())
                 .permissionFlag(Arrays.asList("role:1", "role:2"));
     }
@@ -97,7 +92,7 @@ public class FlowTest {
     public void termination() {
         // 终止流程实例
         FlowParams flowParams = new FlowParams();
-        flowParams.message("终止流程").createBy("1");
+        flowParams.message("终止流程").createBy("user:1");
         taskService.termination(1232001396254052352L, flowParams);
     }
 

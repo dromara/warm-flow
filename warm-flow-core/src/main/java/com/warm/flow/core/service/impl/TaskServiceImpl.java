@@ -11,11 +11,7 @@ import com.warm.flow.core.listener.Listener;
 import com.warm.flow.core.listener.ListenerVariable;
 import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.TaskService;
-import com.warm.flow.core.utils.AssertUtil;
-import com.warm.flow.core.utils.ExpressionUtil;
-import com.warm.flow.core.utils.ListenerUtil;
-import com.warm.flow.core.utils.SqlHelper;
-import com.warm.tools.utils.*;
+import com.warm.flow.core.utils.*;
 import org.noear.snack.ONode;
 
 import java.util.*;
@@ -179,10 +175,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         instance.setFlowStatus(FlowStatus.FINISHED.getKey());
         FlowFactory.insService().updateById(instance);
 
-        // 流程结束，流程定义的节点权限人也要清空
-        List<Long> nodeIds = StreamUtils.toList(FlowFactory.nodeService().getByNodeCodes(null
-                , instance.getDefinitionId()), Node::getId);
-        FlowFactory.userService().delUser(CollUtil.listAddToNew(nodeIds, task.getId()));
+        // 删除流程相关办理人
+        FlowFactory.userService().delUser(Collections.singletonList(task.getId()));
 
         // 处理未完成的任务，当流程完成，还存在代办任务未完成，转历史任务，状态完成。
         handUndoneTask(instance, task.getId());
@@ -271,8 +265,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             permissionList = FlowFactory.userService().getPermission(node.getId());
             // 如果设置了发起人审批，则需要动态替换权限标识
             for (int i = 0; i < permissionList.size(); i++) {
-                if (StringUtils.isNotEmpty(permissionList.get(i)) && FlowCons.WARMFLOWINITIATOR.equals(permissionList.get(i))) {
-                    permissionList.set(i, instance.getCreateBy());
+                String permission = permissionList.get(i);
+                if (StringUtils.isNotEmpty(permission) && permission.contains(FlowCons.WARMFLOWINITIATOR)) {
+                    permissionList.set(i, permission.replace(FlowCons.WARMFLOWINITIATOR, instance.getCreateBy()));
                 }
             }
         }

@@ -3,7 +3,7 @@ package com.warm.flow.orm.entity;
 import com.warm.flow.core.entity.Skip;
 import com.warm.flow.orm.utils.JPAUtil;
 import com.warm.flow.orm.utils.JPAPredicateFunction;
-import com.warm.tools.utils.StringUtils;
+import com.warm.flow.core.utils.StringUtils;
 
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -71,7 +71,43 @@ public class FlowSkip extends JPARootEntity<FlowSkip> implements Skip {
 
     @Override
     public void initDefaultValue() {
+    }
 
+    @Override
+    public void mergeUpdate(FlowSkip updateEntity) {
+        if (Objects.nonNull(updateEntity.definitionId)) {
+            this.definitionId = updateEntity.definitionId;
+        }
+        if (StringUtils.isNotEmpty(updateEntity.nowNodeCode)) {
+            this.nowNodeCode = updateEntity.nowNodeCode;
+        }
+        if (Objects.nonNull(updateEntity.nowNodeType)) {
+            this.nowNodeType = updateEntity.nowNodeType;
+        }
+        if (StringUtils.isNotEmpty(updateEntity.nextNodeCode)) {
+            this.nextNodeCode = updateEntity.nextNodeCode;
+        }
+        if (Objects.nonNull(updateEntity.nextNodeType)) {
+            this.nextNodeType = updateEntity.nextNodeType;
+        }
+        if (StringUtils.isNotEmpty(updateEntity.skipName)) {
+            this.skipName = updateEntity.skipName;
+        }
+        if (Objects.nonNull(updateEntity.skipType)) {
+            this.skipType = updateEntity.skipType;
+        }
+        if (StringUtils.isNotEmpty(updateEntity.skipCondition)) {
+            this.skipCondition = updateEntity.skipCondition;
+        }
+        if (StringUtils.isNotEmpty(updateEntity.coordinate)) {
+            this.coordinate = updateEntity.coordinate;
+        }
+        if (Objects.nonNull(updateEntity.getCreateTime())) {
+            this.setCreateTime(updateEntity.getCreateTime());
+        }
+        if (Objects.nonNull(updateEntity.getUpdateTime())) {
+            this.setUpdateTime(updateEntity.getUpdateTime());
+        }
     }
 
     /**

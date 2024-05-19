@@ -8,7 +8,7 @@ import com.warm.flow.core.handler.TenantHandler;
 import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.core.service.*;
 import com.warm.flow.core.utils.ClassUtil;
-import com.warm.tools.utils.ObjectUtil;
+import com.warm.flow.core.utils.ObjectUtil;
 import org.noear.snack.core.utils.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -186,8 +186,8 @@ public class FlowFactory {
             o = FrameInvoker.getBean(DataFillHandler.class);
         } catch (Exception ignored) {
         }
-        if (ObjectUtil.isNotNull(o)) {
-            return FlowFactory.dataFillHandler = o = new DefaultDataFillHandler();
+        if (ObjectUtil.isNull(o)) {
+            return FlowFactory.dataFillHandler = new DefaultDataFillHandler();
         }
         return FlowFactory.dataFillHandler = o;
     }
@@ -215,4 +215,10 @@ public class FlowFactory {
         return FlowFactory.tenantHandler = o;
     }
 
+    /**
+     * 获取数据库类型
+     */
+    public static String dataSourceType() {
+        return flowConfig.getDataSourceType();
+    }
 }
