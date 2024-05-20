@@ -4,7 +4,7 @@ import com.warm.flow.core.entity.Task;
 import com.warm.flow.orm.utils.JPAUpdateMergeFunction;
 import com.warm.flow.orm.utils.JPAUtil;
 import com.warm.flow.orm.utils.JPAPredicateFunction;
-import com.warm.tools.utils.StringUtils;
+import com.warm.flow.core.utils.StringUtils;
 
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;

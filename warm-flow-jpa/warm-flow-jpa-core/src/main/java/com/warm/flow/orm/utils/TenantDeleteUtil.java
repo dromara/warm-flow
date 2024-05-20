@@ -4,9 +4,7 @@ import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.config.WarmFlow;
 import com.warm.flow.core.entity.RootEntity;
 import com.warm.flow.core.handler.TenantHandler;
-import com.warm.tools.utils.ObjectUtil;
-
-import java.util.function.Supplier;
+import com.warm.flow.core.utils.ObjectUtil;
 
 /**
  * mybatis-plus 租户和逻辑删除工具类

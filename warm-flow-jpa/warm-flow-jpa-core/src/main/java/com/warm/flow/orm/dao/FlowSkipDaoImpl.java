@@ -2,15 +2,11 @@ package com.warm.flow.orm.dao;
 
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.dao.FlowSkipDao;
-import com.warm.flow.orm.entity.FlowNode;
 import com.warm.flow.orm.entity.FlowSkip;
 import com.warm.flow.orm.utils.TenantDeleteUtil;
-import com.warm.tools.utils.StringUtils;
+import com.warm.flow.core.utils.StringUtils;
 
-import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
-import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.CriteriaUpdate;
 import java.io.Serializable;
 import java.util.Collection;

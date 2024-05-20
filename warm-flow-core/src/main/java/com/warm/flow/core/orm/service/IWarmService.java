@@ -2,7 +2,7 @@ package com.warm.flow.core.orm.service;
 
 
 import com.warm.flow.core.orm.agent.WarmQuery;
-import com.warm.tools.utils.page.Page;
+import com.warm.flow.core.utils.page.Page;
 
 import java.io.Serializable;
 import java.util.Collection;

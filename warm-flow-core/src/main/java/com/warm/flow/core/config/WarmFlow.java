@@ -2,8 +2,8 @@ package com.warm.flow.core.config;
 
 import com.warm.flow.core.constant.FlowConfigCons;
 import com.warm.flow.core.invoker.FrameInvoker;
-import com.warm.tools.utils.ObjectUtil;
-import com.warm.tools.utils.StringUtils;
+import com.warm.flow.core.utils.ObjectUtil;
+import com.warm.flow.core.utils.StringUtils;
 
 /**
  * WarmFlow属性配置文件
@@ -40,6 +40,12 @@ public class WarmFlow {
      * 租户模式处理类路径
      */
     private String tenantHandlerPath;
+    /**
+     * 数据源类型, mybatis模块对orm进一步的封装, 由于各数据库分页语句存在差异,
+     * 当配置此参数时, 以此参数结果为基准, 未配置时, 取DataSource中数据源类型,
+     * 兜底为mysql数据库
+     */
+    private String dataSourceType;
 
     public static WarmFlow init() {
         WarmFlow flowConfig = new WarmFlow();
@@ -57,6 +63,9 @@ public class WarmFlow {
 
         // 设置数据填充处理类
         flowConfig.setDataFillHandlerPath(FrameInvoker.getCfg(FlowConfigCons.DATAFILLHANDLEPATH));
+
+        // 设置数据源类型
+        flowConfig.setDataSourceType(FrameInvoker.getCfg(FlowConfigCons.DATA_SOURCE_TYPE));
         printBanner(flowConfig);
         return flowConfig;
     }
@@ -136,5 +145,13 @@ public class WarmFlow {
 
     public void setTenantHandlerPath(String tenantHandlerPath) {
         this.tenantHandlerPath = tenantHandlerPath;
+    }
+
+    public String getDataSourceType() {
+        return dataSourceType;
+    }
+
+    public void setDataSourceType(String dataSourceType) {
+        this.dataSourceType = dataSourceType;
     }
 }

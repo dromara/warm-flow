@@ -8,11 +8,11 @@ package com.warm.flow.core.enums;
  */
 public enum UserType {
 
-    APPROVAL("1", "审批人权限"),
-    ASSIGNEE("2", "转办人权限"),
-    CARBON("3", "抄送人权限"),
-    APPROVER("4", "已审批人"),
-    PROPOSE("5", "计划审批人");
+    APPROVAL("1", "代办任务的审批人权限"),
+    ASSIGNEE("2", "代办任务的转办人权限"),
+    CARBON("3", "流程实例的抄送人权限"),
+    APPROVER("4", "流程历史的已审批人"),
+    PROPOSE("5", "流程节点的权限");
 
     private String key;
     private String value;

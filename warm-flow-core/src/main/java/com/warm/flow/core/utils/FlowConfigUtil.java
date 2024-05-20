@@ -10,10 +10,6 @@ import com.warm.flow.core.entity.User;
 import com.warm.flow.core.enums.NodeType;
 import com.warm.flow.core.enums.SkipType;
 import com.warm.flow.core.enums.UserType;
-import com.warm.tools.utils.CollUtil;
-import com.warm.tools.utils.ObjectUtil;
-import com.warm.tools.utils.StreamUtils;
-import com.warm.tools.utils.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -124,6 +120,7 @@ public class FlowConfigUtil {
     }
 
     private static List<User> initUser(Element nodeElement, Node node){
+        // 初始化流程节点的权限
         List<String> permissions = CollUtil.strToColl(nodeElement.attributeValue("permissionFlag"), ",");
         if(CollUtil.isNotEmpty(permissions)){
             return StreamUtils.toList(permissions, permission -> FlowFactory.userService()

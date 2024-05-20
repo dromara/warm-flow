@@ -5,7 +5,7 @@ import com.warm.flow.core.entity.Skip;
 import com.warm.flow.orm.utils.JPAUpdateMergeFunction;
 import com.warm.flow.orm.utils.JPAUtil;
 import com.warm.flow.orm.utils.JPAPredicateFunction;
-import com.warm.tools.utils.StringUtils;
+import com.warm.flow.core.utils.StringUtils;
 
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -120,6 +120,43 @@ public class FlowNode extends JPARootEntity<FlowNode> implements Node {
     public void initDefaultValue() {
         if (Objects.isNull(this.skipAnyNode)) {
             this.skipAnyNode = "N";
+        }
+    }
+
+    @Override
+    public void mergeUpdate(FlowNode updateEntity) {
+        if (Objects.nonNull(updateEntity.nodeType)) {
+            this.nodeType = updateEntity.nodeType;
+        }
+        if (Objects.nonNull(updateEntity.definitionId)) {
+            this.definitionId = updateEntity.definitionId;
+        }
+        if (StringUtils.isNotEmpty(updateEntity.nodeCode)) {
+            this.nodeCode = updateEntity.nodeCode;
+        }
+        if (StringUtils.isNotEmpty(updateEntity.nodeName)) {
+            this.nodeName = updateEntity.nodeName;
+        }
+        if (StringUtils.isNotEmpty(updateEntity.coordinate)) {
+            this.coordinate = updateEntity.coordinate;
+        }
+        if (StringUtils.isNotEmpty(updateEntity.skipAnyNode)) {
+            this.skipAnyNode = updateEntity.skipAnyNode;
+        }
+        if (StringUtils.isNotEmpty(updateEntity.listenerType)) {
+            this.listenerType = updateEntity.listenerType;
+        }
+        if (StringUtils.isNotEmpty(updateEntity.listenerPath)) {
+            this.listenerPath = updateEntity.listenerPath;
+        }
+        if (StringUtils.isNotEmpty(updateEntity.version)) {
+            this.version = updateEntity.version;
+        }
+        if (Objects.nonNull(updateEntity.getCreateTime())) {
+            this.setCreateTime(updateEntity.getCreateTime());
+        }
+        if (Objects.nonNull(updateEntity.getUpdateTime())) {
+            this.setUpdateTime(updateEntity.getUpdateTime());
         }
     }
 

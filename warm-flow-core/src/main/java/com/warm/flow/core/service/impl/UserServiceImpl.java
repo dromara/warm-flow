@@ -11,8 +11,8 @@ import com.warm.flow.core.enums.UserType;
 import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.UserService;
 import com.warm.flow.core.utils.AssertUtil;
-import com.warm.tools.utils.CollUtil;
-import com.warm.tools.utils.StreamUtils;
+import com.warm.flow.core.utils.CollUtil;
+import com.warm.flow.core.utils.StreamUtils;
 
 import java.util.List;
 
@@ -52,6 +52,7 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
 
     @Override
     public User hisTaskAddUser(Long hisTaskId, FlowParams flowParams) {
+        // 新建流程历史的已审批人
         return getUser(hisTaskId, flowParams.getCreateBy(), UserType.APPROVER.getKey());
     }
 
@@ -59,7 +60,7 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
     public List<User> taskAddUser(Task task, FlowParams flowParams) {
         // 审批人权限不能为空
         AssertUtil.isTrue(CollUtil.isEmpty(task.getPermissionList()), ExceptionCons.LOST_NEXT_PERMISSION);
-        // 遍历权限集合，生成流程用户
+        // 遍历权限集合，生成流程节点的权限
         return StreamUtils.toList(task.getPermissionList()
                 , permission -> getUser(task.getId(), permission, UserType.APPROVAL.getKey()));
     }

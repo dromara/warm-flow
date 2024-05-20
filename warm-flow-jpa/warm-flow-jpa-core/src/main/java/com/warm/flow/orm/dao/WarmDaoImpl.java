@@ -10,11 +10,11 @@ import com.warm.flow.orm.utils.JPAQueryFunction;
 import com.warm.flow.orm.utils.JPAPredicateFunction;
 import com.warm.flow.orm.utils.TenantDeleteUtil;
 import com.warm.flow.orm.utils.JPAUpdateFunction;
-import com.warm.tools.utils.CollUtil;
-import com.warm.tools.utils.ObjectUtil;
-import com.warm.tools.utils.StringUtils;
-import com.warm.tools.utils.page.OrderBy;
-import com.warm.tools.utils.page.Page;
+import com.warm.flow.core.utils.CollUtil;
+import com.warm.flow.core.utils.ObjectUtil;
+import com.warm.flow.core.utils.StringUtils;
+import com.warm.flow.core.utils.page.OrderBy;
+import com.warm.flow.core.utils.page.Page;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;

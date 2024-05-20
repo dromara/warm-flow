@@ -3,11 +3,10 @@ package com.warm.flow.orm.dao;
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.dao.FlowHisTaskDao;
 import com.warm.flow.core.invoker.FrameInvoker;
-import com.warm.flow.orm.entity.FlowDefinition;
 import com.warm.flow.orm.entity.FlowHisTask;
 import com.warm.flow.orm.mapper.FlowHisTaskMapper;
 import com.warm.flow.orm.utils.TenantDeleteUtil;
-import com.warm.tools.utils.StringUtils;
+import com.warm.flow.core.utils.StringUtils;
 
 import java.util.List;
 

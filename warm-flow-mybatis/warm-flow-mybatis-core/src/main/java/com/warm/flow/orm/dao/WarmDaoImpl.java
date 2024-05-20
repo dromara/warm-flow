@@ -7,10 +7,9 @@ import com.warm.flow.core.handler.DataFillHandler;
 import com.warm.flow.core.orm.agent.WarmQuery;
 import com.warm.flow.orm.mapper.WarmMapper;
 import com.warm.flow.orm.utils.TenantDeleteUtil;
-import com.warm.tools.utils.CollUtil;
-import com.warm.tools.utils.ObjectUtil;
-import com.warm.tools.utils.StringUtils;
-import com.warm.tools.utils.page.Page;
+import com.warm.flow.core.utils.ObjectUtil;
+import com.warm.flow.core.utils.StringUtils;
+import com.warm.flow.core.utils.page.Page;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -53,9 +52,11 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
     @Override
     public Page<T> selectPage(T entity, Page<T> page) {
         TenantDeleteUtil.getEntity(entity);
+        String dataSourceType = FlowFactory.dataSourceType();
+        page.ifNecessaryChangePage(FlowFactory.dataSourceType());
         long total = getMapper().selectCount(entity);
         if (total > 0) {
-            List<T> list = getMapper().selectList(entity, page, page.getOrderBy() + " " + page.getIsAsc());
+            List<T> list = getMapper().selectList(entity, page, page.getOrderBy() + " " + page.getIsAsc(), dataSourceType);
             return new Page<>(list, total);
         }
         return Page.empty();
@@ -64,10 +65,11 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
     @Override
     public List<T> selectList(T entity, WarmQuery<T> query) {
         TenantDeleteUtil.getEntity(entity);
+        String dataSourceType = FlowFactory.dataSourceType();
         if (ObjectUtil.isNull(query)) {
-            return getMapper().selectList(entity, null, null);
+            return getMapper().selectList(entity, null, null, dataSourceType);
         }
-        return getMapper().selectList(entity, null, query.getOrderBy() + " " + query.getIsAsc());
+        return getMapper().selectList(entity, null, query.getOrderBy() + " " + query.getIsAsc(), dataSourceType);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.warm.tools.utils.page;
+package com.warm.flow.core.utils.page;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -131,6 +131,19 @@ public class Page<T> implements OrderBy {
 
     public Page<T> setIsAsc(String isAsc) {
         this.isAsc = isAsc;
+        return this;
+    }
+
+    public Page<T> ifNecessaryChangePage(String dataSourceType) {
+        if ("oracle".equals(dataSourceType)) {
+            this.pageSize = this.pageSize + this.pageNum;
+        } else {
+            if (pageNum == 0) {
+                int tmpPageSize = this.pageSize;
+                this.pageSize = this.pageNum;
+                this.pageNum = tmpPageSize;
+            }
+        }
         return this;
     }
 }

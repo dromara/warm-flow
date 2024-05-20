@@ -29,6 +29,12 @@
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
         </dependency>
+
+        <!--<dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>dynamic-datasource-spring-boot-starter</artifactId>
+        </dependency>-->
+
         <dependency>
             <groupId>io.github.minliuhua</groupId>
             <artifactId>warm-flow-mybatis-sb-starter</artifactId>
@@ -44,11 +50,22 @@
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>io.github.minliuhua</groupId>
             <artifactId>warm-flow-core-test</artifactId>
             <scope>compile</scope>
         </dependency>
+
+        <!--<dependency>
+            <groupId>com.oracle.database.jdbc</groupId>
+            <artifactId>ojdbc6</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.clickhouse</groupId>
+            <artifactId>clickhouse-jdbc</artifactId>
+        </dependency>-->
     </dependencies>
     <dependencyManagement>
         <dependencies>

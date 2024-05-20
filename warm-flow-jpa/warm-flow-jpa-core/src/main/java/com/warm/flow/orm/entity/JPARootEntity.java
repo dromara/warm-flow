@@ -62,6 +62,12 @@ public abstract class JPARootEntity<T extends RootEntity> implements RootEntity 
 
 
     /**
+     * 兼容框架updateById现有处理逻辑，将变更值 merge过来
+     * @param updateEntity
+     */
+    public abstract void mergeUpdate(T updateEntity);
+
+    /**
      * 主键
      */
     @Id

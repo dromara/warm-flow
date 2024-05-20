@@ -86,12 +86,6 @@ public class FlowTask implements Task {
     private Integer flowStatus;
 
     /**
-     * 权限标识（权限类型:权限标识，可以多个，如role:1,role:2)
-     */
-    @TableField(exist = false)
-    private String permissionFlag;
-
-    /**
      * 权限标识 permissionFlag的list形式
      */
     @TableField(exist = false)

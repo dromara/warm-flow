@@ -1,12 +1,10 @@
 package com.warm.flow.orm.dao;
 
 import com.warm.flow.core.FlowFactory;
-import com.warm.flow.core.dao.FlowTaskDao;
 import com.warm.flow.core.dao.FlowUserDao;
-import com.warm.flow.orm.entity.FlowTask;
 import com.warm.flow.orm.entity.FlowUser;
 import com.warm.flow.orm.utils.TenantDeleteUtil;
-import com.warm.tools.utils.StringUtils;
+import com.warm.flow.core.utils.StringUtils;
 
 import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaUpdate;
