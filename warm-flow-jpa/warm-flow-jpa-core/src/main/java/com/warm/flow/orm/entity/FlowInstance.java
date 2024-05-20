@@ -1,6 +1,7 @@
 package com.warm.flow.orm.entity;
 
 import com.warm.flow.core.entity.Instance;
+import com.warm.flow.orm.utils.JPAUpdateMergeFunction;
 import com.warm.flow.orm.utils.JPAUtil;
 import com.warm.flow.orm.utils.JPAPredicateFunction;
 import com.warm.tools.utils.StringUtils;
@@ -58,23 +59,8 @@ public class FlowInstance extends JPARootEntity<FlowInstance> implements Instanc
                 }
             };
 
-    @Override
-    public JPAPredicateFunction<CriteriaBuilder, Root<FlowInstance>, List<Predicate>> entityPredicate() {
-        return this.entityPredicate;
-    }
-
-    @Override
-    public String orderByField(String orderByColumn) {
-        return MAPPING.get(orderByColumn);
-    }
-
-
-    @Override
-    public void initDefaultValue() {
-    }
-
-    @Override
-    public void mergeUpdate(FlowInstance updateEntity) {
+    @Transient
+    private JPAUpdateMergeFunction<FlowInstance> entityMerge = (updateEntity) -> {
         if (StringUtils.isNotEmpty(updateEntity.businessId)) {
             this.businessId = updateEntity.businessId;
         }
@@ -109,7 +95,25 @@ public class FlowInstance extends JPARootEntity<FlowInstance> implements Instanc
         if (Objects.nonNull(updateEntity.getUpdateTime())) {
             this.setUpdateTime(updateEntity.getUpdateTime());
         }
+    };
+
+    @Override
+    public JPAPredicateFunction<CriteriaBuilder, Root<FlowInstance>, List<Predicate>> entityPredicate() {
+        return this.entityPredicate;
     }
+
+    @Override
+    public JPAUpdateMergeFunction<FlowInstance> entityMerge() {
+        return this.entityMerge;
+    }
+
+    @Override
+    public String orderByField(String orderByColumn) {
+        return MAPPING.get(orderByColumn);
+    }
+
+    @Override
+    public void initDefaultValue() {}
 
     /**
      * 对应flow_definition表的id

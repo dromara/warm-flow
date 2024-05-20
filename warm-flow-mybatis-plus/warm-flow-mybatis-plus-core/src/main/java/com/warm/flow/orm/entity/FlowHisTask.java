@@ -60,6 +60,11 @@ public class FlowHisTask implements HisTask {
     private Long instanceId;
 
     /**
+     * 任务表id
+     */
+    private Long taskId;
+
+    /**
      * 业务id
      */
     @TableField(exist = false)
@@ -188,6 +193,17 @@ public class FlowHisTask implements HisTask {
     @Override
     public FlowHisTask setInstanceId(Long instanceId) {
         this.instanceId = instanceId;
+        return this;
+    }
+
+    @Override
+    public Long getTaskId() {
+        return taskId;
+    }
+
+    @Override
+    public FlowHisTask setTaskId(Long taskId) {
+        this.taskId = taskId;
         return this;
     }
 
@@ -354,6 +370,7 @@ public class FlowHisTask implements HisTask {
                 ", definitionId=" + definitionId +
                 ", flowName='" + flowName + '\'' +
                 ", instanceId=" + instanceId +
+                ", taskId=" + taskId +
                 ", tenantId='" + tenantId + '\'' +
                 ", businessId='" + businessId + '\'' +
                 ", nodeCode='" + nodeCode + '\'' +

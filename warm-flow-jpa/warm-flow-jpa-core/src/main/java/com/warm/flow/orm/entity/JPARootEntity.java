@@ -1,6 +1,7 @@
 package com.warm.flow.orm.entity;
 
 import com.warm.flow.core.entity.RootEntity;
+import com.warm.flow.orm.utils.JPAUpdateMergeFunction;
 import com.warm.flow.orm.utils.JPAUtil;
 import com.warm.flow.orm.utils.JPAPredicateFunction;
 
@@ -49,17 +50,16 @@ public abstract class JPARootEntity<T extends RootEntity> implements RootEntity 
 
     public abstract JPAPredicateFunction<CriteriaBuilder, Root<T>, List<Predicate>> entityPredicate();
 
+    public abstract JPAUpdateMergeFunction<T> entityMerge();
+
     public abstract void initDefaultValue();
 
     public JPAPredicateFunction<CriteriaBuilder, Root<T>, List<Predicate>> commonPredicate() {
         return this.commonPredicate;
     };
 
-    /**
-     * 兼容框架updateById现有处理逻辑，将变更值 merge过来
-     * @param updateEntity
-     */
-    public abstract void mergeUpdate(T updateEntity);
+
+
 
     /**
      * 主键

@@ -43,6 +43,10 @@ public interface HisTask extends RootEntity {
 
     public HisTask setInstanceId(Long instanceId);
 
+    public Long getTaskId();
+
+    public HisTask setTaskId(Long taskId);
+
     public String getBusinessId();
 
     public HisTask setBusinessId(String businessId);

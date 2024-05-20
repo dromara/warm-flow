@@ -13,6 +13,7 @@
         <result property="targetNodeName" column="target_node_name"/>
         <result property="definitionId" column="definition_id"/>
         <result property="instanceId" column="instance_id"/>
+        <result property="taskId" column="task_id"/>
         <result property="flowStatus" column="flow_status"/>
         <result property="message" column="message"/>
         <result property="createTime" column="create_time"/>
@@ -32,6 +33,7 @@
                t.target_node_name,
                t.definition_id,
                t.instance_id,
+               t.task_id,
                t.flow_status,
                t.message,
                t.create_time,
@@ -64,6 +66,7 @@
             </if>
             <if test="entity.definitionId != null ">and t.definition_id = #{entity.definitionId}</if>
             <if test="entity.instanceId != null ">and t.instance_id = #{entity.instanceId}</if>
+            <if test="entity.taskId != null ">and t.task_id = #{entity.taskId}</if>
             <if test="entity.flowStatus != null">and t.flow_status = #{fentity.flowStatus}</if>
             <if test="entity.message != null  and entity.message != ''">and t.message = #{entity.message}</if>
             <if test="entity.createTime != null">and t.create_time = #{entity.createTime}</if>
@@ -123,6 +126,7 @@
             <if test="targetNodeName != null and targetNodeName != ''">target_node_name,</if>
             <if test="definitionId != null">definition_id,</if>
             <if test="instanceId != null">instance_id,</if>
+            <if test="taskId != null">task_id,</if>
             <if test="flowStatus != null">flow_status,</if>
             <if test="message != null">message,</if>
             <if test="createTime != null">create_time,</if>
@@ -139,6 +143,7 @@
             <if test="targetNodeName != null and targetNodeName != ''">#{targetNodeName},</if>
             <if test="definitionId != null">#{definitionId},</if>
             <if test="instanceId != null">#{instanceId},</if>
+            <if test="taskId != null">#{taskId},</if>
             <if test="flowStatus != null">#{flowStatus},</if>
             <if test="message != null">#{message},</if>
             <if test="createTime != null">#{createTime},</if>
@@ -158,6 +163,7 @@
             <if test="targetNodeName != null and targetNodeName != ''">t.target_node_name = #{targetNodeName},</if>
             <if test="definitionId != null">t.definition_id = #{definitionId},</if>
             <if test="instanceId != null">t.instance_id = #{instanceId},</if>
+            <if test="taskId != null">t.task_id = #{taskId},</if>
             <if test="flowStatus != null">t.flow_status = #{flowStatus},</if>
             <if test="message != null">t.message = #{message},</if>
             <if test="createTime != null">t.create_time = #{createTime},</if>
@@ -232,6 +238,7 @@
             <if test="targetNodeName != null and targetNodeName != ''">and target_node_name = #{targetNodeName}</if>
             <if test="definitionId != null">and definition_id = #{definitionId}</if>
             <if test="instanceId != null">and instance_id = #{instanceId}</if>
+            <if test="taskId != null">and task_id = #{taskId}</if>
             <if test="flowStatus != null">and flow_status = #{flowStatus}</if>
             <if test="message != null">and message = #{message}</if>
             <if test="createTime != null">and create_time = #{createTime}</if>
@@ -252,6 +259,7 @@
             <if test="entity.targetNodeName != null and entity.targetNodeName != ''">and t.target_node_name = #{entity.targetNodeName}</if>
             <if test="entity.definitionId != null">and t.definition_id = #{entity.definitionId}</if>
             <if test="entity.instanceId != null">and t.instance_id = #{entity.instanceId}</if>
+            <if test="entity.taskId != null">and t.task_id = #{entity.taskId}</if>
             <if test="entity.flowStatus != null">and t.flow_status = #{entity.flowStatus}</if>
             <if test="entity.message != null">and t.message = #{entity.message}</if>
             <if test="entity.createTime != null">and t.create_time = #{entity.createTime}</if>
