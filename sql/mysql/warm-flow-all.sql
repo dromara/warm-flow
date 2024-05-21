@@ -25,8 +25,6 @@ CREATE TABLE `flow_his_task`
     `node_type`        tinyint(1) DEFAULT NULL COMMENT '开始节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）',
     `target_node_code` varchar(100) DEFAULT NULL COMMENT '目标节点编码',
     `target_node_name` varchar(100) DEFAULT NULL COMMENT '结束节点名称',
-    `approver`         varchar(40)  DEFAULT NULL COMMENT '审批者',
-    `permission_flag`  varchar(200) DEFAULT NULL COMMENT '权限标识（权限类型:权限标识，可以多个，如role:1,role:2)',
     `flow_status`      tinyint(1) NOT NULL COMMENT '流程状态（0待提交 1审批中 2 审批通过 8已完成 9已退回 10失效）',
     `message`          varchar(500) DEFAULT NULL COMMENT '审批意见',
     `create_time`      datetime     DEFAULT NULL COMMENT '创建时间',
@@ -62,7 +60,6 @@ CREATE TABLE `flow_node`
     `definition_id`   bigint       NOT NULL COMMENT '流程定义id',
     `node_code`       varchar(100) NOT NULL COMMENT '流程节点编码',
     `node_name`       varchar(100) DEFAULT NULL COMMENT '流程节点名称',
-    `permission_flag` varchar(200) DEFAULT NULL COMMENT '权限标识（权限类型:权限标识，可以多个，如role:1,role:2)',
     `coordinate`      varchar(100) DEFAULT NULL COMMENT '坐标',
     `skip_any_node`   varchar(100) DEFAULT 'N' COMMENT '是否可以退回任意节点（Y是 N否）',
     `listener_type`   varchar(100) DEFAULT NULL COMMENT '监听器类型',
@@ -103,10 +100,7 @@ CREATE TABLE `flow_task`
     `node_code`       varchar(100) NOT NULL COMMENT '节点编码',
     `node_name`       varchar(100) DEFAULT NULL COMMENT '节点名称',
     `node_type`       tinyint(1) NOT NULL COMMENT '节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）',
-    `permission_flag` varchar(200) DEFAULT NULL COMMENT '权限标识（权限类型:权限标识，可以多个，如role:1,role:2)',
     `flow_status`     tinyint(1) NOT NULL COMMENT '流程状态（0待提交 1审批中 2 审批通过 8已完成 9已退回 10失效）',
-    `approver`        varchar(40)  DEFAULT NULL COMMENT '审批者',
-    `assignee`        varchar(40)  DEFAULT NULL COMMENT '转办人',
     `create_time`     datetime     DEFAULT NULL COMMENT '创建时间',
     `update_time`     datetime     DEFAULT NULL COMMENT '更新时间',
     `del_flag`    char(1)      DEFAULT NULL COMMENT '删除标志',
@@ -114,3 +108,16 @@ CREATE TABLE `flow_task`
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB  COMMENT='待办任务表';
 
+CREATE TABLE `flow_user`
+(
+    `id`              bigint unsigned NOT NULL COMMENT '主键id',
+    `type`            char(1)  NOT NULL COMMENT '人员类型（1代办任务的审批人权限 2代办任务的转办人权限 3流程实例的抄送人权限 4流程历史的已审批人 5流程节点的权限）',
+    `processed_by`    varchar(80) DEFAULT NULL COMMENT '权限 (role:1/user:1)/已审批人(用户id)',
+    `associated`      bigint NOT NULL COMMENT '关联id（审批人和转办人是代办任务id，抄送人是实例id，已审批人是历史表id,计划审批人是节点的id）',
+    `create_time`     datetime     DEFAULT NULL COMMENT '创建时间',
+    `update_time`     datetime     DEFAULT NULL COMMENT '更新时间',
+    `del_flag`        char(1)      DEFAULT NULL COMMENT '删除标志',
+    `tenant_id`       varchar(40)  DEFAULT NULL COMMENT '租户id',
+    PRIMARY KEY (`id`) USING BTREE,
+    KEY `user_processed_type` (`processed_by`,`type`)
+) ENGINE=InnoDB  COMMENT='流程用户表';
