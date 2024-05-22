@@ -4,6 +4,7 @@ import com.warm.flow.core.entity.Definition;
 import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.User;
 import com.warm.flow.core.enums.PublishStatus;
+import com.warm.flow.orm.utils.JPAUpdateMergeFunction;
 import com.warm.flow.orm.utils.JPAUtil;
 import com.warm.flow.orm.utils.JPAPredicateFunction;
 import com.warm.flow.core.utils.StringUtils;
@@ -37,48 +38,28 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
     @Transient
     private JPAPredicateFunction<CriteriaBuilder, Root<FlowDefinition>, List<Predicate>> entityPredicate =
             (criteriaBuilder, root, predicates) -> {
-                if (StringUtils.isNotEmpty(this.flowCode)) {
-                    predicates.add(criteriaBuilder.equal(root.get("flowCode"), this.flowCode));
-                }
-                if (StringUtils.isNotEmpty(this.flowName)) {
-                    predicates.add(criteriaBuilder.equal(root.get("flowName"), this.flowName));
-                }
-                if (StringUtils.isNotEmpty(this.version)) {
-                    predicates.add(criteriaBuilder.equal(root.get("version"), this.version));
-                }
-                if (Objects.nonNull(this.isPublish)) {
-                    predicates.add(criteriaBuilder.equal(root.get("isPublish"), this.isPublish));
-                }
-                if  (Objects.nonNull(this.fromCustom)) {
-                    predicates.add(criteriaBuilder.equal(root.get("fromCustom"), this.fromCustom));
-                }
-                if (Objects.nonNull(this.fromPath)) {
-                    predicates.add(criteriaBuilder.equal(root.get("fromPath"), this.fromPath));
-                }
+        if (StringUtils.isNotEmpty(this.flowCode)) {
+            predicates.add(criteriaBuilder.equal(root.get("flowCode"), this.flowCode));
+        }
+        if (StringUtils.isNotEmpty(this.flowName)) {
+            predicates.add(criteriaBuilder.equal(root.get("flowName"), this.flowName));
+        }
+        if (StringUtils.isNotEmpty(this.version)) {
+            predicates.add(criteriaBuilder.equal(root.get("version"), this.version));
+        }
+        if (Objects.nonNull(this.isPublish)) {
+            predicates.add(criteriaBuilder.equal(root.get("isPublish"), this.isPublish));
+        }
+        if  (Objects.nonNull(this.fromCustom)) {
+            predicates.add(criteriaBuilder.equal(root.get("fromCustom"), this.fromCustom));
+        }
+        if (Objects.nonNull(this.fromPath)) {
+            predicates.add(criteriaBuilder.equal(root.get("fromPath"), this.fromPath));
+        }
     };
 
-    @Override
-    public JPAPredicateFunction<CriteriaBuilder, Root<FlowDefinition>, List<Predicate>> entityPredicate() {
-        return this.entityPredicate;
-    }
-
-    @Override
-    public String orderByField(String orderByColumn) {
-        return MAPPING.get(orderByColumn);
-    }
-
-    @Override
-    public void initDefaultValue() {
-        if (Objects.isNull(this.isPublish)) {
-            this.isPublish = PublishStatus.UNPUBLISHED.getKey();
-        }
-        if (Objects.isNull(this.fromCustom)) {
-            this.fromCustom = "N";
-        }
-    }
-
-    @Override
-    public void mergeUpdate(FlowDefinition updateEntity) {
+    @Transient
+    private JPAUpdateMergeFunction<FlowDefinition> entityMerge = (updateEntity) -> {
         if (StringUtils.isNotEmpty(updateEntity.flowCode)) {
             this.flowCode = updateEntity.flowCode;
         }
@@ -102,6 +83,31 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
         }
         if (Objects.nonNull(updateEntity.getUpdateTime())) {
             this.setUpdateTime(updateEntity.getUpdateTime());
+        }
+    };
+
+    @Override
+    public JPAPredicateFunction<CriteriaBuilder, Root<FlowDefinition>, List<Predicate>> entityPredicate() {
+        return this.entityPredicate;
+    }
+
+    @Override
+    public JPAUpdateMergeFunction<FlowDefinition> entityMerge() {
+        return this.entityMerge;
+    }
+
+    @Override
+    public String orderByField(String orderByColumn) {
+        return MAPPING.get(orderByColumn);
+    }
+
+    @Override
+    public void initDefaultValue() {
+        if (Objects.isNull(this.isPublish)) {
+            this.isPublish = PublishStatus.UNPUBLISHED.getKey();
+        }
+        if (Objects.isNull(this.fromCustom)) {
+            this.fromCustom = "N";
         }
     }
 
@@ -131,13 +137,13 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
     /**
      * 审批表单是否自定义（Y是 2否）
      */
-    @Transient
+    @Column(name="from_custom")
     private String fromCustom;
 
     /**
      * 审批表单是否自定义（Y是 2否）
      */
-    @Transient
+    @Column(name="from_path")
     private String fromPath;
 
     /**

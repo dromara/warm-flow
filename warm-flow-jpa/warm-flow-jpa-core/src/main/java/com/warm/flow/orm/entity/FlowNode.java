@@ -2,6 +2,7 @@ package com.warm.flow.orm.entity;
 
 import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.Skip;
+import com.warm.flow.orm.utils.JPAUpdateMergeFunction;
 import com.warm.flow.orm.utils.JPAUtil;
 import com.warm.flow.orm.utils.JPAPredicateFunction;
 import com.warm.flow.core.utils.StringUtils;
@@ -63,25 +64,8 @@ public class FlowNode extends JPARootEntity<FlowNode> implements Node {
                 }
             };
 
-    @Override
-    public JPAPredicateFunction<CriteriaBuilder, Root<FlowNode>, List<Predicate>> entityPredicate() {
-        return this.entityPredicate;
-    }
-
-    @Override
-    public String orderByField(String orderByColumn) {
-        return MAPPING.get(orderByColumn);
-    }
-
-    @Override
-    public void initDefaultValue() {
-        if (Objects.isNull(this.skipAnyNode)) {
-            this.skipAnyNode = "N";
-        }
-    }
-
-    @Override
-    public void mergeUpdate(FlowNode updateEntity) {
+    @Transient
+    private JPAUpdateMergeFunction<FlowNode> entityMerge = (updateEntity) ->  {
         if (Objects.nonNull(updateEntity.nodeType)) {
             this.nodeType = updateEntity.nodeType;
         }
@@ -114,6 +98,28 @@ public class FlowNode extends JPARootEntity<FlowNode> implements Node {
         }
         if (Objects.nonNull(updateEntity.getUpdateTime())) {
             this.setUpdateTime(updateEntity.getUpdateTime());
+        }
+    };
+
+    @Override
+    public JPAPredicateFunction<CriteriaBuilder, Root<FlowNode>, List<Predicate>> entityPredicate() {
+        return this.entityPredicate;
+    }
+
+    @Override
+    public JPAUpdateMergeFunction<FlowNode> entityMerge() {
+        return this.entityMerge;
+    }
+
+    @Override
+    public String orderByField(String orderByColumn) {
+        return MAPPING.get(orderByColumn);
+    }
+
+    @Override
+    public void initDefaultValue() {
+        if (Objects.isNull(this.skipAnyNode)) {
+            this.skipAnyNode = "N";
         }
     }
 

@@ -1,6 +1,7 @@
 package com.warm.flow.orm.entity;
 
 import com.warm.flow.core.entity.Skip;
+import com.warm.flow.orm.utils.JPAUpdateMergeFunction;
 import com.warm.flow.orm.utils.JPAUtil;
 import com.warm.flow.orm.utils.JPAPredicateFunction;
 import com.warm.flow.core.utils.StringUtils;
@@ -58,23 +59,8 @@ public class FlowSkip extends JPARootEntity<FlowSkip> implements Skip {
                 }
             };
 
-    @Override
-    public JPAPredicateFunction<CriteriaBuilder, Root<FlowSkip>, List<Predicate>> entityPredicate() {
-        return this.entityPredicate;
-    }
-
-    @Override
-    public String orderByField(String orderByColumn) {
-        return MAPPING.get(orderByColumn);
-    }
-
-
-    @Override
-    public void initDefaultValue() {
-    }
-
-    @Override
-    public void mergeUpdate(FlowSkip updateEntity) {
+    @Transient
+    private JPAUpdateMergeFunction<FlowSkip> entityMerge = (updateEntity) ->  {
         if (Objects.nonNull(updateEntity.definitionId)) {
             this.definitionId = updateEntity.definitionId;
         }
@@ -108,6 +94,25 @@ public class FlowSkip extends JPARootEntity<FlowSkip> implements Skip {
         if (Objects.nonNull(updateEntity.getUpdateTime())) {
             this.setUpdateTime(updateEntity.getUpdateTime());
         }
+    };
+
+    @Override
+    public JPAPredicateFunction<CriteriaBuilder, Root<FlowSkip>, List<Predicate>> entityPredicate() {
+        return this.entityPredicate;
+    }
+
+    @Override
+    public JPAUpdateMergeFunction<FlowSkip> entityMerge() {
+        return this.entityMerge;
+    }
+
+    @Override
+    public String orderByField(String orderByColumn) {
+        return MAPPING.get(orderByColumn);
+    }
+
+    @Override
+    public void initDefaultValue() {
     }
 
     /**

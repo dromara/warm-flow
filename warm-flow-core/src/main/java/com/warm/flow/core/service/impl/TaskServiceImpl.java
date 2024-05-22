@@ -546,6 +546,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             addTasks.removeIf(addTask -> {
                 if (NodeType.isEnd(addTask.getNodeType())) {
                     HisTask insHis = FlowFactory.newHisTask()
+                            .setTaskId(addTask.getId())
                             .setInstanceId(addTask.getInstanceId())
                             .setNodeCode(addTask.getNodeCode())
                             .setNodeName(addTask.getNodeName())

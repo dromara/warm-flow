@@ -150,9 +150,11 @@ public abstract class WarmDaoImpl<T extends JPARootEntity<T>> implements WarmDao
     }
 
     public int updateById(T entity) {
-        // 此处为兼容框架 updateById 处理模式,将原始Entity查询,并进行更新合并操作
         T originEntity = selectById(entity.getId());
-        originEntity.mergeUpdate(entity);
+
+        // 此处为兼容整体框架 updateById 处理逻辑,获取原始Entity,并进行更新合并操作
+        originEntity.entityMerge().merge(entity);
+
         entityManager.persist(originEntity);
         return 1;
     }

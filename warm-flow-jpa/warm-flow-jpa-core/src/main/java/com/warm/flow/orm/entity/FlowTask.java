@@ -1,6 +1,7 @@
 package com.warm.flow.orm.entity;
 
 import com.warm.flow.core.entity.Task;
+import com.warm.flow.orm.utils.JPAUpdateMergeFunction;
 import com.warm.flow.orm.utils.JPAUtil;
 import com.warm.flow.orm.utils.JPAPredicateFunction;
 import com.warm.flow.core.utils.StringUtils;
@@ -52,23 +53,8 @@ public class FlowTask extends JPARootEntity<FlowTask> implements Task {
                 }
             };
 
-    @Override
-    public JPAPredicateFunction<CriteriaBuilder, Root<FlowTask>, List<Predicate>> entityPredicate() {
-        return this.entityPredicate;
-    }
-
-    @Override
-    public String orderByField(String orderByColumn) {
-        return MAPPING.get(orderByColumn);
-    }
-
-
-    @Override
-    public void initDefaultValue() {
-    }
-
-    @Override
-    public void mergeUpdate(FlowTask updateEntity) {
+    @Transient
+    private JPAUpdateMergeFunction<FlowTask> entityMerge = (updateEntity) -> {
         if (StringUtils.isNotEmpty(updateEntity.nodeCode)) {
             this.nodeCode = updateEntity.nodeCode;
         }
@@ -93,6 +79,26 @@ public class FlowTask extends JPARootEntity<FlowTask> implements Task {
         if (Objects.nonNull(updateEntity.getUpdateTime())) {
             this.setUpdateTime(updateEntity.getUpdateTime());
         }
+    };
+
+    @Override
+    public JPAPredicateFunction<CriteriaBuilder, Root<FlowTask>, List<Predicate>> entityPredicate() {
+        return this.entityPredicate;
+    }
+
+    @Override
+    public JPAUpdateMergeFunction<FlowTask> entityMerge() {
+        return this.entityMerge;
+    }
+
+
+    @Override
+    public String orderByField(String orderByColumn) {
+        return MAPPING.get(orderByColumn);
+    }
+
+    @Override
+    public void initDefaultValue() {
     }
 
     /**

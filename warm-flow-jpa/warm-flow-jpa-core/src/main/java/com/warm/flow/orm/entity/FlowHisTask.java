@@ -1,6 +1,7 @@
 package com.warm.flow.orm.entity;
 
 import com.warm.flow.core.entity.HisTask;
+import com.warm.flow.orm.utils.JPAUpdateMergeFunction;
 import com.warm.flow.orm.utils.JPAUtil;
 import com.warm.flow.orm.utils.JPAPredicateFunction;
 import com.warm.flow.core.utils.StringUtils;
@@ -51,6 +52,9 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
                 if (Objects.nonNull(this.instanceId)) {
                     predicates.add(criteriaBuilder.equal(root.get("instanceId"), this.instanceId));
                 }
+                if (Objects.nonNull(this.taskId)) {
+                    predicates.add(criteriaBuilder.equal(root.get("taskId"), this.taskId));
+                }
                 if  (Objects.nonNull(this.flowStatus)) {
                     predicates.add(criteriaBuilder.equal(root.get("flowStatus"), this.flowStatus));
                 }
@@ -59,22 +63,8 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
                 }
             };
 
-    @Override
-    public JPAPredicateFunction<CriteriaBuilder, Root<FlowHisTask>, List<Predicate>> entityPredicate() {
-        return this.entityPredicate;
-    }
-
-    @Override
-    public String orderByField(String orderByColumn) {
-        return MAPPING.get(orderByColumn);
-    }
-
-
-    @Override
-    public void initDefaultValue() {}
-
-    @Override
-    public void mergeUpdate(FlowHisTask updateEntity) {
+    @Transient
+    private JPAUpdateMergeFunction<FlowHisTask> entityMerge = (updateEntity) -> {
         if (StringUtils.isNotEmpty(updateEntity.nodeCode)) {
             this.nodeCode = updateEntity.nodeCode;
         }
@@ -96,6 +86,9 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
         if (Objects.nonNull(updateEntity.instanceId)) {
             this.instanceId = updateEntity.instanceId;
         }
+        if (Objects.nonNull(updateEntity.taskId)) {
+            this.taskId = updateEntity.taskId;
+        }
         if (Objects.nonNull(updateEntity.flowStatus)) {
             this.flowStatus = updateEntity.flowStatus;
         }
@@ -109,7 +102,25 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
         if (Objects.nonNull(updateEntity.getUpdateTime())) {
             this.setUpdateTime(updateEntity.getUpdateTime());
         }
+    };
+
+    @Override
+    public JPAPredicateFunction<CriteriaBuilder, Root<FlowHisTask>, List<Predicate>> entityPredicate() {
+        return this.entityPredicate;
     }
+
+    @Override
+    public JPAUpdateMergeFunction<FlowHisTask> entityMerge() {
+        return this.entityMerge;
+    }
+
+    @Override
+    public String orderByField(String orderByColumn) {
+        return MAPPING.get(orderByColumn);
+    }
+
+    @Override
+    public void initDefaultValue() {}
 
     /**
      * 对应flow_definition表的id
@@ -128,6 +139,12 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
      */
     @Column(name="instance_id")
     private Long instanceId;
+
+    /**
+     * 任务表id
+     */
+    @Column(name="task_id")
+    private Long taskId;
 
     /**
      * 业务id
@@ -233,6 +250,17 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
     @Override
     public FlowHisTask setInstanceId(Long instanceId) {
         this.instanceId = instanceId;
+        return this;
+    }
+
+    @Override
+    public Long getTaskId() {
+        return taskId;
+    }
+
+    @Override
+    public FlowHisTask setTaskId(Long taskId) {
+        this.taskId = taskId;
         return this;
     }
 
@@ -377,6 +405,7 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
                 ", definitionId=" + definitionId +
                 ", flowName='" + flowName + '\'' +
                 ", instanceId=" + instanceId +
+                ", taskId=" + taskId +
                 ", tenantId='" + super.getTenantId() + '\'' +
                 ", businessId='" + businessId + '\'' +
                 ", nodeCode='" + nodeCode + '\'' +
