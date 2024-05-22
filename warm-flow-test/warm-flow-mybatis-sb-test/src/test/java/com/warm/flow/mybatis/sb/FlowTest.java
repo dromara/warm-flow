@@ -35,7 +35,7 @@ public class FlowTest {
         return FlowParams.build().flowCode("leaveFlow-serial1")
                 .createBy("user:1")
                 .skipType(SkipType.PASS.getKey())
-                .permissionList(Arrays.asList("role:100", "role:101"))
+                .additionalHandler(Arrays.asList("role:100", "role:101"))
                 .permissionFlag(Arrays.asList("role:1", "role:2"));
     }
 

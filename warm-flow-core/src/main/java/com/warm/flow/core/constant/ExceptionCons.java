@@ -32,7 +32,7 @@ public class ExceptionCons {
 
     public static final String SAME_NODE_CODE = "同一流程中节点编码重复!";
 
-    public static final String NULL_DEST_NODE = "无法跳转到节点,请检查跳转类型和当前用户权限是否匹配!";
+    public static final String NULL_SKIP_TYPE = "无法跳转到节点,请检查跳转类型是否匹配!";
 
     public static final String NULL_CONDITIONVALUE_NODE = "未找到跳转条件，不支持跳转!";
 
@@ -48,13 +48,12 @@ public class ExceptionCons {
 
     public static final String LOST_DEST_NODE = "目标节点为空!";
 
+    public static final String LOST_CUR_NODE = "当前流程节点丢失!";
     public static final String NULL_NODE_CODE = "目标节点不存在!";
 
     public static final String NULL_BUSINESS_ID = "业务id为空!";
 
     public static final String NULL_FLOW_CODE = "流程编码缺失!";
-
-    public static final String NOT_FOUNT_INSTANCE_ID = "流程实例id为空!";
 
     public static final String NOT_FOUNT_INSTANCE = "流程实例获取失败!";
 
@@ -68,8 +67,6 @@ public class ExceptionCons {
 
     public static final String NOT_NODE_DATA = "流程节点数据缺失!";
 
-    public static final String SKIP_ANY_NODE = "该节点未配置可跳转到任意节点!";
-
     public static final String NOT_PUBLISH_NODE = "不存在已发布的流程节点!";
 
     public static final String NOT_PUBLISH_TASK = "存在正在执行的代办任务，不可取消!";
@@ -78,13 +75,11 @@ public class ExceptionCons {
 
     public static final String FLOW_FINISH = "流程已完成！";
 
-    public static final String NOT_LISTENER = "监听器不存在";
-
     public static final String LOST_NEXT_PERMISSION = "下一节点审批人权限缺失";
 
     public static final String LOST_NODE_PERMISSION = "当前节点审批人权限缺失";
 
-    public static final String ASSIGNEE_NULL_ROLE_NODE = "无法转办,请检查当前用户是否有权限!";
+    public static final String NOT_AUTHORITY = "请检查当前用户是否有权限!";
 
-    public static final String LOST_ASSIGNEE_PERMISSION = "转办人权限缺失";
+    public static final String LOST_ADDITIONAL_PERMISSION = "调整的权限缺失";
 }

@@ -44,11 +44,10 @@ public interface TaskService extends IWarmService<Task> {
      *                               - variable:流程变量[按需传输,跳转条件放入流程变量<互斥网关必传>]
      *                               - variableTask:任务变量[按需传输]     * @return
      * @param task:流程任务[必传]
-     * @param instance:流程实例[必传]
      */
-    Instance skip(FlowParams flowParams, Task task, Instance instance);
+    Instance skip(FlowParams flowParams, Task task);
     /**
-     * 被别人的委派的人处理任务方法
+     * 受托人处理任务方法
      *
      * @param taskId 任务id
      * @return flowParams 流程参数
@@ -122,7 +121,7 @@ public interface TaskService extends IWarmService<Task> {
     Integer setFlowStatus(Integer nodeType, String skipType);
 
     /**
-     * 转办任务 ignore默认为true，比如管理员权限
+     * 转办任务,需要校验办理人权限
      *
      * @param taskId         任务id
      * @param flowParams 流程参数(包含当前处理人的权限，重新指定的权限标识（办理人）)
@@ -130,16 +129,16 @@ public interface TaskService extends IWarmService<Task> {
     boolean transfer(Long taskId, FlowParams flowParams);
 
     /**
-     * 转办任务 ignore默认为true，比如管理员权限
+     * 转办任务 ignore默认为true，转办忽略权限校验，比如管理员权限
      *
      * @param taskId         任务id
      * @param flowParams 流程参数(包含当前处理人的权限，重新指定的权限标识（办理人）)
-     * @param ignore 转办忽略权限（true - 忽略，false - 不忽略）
+     * @param ignore 转办忽略权限校验（true - 忽略，false - 不忽略）
      * @param clear 清理当前任务的计划审批人（true - 清理，false - 不清理）
      */
     boolean transfer(Long taskId, FlowParams flowParams, boolean ignore, boolean clear);
     /**
-     * 加减签
+     * 加减签,需要校验办理人权限
      *
      * @param taskId         任务id
      * @param flowParams 流程参数(包含当前处理人的权限，重新指定的权限标识（办理人）)
@@ -147,12 +146,30 @@ public interface TaskService extends IWarmService<Task> {
     boolean signature(Long taskId, FlowParams flowParams);
 
     /**
-     * 委派
+     * 加减签 ignore默认为true，转办忽略权限校验，比如管理员权限
+     *
+     * @param taskId         任务id
+     * @param flowParams 流程参数(包含当前处理人的权限，重新指定的权限标识（办理人）)
+     * @param ignore 转办忽略权限校验（true - 忽略，false - 不忽略）
+     */
+    boolean signature(Long taskId, FlowParams flowParams, boolean ignore);
+
+    /**
+     * 委派,需要校验办理人权限
      *
      * @param taskId         任务id
      * @param flowParams 流程参数(包含当前处理人的权限，重新指定的权限标识（办理人）)
      */
     boolean depute(Long taskId, FlowParams flowParams);
+
+    /**
+     * 委派 ignore默认为true，转办忽略权限校验，比如管理员权限
+     * @param taskId         任务id
+     * @param flowParams 流程参数(包含当前处理人的权限，重新指定的权限标识（办理人）)
+     * @param ignore 转办忽略权限校验（true - 忽略，false - 不忽略）
+     */
+    boolean depute(Long taskId, FlowParams flowParams, boolean ignore);
+
     /**
      * 转办，委派，加减签等处理
      *

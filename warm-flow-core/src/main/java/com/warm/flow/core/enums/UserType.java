@@ -10,7 +10,7 @@ public enum UserType {
 
     APPROVAL("1", "代办任务的审批人权限"),
     ASSIGNEE("2", "代办任务的转办人权限"),
-    CARBON("3", "流程实例的抄送人权限"),
+    CCTO("3", "流程实例的抄送人权限"),
     APPROVER("4", "流程历史的已审批人"),
     PROPOSE("5", "流程节点的权限"),
     DEPUTE("6", "待办任务的委托人权限");

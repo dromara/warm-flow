@@ -28,4 +28,14 @@ public class MapUtil {
     public static boolean isNotEmpty(Map<?, ?> map) {
         return !isEmpty(map);
     }
+
+    /**
+     * 如果Map是空，则返回默认值
+     * @param map Map
+     * @param defaultMap 默认值
+     * @return 结果
+     */
+    public static <K, V> Map<K, V> emptyDefault(Map<K, V> map, Map<K, V> defaultMap) {
+        return isEmpty(map) ? defaultMap : map;
+    }
 }

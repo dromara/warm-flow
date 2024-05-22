@@ -124,7 +124,7 @@ public class FlowConfigUtil {
         List<String> permissions = CollUtil.strToColl(nodeElement.attributeValue("permissionFlag"), ",");
         if(CollUtil.isNotEmpty(permissions)){
             return StreamUtils.toList(permissions, permission -> FlowFactory.userService()
-                    .getUser(node.getId(), permission, UserType.PROPOSE.getKey()));
+                    .structureUser(node.getId(), permission, UserType.PROPOSE.getKey()));
         }
         return Collections.emptyList();
     }
@@ -149,7 +149,7 @@ public class FlowConfigUtil {
             nodeElement.addAttribute("nodeType", NodeType.getValueByKey(node.getNodeType()));
             nodeElement.addAttribute("nodeCode", node.getNodeCode());
             nodeElement.addAttribute("nodeName", node.getNodeName());
-            List<String> permission = FlowFactory.userService().getPermission(node.getId());
+            List<String> permission = FlowFactory.userService().getPermission(node.getId(), UserType.PROPOSE.getKey());
             if (CollUtil.isNotEmpty(permission)) {
                 nodeElement.addAttribute("permissionFlag", CollUtil.strListToStr(permission, ","));
             }

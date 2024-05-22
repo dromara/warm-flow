@@ -31,9 +31,9 @@ public class FlowParams {
      */
     private List<String> permissionFlag;
     /**
-     * 加减签，转办，委托，抄送人权限标识 例如：[role:admin,user:2]
+     * 额外办理人：加减签，转办，委托，抄送人权限标识，例如：[role:admin,user:2]
      */
-    private List<String> permissionList;
+    private List<String> additionalHandler;
     /**
      * 跳转类型（PASS审批通过 REJECT退回）
      */
@@ -119,12 +119,12 @@ public class FlowParams {
         return this;
     }
 
-    public List<String> getPermissionList() {
-        return permissionList;
+    public List<String> getAdditionalHandler() {
+        return additionalHandler;
     }
 
-    public FlowParams permissionList(List<String> permissionList) {
-        this.permissionList = permissionList;
+    public FlowParams additionalHandler(List<String> permissionList) {
+        this.additionalHandler = permissionList;
         return this;
     }
 

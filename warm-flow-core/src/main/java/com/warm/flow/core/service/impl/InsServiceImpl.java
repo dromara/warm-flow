@@ -69,8 +69,8 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         List<User> users = FlowFactory.userService().setUser(hisTasks, addTasks, flowParams);
 
         // 新增抄送人
-        if(CollUtil.isNotEmpty(flowParams.getPermissionList())){
-            users.addAll(FlowFactory.userService().carbonUser(instance.getId(), flowParams));
+        if(CollUtil.isNotEmpty(flowParams.getAdditionalHandler())){
+            users.addAll(FlowFactory.userService().ccTo(instance.getId(), flowParams.getAdditionalHandler()));
         }
 
         // 开启流程，保存流程信息
@@ -91,16 +91,11 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         AssertUtil.isTrue(CollUtil.isEmpty(taskList), ExceptionCons.NOT_FOUNT_TASK);
         AssertUtil.isTrue(taskList.size() > 1, ExceptionCons.TASK_NOT_ONE);
         Task task = taskList.get(0);
-        // 如果是被别人委派的人在处理任务，需要处理一条委派记录，并且更新委派给别人的人还要回到计划审批人,然后直接返回流程实例
-        if(FlowFactory.userService().haveDepute(task.getId())){
+        // 如果是受托人在处理任务，需要处理一条委派记录，并且更新委派人，回到计划审批人,然后直接返回流程实例
+        if(FlowFactory.userService().haveDepute(task.getId(), flowParams.getCreateBy())){
             return FlowFactory.taskService().handleDepute(task.getId(), flowParams);
         }
-        // 获取当前流程
-        Instance instance = getById(instanceId);
-        AssertUtil.isTrue(ObjectUtil.isNull(instance), ExceptionCons.NOT_FOUNT_INSTANCE);
-        AssertUtil.isTrue(FlowStatus.isFinished(instance.getFlowStatus()), ExceptionCons.FLOW_FINISH);
-
-        return FlowFactory.taskService().skip(flowParams, task, instance);
+        return FlowFactory.taskService().skip(flowParams, task);
     }
 
     @Override

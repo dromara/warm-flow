@@ -27,6 +27,16 @@ public class ArrayUtil {
     }
 
     /**
+     * 如果数组是空，则返回默认值
+     * @param objects 数组
+     * @param defaultArr 默认值
+     * @return 结果
+     */
+    public static <T> T[] emptyDefault(T[] objects, T[] defaultArr) {
+        return isEmpty(objects) ? defaultArr : objects;
+    }
+
+    /**
      * * 判断一个对象是否是数组类型（Java基本型别的数组）
      *
      * @param object 对象

@@ -38,6 +38,16 @@ public class CollUtil {
     }
 
     /**
+     * 如果集合是空，则返回默认值
+     * @param list 集合
+     * @param defaultList 默认值
+     * @return 结果
+     */
+    public static <T> List<T> emptyDefault(List<T> list, List<T> defaultList) {
+        return isEmpty(list) ? defaultList : list;
+    }
+
+    /**
      * 判断给定的collection列表中是否包含数组array 判断给定的数组array中是否包含给定的元素value
      *
      * @param collection 给定的集合
