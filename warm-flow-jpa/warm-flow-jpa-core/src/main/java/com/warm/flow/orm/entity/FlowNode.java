@@ -123,43 +123,6 @@ public class FlowNode extends JPARootEntity<FlowNode> implements Node {
         }
     }
 
-    @Override
-    public void mergeUpdate(FlowNode updateEntity) {
-        if (Objects.nonNull(updateEntity.nodeType)) {
-            this.nodeType = updateEntity.nodeType;
-        }
-        if (Objects.nonNull(updateEntity.definitionId)) {
-            this.definitionId = updateEntity.definitionId;
-        }
-        if (StringUtils.isNotEmpty(updateEntity.nodeCode)) {
-            this.nodeCode = updateEntity.nodeCode;
-        }
-        if (StringUtils.isNotEmpty(updateEntity.nodeName)) {
-            this.nodeName = updateEntity.nodeName;
-        }
-        if (StringUtils.isNotEmpty(updateEntity.coordinate)) {
-            this.coordinate = updateEntity.coordinate;
-        }
-        if (StringUtils.isNotEmpty(updateEntity.skipAnyNode)) {
-            this.skipAnyNode = updateEntity.skipAnyNode;
-        }
-        if (StringUtils.isNotEmpty(updateEntity.listenerType)) {
-            this.listenerType = updateEntity.listenerType;
-        }
-        if (StringUtils.isNotEmpty(updateEntity.listenerPath)) {
-            this.listenerPath = updateEntity.listenerPath;
-        }
-        if (StringUtils.isNotEmpty(updateEntity.version)) {
-            this.version = updateEntity.version;
-        }
-        if (Objects.nonNull(updateEntity.getCreateTime())) {
-            this.setCreateTime(updateEntity.getCreateTime());
-        }
-        if (Objects.nonNull(updateEntity.getUpdateTime())) {
-            this.setUpdateTime(updateEntity.getUpdateTime());
-        }
-    }
-
     /**
      * 跳转条件
      */
