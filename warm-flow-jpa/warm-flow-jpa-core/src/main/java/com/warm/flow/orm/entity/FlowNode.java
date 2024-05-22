@@ -11,6 +11,7 @@ import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -151,6 +152,12 @@ public class FlowNode extends JPARootEntity<FlowNode> implements Node {
     private String nodeName;
 
     /**
+     * 流程签署比例值
+     */
+    @Column(name="node_ratio")
+    private BigDecimal nodeRatio;
+
+    /**
      * 动态权限标识（权限类型:权限标识，可以多个，如role:1,role:2)
      */
     @Transient
@@ -179,6 +186,17 @@ public class FlowNode extends JPARootEntity<FlowNode> implements Node {
      */
     @Column(name="listener_path")
     private String listenerPath;
+
+    /**
+     * 处理器类型
+     */
+    @Column(name="handler_type")
+    private String handlerType;
+    /**
+     * 处理器路径
+     */
+    @Column(name="handler_path")
+    private String handlerPath;
 
     @Override
     public Integer getNodeType() {
@@ -221,6 +239,17 @@ public class FlowNode extends JPARootEntity<FlowNode> implements Node {
     @Override
     public FlowNode setNodeName(String nodeName) {
         this.nodeName = nodeName;
+        return this;
+    }
+
+    @Override
+    public BigDecimal getNodeRatio() {
+        return nodeRatio;
+    }
+
+    @Override
+    public FlowNode setNodeRatio(BigDecimal nodeRatio) {
+        this.nodeRatio = nodeRatio;
         return this;
     }
 
@@ -291,6 +320,28 @@ public class FlowNode extends JPARootEntity<FlowNode> implements Node {
     }
 
     @Override
+    public String getHandlerType() {
+        return handlerType;
+    }
+
+    @Override
+    public FlowNode setHandlerType(String listenerType) {
+        this.handlerType = listenerType;
+        return this;
+    }
+
+    @Override
+    public String getHandlerPath() {
+        return handlerPath;
+    }
+
+    @Override
+    public FlowNode setHandlerPath(String listenerPath) {
+        this.handlerPath = listenerPath;
+        return this;
+    }
+
+    @Override
     public List<Skip> getSkipList() {
         return skipList;
     }
@@ -304,20 +355,25 @@ public class FlowNode extends JPARootEntity<FlowNode> implements Node {
     @Override
     public String toString() {
         return "FlowNode{" +
-                "id=" + super.getId() +
+                "skipList=" + skipList +
+                ", id=" + super.getId() +
                 ", createTime=" + super.getCreateTime() +
                 ", updateTime=" + super.getUpdateTime() +
+                ", tenantId='" + super.getTenantId() + '\'' +
+                ", delFlag='" + super.getDelFlag() + '\'' +
                 ", nodeType=" + nodeType +
                 ", definitionId=" + definitionId +
                 ", nodeCode='" + nodeCode + '\'' +
                 ", nodeName='" + nodeName + '\'' +
+                ", nodeRatio=" + nodeRatio +
                 ", dynamicPermissionFlagList='" + dynamicPermissionFlagList + '\'' +
                 ", coordinate='" + coordinate + '\'' +
                 ", version='" + version + '\'' +
                 ", skipAnyNode='" + skipAnyNode + '\'' +
                 ", listenerType='" + listenerType + '\'' +
                 ", listenerPath='" + listenerPath + '\'' +
-                ", skipList=" + skipList +
-                "} " + super.toString();
+                ", handlerType='" + handlerType + '\'' +
+                ", handlerPath='" + handlerPath + '\'' +
+                "}";
     }
 }

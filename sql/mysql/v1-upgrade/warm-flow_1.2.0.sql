@@ -47,3 +47,15 @@ ALTER TABLE `flow_his_task` DROP COLUMN approver;
 ALTER TABLE `flow_his_task` DROP COLUMN permission_flag;
 -- 去掉 flow_node 表废弃字段sql
 ALTER TABLE `flow_node` DROP COLUMN permission_flag;
+
+-- flow_node 增加会签，票签字段
+ALTER TABLE `flow_node`
+    ADD COLUMN `handler_type` VARCHAR(100) NULL DEFAULT NULL COMMENT '处理器类型' AFTER `listener_path`,
+    ADD COLUMN `handler_path` VARCHAR(400) NULL DEFAULT NULL COMMENT '处理器路径' AFTER `handler_type`;
+ALTER TABLE `flow_node`
+    ADD COLUMN `node_ratio` DECIMAL(6,3) NULL DEFAULT NULL COMMENT '流程签署比例值' AFTER `node_name`;
+
+-- flow_his_task 增加task_id
+ALTER TABLE `flow_his_task`
+    ADD COLUMN `task_id` BIGINT(19) NOT NULL COMMENT '对应flow_task表的id' AFTER `instance_id`;
+

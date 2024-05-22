@@ -326,10 +326,11 @@ public class FlowInstance extends JPARootEntity<FlowInstance> implements Instanc
                 "id=" + super.getId() +
                 ", createTime=" + super.getCreateTime() +
                 ", updateTime=" + super.getUpdateTime() +
+                ", tenantId='" + super.getTenantId() + '\'' +
+                ", delFlag='" + super.getDelFlag() + '\'' +
                 ", definitionId=" + definitionId +
                 ", flowName='" + flowName + '\'' +
                 ", businessId='" + businessId + '\'' +
-                ", tenantId='" + super.getTenantId() + '\'' +
                 ", nodeType=" + nodeType +
                 ", nodeCode='" + nodeCode + '\'' +
                 ", nodeName='" + nodeName + '\'' +
@@ -339,6 +340,6 @@ public class FlowInstance extends JPARootEntity<FlowInstance> implements Instanc
                 ", fromCustom='" + fromCustom + '\'' +
                 ", fromPath='" + fromPath + '\'' +
                 ", ext='" + ext + '\'' +
-                "} " + super.toString();
+                "}";
     }
 }
