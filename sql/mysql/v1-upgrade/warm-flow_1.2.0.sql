@@ -48,6 +48,3 @@ ALTER TABLE `flow_his_task` DROP COLUMN approver;
 ALTER TABLE `flow_his_task` DROP COLUMN permission_flag;
 -- 去掉 flow_node 表废弃字段sql
 ALTER TABLE `flow_node` DROP COLUMN permission_flag;
-
--- 历史表新增字段，用于存储操作记录(加签和减签，转办，委托，抄送等)
-ALTER TABLE `flow_his_task` ADD COLUMN `record` varchar(500) DEFAULT NULL COMMENT '操作记录' AFTER `flow_status`;
