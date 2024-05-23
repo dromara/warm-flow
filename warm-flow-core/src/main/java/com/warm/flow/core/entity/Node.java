@@ -1,5 +1,6 @@
 package com.warm.flow.core.entity;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -47,6 +48,10 @@ public interface Node extends RootEntity {
 
     public Node setNodeName(String nodeName);
 
+    public BigDecimal getNodeRatio();
+
+    public Node setNodeRatio(BigDecimal nodeRatio);
+
     public List<String> getDynamicPermissionFlagList();
 
     public Node setDynamicPermissionFlagList(List<String> permissionFlagList);
@@ -66,6 +71,14 @@ public interface Node extends RootEntity {
     String getListenerPath();
 
     Node setListenerPath(String listenerPath);
+
+    String getHandlerType();
+
+    Node setHandlerType(String listenerType);
+
+    String getHandlerPath();
+
+    Node setHandlerPath(String listenerPath);
 
     public String getVersion();
 

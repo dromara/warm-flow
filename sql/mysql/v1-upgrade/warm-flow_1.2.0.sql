@@ -51,3 +51,16 @@ ALTER TABLE `flow_node` DROP COLUMN permission_flag;
 
 -- 历史表新增字段，用于存储操作记录(加签和减签，转办，委托，抄送等)
 ALTER TABLE `flow_his_task` ADD COLUMN `record` varchar(500) DEFAULT NULL COMMENT '操作记录' AFTER `flow_status`;
+
+
+-- flow_node 增加会签，票签字段
+ALTER TABLE `flow_node`
+    ADD COLUMN `handler_type` VARCHAR(100) NULL DEFAULT NULL COMMENT '处理器类型' AFTER `listener_path`,
+    ADD COLUMN `handler_path` VARCHAR(400) NULL DEFAULT NULL COMMENT '处理器路径' AFTER `handler_type`;
+ALTER TABLE `flow_node`
+    ADD COLUMN `node_ratio` DECIMAL(6,3) NULL DEFAULT NULL COMMENT '流程签署比例值' AFTER `node_name`;
+
+-- flow_his_task 增加task_id
+ALTER TABLE `flow_his_task`
+    ADD COLUMN `task_id` BIGINT(19) NOT NULL COMMENT '对应flow_task表的id' AFTER `instance_id`;
+

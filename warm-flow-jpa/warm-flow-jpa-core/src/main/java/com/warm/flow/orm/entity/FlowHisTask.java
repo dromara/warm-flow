@@ -402,11 +402,12 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
                 "id=" + super.getId() +
                 ", createTime=" + super.getCreateTime() +
                 ", updateTime=" + super.getUpdateTime() +
+                ", tenantId='" + super.getTenantId() + '\'' +
+                ", delFlag='" + super.getDelFlag() + '\'' +
                 ", definitionId=" + definitionId +
                 ", flowName='" + flowName + '\'' +
                 ", instanceId=" + instanceId +
                 ", taskId=" + taskId +
-                ", tenantId='" + super.getTenantId() + '\'' +
                 ", businessId='" + businessId + '\'' +
                 ", nodeCode='" + nodeCode + '\'' +
                 ", nodeName='" + nodeName + '\'' +
@@ -419,6 +420,6 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
                 ", createBy='" + createBy + '\'' +
                 ", fromCustom='" + fromCustom + '\'' +
                 ", fromPath='" + fromPath + '\'' +
-                "} " + super.toString();
+                "}";
     }
 }
