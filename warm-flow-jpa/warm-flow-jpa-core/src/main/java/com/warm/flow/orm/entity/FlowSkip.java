@@ -291,6 +291,8 @@ public class FlowSkip extends JPARootEntity<FlowSkip> implements Skip {
                 "id=" + super.getId() +
                 ", createTime=" + super.getCreateTime() +
                 ", updateTime=" + super.getUpdateTime() +
+                ", tenantId='" + super.getTenantId() + '\'' +
+                ", delFlag='" + super.getDelFlag() + '\'' +
                 ", definitionId=" + definitionId +
                 ", nodeId=" + nodeId +
                 ", nowNodeCode='" + nowNodeCode + '\'' +
@@ -301,6 +303,6 @@ public class FlowSkip extends JPARootEntity<FlowSkip> implements Skip {
                 ", skipType='" + skipType + '\'' +
                 ", skipCondition='" + skipCondition + '\'' +
                 ", coordinate='" + coordinate + '\'' +
-                "} " + super.toString();
+                "} ";
     }
 }

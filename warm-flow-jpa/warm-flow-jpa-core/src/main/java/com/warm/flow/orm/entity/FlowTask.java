@@ -296,9 +296,10 @@ public class FlowTask extends JPARootEntity<FlowTask> implements Task {
                 "id=" + super.getId() +
                 ", createTime=" + super.getCreateTime() +
                 ", updateTime=" + super.getUpdateTime() +
+                ", tenantId='" + super.getTenantId() + '\'' +
+                ", delFlag='" + super.getDelFlag() + '\'' +
                 ", definitionId=" + definitionId +
                 ", instanceId=" + instanceId +
-                ", tenantId='" + super.getTenantId() + '\'' +
                 ", flowName='" + flowName + '\'' +
                 ", businessId='" + businessId + '\'' +
                 ", nodeCode='" + nodeCode + '\'' +
@@ -308,6 +309,6 @@ public class FlowTask extends JPARootEntity<FlowTask> implements Task {
                 ", permissionList=" + permissionList +
                 ", fromCustom='" + fromCustom + '\'' +
                 ", fromPath='" + fromPath + '\'' +
-                "} " + super.toString();
+                "} ";
     }
 }

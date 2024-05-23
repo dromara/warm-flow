@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.Skip;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -65,6 +66,10 @@ public class FlowNode implements Node {
      */
     private String nodeName;
     /**
+     * 流程签署比例值
+     */
+    private BigDecimal nodeRatio;
+    /**
      * 动态权限标识（权限类型:权限标识，可以多个，如role:1,role:2)
      */
     @TableField(exist = false)
@@ -89,6 +94,14 @@ public class FlowNode implements Node {
      * 监听器路径
      */
     private String listenerPath;
+    /**
+     * 处理器类型
+     */
+    private String handlerType;
+    /**
+     * 处理器路径
+     */
+    private String handlerPath;
 
     @Override
     public Long getId() {
@@ -190,6 +203,17 @@ public class FlowNode implements Node {
     }
 
     @Override
+    public BigDecimal getNodeRatio() {
+        return nodeRatio;
+    }
+
+    @Override
+    public FlowNode setNodeRatio(BigDecimal nodeRatio) {
+        this.nodeRatio = nodeRatio;
+        return this;
+    }
+
+    @Override
     public List<String> getDynamicPermissionFlagList() {
         return dynamicPermissionFlagList;
     }
@@ -256,6 +280,28 @@ public class FlowNode implements Node {
     }
 
     @Override
+    public String getHandlerType() {
+        return handlerType;
+    }
+
+    @Override
+    public FlowNode setHandlerType(String listenerType) {
+        this.handlerType = listenerType;
+        return this;
+    }
+
+    @Override
+    public String getHandlerPath() {
+        return handlerPath;
+    }
+
+    @Override
+    public FlowNode setHandlerPath(String listenerPath) {
+        this.handlerPath = listenerPath;
+        return this;
+    }
+
+    @Override
     public List<Skip> getSkipList() {
         return skipList;
     }
@@ -279,12 +325,15 @@ public class FlowNode implements Node {
                 ", definitionId=" + definitionId +
                 ", nodeCode='" + nodeCode + '\'' +
                 ", nodeName='" + nodeName + '\'' +
+                ", nodeRatio=" + nodeRatio +
                 ", dynamicPermissionFlagList=" + dynamicPermissionFlagList +
                 ", coordinate='" + coordinate + '\'' +
                 ", version='" + version + '\'' +
                 ", skipAnyNode='" + skipAnyNode + '\'' +
                 ", listenerType='" + listenerType + '\'' +
                 ", listenerPath='" + listenerPath + '\'' +
+                ", handlerType='" + handlerType + '\'' +
+                ", handlerPath='" + handlerPath + '\'' +
                 '}';
     }
 }
