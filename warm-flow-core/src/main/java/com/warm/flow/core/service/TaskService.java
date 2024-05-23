@@ -155,7 +155,7 @@ public interface TaskService extends IWarmService<Task> {
     boolean signature(Long taskId, FlowParams flowParams, boolean ignore);
 
     /**
-     * 委派,需要校验办理人权限
+     * 委派,需要校验办理人权限(不清理计划审批人）
      *
      * @param taskId         任务id
      * @param flowParams 流程参数(包含当前处理人的权限，重新指定的权限标识（办理人）)
@@ -163,13 +163,23 @@ public interface TaskService extends IWarmService<Task> {
     boolean depute(Long taskId, FlowParams flowParams);
 
     /**
-     * 委派 ignore默认为true，转办忽略权限校验，比如管理员权限
+     * 委派 ignore默认为true，转办忽略权限校验，比如管理员权限(不清理计划审批人）
+     *
      * @param taskId         任务id
      * @param flowParams 流程参数(包含当前处理人的权限，重新指定的权限标识（办理人）)
      * @param ignore 转办忽略权限校验（true - 忽略，false - 不忽略）
      */
     boolean depute(Long taskId, FlowParams flowParams, boolean ignore);
 
+    /**
+     * 委派 ignore默认为true，转办忽略权限校验，比如管理员权限,需要自己判断是否需要清理计划审批人
+     *
+     * @param taskId         任务id
+     * @param flowParams 流程参数(包含当前处理人的权限，重新指定的权限标识（办理人）)
+     * @param ignore 转办忽略权限校验（true - 忽略，false - 不忽略）
+     * @param clear 清理当前任务的计划审批人（true - 清理，false - 不清理）
+     */
+    boolean depute(Long taskId, FlowParams flowParams, boolean ignore, boolean clear);
     /**
      * 转办，委派，加减签等处理
      *

@@ -8,10 +8,11 @@ package com.warm.flow.core.enums;
  */
 public enum CirculationType {
 
-    SIGNATURE("signature", "加减签", false),
+    SIGNATURE("signature", "加减签(清理待办任务的计划审批人，重新加入待办任务的计划审批人)", true),
     TRANSFER("transfer", "转办(不清理待办任务的计划审批人)", false),
-    CHANGE("transfer", "转办(清理待办任务的计划审批人)", true),
-    DEPUTE("depute", "委派", false);
+    TRANSFER_CHANGE("transfer", "转办(清理待办任务的计划审批人)", true),
+    DEPUTE("depute", "委派（清理待办任务的计划审批人，重新加入被委派的人，委派别人的人进去创建人）", false),
+    DEPUTE_CHANGE("depute", "委派（不清理待办任务的计划审批人，重新加入被委派的人，委派别人的人进去创建人）", true);
 
     private String key;
     private String value;

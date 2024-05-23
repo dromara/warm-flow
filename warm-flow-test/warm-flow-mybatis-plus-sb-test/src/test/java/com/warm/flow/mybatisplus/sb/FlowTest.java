@@ -47,7 +47,7 @@ public class FlowTest {
 
     @Test
     public void publish() {
-        defService.publish(1239301388006199314L);
+        defService.publish(1243304918010433536L);
     }
 
     @Test
@@ -98,5 +98,36 @@ public class FlowTest {
         for (Definition definition : list) {
             System.out.println(definition);
         }
+    }
+
+    /**
+     * 加减签
+     */
+    @Test
+    public void signature(){
+        FlowParams flowParams = FlowParams.build().additionalHandler(Arrays.asList("role:102", "role:1"))
+                        .permissionFlag(Arrays.asList("role:1", "role:2", "user:1"))
+                        .skipType(SkipType.PASS.getKey()).createBy("user:1");
+        taskService.signature(1243308524025548800L, flowParams);
+    }
+    /**
+     * 委派
+     */
+    @Test
+    public void depute(){
+        FlowParams flowParams = FlowParams.build().additionalHandler(Arrays.asList("role:103", "role:3"))
+                .permissionFlag(Arrays.asList("role:3", "role:102", "user:1"))
+                .skipType(SkipType.PASS.getKey()).createBy("user:1");
+        taskService.depute(1243308524025548800L, flowParams);
+    }
+    /**
+     * 转办
+     */
+    @Test
+    public void transfer(){
+        FlowParams flowParams = FlowParams.build().additionalHandler(Arrays.asList("role:103", "role:3"))
+                .permissionFlag(Arrays.asList("role:3", "role:102", "user:1"))
+                .skipType(SkipType.PASS.getKey()).createBy("user:1");
+        taskService.transfer(1243308524025548800L, flowParams, false, true);
     }
 }

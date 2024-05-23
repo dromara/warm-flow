@@ -304,7 +304,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     @Override
     public boolean transfer(Long taskId, FlowParams flowParams, boolean ignore, boolean clear) {
-        return processedHandle(taskId, flowParams, ignore, clear? CirculationType.CHANGE:CirculationType.TRANSFER);
+        return processedHandle(taskId, flowParams, ignore, clear? CirculationType.TRANSFER_CHANGE :CirculationType.TRANSFER);
     }
 
     @Override
@@ -324,7 +324,12 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     @Override
     public boolean depute(Long taskId, FlowParams flowParams, boolean ignore) {
-        return processedHandle(taskId, flowParams, ignore, CirculationType.DEPUTE);
+        return processedHandle(taskId, flowParams, false, CirculationType.DEPUTE);
+    }
+
+    @Override
+    public boolean depute(Long taskId, FlowParams flowParams, boolean ignore, boolean clear) {
+        return processedHandle(taskId, flowParams, ignore, clear?CirculationType.DEPUTE_CHANGE:CirculationType.DEPUTE);
     }
 
     @Override
@@ -359,11 +364,13 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             // 转办，不清理原有计划审批人
             case TRANSFER:
             // 转办，清理原有计划审批人
-            case CHANGE:
+            case TRANSFER_CHANGE:
                 userType = UserType.ASSIGNEE;
                 break;
-            // 委派，清理计划审批人，新增受托人
+            // 委派，不清理计划审批人，新增受托人
             case DEPUTE:
+            // 委派，清理计划审批人，新增受托人
+            case DEPUTE_CHANGE:
                 userType = UserType.DEPUTE;
                 break;
         }
