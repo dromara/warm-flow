@@ -78,6 +78,13 @@ public interface UserService extends IWarmService<User> {
      * @date 2024/5/10 13:59
      */
     void delUser(List<Long> ids);
+
+    /**
+     * 删除用户，通过已有用户
+     * @param user
+     */
+    void delUser(User user);
+
     /**
      * 根据(代办任务，实例，历史表，节点等)id查询权限人或者处理人
      *
@@ -160,4 +167,5 @@ public interface UserService extends IWarmService<User> {
      * @date 2024/5/10 11:19
      */
     boolean haveDepute(Long taskId, String createBy);
+
 }

@@ -14,6 +14,8 @@ import com.warm.flow.core.service.TaskService;
 import com.warm.flow.core.utils.*;
 import org.noear.snack.ONode;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -71,6 +73,12 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
         // 判断当前处理人是否有权限处理
         checkAuth(NowNode, task, flowParams.getPermissionFlag());
+
+        //或签、会签、票签逻辑处理
+        boolean isLast = cooperate(NowNode, task, flowParams);
+        if (!isLast) {
+            return instance;
+        }
 
         // 获取关联的节点，判断当前处理人是否有权限处理
         Node nextNode = getNextNode(NowNode, task, flowParams);
@@ -163,6 +171,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 流程定义的结束节点转历史
         HisTask hisTask = FlowFactory.newHisTask()
                 .setInstanceId(task.getInstanceId())
+                .setTaskId(task.getId())
                 .setNodeCode(endNode.getNodeCode())
                 .setNodeName(endNode.getNodeName())
                 .setNodeType(endNode.getNodeType())
@@ -389,6 +398,88 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             }
         }
         return tasks.stream().max(Comparator.comparingLong(Task::getId)).orElse(null);
+    }
+
+    /**
+     * 协作处理，会签，票签过程中 返回 false 最后一个签署返回 true
+     * @param NowNode
+     * @param task
+     * @param flowParams
+     * @return
+     */
+    private boolean cooperate(Node NowNode, Task task, FlowParams flowParams) {
+        BigDecimal nodeRatio = NowNode.getNodeRatio();
+        if (CooperateType.isOrSign(nodeRatio)) {
+            // 或签
+            return true;
+        }
+
+        List<User> todoList = FlowFactory.userService().list(FlowFactory.newUser()
+                .setAssociated(task.getId()));
+        if (CooperateType.isCountersign(nodeRatio) &&
+                (todoList.size() == 1 || SkipType.isReject(flowParams.getSkipType()))) {
+            // 只有一位待办人结束任务 或者 当前人驳回直接返回
+            return true;
+        }
+
+        // 已办列表
+        List<HisTask> doneList = FlowFactory.hisTaskService()
+                .list(FlowFactory.newHisTask().setTaskId(task.getId()));
+        doneList = CollUtil.isEmpty(doneList) ? CollUtil.<HisTask>toList() : doneList;
+
+        // TODO 这里处理 cooperation handler 获取下面的 todo all 值，能获取使用 handler的值，不能获取使用以下全自动计算代码
+
+        // 所有人
+        BigDecimal all = BigDecimal.ZERO.add(BigDecimal.valueOf(todoList.size())).add(BigDecimal.valueOf(doneList.size()));
+
+        List<HisTask> donePassList = doneList.stream().filter(hisTask ->
+                {return hisTask.getFlowStatus() == FlowStatus.PASS.getKey();}).collect(Collectors.toList());
+
+        List<HisTask> doneRejectList = doneList.stream().filter(hisTask ->
+                {return hisTask.getFlowStatus() == FlowStatus.REJECT.getKey();}).collect(Collectors.toList());
+
+        boolean isPass = SkipType.isPass(flowParams.getSkipType());
+
+        BigDecimal passRatio = (isPass ? BigDecimal.ONE : BigDecimal.ZERO).add(BigDecimal.valueOf(donePassList.size()))
+                .divide(all, 4, RoundingMode.HALF_UP).multiply(CooperateType.HUNDRED);
+
+        BigDecimal rejectRatio = (isPass ? BigDecimal.ZERO : BigDecimal.ONE).add(BigDecimal.valueOf(doneRejectList.size()))
+                .divide(all, 4, RoundingMode.HALF_UP).multiply(CooperateType.HUNDRED);
+
+        if (!isPass && rejectRatio.compareTo(CooperateType.HUNDRED.subtract(nodeRatio)) > 0) {
+            // 驳回，并且当前是驳回
+            return true;
+        }
+
+        if (passRatio.compareTo(nodeRatio) >= 0) {
+            // 大于等于 nodeRatio 设置值结束任务
+            return true;
+        }
+
+        HisTask insHis = FlowFactory.newHisTask()
+                .setTaskId(task.getId())
+                .setInstanceId(task.getInstanceId())
+                .setNodeCode(task.getNodeCode())
+                .setNodeName(task.getNodeName())
+                .setNodeType(task.getNodeType())
+                .setTenantId(task.getTenantId())
+                .setDefinitionId(task.getDefinitionId())
+                .setMessage(flowParams.getMessage())
+                .setFlowStatus(isPass ? FlowStatus.PASS.getKey() : FlowStatus.REJECT.getKey())
+                .setCreateTime(new Date());
+        FlowFactory.dataFillHandler().idFill(insHis);
+        FlowFactory.hisTaskService().save(insHis);
+
+        User insUser = FlowFactory.userService()
+                .hisTaskAddUser(insHis.getId(), flowParams);
+        FlowFactory.userService().save(insUser);
+
+        User user = FlowFactory.userService().getOne(FlowFactory.newUser()
+                .setAssociated(task.getId())
+                .setProcessedBy(flowParams.getCreateBy()));
+        FlowFactory.userService().delUser(user);
+
+        return false;
     }
 
     /**

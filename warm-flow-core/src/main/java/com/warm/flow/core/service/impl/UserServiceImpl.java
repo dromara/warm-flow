@@ -76,6 +76,11 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
     }
 
     @Override
+    public void delUser(User user) {
+        getDao().delete(user);
+    }
+
+    @Override
     public List<String> getPermission(long id) {
         return StreamUtils.toList(list(FlowFactory.newUser().setAssociated(id)), User::getProcessedBy);
     }
