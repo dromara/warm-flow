@@ -102,6 +102,11 @@ public class FlowUser extends JPARootEntity<FlowUser> implements User{
      */
     private Long associated;
 
+    /**
+     * 作为委托的人保存
+     */
+    @Column(name = "create_by")
+    private String createBy;
 
     @Override
     public String getType() {
@@ -133,6 +138,17 @@ public class FlowUser extends JPARootEntity<FlowUser> implements User{
     @Override
     public FlowUser setAssociated(Long associated) {
         this.associated = associated;
+        return this;
+    }
+
+    @Override
+    public String getCreateBy() {
+        return this.createBy;
+    }
+
+    @Override
+    public User setCreateBy(String createBy) {
+        this.createBy = createBy;
         return this;
     }
 

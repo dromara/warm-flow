@@ -52,6 +52,11 @@ public class FlowUser implements User{
      */
     private Long associated;
 
+    /**
+     * 作为委托的人保存
+     */
+    private String createBy;
+
     @Override
     public Long getId() {
         return id;
@@ -137,6 +142,17 @@ public class FlowUser implements User{
     @Override
     public FlowUser setAssociated(Long associated) {
         this.associated = associated;
+        return this;
+    }
+
+    @Override
+    public String getCreateBy() {
+        return this.createBy;
+    }
+
+    @Override
+    public User setCreateBy(String createBy) {
+        this.createBy = createBy;
         return this;
     }
 

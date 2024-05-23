@@ -131,8 +131,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 .setTargetNodeName(task.getNodeName())
                 .setFlowStatus(FlowStatus.PASS.getKey())
                 .setMessage(flowParams.getMessage())
-                .setCreateTime(new Date())
-                .setRecord(" deputed " + flowParams.getCreateBy() + " handle task, depute " + deputeUser.getCreateBy());
+                .setCreateTime(new Date());
         FlowFactory.dataFillHandler().idFill(insHis);
         FlowFactory.hisTaskService().saveBatch(CollUtil.toList(insHis));
         // 更新当前任务的计划审批人
