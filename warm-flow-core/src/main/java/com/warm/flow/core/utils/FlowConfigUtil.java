@@ -17,6 +17,7 @@ import org.dom4j.io.SAXReader;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -93,6 +94,8 @@ public class FlowConfigUtil {
         node.setNodeType(NodeType.getKeyByValue(nodeElement.attributeValue("nodeType")));
         node.setNodeCode(nodeElement.attributeValue("nodeCode"));
         node.setNodeName(nodeElement.attributeValue("nodeName"));
+        node.setNodeRatio(StringUtils.isNotEmpty(nodeElement.attributeValue("nodeRatio")) ?
+                new BigDecimal(nodeElement.attributeValue("nodeRatio")): null);
         node.setCoordinate(nodeElement.attributeValue("coordinate"));
         node.setSkipAnyNode(nodeElement.attributeValue("skipAnyNode"));
         node.setListenerType(nodeElement.attributeValue("listenerType"));
@@ -149,6 +152,7 @@ public class FlowConfigUtil {
             nodeElement.addAttribute("nodeType", NodeType.getValueByKey(node.getNodeType()));
             nodeElement.addAttribute("nodeCode", node.getNodeCode());
             nodeElement.addAttribute("nodeName", node.getNodeName());
+            nodeElement.addAttribute("nodeRatio", Objects.nonNull(node.getNodeRatio()) ? node.getNodeRatio().toPlainString() : null);
             List<String> permission = FlowFactory.userService().getPermission(node.getId(), UserType.PROPOSE.getKey());
             if (CollUtil.isNotEmpty(permission)) {
                 nodeElement.addAttribute("permissionFlag", CollUtil.strListToStr(permission, ","));
