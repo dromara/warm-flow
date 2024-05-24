@@ -82,4 +82,8 @@ public class ExceptionCons {
     public static final String NOT_AUTHORITY = "请检查当前用户是否有权限!";
 
     public static final String LOST_ADDITIONAL_PERMISSION = "调整的权限缺失";
+
+    public static final String NULL_CURRENT_USERID = "请传递当前用户ID";
+
+    public static final String CURRENT_USER_NO_PERMISSION = "当前办理人没有办理权限";
 }

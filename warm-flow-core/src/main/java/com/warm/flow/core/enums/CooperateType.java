@@ -1,7 +1,5 @@
 package com.warm.flow.core.enums;
 
-import com.warm.flow.core.utils.ObjectUtil;
-
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -16,7 +14,7 @@ public enum CooperateType {
     VOTE("voteSign", "票签"),
     ALL("countersign", "会签");
 
-    public final static BigDecimal HUNDRED = BigDecimal.valueOf(100);
+    public final static BigDecimal ONE_HUNDRED = BigDecimal.valueOf(100);
 
     private String key;
     private String value;
@@ -51,7 +49,7 @@ public enum CooperateType {
      * @return
      */
     public static Boolean isOrSign(BigDecimal ratio) {
-        if (Objects.isNull(ratio) || ratio.compareTo(BigDecimal.ZERO) < 0) {
+        if (Objects.isNull(ratio) || ratio.compareTo(BigDecimal.ZERO) <= 0) {
             return Boolean.TRUE;
         }
         return Boolean.FALSE;
@@ -67,7 +65,7 @@ public enum CooperateType {
     public static Boolean isVoteSign(BigDecimal ratio) {
         if (Objects.nonNull(ratio)
             && ratio.compareTo(BigDecimal.ZERO) > 0
-            && ratio.compareTo(HUNDRED) < 0) {
+            && ratio.compareTo(ONE_HUNDRED) < 0) {
             return Boolean.TRUE;
         }
         return Boolean.FALSE;
@@ -81,7 +79,7 @@ public enum CooperateType {
      */
     public static Boolean isCountersign(BigDecimal ratio) {
         if (Objects.nonNull(ratio)
-            && ratio.compareTo(HUNDRED) == 0) {
+            && ratio.compareTo(ONE_HUNDRED) >= 0) {
             return Boolean.TRUE;
         }
         return Boolean.FALSE;

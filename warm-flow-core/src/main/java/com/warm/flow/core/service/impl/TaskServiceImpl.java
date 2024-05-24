@@ -441,11 +441,11 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         BigDecimal all = BigDecimal.ZERO.add(BigDecimal.valueOf(todoList.size())).add(BigDecimal.valueOf(doneList.size()));
 
         List<HisTask> donePassList = doneList.stream().filter(hisTask ->
-                {return hisTask.getFlowStatus() == FlowStatus.PASS.getKey();})
+                {return Objects.equals(hisTask.getFlowStatus(), FlowStatus.PASS.getKey());})
                 .collect(Collectors.toList());
 
         List<HisTask> doneRejectList = doneList.stream().filter(hisTask ->
-                {return hisTask.getFlowStatus() == FlowStatus.REJECT.getKey();})
+                {return Objects.equals(hisTask.getFlowStatus(), FlowStatus.REJECT.getKey());})
                 .collect(Collectors.toList());
 
         boolean isPass = SkipType.isPass(flowParams.getSkipType());
@@ -453,14 +453,14 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 计算通过率
         BigDecimal passRatio = (isPass ? BigDecimal.ONE : BigDecimal.ZERO)
                 .add(BigDecimal.valueOf(donePassList.size()))
-                .divide(all, 4, RoundingMode.HALF_UP).multiply(CooperateType.HUNDRED);
+                .divide(all, 4, RoundingMode.HALF_UP).multiply(CooperateType.ONE_HUNDRED);
 
         // 计算驳回率
         BigDecimal rejectRatio = (isPass ? BigDecimal.ZERO : BigDecimal.ONE)
                 .add(BigDecimal.valueOf(doneRejectList.size()))
-                .divide(all, 4, RoundingMode.HALF_UP).multiply(CooperateType.HUNDRED);
+                .divide(all, 4, RoundingMode.HALF_UP).multiply(CooperateType.ONE_HUNDRED);
 
-        if (!isPass && rejectRatio.compareTo(CooperateType.HUNDRED.subtract(nodeRatio)) > 0) {
+        if (!isPass && rejectRatio.compareTo(CooperateType.ONE_HUNDRED.subtract(nodeRatio)) > 0) {
             // 驳回，并且当前是驳回
             return true;
         }
