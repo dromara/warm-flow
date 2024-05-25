@@ -20,6 +20,7 @@ CREATE TABLE `flow_his_task`
     `id`               bigint unsigned NOT NULL COMMENT '主键id',
     `definition_id`    bigint NOT NULL COMMENT '对应flow_definition表的id',
     `instance_id`      bigint NOT NULL COMMENT '对应flow_instance表的id',
+    `task_id` BIGINT(19) NOT NULL COMMENT '对应flow_task表的id'
     `node_code`        varchar(100) DEFAULT NULL COMMENT '开始节点编码',
     `node_name`        varchar(100) DEFAULT NULL COMMENT '开始节点名称',
     `node_type`        tinyint(1) DEFAULT NULL COMMENT '开始节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）',
@@ -60,15 +61,18 @@ CREATE TABLE `flow_node`
     `definition_id`   bigint       NOT NULL COMMENT '流程定义id',
     `node_code`       varchar(100) NOT NULL COMMENT '流程节点编码',
     `node_name`       varchar(100) DEFAULT NULL COMMENT '流程节点名称',
+    `node_ratio`      DECIMAL(6,3) DEFAULT NULL COMMENT '流程签署比例值',
     `coordinate`      varchar(100) DEFAULT NULL COMMENT '坐标',
     `skip_any_node`   varchar(100) DEFAULT 'N' COMMENT '是否可以退回任意节点（Y是 N否）',
     `listener_type`   varchar(100) DEFAULT NULL COMMENT '监听器类型',
     `listener_path`   varchar(400) DEFAULT NULL COMMENT '监听器路径',
+    `handler_type`    varchar(100)  DEFAULT NULL COMMENT '处理器类型',
+    `handler_path`    varchar(400)  DEFAULT NULL COMMENT '处理器路径',
     `version`         varchar(20)  NOT NULL COMMENT '版本',
     `create_time`     datetime     DEFAULT NULL COMMENT '创建时间',
     `update_time`     datetime     DEFAULT NULL COMMENT '更新时间',
-    `del_flag`    char(1)      DEFAULT NULL COMMENT '删除标志',
-    `tenant_id`     varchar(40)  DEFAULT NULL COMMENT '租户id',
+    `del_flag`        char(1)      DEFAULT NULL COMMENT '删除标志',
+    `tenant_id`       varchar(40)  DEFAULT NULL COMMENT '租户id',
     PRIMARY KEY (`id`) USING BTREE,
     UNIQUE KEY `info_id_code` (`definition_id`,`node_code`) USING BTREE COMMENT '保证一个流程中node_code是唯一的'
 ) ENGINE=InnoDB  COMMENT='流程结点表';
