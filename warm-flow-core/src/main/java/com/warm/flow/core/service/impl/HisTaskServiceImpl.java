@@ -6,6 +6,7 @@ import com.warm.flow.core.dto.FlowParams;
 import com.warm.flow.core.entity.HisTask;
 import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.Task;
+import com.warm.flow.core.enums.ActionType;
 import com.warm.flow.core.enums.FlowStatus;
 import com.warm.flow.core.enums.SkipType;
 import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
@@ -37,6 +38,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
             HisTask insHis = FlowFactory.newHisTask();
             insHis.setInstanceId(task.getInstanceId());
             insHis.setTaskId(task.getId());
+            insHis.setActionType(ActionType.APPROVAL.getKey());
             insHis.setNodeCode(task.getNodeCode());
             insHis.setNodeName(task.getNodeName());
             insHis.setNodeType(task.getNodeType());
@@ -44,6 +46,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
             insHis.setDefinitionId(task.getDefinitionId());
             insHis.setTargetNodeCode(nextNode.getNodeCode());
             insHis.setTargetNodeName(nextNode.getNodeName());
+            insHis.setApprover(flowParams.getCreateBy());
             insHis.setFlowStatus(SkipType.isReject(flowParams.getSkipType())
                     ? FlowStatus.REJECT.getKey() : FlowStatus.PASS.getKey());
             insHis.setMessage(flowParams.getMessage());

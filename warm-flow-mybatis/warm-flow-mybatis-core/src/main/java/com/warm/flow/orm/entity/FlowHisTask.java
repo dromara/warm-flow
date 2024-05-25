@@ -59,6 +59,11 @@ public class FlowHisTask implements HisTask {
     private Long taskId;
 
     /**
+     * 历史任务动作类型（0审批 1转办 2会签 3票签 4委派）
+     */
+    private Integer actionType;
+
+    /**
      * 业务id
      */
     private String businessId;
@@ -87,6 +92,16 @@ public class FlowHisTask implements HisTask {
      * 结束节点名称
      */
     private String targetNodeName;
+
+    /**
+     * 审批者
+     */
+    private String approver;
+
+    /**
+     * 协作人(只有转办、会签、票签、委派)
+     */
+    private String collaborator;
 
     /**
      * 权限标识 permissionFlag的list形式
@@ -186,6 +201,17 @@ public class FlowHisTask implements HisTask {
     }
 
     @Override
+    public Integer getActionType() {
+        return actionType;
+    }
+
+    @Override
+    public FlowHisTask setActionType(Integer actionType) {
+        this.actionType = actionType;
+        return this;
+    }
+
+    @Override
     public Long getTaskId() {
         return taskId;
     }
@@ -279,6 +305,28 @@ public class FlowHisTask implements HisTask {
     }
 
     @Override
+    public String getApprover() {
+        return approver;
+    }
+
+    @Override
+    public FlowHisTask setApprover(String approver) {
+        this.approver = approver;
+        return this;
+    }
+
+    @Override
+    public String getCollaborator() {
+        return collaborator;
+    }
+
+    @Override
+    public HisTask setCollaborator(String collaborator) {
+        this.collaborator = collaborator;
+        return this;
+    }
+
+    @Override
     public FlowHisTask setTargetNodeName(String targetNodeName) {
         this.targetNodeName = targetNodeName;
         return this;
@@ -360,6 +408,7 @@ public class FlowHisTask implements HisTask {
                 ", flowName='" + flowName + '\'' +
                 ", instanceId=" + instanceId +
                 ", taskId=" + taskId +
+                ", actionType=" + actionType +
                 ", tenantId='" + tenantId + '\'' +
                 ", businessId='" + businessId + '\'' +
                 ", nodeCode='" + nodeCode + '\'' +
@@ -367,6 +416,8 @@ public class FlowHisTask implements HisTask {
                 ", nodeType=" + nodeType +
                 ", targetNodeCode='" + targetNodeCode + '\'' +
                 ", targetNodeName='" + targetNodeName + '\'' +
+                ", approver='" + approver + '\'' +
+                ", collaborator='" + collaborator + '\'' +
                 ", permissionList=" + permissionList +
                 ", flowStatus=" + flowStatus +
                 ", message='" + message + '\'' +

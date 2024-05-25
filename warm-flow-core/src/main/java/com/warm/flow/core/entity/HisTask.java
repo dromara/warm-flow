@@ -43,6 +43,10 @@ public interface HisTask extends RootEntity {
 
     public HisTask setInstanceId(Long instanceId);
 
+    public Integer getActionType();
+
+    public HisTask setActionType(Integer actionType);
+
     public Long getTaskId();
 
     public HisTask setTaskId(Long taskId);
@@ -70,6 +74,14 @@ public interface HisTask extends RootEntity {
     public String getTargetNodeName();
 
     public HisTask setTargetNodeName(String targetNodeName);
+
+    public String getApprover();
+
+    public HisTask setApprover(String approver);
+
+    public String getCollaborator();
+
+    public HisTask setCollaborator(String collaborator);
 
     public List<String> getPermissionList();
 
