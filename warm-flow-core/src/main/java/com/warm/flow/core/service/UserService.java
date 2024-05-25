@@ -1,7 +1,6 @@
 package com.warm.flow.core.service;
 
 import com.warm.flow.core.dto.FlowParams;
-import com.warm.flow.core.entity.HisTask;
 import com.warm.flow.core.entity.Task;
 import com.warm.flow.core.entity.User;
 import com.warm.flow.core.orm.service.IWarmService;
@@ -19,26 +18,23 @@ public interface UserService extends IWarmService<User> {
     /**
      * 设置流程用户
      *
-     * @param hisTasks 历史任务
      * @param addTasks 代办任务
-     * @param flowParams 流程参数
      * @return List<User>
      * @author xiarg
      * @date 2024/5/10 13:59
      */
-    List<User> setUser(List<HisTask> hisTasks, List<Task> addTasks, FlowParams flowParams);
+    List<User> taskAddUsers(List<Task> addTasks);
     /**
      * 设置流程用户
      *
-     * @param hisTasks 历史任务
      * @param addTasks 代办任务
-     * @param flowParams 流程参数
      * @param taskId 任务id
      * @return List<User>
      * @author xiarg
      * @date 2024/5/10 13:59
      */
-    List<User> setSkipUser(List<HisTask> hisTasks, List<Task> addTasks, FlowParams flowParams, Long taskId);
+    List<User> setSkipUser(List<Task> addTasks, Long taskId);
+
     /**
      * 历史任务增加流程人员
      *
@@ -54,12 +50,11 @@ public interface UserService extends IWarmService<User> {
      * 代办任务增加流程人员
      *
      * @param task 代办任务任务信息
-     * @param flowParams 工作流内置参数
      * @return List<User>
      * @author xiarg
      * @date 2024/5/10 15:45
      */
-    List<User> taskAddUser(Task task, FlowParams flowParams);
+    List<User> taskAddUser(Task task);
     /**
      * 流程增加抄送人
      *

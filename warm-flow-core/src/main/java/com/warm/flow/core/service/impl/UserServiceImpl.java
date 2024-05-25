@@ -4,7 +4,6 @@ import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.constant.ExceptionCons;
 import com.warm.flow.core.dao.FlowUserDao;
 import com.warm.flow.core.dto.FlowParams;
-import com.warm.flow.core.entity.HisTask;
 import com.warm.flow.core.entity.Task;
 import com.warm.flow.core.entity.User;
 import com.warm.flow.core.enums.UserType;
@@ -14,6 +13,7 @@ import com.warm.flow.core.utils.AssertUtil;
 import com.warm.flow.core.utils.CollUtil;
 import com.warm.flow.core.utils.StreamUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,23 +31,19 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
     }
 
     @Override
-    public List<User> setUser(List<HisTask> hisTasks, List<Task> addTasks, FlowParams flowParams) {
-        List<User> hisTaskUserList = null;
-        if(CollUtil.isNotEmpty(hisTasks)){
-            hisTaskUserList = StreamUtils.toList(hisTasks, hisTask -> hisTaskAddUser(hisTask.getId(), flowParams));
-        }
-        List<List<User>> taskUserList = null;
+    public List<User> taskAddUsers(List<Task> addTasks) {
+        List<User> taskUserList = new ArrayList<>();
         if(CollUtil.isNotEmpty(addTasks)){
-            taskUserList = StreamUtils.toList(addTasks, task -> taskAddUser(task, flowParams));
+            StreamUtils.toList(addTasks, task -> taskUserList.addAll(taskAddUser(task)));
         }
-        return CollUtil.listAddListsToNew(hisTaskUserList, taskUserList);
+        return taskUserList;
     }
 
     @Override
-    public List<User> setSkipUser(List<HisTask> hisTasks, List<Task> addTasks, FlowParams flowParams, Long taskId) {
+    public List<User> setSkipUser(List<Task> addTasks, Long taskId) {
         // 删除已执行的代办任务的权限人
         delUser(CollUtil.toList(taskId));
-        return setUser(hisTasks, addTasks, flowParams);
+        return taskAddUsers(addTasks);
     }
 
     @Override
@@ -57,7 +53,7 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
     }
 
     @Override
-    public List<User> taskAddUser(Task task, FlowParams flowParams) {
+    public List<User> taskAddUser(Task task) {
         // 审批人权限不能为空
         AssertUtil.isTrue(CollUtil.isEmpty(task.getPermissionList()), ExceptionCons.LOST_NEXT_PERMISSION);
         // 遍历权限集合，生成流程节点的权限

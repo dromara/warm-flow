@@ -46,6 +46,15 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
                 if (StringUtils.isNotEmpty(this.targetNodeName)) {
                     predicates.add(criteriaBuilder.equal(root.get("targetNodeName"), this.targetNodeName));
                 }
+                if (Objects.nonNull(this.actionType)) {
+                    predicates.add(criteriaBuilder.equal(root.get("actionType"), this.actionType));
+                }
+                if (StringUtils.isNotEmpty(this.approver)) {
+                    predicates.add(criteriaBuilder.equal(root.get("approver"), this.approver));
+                }
+                if (StringUtils.isNotEmpty(this.collaborator)) {
+                    predicates.add(criteriaBuilder.equal(root.get("collaborator"), this.collaborator));
+                }
                 if (Objects.nonNull(this.definitionId)) {
                     predicates.add(criteriaBuilder.equal(root.get("definitionId"), this.definitionId));
                 }
@@ -74,11 +83,20 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
         if (Objects.nonNull(updateEntity.nodeType)) {
             this.nodeType = updateEntity.nodeType;
         }
+        if (Objects.nonNull(updateEntity.actionType)) {
+            this.actionType = updateEntity.actionType;
+        }
         if (StringUtils.isNotEmpty(updateEntity.targetNodeCode)) {
             this.targetNodeCode = updateEntity.targetNodeCode;
         }
         if (StringUtils.isNotEmpty(updateEntity.targetNodeName)) {
             this.targetNodeName = updateEntity.targetNodeName;
+        }
+        if (StringUtils.isNotEmpty(updateEntity.approver)) {
+            this.approver = updateEntity.approver;
+        }
+        if (StringUtils.isNotEmpty(updateEntity.collaborator)) {
+            this.collaborator = updateEntity.collaborator;
         }
         if (Objects.nonNull(updateEntity.definitionId)) {
             this.definitionId = updateEntity.definitionId;
@@ -127,6 +145,12 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
      */
     @Column(name="definition_id")
     private Long definitionId;
+
+    /**
+     * 历史任务动作类型（0审批 1转办 2会签 3票签 4委派）
+     */
+    @Column(name="action_type")
+    private Integer actionType;
 
     /**
      * 流程名称
@@ -183,6 +207,18 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
     private String targetNodeName;
 
     /**
+     * 审批者
+     */
+    @Column(name="approver")
+    private String approver;
+
+    /**
+     * 协作人(只有转办、会签、票签、委派)
+     */
+    @Column(name="collaborator")
+    private String collaborator;
+
+    /**
      * 权限标识 permissionFlag的list形式
      */
     @Transient
@@ -228,6 +264,17 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
     @Override
     public FlowHisTask setDefinitionId(Long definitionId) {
         this.definitionId = definitionId;
+        return this;
+    }
+
+    @Override
+    public Integer getActionType() {
+        return actionType;
+    }
+
+    @Override
+    public FlowHisTask setActionType(Integer actionType) {
+        this.actionType = actionType;
         return this;
     }
 
@@ -331,6 +378,29 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
     }
 
     @Override
+    public String getApprover() {
+        return approver;
+    }
+
+    @Override
+    public FlowHisTask setApprover(String approver) {
+        this.approver = approver;
+        return this;
+    }
+
+    @Override
+    public String getCollaborator() {
+        return collaborator;
+    }
+
+    @Override
+    public HisTask setCollaborator(String collaborator) {
+        this.collaborator = collaborator;
+        return this;
+    }
+
+
+    @Override
     public List<String> getPermissionList() {
         return permissionList;
     }
@@ -414,6 +484,7 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
                 ", nodeType=" + nodeType +
                 ", targetNodeCode='" + targetNodeCode + '\'' +
                 ", targetNodeName='" + targetNodeName + '\'' +
+                ", approver='" + approver + '\'' +
                 ", permissionList=" + permissionList +
                 ", flowStatus=" + flowStatus +
                 ", message='" + message + '\'' +
