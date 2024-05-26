@@ -184,8 +184,19 @@ public class StringUtils {
      * @param sep 分隔符
      * @return set集合
      */
-    public static final Set<String> str2Set(String str, String sep) {
-        return new HashSet<String>(str2List(str, sep, true, false));
+    public static Set<String> str2Set(String str, String sep) {
+        return new HashSet<>(str2List(str, sep, true, false));
+    }
+
+    /**
+     * 字符串转list
+     *
+     * @param str         字符串
+     * @param sep         分隔符
+     * @return list集合
+     */
+    public static List<String> str2List(String str, String sep) {
+        return str2List(str, sep, true, true);
     }
 
     /**
@@ -197,7 +208,7 @@ public class StringUtils {
      * @param trim        去掉首尾空白
      * @return list集合
      */
-    public static final List<String> str2List(String str, String sep, boolean filterBlank, boolean trim) {
+    public static List<String> str2List(String str, String sep, boolean filterBlank, boolean trim) {
         List<String> list = new ArrayList<String>();
         if (isEmpty(str)) {
             return list;

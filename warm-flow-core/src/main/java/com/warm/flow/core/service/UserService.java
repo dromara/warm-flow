@@ -1,6 +1,5 @@
 package com.warm.flow.core.service;
 
-import com.warm.flow.core.dto.FlowParams;
 import com.warm.flow.core.entity.Task;
 import com.warm.flow.core.entity.User;
 import com.warm.flow.core.orm.service.IWarmService;
@@ -36,17 +35,6 @@ public interface UserService extends IWarmService<User> {
     List<User> setSkipUser(List<Task> addTasks, Long taskId);
 
     /**
-     * 历史任务增加流程人员
-     *
-     * @param hisTaskId 历史任务信息id
-     * @param flowParams 工作流内置参数
-     * @return User
-     * @author xiarg
-     * @date 2024/5/10 15:45
-     */
-    User hisTaskAddUser(Long hisTaskId, FlowParams flowParams);
-
-    /**
      * 代办任务增加流程人员
      *
      * @param task 代办任务任务信息
@@ -66,19 +54,13 @@ public interface UserService extends IWarmService<User> {
      */
     List<User> ccTo(Long instanceId, List<String> permissionList);
     /**
-     * 根据(代办任务，实例，历史表，节点)id删除流程用户
+     * 根据代办任务id删除流程用户
      *
-     * @param ids (代办任务，实例，历史表，节点)id集合
+     * @param ids 代办任务id集合
      * @author xiarg
      * @date 2024/5/10 13:59
      */
-    void delUser(List<Long> ids);
-
-    /**
-     * 删除用户，通过已有用户
-     * @param user
-     */
-    void delUser(User user);
+    void deleteByTaskIds(List<Long> ids);
 
     /**
      * 根据(代办任务，实例，历史表，节点等)id查询权限人或者处理人

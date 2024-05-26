@@ -6,10 +6,8 @@ import com.warm.flow.core.dto.FlowCombine;
 import com.warm.flow.core.entity.Definition;
 import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.Skip;
-import com.warm.flow.core.entity.User;
 import com.warm.flow.core.enums.NodeType;
 import com.warm.flow.core.enums.SkipType;
-import com.warm.flow.core.enums.UserType;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -63,15 +61,9 @@ public class FlowConfigUtil {
         List<Element> nodesElement = definitionElement.elements();
         // 遍历一个流程中的各个节点
         List<Node> nodeList = definition.getNodeList();
-        List<User> userList = definition.getUserList();
         for (Element nodeElement : nodesElement) {
             Node node = initNodeAndCondition(nodeElement);
             nodeList.add(node);
-            // 初始化节点的权限用户
-            List<User> users = initUser(nodeElement, node);
-            if (CollUtil.isNotEmpty(users)){
-                userList.addAll(users);
-            }
         }
         try {
             if (is != null) {
@@ -94,6 +86,7 @@ public class FlowConfigUtil {
         node.setNodeType(NodeType.getKeyByValue(nodeElement.attributeValue("nodeType")));
         node.setNodeCode(nodeElement.attributeValue("nodeCode"));
         node.setNodeName(nodeElement.attributeValue("nodeName"));
+        node.setPermissionFlag(nodeElement.attributeValue("permissionFlag"));
         node.setNodeRatio(StringUtils.isNotEmpty(nodeElement.attributeValue("nodeRatio")) ?
                 new BigDecimal(nodeElement.attributeValue("nodeRatio")): null);
         node.setCoordinate(nodeElement.attributeValue("coordinate"));
@@ -122,16 +115,6 @@ public class FlowConfigUtil {
         return node;
     }
 
-    private static List<User> initUser(Element nodeElement, Node node){
-        // 初始化流程节点的权限
-        List<String> permissions = CollUtil.strToColl(nodeElement.attributeValue("permissionFlag"), ",");
-        if(CollUtil.isNotEmpty(permissions)){
-            return StreamUtils.toList(permissions, permission -> FlowFactory.userService()
-                    .structureUser(node.getId(), permission, UserType.PROPOSE.getKey()));
-        }
-        return Collections.emptyList();
-    }
-
     @SuppressWarnings("unchecked")
     public static Document createDocument(Definition definition) {
         // 创建document对象
@@ -152,11 +135,8 @@ public class FlowConfigUtil {
             nodeElement.addAttribute("nodeType", NodeType.getValueByKey(node.getNodeType()));
             nodeElement.addAttribute("nodeCode", node.getNodeCode());
             nodeElement.addAttribute("nodeName", node.getNodeName());
+            nodeElement.addAttribute("permissionFlag", node.getPermissionFlag());
             nodeElement.addAttribute("nodeRatio", Objects.nonNull(node.getNodeRatio()) ? node.getNodeRatio().toPlainString() : null);
-            List<String> permission = FlowFactory.userService().getPermission(node.getId(), UserType.PROPOSE.getKey());
-            if (CollUtil.isNotEmpty(permission)) {
-                nodeElement.addAttribute("permissionFlag", CollUtil.strListToStr(permission, ","));
-            }
             nodeElement.addAttribute("coordinate", node.getCoordinate());
             nodeElement.addAttribute("skipAnyNode", node.getSkipAnyNode());
             nodeElement.addAttribute("listenerType", node.getListenerType());
@@ -192,8 +172,6 @@ public class FlowConfigUtil {
         combine.setDefinition(definition);
         // 所有的流程节点
         List<Node> allNodes = combine.getAllNodes();
-        // 所有的流程节点权限人
-        List<User> allUsers = combine.getAllUsers();
         // 所有的流程连线
         List<Skip> allSkips = combine.getAllSkips();
 
@@ -205,14 +183,10 @@ public class FlowConfigUtil {
         definition.setUpdateTime(new Date());
         FlowFactory.dataFillHandler().idFill(definition);
 
-        // 处理节点权限人
-        List<User> userList = definition.getUserList();
-        allUsers.addAll(userList);
-
         List<Node> nodeList = definition.getNodeList();
         // 每一个流程的开始节点个数
         int startNum = 0;
-        Set<String> nodeCodeSet = new HashSet<String>();
+        Set<String> nodeCodeSet = new HashSet<>();
         // 便利一个流程中的各个节点
         for (Node node : nodeList) {
             initNodeAndCondition(node, definition.getId(), definition.getVersion());

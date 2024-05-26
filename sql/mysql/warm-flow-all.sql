@@ -64,6 +64,7 @@ CREATE TABLE `flow_node`
     `definition_id`   bigint       NOT NULL COMMENT '流程定义id',
     `node_code`       varchar(100) NOT NULL COMMENT '流程节点编码',
     `node_name`       varchar(100) DEFAULT NULL COMMENT '流程节点名称',
+    `permission_flag` varchar(200) DEFAULT NULL COMMENT '权限标识（权限类型:权限标识，可以多个，用逗号隔开)',
     `node_ratio`      DECIMAL(6,3) DEFAULT NULL COMMENT '流程签署比例值',
     `coordinate`      varchar(100) DEFAULT NULL COMMENT '坐标',
     `skip_any_node`   varchar(100) DEFAULT 'N' COMMENT '是否可以退回任意节点（Y是 N否）',
@@ -118,9 +119,9 @@ CREATE TABLE `flow_task`
 CREATE TABLE `flow_user`
 (
     `id`              bigint unsigned NOT NULL COMMENT '主键id',
-    `type`            char(1)  NOT NULL COMMENT '人员类型（1代办任务的审批人权限 2代办任务的转办人权限 3流程实例的抄送人权限 4流程节点的权限 5待办任务的委托人权限）',
-    `processed_by`    varchar(80) DEFAULT NULL COMMENT '权限',
-    `associated`      bigint NOT NULL COMMENT '关联id（审批人和转办人是代办任务id，抄送人是实例id，已审批人是历史表id,计划审批人是节点的id）',
+    `type`            char(1)  NOT NULL COMMENT '人员类型（1代办任务的审批人权限 2代办任务的转办人权限 3流程实例的抄送人权限 4待办任务的委托人权限）',
+    `processed_by`    varchar(80) DEFAULT NULL COMMENT '权限人',
+    `associated`      bigint NOT NULL COMMENT '关联表id',
     `create_time`     datetime     DEFAULT NULL COMMENT '创建时间',
     `create_by`       varchar(80) DEFAULT NULL COMMENT '创建人',
     `update_time`     datetime     DEFAULT NULL COMMENT '更新时间',

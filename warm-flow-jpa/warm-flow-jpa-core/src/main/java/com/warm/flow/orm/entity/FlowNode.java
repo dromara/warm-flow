@@ -170,6 +170,12 @@ public class FlowNode extends JPARootEntity<FlowNode> implements Node {
     private String nodeName;
 
     /**
+     * 权限标识（权限类型:权限标识，可以多个，用逗号隔开)
+     */
+    @Column(name="permission_flag")
+    private String permissionFlag;
+
+    /**
      * 流程签署比例值
      */
     @Column(name="node_ratio")
@@ -257,6 +263,17 @@ public class FlowNode extends JPARootEntity<FlowNode> implements Node {
     @Override
     public FlowNode setNodeName(String nodeName) {
         this.nodeName = nodeName;
+        return this;
+    }
+
+    @Override
+    public String getPermissionFlag() {
+        return permissionFlag;
+    }
+
+    @Override
+    public FlowNode setPermissionFlag(String permissionFlag) {
+        this.permissionFlag = permissionFlag;
         return this;
     }
 
@@ -383,6 +400,7 @@ public class FlowNode extends JPARootEntity<FlowNode> implements Node {
                 ", definitionId=" + definitionId +
                 ", nodeCode='" + nodeCode + '\'' +
                 ", nodeName='" + nodeName + '\'' +
+                ", permissionFlag='" + permissionFlag + '\'' +
                 ", nodeRatio=" + nodeRatio +
                 ", dynamicPermissionFlagList='" + dynamicPermissionFlagList + '\'' +
                 ", coordinate='" + coordinate + '\'' +
