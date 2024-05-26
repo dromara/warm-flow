@@ -10,6 +10,7 @@
         <result property="definitionId" column="definition_id"/>
         <result property="nodeCode" column="node_code"/>
         <result property="nodeName" column="node_name"/>
+        <result property="permissionFlag" column="permission_flag"/>
         <result property="nodeRatio" column="node_ratio"/>
         <result property="coordinate" column="coordinate"/>
         <result property="skipAnyNode" column="skip_any_node"/>
@@ -30,6 +31,7 @@
                t.definition_id,
                t.node_code,
                t.node_name,
+               t.permission_flag,
                t.node_ratio,
                t.coordinate,
                t.skip_any_node,
@@ -143,7 +145,8 @@
             <if test="nodeType != null">node_type,</if>
             <if test="definitionId != null">definition_id,</if>
             <if test="nodeCode != null and nodeCode != ''">node_code,</if>
-            <if test="nodeName != null and nodeName != ''">node_name,</if>
+            <if test="nodeName != null and nodeName != ''">node_name,
+            <if test="permissionFlag != null and permissionFlag != ''">t.permission_flag,</if></if>
             <if test="nodeRatio != null">node_ratio,</if>
             <if test="coordinate != null and coordinate != ''">coordinate,</if>
             <if test="skipAnyNode != null and skipAnyNode != ''">skip_any_node,</if>
@@ -162,7 +165,8 @@
             <if test="nodeType != null">#{nodeType},</if>
             <if test="definitionId != null">#{definitionId},</if>
             <if test="nodeCode != null and nodeCode != ''">#{nodeCode},</if>
-            <if test="nodeName != null and nodeName != ''">#{nodeName},</if>
+            <if test="nodeName != null and nodeName != ''">#{nodeName},
+            <if test="permissionFlag != null and permissionFlag != ''">#{permissionFlag},</if></if>
             <if test="nodeRatio != null">#{nodeRatio},</if>
             <if test="coordinate != null and coordinate != ''">#{coordinate},</if>
             <if test="skipAnyNode != null and skipAnyNode != ''">#{skipAnyNode},</if>

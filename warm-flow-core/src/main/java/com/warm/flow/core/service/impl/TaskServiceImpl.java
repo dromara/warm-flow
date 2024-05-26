@@ -141,11 +141,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 .setCreateTime(new Date());
         FlowFactory.dataFillHandler().idFill(insHis);
         FlowFactory.hisTaskService().saveBatch(CollUtil.toList(insHis));
-        // 更新当前任务的计划审批人
-        String processedBy = deputeUser.getProcessedBy();
-        deputeUser.setProcessedBy(deputeUser.getCreateBy()).setType(UserType.APPROVER.getKey())
-                .setCreateBy(StringUtils.emptyDefault(flowParams.getCreateBy(), processedBy));
-        FlowFactory.userService().updateById(deputeUser);
+        FlowFactory.userService().removeById(deputeUser.getId());
         return FlowFactory.insService().getById(task.getInstanceId());
     }
     @Override
@@ -191,7 +187,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         FlowFactory.insService().updateById(instance);
 
         // 删除流程相关办理人
-        FlowFactory.userService().delUser(Collections.singletonList(task.getId()));
+        FlowFactory.userService().deleteByTaskIds(Collections.singletonList(task.getId()));
 
         // 处理未完成的任务，当流程完成，还存在代办任务未完成，转历史任务，状态完成。
         handUndoneTask(instance, task.getId());
@@ -276,8 +272,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         if (CollUtil.isNotEmpty(node.getDynamicPermissionFlagList())) {
             permissionList = node.getDynamicPermissionFlagList();
         } else {
-            // 查询下一节点权限人
-            permissionList = FlowFactory.userService().getPermission(node.getId(), UserType.PROPOSE.getKey());
+            permissionList = StringUtils.str2List(node.getPermissionFlag(), ",");
             // 如果设置了发起人审批，则需要动态替换权限标识
             for (int i = 0; i < permissionList.size(); i++) {
                 String permission = permissionList.get(i);
@@ -487,12 +482,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         FlowFactory.dataFillHandler().idFill(insHis);
         FlowFactory.hisTaskService().save(insHis);
 
-        // 添加历史任务用户
-        User insUser = FlowFactory.userService().hisTaskAddUser(insHis.getId(), flowParams);
-        FlowFactory.userService().save(insUser);
-
         // 删掉待办用户
-        FlowFactory.userService().delUser(todoUser);
+        FlowFactory.userService().removeById(todoUser.getId());
         return false;
     }
 
@@ -644,7 +635,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         if (CollUtil.isNotEmpty(NowNode.getDynamicPermissionFlagList())) {
             permissions = NowNode.getDynamicPermissionFlagList();
         } else {
-            permissions = FlowFactory.userService().getPermission(task.getId(), UserType.APPROVAL.getKey());
+
+            permissions = StringUtils.str2List(NowNode.getPermissionFlag(), ",");
         }
         // 当前节点
         AssertUtil.isTrue(CollUtil.isEmpty(permissions), ExceptionCons.LOST_NODE_PERMISSION);
@@ -797,7 +789,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         removeByIds(StreamUtils.toList(taskList, Task::getId));
         FlowFactory.hisTaskService().saveBatch(insHisList);
         // 删除所有代办任务的权限人
-        FlowFactory.userService().delUser(StreamUtils.toList(taskList, Task::getId));
+        FlowFactory.userService().deleteByTaskIds(StreamUtils.toList(taskList, Task::getId));
     }
 
     /**

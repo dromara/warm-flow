@@ -42,22 +42,22 @@ public class FlowUser implements User{
     private String delFlag;
 
     /**
-     * 1-审批人权限 2-转办人权限 3-抄送人权限 4-已审批人
+     * 人员类型（1代办任务的审批人权限 2代办任务的转办人权限 3流程实例的抄送人权限 4待办任务的委托人权限）
      */
     private String type;
 
     /**
-     * 权限(role:1/user:1)/已审批人(用户id)
+     * 权限人
      */
     private String processedBy;
 
     /**
-     * 关联id（审批人和转办人是代办任务id，抄送人是实例id，已审批人是历史表id）
+     * 关联表id
      */
     private Long associated;
 
     /**
-     * 作为委托的人保存
+     * 创建人：比如作为委托的人保存
      */
     private String createBy;
 

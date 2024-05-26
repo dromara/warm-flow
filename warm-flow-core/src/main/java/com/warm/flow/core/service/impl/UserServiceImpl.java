@@ -3,7 +3,6 @@ package com.warm.flow.core.service.impl;
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.constant.ExceptionCons;
 import com.warm.flow.core.dao.FlowUserDao;
-import com.warm.flow.core.dto.FlowParams;
 import com.warm.flow.core.entity.Task;
 import com.warm.flow.core.entity.User;
 import com.warm.flow.core.enums.UserType;
@@ -42,14 +41,8 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
     @Override
     public List<User> setSkipUser(List<Task> addTasks, Long taskId) {
         // 删除已执行的代办任务的权限人
-        delUser(CollUtil.toList(taskId));
+        deleteByTaskIds(CollUtil.toList(taskId));
         return taskAddUsers(addTasks);
-    }
-
-    @Override
-    public User hisTaskAddUser(Long hisTaskId, FlowParams flowParams) {
-        // 新建流程历史的已审批人
-        return structureUser(hisTaskId, flowParams.getCreateBy(), UserType.APPROVER.getKey());
     }
 
     @Override
@@ -67,13 +60,8 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
     }
 
     @Override
-    public void delUser(List<Long> ids) {
+    public void deleteByTaskIds(List<Long> ids) {
         getDao().deleteByTaskIds(ids);
-    }
-
-    @Override
-    public void delUser(User user) {
-        getDao().delete(user);
     }
 
     @Override
