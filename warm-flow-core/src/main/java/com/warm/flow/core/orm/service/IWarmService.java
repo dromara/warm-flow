@@ -1,6 +1,7 @@
 package com.warm.flow.core.orm.service;
 
 
+import com.warm.flow.core.dao.WarmDao;
 import com.warm.flow.core.orm.agent.WarmQuery;
 import com.warm.flow.core.utils.page.Page;
 
@@ -16,6 +17,7 @@ import java.util.List;
  */
 public interface IWarmService<T> {
 
+    public <M extends WarmDao<T>> M getDao();
     /**
      * 根据id查询
      *

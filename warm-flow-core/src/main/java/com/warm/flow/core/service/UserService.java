@@ -44,16 +44,6 @@ public interface UserService extends IWarmService<User> {
      */
     List<User> taskAddUser(Task task);
     /**
-     * 流程增加抄送人
-     *
-     * @param instanceId 流程实例id
-     * @param permissionList 权限标识集合
-     * @return List<User>
-     * @author xiarg
-     * @date 2024/5/10 15:45
-     */
-    List<User> ccTo(Long instanceId, List<String> permissionList);
-    /**
      * 根据代办任务id删除流程用户
      *
      * @param ids 代办任务id集合

@@ -8,8 +8,10 @@ import com.warm.flow.core.enums.SkipType;
 import com.warm.flow.core.service.DefService;
 import com.warm.flow.core.service.InsService;
 import com.warm.flow.core.service.TaskService;
-import com.warm.flow.orm.entity.FlowDefinition;
 import com.warm.flow.core.utils.page.Page;
+import com.warm.flow.orm.dao.WarmDaoImpl;
+import com.warm.flow.orm.entity.FlowDefinition;
+import com.warm.flow.orm.mapper.WarmMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -43,6 +45,13 @@ public class FlowTest {
     public void deployFlow() throws Exception {
         String path = "D:\\java\\warm-flow\\warm-flow-doc\\leaveFlow-serial1_1.0.xml";
         System.out.println("已部署流程的id：" + defService.importXml(new FileInputStream(path)).getId());
+    }
+
+    @Test
+    public void deployFlow1() {
+        WarmDaoImpl<Definition> dao = defService.getDao();
+        WarmMapper<Definition> mapper = dao.getMapper();
+        mapper.selectList(null).forEach(System.out::println);
     }
 
     @Test
