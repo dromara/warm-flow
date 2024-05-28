@@ -68,11 +68,6 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         // 代办任务设置处理人
         List<User> users = FlowFactory.userService().taskAddUsers(addTasks);
 
-        // 新增抄送人
-        if(CollUtil.isNotEmpty(flowParams.getAdditionalHandler())){
-            users.addAll(FlowFactory.userService().ccTo(instance.getId(), flowParams.getAdditionalHandler()));
-        }
-
         // 开启流程，保存流程信息
         saveFlowInfo(instance, addTasks, hisTasks, users);
 

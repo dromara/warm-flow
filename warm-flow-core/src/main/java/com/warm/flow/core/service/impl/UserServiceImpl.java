@@ -55,11 +55,6 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
     }
 
     @Override
-    public List<User> ccTo(Long instanceId, List<String> permissionList) {
-        return structureUser(instanceId, permissionList, UserType.CCTO.getKey());
-    }
-
-    @Override
     public void deleteByTaskIds(List<Long> ids) {
         getDao().deleteByTaskIds(ids);
     }
