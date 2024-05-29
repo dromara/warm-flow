@@ -635,12 +635,11 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         if (CollUtil.isNotEmpty(NowNode.getDynamicPermissionFlagList())) {
             permissions = NowNode.getDynamicPermissionFlagList();
         } else {
-
-            permissions = StringUtils.str2List(NowNode.getPermissionFlag(), ",");
+            permissions = FlowFactory.userService().getPermission(task.getId());
         }
         // 当前节点
-        AssertUtil.isTrue(CollUtil.isEmpty(permissions), ExceptionCons.LOST_NODE_PERMISSION);
-        AssertUtil.isTrue(CollUtil.notContainsAny(permissionFlags, permissions), ExceptionCons.NULL_ROLE_NODE);
+        AssertUtil.isTrue(CollUtil.isNotEmpty(permissions) && (CollUtil.isEmpty(permissionFlags)
+                || CollUtil.notContainsAny(permissionFlags, permissions)), ExceptionCons.NULL_ROLE_NODE);
     }
 
     // 设置结束节点相关信息
