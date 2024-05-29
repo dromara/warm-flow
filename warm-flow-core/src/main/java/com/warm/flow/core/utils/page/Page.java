@@ -138,11 +138,9 @@ public class Page<T> implements OrderBy {
         if ("oracle".equals(dataSourceType)) {
             this.pageSize = this.pageSize + this.pageNum;
         } else {
-            if (pageNum == 0) {
-                int tmpPageSize = this.pageSize;
-                this.pageSize = this.pageNum;
-                this.pageNum = tmpPageSize;
-            }
+            int tmpPageSize = this.pageSize;
+            this.pageSize = this.pageNum;
+            this.pageNum = tmpPageSize;
         }
         return this;
     }
