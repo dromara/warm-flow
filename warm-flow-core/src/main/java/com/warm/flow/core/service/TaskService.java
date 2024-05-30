@@ -46,15 +46,7 @@ public interface TaskService extends IWarmService<Task> {
      * @param task:流程任务[必传]
      */
     Instance skip(FlowParams flowParams, Task task);
-    /**
-     * 受托人处理任务方法
-     *
-     * @param taskId 任务id
-     * @return flowParams 流程参数
-     * @author xiarg
-     * @date 2024/5/10 11:19
-     */
-    public Instance handleDepute(Long taskId, FlowParams flowParams);
+
     /**
      * 终止流程，提前结束流程，将所有代办任务转历史
      *

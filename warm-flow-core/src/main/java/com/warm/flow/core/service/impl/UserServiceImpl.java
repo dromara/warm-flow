@@ -108,10 +108,4 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
         return user;
     }
 
-    @Override
-    public boolean haveDepute(Long taskId, String createBy) {
-        List<User> userList = list(FlowFactory.newUser().setAssociated(taskId).setCreateBy(createBy)
-                .setType(UserType.DEPUTE.getKey()));
-        return CollUtil.isNotEmpty(userList);
-    }
 }

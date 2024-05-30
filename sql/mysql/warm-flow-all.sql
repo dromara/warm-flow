@@ -20,8 +20,8 @@ CREATE TABLE `flow_his_task`
     `id`               bigint unsigned NOT NULL COMMENT '主键id',
     `definition_id`    bigint NOT NULL COMMENT '对应flow_definition表的id',
     `instance_id`      bigint NOT NULL COMMENT '对应flow_instance表的id',
-    `task_id`          bigint NOT NULL COMMENT '对应flow_task表的id'
-    `action_type`      tinyint(1) NOT NULL COMMENT '历史任务动作类型（0审批 1转办 2会签 3票签 4委派）',
+    `task_id`          bigint NOT NULL COMMENT '对应flow_task表的id',
+    `action_type`      tinyint(1) NOT NULL DEFAULT '0' COMMENT '历史任务动作类型（0审批 1转办 2会签 3票签 4委派）',
     `node_code`        varchar(100) DEFAULT NULL COMMENT '开始节点编码',
     `node_name`        varchar(100) DEFAULT NULL COMMENT '开始节点名称',
     `node_type`        tinyint(1) DEFAULT NULL COMMENT '开始节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）',
