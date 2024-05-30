@@ -53,7 +53,7 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
     public Page<T> selectPage(T entity, Page<T> page) {
         TenantDeleteUtil.getEntity(entity);
         String dataSourceType = FlowFactory.dataSourceType();
-        page.ifNecessaryChangePage(FlowFactory.dataSourceType());
+        page.ifNecessaryChangePage(dataSourceType);
         long total = getMapper().selectCount(entity);
         if (total > 0) {
             List<T> list = getMapper().selectList(entity, page, page.getOrderBy() + " " + page.getIsAsc(), dataSourceType);
