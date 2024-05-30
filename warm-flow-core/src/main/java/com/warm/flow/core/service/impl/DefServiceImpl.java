@@ -82,14 +82,6 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         // 所有的流程连线
         List<Skip> allSkips = combine.getAllSkips();
 
-        // 删除节点的权限人，节点，流程连线
-        FlowFactory.userService().deleteByTaskIds(
-                FlowFactory.nodeService()
-                        .getByNodeCodes(null, def.getId())
-                        .stream()
-                        .map(Node::getId)
-                        .collect(Collectors.toList())
-        );
         FlowFactory.nodeService().remove(FlowFactory.newNode().setDefinitionId(def.getId()));
         FlowFactory.skipService().remove(FlowFactory.newSkip().setDefinitionId(def.getId()));
         allNodes.forEach(node -> node.setDefinitionId(def.getId()));
