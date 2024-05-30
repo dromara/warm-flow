@@ -62,17 +62,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
 
     @Override
     public void saveXml(Definition def) throws Exception {
-        if (StringUtils.isEmpty(def.getXmlString())) {
-            // 先删除节点的权限人
-            FlowFactory.userService().deleteByTaskIds(
-                    FlowFactory.nodeService()
-                            .getByNodeCodes(null, def.getId())
-                            .stream()
-                            .map(Node::getId)
-                            .collect(Collectors.toList())
-            );
-            FlowFactory.nodeService().remove(FlowFactory.newNode().setDefinitionId(def.getId()));
-            FlowFactory.skipService().remove(FlowFactory.newSkip().setDefinitionId(def.getId()));
+        if (ObjectUtil.isNull(def)) {
             return;
         }
         FlowCombine combine = FlowConfigUtil.readConfig(new ByteArrayInputStream(def.getXmlString()
