@@ -295,6 +295,7 @@
             <id>release</id>
             <build>
                 <!-- mvn clean deploy -P release -->
+                <!-- mvn clean install -Dmaven.test.skip=true   -->
                 <!-- source ~/.bash_profile  -->
                 <plugins>
                     <!-- Source -->

@@ -218,21 +218,8 @@ public class FlowConfigUtil {
      * @param nodeList
      */
     private static void checkSkipNode(List<Skip> allSkips, List<Node> nodeList) {
-        Map<String, Node> flowNodeMap = StreamUtils.toMap(nodeList, Node::getNodeCode, node -> node);
         Map<String, List<Skip>> allSkipMap = StreamUtils.groupByKey(allSkips, Skip::getNowNodeCode);
         List<Skip> gatewaySkips = new ArrayList<>();
-        // TODO min 2023-10-20 ,之前定义的规则，现在已经不适用了，后面观察，会有啥影响
-        // for (FlowSkip allSkip : allSkips) {
-        //     allSkip.setNextNodeType(flowNodeMap.get(allSkip.getNextNodeCode()).getNodeType());
-        //     if (NodeType.isGateWay(allSkip.getNowNodeType())) {
-        //         gatewaySkips.add(allSkip);
-        //     }
-        //     // 中间节点不可退回到网关节点
-        //     AssertUtil.isTrue(!NodeType.isGateWay(allSkip.getNowNodeType())
-        //                     && SkipType.isReject(allSkip.getSkipType())
-        //                     && NodeType.isGateWay(allSkip.getNextNodeType())
-        //             , ExceptionCons.BETWEEN_REJECT_GATEWAY);
-        // }
         // 校验网关节点不可直连
         if (CollUtil.isNotEmpty(gatewaySkips)) {
             for (Skip gatewaySkip1 : gatewaySkips) {

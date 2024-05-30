@@ -86,10 +86,6 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         AssertUtil.isTrue(CollUtil.isEmpty(taskList), ExceptionCons.NOT_FOUNT_TASK);
         AssertUtil.isTrue(taskList.size() > 1, ExceptionCons.TASK_NOT_ONE);
         Task task = taskList.get(0);
-        // 如果是受托人在处理任务，需要处理一条委派记录，并且更新委派人，回到计划审批人,然后直接返回流程实例
-        if(FlowFactory.userService().haveDepute(task.getId(), flowParams.getCreateBy())){
-            return FlowFactory.taskService().handleDepute(task.getId(), flowParams);
-        }
         return FlowFactory.taskService().skip(flowParams, task);
     }
 

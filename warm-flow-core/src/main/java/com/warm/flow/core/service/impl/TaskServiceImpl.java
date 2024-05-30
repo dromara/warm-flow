@@ -35,10 +35,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     @Override
     public Instance skip(Long taskId, FlowParams flowParams) {
-        // 如果是受托人在处理任务，需要处理一条委派记录，并且更新委托人，回到计划审批人,然后直接返回流程实例
-        if(FlowFactory.userService().haveDepute(taskId, flowParams.getCreateBy())){
-            return handleDepute(taskId, flowParams);
-        }
+
         AssertUtil.isTrue(StringUtils.isNotEmpty(flowParams.getMessage())
                 && flowParams.getMessage().length() > 500, ExceptionCons.MSG_OVER_LENGTH);
         // 获取待办任务
@@ -53,6 +50,11 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         Instance instance = FlowFactory.insService().getById(task.getInstanceId());
         AssertUtil.isTrue(ObjectUtil.isNull(instance), ExceptionCons.NOT_FOUNT_INSTANCE);
         AssertUtil.isTrue(FlowStatus.isFinished(instance.getFlowStatus()), ExceptionCons.FLOW_FINISH);
+
+        // 如果是受托人在处理任务，需要处理一条委派记录，并且更新委托人，回到计划审批人,然后直接返回流程实例
+        if(handleDepute(task, flowParams)){
+            return instance;
+        }
 
         // TODO min 后续考虑并发问题，待办任务和实例表不同步，可给代办任务id加锁，抽取所接口，方便后续兼容分布式锁
         // 非第一个记得跳转类型必传
@@ -116,34 +118,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 , NowNode, nextNodes);
         return instance;
     }
-    @Override
-    public Instance handleDepute(Long taskId, FlowParams flowParams) {
-        // 获取待办任务
-        Task task = getById(taskId);
-        // 获取受托人
-        User deputeUser = FlowFactory.userService().getOne(FlowFactory.newUser().setAssociated(taskId)
-                .setType(UserType.DEPUTE.getKey()));
-        // 记录被人别人委托的人处理任务记录
-        HisTask insHis = FlowFactory.newHisTask()
-                .setInstanceId(task.getInstanceId())
-                .setActionType(ActionType.DEPUTE.getKey())
-                .setNodeCode(task.getNodeCode())
-                .setNodeName(task.getNodeName())
-                .setNodeType(task.getNodeType())
-                .setTenantId(task.getTenantId())
-                .setDefinitionId(task.getDefinitionId())
-                .setTargetNodeCode(task.getNodeCode())
-                .setTargetNodeName(task.getNodeName())
-                .setApprover(deputeUser.getProcessedBy())
-                .setCollaborator(deputeUser.getCreateBy())
-                .setFlowStatus(FlowStatus.PASS.getKey())
-                .setMessage(flowParams.getMessage())
-                .setCreateTime(new Date());
-        FlowFactory.dataFillHandler().idFill(insHis);
-        FlowFactory.hisTaskService().saveBatch(CollUtil.toList(insHis));
-        FlowFactory.userService().removeById(deputeUser.getId());
-        return FlowFactory.insService().getById(task.getInstanceId());
-    }
+
     @Override
     public Instance termination(Long taskId, FlowParams flowParams) {
         // 获取待办任务
@@ -397,6 +372,47 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         return tasks.stream().max(Comparator.comparingLong(Task::getId)).orElse(null);
     }
 
+    private boolean handleDepute(Task task, FlowParams flowParams) {
+        // 获取受托人
+        User entrustedUser = FlowFactory.userService().getOne(FlowFactory.newUser().setAssociated(task.getId())
+                .setCreateBy(flowParams.getCreateBy()).setType(UserType.DEPUTE.getKey()));
+        if (ObjectUtil.isNull(entrustedUser)) return false;
+
+        // 记录受托人处理任务记录
+        HisTask insHis = FlowFactory.newHisTask()
+                .setInstanceId(task.getInstanceId())
+                .setActionType(ActionType.DEPUTE.getKey())
+                .setNodeCode(task.getNodeCode())
+                .setNodeName(task.getNodeName())
+                .setNodeType(task.getNodeType())
+                .setTenantId(task.getTenantId())
+                .setDefinitionId(task.getDefinitionId())
+                .setTargetNodeCode(task.getNodeCode())
+                .setTargetNodeName(task.getNodeName())
+                .setApprover(entrustedUser.getProcessedBy())
+                .setCollaborator(entrustedUser.getCreateBy())
+                .setFlowStatus(SkipType.isReject(flowParams.getSkipType())
+                        ? FlowStatus.REJECT.getKey() : FlowStatus.PASS.getKey())
+                .setMessage(flowParams.getMessage())
+                .setCreateTime(new Date());
+        FlowFactory.dataFillHandler().idFill(insHis);
+        FlowFactory.hisTaskService().saveBatch(CollUtil.toList(insHis));
+        FlowFactory.userService().removeById(entrustedUser.getId());
+
+        // 查询委托人，如果在flow_user不存在，则给委托人新增代办记录
+        User deputeUser = FlowFactory.userService().getOne(FlowFactory.newUser().setAssociated(task.getId())
+                .setCreateBy(entrustedUser.getCreateBy()).setType(UserType.APPROVAL.getKey()));
+        if (ObjectUtil.isNull(deputeUser)) {
+            User newUser = FlowFactory.userService().structureUser(entrustedUser.getAssociated(), entrustedUser.getCreateBy()
+                    , UserType.APPROVAL.getKey(), entrustedUser.getProcessedBy());
+            FlowFactory.userService().save(newUser);
+        }
+
+        // 删除受托人
+        FlowFactory.userService().removeById(deputeUser);
+        return true;
+    }
+
     /**
      * 协作处理，会签，票签过程中 返回 false 最后一个签署返回 true
      * @param NowNode
@@ -635,12 +651,11 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         if (CollUtil.isNotEmpty(NowNode.getDynamicPermissionFlagList())) {
             permissions = NowNode.getDynamicPermissionFlagList();
         } else {
-
-            permissions = StringUtils.str2List(NowNode.getPermissionFlag(), ",");
+            permissions = FlowFactory.userService().getPermission(task.getId());
         }
         // 当前节点
-        AssertUtil.isTrue(CollUtil.isEmpty(permissions), ExceptionCons.LOST_NODE_PERMISSION);
-        AssertUtil.isTrue(CollUtil.notContainsAny(permissionFlags, permissions), ExceptionCons.NULL_ROLE_NODE);
+        AssertUtil.isTrue(CollUtil.isNotEmpty(permissions) && (CollUtil.isEmpty(permissionFlags)
+                || CollUtil.notContainsAny(permissionFlags, permissions)), ExceptionCons.NULL_ROLE_NODE);
     }
 
     // 设置结束节点相关信息

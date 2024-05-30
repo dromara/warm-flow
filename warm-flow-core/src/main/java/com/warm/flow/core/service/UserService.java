@@ -124,15 +124,5 @@ public interface UserService extends IWarmService<User> {
      * @return 结果
      */
     User structureUser(Long associated, String permission, String type, String createBy);
-    /**
-     * 任务是否存在委派
-     *
-     * @param taskId 任务id
-     * @param createBy 受托人
-     * @return boolean 是否存在委派
-     * @author xiarg
-     * @date 2024/5/10 11:19
-     */
-    boolean haveDepute(Long taskId, String createBy);
 
 }

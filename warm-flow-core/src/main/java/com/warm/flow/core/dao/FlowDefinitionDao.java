@@ -5,7 +5,7 @@ import com.warm.flow.core.entity.Definition;
 import java.util.List;
 
 /**
- * 流程定义Mapper接口
+ * 流程定义Dao接口，不同的orm扩展包实现它
  *
  * @author warm
  * @date 2023-03-29
