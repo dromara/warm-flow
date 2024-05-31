@@ -70,7 +70,7 @@ public interface WarmDao<T> {
      * @param entity 实体
      * @return 结果
      */
-    int modifyById(T entity);
+    int updateById(T entity);
 
     /**
      * 根据entity删除

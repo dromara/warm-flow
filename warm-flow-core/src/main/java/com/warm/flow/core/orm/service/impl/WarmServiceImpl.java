@@ -1,9 +1,12 @@
 package com.warm.flow.core.orm.service.impl;
 
 
+import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.dao.WarmDao;
+import com.warm.flow.core.handler.DataFillHandler;
 import com.warm.flow.core.orm.agent.WarmQuery;
 import com.warm.flow.core.orm.service.IWarmService;
+import com.warm.flow.core.utils.ObjectUtil;
 import com.warm.flow.core.utils.SqlHelper;
 import com.warm.flow.core.utils.CollUtil;
 import com.warm.flow.core.utils.page.Page;
@@ -66,12 +69,14 @@ public abstract class WarmServiceImpl<M extends WarmDao<T>, T> implements IWarmS
 
     @Override
     public boolean save(T entity) {
+        insertFill(entity);
         return SqlHelper.retBool(getDao().save(entity));
     }
 
     @Override
     public boolean updateById(T entity) {
-        return SqlHelper.retBool(getDao().modifyById(entity));
+        updateFill(entity);
+        return SqlHelper.retBool(getDao().updateById(entity));
     }
 
     @Override
@@ -94,6 +99,7 @@ public abstract class WarmServiceImpl<M extends WarmDao<T>, T> implements IWarmS
         if (CollUtil.isEmpty(list)) {
             return;
         }
+        list.forEach(this::insertFill);
         getDao().saveBatch(list);
     }
 
@@ -102,6 +108,7 @@ public abstract class WarmServiceImpl<M extends WarmDao<T>, T> implements IWarmS
         if (CollUtil.isEmpty(list)) {
             return;
         }
+        list.forEach(this::updateFill);
         getDao().updateBatch(list);
     }
 
@@ -133,5 +140,21 @@ public abstract class WarmServiceImpl<M extends WarmDao<T>, T> implements IWarmS
     @Override
     public WarmQuery<T> orderBy(String orderByField) {
         return new WarmQuery<>(this).orderBy(orderByField);
+    }
+
+
+    public void insertFill(T entity) {
+        DataFillHandler dataFillHandler = FlowFactory.dataFillHandler();
+        if (ObjectUtil.isNotNull(dataFillHandler)) {
+            dataFillHandler.idFill(entity);
+            dataFillHandler.insertFill(entity);
+        }
+    }
+
+    public void updateFill(T entity) {
+        DataFillHandler dataFillHandler = FlowFactory.dataFillHandler();
+        if (ObjectUtil.isNotNull(dataFillHandler)) {
+            dataFillHandler.updateFill(entity);
+        }
     }
 }
