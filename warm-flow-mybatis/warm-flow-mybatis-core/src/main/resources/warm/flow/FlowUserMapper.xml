@@ -96,6 +96,22 @@
         <include refid="select_parameter"/>
     </select>
 
+    <select id="listByAssociatedAndTypes" resultMap="FlowUserResult">
+        <include refid="selectVo"/>
+        <where>
+            <if test="entity.associated != null  and entity.associated != ''">and t.associated = #{entity.associated}</if>
+            <if test="types != null and types.length > 0">
+                AND `type` in
+                <foreach item="item" collection="types" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
+            <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+        </where>
+
+    </select>
+
     <insert id="insert" parameterType="com.warm.flow.orm.entity.FlowUser">
         insert into flow_user
         <trim prefix="(" suffix=")" suffixOverrides=",">

@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Param;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * 流程用户Mapper接口
@@ -37,5 +38,7 @@ public interface FlowUserMapper extends WarmMapper<FlowUser> {
                              @Param("entity") FlowUser entity,
                              @Param("logicDeleteValue") String logicDeleteValue,
                              @Param("logicNotDeleteValue") String logicNotDeleteValue);
+
+    List<FlowUser> listByAssociatedAndTypes(@Param("types") String[] types, @Param("entity") FlowUser entity);
 
 }

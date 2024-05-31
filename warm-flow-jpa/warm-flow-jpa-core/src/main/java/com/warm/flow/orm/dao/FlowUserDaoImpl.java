@@ -2,9 +2,9 @@ package com.warm.flow.orm.dao;
 
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.dao.FlowUserDao;
+import com.warm.flow.core.utils.StringUtils;
 import com.warm.flow.orm.entity.FlowUser;
 import com.warm.flow.orm.utils.TenantDeleteUtil;
-import com.warm.flow.core.utils.StringUtils;
 
 import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaUpdate;
@@ -60,6 +60,11 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser> implements FlowUserDa
             });
             return entityManager.createQuery(criteriaDelete).executeUpdate();
         }
+    }
+
+    @Override
+    public List<FlowUser> listByAssociatedAndTypes(Long associated, String[] types) {
+        return null;
     }
 
 }

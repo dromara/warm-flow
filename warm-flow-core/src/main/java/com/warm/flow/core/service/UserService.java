@@ -55,21 +55,21 @@ public interface UserService extends IWarmService<User> {
     /**
      * 根据(代办任务，实例，历史表，节点等)id查询权限人或者处理人
      *
-     * @param id (代办任务，实例，历史表，节点等)id集合
-     * @author xiarg
-     * @date 2024/5/120 13:59
-     */
-    List<String> getPermission(long id);
-
-    /**
-     * 根据(代办任务，实例，历史表，节点等)id查询权限人或者处理人
-     *
-     * @param id (代办任务，实例，历史表，节点等)id集合
+     * @param associated (代办任务，实例，历史表，节点等)id集合
      * @param type 用户表类型
      * @author xiarg
      * @date 2024/5/120 13:59
      */
-    List<String> getPermission(long id, String type);
+    List<String> getPermission(Long associated, String... type);
+
+    /**
+     * 根据(代办任务，实例，历史表，节点等)id查询权限人或者处理人
+     *
+     * @param associated (代办任务，实例，历史表，节点等)id集合
+     * @param types 用户表类型
+     * @return
+     */
+    List<User> listByAssociatedAndTypes(Long associated, String[] types);
 
     /**
      * 根据关联id更新权限人

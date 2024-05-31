@@ -37,4 +37,9 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser> implements FlowUserDa
         }
         return getMapper().deleteByTaskIds(taskIdList, entity);
     }
+
+    @Override
+    public List<FlowUser> listByAssociatedAndTypes(Long associated, String[] types) {
+        return getMapper().listByAssociatedAndTypes(types, TenantDeleteUtil.getEntity(newEntity()).setAssociated(associated));
+    }
 }

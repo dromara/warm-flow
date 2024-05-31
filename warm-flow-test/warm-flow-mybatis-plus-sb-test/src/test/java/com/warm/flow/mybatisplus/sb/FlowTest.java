@@ -117,7 +117,7 @@ public class FlowTest {
         FlowParams flowParams = FlowParams.build().additionalHandler(Arrays.asList("role:102", "role:1"))
                         .permissionFlag(Arrays.asList("role:1", "role:2", "user:1"))
                         .skipType(SkipType.PASS.getKey()).createBy("user:1");
-        taskService.signature(1243308524025548800L, flowParams);
+        taskService.signature(1234425333428654080L, flowParams);
     }
     /**
      * 委派

@@ -8,11 +8,13 @@ import com.warm.flow.core.entity.User;
 import com.warm.flow.core.enums.UserType;
 import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.UserService;
+import com.warm.flow.core.utils.ArrayUtil;
 import com.warm.flow.core.utils.AssertUtil;
 import com.warm.flow.core.utils.CollUtil;
 import com.warm.flow.core.utils.StreamUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -60,14 +62,20 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
     }
 
     @Override
-    public List<String> getPermission(long id) {
-        return StreamUtils.toList(list(FlowFactory.newUser().setAssociated(id)), User::getProcessedBy);
+    public List<String> getPermission(Long associated, String... types) {
+        if (ArrayUtil.isEmpty(types)) {
+            return Collections.emptyList();
+        }
+        if (types.length == 1) {
+            return StreamUtils.toList(list(FlowFactory.newUser().setAssociated(associated).setType(types[0]))
+                    , User::getProcessedBy);
+        }
+        return StreamUtils.toList(listByAssociatedAndTypes(associated, types), User::getProcessedBy);
     }
 
     @Override
-    public List<String> getPermission(long id, String type) {
-        return StreamUtils.toList(list(FlowFactory.newUser().setAssociated(id).setType(type))
-                , User::getProcessedBy);
+    public List<User> listByAssociatedAndTypes(Long associated, String[] types) {
+        return getDao().listByAssociatedAndTypes(associated, types);
     }
 
     @Override
