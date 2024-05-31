@@ -90,23 +90,19 @@ public abstract class WarmServiceImpl<M extends WarmDao<T>, T> implements IWarmS
     }
 
     @Override
-    public void saveBatch(final List<T> list) {
+    public void saveBatch(List<T> list) {
         if (CollUtil.isEmpty(list)) {
             return;
         }
-        for (T record : list) {
-            getDao().save(record);
-        }
+        getDao().saveBatch(list);
     }
 
     @Override
-    public void updateBatch(final List<T> list) {
+    public void updateBatch(List<T> list) {
         if (CollUtil.isEmpty(list)) {
             return;
         }
-        for (T record : list) {
-            getDao().modifyById(record);
-        }
+        getDao().updateBatch(list);
     }
 
     @Override

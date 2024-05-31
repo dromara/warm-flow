@@ -211,6 +211,20 @@ public abstract class WarmDaoImpl<T extends JPARootEntity<T>> implements WarmDao
     }
 
     @Override
+    public void saveBatch(List<T> list) {
+        for (T record : list) {
+            insert(record);
+        }
+    }
+
+    @Override
+    public void updateBatch(List<T> list) {
+        for (T record : list) {
+            modifyById(record);
+        }
+    }
+
+    @Override
     public int deleteByIds(Collection<? extends Serializable> ids) {
         T entity = TenantDeleteUtil.getEntity(newEntity());
         if (StringUtils.isNotEmpty(entity.getDelFlag())) {

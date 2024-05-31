@@ -113,10 +113,10 @@ public interface TaskService extends IWarmService<Task> {
     Integer setFlowStatus(Integer nodeType, String skipType);
 
     /**
-     * 转办任务,需要校验办理人权限
+     * 转办任务,需要校验办理人权限,理当前任务的计划审批人
      *
      * @param taskId         任务id
-     * @param flowParams 流程参数(包含当前处理人的权限，重新指定的权限标识（办理人）)
+     * @param flowParams 流程参数
      */
     boolean transfer(Long taskId, FlowParams flowParams);
 

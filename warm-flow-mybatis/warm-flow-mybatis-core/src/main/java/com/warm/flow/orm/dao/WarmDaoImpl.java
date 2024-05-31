@@ -5,11 +5,11 @@ import com.warm.flow.core.dao.WarmDao;
 import com.warm.flow.core.entity.RootEntity;
 import com.warm.flow.core.handler.DataFillHandler;
 import com.warm.flow.core.orm.agent.WarmQuery;
-import com.warm.flow.orm.mapper.WarmMapper;
-import com.warm.flow.orm.utils.TenantDeleteUtil;
 import com.warm.flow.core.utils.ObjectUtil;
 import com.warm.flow.core.utils.StringUtils;
 import com.warm.flow.core.utils.page.Page;
+import com.warm.flow.orm.mapper.WarmMapper;
+import com.warm.flow.orm.utils.TenantDeleteUtil;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -125,6 +125,20 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
             return getMapper().updateByIdsLogic(ids, entity, FlowFactory.getFlowConfig().getLogicDeleteValue(), entity.getDelFlag());
         }
         return getMapper().deleteByIds(ids, entity);
+    }
+
+    @Override
+    public void saveBatch(List<T> list) {
+        for (T record : list) {
+            insert(record);
+        }
+    }
+
+    @Override
+    public void updateBatch(List<T> list) {
+        for (T record : list) {
+            modifyById(record);
+        }
     }
 
     public void insertFill(T entity) {
