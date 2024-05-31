@@ -2,11 +2,13 @@ package com.warm.flow.orm.dao;
 
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.dao.FlowUserDao;
+import com.warm.flow.core.utils.CollUtil;
 import com.warm.flow.core.utils.StringUtils;
 import com.warm.flow.orm.entity.FlowUser;
 import com.warm.flow.orm.utils.TenantDeleteUtil;
 
 import javax.persistence.criteria.CriteriaDelete;
+import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.CriteriaUpdate;
 import java.util.List;
 import java.util.Objects;
@@ -64,7 +66,24 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser> implements FlowUserDa
 
     @Override
     public List<FlowUser> listByAssociatedAndTypes(Long associated, String[] types) {
-        return null;
+
+        FlowUser entity = TenantDeleteUtil.getEntity(newEntity());
+
+        final CriteriaQuery<FlowUser> criteriaQuery = createCriteriaQuery((criteriaBuilder, root, predicates, innerCriteriaQuery) -> {
+            entity.commonPredicate().process(criteriaBuilder, root, predicates);
+
+            if (Objects.nonNull(associated)) {
+                predicates.add(criteriaBuilder.equal(root.get("associated"), associated));
+            }
+
+            if (types != null && types.length > 0) {
+                predicates.add(createIn(criteriaBuilder, root, "type", types));
+            }
+
+            orderBy(criteriaBuilder, root, innerCriteriaQuery, entity, null);
+        });
+
+        return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
 }

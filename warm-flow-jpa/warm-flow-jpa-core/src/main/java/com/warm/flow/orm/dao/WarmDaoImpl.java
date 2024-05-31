@@ -310,6 +310,15 @@ public abstract class WarmDaoImpl<T extends JPARootEntity<T>> implements WarmDao
         return in;
     }
 
+    protected <F extends Serializable> CriteriaBuilder.In<F> createIn(CriteriaBuilder criteriaBuilder, Root<T> root,
+                                                                      String fieldName, F[] values) {
+        CriteriaBuilder.In<F> in = criteriaBuilder.in(root.get(fieldName));
+        for (F value : values) {
+            in.value(value);
+        }
+        return in;
+    }
+
     protected CriteriaUpdate<T> createCriteriaUpdate(JPAUpdateFunction<CriteriaBuilder, Root<T>, List<Predicate>, CriteriaUpdate<T>> updateFunction) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         Class<T> entityClass = entityClass();
