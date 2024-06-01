@@ -1,12 +1,12 @@
 package com.warm.flow.orm.dao;
 
 import com.warm.flow.core.dao.FlowDefinitionDao;
+import com.warm.flow.core.enums.PublishStatus;
 import com.warm.flow.orm.entity.FlowDefinition;
 import com.warm.flow.orm.utils.TenantDeleteUtil;
 
-import javax.persistence.EntityManager;
-import javax.persistence.criteria.*;
-import java.util.ArrayList;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.CriteriaUpdate;
 import java.util.List;
 
 /**
@@ -48,7 +48,7 @@ public class FlowDefinitionDaoImpl extends WarmDaoImpl<FlowDefinition> implement
             predicates.add(createIn(criteriaBuilder, root, "flowCode", flowCodeList));
 
             // 是否发布（0未发布 1已发布 9失效）
-            innerCriteriaUpdate.set(root.get("isPublish"), 9);
+            innerCriteriaUpdate.set(root.get("isPublish"), PublishStatus.EXPIRED.getKey());
         });
 
         entityManager.createQuery(criteriaUpdate).executeUpdate();

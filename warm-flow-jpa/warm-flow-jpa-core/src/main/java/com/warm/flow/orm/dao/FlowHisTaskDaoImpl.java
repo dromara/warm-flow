@@ -2,6 +2,7 @@ package com.warm.flow.orm.dao;
 
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.dao.FlowHisTaskDao;
+import com.warm.flow.core.enums.FlowStatus;
 import com.warm.flow.orm.entity.FlowHisTask;
 import com.warm.flow.orm.utils.TenantDeleteUtil;
 import com.warm.flow.core.utils.StringUtils;
@@ -48,7 +49,7 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask> implements Flow
             predicates.add(criteriaBuilder.equal(root.get("instanceId"), instanceId));
 
             // 流程状态（0待提交 1审批中 2 审批通过 8已完成 9已退回 10失效）
-            predicates.add(criteriaBuilder.notEqual(root.get("flowStatus"), 9));
+            predicates.add(criteriaBuilder.equal(root.get("flowStatus"), FlowStatus.PASS.getKey()));
 
             // orderBy
             innerCriteriaQuery.orderBy(criteriaBuilder.desc(root.get("createTime")));

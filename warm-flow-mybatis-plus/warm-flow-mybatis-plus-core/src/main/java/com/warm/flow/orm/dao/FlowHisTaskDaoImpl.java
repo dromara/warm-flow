@@ -40,7 +40,7 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask> implements Flow
         LambdaQueryWrapper<FlowHisTask> queryWrapper = TenantDeleteUtil.getLambdaWrapperDefault(newEntity());
         queryWrapper.eq(FlowHisTask::getNodeCode, nodeCode)
                 .eq(FlowHisTask::getInstanceId, instanceId)
-                .ne(FlowHisTask::getFlowStatus, FlowStatus.REJECT.getKey())
+                .eq(FlowHisTask::getFlowStatus, FlowStatus.PASS.getKey())
                 .orderByDesc(FlowHisTask::getCreateTime);
         return getMapper().selectList(queryWrapper);
     }
