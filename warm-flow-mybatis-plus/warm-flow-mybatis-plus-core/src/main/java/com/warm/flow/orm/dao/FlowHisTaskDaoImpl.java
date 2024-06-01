@@ -2,7 +2,7 @@ package com.warm.flow.orm.dao;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.warm.flow.core.dao.FlowHisTaskDao;
-import com.warm.flow.core.enums.PublishStatus;
+import com.warm.flow.core.enums.FlowStatus;
 import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.orm.entity.FlowHisTask;
 import com.warm.flow.orm.mapper.FlowHisTaskMapper;
@@ -40,7 +40,7 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask> implements Flow
         LambdaQueryWrapper<FlowHisTask> queryWrapper = TenantDeleteUtil.getLambdaWrapperDefault(newEntity());
         queryWrapper.eq(FlowHisTask::getNodeCode, nodeCode)
                 .eq(FlowHisTask::getInstanceId, instanceId)
-                .ne(FlowHisTask::getFlowStatus, PublishStatus.EXPIRED.getKey())
+                .ne(FlowHisTask::getFlowStatus, FlowStatus.REJECT.getKey())
                 .orderByDesc(FlowHisTask::getCreateTime);
         return getMapper().selectList(queryWrapper);
     }

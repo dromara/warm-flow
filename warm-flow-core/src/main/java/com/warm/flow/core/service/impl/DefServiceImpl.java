@@ -6,15 +6,14 @@ import com.warm.flow.core.constant.ExceptionCons;
 import com.warm.flow.core.dao.FlowDefinitionDao;
 import com.warm.flow.core.dto.FlowCombine;
 import com.warm.flow.core.entity.*;
-import com.warm.flow.core.enums.FlowStatus;
 import com.warm.flow.core.enums.NodeType;
 import com.warm.flow.core.enums.PublishStatus;
 import com.warm.flow.core.enums.SkipType;
 import com.warm.flow.core.exception.FlowException;
 import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.DefService;
-import com.warm.flow.core.utils.*;
 import com.warm.flow.core.utils.Base64;
+import com.warm.flow.core.utils.*;
 import org.dom4j.Document;
 
 import javax.imageio.ImageIO;
@@ -321,7 +320,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     private List<Node> filterNodes(Instance instance, List<Skip> allSkips, List<Node> nodeList) {
         List<String> allNextNode = new ArrayList<>();
         Map<String, List<Skip>> skipNextMap = StreamUtils.groupByKey(allSkips, Skip::getNowNodeCode);
-        if (FlowStatus.isFinished(instance.getFlowStatus())) {
+        if (NodeType.isEnd(instance.getNodeType())) {
             return nodeList;
         }
         List<Task> curTasks = FlowFactory.taskService().list(FlowFactory.newTask().setInstanceId(instance.getId()));
@@ -371,7 +370,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                 }
                 continue;
             }
-            if (NodeType.isEnd(node.getNodeType()) && FlowStatus.isFinished(instance.getFlowStatus())) {
+            if (NodeType.isEnd(node.getNodeType()) && NodeType.isEnd(instance.getNodeType())) {
                 colorPut(colorMap, "node:" + node.getNodeCode(), Color.GREEN);
                 continue;
             }

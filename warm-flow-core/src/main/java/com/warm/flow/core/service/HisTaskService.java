@@ -4,7 +4,6 @@ import com.warm.flow.core.dto.FlowParams;
 import com.warm.flow.core.entity.HisTask;
 import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.Task;
-import com.warm.flow.core.enums.FlowStatus;
 import com.warm.flow.core.orm.service.IWarmService;
 
 import java.util.List;
@@ -24,8 +23,9 @@ public interface HisTaskService extends IWarmService<HisTask> {
      * @param nextNodes 后续任务
      * @param flowParams 参数
      * @param flowStatus 流程状态
+     * @param actionType 操作动作
      */
-    List<HisTask> setSkipInsHis(Task task, List<Node> nextNodes, FlowParams flowParams, FlowStatus flowStatus);
+    List<HisTask> setSkipInsHis(Task task, List<Node> nextNodes, FlowParams flowParams, Integer flowStatus, Integer actionType);
 
     /**
      * 设置流程历史任务信息
