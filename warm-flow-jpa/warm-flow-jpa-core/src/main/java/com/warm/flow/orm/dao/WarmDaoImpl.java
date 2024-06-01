@@ -2,7 +2,6 @@ package com.warm.flow.orm.dao;
 
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.dao.WarmDao;
-import com.warm.flow.core.handler.DataFillHandler;
 import com.warm.flow.core.orm.agent.WarmQuery;
 import com.warm.flow.core.utils.AssertUtil;
 import com.warm.flow.orm.entity.JPARootEntity;
@@ -133,22 +132,12 @@ public abstract class WarmDaoImpl<T extends JPARootEntity<T>> implements WarmDao
 
     @Override
     public int save(T entity) {
-        insertFill(entity);
-        return insert(entity);
-    }
-
-    public int insert(T entity) {
         TenantDeleteUtil.getEntity(entity);
         entityManager.persist(entity);
         return 1;
     }
 
     @Override
-    public int modifyById(T entity) {
-        updateFill(entity);
-        return updateById(entity);
-    }
-
     public int updateById(T entity) {
         T originEntity = selectById(entity.getId());
 
@@ -213,14 +202,14 @@ public abstract class WarmDaoImpl<T extends JPARootEntity<T>> implements WarmDao
     @Override
     public void saveBatch(List<T> list) {
         for (T record : list) {
-            insert(record);
+            save(record);
         }
     }
 
     @Override
     public void updateBatch(List<T> list) {
         for (T record : list) {
-            modifyById(record);
+            updateById(record);
         }
     }
 
@@ -310,6 +299,15 @@ public abstract class WarmDaoImpl<T extends JPARootEntity<T>> implements WarmDao
         return in;
     }
 
+    protected <F extends Serializable> CriteriaBuilder.In<F> createIn(CriteriaBuilder criteriaBuilder, Root<T> root,
+                                                                      String fieldName, F[] values) {
+        CriteriaBuilder.In<F> in = criteriaBuilder.in(root.get(fieldName));
+        for (F value : values) {
+            in.value(value);
+        }
+        return in;
+    }
+
     protected CriteriaUpdate<T> createCriteriaUpdate(JPAUpdateFunction<CriteriaBuilder, Root<T>, List<Predicate>, CriteriaUpdate<T>> updateFunction) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         Class<T> entityClass = entityClass();
@@ -334,22 +332,5 @@ public abstract class WarmDaoImpl<T extends JPARootEntity<T>> implements WarmDao
 
         criteriaDelete.where(predicates.toArray(new Predicate[0]));
         return criteriaDelete;
-    }
-
-    public void insertFill(T entity) {
-        // 新增时处理默认值填充
-        entity.initDefaultValue();
-        DataFillHandler dataFillHandler = FlowFactory.dataFillHandler();
-        if (ObjectUtil.isNotNull(dataFillHandler)) {
-            dataFillHandler.idFill(entity);
-            dataFillHandler.insertFill(entity);
-        }
-    }
-
-    public void updateFill(T entity) {
-        DataFillHandler dataFillHandler = FlowFactory.dataFillHandler();
-        if (ObjectUtil.isNotNull(dataFillHandler)) {
-            dataFillHandler.updateFill(entity);
-        }
     }
 }

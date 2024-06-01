@@ -3,7 +3,6 @@ package com.warm.flow.orm.dao;
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.dao.WarmDao;
 import com.warm.flow.core.entity.RootEntity;
-import com.warm.flow.core.handler.DataFillHandler;
 import com.warm.flow.core.orm.agent.WarmQuery;
 import com.warm.flow.core.utils.ObjectUtil;
 import com.warm.flow.core.utils.StringUtils;
@@ -80,21 +79,11 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
 
     @Override
     public int save(T entity) {
-        insertFill(entity);
-        return insert(entity);
-    }
-
-    public int insert(T entity) {
         TenantDeleteUtil.getEntity(entity);
         return getMapper().insert(entity);
     }
 
     @Override
-    public int modifyById(T entity) {
-        updateFill(entity);
-        return updateById(entity);
-    }
-
     public int updateById(T entity) {
         TenantDeleteUtil.getEntity(entity);
         return getMapper().updateById(entity);
@@ -130,29 +119,14 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
     @Override
     public void saveBatch(List<T> list) {
         for (T record : list) {
-            insert(record);
+            save(record);
         }
     }
 
     @Override
     public void updateBatch(List<T> list) {
         for (T record : list) {
-            modifyById(record);
-        }
-    }
-
-    public void insertFill(T entity) {
-        DataFillHandler dataFillHandler = FlowFactory.dataFillHandler();
-        if (ObjectUtil.isNotNull(dataFillHandler)) {
-            dataFillHandler.idFill(entity);
-            dataFillHandler.insertFill(entity);
-        }
-    }
-
-    public void updateFill(T entity) {
-        DataFillHandler dataFillHandler = FlowFactory.dataFillHandler();
-        if (ObjectUtil.isNotNull(dataFillHandler)) {
-            dataFillHandler.updateFill(entity);
+            updateById(record);
         }
     }
 }
