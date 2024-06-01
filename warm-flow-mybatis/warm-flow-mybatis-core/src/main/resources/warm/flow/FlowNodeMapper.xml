@@ -64,6 +64,9 @@
             <if test="entity.definitionId != null">and t.definition_id = #{entity.definitionId}</if>
             <if test="entity.nodeCode != null and entity.nodeCode != ''">and t.node_code = #{entity.nodeCode}</if>
             <if test="entity.nodeName != null and entity.nodeName != ''">and t.node_name = #{entity.nodeName}</if>
+            <if test="entity.permissionFlag != null and entity.permissionFlag != ''">and t.permission_flag =
+                #{entity.permissionFlag}
+            </if>
             <if test="entity.nodeRatio != null">and t.node_ratio = #{entity.nodeRatio}</if>
             <if test="entity.coordinate != null and entity.coordinate != ''">and t.coordinate = #{entity.coordinate}</if>
             <if test="entity.skipAnyNode != null and entity.skipAnyNode != ''">and t.skip_any_node = #{entity.skipAnyNode}</if>
@@ -146,7 +149,7 @@
             <if test="definitionId != null">definition_id,</if>
             <if test="nodeCode != null and nodeCode != ''">node_code,</if>
             <if test="nodeName != null and nodeName != ''">node_name,
-            <if test="permissionFlag != null and permissionFlag != ''">t.permission_flag,</if></if>
+            <if test="permissionFlag != null and permissionFlag != ''">permission_flag,</if></if>
             <if test="nodeRatio != null">node_ratio,</if>
             <if test="coordinate != null and coordinate != ''">coordinate,</if>
             <if test="skipAnyNode != null and skipAnyNode != ''">skip_any_node,</if>
@@ -189,6 +192,7 @@
             <if test="definitionId != null">t.definition_id = #{definitionId},</if>
             <if test="nodeCode != null and nodeCode != ''">t.node_code = #{nodeCode},</if>
             <if test="nodeName != null and nodeName != ''">t.node_name = #{nodeName},</if>
+            <if test="permissionFlag != null and permissionFlag != ''">t.permission_flag = #{permissionFlag},</if>
             <if test="nodeRatio != null">t.node_ratio = #{nodeRatio},</if>
             <if test="coordinate != null and coordinate != ''">t.coordinate = #{coordinate},</if>
             <if test="skipAnyNode != null and skipAnyNode != ''">t.skip_any_node = #{skipAnyNode},</if>
@@ -247,6 +251,7 @@
             <if test="definitionId != null">and definition_id = #{definitionId}</if>
             <if test="nodeCode != null and nodeCode != ''">and node_code = #{nodeCode}</if>
             <if test="nodeName != null and nodeName != ''">and node_name = #{nodeName}</if>
+            <if test="permissionFlag != null and permissionFlag != ''">and permission_flag = #{permissionFlag}</if>
             <if test="nodeRatio != null">and node_ratio = #{nodeRatio}</if>
             <if test="coordinate != null and coordinate != ''">and coordinate = #{coordinate}</if>
             <if test="skipAnyNode != null and skipAnyNode != ''">and skip_any_node = #{skipAnyNode}</if>
@@ -270,6 +275,7 @@
             <if test="entity.definitionId != null">and t.definition_id = #{entity.definitionId}</if>
             <if test="entity.nodeCode != null and entity.nodeCode != ''">and t.node_code = #{entity.nodeCode}</if>
             <if test="entity.nodeName != null and entity.nodeName != ''">and t.node_name = #{entity.nodeName}</if>
+            <if test="entity.permissionFlag != null and entity.permissionFlag != ''">and t.permission_flag = #{entity.permissionFlag}</if>
             <if test="entity.nodeRatio != null">and t.node_ratio = #{entity.nodeRatio}</if>
             <if test="entity.coordinate != null and entity.coordinate != ''">and t.coordinate = #{entity.coordinate}</if>
             <if test="entity.skipAnyNode != null and entity.skipAnyNode != ''">and t.skip_any_node = #{entity.skipAnyNode}</if>

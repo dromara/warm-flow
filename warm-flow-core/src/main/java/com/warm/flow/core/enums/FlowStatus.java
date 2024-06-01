@@ -18,7 +18,7 @@ public enum FlowStatus {
     private Integer key;
     private String value;
 
-    private FlowStatus(Integer key, String value) {
+    FlowStatus(Integer key, String value) {
         this.key = key;
         this.value = value;
     }

@@ -4,6 +4,7 @@ import com.warm.flow.core.dto.FlowParams;
 import com.warm.flow.core.entity.HisTask;
 import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.Task;
+import com.warm.flow.core.enums.FlowStatus;
 import com.warm.flow.core.orm.service.IWarmService;
 
 import java.util.List;
@@ -19,9 +20,19 @@ public interface HisTaskService extends IWarmService<HisTask> {
     /**
      * 设置流程历史任务信息
      *
-     * @param task
-     * @param nextNodes
-     * @return
+     * @param task  当前任务
+     * @param nextNodes 后续任务
+     * @param flowParams 参数
+     * @param flowStatus 流程状态
+     */
+    List<HisTask> setSkipInsHis(Task task, List<Node> nextNodes, FlowParams flowParams, FlowStatus flowStatus);
+
+    /**
+     * 设置流程历史任务信息
+     *
+     * @param task  当前任务
+     * @param nextNodes 后续任务
+     * @param flowParams 参数
      */
     List<HisTask> setSkipInsHis(Task task, List<Node> nextNodes, FlowParams flowParams);
 
@@ -30,7 +41,6 @@ public interface HisTaskService extends IWarmService<HisTask> {
      *
      * @param nodeCode
      * @param instanceId
-     * @return
      */
     List<HisTask> getNoReject(String nodeCode, Long instanceId);
 

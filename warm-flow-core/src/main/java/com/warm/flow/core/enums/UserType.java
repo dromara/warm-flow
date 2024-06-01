@@ -15,7 +15,7 @@ public enum UserType {
     private String key;
     private String value;
 
-    private UserType(String key, String value) {
+    UserType(String key, String value) {
         this.key = key;
         this.value = value;
     }

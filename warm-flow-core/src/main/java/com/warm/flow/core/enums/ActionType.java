@@ -18,7 +18,7 @@ public enum ActionType {
     private Integer key;
     private String value;
 
-    private ActionType(Integer key, String value) {
+    ActionType(Integer key, String value) {
         this.key = key;
         this.value = value;
     }

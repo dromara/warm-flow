@@ -19,7 +19,7 @@ public enum CooperateType {
     private String key;
     private String value;
 
-    private CooperateType(String key, String value) {
+    CooperateType(String key, String value) {
         this.key = key;
         this.value = value;
     }

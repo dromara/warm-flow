@@ -58,10 +58,7 @@ public class FlowParams {
      * 租户id
      */
     private String tenantId;
-    /**
-     * 任务流转记录
-     */
-    private String record;
+
     public static FlowParams build() {
         return new FlowParams();
     }
@@ -128,10 +125,6 @@ public class FlowParams {
         return this;
     }
 
-    public void record(String record) {
-        this.record = record;
-    }
-
     public String getFlowCode() {
         return flowCode;
     }
@@ -158,10 +151,6 @@ public class FlowParams {
 
     public String getTenantId() {
         return tenantId;
-    }
-
-    public String getRecord() {
-        return record;
     }
 
 }

@@ -8,9 +8,11 @@ import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.Task;
 import com.warm.flow.core.enums.ActionType;
 import com.warm.flow.core.enums.FlowStatus;
+import com.warm.flow.core.enums.NodeType;
 import com.warm.flow.core.enums.SkipType;
 import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.HisTaskService;
+import com.warm.flow.core.utils.ObjectUtil;
 import com.warm.flow.core.utils.SqlHelper;
 
 import java.util.ArrayList;
@@ -32,7 +34,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
     }
 
     @Override
-    public List<HisTask> setSkipInsHis(Task task, List<Node> nextNodes, FlowParams flowParams) {
+    public List<HisTask> setSkipInsHis(Task task, List<Node> nextNodes, FlowParams flowParams, FlowStatus flowStatus) {
         List<HisTask> hisTasks = new ArrayList<>();
         for (Node nextNode : nextNodes) {
             HisTask insHis = FlowFactory.newHisTask();
@@ -47,16 +49,25 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
             insHis.setTargetNodeCode(nextNode.getNodeCode());
             insHis.setTargetNodeName(nextNode.getNodeName());
             insHis.setApprover(flowParams.getCreateBy());
-            insHis.setFlowStatus(SkipType.isReject(flowParams.getSkipType())
-                    ? FlowStatus.REJECT.getKey() : FlowStatus.PASS.getKey());
+            if (ObjectUtil.isNotNull(flowStatus)) {
+                insHis.setFlowStatus(flowStatus.getKey());
+            } else if (NodeType.isEnd(nextNode.getNodeType())) {
+                insHis.setFlowStatus(FlowStatus.FINISHED.getKey());
+            } else {
+                insHis.setFlowStatus(SkipType.isReject(flowParams.getSkipType())
+                        ? FlowStatus.REJECT.getKey() : FlowStatus.PASS.getKey());
+            }
             insHis.setMessage(flowParams.getMessage());
             insHis.setCreateTime(new Date());
             FlowFactory.dataFillHandler().idFill(insHis);
             hisTasks.add(insHis);
         }
-
-
         return hisTasks;
+    }
+
+    @Override
+    public List<HisTask> setSkipInsHis(Task task, List<Node> nextNodes, FlowParams flowParams) {
+        return setSkipInsHis(task, nextNodes, flowParams, null);
     }
 
     @Override

@@ -13,7 +13,7 @@ public enum PublishStatus {
     private Integer key;
     private String value;
 
-    private PublishStatus(Integer key, String value) {
+    PublishStatus(Integer key, String value) {
         this.key = key;
         this.value = value;
     }

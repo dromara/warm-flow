@@ -128,6 +128,6 @@ public class FlowTest {
         FlowParams flowParams = FlowParams.build().additionalHandler(Arrays.asList("role:103", "role:3"))
                 .permissionFlag(Arrays.asList("role:3", "role:102", "user:1"))
                 .skipType(SkipType.PASS.getKey()).createBy("user:1");
-        taskService.transfer(1243308524025548800L, flowParams, false, true);
+        taskService.transfer(1243308524025548800L, flowParams);
     }
 }

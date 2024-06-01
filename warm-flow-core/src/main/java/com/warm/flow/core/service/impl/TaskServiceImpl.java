@@ -96,7 +96,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         List<HisTask> insHisList = FlowFactory.hisTaskService().setSkipInsHis(task, nextNodes, flowParams);
 
         // 设置结束节点相关信息
-        setEndInfo(instance, addTasks, insHisList);
+        setEndInfo(instance, addTasks);
 
         // 设置流程实例信息
         setSkipInstance(instance, addTasks, flowParams);
@@ -133,27 +133,13 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     @Override
     public Instance termination(Instance instance, Task task, FlowParams flowParams) {
         // 所有代办转历史
-        List<Node> nodeList = FlowFactory.nodeService().list(FlowFactory.newNode()
+        Node endNode = FlowFactory.nodeService().getOne(FlowFactory.newNode()
                 .setDefinitionId(instance.getDefinitionId()).setNodeType(NodeType.END.getKey()));
-        Node endNode = nodeList.get(0);
         // 代办任务转历史
-        List<HisTask> insHisList = FlowFactory.hisTaskService().setSkipInsHis(task, nodeList, flowParams);
-        // 流程定义的结束节点转历史
-        HisTask hisTask = FlowFactory.newHisTask()
-                .setInstanceId(task.getInstanceId())
-                .setTaskId(task.getId())
-                .setActionType(ActionType.APPROVAL.getKey())
-                .setNodeCode(endNode.getNodeCode())
-                .setNodeName(endNode.getNodeName())
-                .setNodeType(endNode.getNodeType())
-                .setApprover(flowParams.getCreateBy())
-                .setTenantId(task.getTenantId())
-                .setDefinitionId(task.getDefinitionId())
-                .setFlowStatus(FlowStatus.FINISHED.getKey())
-                .setCreateTime(new Date());
-        insHisList.add(hisTask);
-        FlowFactory.dataFillHandler().idFill(hisTask);
+        List<HisTask> insHisList = FlowFactory.hisTaskService().setSkipInsHis(task, Collections.singletonList(endNode)
+                , flowParams);
         FlowFactory.hisTaskService().saveBatch(insHisList);
+
         // 流程实例完成
         instance.setNodeType(endNode.getNodeType());
         instance.setNodeCode(endNode.getNodeCode());
@@ -163,7 +149,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
         // 删除流程相关办理人
         FlowFactory.userService().deleteByTaskIds(Collections.singletonList(task.getId()));
-
         // 处理未完成的任务，当流程完成，还存在代办任务未完成，转历史任务，状态完成。
         handUndoneTask(instance, task.getId());
         return instance;
@@ -172,6 +157,87 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     @Override
     public boolean deleteByInsIds(List<Long> instanceIds) {
         return SqlHelper.retBool(getDao().deleteByInsIds(instanceIds));
+    }
+
+    @Override
+    public boolean transfer(Long taskId, FlowParams flowParams) {
+        return processedHandle(taskId, flowParams, false, CirculationType.TRANSFER);
+    }
+
+    @Override
+    public boolean transfer(Long taskId, FlowParams flowParams, boolean ignore) {
+        return processedHandle(taskId, flowParams, ignore, CirculationType.TRANSFER);
+    }
+
+    @Override
+    public boolean signature(Long taskId, FlowParams flowParams) {
+        return processedHandle(taskId, flowParams, false, CirculationType.SIGNATURE);
+    }
+
+    @Override
+    public boolean signature(Long taskId, FlowParams flowParams, boolean ignore) {
+        return processedHandle(taskId, flowParams, ignore, CirculationType.SIGNATURE);
+    }
+
+    @Override
+    public boolean depute(Long taskId, FlowParams flowParams) {
+        return processedHandle(taskId, flowParams, false, CirculationType.DEPUTE);
+    }
+
+    @Override
+    public boolean depute(Long taskId, FlowParams flowParams, boolean ignore) {
+        return processedHandle(taskId, flowParams, false, CirculationType.DEPUTE);
+    }
+
+    @Override
+    public boolean depute(Long taskId, FlowParams flowParams, boolean ignore, boolean clear) {
+        return processedHandle(taskId, flowParams, ignore, clear?CirculationType.DEPUTE_CHANGE:CirculationType.DEPUTE);
+    }
+
+    @Override
+    public boolean processedHandle(Long taskId, FlowParams flowParams, boolean ignore, CirculationType circulationType) {
+        // 获取给谁的权限
+        List<String> additionalHandler = flowParams.getAdditionalHandler();
+        AssertUtil.isTrue(CollUtil.isEmpty(additionalHandler), ExceptionCons.LOST_ADDITIONAL_PERMISSION);
+        if (!ignore) {
+            // 判断当前处理人是否有权限，获取当前办理人的权限
+            List<String> permissions = flowParams.getPermissionFlag();
+            // 获取任务权限人
+            List<String> taskPermissions = FlowFactory.userService().getPermission(taskId, UserType.APPROVAL.getKey());
+            AssertUtil.isTrue(CollUtil.notContainsAny(permissions, taskPermissions), ExceptionCons.NOT_AUTHORITY);
+        }
+        // 增减流程参数 跳转类型
+        flowParams.skipType(SkipType.PASS.getKey());
+        // 留存历史记录
+        Task task = FlowFactory.taskService().getById(taskId);
+        Node node = FlowFactory.nodeService().getOne(FlowFactory.newNode().setNodeCode(task.getNodeCode())
+                .setDefinitionId(task.getDefinitionId()));
+        HisTask hisTask = CollUtil.getOne(FlowFactory.hisTaskService().setSkipInsHis(task, CollUtil.toList(node), flowParams));
+
+        // 处理此任务的权限流转
+        UserType userType = null;
+        switch (circulationType){
+            // 加减签，清空当前的计划审批人，重新设置新的计划审批人
+            case SIGNATURE:
+                userType = UserType.APPROVAL;
+                hisTask.setActionType(ActionType.SIGNATURE.getKey());
+                break;
+            // 转办，清理当前办理人审批人
+            case TRANSFER:
+                userType = UserType.ASSIGNEE;
+                hisTask.setActionType(ActionType.TRANSFER.getKey());
+                break;
+            // 委派，不清理计划审批人，新增受托人
+            case DEPUTE:
+            // 委派，清理计划审批人，新增受托人
+            case DEPUTE_CHANGE:
+                userType = UserType.DEPUTE;
+                hisTask.setActionType(ActionType.DEPUTE.getKey());
+                break;
+        }
+        FlowFactory.hisTaskService().save(hisTask);
+        return FlowFactory.userService().updatePermission(taskId, flowParams.getAdditionalHandler(), userType.getKey(),
+                circulationType.getClear(), flowParams.getCreateBy());
     }
 
     @Override
@@ -273,90 +339,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         } else {
             return FlowStatus.APPROVAL.getKey();
         }
-    }
-
-    @Override
-    public boolean transfer(Long taskId, FlowParams flowParams) {
-        return transfer(taskId, flowParams, false, false);
-    }
-
-    @Override
-    public boolean transfer(Long taskId, FlowParams flowParams, boolean ignore, boolean clear) {
-        return processedHandle(taskId, flowParams, ignore, clear? CirculationType.TRANSFER_CHANGE :CirculationType.TRANSFER);
-    }
-
-    @Override
-    public boolean signature(Long taskId, FlowParams flowParams) {
-        return processedHandle(taskId, flowParams, false, CirculationType.SIGNATURE);
-    }
-
-    @Override
-    public boolean signature(Long taskId, FlowParams flowParams, boolean ignore) {
-        return processedHandle(taskId, flowParams, ignore, CirculationType.SIGNATURE);
-    }
-
-    @Override
-    public boolean depute(Long taskId, FlowParams flowParams) {
-        return processedHandle(taskId, flowParams, false, CirculationType.DEPUTE);
-    }
-
-    @Override
-    public boolean depute(Long taskId, FlowParams flowParams, boolean ignore) {
-        return processedHandle(taskId, flowParams, false, CirculationType.DEPUTE);
-    }
-
-    @Override
-    public boolean depute(Long taskId, FlowParams flowParams, boolean ignore, boolean clear) {
-        return processedHandle(taskId, flowParams, ignore, clear?CirculationType.DEPUTE_CHANGE:CirculationType.DEPUTE);
-    }
-
-    @Override
-    public boolean processedHandle(Long taskId, FlowParams flowParams, boolean ignore, CirculationType circulationType) {
-        // 获取给谁的权限
-        List<String> additionalHandler = flowParams.getAdditionalHandler();
-        AssertUtil.isTrue(CollUtil.isEmpty(additionalHandler), ExceptionCons.LOST_ADDITIONAL_PERMISSION);
-        if (!ignore) {
-            // 判断当前处理人是否有权限，获取当前办理人的权限
-            List<String> permissions = flowParams.getPermissionFlag();
-            // 获取任务权限人
-            List<String> taskPermissions = FlowFactory.userService().getPermission(taskId, UserType.APPROVAL.getKey());
-            AssertUtil.isTrue(CollUtil.notContainsAny(permissions, taskPermissions), ExceptionCons.NOT_AUTHORITY);
-        }
-        // 增减流程参数 跳转类型和审批意见（留存记录的消息）
-        flowParams.skipType(SkipType.PASS.getKey()).record("user:" + flowParams.getCreateBy() + " "
-                + circulationType.getKey() + " " + CollUtil.strListToStr(additionalHandler, ","));
-        // 留存历史记录
-        Task task = FlowFactory.taskService().getById(taskId);
-        Node node = FlowFactory.nodeService().getOne(FlowFactory.newNode().setNodeCode(task.getNodeCode())
-                .setDefinitionId(task.getDefinitionId()));
-        HisTask hisTask = CollUtil.getOne(FlowFactory.hisTaskService().setSkipInsHis(task, CollUtil.toList(node), flowParams));
-
-        // 处理此任务的权限流转
-        UserType userType = null;
-        switch (circulationType){
-            // 加减签，清空当前的计划审批人，重新设置新的计划审批人
-            case SIGNATURE:
-                userType = UserType.APPROVAL;
-                hisTask.setActionType(ActionType.SIGNATURE.getKey());
-                break;
-            // 转办，不清理原有计划审批人
-            case TRANSFER:
-            // 转办，清理原有计划审批人
-            case TRANSFER_CHANGE:
-                userType = UserType.ASSIGNEE;
-                hisTask.setActionType(ActionType.TRANSFER.getKey());
-                break;
-            // 委派，不清理计划审批人，新增受托人
-            case DEPUTE:
-            // 委派，清理计划审批人，新增受托人
-            case DEPUTE_CHANGE:
-                userType = UserType.DEPUTE;
-                hisTask.setActionType(ActionType.DEPUTE.getKey());
-                break;
-        }
-        FlowFactory.hisTaskService().save(hisTask);
-        return FlowFactory.userService().updatePermission(taskId, flowParams.getAdditionalHandler(), userType.getKey(),
-                circulationType.getClear(), flowParams.getCreateBy());
     }
 
     @Override
@@ -661,22 +643,10 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     // 设置结束节点相关信息
-    private void setEndInfo(Instance instance, List<Task> addTasks, List<HisTask> insHisList) {
+    private void setEndInfo(Instance instance, List<Task> addTasks) {
         if (CollUtil.isNotEmpty(addTasks)) {
             addTasks.removeIf(addTask -> {
                 if (NodeType.isEnd(addTask.getNodeType())) {
-                    HisTask insHis = FlowFactory.newHisTask()
-                            .setTaskId(addTask.getId())
-                            .setInstanceId(addTask.getInstanceId())
-                            .setNodeCode(addTask.getNodeCode())
-                            .setNodeName(addTask.getNodeName())
-                            .setNodeType(addTask.getNodeType())
-                            .setTenantId(addTask.getTenantId())
-                            .setDefinitionId(addTask.getDefinitionId())
-                            .setFlowStatus(FlowStatus.FINISHED.getKey())
-                            .setCreateTime(new Date());
-                    FlowFactory.dataFillHandler().idFill(insHis);
-                    insHisList.add(insHis);
                     instance.setNodeType(addTask.getNodeType());
                     instance.setNodeCode(addTask.getNodeCode());
                     instance.setNodeName(addTask.getNodeName());
@@ -699,14 +669,14 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             }
             instance.setVariable(ONode.serialize(variable));
         }
-        // 流程未完成，存在后续任务，才重新设置流程信息
-        if (!FlowStatus.isFinished(instance.getFlowStatus()) && CollUtil.isNotEmpty(addTasks)) {
+
+        // 存在后续任务，才重新设置流程信息
+        if (CollUtil.isNotEmpty(addTasks)) {
             Task nextTask = getNextTask(addTasks);
             instance.setNodeType(nextTask.getNodeType());
             instance.setNodeCode(nextTask.getNodeCode());
             instance.setNodeName(nextTask.getNodeName());
-            instance.setFlowStatus(setFlowStatus(nextTask.getNodeType()
-                    , flowParams.getSkipType()));
+            instance.setFlowStatus(setFlowStatus(nextTask.getNodeType(), flowParams.getSkipType()));
         }
     }
 

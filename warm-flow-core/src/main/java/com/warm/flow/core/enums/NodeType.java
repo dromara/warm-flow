@@ -34,7 +34,7 @@ public enum NodeType {
     private Integer key;
     private String value;
 
-    private NodeType(Integer key, String value) {
+    NodeType(Integer key, String value) {
         this.key = key;
         this.value = value;
     }
