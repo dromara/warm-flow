@@ -147,7 +147,7 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
     private Long definitionId;
 
     /**
-     * 历史任务动作类型（0审批 1转办 2会签 3票签 4委派）
+     * 历史任务动作类型(0审批 1转办 2会签 3票签 4委派 5加签 6减签)
      */
     @Column(name="action_type")
     private Integer actionType;

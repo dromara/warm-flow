@@ -83,7 +83,7 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
                                     String createBy) {
         // 判断是否clear，如果是true，则先删除当前关联id用户数据
         if(clear){
-            getDao().delete(FlowFactory.newUser().setAssociated(associated).setType(UserType.APPROVAL.getKey()));
+            getDao().delete(FlowFactory.newUser().setAssociated(associated).setCreateBy(createBy));
         }
         // 再新增权限人
         saveBatch(StreamUtils.toList(permissions, permission -> structureUser(associated, permission, type, createBy)));

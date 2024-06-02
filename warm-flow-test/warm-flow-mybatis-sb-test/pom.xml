@@ -48,13 +48,11 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>io.github.minliuhua</groupId>
             <artifactId>warm-flow-core-test</artifactId>
-            <scope>compile</scope>
         </dependency>
 
         <!--<dependency>

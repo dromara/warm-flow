@@ -34,15 +34,14 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
     }
 
     @Override
-    public List<HisTask> setSkipInsHis(Task task, List<Node> nextNodes, FlowParams flowParams, Integer flowStatus
-            , Integer actionType) {
+    public List<HisTask> setSkipInsHis(Task task, List<Node> nextNodes, FlowParams flowParams) {
         List<HisTask> hisTasks = new ArrayList<>();
         for (Node nextNode : nextNodes) {
             HisTask insHis = FlowFactory.newHisTask();
             insHis.setInstanceId(task.getInstanceId());
             insHis.setTaskId(task.getId());
-            if (ObjectUtil.isNotNull(actionType)) {
-                insHis.setActionType(actionType);
+            if (ObjectUtil.isNotNull(flowParams.getActionType())) {
+                insHis.setActionType(flowParams.getActionType());
             } else {
                 insHis.setActionType(ActionType.APPROVAL.getKey());
             }
@@ -54,8 +53,8 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
             insHis.setTargetNodeCode(nextNode.getNodeCode());
             insHis.setTargetNodeName(nextNode.getNodeName());
             insHis.setApprover(flowParams.getCreateBy());
-            if (ObjectUtil.isNotNull(flowStatus)) {
-                insHis.setFlowStatus(flowStatus);
+            if (ObjectUtil.isNotNull(flowParams.getFlowStatus())) {
+                insHis.setFlowStatus(flowParams.getFlowStatus());
             } else if (NodeType.isEnd(nextNode.getNodeType())) {
                 insHis.setFlowStatus(FlowStatus.FINISHED.getKey());
             } else {
@@ -68,11 +67,6 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
             hisTasks.add(insHis);
         }
         return hisTasks;
-    }
-
-    @Override
-    public List<HisTask> setSkipInsHis(Task task, List<Node> nextNodes, FlowParams flowParams) {
-        return setSkipInsHis(task, nextNodes, flowParams, null, null);
     }
 
     @Override

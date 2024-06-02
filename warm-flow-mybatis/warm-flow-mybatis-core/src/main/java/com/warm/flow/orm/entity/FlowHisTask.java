@@ -59,7 +59,7 @@ public class FlowHisTask implements HisTask {
     private Long taskId;
 
     /**
-     * 历史任务动作类型（0审批 1转办 2会签 3票签 4委派）
+     * 历史任务动作类型(0审批 1转办 2会签 3票签 4委派 5加签 6减签)
      */
     private Integer actionType;
 

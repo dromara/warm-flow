@@ -27,11 +27,11 @@ public class FlowParams {
     private String nodeCode;
 
     /**
-     * 权限标识 例如：role:admin,user:2
+     * 用户权限标识
      */
     private List<String> permissionFlag;
     /**
-     * 额外办理人：加减签，转办，委托，抄送人权限标识，例如：[role:admin,user:2]
+     * 额外办理人：加减签，转办，委托，抄送人
      */
     private List<String> additionalHandler;
     /**
@@ -50,14 +50,19 @@ public class FlowParams {
     private Map<String, Object> variable;
 
     /**
+     * 流程状态
+     */
+    private Integer flowStatus;
+
+    /**
+     * 历史任务动作类型(0审批 1转办 2会签 3票签 4委派 5加签 6减签)
+     */
+    private Integer actionType;
+
+    /**
      * 扩展字段
      */
     private String ext;
-
-    /**
-     * 租户id
-     */
-    private String tenantId;
 
     public static FlowParams build() {
         return new FlowParams();
@@ -85,11 +90,6 @@ public class FlowParams {
 
     public FlowParams skipType(String skipType) {
         this.skipType = skipType;
-        return this;
-    }
-
-    public FlowParams tenantId(String tenantId) {
-        this.tenantId = tenantId;
         return this;
     }
 
@@ -149,8 +149,21 @@ public class FlowParams {
         return ext;
     }
 
-    public String getTenantId() {
-        return tenantId;
+    public Integer getFlowStatus() {
+        return flowStatus;
     }
 
+    public FlowParams setFlowStatus(Integer flowStatus) {
+        this.flowStatus = flowStatus;
+        return this;
+    }
+
+    public Integer getActionType() {
+        return actionType;
+    }
+
+    public FlowParams setActionType(Integer actionType) {
+        this.actionType = actionType;
+        return this;
+    }
 }

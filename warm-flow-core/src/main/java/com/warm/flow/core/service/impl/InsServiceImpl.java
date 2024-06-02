@@ -122,7 +122,6 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
     private List<HisTask> setHisTask(List<Node> nextNodes, FlowParams flowParams, Node startNode, Long instanceId) {
         Task startTask = FlowFactory.newTask()
                 .setInstanceId(instanceId)
-                .setTenantId(flowParams.getTenantId())
                 .setDefinitionId(startNode.getDefinitionId())
                 .setNodeCode(startNode.getNodeCode())
                 .setNodeName(startNode.getNodeName())
@@ -162,7 +161,6 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         FlowFactory.dataFillHandler().idFill(instance);
         instance.setDefinitionId(firstBetweenNode.getDefinitionId());
         instance.setBusinessId(businessId);
-        instance.setTenantId(flowParams.getTenantId());
         instance.setNodeType(firstBetweenNode.getNodeType());
         instance.setNodeCode(firstBetweenNode.getNodeCode());
         instance.setNodeName(firstBetweenNode.getNodeName());

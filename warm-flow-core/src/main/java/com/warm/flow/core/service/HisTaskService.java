@@ -22,17 +22,6 @@ public interface HisTaskService extends IWarmService<HisTask> {
      * @param task  当前任务
      * @param nextNodes 后续任务
      * @param flowParams 参数
-     * @param flowStatus 流程状态
-     * @param actionType 操作动作
-     */
-    List<HisTask> setSkipInsHis(Task task, List<Node> nextNodes, FlowParams flowParams, Integer flowStatus, Integer actionType);
-
-    /**
-     * 设置流程历史任务信息
-     *
-     * @param task  当前任务
-     * @param nextNodes 后续任务
-     * @param flowParams 参数
      */
     List<HisTask> setSkipInsHis(Task task, List<Node> nextNodes, FlowParams flowParams);
 

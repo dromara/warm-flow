@@ -8,12 +8,13 @@ package com.warm.flow.core.enums;
  */
 public enum ActionType {
 
-    APPROVAL(0, "审批"),
-    TRANSFER(1, "转办"),
-    COUNTERSIGN(2, "会签"),
-    VOTE(3, "票签"),
-    DEPUTE(4, "委派"),
-    SIGNATURE(5, "加减签");
+    APPROVAL(1, "审批"),
+    TRANSFER(2, "转办"),
+    COUNTERSIGN(3, "委派"),
+    VOTE(4, "会签"),
+    DEPUTE(5, "票签"),
+    ADD_SIGNATURE(6, "加签"),
+    REDUCTION_SIGNATURE(7, "减签");
 
     private Integer key;
     private String value;

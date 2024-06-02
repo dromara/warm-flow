@@ -1,10 +1,10 @@
 package com.warm.flow.core.service;
 
 import com.warm.flow.core.dto.FlowParams;
+import com.warm.flow.core.dto.ModifyHandler;
 import com.warm.flow.core.entity.Instance;
 import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.Task;
-import com.warm.flow.core.enums.CirculationType;
 import com.warm.flow.core.orm.service.IWarmService;
 
 import java.util.List;
@@ -75,73 +75,50 @@ public interface TaskService extends IWarmService<Task> {
     boolean deleteByInsIds(List<Long> instanceIds);
 
     /**
-     * 转办任务,需要校验办理人权限
-     *
-     * @param taskId         任务id
-     * @param flowParams 流程参数
+     * 转办, 默认删除当然办理用户权限，转办后，当前办理不可办理
+     * @param taskId 修改的任务id
+     * @param curUser 当前办理人
+     * @param permissionFlag 用户权限标识
+     * @param addHandlers 增加办理人：加签，转办，委托
+     * @param message 审批意见
      */
-    boolean transfer(Long taskId, FlowParams flowParams);
+    boolean transfer(Long taskId, String curUser, List<String> permissionFlag, List<String> addHandlers, String message);
 
     /**
-     * 转办任务,ignore默认为true，转办忽略权限校验，
-     *
-     * @param taskId         任务id
-     * @param flowParams 流程参数
+     * 委派, 默认删除当然办理用户权限，转办后，当前办理不可办理
+     * @param taskId 修改的任务id
+     * @param curUser 当前办理人
+     * @param permissionFlag 用户权限标识
+     * @param addHandlers 增加办理人：加签，转办，委托
+     * @param message 审批意见
      */
-    boolean transfer(Long taskId, FlowParams flowParams, boolean ignore);
+    boolean depute(Long taskId, String curUser, List<String> permissionFlag, List<String> addHandlers, String message);
 
     /**
-     * 加减签,需要校验办理人权限
-     *
-     * @param taskId         任务id
-     * @param flowParams 流程参数(包含当前处理人的权限，重新指定的权限标识（办理人）)
+     * 加签
+     * @param taskId 修改的任务id
+     * @param curUser 当前办理人
+     * @param permissionFlag 用户权限标识
+     * @param addHandlers 增加办理人：加签，转办，委托
+     * @param message 审批意见
      */
-    boolean signature(Long taskId, FlowParams flowParams);
+    boolean addSignature(Long taskId, String curUser, List<String> permissionFlag, List<String> addHandlers, String message);
 
     /**
-     * 加减签 ignore默认为true，转办忽略权限校验，比如管理员权限
-     *
-     * @param taskId         任务id
-     * @param flowParams 流程参数(包含当前处理人的权限，重新指定的权限标识（办理人）)
-     * @param ignore 转办忽略权限校验（true - 忽略，false - 不忽略）
+     * 减签
+     * @param taskId 修改的任务id
+     * @param curUser 当前办理人
+     * @param permissionFlag 用户权限标识
+     * @param reductionHandlers 增加办理人：加签，转办，委托
+     * @param message 审批意见
      */
-    boolean signature(Long taskId, FlowParams flowParams, boolean ignore);
+    boolean reductionSignature(Long taskId, String curUser, List<String> permissionFlag, List<String> reductionHandlers, String message);
 
     /**
-     * 委派,需要校验办理人权限(不清理计划审批人）
-     *
-     * @param taskId         任务id
-     * @param flowParams 流程参数(包含当前处理人的权限，重新指定的权限标识（办理人）)
+     * 修改办理人
+     * @param modifyHandler 修改办理人参数
      */
-    boolean depute(Long taskId, FlowParams flowParams);
-
-    /**
-     * 委派 ignore默认为true，转办忽略权限校验，比如管理员权限(不清理计划审批人）
-     *
-     * @param taskId         任务id
-     * @param flowParams 流程参数(包含当前处理人的权限，重新指定的权限标识（办理人）)
-     * @param ignore 转办忽略权限校验（true - 忽略，false - 不忽略）
-     */
-    boolean depute(Long taskId, FlowParams flowParams, boolean ignore);
-
-    /**
-     * 委派 ignore默认为true，转办忽略权限校验，比如管理员权限,需要自己判断是否需要清理计划审批人
-     *
-     * @param taskId         任务id
-     * @param flowParams 流程参数(包含当前处理人的权限，重新指定的权限标识（办理人）)
-     * @param ignore 转办忽略权限校验（true - 忽略，false - 不忽略）
-     * @param clear 清理当前任务的计划审批人（true - 清理，false - 不清理）
-     */
-    boolean depute(Long taskId, FlowParams flowParams, boolean ignore, boolean clear);
-    /**
-     * 转办，委派，加减签等处理
-     *
-     * @param taskId         任务id
-     * @param flowParams 流程参数(包含当前处理人的权限，重新指定的权限标识（办理人）)
-     * @param ignore 为true忽略权限判断，可直接转办
-     * @param circulationType 一个任务权限流转类型
-     */
-    boolean processedHandle(Long taskId, FlowParams flowParams, boolean ignore, CirculationType circulationType);
+    boolean updateHandler(ModifyHandler modifyHandler);
 
     /**
      * 根据流程id+当前流程节点编码获取与之直接关联(其为源节点)的节点。 definitionId:流程id nodeCode:当前流程状态

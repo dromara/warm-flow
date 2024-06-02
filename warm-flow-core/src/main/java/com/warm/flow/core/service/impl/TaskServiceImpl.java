@@ -5,6 +5,7 @@ import com.warm.flow.core.constant.ExceptionCons;
 import com.warm.flow.core.constant.FlowCons;
 import com.warm.flow.core.dao.FlowTaskDao;
 import com.warm.flow.core.dto.FlowParams;
+import com.warm.flow.core.dto.ModifyHandler;
 import com.warm.flow.core.entity.*;
 import com.warm.flow.core.enums.*;
 import com.warm.flow.core.listener.Listener;
@@ -160,84 +161,98 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     @Override
-    public boolean transfer(Long taskId, FlowParams flowParams) {
-        return processedHandle(taskId, flowParams, false, CirculationType.TRANSFER);
+    public boolean transfer(Long taskId, String curUser, List<String> permissionFlag, List<String> addHandlers, String message) {
+        ModifyHandler modifyHandler = new ModifyHandler()
+                .setTaskId(taskId)
+                .setAddHandlers(addHandlers)
+                .setReductionHandlers(Collections.singletonList(curUser))
+                .setPermissionFlag(permissionFlag)
+                .setActionType(ActionType.TRANSFER.getKey())
+                .setMessage(message)
+                .setCurUser(curUser)
+                .setIgnore(false);
+        return updateHandler(modifyHandler);
     }
 
     @Override
-    public boolean transfer(Long taskId, FlowParams flowParams, boolean ignore) {
-        return processedHandle(taskId, flowParams, ignore, CirculationType.TRANSFER);
+    public boolean depute(Long taskId, String curUser, List<String> permissionFlag, List<String> addHandlers, String message){
+        ModifyHandler modifyHandler = new ModifyHandler()
+                .setTaskId(taskId)
+                .setAddHandlers(addHandlers)
+                .setReductionHandlers(Collections.singletonList(curUser))
+                .setPermissionFlag(permissionFlag)
+                .setActionType(ActionType.COUNTERSIGN.getKey())
+                .setMessage(message)
+                .setCurUser(curUser)
+                .setIgnore(false);
+        return updateHandler(modifyHandler);
     }
 
     @Override
-    public boolean signature(Long taskId, FlowParams flowParams) {
-        return processedHandle(taskId, flowParams, false, CirculationType.SIGNATURE);
+    public boolean addSignature(Long taskId, String curUser, List<String> permissionFlag, List<String> addHandlers, String message){
+        ModifyHandler modifyHandler = new ModifyHandler()
+                .setTaskId(taskId)
+                .setAddHandlers(addHandlers)
+                .setPermissionFlag(permissionFlag)
+                .setActionType(ActionType.ADD_SIGNATURE.getKey())
+                .setMessage(message)
+                .setCurUser(curUser)
+                .setIgnore(false);
+        return updateHandler(modifyHandler);
     }
 
     @Override
-    public boolean signature(Long taskId, FlowParams flowParams, boolean ignore) {
-        return processedHandle(taskId, flowParams, ignore, CirculationType.SIGNATURE);
+    public boolean reductionSignature(Long taskId, String curUser, List<String> permissionFlag, List<String> reductionHandlers, String message){
+        ModifyHandler modifyHandler = new ModifyHandler()
+                .setTaskId(taskId)
+                .setReductionHandlers(reductionHandlers)
+                .setPermissionFlag(permissionFlag)
+                .setActionType(ActionType.REDUCTION_SIGNATURE.getKey())
+                .setMessage(message)
+                .setCurUser(curUser)
+                .setIgnore(false);
+        return updateHandler(modifyHandler);
     }
 
     @Override
-    public boolean depute(Long taskId, FlowParams flowParams) {
-        return processedHandle(taskId, flowParams, false, CirculationType.DEPUTE);
-    }
-
-    @Override
-    public boolean depute(Long taskId, FlowParams flowParams, boolean ignore) {
-        return processedHandle(taskId, flowParams, false, CirculationType.DEPUTE);
-    }
-
-    @Override
-    public boolean depute(Long taskId, FlowParams flowParams, boolean ignore, boolean clear) {
-        return processedHandle(taskId, flowParams, ignore, clear?CirculationType.DEPUTE_CHANGE:CirculationType.DEPUTE);
-    }
-
-    @Override
-    public boolean processedHandle(Long taskId, FlowParams flowParams, boolean ignore, CirculationType circulationType) {
+    public boolean updateHandler(ModifyHandler modifyHandler) {
         // 获取给谁的权限
-        List<String> additionalHandler = flowParams.getAdditionalHandler();
-        AssertUtil.isTrue(CollUtil.isEmpty(additionalHandler), ExceptionCons.LOST_ADDITIONAL_PERMISSION);
-        if (!ignore) {
+        List<String> addHandler = modifyHandler.getAddHandlers();
+        AssertUtil.isTrue(CollUtil.isEmpty(addHandler), ExceptionCons.LOST_ADDITIONAL_PERMISSION);
+        if (!modifyHandler.isIgnore()) {
             // 判断当前处理人是否有权限，获取当前办理人的权限
-            List<String> permissions = flowParams.getPermissionFlag();
+            List<String> permissions = modifyHandler.getPermissionFlag();
             // 获取任务权限人
-            List<String> taskPermissions = FlowFactory.userService().getPermission(taskId, UserType.APPROVAL.getKey());
+            List<String> taskPermissions = FlowFactory.userService().getPermission(modifyHandler.getTaskId(), UserType.APPROVAL.getKey());
             AssertUtil.isTrue(CollUtil.notContainsAny(permissions, taskPermissions), ExceptionCons.NOT_AUTHORITY);
         }
-        // 增减流程参数 跳转类型
-        flowParams.skipType(SkipType.PASS.getKey());
         // 留存历史记录
-        Task task = FlowFactory.taskService().getById(taskId);
+        Task task = FlowFactory.taskService().getById(modifyHandler.getTaskId());
         Node node = FlowFactory.nodeService().getOne(FlowFactory.newNode().setNodeCode(task.getNodeCode())
                 .setDefinitionId(task.getDefinitionId()));
+        FlowParams flowParams = new FlowParams().createBy(modifyHandler.getCurUser())
+                .skipType(SkipType.PASS.getKey())
+                .message(modifyHandler.getMessage())
+                .setActionType(modifyHandler.getActionType());
         HisTask hisTask = CollUtil.getOne(FlowFactory.hisTaskService().setSkipInsHis(task, CollUtil.toList(node), flowParams));
 
-        // 处理此任务的权限流转
-        UserType userType = null;
-        switch (circulationType){
-            // 加减签，清空当前的计划审批人，重新设置新的计划审批人
-            case SIGNATURE:
-                userType = UserType.APPROVAL;
-                hisTask.setActionType(ActionType.SIGNATURE.getKey());
-                break;
-            // 转办，清理当前办理人审批人
-            case TRANSFER:
-                userType = UserType.ASSIGNEE;
-                hisTask.setActionType(ActionType.TRANSFER.getKey());
-                break;
-            // 委派，不清理计划审批人，新增受托人
-            case DEPUTE:
-            // 委派，清理计划审批人，新增受托人
-            case DEPUTE_CHANGE:
-                userType = UserType.DEPUTE;
-                hisTask.setActionType(ActionType.DEPUTE.getKey());
-                break;
-        }
         FlowFactory.hisTaskService().save(hisTask);
-        return FlowFactory.userService().updatePermission(taskId, flowParams.getAdditionalHandler(), userType.getKey(),
-                circulationType.getClear(), flowParams.getCreateBy());
+
+        // 删除对应的操作人
+        if(CollUtil.isNotEmpty(modifyHandler.getReductionHandlers())){
+            for (String reductionHandler : modifyHandler.getReductionHandlers()) {
+                FlowFactory.userService().remove(FlowFactory.newUser().setAssociated(modifyHandler.getTaskId()).setCreateBy(reductionHandler));
+            }
+        }
+
+        // 新增权限人
+        if(CollUtil.isNotEmpty(modifyHandler.getAddHandlers())){
+            FlowFactory.userService().saveBatch(StreamUtils.toList(modifyHandler.getAddHandlers(), permission ->
+                    FlowFactory.userService().structureUser(modifyHandler.getTaskId(), permission, modifyHandler.getActionType().toString()
+                            , modifyHandler.getCurUser())));
+        }
+
+        return true;
     }
 
     @Override
@@ -323,7 +338,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             }
         }
         addTask.setPermissionList(permissionList);
-        addTask.setTenantId(flowParams.getTenantId());
         return addTask;
     }
 
