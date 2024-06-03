@@ -172,7 +172,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         // 关联业务id,起始后面可以不用到业务id,传业务id目前来看只是为了批量创建流程的时候能创建出有区别化的流程,也是为了后期需要用到businessId。
         instance.setCreateTime(now);
         instance.setUpdateTime(now);
-        instance.setCreateBy(flowParams.getCreateBy());
+        instance.setCreateBy(flowParams.getHandler());
         instance.setExt(flowParams.getExt());
         return instance;
     }

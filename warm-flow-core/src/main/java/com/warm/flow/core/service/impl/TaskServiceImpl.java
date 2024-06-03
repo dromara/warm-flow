@@ -53,9 +53,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         AssertUtil.isTrue(NodeType.isEnd(instance.getNodeType()), ExceptionCons.FLOW_FINISH);
 
         // 如果是受托人在处理任务，需要处理一条委派记录，并且更新委托人，回到计划审批人,然后直接返回流程实例
-        if(handleDepute(task, flowParams)){
-            return instance;
-        }
+        if(handleDepute(task, flowParams)) return instance;
 
         // TODO min 后续考虑并发问题，待办任务和实例表不同步，可给代办任务id加锁，抽取所接口，方便后续兼容分布式锁
         // 非第一个记得跳转类型必传
@@ -78,7 +76,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         checkAuth(NowNode, task, flowParams.getPermissionFlag());
 
         //或签、会签、票签逻辑处理
-        if (!cooperate(NowNode, task, flowParams)) return instance;
+        if (isCooperate(NowNode, task, flowParams)) return instance;
 
         // 获取关联的节点，判断当前处理人是否有权限处理
         Node nextNode = getNextNode(NowNode, task, flowParams);
@@ -230,7 +228,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         Task task = FlowFactory.taskService().getById(modifyHandler.getTaskId());
         Node node = FlowFactory.nodeService().getOne(FlowFactory.newNode().setNodeCode(task.getNodeCode())
                 .setDefinitionId(task.getDefinitionId()));
-        FlowParams flowParams = new FlowParams().createBy(modifyHandler.getCurUser())
+        FlowParams flowParams = new FlowParams().handler(modifyHandler.getCurUser())
                 .setFlowStatus(FlowStatus.APPROVAL.getKey())
                 .message(modifyHandler.getMessage())
                 .setActionType(modifyHandler.getActionType());
@@ -371,7 +369,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     private boolean handleDepute(Task task, FlowParams flowParams) {
         // 获取受托人
         User entrustedUser = FlowFactory.userService().getOne(FlowFactory.newUser().setAssociated(task.getId())
-                .setCreateBy(flowParams.getCreateBy()).setType(UserType.DEPUTE.getKey()));
+                .setCreateBy(flowParams.getHandler()).setType(UserType.DEPUTE.getKey()));
         if (ObjectUtil.isNull(entrustedUser)) return false;
 
         // 记录受托人处理任务记录
@@ -410,23 +408,21 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     /**
-     * 协作处理，会签，票签过程中 返回 false 最后一个签署返回 true
+     * 会签，票签，协作处理，返回true；或签返回false
      * @param NowNode
      * @param task
      * @param flowParams
      * @return
      */
-    private boolean cooperate(Node NowNode, Task task, FlowParams flowParams) {
+    private boolean isCooperate(Node NowNode, Task task, FlowParams flowParams) {
         BigDecimal nodeRatio = NowNode.getNodeRatio();
-        if (ObjectUtil.isNull(nodeRatio) || CooperateType.isOrSign(nodeRatio)) {
-            // 或签
-            return true;
-        }
+        // 或签，直接返回
+        if (CooperateType.isOrSign(nodeRatio)) return false;
 
-        AssertUtil.isTrue(StringUtils.isEmpty(flowParams.getCreateBy()), "会签、票签目前只支持createBy用户");
+        AssertUtil.isTrue(StringUtils.isEmpty(flowParams.getHandler()), "会签、票签目前只支持createBy用户");
 
         User todoUser = FlowFactory.userService().getOne(FlowFactory.newUser().setAssociated(task.getId())
-                .setProcessedBy(flowParams.getCreateBy()));
+                .setProcessedBy(flowParams.getHandler()));
 
         AssertUtil.isTrue(Objects.isNull(todoUser), "会签、票签目前只支持createBy用户");
 
@@ -435,7 +431,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         if (CooperateType.isCountersign(nodeRatio) &&
                 (todoList.size() == 1 || SkipType.isReject(flowParams.getSkipType()))) {
             // 只有一位待办人结束任务 或者 当前人驳回直接返回
-            return true;
+            return false;
         }
 
         // 已办列表
@@ -468,12 +464,12 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
         if (!isPass && rejectRatio.compareTo(CooperateType.ONE_HUNDRED.subtract(nodeRatio)) > 0) {
             // 驳回，并且当前是驳回
-            return true;
+            return false;
         }
 
         if (passRatio.compareTo(nodeRatio) >= 0) {
             // 大于等于 nodeRatio 设置值结束任务
-            return true;
+            return false;
         }
 
         // 添加历史任务
@@ -487,7 +483,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 .setNodeType(task.getNodeType())
                 .setTenantId(task.getTenantId())
                 .setDefinitionId(task.getDefinitionId())
-                .setApprover(flowParams.getCreateBy())
+                .setApprover(flowParams.getHandler())
                 .setMessage(flowParams.getMessage())
                 .setFlowStatus(isPass ? FlowStatus.PASS.getKey() : FlowStatus.REJECT.getKey())
                 .setCreateTime(new Date());
@@ -496,7 +492,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
         // 删掉待办用户
         FlowFactory.userService().removeById(todoUser.getId());
-        return false;
+        return true;
     }
 
     /**

@@ -63,9 +63,7 @@ public enum CooperateType {
      * @return
      */
     public static Boolean isVoteSign(BigDecimal ratio) {
-        if (Objects.nonNull(ratio)
-            && ratio.compareTo(BigDecimal.ZERO) > 0
-            && ratio.compareTo(ONE_HUNDRED) < 0) {
+        if (Objects.nonNull(ratio) && ratio.compareTo(BigDecimal.ZERO) > 0 && ratio.compareTo(ONE_HUNDRED) < 0) {
             return Boolean.TRUE;
         }
         return Boolean.FALSE;
@@ -78,8 +76,7 @@ public enum CooperateType {
      * @return
      */
     public static Boolean isCountersign(BigDecimal ratio) {
-        if (Objects.nonNull(ratio)
-            && ratio.compareTo(ONE_HUNDRED) >= 0) {
+        if (Objects.nonNull(ratio) && ratio.compareTo(ONE_HUNDRED) >= 0) {
             return Boolean.TRUE;
         }
         return Boolean.FALSE;

@@ -23,7 +23,7 @@ public class TransactionalTest {
 
     public FlowParams getUser() {
         FlowParams flowParams = FlowParams.build().flowCode("leaveFlow-serial-test")
-                .createBy("user:1")
+                .handler("user:1")
                 .skipType(SkipType.PASS.getKey())
                 .permissionFlag(Arrays.asList("role:1", "role:2"));
         return flowParams;

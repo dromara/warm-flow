@@ -1,5 +1,6 @@
 package com.warm.flow.core.dto;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -8,7 +9,7 @@ import java.util.Map;
  * @description: 工作流内置参数
  * @date: 2023/3/31 17:18
  */
-public class FlowParams {
+public class FlowParams implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
@@ -17,8 +18,14 @@ public class FlowParams {
     private String flowCode;
 
     /**
-     * 用户账号，唯一标识就行
+     * 办理人
      */
+    private String handler;
+
+    /**
+     * 办理人
+     */
+    @Deprecated
     private String createBy;
 
     /**
@@ -73,8 +80,8 @@ public class FlowParams {
         return this;
     }
 
-    public FlowParams createBy(String createBy) {
-        this.createBy = createBy;
+    public FlowParams handler(String handler) {
+        this.handler = handler;
         return this;
     }
 
@@ -129,8 +136,8 @@ public class FlowParams {
         return flowCode;
     }
 
-    public String getCreateBy() {
-        return createBy;
+    public String getHandler() {
+        return handler;
     }
 
     public List<String> getPermissionFlag() {
@@ -164,6 +171,15 @@ public class FlowParams {
 
     public FlowParams setActionType(Integer actionType) {
         this.actionType = actionType;
+        return this;
+    }
+
+    public String getCreateBy() {
+        return handler;
+    }
+
+    public FlowParams setCreateBy(String createBy) {
+        this.handler = createBy;
         return this;
     }
 }

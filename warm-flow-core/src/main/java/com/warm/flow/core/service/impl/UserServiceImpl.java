@@ -80,13 +80,13 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
 
     @Override
     public boolean updatePermission(Long associated, List<String> permissions, String type, boolean clear,
-                                    String createBy) {
+                                    String handler) {
         // 判断是否clear，如果是true，则先删除当前关联id用户数据
         if(clear){
-            getDao().delete(FlowFactory.newUser().setAssociated(associated).setCreateBy(createBy));
+            getDao().delete(FlowFactory.newUser().setAssociated(associated).setCreateBy(handler));
         }
         // 再新增权限人
-        saveBatch(StreamUtils.toList(permissions, permission -> structureUser(associated, permission, type, createBy)));
+        saveBatch(StreamUtils.toList(permissions, permission -> structureUser(associated, permission, type, handler)));
         return true;
     }
 
@@ -101,17 +101,17 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
     }
 
     @Override
-    public List<User> structureUser(Long associated, List<String> permissionList, String type, String createBy) {
-        return StreamUtils.toList(permissionList, permission -> structureUser(associated, permission, type, createBy));
+    public List<User> structureUser(Long associated, List<String> permissionList, String type, String handler) {
+        return StreamUtils.toList(permissionList, permission -> structureUser(associated, permission, type, handler));
     }
 
     @Override
-    public User structureUser(Long associated, String permission, String type, String createBy) {
+    public User structureUser(Long associated, String permission, String type, String handler) {
         User user = FlowFactory.newUser()
                 .setType(type)
                 .setProcessedBy(permission)
                 .setAssociated(associated)
-                .setCreateBy(createBy);
+                .setCreateBy(handler);
         FlowFactory.dataFillHandler().idFill(user);
         return user;
     }

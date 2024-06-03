@@ -52,7 +52,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
             insHis.setDefinitionId(task.getDefinitionId());
             insHis.setTargetNodeCode(nextNode.getNodeCode());
             insHis.setTargetNodeName(nextNode.getNodeName());
-            insHis.setApprover(flowParams.getCreateBy());
+            insHis.setApprover(flowParams.getHandler());
             if (ObjectUtil.isNotNull(flowParams.getFlowStatus())) {
                 insHis.setFlowStatus(flowParams.getFlowStatus());
             } else if (NodeType.isEnd(nextNode.getNodeType())) {

@@ -25,7 +25,7 @@ public interface TaskService extends IWarmService<Task> {
      *                               - nodeCode:节点编码 [如果指定跳转节点,必传]
      *                               - permissionFlag:办理人权限标识[按需传输]
      *                               - message:审批意见  [按需传输]
-     *                               - createBy:办理人帐号[建议传]
+     *                               - handler:办理人唯一标识[建议传]
      *                               - nickname:办理人昵称[按需传输]
      *                               - variable:流程变量[按需传输,跳转条件放入流程变量<互斥网关必传>]
      *                               - variableTask:任务变量[按需传输]
@@ -39,7 +39,7 @@ public interface TaskService extends IWarmService<Task> {
      *                               - nodeCode:节点编码 [如果指定跳转节点,必传]
      *                               - permissionFlag:办理人权限标识[按需传输]
      *                               - message:审批意见  [按需传输]
-     *                               - createBy:办理人帐号[建议传]
+     *                               - handler:办理人唯一标识[建议传]
      *                               - nickname:办理人昵称[按需传输]
      *                               - variable:流程变量[按需传输,跳转条件放入流程变量<互斥网关必传>]
      *                               - variableTask:任务变量[按需传输]
@@ -52,7 +52,7 @@ public interface TaskService extends IWarmService<Task> {
      *
      * @param taskId:流程任务id[必传]
      * @param flowParams:包含流程相关参数的对象 - message:审批意见  [按需传输]
-     *                               - createBy:办理人帐号[建议传]
+     *                               - handler:办理人唯一标识[建议传]
      */
     Instance termination(Long taskId, FlowParams flowParams);
 
@@ -62,7 +62,7 @@ public interface TaskService extends IWarmService<Task> {
      * @param instance:流程实例
      * @param task:流程任务
      * @param flowParams:包含流程相关参数的对象 - message:审批意见  [按需传输]
-     *                               - createBy:办理人帐号[建议传]
+     *                               - handler:办理人唯一标识[建议传]
      */
     Instance termination(Instance instance, Task task, FlowParams flowParams);
 
