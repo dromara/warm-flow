@@ -45,9 +45,9 @@ public class ModifyHandler {
     private boolean ignore;
 
     /**
-     * 历史任务动作类型(0审批 1转办 2会签 3票签 4委派 5加签 6减签)
+     * 协作方式(1或签 2转办 3委派 4会签 5票签 6加签 7减签)
      */
-    private Integer actionType;
+    private Integer cooperateType;
 
     public static ModifyHandler build() {
         return new ModifyHandler();
@@ -116,12 +116,12 @@ public class ModifyHandler {
         return this;
     }
 
-    public Integer getActionType() {
-        return actionType;
+    public Integer getCooperateType() {
+        return cooperateType;
     }
 
-    public ModifyHandler setActionType(Integer actionType) {
-        this.actionType = actionType;
+    public ModifyHandler setCooperateType(Integer cooperateType) {
+        this.cooperateType = cooperateType;
         return this;
     }
 }

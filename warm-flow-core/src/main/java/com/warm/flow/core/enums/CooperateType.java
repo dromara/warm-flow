@@ -11,7 +11,7 @@ import java.util.Objects;
  */
 public enum CooperateType {
 
-    APPROVAL(1, "审批"),
+    OR_SIGN(1, "或签"),
     TRANSFER(2, "转办"),
     DEPUTE(3, "委派"),
     COUNTERSIGN(4, "会签"),

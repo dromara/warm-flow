@@ -46,8 +46,8 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
                 if (StringUtils.isNotEmpty(this.targetNodeName)) {
                     predicates.add(criteriaBuilder.equal(root.get("targetNodeName"), this.targetNodeName));
                 }
-                if (Objects.nonNull(this.actionType)) {
-                    predicates.add(criteriaBuilder.equal(root.get("actionType"), this.actionType));
+                if (Objects.nonNull(this.cooperateType)) {
+                    predicates.add(criteriaBuilder.equal(root.get("cooperateType"), this.cooperateType));
                 }
                 if (StringUtils.isNotEmpty(this.approver)) {
                     predicates.add(criteriaBuilder.equal(root.get("approver"), this.approver));
@@ -83,8 +83,8 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
         if (Objects.nonNull(updateEntity.nodeType)) {
             this.nodeType = updateEntity.nodeType;
         }
-        if (Objects.nonNull(updateEntity.actionType)) {
-            this.actionType = updateEntity.actionType;
+        if (Objects.nonNull(updateEntity.cooperateType)) {
+            this.cooperateType = updateEntity.cooperateType;
         }
         if (StringUtils.isNotEmpty(updateEntity.targetNodeCode)) {
             this.targetNodeCode = updateEntity.targetNodeCode;
@@ -147,10 +147,10 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
     private Long definitionId;
 
     /**
-     * 历史任务动作类型(0审批 1转办 2会签 3票签 4委派 5加签 6减签)
+     * 协作方式(1或签 2转办 3委派 4会签 5票签 6加签 7减签)
      */
-    @Column(name="action_type")
-    private Integer actionType;
+    @Column(name="cooperate_type")
+    private Integer cooperateType;
 
     /**
      * 流程名称
@@ -268,13 +268,13 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
     }
 
     @Override
-    public Integer getActionType() {
-        return actionType;
+    public Integer getCooperateType() {
+        return cooperateType;
     }
 
     @Override
-    public FlowHisTask setActionType(Integer actionType) {
-        this.actionType = actionType;
+    public FlowHisTask setCooperateType(Integer cooperateType) {
+        this.cooperateType = cooperateType;
         return this;
     }
 

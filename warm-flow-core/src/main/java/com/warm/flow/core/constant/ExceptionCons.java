@@ -81,4 +81,6 @@ public class ExceptionCons {
 
     public static final String LOST_ADDITIONAL_PERMISSION = "调整的权限缺失";
 
+    public static final String NULL_HANDLER = "办理人不能为空";
+
 }

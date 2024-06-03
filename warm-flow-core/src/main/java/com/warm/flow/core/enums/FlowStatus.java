@@ -9,10 +9,18 @@ import com.warm.flow.core.utils.ObjectUtil;
  */
 public enum FlowStatus {
     TOBESUBMIT(0, "待提交"),
+
     APPROVAL(1, "审批中"),
+
     PASS(2, "审批通过"),
-    FINISHED(8, "已完成"),
+
+    FINISHED(3, "已完成"),
+
+    AUTO_PASS(4, "自动通过"),
+
+
     REJECT(9, "已退回"),
+
     INVALID(10, "失效");
 
     private Integer key;

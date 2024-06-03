@@ -65,9 +65,9 @@ public class FlowHisTask implements HisTask {
     private Long taskId;
 
     /**
-     * 历史任务动作类型(0审批 1转办 2会签 3票签 4委派 5加签 6减签)
+     * 协作方式(1或签 2转办 3委派 4会签 5票签 6加签 7减签)
      */
-    private Integer actionType;
+    private Integer cooperateType;
 
     /**
      * 业务id
@@ -223,13 +223,13 @@ public class FlowHisTask implements HisTask {
     }
 
     @Override
-    public Integer getActionType() {
-        return actionType;
+    public Integer getCooperateType() {
+        return cooperateType;
     }
 
     @Override
-    public FlowHisTask setActionType(Integer actionType) {
-        this.actionType = actionType;
+    public FlowHisTask setCooperateType(Integer cooperateType) {
+        this.cooperateType = cooperateType;
         return this;
     }
 
@@ -419,7 +419,7 @@ public class FlowHisTask implements HisTask {
                 ", flowName='" + flowName + '\'' +
                 ", instanceId=" + instanceId +
                 ", taskId=" + taskId +
-                ", actionType=" + actionType +
+                ", cooperateType=" + cooperateType +
                 ", tenantId='" + tenantId + '\'' +
                 ", businessId='" + businessId + '\'' +
                 ", nodeCode='" + nodeCode + '\'' +

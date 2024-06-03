@@ -18,12 +18,12 @@ public class FlowParams implements Serializable {
     private String flowCode;
 
     /**
-     * 办理人
+     * 办理人唯一标识
      */
     private String handler;
 
     /**
-     * 办理人
+     * 用户账号，唯一标识就行（即将删除字段）
      */
     @Deprecated
     private String createBy;
@@ -62,9 +62,9 @@ public class FlowParams implements Serializable {
     private Integer flowStatus;
 
     /**
-     * 历史任务动作类型(0审批 1转办 2会签 3票签 4委派 5加签 6减签)
+     * 协作方式(1或签 2转办 3委派 4会签 5票签 6加签 7减签)
      */
-    private Integer actionType;
+    private Integer cooperateType;
 
     /**
      * 扩展字段
@@ -165,12 +165,12 @@ public class FlowParams implements Serializable {
         return this;
     }
 
-    public Integer getActionType() {
-        return actionType;
+    public Integer getCooperateType() {
+        return cooperateType;
     }
 
-    public FlowParams setActionType(Integer actionType) {
-        this.actionType = actionType;
+    public FlowParams setCooperateType(Integer cooperateType) {
+        this.cooperateType = cooperateType;
         return this;
     }
 

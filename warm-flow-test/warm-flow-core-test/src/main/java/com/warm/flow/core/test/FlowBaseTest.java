@@ -30,6 +30,7 @@ public class FlowBaseTest {
      * 部署流程
      */
     public void deployFlow(DefService defService) throws Exception {
+        // warm-flow-test\warm-flow-core-test\src\main\resources\leaveFlow-serial1_1.0.xml
         String path = "D:\\java\\warm-flow\\warm-flow-doc\\leaveFlow-serial1_1.0.xml";
         System.out.println("已部署流程的id：" + defService.importXml(new FileInputStream(path)).getId());
     }

@@ -43,9 +43,9 @@ public interface HisTask extends RootEntity {
 
     public HisTask setInstanceId(Long instanceId);
 
-    public Integer getActionType();
+    public Integer getCooperateType();
 
-    public HisTask setActionType(Integer actionType);
+    public HisTask setCooperateType(Integer cooperateType);
 
     public Long getTaskId();
 

@@ -4,8 +4,10 @@ import com.warm.flow.core.dto.FlowParams;
 import com.warm.flow.core.entity.HisTask;
 import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.Task;
+import com.warm.flow.core.entity.User;
 import com.warm.flow.core.orm.service.IWarmService;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -24,6 +26,33 @@ public interface HisTaskService extends IWarmService<HisTask> {
      * @param flowParams 参数
      */
     List<HisTask> setSkipInsHis(Task task, List<Node> nextNodes, FlowParams flowParams);
+
+    /**
+     * 委派历史任务
+     * @param task
+     * @param flowParams
+     * @param entrustedUser
+     * @return
+     */
+    HisTask setDeputeHisTask(Task task, FlowParams flowParams, User entrustedUser);
+
+    /**
+     * 设置会签票签历史任务
+     * @param task
+     * @param flowParams
+     * @param nodeRatio
+     * @param isPass
+     * @return
+     */
+    HisTask setSignHisTask(Task task, FlowParams flowParams, BigDecimal nodeRatio, boolean isPass);
+
+    /**
+     * 自动完成历史任务
+     * @param flowStatus
+     * @param task
+     * @return
+     */
+    HisTask autoHisTask(Integer flowStatus, Task task);
 
     /**
      * 根据nodeCode获取未退回的历史记录

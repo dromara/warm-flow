@@ -16,7 +16,7 @@
         <result property="definitionId" column="definition_id"/>
         <result property="instanceId" column="instance_id"/>
         <result property="taskId" column="task_id"/>
-        <result property="actionType" column="action_type"/>
+        <result property="cooperateType" column="cooperate_type"/>
         <result property="flowStatus" column="flow_status"/>
         <result property="message" column="message"/>
         <result property="createTime" column="create_time"/>
@@ -39,7 +39,7 @@
                t.definition_id,
                t.instance_id,
                t.task_id,
-               t.action_type,
+               t.cooperate_type,
                t.flow_status,
                t.message,
                t.create_time,
@@ -75,7 +75,7 @@
             <if test="entity.definitionId != null ">and t.definition_id = #{entity.definitionId}</if>
             <if test="entity.instanceId != null ">and t.instance_id = #{entity.instanceId}</if>
             <if test="entity.taskId != null ">and t.task_id = #{entity.taskId}</if>
-            <if test="entity.actionType != null ">and t.action_type = #{entity.actionType}</if>
+            <if test="entity.cooperateType != null ">and t.cooperate_type = #{entity.cooperateType}</if>
             <if test="entity.flowStatus != null">and t.flow_status = #{fentity.flowStatus}</if>
             <if test="entity.message != null  and entity.message != ''">and t.message = #{entity.message}</if>
             <if test="entity.createTime != null">and t.create_time = #{entity.createTime}</if>
@@ -155,7 +155,7 @@
             <if test="definitionId != null">definition_id,</if>
             <if test="instanceId != null">instance_id,</if>
             <if test="taskId != null">task_id,</if>
-            <if test="actionType != null">action_type,</if>
+            <if test="cooperateType != null">cooperate_type,</if>
             <if test="flowStatus != null">flow_status,</if>
             <if test="message != null">message,</if>
             <if test="createTime != null">create_time,</if>
@@ -175,7 +175,7 @@
             <if test="definitionId != null">#{definitionId},</if>
             <if test="instanceId != null">#{instanceId},</if>
             <if test="taskId != null">#{taskId},</if>
-            <if test="actionType != null">#{actionType},</if>
+            <if test="cooperateType != null">#{cooperateType},</if>
             <if test="flowStatus != null">#{flowStatus},</if>
             <if test="message != null">#{message},</if>
             <if test="createTime != null">#{createTime},</if>
@@ -197,7 +197,7 @@
             <if test="definitionId != null">t.definition_id = #{definitionId},</if>
             <if test="instanceId != null">t.instance_id = #{instanceId},</if>
             <if test="taskId != null">t.task_id = #{taskId},</if>
-            <if test="actionType != null">t.action_type = #{actionType},</if>
+            <if test="cooperateType != null">t.cooperate_type = #{cooperateType},</if>
             <if test="flowStatus != null">t.flow_status = #{flowStatus},</if>
             <if test="message != null">t.message = #{message},</if>
             <if test="createTime != null">t.create_time = #{createTime},</if>
@@ -274,7 +274,7 @@
             <if test="definitionId != null">and definition_id = #{definitionId}</if>
             <if test="instanceId != null">and instance_id = #{instanceId}</if>
             <if test="taskId != null">and task_id = #{taskId}</if>
-            <if test="actionType != null">and action_type = #{actionType}</if>
+            <if test="cooperateType != null">and cooperate_type = #{cooperateType}</if>
             <if test="flowStatus != null">and flow_status = #{flowStatus}</if>
             <if test="message != null">and message = #{message}</if>
             <if test="createTime != null">and create_time = #{createTime}</if>
@@ -298,7 +298,7 @@
             <if test="entity.definitionId != null">and t.definition_id = #{entity.definitionId}</if>
             <if test="entity.instanceId != null">and t.instance_id = #{entity.instanceId}</if>
             <if test="entity.taskId != null">and t.task_id = #{entity.taskId}</if>
-            <if test="entity.actionType != null">and t.action_type = #{entity.actionType}</if>
+            <if test="entity.cooperateType != null">and t.cooperate_type = #{entity.cooperateType}</if>
             <if test="entity.flowStatus != null">and t.flow_status = #{entity.flowStatus}</if>
             <if test="entity.message != null">and t.message = #{entity.message}</if>
             <if test="entity.createTime != null">and t.create_time = #{entity.createTime}</if>

@@ -7,14 +7,14 @@ import com.warm.flow.core.entity.HisTask;
 import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.Task;
 import com.warm.flow.core.enums.CooperateType;
-import com.warm.flow.core.enums.FlowStatus;
-import com.warm.flow.core.enums.NodeType;
-import com.warm.flow.core.enums.SkipType;
+import com.warm.flow.core.entity.User;
+import com.warm.flow.core.enums.*;
 import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.HisTaskService;
 import com.warm.flow.core.utils.ObjectUtil;
 import com.warm.flow.core.utils.SqlHelper;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -37,36 +37,93 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
     public List<HisTask> setSkipInsHis(Task task, List<Node> nextNodes, FlowParams flowParams) {
         List<HisTask> hisTasks = new ArrayList<>();
         for (Node nextNode : nextNodes) {
-            HisTask insHis = FlowFactory.newHisTask();
-            insHis.setInstanceId(task.getInstanceId());
-            insHis.setTaskId(task.getId());
-            if (ObjectUtil.isNotNull(flowParams.getActionType())) {
-                insHis.setActionType(flowParams.getActionType());
+            HisTask hisTask = FlowFactory.newHisTask();
+            hisTask.setInstanceId(task.getInstanceId());
+            hisTask.setTaskId(task.getId());
+            if (ObjectUtil.isNotNull(flowParams.getCooperateType())) {
+                hisTask.setCooperateType(flowParams.getCooperateType());
             } else {
-                insHis.setActionType(CooperateType.APPROVAL.getKey());
+                hisTask.setCooperateType(CooperateType.OR_SIGN.getKey());
             }
-            insHis.setNodeCode(task.getNodeCode());
-            insHis.setNodeName(task.getNodeName());
-            insHis.setNodeType(task.getNodeType());
-            insHis.setTenantId(task.getTenantId());
-            insHis.setDefinitionId(task.getDefinitionId());
-            insHis.setTargetNodeCode(nextNode.getNodeCode());
-            insHis.setTargetNodeName(nextNode.getNodeName());
-            insHis.setApprover(flowParams.getHandler());
+            hisTask.setNodeCode(task.getNodeCode());
+            hisTask.setNodeName(task.getNodeName());
+            hisTask.setNodeType(task.getNodeType());
+            hisTask.setDefinitionId(task.getDefinitionId());
+            hisTask.setTargetNodeCode(nextNode.getNodeCode());
+            hisTask.setTargetNodeName(nextNode.getNodeName());
+            hisTask.setApprover(flowParams.getHandler());
+            hisTask.setApprover(flowParams.getHandler());
             if (ObjectUtil.isNotNull(flowParams.getFlowStatus())) {
-                insHis.setFlowStatus(flowParams.getFlowStatus());
-            } else if (NodeType.isEnd(nextNode.getNodeType())) {
-                insHis.setFlowStatus(FlowStatus.FINISHED.getKey());
+                hisTask.setFlowStatus(flowParams.getFlowStatus());
+            } else if (ObjectUtil.isNotNull(nextNode.getNodeType()) && NodeType.isEnd(nextNode.getNodeType())) {
+                hisTask.setFlowStatus(FlowStatus.FINISHED.getKey());
             } else {
-                insHis.setFlowStatus(SkipType.isReject(flowParams.getSkipType())
+                hisTask.setFlowStatus(SkipType.isReject(flowParams.getSkipType())
                         ? FlowStatus.REJECT.getKey() : FlowStatus.PASS.getKey());
             }
-            insHis.setMessage(flowParams.getMessage());
-            insHis.setCreateTime(new Date());
-            FlowFactory.dataFillHandler().idFill(insHis);
-            hisTasks.add(insHis);
+            hisTask.setMessage(flowParams.getMessage());
+            hisTask.setCreateTime(new Date());
+            FlowFactory.dataFillHandler().idFill(hisTask);
+            hisTasks.add(hisTask);
         }
         return hisTasks;
+    }
+
+    @Override
+    public HisTask setDeputeHisTask(Task task, FlowParams flowParams, User entrustedUser) {
+        HisTask hisTask = FlowFactory.newHisTask()
+                .setInstanceId(task.getInstanceId())
+                .setTaskId(task.getId())
+                .setCooperateType(CooperateType.DEPUTE.getKey())
+                .setNodeCode(task.getNodeCode())
+                .setNodeName(task.getNodeName())
+                .setNodeType(task.getNodeType())
+                .setDefinitionId(task.getDefinitionId())
+                .setTargetNodeCode(task.getNodeCode())
+                .setTargetNodeName(task.getNodeName())
+                .setApprover(entrustedUser.getProcessedBy())
+                .setCollaborator(entrustedUser.getCreateBy())
+                .setFlowStatus(SkipType.isReject(flowParams.getSkipType())
+                        ? FlowStatus.REJECT.getKey() : FlowStatus.PASS.getKey())
+                .setMessage(flowParams.getMessage())
+                .setCreateTime(new Date());
+        FlowFactory.dataFillHandler().idFill(hisTask);
+        return hisTask;
+    }
+
+    @Override
+    public HisTask setSignHisTask(Task task, FlowParams flowParams, BigDecimal nodeRatio, boolean isPass) {
+        HisTask hisTask = FlowFactory.newHisTask()
+                .setTaskId(task.getId())
+                .setInstanceId(task.getInstanceId())
+                .setCooperateType(CooperateType.isCountersign(nodeRatio)
+                        ? CooperateType.COUNTERSIGN.getKey() : CooperateType.VOTE.getKey())
+                .setNodeCode(task.getNodeCode())
+                .setNodeName(task.getNodeName())
+                .setNodeType(task.getNodeType())
+                .setDefinitionId(task.getDefinitionId())
+                .setApprover(flowParams.getHandler())
+                .setMessage(flowParams.getMessage())
+                .setFlowStatus(isPass ? FlowStatus.PASS.getKey() : FlowStatus.REJECT.getKey())
+                .setCreateTime(new Date());
+        FlowFactory.dataFillHandler().idFill(hisTask);
+        return hisTask;
+    }
+
+    @Override
+    public HisTask autoHisTask(Integer flowStatus, Task task) {
+        HisTask hisTask = FlowFactory.newHisTask()
+            .setTaskId(task.getId())
+            .setCooperateType(CooperateType.OR_SIGN.getKey())
+            .setInstanceId(task.getInstanceId())
+            .setNodeCode(task.getNodeCode())
+            .setNodeName(task.getNodeName())
+            .setNodeType(task.getNodeType())
+            .setDefinitionId(task.getDefinitionId())
+            .setFlowStatus(flowStatus)
+            .setCreateTime(new Date());
+        FlowFactory.dataFillHandler().idFill(hisTask);
+        return hisTask;
     }
 
     @Override
