@@ -43,7 +43,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
             if (ObjectUtil.isNotNull(flowParams.getCooperateType())) {
                 hisTask.setCooperateType(flowParams.getCooperateType());
             } else {
-                hisTask.setCooperateType(CooperateType.OR_SIGN.getKey());
+                hisTask.setCooperateType(CooperateType.APPROVAL.getKey());
             }
             hisTask.setNodeCode(task.getNodeCode());
             hisTask.setNodeName(task.getNodeName());
@@ -114,7 +114,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
     public HisTask autoHisTask(Integer flowStatus, Task task) {
         HisTask hisTask = FlowFactory.newHisTask()
             .setTaskId(task.getId())
-            .setCooperateType(CooperateType.OR_SIGN.getKey())
+            .setCooperateType(CooperateType.APPROVAL.getKey())
             .setInstanceId(task.getInstanceId())
             .setNodeCode(task.getNodeCode())
             .setNodeName(task.getNodeName())

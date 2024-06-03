@@ -5,13 +5,20 @@ import java.util.Objects;
 
 /**
  * 协作类型
+ * APPROVAL-审批：无其他协作方式
+ * TRANSFER-转办：任务转给其他人办理
+ * DEPUTE-委派：求助其他人审批，然后参照他的意见决定是否审批通过
+ * COUNTERSIGN-会签：和其他人一起审批通过，才算通过
+ * VOTE-票签：和部分人一起审批，达到一定通过率，才算通过
+ * ADD_SIGNATURE-加签：办理中途，希望其他人一起参与办理
+ * REDUCTION_SIGNATURE-减签：办理中途，希望某些人不参与办理
  *
  * @author xiarg
  * @date 2024/5/10 16:04
  */
 public enum CooperateType {
 
-    OR_SIGN(1, "或签"),
+    APPROVAL(1, "审批"),
     TRANSFER(2, "转办"),
     DEPUTE(3, "委派"),
     COUNTERSIGN(4, "会签"),

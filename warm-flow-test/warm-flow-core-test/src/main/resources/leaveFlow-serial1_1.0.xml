@@ -14,7 +14,7 @@
         <skip coordinate="750,280;870,280" skipType="PASS">9edc9b26-cab4-4fd4-9a30-c89f11626911</skip>
         <skip coordinate="700,240;700,210;280,210;280,240" skipType="REJECT">2</skip>
     </node>
-    <node nodeType="between" nodeCode="9edc9b26-cab4-4fd4-9a30-c89f11626911" nodeName="hr审批" permissionFlag="user:warmFlowInitiator" coordinate="920,280|920,280" skipAnyNode="Y" listenerType="start,assignment,finish,permission,create" listenerPath="com.ruoyi.system.Listener.StartListener@@323@@com.ruoyi.system.Listener.FinishListener@@com.ruoyi.system.Listener.PermissionListener@@com.ruoyi.system.Listener.CreateListener">
+    <node nodeType="between" nodeCode="9edc9b26-cab4-4fd4-9a30-c89f11626911" nodeName="hr审批" permissionFlag="warmFlowInitiator" coordinate="920,280|920,280" skipAnyNode="Y" listenerType="start,assignment,finish,permission,create" listenerPath="com.ruoyi.system.Listener.StartListener@@323@@com.ruoyi.system.Listener.FinishListener@@com.ruoyi.system.Listener.PermissionListener@@com.ruoyi.system.Listener.CreateListener">
         <skip coordinate="970,280;1100,280" skipType="PASS">fa0fe17b-66d2-458d-b420-fec5cb14f73d</skip>
     </node>
     <node nodeType="end" nodeCode="fa0fe17b-66d2-458d-b420-fec5cb14f73d" nodeName="结束" coordinate="1120,280|1120,280" skipAnyNode="N" listenerType="start,assignment,finish,permission,create" listenerPath="com.ruoyi.system.Listener.StartListener@@323@@com.ruoyi.system.Listener.FinishListener@@com.ruoyi.system.Listener.PermissionListener@@com.ruoyi.system.Listener.CreateListener"/>
