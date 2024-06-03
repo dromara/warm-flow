@@ -76,7 +76,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         checkAuth(NowNode, task, flowParams.getPermissionFlag());
 
         //或签、会签、票签逻辑处理
-        if (isCooperate(NowNode, task, flowParams)) return instance;
+        if (cooperate(NowNode, task, flowParams)) return instance;
 
         // 获取关联的节点，判断当前处理人是否有权限处理
         Node nextNode = getNextNode(NowNode, task, flowParams);
@@ -165,7 +165,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 .setAddHandlers(addHandlers)
                 .setReductionHandlers(Collections.singletonList(curUser))
                 .setPermissionFlag(permissionFlag)
-                .setActionType(ActionType.TRANSFER.getKey())
+                .setActionType(CooperateType.TRANSFER.getKey())
                 .setMessage(message)
                 .setCurUser(curUser)
                 .setIgnore(false);
@@ -179,7 +179,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 .setAddHandlers(addHandlers)
                 .setReductionHandlers(Collections.singletonList(curUser))
                 .setPermissionFlag(permissionFlag)
-                .setActionType(ActionType.DEPUTE.getKey())
+                .setActionType(CooperateType.DEPUTE.getKey())
                 .setMessage(message)
                 .setCurUser(curUser)
                 .setIgnore(false);
@@ -192,7 +192,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 .setTaskId(taskId)
                 .setAddHandlers(addHandlers)
                 .setPermissionFlag(permissionFlag)
-                .setActionType(ActionType.ADD_SIGNATURE.getKey())
+                .setActionType(CooperateType.ADD_SIGNATURE.getKey())
                 .setMessage(message)
                 .setCurUser(curUser)
                 .setIgnore(false);
@@ -205,7 +205,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 .setTaskId(taskId)
                 .setReductionHandlers(reductionHandlers)
                 .setPermissionFlag(permissionFlag)
-                .setActionType(ActionType.REDUCTION_SIGNATURE.getKey())
+                .setActionType(CooperateType.REDUCTION_SIGNATURE.getKey())
                 .setMessage(message)
                 .setCurUser(curUser)
                 .setIgnore(false);
@@ -375,7 +375,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 记录受托人处理任务记录
         HisTask insHis = FlowFactory.newHisTask()
                 .setInstanceId(task.getInstanceId())
-                .setActionType(ActionType.DEPUTE.getKey())
+                .setActionType(CooperateType.DEPUTE.getKey())
                 .setNodeCode(task.getNodeCode())
                 .setNodeName(task.getNodeName())
                 .setNodeType(task.getNodeType())
@@ -414,10 +414,13 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
      * @param flowParams
      * @return
      */
-    private boolean isCooperate(Node NowNode, Task task, FlowParams flowParams) {
+    private boolean cooperate(Node NowNode, Task task, FlowParams flowParams) {
         BigDecimal nodeRatio = NowNode.getNodeRatio();
-        // 或签，直接返回
-        if (CooperateType.isOrSign(nodeRatio)) return false;
+
+        if (CooperateType.isOrSign(nodeRatio)) {
+            // 或签，直接返回
+            return false;
+        }
 
         AssertUtil.isTrue(StringUtils.isEmpty(flowParams.getHandler()), "会签、票签目前只支持createBy用户");
 
@@ -426,11 +429,21 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
         AssertUtil.isTrue(Objects.isNull(todoUser), "会签、票签目前只支持createBy用户");
 
-        List<User> todoList = FlowFactory.userService().list(FlowFactory.newUser()
-                .setAssociated(task.getId()));
-        if (CooperateType.isCountersign(nodeRatio) &&
-                (todoList.size() == 1 || SkipType.isReject(flowParams.getSkipType()))) {
-            // 只有一位待办人结束任务 或者 当前人驳回直接返回
+        // 待办列表
+        List<User> todoList = FlowFactory.userService().list(FlowFactory.newUser().setAssociated(task.getId()));
+
+        if (todoList.size() == 1) {
+            // 只有一位待办人结束任务
+            return false;
+        }
+
+        // 除当前办理人外剩余办理人列表
+        List<User> restList = todoList.stream().filter(u -> {return !Objects.equals(u.getProcessedBy(), todoUser.getProcessedBy());})
+                .collect(Collectors.toList());
+
+        if (CooperateType.isCountersign(nodeRatio) && SkipType.isReject(flowParams.getSkipType())) {
+            // 会签并且当前人驳回直接返回
+            cooperateAutoComplete(task, restList, CooperateType.COUNTERSIGN);
             return false;
         }
 
@@ -447,8 +460,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                         Objects.equals(hisTask.getFlowStatus(), FlowStatus.PASS.getKey())).collect(Collectors.toList());
 
         List<HisTask> doneRejectList = doneList.stream().filter(hisTask ->
-                        Objects.equals(hisTask.getFlowStatus(), FlowStatus.REJECT.getKey()))
-                .collect(Collectors.toList());
+                        Objects.equals(hisTask.getFlowStatus(), FlowStatus.REJECT.getKey())).collect(Collectors.toList());
 
         boolean isPass = SkipType.isPass(flowParams.getSkipType());
 
@@ -464,11 +476,13 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
         if (!isPass && rejectRatio.compareTo(CooperateType.ONE_HUNDRED.subtract(nodeRatio)) > 0) {
             // 驳回，并且当前是驳回
+            cooperateAutoComplete(task, restList, CooperateType.VOTE);
             return false;
         }
 
         if (passRatio.compareTo(nodeRatio) >= 0) {
             // 大于等于 nodeRatio 设置值结束任务
+            cooperateAutoComplete(task, restList, CooperateType.VOTE);
             return false;
         }
 
@@ -477,7 +491,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 .setTaskId(task.getId())
                 .setInstanceId(task.getInstanceId())
                 .setActionType(CooperateType.isCountersign(nodeRatio)
-                        ? ActionType.COUNTERSIGN.getKey() : ActionType.VOTE.getKey())
+                        ? CooperateType.COUNTERSIGN.getKey() : CooperateType.VOTE.getKey())
                 .setNodeCode(task.getNodeCode())
                 .setNodeName(task.getNodeName())
                 .setNodeType(task.getNodeType())
@@ -493,6 +507,31 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 删掉待办用户
         FlowFactory.userService().removeById(todoUser.getId());
         return true;
+    }
+
+    private void cooperateAutoComplete(Task task, List<User> userList, CooperateType cooperateType) {
+        if (CollUtil.isEmpty(userList)) {return;}
+
+        List<HisTask> hisTaskList = new ArrayList<>();
+        for (User user : userList) {
+            // 添加历史任务
+            HisTask insHis = FlowFactory.newHisTask()
+                    .setTaskId(task.getId())
+                    .setInstanceId(task.getInstanceId())
+                    .setActionType(cooperateType.getKey())
+                    .setNodeCode(task.getNodeCode())
+                    .setNodeName(task.getNodeName())
+                    .setNodeType(task.getNodeType())
+                    .setTenantId(task.getTenantId())
+                    .setDefinitionId(task.getDefinitionId())
+                    .setApprover(user.getProcessedBy())
+                    .setFlowStatus(FlowStatus.FINISHED.getKey())
+                    .setCreateTime(new Date());
+            hisTaskList.add(insHis);
+        }
+
+        FlowFactory.hisTaskService().saveBatch(hisTaskList);
+        FlowFactory.userService().removeByIds(userList.stream().map(User::getId).collect(Collectors.toList()));
     }
 
     /**

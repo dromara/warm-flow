@@ -4,27 +4,30 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 /**
- * 协作方式
+ * 协作类型
  *
- * @author vanlin
- * @date 2024/5/23 16:04
+ * @author xiarg
+ * @date 2024/5/10 16:04
  */
 public enum CooperateType {
-    OR("orSign", "或签"),
-    VOTE("voteSign", "票签"),
-    ALL("countersign", "会签");
 
-    public final static BigDecimal ONE_HUNDRED = BigDecimal.valueOf(100);
+    APPROVAL(1, "审批"),
+    TRANSFER(2, "转办"),
+    DEPUTE(3, "委派"),
+    COUNTERSIGN(4, "会签"),
+    VOTE(5, "票签"),
+    ADD_SIGNATURE(6, "加签"),
+    REDUCTION_SIGNATURE(7, "减签");
 
-    private String key;
+    private Integer key;
     private String value;
 
-    CooperateType(String key, String value) {
+    CooperateType(Integer key, String value) {
         this.key = key;
         this.value = value;
     }
 
-    public static String getKeyByValue(String value) {
+    public static Integer getKeyByValue(String value) {
         for (CooperateType item : CooperateType.values()) {
             if (item.getValue().equals(value)) {
                 return item.getKey();
@@ -33,14 +36,35 @@ public enum CooperateType {
         return null;
     }
 
-    public static String getValueByKey(String Key) {
+    public static String getValueByKey(Integer key) {
         for (CooperateType item : CooperateType.values()) {
-            if (item.getKey().equals(Key)) {
+            if (item.getKey().equals(key)) {
                 return item.getValue();
             }
         }
         return null;
     }
+
+    public static CooperateType getByKey(Integer key) {
+        for (CooperateType item : CooperateType.values()) {
+            if (item.getKey().equals(key)) {
+                return item;
+            }
+        }
+        return null;
+    }
+
+
+    public Integer getKey() {
+        return key;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+
+    public final static BigDecimal ONE_HUNDRED = BigDecimal.valueOf(100);
 
     /**
      * 判断是否为或签
@@ -82,11 +106,4 @@ public enum CooperateType {
         return Boolean.FALSE;
     }
 
-    public String getKey() {
-        return key;
-    }
-
-    public String getValue() {
-        return value;
-    }
 }

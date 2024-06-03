@@ -6,7 +6,7 @@ import com.warm.flow.core.dto.FlowParams;
 import com.warm.flow.core.entity.HisTask;
 import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.Task;
-import com.warm.flow.core.enums.ActionType;
+import com.warm.flow.core.enums.CooperateType;
 import com.warm.flow.core.enums.FlowStatus;
 import com.warm.flow.core.enums.NodeType;
 import com.warm.flow.core.enums.SkipType;
@@ -43,7 +43,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
             if (ObjectUtil.isNotNull(flowParams.getActionType())) {
                 insHis.setActionType(flowParams.getActionType());
             } else {
-                insHis.setActionType(ActionType.APPROVAL.getKey());
+                insHis.setActionType(CooperateType.APPROVAL.getKey());
             }
             insHis.setNodeCode(task.getNodeCode());
             insHis.setNodeName(task.getNodeName());
