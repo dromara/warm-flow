@@ -181,7 +181,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 .setAddHandlers(addHandlers)
                 .setReductionHandlers(Collections.singletonList(curUser))
                 .setPermissionFlag(permissionFlag)
-                .setActionType(ActionType.COUNTERSIGN.getKey())
+                .setActionType(ActionType.DEPUTE.getKey())
                 .setMessage(message)
                 .setCurUser(curUser)
                 .setIgnore(false);
@@ -231,7 +231,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         Node node = FlowFactory.nodeService().getOne(FlowFactory.newNode().setNodeCode(task.getNodeCode())
                 .setDefinitionId(task.getDefinitionId()));
         FlowParams flowParams = new FlowParams().createBy(modifyHandler.getCurUser())
-                .skipType(SkipType.PASS.getKey())
+                .setFlowStatus(FlowStatus.APPROVAL.getKey())
                 .message(modifyHandler.getMessage())
                 .setActionType(modifyHandler.getActionType());
         HisTask hisTask = CollUtil.getOne(FlowFactory.hisTaskService().setSkipInsHis(task, CollUtil.toList(node), flowParams));

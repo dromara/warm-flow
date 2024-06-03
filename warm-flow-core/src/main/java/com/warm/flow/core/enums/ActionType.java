@@ -10,9 +10,9 @@ public enum ActionType {
 
     APPROVAL(1, "审批"),
     TRANSFER(2, "转办"),
-    COUNTERSIGN(3, "委派"),
-    VOTE(4, "会签"),
-    DEPUTE(5, "票签"),
+    DEPUTE(3, "委派"),
+    COUNTERSIGN(4, "会签"),
+    VOTE(5, "票签"),
     ADD_SIGNATURE(6, "加签"),
     REDUCTION_SIGNATURE(7, "减签");
 
