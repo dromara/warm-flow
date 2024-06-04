@@ -69,7 +69,7 @@ public interface UserService extends IWarmService<User> {
      * @param types 用户表类型
      * @return
      */
-    List<User> listByAssociatedAndTypes(Long associated, String[] types);
+    List<User> listByAssociatedAndTypes(Long associated, String... types);
 
     /**
      * 根据关联id更新权限人

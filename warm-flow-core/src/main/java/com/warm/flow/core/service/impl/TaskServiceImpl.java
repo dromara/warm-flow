@@ -408,33 +408,29 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 或签，直接返回
         if (CooperateType.isOrSign(nodeRatio)) return false;
 
+        // 办理人和转办人列表
+        List<User> todoList = FlowFactory.userService().listByAssociatedAndTypes(task.getId()
+                , UserType.APPROVAL.getKey(), UserType.ASSIGNEE.getKey());
+
         // 判断办理人是否有办理权限
-        AssertUtil.isTrue(StringUtils.isEmpty(flowParams.getHandler()), ExceptionCons.NULL_HANDLER);
-        User todoUser = FlowFactory.userService().getOne(FlowFactory.newUser().setAssociated(task.getId())
-                .setProcessedBy(flowParams.getHandler()).setType(UserType.APPROVAL.getKey()));
+        AssertUtil.isTrue(StringUtils.isEmpty(flowParams.getHandler()), ExceptionCons.SIGN_NULL_HANDLER);
+        User todoUser = CollUtil.getOne(StreamUtils.filter(todoList, u -> Objects.equals(u.getProcessedBy(), flowParams.getHandler())));
         AssertUtil.isTrue(Objects.isNull(todoUser), ExceptionCons.NOT_AUTHORITY);
 
-        // 待办列表
-        List<User> todoList = FlowFactory.userService().list(FlowFactory.newUser().setAssociated(task.getId()));
-
-        if (todoList.size() == 1) {
-            // 只有一位待办人结束任务
-            return false;
-        }
+        if (todoList.size() == 1) return false;
 
         // 除当前办理人外剩余办理人列表
-        List<User> restList = todoList.stream().filter(u -> {return !Objects.equals(u.getProcessedBy(), todoUser.getProcessedBy());})
-                .collect(Collectors.toList());
+        List<User> restList = StreamUtils.filter(todoList, u -> !Objects.equals(u.getProcessedBy(), flowParams.getHandler()));
 
+        // 会签并且当前人驳回直接返回
         if (CooperateType.isCountersign(nodeRatio) && SkipType.isReject(flowParams.getSkipType())) {
-            // 会签并且当前人驳回直接返回
             cooperateAutoPass(task, restList, CooperateType.COUNTERSIGN);
             return false;
         }
 
         // 查询会签票签已办列表
         List<HisTask> doneList = FlowFactory.hisTaskService().list(FlowFactory.newHisTask().setTaskId(task.getId()));
-        doneList = CollUtil.isEmpty(doneList) ? CollUtil.<HisTask>toList() : doneList;
+        doneList = CollUtil.isEmpty(doneList) ? CollUtil.toList() : doneList;
 
         // TODO 这里处理 cooperation handler 获取下面的 passRatio rejectRatio all 值，能获取使用 handler的值，不能获取使用以下全自动计算代码
 
@@ -481,8 +477,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     private void cooperateAutoPass(Task task, List<User> userList, CooperateType cooperateType) {
-        if (CollUtil.isEmpty(userList)) {return;}
-
         List<HisTask> hisTaskList = new ArrayList<>();
         for (User user : userList) {
             // 添加历史任务
@@ -500,6 +494,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                     .setCreateTime(new Date());
             hisTaskList.add(insHis);
         }
+
+        FlowFactory.hisTaskService().autoHisTask(FlowStatus.AUTO_PASS.getKey(), task, userList, cooperateType.getKey());
 
         FlowFactory.hisTaskService().saveBatch(hisTaskList);
         FlowFactory.userService().removeByIds(userList.stream().map(User::getId).collect(Collectors.toList()));
@@ -726,7 +722,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 }
             }
             if (CollUtil.isNotEmpty(noDoneTasks)) {
-                convertHisTask(noDoneTasks, FlowStatus.INVALID.getKey(), null);
+                convertHisTask(noDoneTasks, FlowStatus.INVALID.getKey());
             }
         }
     }
@@ -763,8 +759,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     private void handUndoneTask(Instance instance, Long taskId) {
         if (NodeType.isEnd(instance.getNodeType())) {
             List<Task> taskList = list(FlowFactory.newTask().setInstanceId(instance.getId()));
-            if (CollUtil.isNotEmpty(taskList)) {
-                convertHisTask(taskList, FlowStatus.AUTO_PASS.getKey(), taskId);
+            List<Task> noDoneTasks = StreamUtils.filter(taskList, task -> !task.getId().equals(taskId));
+            if (CollUtil.isNotEmpty(noDoneTasks)) {
+                convertHisTask(noDoneTasks, FlowStatus.AUTO_PASS.getKey());
             }
         }
     }
@@ -774,12 +771,11 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
      *
      * @param taskList
      */
-    private void convertHisTask(List<Task> taskList, Integer flowStatus, Long taskId) {
+    private void convertHisTask(List<Task> taskList, Integer flowStatus) {
         List<HisTask> insHisList = new ArrayList<>();
         for (Task task : taskList) {
-            if (ObjectUtil.isNotNull(taskId) && !task.getId().equals(taskId)) {
-                insHisList.add(FlowFactory.hisTaskService().autoHisTask(flowStatus, task));
-            }
+            List<User> userList = FlowFactory.userService().listByAssociatedAndTypes(task.getId());
+            insHisList.addAll(FlowFactory.hisTaskService().autoHisTask(flowStatus, task, userList, CooperateType.APPROVAL.getKey()));
         }
         removeByIds(StreamUtils.toList(taskList, Task::getId));
         FlowFactory.hisTaskService().saveBatch(insHisList);

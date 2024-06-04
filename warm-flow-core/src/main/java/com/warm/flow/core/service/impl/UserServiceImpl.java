@@ -63,18 +63,18 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
 
     @Override
     public List<String> getPermission(Long associated, String... types) {
-        if (ArrayUtil.isEmpty(types)) {
-            return Collections.emptyList();
-        }
         if (types.length == 1) {
             return StreamUtils.toList(list(FlowFactory.newUser().setAssociated(associated).setType(types[0]))
                     , User::getProcessedBy);
         }
-        return StreamUtils.toList(listByAssociatedAndTypes(associated, types), User::getProcessedBy);
+        return StreamUtils.toList(getDao().listByAssociatedAndTypes(associated, types), User::getProcessedBy);
     }
 
     @Override
-    public List<User> listByAssociatedAndTypes(Long associated, String[] types) {
+    public List<User> listByAssociatedAndTypes(Long associated, String... types) {
+        if (types.length == 1) {
+            return list(FlowFactory.newUser().setAssociated(associated).setType(types[0]));
+        }
         return getDao().listByAssociatedAndTypes(associated, types);
     }
 

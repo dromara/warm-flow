@@ -50,9 +50,9 @@ public interface HisTaskService extends IWarmService<HisTask> {
      * 自动完成历史任务
      * @param flowStatus
      * @param task
-     * @return
+     * @param userList
      */
-    HisTask autoHisTask(Integer flowStatus, Task task);
+    List<HisTask> autoHisTask(Integer flowStatus, Task task, List<User> userList, Integer cooperateType);
 
     /**
      * 根据nodeCode获取未退回的历史记录

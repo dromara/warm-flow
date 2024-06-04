@@ -111,19 +111,25 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
     }
 
     @Override
-    public HisTask autoHisTask(Integer flowStatus, Task task) {
-        HisTask hisTask = FlowFactory.newHisTask()
-            .setTaskId(task.getId())
-            .setCooperateType(CooperateType.APPROVAL.getKey())
-            .setInstanceId(task.getInstanceId())
-            .setNodeCode(task.getNodeCode())
-            .setNodeName(task.getNodeName())
-            .setNodeType(task.getNodeType())
-            .setDefinitionId(task.getDefinitionId())
-            .setFlowStatus(flowStatus)
-            .setCreateTime(new Date());
-        FlowFactory.dataFillHandler().idFill(hisTask);
-        return hisTask;
+    public List<HisTask> autoHisTask(Integer flowStatus, Task task, List<User> userList, Integer cooperateType) {
+        List<HisTask> hisTasks = new ArrayList<>();
+        for (User user : userList) {
+            HisTask hisTask = FlowFactory.newHisTask()
+                    .setTaskId(task.getId())
+                    .setInstanceId(task.getInstanceId())
+                    .setCooperateType(cooperateType)
+                    .setNodeCode(task.getNodeCode())
+                    .setNodeName(task.getNodeName())
+                    .setNodeType(task.getNodeType())
+                    .setDefinitionId(task.getDefinitionId())
+                    .setApprover(user.getProcessedBy())
+                    .setFlowStatus(flowStatus)
+                    .setCreateTime(new Date());
+            FlowFactory.dataFillHandler().idFill(hisTask);
+            hisTasks.add(hisTask);
+        }
+
+        return hisTasks;
     }
 
     @Override
