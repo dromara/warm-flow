@@ -10,6 +10,7 @@ import com.warm.flow.core.utils.StringUtils;
 import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.CriteriaUpdate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -89,6 +90,11 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask> implements Flow
             return entityManager.createQuery(criteriaDelete).executeUpdate();
         }
 
+    }
+
+    @Override
+    public List<FlowHisTask> listByTaskIdAndCooperateTypes(Long taskId, Integer[] cooperateTypes) {
+        return Collections.emptyList();
     }
 
 

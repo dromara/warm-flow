@@ -1,6 +1,5 @@
 package com.warm.flow.orm.mapper;
 
-import com.warm.flow.orm.entity.FlowDefinition;
 import com.warm.flow.orm.entity.FlowHisTask;
 import org.apache.ibatis.annotations.Param;
 
@@ -45,4 +44,7 @@ public interface FlowHisTaskMapper extends WarmMapper<FlowHisTask> {
     int updateByInsIdsLogic(@Param("instanceIds") Collection<? extends Serializable> instanceIds
             , @Param("entity") FlowHisTask entity, @Param("logicDeleteValue") String logicDeleteValue
             , @Param("logicNotDeleteValue") String logicNotDeleteValue);
+
+    List<FlowHisTask> listByTaskIdAndCooperateTypes(@Param("cooperateTypes") Integer[] cooperateTypes
+            , @Param("entity") FlowHisTask entity);
 }

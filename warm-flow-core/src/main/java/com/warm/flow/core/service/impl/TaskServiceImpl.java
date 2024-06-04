@@ -429,19 +429,20 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         }
 
         // 查询会签票签已办列表
-        List<HisTask> doneList = FlowFactory.hisTaskService().list(FlowFactory.newHisTask().setTaskId(task.getId()));
-        doneList = CollUtil.isEmpty(doneList) ? CollUtil.toList() : doneList;
+        List<HisTask> doneList = FlowFactory.hisTaskService().listByTaskIdAndCooperateTypes(task.getId()
+                , CooperateType.COUNTERSIGN.getKey(), CooperateType.VOTE.getKey());
+        doneList = CollUtil.emptyDefault(doneList, Collections.emptyList());
 
         // TODO 这里处理 cooperation handler 获取下面的 passRatio rejectRatio all 值，能获取使用 handler的值，不能获取使用以下全自动计算代码
 
         // 所有人
         BigDecimal all = BigDecimal.ZERO.add(BigDecimal.valueOf(todoList.size())).add(BigDecimal.valueOf(doneList.size()));
 
-        List<HisTask> donePassList = doneList.stream().filter(hisTask ->
-                        Objects.equals(hisTask.getFlowStatus(), FlowStatus.PASS.getKey())).collect(Collectors.toList());
+        List<HisTask> donePassList = StreamUtils.filter(doneList
+                , hisTask -> Objects.equals(hisTask.getFlowStatus(), FlowStatus.PASS.getKey()));
 
-        List<HisTask> doneRejectList = doneList.stream().filter(hisTask ->
-                        Objects.equals(hisTask.getFlowStatus(), FlowStatus.REJECT.getKey())).collect(Collectors.toList());
+        List<HisTask> doneRejectList = StreamUtils.filter(doneList
+                , hisTask -> Objects.equals(hisTask.getFlowStatus(), FlowStatus.REJECT.getKey()));
 
         boolean isPass = SkipType.isPass(flowParams.getSkipType());
 
@@ -477,28 +478,10 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     private void cooperateAutoPass(Task task, List<User> userList, CooperateType cooperateType) {
-        List<HisTask> hisTaskList = new ArrayList<>();
-        for (User user : userList) {
-            // 添加历史任务
-            HisTask insHis = FlowFactory.newHisTask()
-                    .setTaskId(task.getId())
-                    .setInstanceId(task.getInstanceId())
-                    .setCooperateType(cooperateType.getKey())
-                    .setNodeCode(task.getNodeCode())
-                    .setNodeName(task.getNodeName())
-                    .setNodeType(task.getNodeType())
-                    .setTenantId(task.getTenantId())
-                    .setDefinitionId(task.getDefinitionId())
-                    .setApprover(user.getProcessedBy())
-                    .setFlowStatus(FlowStatus.AUTO_PASS.getKey())
-                    .setCreateTime(new Date());
-            hisTaskList.add(insHis);
-        }
-
-        FlowFactory.hisTaskService().autoHisTask(FlowStatus.AUTO_PASS.getKey(), task, userList, cooperateType.getKey());
-
+        List<HisTask> hisTaskList = FlowFactory.hisTaskService()
+                .autoHisTask(FlowStatus.AUTO_PASS.getKey(), task, userList, cooperateType.getKey());
         FlowFactory.hisTaskService().saveBatch(hisTaskList);
-        FlowFactory.userService().removeByIds(userList.stream().map(User::getId).collect(Collectors.toList()));
+        FlowFactory.userService().removeByIds(StreamUtils.toList(userList, User::getId));
     }
 
     /**

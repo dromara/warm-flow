@@ -14,7 +14,6 @@ import com.warm.flow.core.utils.CollUtil;
 import com.warm.flow.core.utils.StreamUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -63,6 +62,9 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
 
     @Override
     public List<String> getPermission(Long associated, String... types) {
+        if (ArrayUtil.isEmpty(types)) {
+            return StreamUtils.toList(list(FlowFactory.newUser().setAssociated(associated)), User::getProcessedBy);
+        }
         if (types.length == 1) {
             return StreamUtils.toList(list(FlowFactory.newUser().setAssociated(associated).setType(types[0]))
                     , User::getProcessedBy);
@@ -72,6 +74,9 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
 
     @Override
     public List<User> listByAssociatedAndTypes(Long associated, String... types) {
+        if (ArrayUtil.isEmpty(types)) {
+            return list(FlowFactory.newUser().setAssociated(associated));
+        }
         if (types.length == 1) {
             return list(FlowFactory.newUser().setAssociated(associated).setType(types[0]));
         }

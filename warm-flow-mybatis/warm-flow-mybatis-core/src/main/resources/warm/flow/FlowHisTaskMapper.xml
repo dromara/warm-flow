@@ -141,6 +141,22 @@
         order by t.create_time desc
     </select>
 
+    <select id="listByTaskIdAndCooperateTypes" resultMap="FlowHisTaskResult">
+        <include refid="selectVo"/>
+        <where>
+            <if test="entity.taskId != null  and entity.taskId != ''">and t.task_idd = #{entity.taskId}</if>
+            <if test="cooperateTypes != null and cooperateTypes.length > 0">
+                AND `cooperate_type` in
+                <foreach item="item" collection="cooperateTypes" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
+            <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+        </where>
+
+    </select>
+
     <insert id="insert" parameterType="com.warm.flow.orm.entity.FlowHisTask">
         insert into flow_his_task
         <trim prefix="(" suffix=")" suffixOverrides=",">

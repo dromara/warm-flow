@@ -29,4 +29,11 @@ public interface FlowHisTaskDao<T extends HisTask> extends WarmDao<T> {
      */
     int deleteByInsIds(List<Long> instanceIds);
 
+    /**
+     * 根据任务id和协作类型查询
+     * @param taskId
+     * @param cooperateTypes
+     * @return
+     */
+    List<T> listByTaskIdAndCooperateTypes(Long taskId, Integer[] cooperateTypes);
 }

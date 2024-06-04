@@ -11,6 +11,7 @@ import com.warm.flow.core.entity.User;
 import com.warm.flow.core.enums.*;
 import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.HisTaskService;
+import com.warm.flow.core.utils.ArrayUtil;
 import com.warm.flow.core.utils.ObjectUtil;
 import com.warm.flow.core.utils.SqlHelper;
 
@@ -31,6 +32,27 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
     public HisTaskService setDao(FlowHisTaskDao<HisTask> warmDao) {
         this.warmDao = warmDao;
         return this;
+    }
+
+    @Override
+    public List<HisTask> listByTaskIdAndCooperateTypes(Long taskId, Integer... cooperateTypes) {
+        if (ArrayUtil.isEmpty(cooperateTypes)) {
+            return list(FlowFactory.newHisTask().setTaskId(taskId));
+        }
+        if (cooperateTypes.length == 1) {
+            return list(FlowFactory.newHisTask().setTaskId(taskId).setCooperateType(cooperateTypes[0]));
+        }
+        return getDao().listByTaskIdAndCooperateTypes(taskId, cooperateTypes);
+    }
+
+    @Override
+    public List<HisTask> getNoReject(String nodeCode, Long instanceId) {
+        return getDao().getNoReject(nodeCode, instanceId);
+    }
+
+    @Override
+    public boolean deleteByInsIds(List<Long> instanceIds) {
+        return SqlHelper.retBool(getDao().deleteByInsIds(instanceIds));
     }
 
     @Override
@@ -130,15 +152,5 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
         }
 
         return hisTasks;
-    }
-
-    @Override
-    public List<HisTask> getNoReject(String nodeCode, Long instanceId) {
-        return getDao().getNoReject(nodeCode, instanceId);
-    }
-
-    @Override
-    public boolean deleteByInsIds(List<Long> instanceIds) {
-        return SqlHelper.retBool(getDao().deleteByInsIds(instanceIds));
     }
 }

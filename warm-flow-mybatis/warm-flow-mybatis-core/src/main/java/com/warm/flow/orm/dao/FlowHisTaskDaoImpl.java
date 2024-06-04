@@ -3,10 +3,10 @@ package com.warm.flow.orm.dao;
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.dao.FlowHisTaskDao;
 import com.warm.flow.core.invoker.FrameInvoker;
+import com.warm.flow.core.utils.StringUtils;
 import com.warm.flow.orm.entity.FlowHisTask;
 import com.warm.flow.orm.mapper.FlowHisTaskMapper;
 import com.warm.flow.orm.utils.TenantDeleteUtil;
-import com.warm.flow.core.utils.StringUtils;
 
 import java.util.List;
 
@@ -53,6 +53,11 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask> implements Flow
             return getMapper().updateByInsIdsLogic(instanceIds, entity, FlowFactory.getFlowConfig().getLogicDeleteValue(), entity.getDelFlag());
         }
         return getMapper().deleteByInsIds(instanceIds, entity);
+    }
+
+    @Override
+    public List<FlowHisTask> listByTaskIdAndCooperateTypes(Long taskId, Integer[] cooperateTypes) {
+        return getMapper().listByTaskIdAndCooperateTypes(cooperateTypes, TenantDeleteUtil.getEntity(newEntity()).setTaskId(taskId));
     }
 
 }

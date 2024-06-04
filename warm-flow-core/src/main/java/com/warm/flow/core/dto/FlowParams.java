@@ -62,7 +62,7 @@ public class FlowParams implements Serializable {
     private Integer flowStatus;
 
     /**
-     * 协作方式(1或签 2转办 3委派 4会签 5票签 6加签 7减签)
+     * 协作方式(1审批 2转办 3委派 4会签 5票签 6加签 7减签)
      */
     private Integer cooperateType;
 

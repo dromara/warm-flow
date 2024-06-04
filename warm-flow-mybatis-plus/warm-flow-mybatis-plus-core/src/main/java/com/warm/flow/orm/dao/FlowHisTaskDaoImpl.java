@@ -57,4 +57,11 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask> implements Flow
                 , (lqw) -> lqw.in(FlowHisTask::getInstanceId, instanceIds));
     }
 
+    @Override
+    public List<FlowHisTask> listByTaskIdAndCooperateTypes(Long taskId, Integer[] cooperateTypes) {
+        LambdaQueryWrapper<FlowHisTask> queryWrapper = TenantDeleteUtil.getLambdaWrapperDefault(newEntity());
+        queryWrapper.eq(FlowHisTask::getTaskId, taskId).in(FlowHisTask::getCooperateType, cooperateTypes);
+        return getMapper().selectList(queryWrapper);
+    }
+
 }

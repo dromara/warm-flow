@@ -19,6 +19,30 @@ import java.util.List;
 public interface HisTaskService extends IWarmService<HisTask> {
 
     /**
+     * 根据任务id和协作类型查询
+     * @param taskId
+     * @param cooperateTypes
+     * @return
+     */
+    List<HisTask> listByTaskIdAndCooperateTypes(Long taskId, Integer... cooperateTypes);
+
+    /**
+     * 根据nodeCode获取未退回的历史记录
+     *
+     * @param nodeCode
+     * @param instanceId
+     */
+    List<HisTask> getNoReject(String nodeCode, Long instanceId);
+
+    /**
+     * 根据instanceIds删除
+     *
+     * @param instanceIds
+     * @return
+     */
+    boolean deleteByInsIds(List<Long> instanceIds);
+
+    /**
      * 设置流程历史任务信息
      *
      * @param task  当前任务
@@ -53,21 +77,5 @@ public interface HisTaskService extends IWarmService<HisTask> {
      * @param userList
      */
     List<HisTask> autoHisTask(Integer flowStatus, Task task, List<User> userList, Integer cooperateType);
-
-    /**
-     * 根据nodeCode获取未退回的历史记录
-     *
-     * @param nodeCode
-     * @param instanceId
-     */
-    List<HisTask> getNoReject(String nodeCode, Long instanceId);
-
-    /**
-     * 根据instanceIds删除
-     *
-     * @param instanceIds
-     * @return
-     */
-    boolean deleteByInsIds(List<Long> instanceIds);
 
 }

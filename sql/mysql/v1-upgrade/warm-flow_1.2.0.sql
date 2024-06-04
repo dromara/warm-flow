@@ -41,6 +41,8 @@ ALTER TABLE `flow_node`
 -- flow_his_task 增加task_id
 ALTER TABLE `flow_his_task`
     ADD COLUMN `task_id` BIGINT(19) NOT NULL COMMENT '对应flow_task表的id' AFTER `instance_id`,
-    ADD COLUMN `cooperate_type` tinyint(1) NULL DEFAULT 0 COMMENT '协作方式(1或签 2转办 3委派 4会签 5票签 6加签 7减签)' AFTER `approver`,
+    ADD COLUMN `cooperate_type` tinyint(1) NULL DEFAULT 0 COMMENT '协作方式(1审批 2转办 3委派 4会签 5票签 6加签 7减签)' AFTER `approver`,
     ADD COLUMN `collaborator` VARCHAR(40) NULL DEFAULT NULL COMMENT '协作人' AFTER `cooperate_type`;
 
+ALTER TABLE `flow_definition`  DROP INDEX `flow_code_version`;
+ALTER TABLE `flow_node` DROP INDEX `info_id_code`;

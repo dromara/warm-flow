@@ -147,7 +147,7 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
     private Long definitionId;
 
     /**
-     * 协作方式(1或签 2转办 3委派 4会签 5票签 6加签 7减签)
+     * 协作方式(1审批 2转办 3委派 4会签 5票签 6加签 7减签)
      */
     @Column(name="cooperate_type")
     private Integer cooperateType;
