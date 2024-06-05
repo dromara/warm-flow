@@ -94,7 +94,15 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask> implements Flow
 
     @Override
     public List<FlowHisTask> listByTaskIdAndCooperateTypes(Long taskId, Integer[] cooperateTypes) {
-        return Collections.emptyList();
+        FlowHisTask entity = TenantDeleteUtil.getEntity(newEntity());
+
+        final CriteriaQuery<FlowHisTask> criteriaQuery = createCriteriaQuery((criteriaBuilder, root, predicates, innerCriteriaQuery) -> {
+            entity.commonPredicate().process(criteriaBuilder, root, predicates);
+
+            predicates.add(criteriaBuilder.equal(root.get("taskId"), taskId));
+            predicates.add(createIn(criteriaBuilder, root, "cooperateType", cooperateTypes));
+        });
+        return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
 

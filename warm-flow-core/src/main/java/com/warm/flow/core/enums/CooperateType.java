@@ -79,11 +79,11 @@ public enum CooperateType {
      * @param
      * @return
      */
-    public static Boolean isOrSign(BigDecimal ratio) {
+    public static boolean isOrSign(BigDecimal ratio) {
         if (Objects.isNull(ratio) || ratio.compareTo(BigDecimal.ZERO) <= 0) {
-            return Boolean.TRUE;
+            return true;
         }
-        return Boolean.FALSE;
+        return false;
     }
 
 
@@ -93,11 +93,11 @@ public enum CooperateType {
      * @param
      * @return
      */
-    public static Boolean isVoteSign(BigDecimal ratio) {
+    public static boolean isVoteSign(BigDecimal ratio) {
         if (Objects.nonNull(ratio) && ratio.compareTo(BigDecimal.ZERO) > 0 && ratio.compareTo(ONE_HUNDRED) < 0) {
-            return Boolean.TRUE;
+            return true;
         }
-        return Boolean.FALSE;
+        return false;
     }
 
     /**
@@ -106,11 +106,11 @@ public enum CooperateType {
      * @param
      * @return
      */
-    public static Boolean isCountersign(BigDecimal ratio) {
+    public static boolean isCountersign(BigDecimal ratio) {
         if (Objects.nonNull(ratio) && ratio.compareTo(ONE_HUNDRED) >= 0) {
-            return Boolean.TRUE;
+            return true;
         }
-        return Boolean.FALSE;
+        return false;
     }
 
 }
