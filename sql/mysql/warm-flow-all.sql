@@ -28,7 +28,7 @@ CREATE TABLE `flow_his_task`
     `approver`         varchar(40)  DEFAULT NULL COMMENT '审批者',
     `cooperate_type`   tinyint(1) NOT NULL DEFAULT '0' COMMENT '协作方式(1审批 2转办 3委派 4会签 5票签 6加签 7减签)',
     `collaborator`     varchar(40)  DEFAULT NULL COMMENT '协作人',
-    `flow_status`      tinyint(1) NOT NULL COMMENT '流程状态（0待提交 1审批中 2 审批通过 8已完成 9已退回 10失效）',
+    `flow_status`      tinyint(1) NOT NULL COMMENT '流程状态（1审批中 2 审批通过 9已退回 10失效）',
     `message`          varchar(500) DEFAULT NULL COMMENT '审批意见',
     `create_time`      datetime     DEFAULT NULL COMMENT '创建时间',
     `update_time`      datetime     DEFAULT NULL COMMENT '更新时间',
