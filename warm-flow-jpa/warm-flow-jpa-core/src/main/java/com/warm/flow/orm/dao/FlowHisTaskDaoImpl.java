@@ -40,13 +40,16 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask> implements Flow
      * @return
      */
     @Override
-    public List<FlowHisTask> getNoReject(String nodeCode, Long instanceId) {
+    public List<FlowHisTask> getNoReject(String nodeCode, String targetNodeCode, Long instanceId) {
         FlowHisTask entity = TenantDeleteUtil.getEntity(newEntity());
 
         final CriteriaQuery<FlowHisTask> criteriaQuery = createCriteriaQuery((criteriaBuilder, root, predicates, innerCriteriaQuery) -> {
             entity.commonPredicate().process(criteriaBuilder, root, predicates);
 
             predicates.add(criteriaBuilder.equal(root.get("nodeCode"), nodeCode));
+            if (StringUtils.isNotEmpty(targetNodeCode)) {
+                predicates.add(criteriaBuilder.equal(root.get("targetNodeCode"), targetNodeCode));
+            }
             predicates.add(criteriaBuilder.equal(root.get("instanceId"), instanceId));
 
             // 流程状态（0待提交 1审批中 2 审批通过 8已完成 9已退回 10失效）

@@ -32,7 +32,7 @@ public interface HisTaskService extends IWarmService<HisTask> {
      * @param nodeCode
      * @param instanceId
      */
-    List<HisTask> getNoReject(String nodeCode, Long instanceId);
+    List<HisTask> getNoReject(String nodeCode, String targetNodeCode, Long instanceId);
 
     /**
      * 根据instanceIds删除

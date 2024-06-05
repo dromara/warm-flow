@@ -153,29 +153,31 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     @Override
     public boolean copyDef(Long id) {
         Definition definition = ClassUtil.clone(getById(id));
+        AssertUtil.isTrue(ObjectUtil.isNull(definition), ExceptionCons.NOT_FOUNT_DEF);
+
         List<Node> nodeList = FlowFactory.nodeService().list(FlowFactory.newNode().setDefinitionId(id))
                 .stream().map(ClassUtil::clone).collect(Collectors.toList());
         List<Skip> skipList = FlowFactory.skipService().list(FlowFactory.newSkip().setDefinitionId(id))
                 .stream().map(ClassUtil::clone).collect(Collectors.toList());
-        FlowFactory.dataFillHandler().idFill(definition.setId(null));
-        definition.setVersion(definition.getVersion() + "_copy");
-        definition.setIsPublish(PublishStatus.UNPUBLISHED.getKey());
-        definition.setCreateTime(null);
-        definition.setUpdateTime(null);
+        FlowFactory.dataFillHandler().idFill(definition);
+        definition.setVersion(definition.getVersion() + "_copy")
+                .setIsPublish(PublishStatus.UNPUBLISHED.getKey())
+                .setCreateTime(null)
+                .setUpdateTime(null);
 
         nodeList.forEach(node -> {
-            node.setId(null);
-            node.setDefinitionId(definition.getId());
-            node.setCreateTime(null);
-            node.setUpdateTime(null);
+            node.setId(null)
+                .setDefinitionId(definition.getId())
+                .setCreateTime(null)
+                .setUpdateTime(null);
         });
         FlowFactory.nodeService().saveBatch(nodeList);
 
         skipList.forEach(skip -> {
-            skip.setId(null);
-            skip.setDefinitionId(definition.getId());
-            skip.setCreateTime(null);
-            skip.setUpdateTime(null);
+            skip.setId(null)
+                .setDefinitionId(definition.getId())
+                .setCreateTime(null)
+                .setUpdateTime(null);
         });
         FlowFactory.skipService().saveBatch(skipList);
         return save(definition);
@@ -380,7 +382,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
             Task task = FlowFactory.taskService()
                     .getOne(FlowFactory.newTask().setNodeCode(node.getNodeCode()).setInstanceId(instance.getId()));
             HisTask curHisTask = CollUtil.getOne(FlowFactory.hisTaskService()
-                    .getNoReject(node.getNodeCode(), instance.getId()));
+                    .getNoReject(node.getNodeCode(), null, instance.getId()));
 
             List<Skip> oneLastSkips = skipLastMap.get(node.getNodeCode());
             if (CollUtil.isNotEmpty(oneLastSkips)) {
@@ -393,11 +395,8 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                         // 如果前置节点是网关，那网关前任意一个任务完成就算完成
                         List<Skip> twoLastSkips = skipLastMap.get(oneLastSkip.getNowNodeCode());
                         for (Skip twoLastSkip : twoLastSkips) {
-                            List<HisTask> twoLastHisTasks = FlowFactory.hisTaskService()
-                                    .getNoReject(twoLastSkip.getNowNodeCode(), instance.getId());
-                            Map<String, HisTask> twoLastHisTaskMap = StreamUtils.toMap(twoLastHisTasks
-                                    , HisTask::getTargetNodeCode, hisTask -> hisTask);
-                            HisTask twoLastHisTask = twoLastHisTaskMap.get(node.getNodeCode());
+                            HisTask twoLastHisTask = CollUtil.getOne(FlowFactory.hisTaskService()
+                                    .getNoReject(twoLastSkip.getNowNodeCode(), node.getNodeCode(), instance.getId()));
 
                             Color c;
                             // 前前置节点完成时间是否早于前置节点，如果是串行网关，那前前置节点必须只有一个完成，如果是并行网关都要完成
@@ -421,11 +420,8 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                             setNextColorMap(colorMap, oneNextSkips, c, skipNextMap);
                         }
                     } else {
-                        List<HisTask> oneLastHisTasks = FlowFactory.hisTaskService()
-                                .getNoReject(oneLastSkip.getNowNodeCode(), instance.getId());
-                        Map<String, HisTask> oneLastHisTaskMap = StreamUtils.toMap(oneLastHisTasks
-                                , HisTask::getTargetNodeCode, hisTask -> hisTask);
-                        HisTask oneLastHisTask = oneLastHisTaskMap.get(node.getNodeCode());
+                        HisTask oneLastHisTask = CollUtil.getOne(FlowFactory.hisTaskService()
+                                .getNoReject(oneLastSkip.getNowNodeCode(), node.getNodeCode(), instance.getId()));
                         Color c;
                         // 前前置节点完成时间是否早于前置节点，如果是串行网关，那前前置节点必须只有一个完成，如果是并行网关都要完成
                         if (task != null) {

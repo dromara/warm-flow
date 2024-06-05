@@ -28,24 +28,11 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask> implements Flow
         return new FlowHisTask();
     }
 
-    /**
-     * 根据nodeCode获取未退回的历史记录
-     *
-     * @param nodeCode
-     * @param instanceId
-     * @return
-     */
     @Override
-    public List<FlowHisTask> getNoReject(String nodeCode, Long instanceId) {
-        return getMapper().getNoReject(nodeCode, instanceId, TenantDeleteUtil.getEntity(newEntity()));
+    public List<FlowHisTask> getNoReject(String nodeCode, String targetNodeCode, Long instanceId) {
+        return getMapper().getNoReject(nodeCode, targetNodeCode, instanceId, TenantDeleteUtil.getEntity(newEntity()));
     }
 
-    /**
-     * 根据instanceIds删除
-     *
-     * @param instanceIds 主键
-     * @return 结果
-     */
     @Override
     public int deleteByInsIds(List<Long> instanceIds) {
         FlowHisTask entity = TenantDeleteUtil.getEntity(newEntity());

@@ -136,8 +136,9 @@
         where t.node_code = #{nodeCode}
         and t.instance_id = #{instanceId}
         and t.flow_status = 2
-        <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
-        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+        <if test="entity.targetNodeCode != null and entity.targetNodeCode != ''">and t.target_node_code = #{entity.targetNodeCode}</if>
+        <if test="entity.delFlag != null and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
+        <if test="entity.tenantId != null and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
         order by t.create_time desc
     </select>
 

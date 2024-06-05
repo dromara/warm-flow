@@ -59,10 +59,6 @@ public interface Task extends RootEntity {
 
     public Task setNodeType(Integer nodeType);
 
-    public Integer getFlowStatus();
-
-    public Task setFlowStatus(Integer flowStatus);
-
     public List<String> getPermissionList();
 
     public Task setPermissionList(List<String> permissionList);

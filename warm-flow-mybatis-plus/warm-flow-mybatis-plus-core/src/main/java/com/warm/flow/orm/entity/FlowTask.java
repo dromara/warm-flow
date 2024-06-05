@@ -81,11 +81,6 @@ public class FlowTask implements Task {
     private Integer nodeType;
 
     /**
-     * 流程状态（0待提交 1审批中 2 审批通过 8已完成 9已退回 10失效）
-     */
-    private Integer flowStatus;
-
-    /**
      * 权限标识 permissionFlag的list形式
      */
     @TableField(exist = false)
@@ -236,17 +231,6 @@ public class FlowTask implements Task {
     }
 
     @Override
-    public Integer getFlowStatus() {
-        return flowStatus;
-    }
-
-    @Override
-    public FlowTask setFlowStatus(Integer flowStatus) {
-        this.flowStatus = flowStatus;
-        return this;
-    }
-
-    @Override
     public List<String> getPermissionList() {
         return permissionList;
     }
@@ -293,7 +277,6 @@ public class FlowTask implements Task {
                 ", nodeCode='" + nodeCode + '\'' +
                 ", nodeName='" + nodeName + '\'' +
                 ", nodeType=" + nodeType +
-                ", flowStatus=" + flowStatus +
                 ", permissionList=" + permissionList +
                 ", fromCustom='" + fromCustom + '\'' +
                 ", fromPath='" + fromPath + '\'' +

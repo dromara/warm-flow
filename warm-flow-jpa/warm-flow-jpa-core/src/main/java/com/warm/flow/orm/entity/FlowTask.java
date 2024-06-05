@@ -48,9 +48,6 @@ public class FlowTask extends JPARootEntity<FlowTask> implements Task {
                 if  (Objects.nonNull(this.instanceId)) {
                     predicates.add(criteriaBuilder.equal(root.get("instanceId"), this.instanceId));
                 }
-                if  (Objects.nonNull(this.flowStatus)) {
-                    predicates.add(criteriaBuilder.equal(root.get("flowStatus"), this.flowStatus));
-                }
             };
 
     @Transient
@@ -69,9 +66,6 @@ public class FlowTask extends JPARootEntity<FlowTask> implements Task {
         }
         if (Objects.nonNull(updateEntity.instanceId)) {
             this.instanceId = updateEntity.instanceId;
-        }
-        if (Objects.nonNull(updateEntity.flowStatus)) {
-            this.flowStatus = updateEntity.flowStatus;
         }
         if (Objects.nonNull(updateEntity.getCreateTime())) {
             this.setCreateTime(updateEntity.getCreateTime());
@@ -142,13 +136,6 @@ public class FlowTask extends JPARootEntity<FlowTask> implements Task {
      */
     @Column(name="node_type")
     private Integer nodeType;
-
-
-    /**
-     * 流程状态（0待提交 1审批中 2 审批通过 8已完成 9已退回 10失效）
-     */
-    @Column(name="flow_status")
-    private Integer flowStatus;
 
     /**
      * 权限标识 permissionFlag的list形式
@@ -247,17 +234,6 @@ public class FlowTask extends JPARootEntity<FlowTask> implements Task {
     }
 
     @Override
-    public Integer getFlowStatus() {
-        return flowStatus;
-    }
-
-    @Override
-    public FlowTask setFlowStatus(Integer flowStatus) {
-        this.flowStatus = flowStatus;
-        return this;
-    }
-
-    @Override
     public List<String> getPermissionList() {
         return permissionList;
     }
@@ -305,7 +281,6 @@ public class FlowTask extends JPARootEntity<FlowTask> implements Task {
                 ", nodeCode='" + nodeCode + '\'' +
                 ", nodeName='" + nodeName + '\'' +
                 ", nodeType=" + nodeType +
-                ", flowStatus=" + flowStatus +
                 ", permissionList=" + permissionList +
                 ", fromCustom='" + fromCustom + '\'' +
                 ", fromPath='" + fromPath + '\'' +

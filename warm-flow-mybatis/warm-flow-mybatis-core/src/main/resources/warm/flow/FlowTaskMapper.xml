@@ -11,7 +11,6 @@
         <result property="nodeType" column="node_type"/>
         <result property="definitionId" column="definition_id"/>
         <result property="instanceId" column="instance_id"/>
-        <result property="flowStatus" column="flow_status"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
         <result property="tenantId" column="tenant_id"/>
@@ -30,7 +29,6 @@
                t.node_type,
                t.definition_id,
                t.instance_id,
-               t.flow_status,
                t.create_time,
                t.update_time,
                t.del_flag,
@@ -56,7 +54,6 @@
             <if test="entity.nodeType != null">and t.node_type = #{entity.nodeCode}</if>
             <if test="entity.definitionId != null ">and t.definition_id = #{entity.definitionId}</if>
             <if test="entity.instanceId != null ">and t.instance_id = #{entity.instanceId}</if>
-            <if test="entity.flowStatus != null">and t.flow_status = #{entity.flowStatus}</if>
             <if test="entity.createTime != null">and t.create_time = #{entity.createTime}</if>
             <if test="entity.updateTime != null">and t.update_time = #{entity.updateTime}</if>
             <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
@@ -119,7 +116,6 @@
             <if test="nodeType != null">node_type,</if>
             <if test="definitionId != null">definition_id,</if>
             <if test="instanceId != null">instance_id,</if>
-            <if test="flowStatus != null">flow_status,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
             <if test="delFlag != null and delFlag != ''">del_flag,</if>
@@ -132,7 +128,6 @@
             <if test="nodeType != null">#{nodeType},</if>
             <if test="definitionId != null">#{definitionId},</if>
             <if test="instanceId != null">#{instanceId},</if>
-            <if test="flowStatus != null">#{flowStatus},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
             <if test="delFlag != null and delFlag != ''">#{delFlag},</if>
@@ -148,7 +143,6 @@
             <if test="nodeType != null">t.node_type = #{nodeType},</if>
             <if test="definitionId != null">t.definition_id = #{definitionId},</if>
             <if test="instanceId != null">t.instance_id = #{instanceId},</if>
-            <if test="flowStatus != null">t.flow_status = #{flowStatus},</if>
             <if test="createTime != null">t.create_time = #{createTime},</if>
             <if test="updateTime != null">t.update_time = #{updateTime},</if>
         </trim>
@@ -219,7 +213,6 @@
             <if test="nodeType != null">and node_type = #{nodeType}</if>
             <if test="definitionId != null">and definition_id = #{definitionId}</if>
             <if test="instanceId != null">and instance_id = #{instanceId}</if>
-            <if test="flowStatus != null">and flow_status = #{flowStatus}</if>
             <if test="createTime != null">and create_time = #{createTime}</if>
             <if test="updateTime != null">and update_time = #{updateTime}</if>
             <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
@@ -236,7 +229,6 @@
             <if test="entity.nodeType != null">and t.node_type = #{entity.nodeType}</if>
             <if test="entity.definitionId != null">and t.definition_id = #{entity.definitionId}</if>
             <if test="entity.instanceId != null">and t.instance_id = #{entity.instanceId}</if>
-            <if test="entity.flowStatus != null">and t.flow_status = #{entity.flowStatus}</if>
             <if test="entity.createTime != null">and t.create_time = #{entity.createTime}</if>
             <if test="entity.updateTime != null">and t.update_time = #{entity.updateTime}</if>
             <if test="entity.tenantId != null and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>

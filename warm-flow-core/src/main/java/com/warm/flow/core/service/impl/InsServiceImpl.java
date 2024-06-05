@@ -125,8 +125,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
                 .setDefinitionId(startNode.getDefinitionId())
                 .setNodeCode(startNode.getNodeCode())
                 .setNodeName(startNode.getNodeName())
-                .setNodeType(startNode.getNodeType())
-                .setFlowStatus(FlowStatus.PASS.getKey());
+                .setNodeType(startNode.getNodeType());
         FlowFactory.dataFillHandler().idFill(startTask);
         // 开始任务转历史任务
         return FlowFactory.hisTaskService().setSkipInsHis(startTask, nextNodes, flowParams);
