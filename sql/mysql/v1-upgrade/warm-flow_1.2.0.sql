@@ -29,6 +29,8 @@ left join (Select (@rowNum :=0) ) c ON 1=1;
 ALTER TABLE `flow_task` DROP COLUMN approver;
 ALTER TABLE `flow_task` DROP COLUMN assignee;
 ALTER TABLE `flow_task` DROP COLUMN permission_flag;
+ALTER TABLE `flow_task` DROP COLUMN flow_status;
+
 -- 去掉 flow_his_task 表废弃字段sql
 ALTER TABLE `flow_his_task` DROP COLUMN permission_flag;
 

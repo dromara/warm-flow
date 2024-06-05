@@ -106,7 +106,6 @@ CREATE TABLE `flow_task`
     `node_code`       varchar(100) NOT NULL COMMENT '节点编码',
     `node_name`       varchar(100) DEFAULT NULL COMMENT '节点名称',
     `node_type`       tinyint(1) NOT NULL COMMENT '节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）',
-    `flow_status`     tinyint(1) NOT NULL COMMENT '流程状态（0待提交 1审批中 2 审批通过 8已完成 9已退回 10失效）',
     `create_time`     datetime     DEFAULT NULL COMMENT '创建时间',
     `update_time`     datetime     DEFAULT NULL COMMENT '更新时间',
     `del_flag`    char(1)      DEFAULT NULL COMMENT '删除标志',

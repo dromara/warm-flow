@@ -46,8 +46,8 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
     }
 
     @Override
-    public List<HisTask> getNoReject(String nodeCode, Long instanceId) {
-        return getDao().getNoReject(nodeCode, instanceId);
+    public List<HisTask> getNoReject(String nodeCode, String targetNodeCode, Long instanceId) {
+        return getDao().getNoReject(nodeCode, targetNodeCode, instanceId);
     }
 
     @Override
@@ -77,8 +77,6 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
             hisTask.setApprover(flowParams.getHandler());
             if (ObjectUtil.isNotNull(flowParams.getFlowStatus())) {
                 hisTask.setFlowStatus(flowParams.getFlowStatus());
-            } else if (ObjectUtil.isNotNull(nextNode.getNodeType()) && NodeType.isEnd(nextNode.getNodeType())) {
-                hisTask.setFlowStatus(FlowStatus.FINISHED.getKey());
             } else {
                 hisTask.setFlowStatus(SkipType.isReject(flowParams.getSkipType())
                         ? FlowStatus.REJECT.getKey() : FlowStatus.PASS.getKey());

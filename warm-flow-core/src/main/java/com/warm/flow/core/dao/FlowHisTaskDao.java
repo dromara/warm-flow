@@ -16,10 +16,11 @@ public interface FlowHisTaskDao<T extends HisTask> extends WarmDao<T> {
      * 根据nodeCode获取未退回的历史记录
      *
      * @param nodeCode
+     * @param targetNodeCode
      * @param instanceId
      * @return
      */
-    List<T> getNoReject(String nodeCode, Long instanceId);
+    List<T> getNoReject(String nodeCode,String targetNodeCode, Long instanceId);
 
     /**
      * 根据instanceIds删除

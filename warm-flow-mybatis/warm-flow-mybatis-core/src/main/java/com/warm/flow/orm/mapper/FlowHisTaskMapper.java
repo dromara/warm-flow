@@ -19,11 +19,13 @@ public interface FlowHisTaskMapper extends WarmMapper<FlowHisTask> {
      * 根据nodeCode获取未退回的历史记录
      *
      * @param nodeCode
+     * @param targetNodeCode
      * @param instanceId
      * @param entity
      * @return
      */
-    List<FlowHisTask> getNoReject(@Param("nodeCode") String nodeCode, @Param("instanceId") Long instanceId
+    List<FlowHisTask> getNoReject(@Param("nodeCode") String nodeCode, @Param("targetNodeCode") String targetNodeCode
+            , @Param("instanceId") Long instanceId
             , @Param("entity") FlowHisTask entity);
 
     /**
