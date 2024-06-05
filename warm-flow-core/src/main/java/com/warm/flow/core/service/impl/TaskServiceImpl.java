@@ -397,7 +397,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     /**
-     * 会签，票签，协作处理，返回true；或签返回false
+     * 会签，票签，协作处理，返回true；或签或者会签、票签结束返回false
      * @param NowNode
      * @param task
      * @param flowParams
@@ -417,6 +417,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         User todoUser = CollUtil.getOne(StreamUtils.filter(todoList, u -> Objects.equals(u.getProcessedBy(), flowParams.getHandler())));
         AssertUtil.isTrue(Objects.isNull(todoUser), ExceptionCons.NOT_AUTHORITY);
 
+        // 当只剩一人时，他决定走向
         if (todoList.size() == 1) return false;
 
         // 除当前办理人外剩余办理人列表

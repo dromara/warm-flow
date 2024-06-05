@@ -15,6 +15,8 @@ import java.util.List;
  */
 public interface WarmDao<T> {
 
+    T newEntity();
+
     /**
      * 根据id查询
      *

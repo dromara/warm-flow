@@ -24,8 +24,6 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
 
     public abstract WarmMapper<T> getMapper();
 
-    public abstract T newEntity();
-
     /**
      * 根据id查询
      *
