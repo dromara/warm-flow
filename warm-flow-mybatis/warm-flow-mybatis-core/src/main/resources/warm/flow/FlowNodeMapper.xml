@@ -309,4 +309,50 @@
         <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
         <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag = #{logicNotDeleteValue}</if>
     </update>
+
+    <insert id="saveBatch" parameterType="com.warm.flow.orm.entity.FlowNode">
+        insert into flow_node(
+        id,
+        node_type,
+        definition_id,
+        node_code,
+        node_name,
+        permission_flag,
+        node_ratio,
+        coordinate,
+        skip_any_node,
+        listener_type,
+        listener_path,
+        handler_type,
+        handler_path,
+        version,
+        create_time,
+        update_time,
+        del_flag,
+        tenant_id
+        )
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.id},
+            #{item.nodeType},
+            #{item.definitionId},
+            #{item.nodeCode},
+            #{item.nodeName},
+            #{item.permissionFlag},
+            #{item.nodeRatio},
+            #{item.coordinate},
+            #{item.skipAnyNode},
+            #{item.listenerType},
+            #{item.listenerPath},
+            #{item.handlerType},
+            #{item.handlerPath},
+            #{item.version},
+            #{item.createTime},
+            #{item.updateTime},
+            #{item.delFlag},
+            #{item.tenantId}
+            )
+        </foreach>
+    </insert>
 </mapper>

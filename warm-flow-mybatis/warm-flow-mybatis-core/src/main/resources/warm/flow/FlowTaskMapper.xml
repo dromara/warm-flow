@@ -235,4 +235,34 @@
             <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag = #{logicNotDeleteValue}</if>
         </where>
     </update>
+
+    <insert id="saveBatch" parameterType="com.warm.flow.orm.entity.FlowTask">
+        insert into flow_task(
+        id,
+        node_code,
+        node_name,
+        node_type,
+        definition_id,
+        instance_id,
+        create_time,
+        update_time,
+        del_flag,
+        tenant_id
+        )
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.id},
+            #{item.nodeCode},
+            #{item.nodeName},
+            #{item.nodeType},
+            #{item.definitionId},
+            #{item.instanceId},
+            #{item.createTime},
+            #{item.updateTime},
+            #{item.delFlag},
+            #{item.tenantId}
+            )
+        </foreach>
+    </insert>
 </mapper>

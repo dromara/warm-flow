@@ -120,4 +120,12 @@ public interface WarmMapper<T> {
             , @Param("logicDeleteValue") String logicDeleteValue
             , @Param("logicNotDeleteValue") String logicNotDeleteValue);
 
+    /**
+     * 批量插入
+     *
+     * @param list 需要插入的集合元素
+     * @return 插入的数量
+     */
+    int saveBatch(@Param("list") Collection<T> list);
+
 }

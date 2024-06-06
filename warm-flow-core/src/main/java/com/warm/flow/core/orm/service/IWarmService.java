@@ -123,6 +123,14 @@ public interface IWarmService<T> {
     void saveBatch(List<T> list);
 
     /**
+     * 批量新增
+     *
+     * @param list      需要插入的集合数据
+     * @param batchSize 插入大小
+     */
+    void saveBatch(List<T> list, int batchSize);
+
+    /**
      * 批量更新
      *
      * @param list

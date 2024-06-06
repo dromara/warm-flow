@@ -117,8 +117,9 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
     @Override
     public void saveBatch(List<T> list) {
         for (T record : list) {
-            save(record);
+            TenantDeleteUtil.getEntity(record);
         }
+        getMapper().saveBatch(list);
     }
 
     @Override
