@@ -87,8 +87,9 @@ public class FlowConfigUtil {
         node.setNodeCode(nodeElement.attributeValue("nodeCode"));
         node.setNodeName(nodeElement.attributeValue("nodeName"));
         node.setPermissionFlag(nodeElement.attributeValue("permissionFlag"));
-        node.setNodeRatio(StringUtils.isNotEmpty(nodeElement.attributeValue("nodeRatio")) ?
-                new BigDecimal(nodeElement.attributeValue("nodeRatio")): null);
+        if (StringUtils.isNotEmpty(nodeElement.attributeValue("nodeRatio"))) {
+            node.setNodeRatio(new BigDecimal(nodeElement.attributeValue("nodeRatio")));
+        }
         node.setCoordinate(nodeElement.attributeValue("coordinate"));
         node.setSkipAnyNode(nodeElement.attributeValue("skipAnyNode"));
         node.setListenerType(nodeElement.attributeValue("listenerType"));
@@ -136,7 +137,9 @@ public class FlowConfigUtil {
             nodeElement.addAttribute("nodeCode", node.getNodeCode());
             nodeElement.addAttribute("nodeName", node.getNodeName());
             nodeElement.addAttribute("permissionFlag", node.getPermissionFlag());
-            nodeElement.addAttribute("nodeRatio", Objects.nonNull(node.getNodeRatio()) ? node.getNodeRatio().toPlainString() : null);
+            if (Objects.nonNull(node.getNodeRatio())) {
+                nodeElement.addAttribute("nodeRatio", node.getNodeRatio().toString());
+            }
             nodeElement.addAttribute("coordinate", node.getCoordinate());
             nodeElement.addAttribute("skipAnyNode", node.getSkipAnyNode());
             nodeElement.addAttribute("listenerType", node.getListenerType());
@@ -163,7 +166,6 @@ public class FlowConfigUtil {
         }
         return document;
     }
-
 
     private static FlowCombine structureFlow(Definition definition) {
         // 获取流程
