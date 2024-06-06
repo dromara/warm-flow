@@ -108,7 +108,7 @@ public abstract class WarmServiceImpl<M extends WarmDao<T>, T> implements IWarmS
             return;
         }
 
-        List<List<T>> split = CollUtil.split(list, Math.min(batchSize, 100));
+        List<List<T>> split = CollUtil.split(list, batchSize);
 
         for (List<T> ts : split) {
             ts.forEach(this::insertFill);
