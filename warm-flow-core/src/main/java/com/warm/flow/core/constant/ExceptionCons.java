@@ -85,4 +85,12 @@ public class ExceptionCons {
 
     public static final String SIGN_NULL_HANDLER = "会签票签时，办理人标识不能为空";
 
+    public static final String REDUCTION_SIGN_ONE_ERROR = "办理人不足或者只有一人，不可减签";
+
+    public static final String IS_ALREADY_SIGN = "已经是待办人，不可加签";
+
+    public static final String IS_ALREADY_TRANSFER = "已经是转办人，不可转办";
+
+    public static final String IS_ALREADY_DEPUTE = "已经是受托人，不可委托";
+
 }

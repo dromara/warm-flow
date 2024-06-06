@@ -165,6 +165,10 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     @Override
     public boolean transfer(Long taskId, String curUser, List<String> permissionFlag, List<String> addHandlers, String message) {
+        List<User> users = FlowFactory.userService().list(FlowFactory.newUser().setAssociated(taskId)
+                .setCreateBy(curUser).setType(UserType.TRANSFER.getKey()));
+        AssertUtil.isTrue(CollUtil.isNotEmpty(users), ExceptionCons.IS_ALREADY_TRANSFER);
+
         ModifyHandler modifyHandler = new ModifyHandler()
                 .setTaskId(taskId)
                 .setAddHandlers(addHandlers)
@@ -179,6 +183,10 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     @Override
     public boolean depute(Long taskId, String curUser, List<String> permissionFlag, List<String> addHandlers, String message){
+        List<User> users = FlowFactory.userService().list(FlowFactory.newUser().setAssociated(taskId)
+                .setCreateBy(curUser).setType(UserType.DEPUTE.getKey()));
+        AssertUtil.isTrue(CollUtil.isNotEmpty(users), ExceptionCons.IS_ALREADY_DEPUTE);
+
         ModifyHandler modifyHandler = new ModifyHandler()
                 .setTaskId(taskId)
                 .setAddHandlers(addHandlers)
@@ -193,6 +201,10 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     @Override
     public boolean addSignature(Long taskId, String curUser, List<String> permissionFlag, List<String> addHandlers, String message){
+        List<User> users = FlowFactory.userService().list(FlowFactory.newUser().setAssociated(taskId)
+                .setCreateBy(curUser).setType(UserType.APPROVAL.getKey()));
+        AssertUtil.isTrue(CollUtil.isNotEmpty(users), ExceptionCons.IS_ALREADY_SIGN);
+
         ModifyHandler modifyHandler = new ModifyHandler()
                 .setTaskId(taskId)
                 .setAddHandlers(addHandlers)
@@ -206,6 +218,10 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     @Override
     public boolean reductionSignature(Long taskId, String curUser, List<String> permissionFlag, List<String> reductionHandlers, String message){
+        List<User> users = FlowFactory.userService().list(FlowFactory.newUser().setAssociated(taskId)
+                .setType(UserType.APPROVAL.getKey()));
+
+        AssertUtil.isTrue(CollUtil.isEmpty(users) || users.size() == 1, ExceptionCons.REDUCTION_SIGN_ONE_ERROR);
         ModifyHandler modifyHandler = new ModifyHandler()
                 .setTaskId(taskId)
                 .setReductionHandlers(reductionHandlers)
@@ -409,7 +425,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
         // 办理人和转办人列表
         List<User> todoList = FlowFactory.userService().listByAssociatedAndTypes(task.getId()
-                , UserType.APPROVAL.getKey(), UserType.ASSIGNEE.getKey());
+                , UserType.APPROVAL.getKey(), UserType.TRANSFER.getKey());
 
         // 判断办理人是否有办理权限
         AssertUtil.isTrue(StringUtils.isEmpty(flowParams.getHandler()), ExceptionCons.SIGN_NULL_HANDLER);
@@ -632,7 +648,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         } else {
             // 查询审批人和转办人
             permissions = FlowFactory.userService().getPermission(task.getId(), UserType.APPROVAL.getKey()
-                    , UserType.ASSIGNEE.getKey());
+                    , UserType.TRANSFER.getKey());
         }
         // 当前节点
         AssertUtil.isTrue(CollUtil.isNotEmpty(permissions) && (CollUtil.isEmpty(permissionFlags)
