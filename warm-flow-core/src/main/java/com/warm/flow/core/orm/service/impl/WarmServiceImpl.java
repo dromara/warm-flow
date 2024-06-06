@@ -99,8 +99,21 @@ public abstract class WarmServiceImpl<M extends WarmDao<T>, T> implements IWarmS
         if (CollUtil.isEmpty(list)) {
             return;
         }
-        list.forEach(this::insertFill);
-        getDao().saveBatch(list);
+        this.saveBatch(list, 100);
+    }
+
+    @Override
+    public void saveBatch(List<T> list, int batchSize) {
+        if (CollUtil.isEmpty(list)) {
+            return;
+        }
+
+        List<List<T>> split = CollUtil.split(list, Math.min(batchSize, 100));
+
+        for (List<T> ts : split) {
+            ts.forEach(this::insertFill);
+            getDao().saveBatch(ts);
+        }
     }
 
     @Override

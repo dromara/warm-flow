@@ -1,6 +1,8 @@
 package com.warm.flow.core.utils;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * @author warm
@@ -191,5 +193,20 @@ public class CollUtil {
             sb.deleteCharAt(sb.length() - 1);
         }
         return sb.toString();
+    }
+
+    /**
+     * 按照<p>batchSize</p>分割源集合,微批概念
+     *
+     * @param list      源集合
+     * @param batchSize 分批大小
+     * @param <T>       obj
+     * @return 指定<p>batchSize</p>的全部list
+     */
+    public static <T> List<List<T>> split(List<T> list, int batchSize) {
+        final int N = (int) Math.ceil((double) list.size() / batchSize);
+        return IntStream.range(0, N).boxed()
+                .map(i -> list.subList(i * batchSize, Math.min((i + 1) * batchSize, list.size())))
+                .collect(Collectors.toList());
     }
 }
