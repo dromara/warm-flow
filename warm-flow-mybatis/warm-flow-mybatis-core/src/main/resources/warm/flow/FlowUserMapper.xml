@@ -230,4 +230,30 @@
         <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
         <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag = #{logicNotDeleteValue}</if>
     </update>
+
+    <insert id="saveBatch" parameterType="com.warm.flow.orm.entity.FlowUser">
+        insert into flow_user(
+        id,
+        type,
+        processed_by,
+        associated,
+        create_time,
+        update_time,
+        del_flag,
+        tenant_id
+        )
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.id},
+            #{item.type},
+            #{item.processedBy},
+            #{item.associated},
+            #{item.createTime},
+            #{item.updateTime},
+            #{item.delFlag},
+            #{item.tenantId}
+            )
+        </foreach>
+    </insert>
 </mapper>

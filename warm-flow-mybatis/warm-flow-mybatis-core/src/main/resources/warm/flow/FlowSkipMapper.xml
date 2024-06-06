@@ -266,4 +266,42 @@
         <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
         <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag = #{logicNotDeleteValue}</if>
     </update>
+
+    <insert id="saveBatch" parameterType="com.warm.flow.orm.entity.FlowSkip">
+        insert into flow_skip(
+        id,
+        definition_id,
+        now_node_code,
+        now_node_type,
+        next_node_code,
+        next_node_type,
+        skip_name,
+        skip_type,
+        skip_condition,
+        coordinate,
+        create_time,
+        update_time,
+        del_flag,
+        tenant_id
+        )
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.id},
+            #{item.definitionId},
+            #{item.nowNodeCode},
+            #{item.nowNodeType},
+            #{item.nextNodeCode},
+            #{item.nextNodeType},
+            #{item.skipName},
+            #{item.skipType},
+            #{item.skipCondition},
+            #{item.coordinate},
+            #{item.createTime},
+            #{item.updateTime},
+            #{item.delFlag},
+            #{item.tenantId}
+            )
+        </foreach>
+    </insert>
 </mapper>
