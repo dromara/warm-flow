@@ -418,13 +418,12 @@ public class FlowHisTask implements HisTask {
                 "id=" + id +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
-                ", tenantId='" + tenantId + '\'' +
-                ", delFlag='" + delFlag + '\'' +
                 ", definitionId=" + definitionId +
                 ", flowName='" + flowName + '\'' +
                 ", instanceId=" + instanceId +
                 ", taskId=" + taskId +
                 ", cooperateType=" + cooperateType +
+                ", tenantId='" + tenantId + '\'' +
                 ", businessId='" + businessId + '\'' +
                 ", nodeCode='" + nodeCode + '\'' +
                 ", nodeName='" + nodeName + '\'' +
@@ -440,6 +439,6 @@ public class FlowHisTask implements HisTask {
                 ", createBy='" + createBy + '\'' +
                 ", fromCustom='" + fromCustom + '\'' +
                 ", fromPath='" + fromPath + '\'' +
-                '}';
+                "} " + super.toString();
     }
 }
