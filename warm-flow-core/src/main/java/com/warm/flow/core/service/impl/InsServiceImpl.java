@@ -172,7 +172,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         instance.setCreateTime(now);
         instance.setUpdateTime(now);
         instance.setCreateBy(flowParams.getHandler());
-        instance.setExt(flowParams.getExt());
+        instance.setExt(flowParams.getTaskExt());
         return instance;
     }
 

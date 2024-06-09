@@ -127,6 +127,11 @@ public class FlowHisTask implements HisTask {
     private String message;
 
     /**
+     * 业务详情 存业务类的json
+     */
+    private String ext;
+
+    /**
      * 创建者
      */
     @TableField(exist = false)
@@ -376,6 +381,15 @@ public class FlowHisTask implements HisTask {
         return this;
     }
 
+    public String getExt() {
+        return ext;
+    }
+
+    public FlowHisTask setExt(String ext) {
+        this.ext = ext;
+        return this;
+    }
+
     @Override
     public String getCreateBy() {
         return createBy;
@@ -415,12 +429,13 @@ public class FlowHisTask implements HisTask {
                 "id=" + id +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
+                ", tenantId='" + tenantId + '\'' +
+                ", delFlag='" + delFlag + '\'' +
                 ", definitionId=" + definitionId +
                 ", flowName='" + flowName + '\'' +
                 ", instanceId=" + instanceId +
                 ", taskId=" + taskId +
                 ", cooperateType=" + cooperateType +
-                ", tenantId='" + tenantId + '\'' +
                 ", businessId='" + businessId + '\'' +
                 ", nodeCode='" + nodeCode + '\'' +
                 ", nodeName='" + nodeName + '\'' +
@@ -432,9 +447,10 @@ public class FlowHisTask implements HisTask {
                 ", permissionList=" + permissionList +
                 ", flowStatus=" + flowStatus +
                 ", message='" + message + '\'' +
+                ", ext='" + ext + '\'' +
                 ", createBy='" + createBy + '\'' +
                 ", fromCustom='" + fromCustom + '\'' +
                 ", fromPath='" + fromPath + '\'' +
-                "} " + super.toString();
+                '}';
     }
 }

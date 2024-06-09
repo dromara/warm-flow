@@ -69,7 +69,7 @@ public class FlowParams implements Serializable {
     /**
      * 扩展字段
      */
-    private String ext;
+    private String taskExt;
 
     public static FlowParams build() {
         return new FlowParams();
@@ -105,8 +105,8 @@ public class FlowParams implements Serializable {
         return this;
     }
 
-    public FlowParams ext(String ext) {
-        this.ext = ext;
+    public FlowParams taskExt(String taskExt) {
+        this.taskExt = taskExt;
         return this;
     }
 
@@ -152,8 +152,8 @@ public class FlowParams implements Serializable {
         return message;
     }
 
-    public String getExt() {
-        return ext;
+    public String getTaskExt() {
+        return taskExt;
     }
 
     public Integer getFlowStatus() {
