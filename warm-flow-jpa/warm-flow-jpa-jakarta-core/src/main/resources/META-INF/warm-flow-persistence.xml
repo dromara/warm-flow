@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="3.2" xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_2.xsd">
+    <persistence-unit name="warm-flow-jpa">
+        <class>com.warm.flow.orm.entity.FlowDefinition</class>
+        <class>com.warm.flow.orm.entity.FlowHisTask</class>
+        <class>com.warm.flow.orm.entity.FlowInstance</class>
+        <class>com.warm.flow.orm.entity.FlowNode</class>
+        <class>com.warm.flow.orm.entity.FlowSkip</class>
+        <class>com.warm.flow.orm.entity.FlowTask</class>
+        <class>com.warm.flow.orm.entity.FlowUser</class>
+    </persistence-unit>
+</persistence>
