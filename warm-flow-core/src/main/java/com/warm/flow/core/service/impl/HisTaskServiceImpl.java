@@ -74,6 +74,40 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
             hisTask.setTargetNodeCode(nextNode.getNodeCode());
             hisTask.setTargetNodeName(nextNode.getNodeName());
             hisTask.setApprover(flowParams.getHandler());
+            if (ObjectUtil.isNotNull(flowParams.getFlowStatus())) {
+                hisTask.setFlowStatus(flowParams.getFlowStatus());
+            } else {
+                hisTask.setFlowStatus(SkipType.isReject(flowParams.getSkipType())
+                        ? FlowStatus.REJECT.getKey() : FlowStatus.PASS.getKey());
+            }
+            hisTask.setMessage(flowParams.getMessage());
+            hisTask.setCreateTime(new Date());
+            FlowFactory.dataFillHandler().idFill(hisTask);
+            hisTasks.add(hisTask);
+        }
+        return hisTasks;
+    }
+
+    @Override
+    public List<HisTask> setCooperateHis(Task task, Node node, FlowParams flowParams
+            , List<String> collaborators) {
+        List<HisTask> hisTasks = new ArrayList<>();
+        for (String collaborator : collaborators) {
+            HisTask hisTask = FlowFactory.newHisTask();
+            hisTask.setInstanceId(task.getInstanceId());
+            hisTask.setTaskId(task.getId());
+            if (ObjectUtil.isNotNull(flowParams.getCooperateType())) {
+                hisTask.setCooperateType(flowParams.getCooperateType());
+            } else {
+                hisTask.setCooperateType(CooperateType.APPROVAL.getKey());
+            }
+            hisTask.setCollaborator(collaborator);
+            hisTask.setNodeCode(task.getNodeCode());
+            hisTask.setNodeName(task.getNodeName());
+            hisTask.setNodeType(task.getNodeType());
+            hisTask.setDefinitionId(task.getDefinitionId());
+            hisTask.setTargetNodeCode(node.getNodeCode());
+            hisTask.setTargetNodeName(node.getNodeName());
             hisTask.setApprover(flowParams.getHandler());
             if (ObjectUtil.isNotNull(flowParams.getFlowStatus())) {
                 hisTask.setFlowStatus(flowParams.getFlowStatus());

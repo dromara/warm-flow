@@ -52,6 +52,17 @@ public interface HisTaskService extends IWarmService<HisTask> {
     List<HisTask> setSkipInsHis(Task task, List<Node> nextNodes, FlowParams flowParams);
 
     /**
+     * 设置协作历史记录
+     * @param task 当前任务
+     * @param node 当然任务节点
+     * @param flowParams 参数
+     * @param collaborators 协作人
+     * @return
+     */
+    List<HisTask> setCooperateHis(Task task, Node node, FlowParams flowParams
+            , List<String> collaborators);
+
+    /**
      * 委派历史任务
      * @param task
      * @param flowParams

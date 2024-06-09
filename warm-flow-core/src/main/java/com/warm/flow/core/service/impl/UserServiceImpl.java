@@ -14,6 +14,7 @@ import com.warm.flow.core.utils.CollUtil;
 import com.warm.flow.core.utils.StreamUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -69,7 +70,8 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
             return StreamUtils.toList(list(FlowFactory.newUser().setAssociated(associated).setType(types[0]))
                     , User::getProcessedBy);
         }
-        return StreamUtils.toList(getDao().listByAssociatedAndTypes(associated, types), User::getProcessedBy);
+        return StreamUtils.toList(getDao().listByAssociatedAndTypes(Collections.singletonList(associated), types)
+                , User::getProcessedBy);
     }
 
     @Override
@@ -80,8 +82,20 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
         if (types.length == 1) {
             return list(FlowFactory.newUser().setAssociated(associated).setType(types[0]));
         }
-        return getDao().listByAssociatedAndTypes(associated, types);
+        return getDao().listByAssociatedAndTypes(Collections.singletonList(associated), types);
     }
+
+    @Override
+    public List<User> getByAssociateds(List<Long> associateds, String... types) {
+        if (CollUtil.isEmpty(associateds)) {
+            return Collections.emptyList();
+        }
+        if (associateds.size() == 1) {
+            return listByAssociatedAndTypes(associateds.get(0), types);
+        }
+        return getDao().listByAssociatedAndTypes(associateds, types);
+    }
+
 
     @Override
     public boolean updatePermission(Long associated, List<String> permissions, String type, boolean clear,

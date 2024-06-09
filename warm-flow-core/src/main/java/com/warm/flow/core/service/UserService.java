@@ -71,6 +71,8 @@ public interface UserService extends IWarmService<User> {
      */
     List<User> listByAssociatedAndTypes(Long associated, String... types);
 
+    List<User> getByAssociateds(List<Long> associateds, String... types);
+
     /**
      * 根据关联id更新权限人
      *

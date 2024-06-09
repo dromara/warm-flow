@@ -99,7 +99,15 @@
     <select id="listByAssociatedAndTypes" resultMap="FlowUserResult">
         <include refid="selectVo"/>
         <where>
-            <if test="entity.associated != null  and entity.associated != ''">and t.associated = #{entity.associated}</if>
+            <if test="associateds == null and entity.associated != null  and entity.associated != ''">
+                and t.associated = #{entity.associated}
+            </if>
+            <if test="associateds != null and associateds.size > 0">
+                AND `associated` in
+                <foreach item="item" collection="associateds" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
             <if test="types != null and types.length > 0">
                 AND `type` in
                 <foreach item="item" collection="types" open="(" separator="," close=")">
@@ -185,16 +193,16 @@
     </update>
 
     <delete id="delete" parameterType="com.warm.flow.orm.entity.FlowUser">
-        delete from flow_user t
+        delete from flow_user
         <where>
-            <if test="id != null">and t.id = #{id}</if>
-            <if test="type != null  and type != ''">and t.type = #{type}</if>
-            <if test="processedBy != null  and processedBy != ''">and t.processed_by = #{processedBy}</if>
-            <if test="associated != null">and t.associated = #{associated}</if>
-            <if test="createTime != null">and t.create_time = #{createTime}</if>
-            <if test="updateTime != null">and t.update_time = #{updateTime}</if>
-            <if test="tenantId != null  and tenantId != ''">and t.tenant_id = #{tenantId}</if>
-            <if test="delFlag != null  and delFlag != ''">and t.del_flag = #{delFlag}</if>
+            <if test="id != null">and id = #{id}</if>
+            <if test="type != null  and type != ''">and type = #{type}</if>
+            <if test="processedBy != null  and processedBy != ''">and processed_by = #{processedBy}</if>
+            <if test="associated != null">and associated = #{associated}</if>
+            <if test="createTime != null">and create_time = #{createTime}</if>
+            <if test="updateTime != null">and update_time = #{updateTime}</if>
+            <if test="tenantId != null  and tenantId != ''">and tenant_id = #{tenantId}</if>
+            <if test="delFlag != null  and delFlag != ''">and del_flag = #{delFlag}</if>
         </where>
     </delete>
 
