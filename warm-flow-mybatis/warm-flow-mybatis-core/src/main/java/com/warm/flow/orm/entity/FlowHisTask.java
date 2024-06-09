@@ -334,6 +334,17 @@ public class FlowHisTask implements HisTask {
     }
 
     @Override
+    public String getServiceDetails() {
+        return message;
+    }
+
+    @Override
+    public FlowHisTask setServiceDetails(String message) {
+        this.message = message;
+        return this;
+    }
+
+    @Override
     public String getCreateBy() {
         return createBy;
     }

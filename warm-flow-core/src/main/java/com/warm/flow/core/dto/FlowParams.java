@@ -47,6 +47,11 @@ public class FlowParams {
     private String message;
 
     /**
+     * 业务详情 存业务类的json
+     */
+    private String serviceDetails;
+
+    /**
      * 流程变量
      */
     private Map<String, Object> variable;
