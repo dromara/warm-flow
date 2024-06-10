@@ -6,13 +6,13 @@
           listenerPath="com.warm.flow.core.test.Listener.StartListener@@323@@com.warm.flow.core.test.Listener.FinishListener@@com.warm.flow.core.test.Listener.PermissionListener@@com.warm.flow.core.test.Listener.CreateListener">
         <skip coordinate="140,280;230,280" skipType="PASS">2</skip>
     </node>
-    <node nodeType="between" nodeCode="2" nodeName="待提交" permissionFlag="1,2,3"
-          coordinate="280,280|280,280" skipAnyNode="N" nodeRatio="66" listenerType="start,assignment,finish,permission,create"
+    <node nodeType="between" nodeCode="2" nodeName="待提交" permissionFlag="role:1,role:2,role:100,role:101"
+          coordinate="280,280|280,280" skipAnyNode="N" nodeRatio="0" listenerType="start,assignment,finish,permission,create"
           listenerPath="com.warm.flow.core.test.Listener.StartListener@@323@@com.warm.flow.core.test.Listener.FinishListener@@com.warm.flow.core.test.Listener.PermissionListener@@com.warm.flow.core.test.Listener.CreateListener">
         <skip coordinate="330,280;430,280" skipType="PASS">3</skip>
     </node>
-    <node nodeType="between" nodeCode="3" nodeName="组长审批" permissionFlag="role:1,role:2,role:100,role:101"
-          coordinate="480,280|480,280" skipAnyNode="Y" nodeRatio="0" listenerType="start,assignment,finish,permission,create"
+    <node nodeType="between" nodeCode="3" nodeName="组长审批" permissionFlag="1,2,100"
+          coordinate="480,280|480,280" skipAnyNode="Y" nodeRatio="66" listenerType="start,assignment,finish,permission,create"
           listenerPath="com.warm.flow.core.test.Listener.StartListener@@323@@com.warm.flow.core.test.Listener.FinishListener@@com.warm.flow.core.test.Listener.PermissionListener@@com.warm.flow.core.test.Listener.CreateListener">
         <skip coordinate="530,280;650,280" skipType="PASS">4</skip>
     </node>
