@@ -14,7 +14,7 @@ public enum FlowStatus {
 
     PASS(2, "审批通过"),
 
-    AUTO_PASS(3, "自动通过"),
+    AUTO_PASS(3, "自动完成"),
 
     FINISHED(8, "已完成"),
 

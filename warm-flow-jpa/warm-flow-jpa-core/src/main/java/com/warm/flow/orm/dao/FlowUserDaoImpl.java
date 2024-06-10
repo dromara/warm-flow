@@ -65,15 +65,17 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser> implements FlowUserDa
     }
 
     @Override
-    public List<FlowUser> listByAssociatedAndTypes(Long associated, String[] types) {
+    public List<FlowUser> listByAssociatedAndTypes(List<Long> associateds, String[] types) {
 
         FlowUser entity = TenantDeleteUtil.getEntity(newEntity());
 
         final CriteriaQuery<FlowUser> criteriaQuery = createCriteriaQuery((criteriaBuilder, root, predicates, innerCriteriaQuery) -> {
             entity.commonPredicate().process(criteriaBuilder, root, predicates);
 
-            if (Objects.nonNull(associated)) {
-                predicates.add(criteriaBuilder.equal(root.get("associated"), associated));
+            if (CollUtil.isNotEmpty(associateds) && associateds.size() == 1) {
+                predicates.add(criteriaBuilder.equal(root.get("associated"), associateds.get(0)));
+            } else {
+                predicates.add(createIn(criteriaBuilder, root, "associated", associateds));
             }
 
             if (types != null && types.length > 0) {

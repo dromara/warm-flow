@@ -3,6 +3,7 @@ package com.warm.flow.orm.dao;
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.dao.FlowUserDao;
 import com.warm.flow.core.invoker.FrameInvoker;
+import com.warm.flow.core.utils.CollUtil;
 import com.warm.flow.orm.entity.FlowUser;
 import com.warm.flow.orm.mapper.FlowUserMapper;
 import com.warm.flow.orm.utils.TenantDeleteUtil;
@@ -39,7 +40,12 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser> implements FlowUserDa
     }
 
     @Override
-    public List<FlowUser> listByAssociatedAndTypes(Long associated, String[] types) {
-        return getMapper().listByAssociatedAndTypes(types, TenantDeleteUtil.getEntity(newEntity()).setAssociated(associated));
+    public List<FlowUser> listByAssociatedAndTypes(List<Long> associateds, String[] types) {
+        if (CollUtil.isNotEmpty(associateds) && associateds.size() == 1) {
+            return getMapper().listByAssociatedAndTypes(types, null
+                    , TenantDeleteUtil.getEntity(newEntity()).setAssociated(associateds.get(0)));
+        }
+        return getMapper().listByAssociatedAndTypes(types, associateds
+                , TenantDeleteUtil.getEntity(newEntity()));
     }
 }

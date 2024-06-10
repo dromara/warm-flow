@@ -110,7 +110,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         updateFlowInfo(task, instance, insHisList, addTasks, users);
 
         // 处理未完成的任务，当流程完成，还存在代办任务未完成，转历史任务，状态完成。
-        handUndoneTask(instance, null);
+        handUndoneTask(instance);
 
         // 最后判断是否存在监听器，存在执行监听器
         ListenerUtil.executeListener(new ListenerVariable(instance, flowParams.getVariable(), task, addTasks)
@@ -154,7 +154,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 删除流程相关办理人
         FlowFactory.userService().deleteByTaskIds(Collections.singletonList(task.getId()));
         // 处理未完成的任务，当流程完成，还存在代办任务未完成，转历史任务，状态完成。
-        handUndoneTask(instance, task.getId());
+        handUndoneTask(instance);
         return instance;
     }
 
@@ -165,6 +165,10 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     @Override
     public boolean transfer(Long taskId, String curUser, List<String> permissionFlag, List<String> addHandlers, String message) {
+        List<User> users = FlowFactory.userService().list(FlowFactory.newUser().setAssociated(taskId)
+                .setCreateBy(curUser).setType(UserType.TRANSFER.getKey()));
+        AssertUtil.isTrue(CollUtil.isNotEmpty(users), ExceptionCons.IS_ALREADY_TRANSFER);
+
         ModifyHandler modifyHandler = new ModifyHandler()
                 .setTaskId(taskId)
                 .setAddHandlers(addHandlers)
@@ -179,6 +183,10 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     @Override
     public boolean depute(Long taskId, String curUser, List<String> permissionFlag, List<String> addHandlers, String message){
+        List<User> users = FlowFactory.userService().list(FlowFactory.newUser().setAssociated(taskId)
+                .setCreateBy(curUser).setType(UserType.DEPUTE.getKey()));
+        AssertUtil.isTrue(CollUtil.isNotEmpty(users), ExceptionCons.IS_ALREADY_DEPUTE);
+
         ModifyHandler modifyHandler = new ModifyHandler()
                 .setTaskId(taskId)
                 .setAddHandlers(addHandlers)
@@ -193,6 +201,10 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     @Override
     public boolean addSignature(Long taskId, String curUser, List<String> permissionFlag, List<String> addHandlers, String message){
+        List<User> users = FlowFactory.userService().list(FlowFactory.newUser().setAssociated(taskId)
+                .setCreateBy(curUser).setType(UserType.APPROVAL.getKey()));
+        AssertUtil.isTrue(CollUtil.isNotEmpty(users), ExceptionCons.IS_ALREADY_SIGN);
+
         ModifyHandler modifyHandler = new ModifyHandler()
                 .setTaskId(taskId)
                 .setAddHandlers(addHandlers)
@@ -206,6 +218,10 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     @Override
     public boolean reductionSignature(Long taskId, String curUser, List<String> permissionFlag, List<String> reductionHandlers, String message){
+        List<User> users = FlowFactory.userService().list(FlowFactory.newUser().setAssociated(taskId)
+                .setType(UserType.APPROVAL.getKey()));
+
+        AssertUtil.isTrue(CollUtil.isEmpty(users) || users.size() == 1, ExceptionCons.REDUCTION_SIGN_ONE_ERROR);
         ModifyHandler modifyHandler = new ModifyHandler()
                 .setTaskId(taskId)
                 .setReductionHandlers(reductionHandlers)
@@ -220,8 +236,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     @Override
     public boolean updateHandler(ModifyHandler modifyHandler) {
         // 获取给谁的权限
-        List<String> addHandler = modifyHandler.getAddHandlers();
-        AssertUtil.isTrue(CollUtil.isEmpty(addHandler), ExceptionCons.LOST_ADDITIONAL_PERMISSION);
         if (!modifyHandler.isIgnore()) {
             // 判断当前处理人是否有权限，获取当前办理人的权限
             List<String> permissions = modifyHandler.getPermissionFlag();
@@ -237,15 +251,16 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 .setFlowStatus(FlowStatus.APPROVAL.getKey())
                 .message(modifyHandler.getMessage())
                 .setCooperateType(modifyHandler.getCooperateType());
-        HisTask hisTask = CollUtil.getOne(FlowFactory.hisTaskService().setSkipInsHis(task, CollUtil.toList(node), flowParams));
 
-        FlowFactory.hisTaskService().save(hisTask);
-
+        HisTask hisTask = null;
         // 删除对应的操作人
         if(CollUtil.isNotEmpty(modifyHandler.getReductionHandlers())){
             for (String reductionHandler : modifyHandler.getReductionHandlers()) {
-                FlowFactory.userService().remove(FlowFactory.newUser().setAssociated(modifyHandler.getTaskId()).setCreateBy(reductionHandler));
+                FlowFactory.userService().remove(FlowFactory.newUser().setAssociated(modifyHandler.getTaskId())
+                        .setProcessedBy(reductionHandler));
             }
+            hisTask = CollUtil.getOne(FlowFactory.hisTaskService().setCooperateHis(task, node
+                    , flowParams, modifyHandler.getReductionHandlers()));
         }
 
         // 新增权限人
@@ -253,8 +268,11 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             FlowFactory.userService().saveBatch(StreamUtils.toList(modifyHandler.getAddHandlers(), permission ->
                     FlowFactory.userService().structureUser(modifyHandler.getTaskId(), permission
                             , modifyHandler.getCooperateType().toString(), modifyHandler.getCurUser())));
+            hisTask = CollUtil.getOne(FlowFactory.hisTaskService().setCooperateHis(task, node
+                    , flowParams, modifyHandler.getAddHandlers()));
         }
 
+        FlowFactory.hisTaskService().save(hisTask);
         return true;
     }
 
@@ -409,7 +427,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
         // 办理人和转办人列表
         List<User> todoList = FlowFactory.userService().listByAssociatedAndTypes(task.getId()
-                , UserType.APPROVAL.getKey(), UserType.ASSIGNEE.getKey());
+                , UserType.APPROVAL.getKey(), UserType.TRANSFER.getKey());
 
         // 判断办理人是否有办理权限
         AssertUtil.isTrue(StringUtils.isEmpty(flowParams.getHandler()), ExceptionCons.SIGN_NULL_HANDLER);
@@ -632,7 +650,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         } else {
             // 查询审批人和转办人
             permissions = FlowFactory.userService().getPermission(task.getId(), UserType.APPROVAL.getKey()
-                    , UserType.ASSIGNEE.getKey());
+                    , UserType.TRANSFER.getKey());
         }
         // 当前节点
         AssertUtil.isTrue(CollUtil.isNotEmpty(permissions) && (CollUtil.isEmpty(permissionFlags)
@@ -737,14 +755,12 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
      * 处理未完成的任务，当流程完成，还存在代办任务未完成，转历史任务，状态完成。
      *
      * @param instance
-     * @param taskId   排除此任务
      */
-    private void handUndoneTask(Instance instance, Long taskId) {
+    private void handUndoneTask(Instance instance) {
         if (NodeType.isEnd(instance.getNodeType())) {
             List<Task> taskList = list(FlowFactory.newTask().setInstanceId(instance.getId()));
-            List<Task> noDoneTasks = StreamUtils.filter(taskList, task -> !task.getId().equals(taskId));
-            if (CollUtil.isNotEmpty(noDoneTasks)) {
-                convertHisTask(noDoneTasks, FlowStatus.AUTO_PASS.getKey());
+            if (CollUtil.isNotEmpty(taskList)) {
+                convertHisTask(taskList, FlowStatus.AUTO_PASS.getKey());
             }
         }
     }

@@ -6,28 +6,31 @@
           listenerPath="com.warm.flow.core.test.Listener.StartListener@@323@@com.warm.flow.core.test.Listener.FinishListener@@com.warm.flow.core.test.Listener.PermissionListener@@com.warm.flow.core.test.Listener.CreateListener">
         <skip coordinate="140,280;230,280" skipType="PASS">2</skip>
     </node>
-    <node nodeType="between" nodeCode="2" nodeName="待提交" permissionFlag="1,2,3"
-          coordinate="280,280|280,280" skipAnyNode="N" nodeRatio="100" listenerType="start,assignment,finish,permission,create"
+    <node nodeType="between" nodeCode="2" nodeName="待提交" permissionFlag="1,2,3" coordinate="280,280|280,280" skipAnyNode="N" nodeRatio="100"
+          listenerType="start,assignment,finish,permission,create"
           listenerPath="com.warm.flow.core.test.Listener.StartListener@@323@@com.warm.flow.core.test.Listener.FinishListener@@com.warm.flow.core.test.Listener.PermissionListener@@com.warm.flow.core.test.Listener.CreateListener">
         <skip coordinate="330,280;430,280" skipType="PASS">3</skip>
     </node>
-    <node nodeType="between" nodeCode="3" nodeName="组长审批" permissionFlag="role:1,role:3,role:2,role:100,role:101"
-          coordinate="480,280|480,280" skipAnyNode="Y" nodeRatio="0" listenerType="start,assignment,finish,permission,create"
+    <node nodeType="between" nodeCode="3" nodeName="组长审批" permissionFlag="role:1,role:2,role:100,role:101"
+          coordinate="480,280|480,280" skipAnyNode="Y" nodeRatio="0"
+          listenerType="start,assignment,finish,permission,create"
           listenerPath="com.warm.flow.core.test.Listener.StartListener@@323@@com.warm.flow.core.test.Listener.FinishListener@@com.warm.flow.core.test.Listener.PermissionListener@@com.warm.flow.core.test.Listener.CreateListener">
         <skip coordinate="530,280;650,280" skipType="PASS">4</skip>
     </node>
     <node nodeType="between" nodeCode="4" nodeName="部门经理审批" permissionFlag="role:1,role:2,role:100,role:101"
-          coordinate="700,280|700,280" skipAnyNode="N" nodeRatio="0" listenerType="start,assignment,finish,permission,create"
+          coordinate="700,280|700,280" skipAnyNode="N" nodeRatio="0"
+          listenerType="start,assignment,finish,permission,create"
           listenerPath="com.warm.flow.core.test.Listener.StartListener@@323@@com.warm.flow.core.test.Listener.FinishListener@@com.warm.flow.core.test.Listener.PermissionListener@@com.warm.flow.core.test.Listener.CreateListener">
-        <skip coordinate="750,280;870,280" skipType="PASS">9edc9b26-cab4-4fd4-9a30-c89f11626911</skip>
+        <skip coordinate="750,280;870,280" skipType="PASS">5</skip>
         <skip coordinate="700,240;700,210;280,210;280,240" skipType="REJECT">2</skip>
     </node>
-    <node nodeType="between" nodeCode="9edc9b26-cab4-4fd4-9a30-c89f11626911" nodeName="hr审批" permissionFlag="warmFlowInitiator"
-          coordinate="920,280|920,280" skipAnyNode="Y" nodeRatio="0" listenerType="start,assignment,finish,permission,create"
+    <node nodeType="between" nodeCode="5" nodeName="hr审批" permissionFlag="warmFlowInitiator"
+          coordinate="920,280|920,280" skipAnyNode="Y" nodeRatio="0"
+          listenerType="start,assignment,finish,permission,create"
           listenerPath="com.warm.flow.core.test.Listener.StartListener@@323@@com.warm.flow.core.test.Listener.FinishListener@@com.warm.flow.core.test.Listener.PermissionListener@@com.warm.flow.core.test.Listener.CreateListener">
-        <skip coordinate="970,280;1100,280" skipType="PASS">fa0fe17b-66d2-458d-b420-fec5cb14f73d</skip>
+        <skip coordinate="970,280;1100,280" skipType="PASS">6</skip>
     </node>
-    <node nodeType="end" nodeCode="fa0fe17b-66d2-458d-b420-fec5cb14f73d" nodeName="结束" coordinate="1120,280|1120,280"
-          skipAnyNode="N" listenerType="start,assignment,finish,permission,create"
+    <node nodeType="end" nodeCode="6" nodeName="结束" coordinate="1120,280|1120,280" skipAnyNode="N"
+          listenerType="start,assignment,finish,permission,create"
           listenerPath="com.warm.flow.core.test.Listener.StartListener@@323@@com.warm.flow.core.test.Listener.FinishListener@@com.warm.flow.core.test.Listener.PermissionListener@@com.warm.flow.core.test.Listener.CreateListener"/>
 </definition>

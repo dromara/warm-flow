@@ -38,7 +38,7 @@ public class ClassUtil {
             // 创建新的对象实例
             Constructor<C> constructors = clazz.getConstructor();
             // 创建一个对象
-            C instance = constructors.newInstance(new Object[]{});
+            C instance = constructors.newInstance();
             // 获取对象的所有字段
             Field[] fields = clazz.getDeclaredFields();
             // 遍历字段进行赋值

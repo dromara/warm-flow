@@ -25,9 +25,9 @@ public interface FlowUserDao<T extends User> extends WarmDao<T> {
     /**
      * 根据(代办任务，实例，历史表，节点等)id查询权限人或者处理人
      *
-     * @param associated (代办任务，实例，历史表，节点等)id集合
+     * @param associateds (代办任务，实例，历史表，节点等)id集合
      * @param types 用户表类型
      * @return
      */
-    List<T> listByAssociatedAndTypes(Long associated, String[] types);
+    List<T> listByAssociatedAndTypes(List<Long> associateds, String[] types);
 }

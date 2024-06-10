@@ -159,7 +159,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                 .stream().map(ClassUtil::clone).collect(Collectors.toList());
         List<Skip> skipList = FlowFactory.skipService().list(FlowFactory.newSkip().setDefinitionId(id))
                 .stream().map(ClassUtil::clone).collect(Collectors.toList());
-        FlowFactory.dataFillHandler().idFill(definition);
+        FlowFactory.dataFillHandler().idFill(definition.setId(null));
         definition.setVersion(definition.getVersion() + "_copy")
                 .setIsPublish(PublishStatus.UNPUBLISHED.getKey())
                 .setCreateTime(null)
