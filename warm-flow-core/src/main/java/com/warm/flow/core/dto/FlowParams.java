@@ -69,6 +69,11 @@ public class FlowParams implements Serializable {
     /**
      * 扩展字段
      */
+    private String ext;
+
+    /**
+     * 新增历史记录表扩展字段 存储业务详情
+     */
     private String taskExt;
 
     public static FlowParams build() {
@@ -102,6 +107,11 @@ public class FlowParams implements Serializable {
 
     public FlowParams message(String message) {
         this.message = message;
+        return this;
+    }
+
+    public FlowParams ext(String ext) {
+        this.ext = ext;
         return this;
     }
 
@@ -150,6 +160,10 @@ public class FlowParams implements Serializable {
 
     public String getMessage() {
         return message;
+    }
+
+    public String getExt() {
+        return ext;
     }
 
     public String getTaskExt() {
