@@ -370,10 +370,12 @@ public class FlowHisTask implements HisTask {
         return this;
     }
 
+    @Override
     public String getExt() {
         return ext;
     }
 
+    @Override
     public FlowHisTask setExt(String ext) {
         this.ext = ext;
         return this;

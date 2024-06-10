@@ -95,6 +95,10 @@ public interface HisTask extends RootEntity {
 
     public HisTask setMessage(String message);
 
+    public String getExt();
+
+    public HisTask setExt(String ext);
+
     public String getCreateBy();
 
     public HisTask setCreateBy(String createBy);
