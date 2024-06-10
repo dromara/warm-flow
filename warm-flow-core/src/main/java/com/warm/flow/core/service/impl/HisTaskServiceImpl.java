@@ -82,6 +82,8 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
             }
             hisTask.setMessage(flowParams.getMessage());
             hisTask.setCreateTime(new Date());
+            //业务详情添加至历史记录
+            hisTask.setExt(flowParams.getTaskExt());
             FlowFactory.dataFillHandler().idFill(hisTask);
             hisTasks.add(hisTask);
         }
