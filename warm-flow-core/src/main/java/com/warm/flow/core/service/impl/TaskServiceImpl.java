@@ -166,7 +166,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     @Override
     public boolean transfer(Long taskId, String curUser, List<String> permissionFlag, List<String> addHandlers, String message) {
         List<User> users = FlowFactory.userService().list(FlowFactory.newUser().setAssociated(taskId)
-                .setCreateBy(curUser).setType(UserType.TRANSFER.getKey()));
+                .setProcessedBy(curUser).setType(UserType.TRANSFER.getKey()));
         AssertUtil.isTrue(CollUtil.isNotEmpty(users), ExceptionCons.IS_ALREADY_TRANSFER);
 
         ModifyHandler modifyHandler = new ModifyHandler()
@@ -184,7 +184,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     @Override
     public boolean depute(Long taskId, String curUser, List<String> permissionFlag, List<String> addHandlers, String message){
         List<User> users = FlowFactory.userService().list(FlowFactory.newUser().setAssociated(taskId)
-                .setCreateBy(curUser).setType(UserType.DEPUTE.getKey()));
+                .setProcessedBy(curUser).setType(UserType.DEPUTE.getKey()));
         AssertUtil.isTrue(CollUtil.isNotEmpty(users), ExceptionCons.IS_ALREADY_DEPUTE);
 
         ModifyHandler modifyHandler = new ModifyHandler()
@@ -202,7 +202,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     @Override
     public boolean addSignature(Long taskId, String curUser, List<String> permissionFlag, List<String> addHandlers, String message){
         List<User> users = FlowFactory.userService().list(FlowFactory.newUser().setAssociated(taskId)
-                .setCreateBy(curUser).setType(UserType.APPROVAL.getKey()));
+                .setProcessedBy(curUser).setType(UserType.APPROVAL.getKey()));
         AssertUtil.isTrue(CollUtil.isNotEmpty(users), ExceptionCons.IS_ALREADY_SIGN);
 
         ModifyHandler modifyHandler = new ModifyHandler()
@@ -399,7 +399,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     private boolean handleDepute(Task task, FlowParams flowParams) {
         // 获取受托人
         User entrustedUser = FlowFactory.userService().getOne(FlowFactory.newUser().setAssociated(task.getId())
-                .setCreateBy(flowParams.getHandler()).setType(UserType.DEPUTE.getKey()));
+                .setProcessedBy(flowParams.getHandler()).setType(UserType.DEPUTE.getKey()));
         if (ObjectUtil.isNull(entrustedUser)) return false;
 
         // 记录受托人处理任务记录
@@ -409,7 +409,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
         // 查询委托人，如果在flow_user不存在，则给委托人新增代办记录
         User deputeUser = FlowFactory.userService().getOne(FlowFactory.newUser().setAssociated(task.getId())
-                .setCreateBy(entrustedUser.getCreateBy()).setType(UserType.APPROVAL.getKey()));
+                .setProcessedBy(entrustedUser.getCreateBy()).setType(UserType.APPROVAL.getKey()));
         if (ObjectUtil.isNull(deputeUser)) {
             User newUser = FlowFactory.userService().structureUser(entrustedUser.getAssociated(), entrustedUser.getCreateBy()
                     , UserType.APPROVAL.getKey(), entrustedUser.getProcessedBy());
