@@ -11,6 +11,7 @@
         <result property="associated" column="associated"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
         <result property="tenantId" column="tenant_id"/>
         <result property="delFlag" column="del_flag"/>
     </resultMap>
@@ -22,6 +23,7 @@
                t.associated,
                t.create_time,
                t.update_time,
+               t.create_by,
                t.tenant_id,
                t.del_flag
         from flow_user t
@@ -45,6 +47,7 @@
             <if test="entity.associated != null">and t.associated = #{entity.associated}</if>
             <if test="entity.createTime != null">and t.create_time = #{entity.createTime}</if>
             <if test="entity.updateTime != null">and t.update_time = #{entity.updateTime}</if>
+            <if test="entity.createBy != null  and entity.createBy != ''">and t.create_by = #{entity.createBy}</if>
             <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
             <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
         </where>
@@ -129,6 +132,7 @@
             <if test="associated != null">associated,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
             <if test="delFlag != null and delFlag != ''">del_flag,</if>
             <if test="tenantId != null and tenantId != ''">tenant_id,</if>
         </trim>
@@ -139,6 +143,7 @@
             <if test="associated != null">#{associated},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
             <if test="delFlag != null and delFlag != ''">#{delFlag},</if>
             <if test="tenantId != null and tenantId != ''">#{tenantId},</if>
         </trim>
@@ -152,6 +157,7 @@
             <if test="associated != null">t.associated = #{associated},</if>
             <if test="createTime != null">t.create_time = #{createTime},</if>
             <if test="updateTime != null">t.update_time = #{updateTime},</if>
+            <if test="createBy != null">t.create_by = #{createBy},</if>
         </trim>
         where id = #{id}
         <if test="delFlag != null  and delFlag != ''">and del_flag = #{delFlag}</if>
@@ -201,8 +207,8 @@
             <if test="associated != null">and associated = #{associated}</if>
             <if test="createTime != null">and create_time = #{createTime}</if>
             <if test="updateTime != null">and update_time = #{updateTime}</if>
+            <if test="createBy != null  and createBy != ''">and create_by = #{createBy}</if>
             <if test="tenantId != null  and tenantId != ''">and tenant_id = #{tenantId}</if>
-            <if test="delFlag != null  and delFlag != ''">and del_flag = #{delFlag}</if>
         </where>
     </delete>
 
@@ -216,6 +222,7 @@
             <if test="entity.associated != null">and t.associated = #{associated}</if>
             <if test="entity.createTime != null">and t.create_time = #{entity.createTime}</if>
             <if test="entity.updateTime != null">and t.update_time = #{entity.updateTime}</if>
+            <if test="entity.createBy != null  and entity.createBy != ''">and t.create_by = #{entity.createBy}</if>
             <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
             <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
         </where>
@@ -247,6 +254,7 @@
         associated,
         create_time,
         update_time,
+        create_by,
         del_flag,
         tenant_id
         )
@@ -259,6 +267,7 @@
             #{item.associated},
             #{item.createTime},
             #{item.updateTime},
+            #{item.createBy},
             #{item.delFlag},
             #{item.tenantId}
             )

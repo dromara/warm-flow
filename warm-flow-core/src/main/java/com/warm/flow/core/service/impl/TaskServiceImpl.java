@@ -252,27 +252,35 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 .message(modifyHandler.getMessage())
                 .setCooperateType(modifyHandler.getCooperateType());
 
-        HisTask hisTask = null;
+        List<HisTask> hisTasks = null;
         // 删除对应的操作人
         if(CollUtil.isNotEmpty(modifyHandler.getReductionHandlers())){
             for (String reductionHandler : modifyHandler.getReductionHandlers()) {
                 FlowFactory.userService().remove(FlowFactory.newUser().setAssociated(modifyHandler.getTaskId())
                         .setProcessedBy(reductionHandler));
             }
-            hisTask = CollUtil.getOne(FlowFactory.hisTaskService().setCooperateHis(task, node
-                    , flowParams, modifyHandler.getReductionHandlers()));
+            hisTasks = FlowFactory.hisTaskService().setCooperateHis(task, node
+                    , flowParams, modifyHandler.getReductionHandlers());
         }
 
         // 新增权限人
         if(CollUtil.isNotEmpty(modifyHandler.getAddHandlers())){
+            String type;;
+            if (CooperateType.TRANSFER.getKey().equals(modifyHandler.getCooperateType())) {
+                type = UserType.TRANSFER.getKey();
+            } else if (CooperateType.DEPUTE.getKey().equals(modifyHandler.getCooperateType())) {
+                type = UserType.DEPUTE.getKey();
+            } else {
+                type = UserType.APPROVAL.getKey();
+            }
             FlowFactory.userService().saveBatch(StreamUtils.toList(modifyHandler.getAddHandlers(), permission ->
                     FlowFactory.userService().structureUser(modifyHandler.getTaskId(), permission
-                            , modifyHandler.getCooperateType().toString(), modifyHandler.getCurUser())));
-            hisTask = CollUtil.getOne(FlowFactory.hisTaskService().setCooperateHis(task, node
-                    , flowParams, modifyHandler.getAddHandlers()));
+                            , type, modifyHandler.getCurUser())));
+            hisTasks = FlowFactory.hisTaskService().setCooperateHis(task, node
+                    , flowParams, modifyHandler.getAddHandlers());
         }
 
-        FlowFactory.hisTaskService().save(hisTask);
+        FlowFactory.hisTaskService().saveBatch(hisTasks);
         return true;
     }
 
