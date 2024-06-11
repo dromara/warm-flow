@@ -76,7 +76,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         checkAuth(NowNode, task, flowParams.getPermissionFlag());
 
         //或签、会签、票签逻辑处理
-        if (cooperate(NowNode, task, flowParams)) return instance;
+        if (cooperate(instance, NowNode, task, flowParams)) return instance;
 
         // 获取关联的节点，判断当前处理人是否有权限处理
         Node nextNode = getNextNode(NowNode, task, flowParams);
@@ -415,13 +415,14 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     /**
      * 会签，票签，协作处理，返回true；或签或者会签、票签结束返回false
-     * @param NowNode
+     * @param instance
+     * @param nowNode
      * @param task
      * @param flowParams
      * @return
      */
-    private boolean cooperate(Node NowNode, Task task, FlowParams flowParams) {
-        BigDecimal nodeRatio = NowNode.getNodeRatio();
+    private boolean cooperate(Instance instance, Node nowNode, Task task, FlowParams flowParams) {
+        BigDecimal nodeRatio = nowNode.getNodeRatio();
         // 或签，直接返回
         if (CooperateType.isOrSign(nodeRatio)) return false;
 
@@ -678,11 +679,14 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         Map<String, Object> variable = flowParams.getVariable();
         if (MapUtil.isNotEmpty(variable)) {
             String variableStr = instance.getVariable();
-            if (StringUtils.isNotEmpty(variableStr)) {
-                Map<String, Object> deserialize = ONode.deserialize(variableStr);
-                deserialize.putAll(variable);
+            Map<String, Object> deserialize;
+            if (StringUtils.isEmpty(variableStr)) {
+                deserialize = new HashMap<>();
+            } else {
+                deserialize = ONode.deserialize(variableStr);
             }
-            instance.setVariable(ONode.serialize(variable));
+            deserialize.putAll(variable);
+            instance.setVariable(ONode.serialize(deserialize));
         }
 
         // 存在后续任务，才重新设置流程信息
