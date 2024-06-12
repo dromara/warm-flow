@@ -46,7 +46,7 @@ CREATE TABLE `flow_instance`
     `node_code`     varchar(40) NOT NULL COMMENT '流程节点编码',
     `node_name`     varchar(100) DEFAULT NULL COMMENT '流程节点名称',
     `variable`      text COMMENT '任务变量',
-    `flow_status`   tinyint(1) NOT NULL COMMENT '流程状态（0待提交 1审批中 2 审批通过 8已完成 9已退回 10失效）',
+    `flow_status`   tinyint(1) NOT NULL COMMENT '流程状态（0待提交 1审批中 2 审批通过 3自动通过 8已完成 9已退回 10失效）',
     `create_by`     varchar(64)  DEFAULT '' COMMENT '创建者',
     `create_time`   datetime     DEFAULT NULL COMMENT '创建时间',
     `update_time`   datetime     DEFAULT NULL COMMENT '更新时间',

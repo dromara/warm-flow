@@ -26,9 +26,7 @@ public interface TaskService extends IWarmService<Task> {
      *                               - permissionFlag:办理人权限标识[按需传输]
      *                               - message:审批意见  [按需传输]
      *                               - handler:办理人唯一标识[建议传]
-     *                               - nickname:办理人昵称[按需传输]
      *                               - variable:流程变量[按需传输,跳转条件放入流程变量<互斥网关必传>]
-     *                               - variableTask:任务变量[按需传输]
      */
     Instance skip(Long taskId, FlowParams flowParams);
 
@@ -40,9 +38,7 @@ public interface TaskService extends IWarmService<Task> {
      *                               - permissionFlag:办理人权限标识[按需传输]
      *                               - message:审批意见  [按需传输]
      *                               - handler:办理人唯一标识[建议传]
-     *                               - nickname:办理人昵称[按需传输]
      *                               - variable:流程变量[按需传输,跳转条件放入流程变量<互斥网关必传>]
-     *                               - variableTask:任务变量[按需传输]
      * @param task:流程任务[必传]
      */
     Instance skip(FlowParams flowParams, Task task);
@@ -77,8 +73,8 @@ public interface TaskService extends IWarmService<Task> {
     /**
      * 转办, 默认删除当然办理用户权限，转办后，当前办理不可办理
      * @param taskId 修改的任务id
-     * @param curUser 当前办理人
-     * @param permissionFlag 用户权限标识
+     * @param curUser 当前办理人唯一标识
+     * @param permissionFlag 用户权限标识集合
      * @param addHandlers 增加办理人：加签，转办，委托
      * @param message 审批意见
      */
@@ -87,28 +83,28 @@ public interface TaskService extends IWarmService<Task> {
     /**
      * 委派, 默认删除当然办理用户权限，转办后，当前办理不可办理
      * @param taskId 修改的任务id
-     * @param curUser 当前办理人
-     * @param permissionFlag 用户权限标识
+     * @param curUser 当前办理人唯一标识
+     * @param permissionFlag 用户权限标识集合
      * @param addHandlers 增加办理人：加签，转办，委托
      * @param message 审批意见
      */
     boolean depute(Long taskId, String curUser, List<String> permissionFlag, List<String> addHandlers, String message);
 
     /**
-     * 加签
+     * 加签，增加办理人
      * @param taskId 修改的任务id
-     * @param curUser 当前办理人
-     * @param permissionFlag 用户权限标识
+     * @param curUser 当前办理人唯一标识
+     * @param permissionFlag 用户权限标识集合
      * @param addHandlers 增加办理人：加签，转办，委托
      * @param message 审批意见
      */
     boolean addSignature(Long taskId, String curUser, List<String> permissionFlag, List<String> addHandlers, String message);
 
     /**
-     * 减签
+     * 减签，减少办理人
      * @param taskId 修改的任务id
-     * @param curUser 当前办理人
-     * @param permissionFlag 用户权限标识
+     * @param curUser 当前办理人唯一标识
+     * @param permissionFlag 用户权限标识集合
      * @param reductionHandlers 增加办理人：加签，转办，委托
      * @param message 审批意见
      */
