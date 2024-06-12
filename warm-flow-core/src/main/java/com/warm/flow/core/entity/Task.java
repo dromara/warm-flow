@@ -63,6 +63,10 @@ public interface Task extends RootEntity {
 
     public Task setPermissionList(List<String> permissionList);
 
+    public List<User> getUserList();
+
+    public Task setUserList(List<User> userList);
+
     public String getFromCustom();
 
     public Task setFromCustom(String fromCustom);

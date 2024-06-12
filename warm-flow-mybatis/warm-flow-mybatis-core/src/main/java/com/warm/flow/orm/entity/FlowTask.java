@@ -1,7 +1,9 @@
 package com.warm.flow.orm.entity;
 
 import com.warm.flow.core.entity.Task;
+import com.warm.flow.core.entity.User;
 
+import java.beans.Transient;
 import java.util.Date;
 import java.util.List;
 
@@ -77,6 +79,11 @@ public class FlowTask implements Task {
      * 权限标识 permissionFlag的list形式
      */
     private List<String> permissionList;
+
+    /**
+     * 流程用户列表
+     */
+    private List<User> userList;
 
     /**
      * 审批表单是否自定义（Y是 2否）
@@ -232,6 +239,17 @@ public class FlowTask implements Task {
     }
 
     @Override
+    public List<User> getUserList() {
+        return userList;
+    }
+
+    @Override
+    public FlowTask setUserList(List<User> userList) {
+        this.userList = userList;
+        return this;
+    }
+
+    @Override
     public String getFromCustom() {
         return fromCustom;
     }
@@ -268,6 +286,7 @@ public class FlowTask implements Task {
                 ", nodeName='" + nodeName + '\'' +
                 ", nodeType=" + nodeType +
                 ", permissionList=" + permissionList +
+                ", userList=" + userList +
                 ", fromCustom='" + fromCustom + '\'' +
                 ", fromPath='" + fromPath + '\'' +
                 "} " + super.toString();

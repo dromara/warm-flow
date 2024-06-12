@@ -17,7 +17,7 @@ import java.util.List;
 public interface DefService extends IWarmService<Definition> {
 
     /**
-     * 导入xml
+     * 导入流程定义xml的is，返回流程定义对象
      *
      * @param is
      * @throws Exception
@@ -25,15 +25,25 @@ public interface DefService extends IWarmService<Definition> {
     Definition importXml(InputStream is) throws Exception;
 
     /**
-     * 根据xml字符串保持流程定义
+     * 传入流程定义id、流程定义xml字符串，保存流程定义数据
      *
      * @param def
      * @throws Exception
      */
     void saveXml(Definition def) throws Exception;
 
+    /**
+     * 导出流程定义xml的Document对象
+     * @param id 流程定义id
+     * @return
+     */
     Document exportXml(Long id);
 
+    /**
+     * 获取流程定义xml的字符串
+     * @param id
+     * @return
+     */
     String xmlString(Long id);
 
     List<Definition> queryByCodeList(List<String> flowCodeList);
@@ -49,7 +59,7 @@ public interface DefService extends IWarmService<Definition> {
     boolean checkAndSave(Definition definition);
 
     /**
-     * 删除流程定义
+     * 删除流程定义相关数据
      *
      * @param ids
      * @return
