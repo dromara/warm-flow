@@ -66,6 +66,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         AssertUtil.isTrue(ObjectUtil.isNull(NowNode), ExceptionCons.LOST_CUR_NODE);
 
         //执行开始节点 开始监听器
+        List<User> userList = FlowFactory.userService().listByAssociatedAndTypes(task.getId());
+        task.setUserList(userList);
         ListenerUtil.executeListener(new ListenerVariable(instance, NowNode, flowParams.getVariable(), task)
                 , Listener.LISTENER_START);
 
@@ -76,7 +78,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         checkAuth(NowNode, task, flowParams.getPermissionFlag());
 
         //或签、会签、票签逻辑处理
-        if (cooperate(instance, NowNode, task, flowParams)) return instance;
+        if (cooperate(NowNode, task, flowParams)) return instance;
 
         // 获取关联的节点，判断当前处理人是否有权限处理
         Node nextNode = getNextNode(NowNode, task, flowParams);
@@ -423,13 +425,12 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     /**
      * 会签，票签，协作处理，返回true；或签或者会签、票签结束返回false
-     * @param instance
      * @param nowNode
      * @param task
      * @param flowParams
      * @return
      */
-    private boolean cooperate(Instance instance, Node nowNode, Task task, FlowParams flowParams) {
+    private boolean cooperate(Node nowNode, Task task, FlowParams flowParams) {
         BigDecimal nodeRatio = nowNode.getNodeRatio();
         // 或签，直接返回
         if (CooperateType.isOrSign(nodeRatio)) return false;
@@ -658,8 +659,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             permissions = NowNode.getDynamicPermissionFlagList();
         } else {
             // 查询审批人和转办人
-            permissions = FlowFactory.userService().getPermission(task.getId(), UserType.APPROVAL.getKey()
-                    , UserType.TRANSFER.getKey());
+            permissions = StreamUtils.toList(task.getUserList(), User::getProcessedBy);
         }
         // 当前节点
         AssertUtil.isTrue(CollUtil.isNotEmpty(permissions) && (CollUtil.isEmpty(permissionFlags)

@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.warm.flow.core.entity.Task;
+import com.warm.flow.core.entity.User;
 
+import java.beans.Transient;
 import java.util.Date;
 import java.util.List;
 
@@ -85,6 +87,12 @@ public class FlowTask implements Task {
      */
     @TableField(exist = false)
     private List<String> permissionList;
+
+    /**
+     * 流程用户列表
+     */
+    @TableField(exist = false)
+    private List<User> userList;
 
     /**
      * 审批表单是否自定义（Y是 2否）
@@ -242,6 +250,17 @@ public class FlowTask implements Task {
     }
 
     @Override
+    public List<User> getUserList() {
+        return userList;
+    }
+
+    @Override
+    public FlowTask setUserList(List<User> userList) {
+        this.userList = userList;
+        return this;
+    }
+
+    @Override
     public String getFromCustom() {
         return fromCustom;
     }
@@ -278,6 +297,7 @@ public class FlowTask implements Task {
                 ", nodeName='" + nodeName + '\'' +
                 ", nodeType=" + nodeType +
                 ", permissionList=" + permissionList +
+                ", userList=" + userList +
                 ", fromCustom='" + fromCustom + '\'' +
                 ", fromPath='" + fromPath + '\'' +
                 "} " + super.toString();
