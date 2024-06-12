@@ -47,7 +47,7 @@
     </modules>
 
     <properties>
-        <revision>1.2.0-SNAPSHOT</revision>
+        <revision>1.2.0</revision>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -194,11 +194,11 @@
                 <version>${revision}</version>
             </dependency>
 
-            <dependency>
-                <groupId>io.github.minliuhua</groupId>
-                <artifactId>warm-flow-jpa-jakarta-sb-starter</artifactId>
-                <version>${revision}</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>io.github.minliuhua</groupId>-->
+<!--                <artifactId>warm-flow-jpa-jakarta-sb-starter</artifactId>-->
+<!--                <version>${revision}</version>-->
+<!--            </dependency>-->
 
 
             <!--for test-->
@@ -366,7 +366,19 @@
                     </plugin>
                 </plugins>
             </build>
-
         </profile>
     </profiles>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <name>snapshots</name>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <name>releases</name>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 </project>
