@@ -3,7 +3,7 @@ create table FLOW_SKIP
 	ID NUMBER(20) not null
 		constraint FLOW_SKIP_PK
 			primary key,
-	DEFINITION_ID NUMBER not null,
+	DEFINITION_ID NUMBER(20) not null,
 	NOW_NODE_CODE VARCHAR2(100) not null,
 	NOW_NODE_TYPE NUMBER(1),
 	NEXT_NODE_CODE VARCHAR2(100) not null,
@@ -66,9 +66,7 @@ comment on column FLOW_SKIP.TENANT_ID is '租户id'
 
 create table FLOW_HIS_TASK
 (
-	ID NUMBER(20) not null
-		constraint FLOW_HIS_TASK_PK
-			primary key,
+	ID NUMBER(20) not null,
 	DEFINITION_ID NUMBER(20) not null,
 	INSTANCE_ID NUMBER(20) not null,
 	TASK_ID NUMBER(20) not null,
@@ -82,7 +80,10 @@ create table FLOW_HIS_TASK
 	CREATE_TIME DATE,
 	UPDATE_TIME DATE,
 	DEL_FLAG VARCHAR2(1),
-	TENANT_ID VARCHAR2(40)
+	TENANT_ID VARCHAR2(40),
+	APPROVER VARCHAR2(40),
+	COOPERATE_TYPE NUMBER(1) default 0,
+	COLLABORATOR VARCHAR2(40)
 )
 /
 
@@ -132,6 +133,15 @@ comment on column FLOW_HIS_TASK.DEL_FLAG is '删除标志'
 /
 
 comment on column FLOW_HIS_TASK.TENANT_ID is '租户id'
+/
+
+comment on column FLOW_HIS_TASK.APPROVER is '审批者'
+/
+
+comment on column FLOW_HIS_TASK.COOPERATE_TYPE is '协作方式(1审批 2转办 3委派 4会签 5票签 6加签 7减签)'
+/
+
+comment on column FLOW_HIS_TASK.COLLABORATOR is '协作人'
 /
 
 create table FLOW_DEFINITION
@@ -264,7 +274,7 @@ create table FLOW_NODE
 		constraint FLOW_NODE_PK
 			primary key,
 	NODE_TYPE NUMBER(1) not null,
-	DEFINITION_ID NUMBER not null,
+	DEFINITION_ID NUMBER(20) not null,
 	NODE_CODE VARCHAR2(100) not null,
 	NODE_NAME VARCHAR2(100),
 	NODE_RATIO NUMBER(6,3),
@@ -278,7 +288,8 @@ create table FLOW_NODE
 	CREATE_TIME DATE,
 	UPDATE_TIME DATE,
 	DEL_FLAG VARCHAR2(1),
-	TENANT_ID VARCHAR2(40)
+	TENANT_ID VARCHAR2(40),
+	PERMISSION_FLAG VARCHAR2(200)
 )
 /
 
@@ -336,6 +347,9 @@ comment on column FLOW_NODE.DEL_FLAG is '删除标志'
 comment on column FLOW_NODE.TENANT_ID is '租户id'
 /
 
+comment on column FLOW_NODE.PERMISSION_FLAG is '权限标识（权限类型:权限标识，可以多个，用逗号隔开)'
+/
+
 create unique index IDX_FLOW_ID_CODE
 	on FLOW_NODE (DEFINITION_ID, NODE_CODE)
 /
@@ -350,7 +364,6 @@ create table FLOW_TASK
 	NODE_CODE VARCHAR2(100),
 	NODE_NAME VARCHAR2(100),
 	NODE_TYPE NUMBER(1),
-	FLOW_STATUS NUMBER(2),
 	CREATE_TIME DATE,
 	UPDATE_TIME DATE,
 	DEL_FLAG VARCHAR2(1),
@@ -377,9 +390,6 @@ comment on column FLOW_TASK.NODE_NAME is '节点名称'
 /
 
 comment on column FLOW_TASK.NODE_TYPE is '节点类型 (0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关)'
-/
-
-comment on column FLOW_TASK.FLOW_STATUS is '流程状态 (0待提交 1审批中 2审批通过 8已完成 9已退回 10失效)'
 /
 
 comment on column FLOW_TASK.CREATE_TIME is '创建时间'
