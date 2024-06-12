@@ -87,7 +87,7 @@ public class FlowUser extends JPARootEntity<FlowUser> implements User{
     }
 
     /**
-     * 人员类型（1代办任务的审批人权限 2代办任务的转办人权限 3流程实例的抄送人权限 4待办任务的委托人权限）
+     * 人员类型（1代办任务的审批人权限 2代办任务的转办人权限 3待办任务的委托人权限）
      */
     private String type;
 
