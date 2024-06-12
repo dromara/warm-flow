@@ -167,8 +167,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     @Override
     public boolean transfer(Long taskId, String curUser, List<String> permissionFlag, List<String> addHandlers, String message) {
-        List<User> users = FlowFactory.userService().list(FlowFactory.newUser().setAssociated(taskId)
-                .setProcessedBy(curUser).setType(UserType.TRANSFER.getKey()));
+        List<User> users = FlowFactory.userService().getByProcessedBys(taskId, addHandlers, UserType.TRANSFER.getKey());
         AssertUtil.isTrue(CollUtil.isNotEmpty(users), ExceptionCons.IS_ALREADY_TRANSFER);
 
         ModifyHandler modifyHandler = new ModifyHandler()
@@ -185,8 +184,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     @Override
     public boolean depute(Long taskId, String curUser, List<String> permissionFlag, List<String> addHandlers, String message){
-        List<User> users = FlowFactory.userService().list(FlowFactory.newUser().setAssociated(taskId)
-                .setProcessedBy(curUser).setType(UserType.DEPUTE.getKey()));
+        List<User> users = FlowFactory.userService().getByProcessedBys(taskId, addHandlers, UserType.DEPUTE.getKey());
         AssertUtil.isTrue(CollUtil.isNotEmpty(users), ExceptionCons.IS_ALREADY_DEPUTE);
 
         ModifyHandler modifyHandler = new ModifyHandler()
@@ -203,8 +201,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     @Override
     public boolean addSignature(Long taskId, String curUser, List<String> permissionFlag, List<String> addHandlers, String message){
-        List<User> users = FlowFactory.userService().list(FlowFactory.newUser().setAssociated(taskId)
-                .setProcessedBy(curUser).setType(UserType.APPROVAL.getKey()));
+        List<User> users = FlowFactory.userService().getByProcessedBys(taskId, addHandlers, UserType.APPROVAL.getKey());
         AssertUtil.isTrue(CollUtil.isNotEmpty(users), ExceptionCons.IS_ALREADY_SIGN);
 
         ModifyHandler modifyHandler = new ModifyHandler()

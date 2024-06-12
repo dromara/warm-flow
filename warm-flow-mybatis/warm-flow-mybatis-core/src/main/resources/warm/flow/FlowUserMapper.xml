@@ -102,7 +102,7 @@
     <select id="listByAssociatedAndTypes" resultMap="FlowUserResult">
         <include refid="selectVo"/>
         <where>
-            <if test="associateds == null and entity.associated != null  and entity.associated != ''">
+            <if test="associateds == null and entity.associated != null">
                 and t.associated = #{entity.associated}
             </if>
             <if test="associateds != null and associateds.size > 0">
@@ -120,7 +120,32 @@
             <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
             <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
         </where>
+    </select>
 
+    <select id="listByProcessedBys" resultMap="FlowUserResult">
+        <include refid="selectVo"/>
+        <where>
+            <if test="entity.associated != null">
+                and t.associated = #{entity.associated}
+            </if>
+            <if test="processedBys == null and entity.processedBy != null  and entity.processedBy != ''">
+                and t.processed_by = #{processedBy}
+            </if>
+            <if test="processedBys != null and processedBys.size > 0">
+                AND `processed_by` in
+                <foreach item="item" collection="processedBys" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="types != null and types.length > 0">
+                AND `type` in
+                <foreach item="item" collection="types" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
+            <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+        </where>
     </select>
 
     <insert id="insert" parameterType="com.warm.flow.orm.entity.FlowUser">

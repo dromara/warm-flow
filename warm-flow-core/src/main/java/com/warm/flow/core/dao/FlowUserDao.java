@@ -30,4 +30,14 @@ public interface FlowUserDao<T extends User> extends WarmDao<T> {
      * @return
      */
     List<T> listByAssociatedAndTypes(List<Long> associateds, String[] types);
+
+    /**
+     * 根据办理人查询
+     *
+     * @param associated 代办任务id
+     * @param processedBys 办理人id集合
+     * @param types 用户表类型
+     * @return
+     */
+    List<T> listByProcessedBys(Long associated, List<String> processedBys, String[] types);
 }

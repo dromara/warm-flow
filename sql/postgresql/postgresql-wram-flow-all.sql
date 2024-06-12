@@ -77,8 +77,8 @@ COMMENT ON COLUMN flow_his_task.target_node_code IS '目标节点编码';
 COMMENT ON COLUMN flow_his_task.target_node_name IS '结束节点名称';
 COMMENT ON COLUMN flow_his_task.approver IS '审批者';
 COMMENT ON COLUMN flow_his_task.cooperate_type IS '协作方式(1审批 2转办 3委派 4会签 5票签 6加签 7减签)';
-COMMENT ON COLUMN flow_his_task.collaborator IS '协作人(只有转办、会签、票签、委派)';
-COMMENT ON COLUMN flow_his_task.flow_status IS '流程状态（0待提交 1审批中 2 审批通过 8已完成 9已退回 10失效）';
+COMMENT ON COLUMN flow_his_task.collaborator IS '协作人';
+COMMENT ON COLUMN flow_his_task.flow_status IS '流程状态（1审批中 2 审批通过 9已退回 10失效）';
 COMMENT ON COLUMN flow_his_task.message IS '审批意见';
 COMMENT ON COLUMN flow_his_task.create_time IS '创建时间';
 COMMENT ON COLUMN flow_his_task.update_time IS '更新时间';
@@ -120,7 +120,7 @@ COMMENT ON COLUMN flow_instance.node_type IS '结点类型（0开始节点 1中�
 COMMENT ON COLUMN flow_instance.node_code IS '流程节点编码';
 COMMENT ON COLUMN flow_instance.node_name IS '流程节点名称';
 COMMENT ON COLUMN flow_instance.variable IS '任务变量';
-COMMENT ON COLUMN flow_instance.flow_status IS '流程状态（0待提交 1审批中 2 审批通过 8已完成 9已退回 10失效）';
+COMMENT ON COLUMN flow_instance.flow_status IS '流程状态（0待提交 1审批中 2 审批通过 3自动通过 8已完成 9已退回 10失效）';
 COMMENT ON COLUMN flow_instance.create_by IS '创建者';
 COMMENT ON COLUMN flow_instance.create_time IS '创建时间';
 COMMENT ON COLUMN flow_instance.update_time IS '更新时间';
@@ -283,7 +283,7 @@ COMMENT ON TABLE flow_user IS '流程用户表';
 -- Column comments
 
 COMMENT ON COLUMN flow_user.id IS '主键id';
-COMMENT ON COLUMN flow_user."type" IS '人员类型（1代办任务的审批人权限 2代办任务的转办人权限 3流程实例的抄送人权限 4待办任务的委托人权限）';
+COMMENT ON COLUMN flow_user."type" IS '人员类型（1代办任务的审批人权限 2代办任务的转办人权限 3待办任务的委托人权限）';
 COMMENT ON COLUMN flow_user.processed_by IS '权限人';
 COMMENT ON COLUMN flow_user.associated IS '关联表id';
 COMMENT ON COLUMN flow_user.create_time IS '创建时间';

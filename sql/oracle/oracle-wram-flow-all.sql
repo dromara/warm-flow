@@ -117,7 +117,7 @@ comment on column FLOW_HIS_TASK.TARGET_NODE_CODE is '目标节点编码'
 comment on column FLOW_HIS_TASK.TARGET_NODE_NAME is '目标节点名称'
 /
 
-comment on column FLOW_HIS_TASK.FLOW_STATUS is '流程状态 (0待提交 1审批中 2审批通过 8已完成 9已退回 10失效)'
+comment on column FLOW_HIS_TASK.FLOW_STATUS is '流程状态（1审批中 2 审批通过 9已退回 10失效）'
 /
 
 comment on column FLOW_HIS_TASK.MESSAGE is '审批意见'
@@ -198,10 +198,6 @@ comment on column FLOW_DEFINITION.DEL_FLAG is '删除标志'
 comment on column FLOW_DEFINITION.TENANT_ID is '租户id'
 /
 
-create unique index IDX_FLOW_CODE_VERSION
-	on FLOW_DEFINITION (FLOW_CODE, VERSION)
-/
-
 create table FLOW_INSTANCE
 (
 	ID NUMBER not null
@@ -247,7 +243,7 @@ comment on column FLOW_INSTANCE.NODE_NAME is '开始节点名称'
 comment on column FLOW_INSTANCE.VARIABLE is '任务变量'
 /
 
-comment on column FLOW_INSTANCE.FLOW_STATUS is '流程状态 (0待提交 1审批中 2审批通过 8已完成 9已退回 10失效)'
+comment on column FLOW_INSTANCE.FLOW_STATUS is '流程状态（0待提交 1审批中 2 审批通过 3自动通过 8已完成 9已退回 10失效）'
 /
 
 comment on column FLOW_INSTANCE.CREATE_BY is '创建者'
@@ -350,10 +346,6 @@ comment on column FLOW_NODE.TENANT_ID is '租户id'
 comment on column FLOW_NODE.PERMISSION_FLAG is '权限标识（权限类型:权限标识，可以多个，用逗号隔开)'
 /
 
-create unique index IDX_FLOW_ID_CODE
-	on FLOW_NODE (DEFINITION_ID, NODE_CODE)
-/
-
 create table FLOW_TASK
 (
 	ID NUMBER(20) not null
@@ -426,13 +418,13 @@ comment on table FLOW_USER is '待办任务表'
 comment on column FLOW_USER.ID is '主键id'
 /
 
-comment on column FLOW_USER.TYPE is '人员类型（1代办任务的审批人权限 2代办任务的转办人权限 3流程实例的抄送人权限 4流程历史的已审批人 5流程节点的权限 6待办任务的委托人权限）'
+comment on column FLOW_USER.TYPE is '人员类型（1代办任务的审批人权限 2代办任务的转办人权限 3待办任务的委托人权限）'
 /
 
-comment on column FLOW_USER.PROCESSED_BY is '权限 (role:1/user:1)/已审批人(用户id)'
+comment on column FLOW_USER.PROCESSED_BY is '权限人)'
 /
 
-comment on column FLOW_USER.ASSOCIATED is '关联id（审批人和转办人是代办任务id，抄送人是实例id，已审批人是历史表id,计划审批人是节点的id）'
+comment on column FLOW_USER.ASSOCIATED is '关联表id'
 /
 
 comment on column FLOW_USER.CREATE_TIME is '创建时间'

@@ -41,5 +41,5 @@ public class FlowConfigCons {
      * 当配置此参数时, 以此参数结果为基准, 未配置时, 取DataSource中数据源类型,
      * 兜底为mysql数据库
      */
-    public static final String DATA_SOURCE_TYPE = "data_source_type";
+    public static final String DATA_SOURCE_TYPE = "warm-flow.data_source_type";
 }
