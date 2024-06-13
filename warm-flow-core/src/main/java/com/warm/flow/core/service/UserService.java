@@ -55,7 +55,7 @@ public interface UserService extends IWarmService<User> {
     /**
      * 根据(代办任务，实例，历史表，节点等)id查询权限人或者处理人
      *
-     * @param associated (代办任务，实例，历史表，节点等)id集合
+     * @param associated 代办任务id集合
      * @param type 用户表类型
      * @author xiarg
      * @date 2024/5/120 13:59
@@ -65,13 +65,40 @@ public interface UserService extends IWarmService<User> {
     /**
      * 根据(代办任务，实例，历史表，节点等)id查询权限人或者处理人
      *
-     * @param associated (代办任务，实例，历史表，节点等)id集合
+     * @param associated 代办任务id
      * @param types 用户表类型
      * @return
      */
     List<User> listByAssociatedAndTypes(Long associated, String... types);
 
+    /**
+     * 根据(代办任务，实例，历史表，节点等)id查询权限人或者处理人
+     *
+     * @param associateds (代办任务，实例，历史表，节点等)id集合
+     * @param types 用户表类型
+     * @return
+     */
     List<User> getByAssociateds(List<Long> associateds, String... types);
+
+    /**
+     * 根据办理人查询
+     *
+     * @param associated 代办任务id
+     * @param processedBy 办理人
+     * @param types 用户表类型
+     * @return
+     */
+    List<User> listByProcessedBys(Long associated, String processedBy, String... types);
+
+    /**
+     * 根据办理人查询
+     *
+     * @param associated 代办任务id
+     * @param processedBys 办理人id集合
+     * @param types 用户表类型
+     * @return
+     */
+    List<User> getByProcessedBys(Long associated, List<String> processedBys, String... types);
 
     /**
      * 根据关联id更新权限人

@@ -48,4 +48,14 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser> implements FlowUserDa
         return getMapper().listByAssociatedAndTypes(types, associateds
                 , TenantDeleteUtil.getEntity(newEntity()));
     }
+
+    @Override
+    public List<FlowUser> listByProcessedBys(Long associated, List<String> processedBys, String[] types) {
+        if (CollUtil.isNotEmpty(processedBys) && processedBys.size() == 1) {
+            return getMapper().listByProcessedBys(types, null, TenantDeleteUtil
+                    .getEntity(newEntity()).setAssociated(associated).setProcessedBy(processedBys.get(0)));
+        }
+        return getMapper().listByProcessedBys(types, processedBys
+                , TenantDeleteUtil.getEntity(newEntity()).setAssociated(associated));
+    }
 }

@@ -40,7 +40,11 @@ public interface FlowUserMapper extends WarmMapper<FlowUser> {
                              @Param("logicNotDeleteValue") String logicNotDeleteValue);
 
     List<FlowUser> listByAssociatedAndTypes(@Param("types") String[] types
-            , @Param("associateds") List<Long> associateds
+            , @Param("associateds") List<Long> processedBys
+            , @Param("entity") FlowUser entity);
+
+    List<FlowUser> listByProcessedBys(@Param("types") String[] types
+            , @Param("associateds") List<String> processedBys
             , @Param("entity") FlowUser entity);
 
 }

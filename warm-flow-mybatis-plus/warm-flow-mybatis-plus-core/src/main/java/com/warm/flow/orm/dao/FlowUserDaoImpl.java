@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.warm.flow.core.dao.FlowUserDao;
 import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.core.utils.CollUtil;
+import com.warm.flow.core.utils.ObjectUtil;
 import com.warm.flow.orm.entity.FlowUser;
 import com.warm.flow.orm.mapper.FlowUserMapper;
 import com.warm.flow.orm.utils.TenantDeleteUtil;
@@ -41,6 +42,19 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser> implements FlowUserDa
             queryWrapper.eq(FlowUser::getAssociated, associateds.get(0));
         } else {
             queryWrapper.in(FlowUser::getAssociated, associateds);
+        }
+        queryWrapper.in(FlowUser::getType, types);
+        return getMapper().selectList(queryWrapper);
+    }
+
+    @Override
+    public List<FlowUser> listByProcessedBys(Long associated, List<String> processedBys, String[] types) {
+        LambdaQueryWrapper<FlowUser> queryWrapper = TenantDeleteUtil.getLambdaWrapperDefault(newEntity());
+        queryWrapper.eq(ObjectUtil.isNotNull(associated), FlowUser::getAssociated, associated);
+        if (CollUtil.isNotEmpty(processedBys) && processedBys.size() == 1) {
+            queryWrapper.eq(FlowUser::getProcessedBy, processedBys.get(0));
+        } else {
+            queryWrapper.in(FlowUser::getProcessedBy, processedBys);
         }
         queryWrapper.in(FlowUser::getType, types);
         return getMapper().selectList(queryWrapper);
