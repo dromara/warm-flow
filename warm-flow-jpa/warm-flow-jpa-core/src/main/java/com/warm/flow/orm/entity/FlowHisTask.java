@@ -70,6 +70,9 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
                 if (Objects.nonNull(this.message)) {
                     predicates.add(criteriaBuilder.equal(root.get("message"), this.message));
                 }
+                if (Objects.nonNull(this.ext)) {
+                    predicates.add(criteriaBuilder.equal(root.get("ext"), this.ext));
+                }
             };
 
     @Transient
@@ -113,7 +116,9 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
         if (Objects.nonNull(updateEntity.message)) {
             this.message = updateEntity.message;
         }
-
+        if (Objects.nonNull(updateEntity.ext)) {
+            this.ext = updateEntity.ext;
+        }
         if (Objects.nonNull(updateEntity.getCreateTime())) {
             this.setCreateTime(updateEntity.getCreateTime());
         }
@@ -235,6 +240,12 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
      */
     @Column(name="message")
     private String message;
+
+    /**
+     * 扩展字段 可用于存储业务详情
+     */
+    @Column(name="ext")
+    private String ext;
 
     /**
      * 创建者
@@ -434,6 +445,17 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
     }
 
     @Override
+    public String getExt() {
+        return ext;
+    }
+
+    @Override
+    public HisTask setExt(String ext) {
+        this.ext = ext;
+        return this;
+    }
+
+    @Override
     public String getCreateBy() {
         return createBy;
     }
@@ -488,6 +510,7 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
                 ", permissionList=" + permissionList +
                 ", flowStatus=" + flowStatus +
                 ", message='" + message + '\'' +
+                ", ext='" + ext + '\'' +
                 ", createBy='" + createBy + '\'' +
                 ", fromCustom='" + fromCustom + '\'' +
                 ", fromPath='" + fromPath + '\'' +

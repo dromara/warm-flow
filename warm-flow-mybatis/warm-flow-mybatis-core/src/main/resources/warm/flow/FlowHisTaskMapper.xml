@@ -19,6 +19,7 @@
         <result property="cooperateType" column="cooperate_type"/>
         <result property="flowStatus" column="flow_status"/>
         <result property="message" column="message"/>
+        <result property="ext" column="ext"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
         <result property="businessId" column="business_id"/>
@@ -42,6 +43,7 @@
                t.cooperate_type,
                t.flow_status,
                t.message,
+               t.ext,
                t.create_time,
                t.update_time,
                t.tenant_id,
@@ -78,6 +80,7 @@
             <if test="entity.cooperateType != null ">and t.cooperate_type = #{entity.cooperateType}</if>
             <if test="entity.flowStatus != null">and t.flow_status = #{fentity.flowStatus}</if>
             <if test="entity.message != null  and entity.message != ''">and t.message = #{entity.message}</if>
+            <if test="entity.ext != null  and entity.ext != ''">and t.ext = #{entity.ext}</if>
             <if test="entity.createTime != null">and t.create_time = #{entity.createTime}</if>
             <if test="entity.updateTime != null">and t.update_time = #{entity.updateTime}</if>
             <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
@@ -175,6 +178,7 @@
             <if test="cooperateType != null">cooperate_type,</if>
             <if test="flowStatus != null">flow_status,</if>
             <if test="message != null">message,</if>
+            <if test="ext != null">ext,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
             <if test="tenantId != null and tenantId != ''">tenant_id,</if>
@@ -195,6 +199,7 @@
             <if test="cooperateType != null">#{cooperateType},</if>
             <if test="flowStatus != null">#{flowStatus},</if>
             <if test="message != null">#{message},</if>
+            <if test="ext != null">#{ext},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
             <if test="tenantId != null and tenantId != ''">#{tenantId},</if>
@@ -217,6 +222,7 @@
             <if test="cooperateType != null">t.cooperate_type = #{cooperateType},</if>
             <if test="flowStatus != null">t.flow_status = #{flowStatus},</if>
             <if test="message != null">t.message = #{message},</if>
+            <if test="ext != null">t.ext = #{ext},</if>
             <if test="createTime != null">t.create_time = #{createTime},</if>
             <if test="updateTime != null">t.update_time = #{updateTime},</if>
         </trim>
@@ -294,6 +300,7 @@
             <if test="cooperateType != null">and cooperate_type = #{cooperateType}</if>
             <if test="flowStatus != null">and flow_status = #{flowStatus}</if>
             <if test="message != null">and message = #{message}</if>
+            <if test="ext != null">and ext = #{ext}</if>
             <if test="createTime != null">and create_time = #{createTime}</if>
             <if test="updateTime != null">and update_time = #{updateTime}</if>
             <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
@@ -318,6 +325,7 @@
             <if test="entity.cooperateType != null">and t.cooperate_type = #{entity.cooperateType}</if>
             <if test="entity.flowStatus != null">and t.flow_status = #{entity.flowStatus}</if>
             <if test="entity.message != null">and t.message = #{entity.message}</if>
+            <if test="entity.ext != null">and t.ext = #{entity.ext}</if>
             <if test="entity.createTime != null">and t.create_time = #{entity.createTime}</if>
             <if test="entity.updateTime != null">and t.update_time = #{entity.updateTime}</if>
             <if test="entity.tenantId != null and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
@@ -341,6 +349,7 @@
         cooperate_type,
         flow_status,
         message,
+        ext,
         create_time,
         update_time,
         tenant_id,
@@ -363,6 +372,7 @@
             #{item.cooperateType},
             #{item.flowStatus},
             #{item.message},
+            #{item.ext},
             #{item.createTime},
             #{item.updateTime},
             #{item.tenantId},

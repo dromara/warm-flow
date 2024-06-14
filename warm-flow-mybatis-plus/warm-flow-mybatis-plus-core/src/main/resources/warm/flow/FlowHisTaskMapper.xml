@@ -15,6 +15,7 @@
         <result property="instanceId" column="instance_id"/>
         <result property="flowStatus" column="flow_status"/>
         <result property="message" column="message"/>
+        <result property="ext" column="ext"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
         <result property="businessId" column="business_id"/>
@@ -34,6 +35,7 @@
                t.instance_id,
                t.flow_status,
                t.message,
+               t.ext,
                t.create_time,
                t.update_time,
                t.tenant_id
