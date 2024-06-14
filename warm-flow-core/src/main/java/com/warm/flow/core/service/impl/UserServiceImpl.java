@@ -49,8 +49,6 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
 
     @Override
     public List<User> taskAddUser(Task task) {
-        // 审批人权限不能为空
-        AssertUtil.isTrue(CollUtil.isEmpty(task.getPermissionList()), ExceptionCons.LOST_NEXT_PERMISSION);
         // 遍历权限集合，生成流程节点的权限
         List<User> userList = StreamUtils.toList(task.getPermissionList()
                 , permission -> structureUser(task.getId(), permission, UserType.APPROVAL.getKey()));
