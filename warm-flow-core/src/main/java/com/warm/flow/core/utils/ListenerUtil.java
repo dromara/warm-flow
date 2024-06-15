@@ -8,7 +8,9 @@ import com.warm.flow.core.listener.ListenerVariable;
 import com.warm.flow.core.listener.NodePermission;
 import com.warm.flow.core.listener.ValueHolder;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 
 /**
@@ -86,10 +88,14 @@ public class ListenerUtil {
                         //截取出path 和params
                         getListenerPath(listenerPath, valueHolder);
                         Class<?> clazz = ClassUtil.getClazz(valueHolder.getPath());
-                        if (ObjectUtil.isNotNull(clazz)) {
+                        // 增加传入类路径校验Listener接口, 防止强制类型转换失败
+                        if (ObjectUtil.isNotNull(clazz) && Listener.class.isAssignableFrom(clazz)) {
                             Listener listener = (Listener) FrameInvoker.getBean(clazz);
                             if (ObjectUtil.isNotNull(listener)) {
-                                listener.notify(listenerVariable.setParams(valueHolder.getParams()));
+                                Map<String, Object> variable = listenerVariable.getVariable();
+                                variable = MapUtil.isEmpty(variable) ? new HashMap<>() : variable;
+                                variable.put(FlowCons.WARM_LISTENER_PARAM, valueHolder.getParams());
+                                listener.notify(listenerVariable.setVariable(variable));
                             }
 
                         }
