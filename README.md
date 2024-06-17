@@ -36,7 +36,8 @@ http://warm-flow.cn
 ### 支持数据库类型
 
 * [x] mysql
-* [ ] oracle
+* [x] oracle
+* [x] PostgreSQL
 * [ ] sqlserver
 * [ ] ......
 
@@ -44,8 +45,9 @@ http://warm-flow.cn
 ### orm扩展包
 
 * [x] mybatis
-* [ ] mybatis-plus
-* [ ] jpa
+* [x] mybatis-plus
+* [x] jpa
+* [ ] mybatis-flex
 * [ ] ......
 
 
