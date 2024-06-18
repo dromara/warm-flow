@@ -17,6 +17,7 @@
         <module>warm-flow-jpa-sb-test</module>
         <module>warm-flow-mybatis-sb-test</module>
         <module>warm-flow-mybatis-plus-sb-test</module>
+        <module>warm-flow-mybatis-flex-sb-test</module>
     </modules>
 
     <dependencyManagement>
