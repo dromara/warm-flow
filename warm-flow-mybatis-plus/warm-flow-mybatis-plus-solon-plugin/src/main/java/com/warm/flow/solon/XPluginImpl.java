@@ -28,7 +28,7 @@ public class XPluginImpl implements Plugin {
         EventBus.subscribe(Configuration.class, e -> {
             List<String> mapperList = Arrays.asList("warm/flow/FlowDefinitionMapper.xml", "warm/flow/FlowHisTaskMapper.xml"
                     , "warm/flow/FlowInstanceMapper.xml", "warm/flow/FlowNodeMapper.xml"
-                    , "warm/flow/FlowSkipMapper.xml", "warm/flow/FlowTaskMapper.xml");
+                    , "warm/flow/FlowSkipMapper.xml", "warm/flow/FlowTaskMapper.xml", "warm/flow/FlowUserMapper.xml");
 
             try {
                 for (String mapper : mapperList) {

@@ -146,7 +146,7 @@ public class FlowAutoConfig {
         if (StringUtils.isEmpty(dataSourceType)) {
             org.apache.ibatis.session.Configuration configuration = sqlSessionFactory.getConfiguration();
             DataSource dataSource = configuration.getEnvironment().getDataSource();
-            DatabaseMetaData metaData = null;
+            DatabaseMetaData metaData;
             Connection connection = null;
             try {
                 connection = dataSource.getConnection();
