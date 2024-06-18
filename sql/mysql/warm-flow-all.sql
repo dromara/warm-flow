@@ -16,26 +16,28 @@ CREATE TABLE `flow_definition`
 
 CREATE TABLE `flow_his_task`
 (
-    `id`               bigint unsigned NOT NULL COMMENT '主键id',
-    `definition_id`    bigint NOT NULL COMMENT '对应flow_definition表的id',
-    `instance_id`      bigint NOT NULL COMMENT '对应flow_instance表的id',
-    `task_id`          bigint NOT NULL COMMENT '对应flow_task表的id',
-    `node_code`        varchar(100) DEFAULT NULL COMMENT '开始节点编码',
-    `node_name`        varchar(100) DEFAULT NULL COMMENT '开始节点名称',
-    `node_type`        tinyint(1) DEFAULT NULL COMMENT '开始节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）',
-    `target_node_code` varchar(100) DEFAULT NULL COMMENT '目标节点编码',
-    `target_node_name` varchar(100) DEFAULT NULL COMMENT '结束节点名称',
-    `approver`         varchar(40)  DEFAULT NULL COMMENT '审批者',
-    `cooperate_type`   tinyint(1) NOT NULL DEFAULT '0' COMMENT '协作方式(1审批 2转办 3委派 4会签 5票签 6加签 7减签)',
-    `collaborator`     varchar(40)  DEFAULT NULL COMMENT '协作人',
-    `flow_status`      tinyint(1) NOT NULL COMMENT '流程状态（1审批中 2 审批通过 9已退回 10失效）',
-    `message`          varchar(500) DEFAULT NULL COMMENT '审批意见',
-    `create_time`      datetime     DEFAULT NULL COMMENT '创建时间',
-    `update_time`      datetime     DEFAULT NULL COMMENT '更新时间',
-    `del_flag`    char(1)      DEFAULT NULL COMMENT '删除标志',
-    `tenant_id` varchar(40)  DEFAULT NULL COMMENT '租户id',
+    `id`               bigint(20) unsigned NOT NULL COMMENT '主键id',
+    `definition_id`    bigint(20)          NOT NULL COMMENT '对应flow_definition表的id',
+    `instance_id`      bigint(20)          NOT NULL COMMENT '对应flow_instance表的id',
+    `task_id`          bigint(20)          NOT NULL COMMENT '对应flow_task表的id',
+    `node_code`        varchar(100)                 DEFAULT NULL COMMENT '开始节点编码',
+    `node_name`        varchar(100)                 DEFAULT NULL COMMENT '开始节点名称',
+    `node_type`        tinyint(1)                   DEFAULT NULL COMMENT '开始节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）',
+    `target_node_code` varchar(100)                 DEFAULT NULL COMMENT '目标节点编码',
+    `target_node_name` varchar(100)                 DEFAULT NULL COMMENT '结束节点名称',
+    `approver`         varchar(40)                  DEFAULT NULL COMMENT '审批者',
+    `cooperate_type`   tinyint(1)          NOT NULL DEFAULT '0' COMMENT '协作方式(1审批 2转办 3委派 4会签 5票签 6加签 7减签)',
+    `collaborator`     varchar(40)                  DEFAULT NULL COMMENT '协作人',
+    `flow_status`      tinyint(1)          NOT NULL COMMENT '流程状态（1审批中 2 审批通过 9已退回 10失效）',
+    `message`          varchar(500)                 DEFAULT NULL COMMENT '审批意见',
+    `ext`              varchar(400)                 DEFAULT NULL COMMENT '业务详情 存业务表对象json字符串',
+    `create_time`      datetime                     DEFAULT NULL COMMENT '创建时间',
+    `update_time`      datetime                     DEFAULT NULL COMMENT '更新时间',
+    `del_flag`         char(1)                      DEFAULT NULL COMMENT '删除标志',
+    `tenant_id`        varchar(40)                  DEFAULT NULL COMMENT '租户id',
     PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB  COMMENT='历史任务记录表';
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='历史任务记录表';
 
 CREATE TABLE `flow_instance`
 (
