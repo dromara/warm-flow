@@ -1,11 +1,10 @@
 package com.warm.flow.orm.entity;
 
 import com.warm.flow.core.entity.User;
+import com.warm.flow.core.utils.StringUtils;
 import com.warm.flow.orm.utils.JPAPredicateFunction;
 import com.warm.flow.orm.utils.JPAUpdateMergeFunction;
 import com.warm.flow.orm.utils.JPAUtil;
-import com.warm.flow.core.utils.StringUtils;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -13,6 +12,7 @@ import jakarta.persistence.Transient;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -25,7 +25,7 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "flow_user")
-public class FlowUser extends JPARootEntity<FlowUser> implements User{
+public class FlowUser extends JPARootEntity<FlowUser> implements User {
     public final static HashMap<String, String> MAPPING = new HashMap<>();
 
     static {
@@ -48,7 +48,7 @@ public class FlowUser extends JPARootEntity<FlowUser> implements User{
             };
 
     @Transient
-    private JPAUpdateMergeFunction<FlowUser> entityMerge = (updateEntity) ->  {
+    private JPAUpdateMergeFunction<FlowUser> entityMerge = (updateEntity) -> {
         if (StringUtils.isNotEmpty(updateEntity.type)) {
             this.type = updateEntity.type;
         }

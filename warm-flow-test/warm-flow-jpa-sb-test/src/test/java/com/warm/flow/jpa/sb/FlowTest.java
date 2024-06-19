@@ -98,7 +98,7 @@ public class FlowTest extends FlowBaseTest {
      * 分页
      */
     @Test
-    public void page(){
+    public void page() {
         page(defService);
     }
 
@@ -114,7 +114,7 @@ public class FlowTest extends FlowBaseTest {
      * 委派
      */
     @Test
-    public void depute(){
+    public void depute() {
         depute(taskService);
     }
 
@@ -122,7 +122,7 @@ public class FlowTest extends FlowBaseTest {
      * 加签
      */
     @Test
-    public void addSignature(){
+    public void addSignature() {
         addSignature(taskService);
     }
 
@@ -130,7 +130,7 @@ public class FlowTest extends FlowBaseTest {
      * 减签
      */
     @Test
-    public void reductionSignature(){
+    public void reductionSignature() {
         reductionSignature(taskService);
     }
 

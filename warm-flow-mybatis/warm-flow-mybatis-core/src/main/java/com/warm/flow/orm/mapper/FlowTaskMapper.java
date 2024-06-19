@@ -1,12 +1,10 @@
 package com.warm.flow.orm.mapper;
 
-import com.warm.flow.orm.entity.FlowSkip;
 import com.warm.flow.orm.entity.FlowTask;
 import org.apache.ibatis.annotations.Param;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * 待办任务Mapper接口

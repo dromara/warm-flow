@@ -1,18 +1,11 @@
 package com.warm.flow.orm.utils;
 
 import com.warm.flow.core.entity.RootEntity;
-import com.warm.flow.core.orm.agent.WarmQuery;
-import com.warm.flow.orm.entity.*;
 
 import javax.persistence.Column;
 import javax.persistence.Transient;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import java.lang.reflect.Field;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -35,7 +28,7 @@ public class JPAUtil {
                 continue;
             }
             Column column = field.getAnnotation(Column.class);
-            if(Objects.nonNull(column)) {
+            if (Objects.nonNull(column)) {
                 mapping.put(column.name(), field.getName());
             } else {
                 mapping.put(field.getName(), field.getName());

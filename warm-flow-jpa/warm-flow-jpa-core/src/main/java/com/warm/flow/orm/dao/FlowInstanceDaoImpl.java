@@ -3,10 +3,6 @@ package com.warm.flow.orm.dao;
 import com.warm.flow.core.dao.FlowInstanceDao;
 import com.warm.flow.orm.entity.FlowInstance;
 
-import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-
 /**
  * 流程实例Mapper接口
  *

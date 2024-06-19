@@ -8,7 +8,7 @@ import java.util.Date;
  * @author xiarg
  * @date 2024/5/10 10:41
  */
-public interface User extends RootEntity{
+public interface User extends RootEntity {
 
     public Long getId();
 

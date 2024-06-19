@@ -24,9 +24,10 @@ public class ClassUtil {
 
     /**
      * 通过反射实现对象克隆
+     *
      * @param origin
-     * @return
      * @param <C>
+     * @return
      */
     public static <C> C clone(C origin) {
         if (Objects.isNull(origin)) {
@@ -63,6 +64,7 @@ public class ClassUtil {
 
     /**
      * 让指定字段变为可访问
+     *
      * @param field
      */
     public static void makeAccessible(Field field) {

@@ -6,10 +6,10 @@ import com.warm.flow.core.utils.CollUtil;
 import com.warm.flow.core.utils.StringUtils;
 import com.warm.flow.orm.entity.FlowUser;
 import com.warm.flow.orm.utils.TenantDeleteUtil;
-
 import jakarta.persistence.criteria.CriteriaDelete;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.CriteriaUpdate;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -48,7 +48,7 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser> implements FlowUserDa
                 predicates.add(createIn(criteriaBuilder, root, "associated", taskIdList));
 
                 // 更新值
-                innerCriteriaUpdate.set(root.get("delFlag"),  FlowFactory.getFlowConfig().getLogicDeleteValue());
+                innerCriteriaUpdate.set(root.get("delFlag"), FlowFactory.getFlowConfig().getLogicDeleteValue());
             });
 
             return entityManager.createQuery(criteriaUpdate).executeUpdate();

@@ -1,15 +1,18 @@
 package com.warm.flow.orm.entity;
 
 import com.warm.flow.core.entity.Instance;
+import com.warm.flow.core.utils.StringUtils;
+import com.warm.flow.orm.utils.JPAPredicateFunction;
 import com.warm.flow.orm.utils.JPAUpdateMergeFunction;
 import com.warm.flow.orm.utils.JPAUtil;
-import com.warm.flow.orm.utils.JPAPredicateFunction;
-import com.warm.flow.core.utils.StringUtils;
-
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -113,12 +116,13 @@ public class FlowInstance extends JPARootEntity<FlowInstance> implements Instanc
     }
 
     @Override
-    public void initDefaultValue() {}
+    public void initDefaultValue() {
+    }
 
     /**
      * 对应flow_definition表的id
      */
-    @Column(name="definition_id")
+    @Column(name = "definition_id")
     private Long definitionId;
 
     /**
@@ -130,43 +134,43 @@ public class FlowInstance extends JPARootEntity<FlowInstance> implements Instanc
     /**
      * 业务id
      */
-    @Column(name="business_id")
+    @Column(name = "business_id")
     private String businessId;
 
     /**
      * 节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）
      */
-    @Column(name="node_type")
+    @Column(name = "node_type")
     private Integer nodeType;
 
     /**
      * 流程节点编码   每个流程的nodeCode是唯一的,即definitionId+nodeCode唯一,在数据库层面做了控制
      */
-    @Column(name="node_code")
+    @Column(name = "node_code")
     private String nodeCode;
 
     /**
      * 流程节点名称
      */
-    @Column(name="node_name")
+    @Column(name = "node_name")
     private String nodeName;
 
     /**
      * 流程变量
      */
-    @Column(name="variable")
+    @Column(name = "variable")
     private String variable;
 
     /**
      * 流程状态（0待提交 1审批中 2 审批通过 3自动通过 8已完成 9已退回 10失效）
      */
-    @Column(name="flow_status")
+    @Column(name = "flow_status")
     private Integer flowStatus;
 
     /**
      * 创建者
      */
-    @Column(name="create_by")
+    @Column(name = "create_by")
     private String createBy;
 
     /**
@@ -184,7 +188,7 @@ public class FlowInstance extends JPARootEntity<FlowInstance> implements Instanc
     /**
      * 扩展字段
      */
-    @Column(name="ext")
+    @Column(name = "ext")
     private String ext;
 
 

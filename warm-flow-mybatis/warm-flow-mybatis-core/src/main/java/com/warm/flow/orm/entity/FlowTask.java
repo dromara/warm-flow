@@ -3,7 +3,6 @@ package com.warm.flow.orm.entity;
 import com.warm.flow.core.entity.Task;
 import com.warm.flow.core.entity.User;
 
-import java.beans.Transient;
 import java.util.Date;
 import java.util.List;
 

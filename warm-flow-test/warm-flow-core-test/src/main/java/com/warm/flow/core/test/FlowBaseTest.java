@@ -85,7 +85,7 @@ public class FlowBaseTest {
     /**
      * 分页
      */
-    public void page(DefService defService){
+    public void page(DefService defService) {
         Definition flowDefinition = FlowFactory.newDef();
         Page<Definition> page = Page.pageOf(1, 10);
         page = defService.orderByCreateTime().desc().page(flowDefinition, page);
@@ -97,44 +97,44 @@ public class FlowBaseTest {
      * 转办
      */
     public void transfer(TaskService taskService) {
-         taskService.transfer(1239301524417548289L
-                 , "1"
-                 , Arrays.asList("role:1", "role:2", "user:1")
-                 , Arrays.asList("2", "3")
-                 ,"转办");
+        taskService.transfer(1239301524417548289L
+                , "1"
+                , Arrays.asList("role:1", "role:2", "user:1")
+                , Arrays.asList("2", "3")
+                , "转办");
     }
 
     /**
      * 委派
      */
-    public void depute(TaskService taskService){
+    public void depute(TaskService taskService) {
         taskService.transfer(1243308524025548800L
                 , "1"
                 , Arrays.asList("role:1", "role:2", "user:1")
                 , Arrays.asList("2", "3")
-                ,"委派");
+                , "委派");
     }
 
     /**
      * 加签
      */
-    public void addSignature(TaskService taskService){
+    public void addSignature(TaskService taskService) {
         taskService.transfer(1234425333428654080L
                 , "1"
                 , Arrays.asList("role:1", "role:2", "user:1")
                 , Arrays.asList("2", "3")
-                ,"加签");
+                , "加签");
     }
 
     /**
      * 减签
      */
-    public void reductionSignature(TaskService taskService){
+    public void reductionSignature(TaskService taskService) {
         taskService.transfer(1234425333428654080L
                 , "1"
                 , Arrays.asList("role:1", "role:2", "user:1")
                 , Arrays.asList("2", "3")
-                ,"减签");
+                , "减签");
     }
 
 }

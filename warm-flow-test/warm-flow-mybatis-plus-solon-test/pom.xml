@@ -23,7 +23,7 @@
             <groupId>org.noear</groupId>
             <artifactId>solon-api</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.noear</groupId>
             <artifactId>solon.logging.logback</artifactId>
@@ -71,15 +71,15 @@
             </plugin>
         </plugins>
     </build>
-    
-    <repositories>		
+
+    <repositories>
         <repository>
-			<id>tencent</id>
-			<url>https://mirrors.cloud.tencent.com/nexus/repository/maven-public/</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
+            <id>tencent</id>
+            <url>https://mirrors.cloud.tencent.com/nexus/repository/maven-public/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
     </repositories>
 
 </project>

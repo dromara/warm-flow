@@ -15,5 +15,5 @@ public class Config {
     public DataSource db1(@Inject("${demo.db1}") HikariDataSource ds) {
         return ds;
     }
-    
+
 }

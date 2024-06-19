@@ -28,7 +28,7 @@ public class JPAUtil {
                 continue;
             }
             Column column = field.getAnnotation(Column.class);
-            if(Objects.nonNull(column)) {
+            if (Objects.nonNull(column)) {
                 mapping.put(column.name(), field.getName());
             } else {
                 mapping.put(field.getName(), field.getName());

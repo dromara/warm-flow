@@ -2,12 +2,12 @@ package com.warm.flow.orm.dao;
 
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.dao.FlowTaskDao;
+import com.warm.flow.core.utils.StringUtils;
 import com.warm.flow.orm.entity.FlowTask;
 import com.warm.flow.orm.utils.TenantDeleteUtil;
-import com.warm.flow.core.utils.StringUtils;
-
 import jakarta.persistence.criteria.CriteriaDelete;
 import jakarta.persistence.criteria.CriteriaUpdate;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -46,7 +46,7 @@ public class FlowTaskDaoImpl extends WarmDaoImpl<FlowTask> implements FlowTaskDa
                 predicates.add(createIn(criteriaBuilder, root, "instanceId", instanceIds));
 
                 // 更新值
-                innerCriteriaUpdate.set(root.get("delFlag"),  FlowFactory.getFlowConfig().getLogicDeleteValue());
+                innerCriteriaUpdate.set(root.get("delFlag"), FlowFactory.getFlowConfig().getLogicDeleteValue());
             });
 
             return entityManager.createQuery(criteriaUpdate).executeUpdate();

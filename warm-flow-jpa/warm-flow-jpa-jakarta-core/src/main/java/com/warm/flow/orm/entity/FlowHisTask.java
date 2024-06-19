@@ -1,15 +1,18 @@
 package com.warm.flow.orm.entity;
 
 import com.warm.flow.core.entity.HisTask;
+import com.warm.flow.core.utils.StringUtils;
+import com.warm.flow.orm.utils.JPAPredicateFunction;
 import com.warm.flow.orm.utils.JPAUpdateMergeFunction;
 import com.warm.flow.orm.utils.JPAUtil;
-import com.warm.flow.orm.utils.JPAPredicateFunction;
-import com.warm.flow.core.utils.StringUtils;
-
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -64,7 +67,7 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
                 if (Objects.nonNull(this.taskId)) {
                     predicates.add(criteriaBuilder.equal(root.get("taskId"), this.taskId));
                 }
-                if  (Objects.nonNull(this.flowStatus)) {
+                if (Objects.nonNull(this.flowStatus)) {
                     predicates.add(criteriaBuilder.equal(root.get("flowStatus"), this.flowStatus));
                 }
                 if (Objects.nonNull(this.message)) {
@@ -143,18 +146,19 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
     }
 
     @Override
-    public void initDefaultValue() {}
+    public void initDefaultValue() {
+    }
 
     /**
      * 对应flow_definition表的id
      */
-    @Column(name="definition_id")
+    @Column(name = "definition_id")
     private Long definitionId;
 
     /**
      * 协作方式(1审批 2转办 3委派 4会签 5票签 6加签 7减签)
      */
-    @Column(name="cooperate_type")
+    @Column(name = "cooperate_type")
     private Integer cooperateType;
 
     /**
@@ -166,13 +170,13 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
     /**
      * 流程实例表id
      */
-    @Column(name="instance_id")
+    @Column(name = "instance_id")
     private Long instanceId;
 
     /**
      * 任务表id
      */
-    @Column(name="task_id")
+    @Column(name = "task_id")
     private Long taskId;
 
     /**
@@ -184,43 +188,43 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
     /**
      * 开始节点编码
      */
-    @Column(name="node_code")
+    @Column(name = "node_code")
     private String nodeCode;
 
     /**
      * 开始节点名称
      */
-    @Column(name="node_name")
+    @Column(name = "node_name")
     private String nodeName;
 
     /**
      * 开始节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）
      */
-    @Column(name="node_type")
+    @Column(name = "node_type")
     private Integer nodeType;
 
     /**
      * 目标节点编码
      */
-    @Column(name="target_node_code")
+    @Column(name = "target_node_code")
     private String targetNodeCode;
 
     /**
      * 结束节点名称
      */
-    @Column(name="target_node_name")
+    @Column(name = "target_node_name")
     private String targetNodeName;
 
     /**
      * 审批者
      */
-    @Column(name="approver")
+    @Column(name = "approver")
     private String approver;
 
     /**
      * 协作人(只有转办、会签、票签、委派)
      */
-    @Column(name="collaborator")
+    @Column(name = "collaborator")
     private String collaborator;
 
     /**
@@ -232,19 +236,19 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
     /**
      * 流程状态（1审批中 2 审批通过 9已退回 10失效）
      */
-    @Column(name="flow_status")
+    @Column(name = "flow_status")
     private Integer flowStatus;
 
     /**
      * 审批意见
      */
-    @Column(name="message")
+    @Column(name = "message")
     private String message;
 
     /**
      * 扩展字段 可用于存储业务详情
      */
-    @Column(name="ext")
+    @Column(name = "ext")
     private String ext;
 
     /**

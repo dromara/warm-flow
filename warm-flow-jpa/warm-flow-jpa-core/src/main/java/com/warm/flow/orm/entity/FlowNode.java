@@ -2,12 +2,15 @@ package com.warm.flow.orm.entity;
 
 import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.Skip;
+import com.warm.flow.core.utils.StringUtils;
+import com.warm.flow.orm.utils.JPAPredicateFunction;
 import com.warm.flow.orm.utils.JPAUpdateMergeFunction;
 import com.warm.flow.orm.utils.JPAUtil;
-import com.warm.flow.orm.utils.JPAPredicateFunction;
-import com.warm.flow.core.utils.StringUtils;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -36,10 +39,10 @@ public class FlowNode extends JPARootEntity<FlowNode> implements Node {
     @Transient
     private JPAPredicateFunction<CriteriaBuilder, Root<FlowNode>, List<Predicate>> entityPredicate =
             (criteriaBuilder, root, predicates) -> {
-                if  (Objects.nonNull(this.nodeType)) {
+                if (Objects.nonNull(this.nodeType)) {
                     predicates.add(criteriaBuilder.equal(root.get("nodeType"), this.nodeType));
                 }
-                if  (Objects.nonNull(this.definitionId)) {
+                if (Objects.nonNull(this.definitionId)) {
                     predicates.add(criteriaBuilder.equal(root.get("definitionId"), this.definitionId));
                 }
                 if (StringUtils.isNotEmpty(this.nodeCode)) {
@@ -75,7 +78,7 @@ public class FlowNode extends JPARootEntity<FlowNode> implements Node {
             };
 
     @Transient
-    private JPAUpdateMergeFunction<FlowNode> entityMerge = (updateEntity) ->  {
+    private JPAUpdateMergeFunction<FlowNode> entityMerge = (updateEntity) -> {
         if (Objects.nonNull(updateEntity.nodeType)) {
             this.nodeType = updateEntity.nodeType;
         }
@@ -151,34 +154,34 @@ public class FlowNode extends JPARootEntity<FlowNode> implements Node {
     /**
      * 节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）
      */
-    @Column(name="node_type")
+    @Column(name = "node_type")
     private Integer nodeType;
     /**
      * 流程id
      */
-    @Column(name="definition_id")
+    @Column(name = "definition_id")
     private Long definitionId;
     /**
      * 流程节点编码   每个流程的nodeCode是唯一的,即definitionId+nodeCode唯一,在数据库层面做了控制
      */
-    @Column(name="node_code")
+    @Column(name = "node_code")
     private String nodeCode;
     /**
      * 流程节点名称
      */
-    @Column(name="node_name")
+    @Column(name = "node_name")
     private String nodeName;
 
     /**
      * 权限标识（权限类型:权限标识，可以多个，用逗号隔开)
      */
-    @Column(name="permission_flag")
+    @Column(name = "permission_flag")
     private String permissionFlag;
 
     /**
      * 流程签署比例值
      */
-    @Column(name="node_ratio")
+    @Column(name = "node_ratio")
     private BigDecimal nodeRatio;
 
     /**
@@ -198,28 +201,28 @@ public class FlowNode extends JPARootEntity<FlowNode> implements Node {
     /**
      * 是否可以跳转任意节点（Y是 N否）
      */
-    @Column(name="skip_any_node")
+    @Column(name = "skip_any_node")
     private String skipAnyNode;
     /**
      * 监听器类型
      */
-    @Column(name="listener_type")
+    @Column(name = "listener_type")
     private String listenerType;
     /**
      * 监听器路径
      */
-    @Column(name="listener_path")
+    @Column(name = "listener_path")
     private String listenerPath;
 
     /**
      * 处理器类型
      */
-    @Column(name="handler_type")
+    @Column(name = "handler_type")
     private String handlerType;
     /**
      * 处理器路径
      */
-    @Column(name="handler_path")
+    @Column(name = "handler_path")
     private String handlerPath;
 
     @Override

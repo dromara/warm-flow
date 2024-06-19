@@ -13,11 +13,11 @@ demo.db1:
 
 # 配置数据源对应的 mybatis 信息（要与 DataSource bean 的名字对上）
 mybatis.db1:
-  configuration:  #扩展配置（要与 MybatisConfiguration 类的属性一一对应）
+  configuration: #扩展配置（要与 MybatisConfiguration 类的属性一一对应）
     cacheEnabled: false
     mapperVerifyEnabled: false #如果为 true，则要求所有 mapper 有 @Mapper 主解
     mapUnderscoreToCamelCase: true
-  globalConfig:   #全局配置（要与 GlobalConfig 类的属性一一对应）
+  globalConfig: #全局配置（要与 GlobalConfig 类的属性一一对应）
     banner: false
 
 # warm-flow工作流配置

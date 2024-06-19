@@ -4,16 +4,16 @@ import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.dao.WarmDao;
 import com.warm.flow.core.orm.agent.WarmQuery;
 import com.warm.flow.core.utils.AssertUtil;
-import com.warm.flow.orm.entity.JPARootEntity;
-import com.warm.flow.orm.utils.JPAQueryFunction;
-import com.warm.flow.orm.utils.JPAPredicateFunction;
-import com.warm.flow.orm.utils.TenantDeleteUtil;
-import com.warm.flow.orm.utils.JPAUpdateFunction;
 import com.warm.flow.core.utils.CollUtil;
 import com.warm.flow.core.utils.ObjectUtil;
 import com.warm.flow.core.utils.StringUtils;
 import com.warm.flow.core.utils.page.OrderBy;
 import com.warm.flow.core.utils.page.Page;
+import com.warm.flow.orm.entity.JPARootEntity;
+import com.warm.flow.orm.utils.JPAPredicateFunction;
+import com.warm.flow.orm.utils.JPAQueryFunction;
+import com.warm.flow.orm.utils.JPAUpdateFunction;
+import com.warm.flow.orm.utils.TenantDeleteUtil;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -121,7 +121,7 @@ public abstract class WarmDaoImpl<T extends JPARootEntity<T>> implements WarmDao
     @Override
     public long selectCount(T entity) {
         TenantDeleteUtil.getEntity(entity);
-        final CriteriaQuery<Long> criteriaCountQuery =createCriteriaCountQuery((criteriaBuilder, root, predicates) -> {
+        final CriteriaQuery<Long> criteriaCountQuery = createCriteriaCountQuery((criteriaBuilder, root, predicates) -> {
             entity.commonPredicate().process(criteriaBuilder, root, predicates);
             entity.entityPredicate().process(criteriaBuilder, root, predicates);
         });
@@ -271,15 +271,15 @@ public abstract class WarmDaoImpl<T extends JPARootEntity<T>> implements WarmDao
     }
 
     protected void orderBy(CriteriaBuilder criteriaBuilder,
-                         Root<T> root,
-                         CriteriaQuery<T> criteriaQuery,
-                         T entity,
-                         OrderBy orderBy) {
+                           Root<T> root,
+                           CriteriaQuery<T> criteriaQuery,
+                           T entity,
+                           OrderBy orderBy) {
         if (Objects.nonNull(orderBy)) {
             if (StringUtils.isNotEmpty(orderBy.getOrderBy())) {
                 String field = entity.orderByField(orderBy.getOrderBy());
                 AssertUtil.isTrue(StringUtils.isEmpty(field), "OrderBy 字段不能为空");
-                if(orderBy.getIsAsc().equals(OrderBy.ASC)) {
+                if (orderBy.getIsAsc().equals(OrderBy.ASC)) {
                     criteriaQuery.orderBy(criteriaBuilder.asc(root.get(field)));
                 } else {
                     criteriaQuery.orderBy(criteriaBuilder.desc(root.get(field)));
@@ -289,7 +289,7 @@ public abstract class WarmDaoImpl<T extends JPARootEntity<T>> implements WarmDao
     }
 
     protected <F extends Serializable> CriteriaBuilder.In<F> createIn(CriteriaBuilder criteriaBuilder, Root<T> root,
-                                            String fieldName, Collection<F> values) {
+                                                                      String fieldName, Collection<F> values) {
         CriteriaBuilder.In<F> in = criteriaBuilder.in(root.get(fieldName));
         for (F value : values) {
             in.value(value);

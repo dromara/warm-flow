@@ -165,20 +165,16 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                 .setCreateTime(null)
                 .setUpdateTime(null);
 
-        nodeList.forEach(node -> {
-            node.setId(null)
+        nodeList.forEach(node -> node.setId(null)
                 .setDefinitionId(definition.getId())
                 .setCreateTime(null)
-                .setUpdateTime(null);
-        });
+                .setUpdateTime(null));
         FlowFactory.nodeService().saveBatch(nodeList);
 
-        skipList.forEach(skip -> {
-            skip.setId(null)
+        skipList.forEach(skip -> skip.setId(null)
                 .setDefinitionId(definition.getId())
                 .setCreateTime(null)
-                .setUpdateTime(null);
-        });
+                .setUpdateTime(null));
         FlowFactory.skipService().saveBatch(skipList);
         return save(definition);
     }

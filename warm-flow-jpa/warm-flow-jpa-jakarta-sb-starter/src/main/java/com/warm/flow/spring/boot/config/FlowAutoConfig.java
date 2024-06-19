@@ -111,7 +111,7 @@ public class FlowAutoConfig {
     }
 
     @SuppressWarnings({"unchecked"})
-    @Bean(name="entityManagerFactoryWarmFlow")
+    @Bean(name = "entityManagerFactoryWarmFlow")
     public LocalContainerEntityManagerFactoryBean primaryEntityManagerFactory(DataSource dataSource, JpaProperties jpaProperties) throws ClassNotFoundException {
         LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
         factory.setDataSource(dataSource);

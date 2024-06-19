@@ -1,10 +1,10 @@
 package com.warm.flow.orm.entity;
 
 import com.warm.flow.core.entity.User;
+import com.warm.flow.core.utils.StringUtils;
 import com.warm.flow.orm.utils.JPAPredicateFunction;
 import com.warm.flow.orm.utils.JPAUpdateMergeFunction;
 import com.warm.flow.orm.utils.JPAUtil;
-import com.warm.flow.core.utils.StringUtils;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,7 +25,7 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "flow_user")
-public class FlowUser extends JPARootEntity<FlowUser> implements User{
+public class FlowUser extends JPARootEntity<FlowUser> implements User {
     public final static HashMap<String, String> MAPPING = new HashMap<>();
 
     static {
@@ -48,7 +48,7 @@ public class FlowUser extends JPARootEntity<FlowUser> implements User{
             };
 
     @Transient
-    private JPAUpdateMergeFunction<FlowUser> entityMerge = (updateEntity) ->  {
+    private JPAUpdateMergeFunction<FlowUser> entityMerge = (updateEntity) -> {
         if (StringUtils.isNotEmpty(updateEntity.type)) {
             this.type = updateEntity.type;
         }

@@ -1,12 +1,9 @@
 package com.warm.flow.orm.dao;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.warm.flow.core.dao.FlowSkipDao;
 import com.warm.flow.core.invoker.FrameInvoker;
-import com.warm.flow.orm.entity.FlowNode;
 import com.warm.flow.orm.entity.FlowSkip;
 import com.warm.flow.orm.mapper.FlowSkipMapper;
-import com.warm.flow.orm.utils.TenantDeleteUtil;
 
 import java.io.Serializable;
 import java.util.Collection;

@@ -20,7 +20,7 @@ public interface FlowHisTaskDao<T extends HisTask> extends WarmDao<T> {
      * @param instanceId
      * @return
      */
-    List<T> getNoReject(String nodeCode,String targetNodeCode, Long instanceId);
+    List<T> getNoReject(String nodeCode, String targetNodeCode, Long instanceId);
 
     /**
      * 根据instanceIds删除
@@ -32,6 +32,7 @@ public interface FlowHisTaskDao<T extends HisTask> extends WarmDao<T> {
 
     /**
      * 根据任务id和协作类型查询
+     *
      * @param taskId
      * @param cooperateTypes
      * @return

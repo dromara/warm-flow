@@ -3,10 +3,10 @@ package com.warm.flow.orm.dao;
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.dao.FlowSkipDao;
 import com.warm.flow.core.invoker.FrameInvoker;
+import com.warm.flow.core.utils.StringUtils;
 import com.warm.flow.orm.entity.FlowSkip;
 import com.warm.flow.orm.mapper.FlowSkipMapper;
 import com.warm.flow.orm.utils.TenantDeleteUtil;
-import com.warm.flow.core.utils.StringUtils;
 
 import java.io.Serializable;
 import java.util.Collection;

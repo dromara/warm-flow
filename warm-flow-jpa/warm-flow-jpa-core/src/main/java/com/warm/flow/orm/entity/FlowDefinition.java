@@ -4,12 +4,15 @@ import com.warm.flow.core.entity.Definition;
 import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.User;
 import com.warm.flow.core.enums.PublishStatus;
+import com.warm.flow.core.utils.StringUtils;
+import com.warm.flow.orm.utils.JPAPredicateFunction;
 import com.warm.flow.orm.utils.JPAUpdateMergeFunction;
 import com.warm.flow.orm.utils.JPAUtil;
-import com.warm.flow.orm.utils.JPAPredicateFunction;
-import com.warm.flow.core.utils.StringUtils;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -38,25 +41,25 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
     @Transient
     private JPAPredicateFunction<CriteriaBuilder, Root<FlowDefinition>, List<Predicate>> entityPredicate =
             (criteriaBuilder, root, predicates) -> {
-        if (StringUtils.isNotEmpty(this.flowCode)) {
-            predicates.add(criteriaBuilder.equal(root.get("flowCode"), this.flowCode));
-        }
-        if (StringUtils.isNotEmpty(this.flowName)) {
-            predicates.add(criteriaBuilder.equal(root.get("flowName"), this.flowName));
-        }
-        if (StringUtils.isNotEmpty(this.version)) {
-            predicates.add(criteriaBuilder.equal(root.get("version"), this.version));
-        }
-        if (Objects.nonNull(this.isPublish)) {
-            predicates.add(criteriaBuilder.equal(root.get("isPublish"), this.isPublish));
-        }
-        if  (Objects.nonNull(this.fromCustom)) {
-            predicates.add(criteriaBuilder.equal(root.get("fromCustom"), this.fromCustom));
-        }
-        if (Objects.nonNull(this.fromPath)) {
-            predicates.add(criteriaBuilder.equal(root.get("fromPath"), this.fromPath));
-        }
-    };
+                if (StringUtils.isNotEmpty(this.flowCode)) {
+                    predicates.add(criteriaBuilder.equal(root.get("flowCode"), this.flowCode));
+                }
+                if (StringUtils.isNotEmpty(this.flowName)) {
+                    predicates.add(criteriaBuilder.equal(root.get("flowName"), this.flowName));
+                }
+                if (StringUtils.isNotEmpty(this.version)) {
+                    predicates.add(criteriaBuilder.equal(root.get("version"), this.version));
+                }
+                if (Objects.nonNull(this.isPublish)) {
+                    predicates.add(criteriaBuilder.equal(root.get("isPublish"), this.isPublish));
+                }
+                if (Objects.nonNull(this.fromCustom)) {
+                    predicates.add(criteriaBuilder.equal(root.get("fromCustom"), this.fromCustom));
+                }
+                if (Objects.nonNull(this.fromPath)) {
+                    predicates.add(criteriaBuilder.equal(root.get("fromPath"), this.fromPath));
+                }
+            };
 
     @Transient
     private JPAUpdateMergeFunction<FlowDefinition> entityMerge = (updateEntity) -> {
@@ -114,13 +117,13 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
     /**
      * 流程编码
      */
-    @Column(name="flow_code")
+    @Column(name = "flow_code")
     private String flowCode;
 
     /**
      * 流程名称
      */
-    @Column(name="flow_name")
+    @Column(name = "flow_name")
     private String flowName;
 
     /**
@@ -131,19 +134,19 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
     /**
      * 是否发布（0未开启 1开启）
      */
-    @Column(name="is_publish")
+    @Column(name = "is_publish")
     private Integer isPublish;
 
     /**
      * 审批表单是否自定义（Y是 2否）
      */
-    @Column(name="from_custom")
+    @Column(name = "from_custom")
     private String fromCustom;
 
     /**
      * 审批表单是否自定义（Y是 2否）
      */
-    @Column(name="from_path")
+    @Column(name = "from_path")
     private String fromPath;
 
     /**
