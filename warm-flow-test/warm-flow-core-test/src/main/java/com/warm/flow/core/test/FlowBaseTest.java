@@ -31,7 +31,7 @@ public class FlowBaseTest {
      */
     public void deployFlow(DefService defService) throws Exception {
         // warm-flow-test\warm-flow-core-test\src\main\resources\leaveFlow-serial1.xml
-        String path = "D:\\java\\warm-flow\\warm-flow-doc\\leaveFlow-serial1.xml";
+        String path = "D:\\java\\warm-flow\\warm-flow-doc\\leaveFlow-serial1_1.0.xml";
         System.out.println("已部署流程的id：" + defService.importXml(new FileInputStream(path)).getId());
     }
 
@@ -39,7 +39,7 @@ public class FlowBaseTest {
      * 发布流程
      */
     public void publish(DefService defService) {
-        defService.publish(1239250377455570962L);
+        defService.publish(1253087350804844550L);
     }
 
     /**

@@ -34,7 +34,7 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
     @Override
     public T selectById(Serializable id) {
         QueryWrapper queryWrapper = TenantDeleteUtil.getDefaultWrapper(newEntity());
-        queryWrapper.eq(T::getId, id);
+        queryWrapper.eq("id", id);
         return getMapper().selectOneByQuery(queryWrapper);
     }
 

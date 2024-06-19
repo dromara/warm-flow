@@ -1,4 +1,4 @@
-package com.warm.flow.mybatisplus.sb;
+package com.warm.flow.mybatisflex.sb;
 
 
 import com.warm.flow.core.service.DefService;

@@ -29,10 +29,10 @@ public class TenantDeleteUtil {
         WarmFlow flowConfig = FlowFactory.getFlowConfig();
         if (ObjectUtil.isNotNull(FlowFactory.tenantHandler())) {
             TenantHandler tenantHandler = FlowFactory.tenantHandler();
-            queryWrapper.eq("tenantId", tenantHandler.getTenantId());
+            queryWrapper.eq("tenant_Id", tenantHandler.getTenantId());
         }
         if (flowConfig.isLogicDelete()) {
-            queryWrapper.eq("delFlag", flowConfig.getLogicNotDeleteValue());
+            queryWrapper.eq("del_Flag", flowConfig.getLogicNotDeleteValue());
         }
         return queryWrapper;
     }

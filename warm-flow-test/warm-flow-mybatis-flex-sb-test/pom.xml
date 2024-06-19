@@ -28,11 +28,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.mybatis-flex</groupId>
-            <artifactId>mybatis-flex-spring-boot-starter</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>io.github.minliuhua</groupId>
             <artifactId>warm-flow-mybatis-flex-sb-starter</artifactId>
         </dependency>

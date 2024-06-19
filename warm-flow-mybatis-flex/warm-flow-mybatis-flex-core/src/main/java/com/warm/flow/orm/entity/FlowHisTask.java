@@ -127,6 +127,11 @@ public class FlowHisTask implements HisTask {
     private String message;
 
     /**
+     * 审批意见
+     */
+    private String ext;
+
+    /**
      * 创建者
      */
     @Column(ignore = true)
@@ -145,6 +150,15 @@ public class FlowHisTask implements HisTask {
     @Column(ignore = true)
     private String fromPath;
 
+    @Override
+    public String getExt(){
+        return ext;
+    }
+
+    public HisTask setExt(String ext){
+        this.ext = ext;
+        return this;
+    }
     @Override
     public Long getId() {
         return id;
@@ -374,16 +388,6 @@ public class FlowHisTask implements HisTask {
     public FlowHisTask setMessage(String message) {
         this.message = message;
         return this;
-    }
-
-    @Override
-    public String getExt() {
-        return null;
-    }
-
-    @Override
-    public HisTask setExt(String ext) {
-        return null;
     }
 
     @Override

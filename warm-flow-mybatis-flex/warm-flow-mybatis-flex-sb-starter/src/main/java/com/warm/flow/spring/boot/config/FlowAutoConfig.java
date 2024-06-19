@@ -9,9 +9,8 @@ import com.warm.flow.core.service.impl.*;
 import com.warm.flow.orm.dao.*;
 import com.warm.flow.orm.invoker.EntityInvoker;
 import com.warm.flow.spring.boot.utils.SpringUtil;
-import org.apache.ibatis.builder.xml.XMLMapperBuilder;
-import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,8 +19,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
 
-import java.util.Arrays;
-import java.util.List;
+import javax.sql.DataSource;
 import java.util.Objects;
 
 /**
@@ -108,8 +106,7 @@ public class FlowAutoConfig {
     }
 
     @Bean
-    public WarmFlow initFlow(SqlSessionFactory sqlSessionFactory) {
-        /*loadXml(sqlSessionFactory);*/
+    public WarmFlow initFlow() {
         // 设置创建对象方法
         EntityInvoker.setNewEntity();
         FrameInvoker.setCfgFunction((key) -> Objects.requireNonNull(SpringUtil.getBean(Environment.class)).getProperty(key));
@@ -120,19 +117,10 @@ public class FlowAutoConfig {
         return FlowFactory.getFlowConfig();
     }
 
-/*    private void loadXml(SqlSessionFactory sqlSessionFactory) {
-        List<String> mapperList = Arrays.asList("warm/flow/FlowDefinitionMapper.xml", "warm/flow/FlowHisTaskMapper.xml"
-                , "warm/flow/FlowInstanceMapper.xml", "warm/flow/FlowNodeMapper.xml"
-                , "warm/flow/FlowSkipMapper.xml", "warm/flow/FlowTaskMapper.xml");
-        org.apache.ibatis.session.Configuration configuration = sqlSessionFactory.getConfiguration();
-        try {
-            for (String mapper : mapperList) {
-                XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(Resources.getResourceAsStream(mapper),
-                        configuration, getClass().getResource("/") + mapper, configuration.getSqlFragments());
-                xmlMapperBuilder.parse();
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    /*@Bean
+    public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
+        SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
+        sessionFactory.setDataSource(dataSource);
+        return sessionFactory.getObject();
     }*/
 }

@@ -31,7 +31,9 @@ public class FlowDefinitionDaoImpl extends WarmDaoImpl<FlowDefinition> implement
 
     @Override
     public List<FlowDefinition> queryByCodeList(List<String> flowCodeList) {
-        return QueryChain.of(getMapper()).in(FlowDefinition::getFlowCode, flowCodeList).listAs(FlowDefinition.class);
+        QueryWrapper queryWrapper = QueryWrapper.create();
+        queryWrapper.in(FlowDefinition::getFlowCode, flowCodeList);
+        return getMapper().selectListByQueryAs(queryWrapper, FlowDefinition.class);
     }
 
     @Override
