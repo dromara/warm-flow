@@ -10,6 +10,7 @@ import com.warm.flow.core.utils.MathUtil;
  */
 public class ExpressionStrategyLe extends ExpressionStrategyAbstract {
 
+    @Override
     public String getType() {
         return FlowCons.splitAt + "le" + FlowCons.splitAt;
     }

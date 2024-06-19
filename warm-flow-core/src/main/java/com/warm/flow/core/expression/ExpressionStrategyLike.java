@@ -9,6 +9,7 @@ import com.warm.flow.core.constant.FlowCons;
  */
 public class ExpressionStrategyLike extends ExpressionStrategyAbstract {
 
+    @Override
     public String getType() {
         return FlowCons.splitAt + "like" + FlowCons.splitAt;
     }

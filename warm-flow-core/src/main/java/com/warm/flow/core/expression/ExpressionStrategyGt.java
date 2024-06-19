@@ -10,6 +10,7 @@ import com.warm.flow.core.utils.MathUtil;
  */
 public class ExpressionStrategyGt extends ExpressionStrategyAbstract {
 
+    @Override
     public String getType() {
         return FlowCons.splitAt + "gt" + FlowCons.splitAt;
     }

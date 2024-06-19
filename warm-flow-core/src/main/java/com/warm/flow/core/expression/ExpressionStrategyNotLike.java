@@ -9,6 +9,7 @@ import com.warm.flow.core.constant.FlowCons;
  */
 public class ExpressionStrategyNotLike extends ExpressionStrategyAbstract {
 
+    @Override
     public String getType() {
         return FlowCons.splitAt + "notNike" + FlowCons.splitAt;
     }
