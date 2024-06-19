@@ -23,12 +23,6 @@ public class FlowParams implements Serializable {
     private String handler;
 
     /**
-     * 用户账号，唯一标识就行（即将删除字段）
-     */
-    @Deprecated
-    private String createBy;
-
-    /**
      * 节点编码（如果要指定跳转节点，传入）
      */
     private String nodeCode;
@@ -188,10 +182,12 @@ public class FlowParams implements Serializable {
         return this;
     }
 
+    @Deprecated
     public String getCreateBy() {
         return handler;
     }
 
+    @Deprecated
     public FlowParams setCreateBy(String createBy) {
         this.handler = createBy;
         return this;
