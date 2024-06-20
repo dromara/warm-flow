@@ -8,8 +8,8 @@ import com.warm.flow.core.service.*;
 import com.warm.flow.core.service.impl.*;
 import com.warm.flow.orm.dao.*;
 import com.warm.flow.orm.invoker.EntityInvoker;
+import com.warm.flow.orm.utils.CommonUtil;
 import com.warm.flow.spring.boot.utils.SpringUtil;
-import com.warm.flow.core.utils.StringUtils;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -21,9 +21,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.util.Arrays;
 import java.util.List;
 
@@ -118,7 +115,7 @@ public class FlowAutoConfig {
         FrameInvoker.setCfgFunction((key) -> SpringUtil.getBean(Environment.class).getProperty(key));
         FrameInvoker.setBeanFunction(SpringUtil::getBean);
         WarmFlow flowConfig = WarmFlow.init();
-        setDataSourceType(flowConfig, sqlSessionFactory);
+        CommonUtil.setDataSourceType(flowConfig, sqlSessionFactory.getConfiguration());
         FlowFactory.setFlowConfig(flowConfig);
         log.info("warm-flow初始化结束");
         return FlowFactory.getFlowConfig();
@@ -127,7 +124,7 @@ public class FlowAutoConfig {
     private void loadXml(SqlSessionFactory sqlSessionFactory) {
         List<String> mapperList = Arrays.asList("warm/flow/FlowDefinitionMapper.xml", "warm/flow/FlowHisTaskMapper.xml"
                 , "warm/flow/FlowInstanceMapper.xml", "warm/flow/FlowNodeMapper.xml"
-                , "warm/flow/FlowSkipMapper.xml", "warm/flow/FlowTaskMapper.xml","warm/flow/FlowUserMapper.xml");
+                , "warm/flow/FlowSkipMapper.xml", "warm/flow/FlowTaskMapper.xml", "warm/flow/FlowUserMapper.xml");
         org.apache.ibatis.session.Configuration configuration = sqlSessionFactory.getConfiguration();
         try {
             for (String mapper : mapperList) {
@@ -138,38 +135,5 @@ public class FlowAutoConfig {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private void setDataSourceType(WarmFlow flowConfig, SqlSessionFactory sqlSessionFactory) {
-        String dataSourceType = flowConfig.getDataSourceType();
-        // 未配置时尝试获取可用数据库类型
-        if (StringUtils.isEmpty(dataSourceType)) {
-            org.apache.ibatis.session.Configuration configuration = sqlSessionFactory.getConfiguration();
-            DataSource dataSource = configuration.getEnvironment().getDataSource();
-            DatabaseMetaData metaData;
-            Connection connection = null;
-            try {
-                connection = dataSource.getConnection();
-                metaData = connection.getMetaData();
-                dataSourceType = metaData.getDatabaseProductName().toLowerCase();
-            } catch (Exception e) {
-                // 不能因为一个字段的取值, 影响到框架自身运行环境
-                // throw new RuntimeException(e);
-            } finally {
-                try {
-                    connection.close();
-                } catch (Exception e) {
-                    // 不能因为一个字段的取值, 影响到框架自身运行环境
-                    // throw new RuntimeException(e);
-                }
-            }
-        }
-
-
-        // 兜底数据库类型
-        if (StringUtils.isEmpty(dataSourceType)) {
-            dataSourceType = "mysql";
-        }
-        flowConfig.setDataSourceType(dataSourceType);
     }
 }

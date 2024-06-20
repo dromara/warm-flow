@@ -17,5 +17,5 @@ public interface FlowDefinitionDao<T extends Definition> extends WarmDao<T> {
 
     void closeFlowByCodeList(List<String> flowCodeList);
 
-    
+
 }

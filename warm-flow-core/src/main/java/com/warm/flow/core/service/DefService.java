@@ -34,6 +34,7 @@ public interface DefService extends IWarmService<Definition> {
 
     /**
      * 导出流程定义xml的Document对象
+     *
      * @param id 流程定义id
      * @return
      */
@@ -41,6 +42,7 @@ public interface DefService extends IWarmService<Definition> {
 
     /**
      * 获取流程定义xml的字符串
+     *
      * @param id
      * @return
      */

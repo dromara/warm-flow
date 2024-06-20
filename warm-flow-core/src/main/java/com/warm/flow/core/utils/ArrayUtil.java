@@ -28,7 +28,8 @@ public class ArrayUtil {
 
     /**
      * 如果数组是空，则返回默认值
-     * @param objects 数组
+     *
+     * @param objects    数组
      * @param defaultArr 默认值
      * @return 结果
      */

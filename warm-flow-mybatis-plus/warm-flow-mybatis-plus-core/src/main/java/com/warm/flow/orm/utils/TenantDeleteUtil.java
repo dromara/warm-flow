@@ -17,19 +17,20 @@ import com.warm.flow.core.utils.StringUtils;
  */
 public class TenantDeleteUtil {
 
-    private TenantDeleteUtil() {}
+    private TenantDeleteUtil() {
+    }
 
 
     /**
      * 获取mybatis-plus查询条件, 根据是否租户或者逻辑删除，有默认值
+     *
      * @param entity
-     * @return
      * @param <T>
+     * @return
      */
     public static <T extends RootEntity> LambdaQueryWrapper<T> getLambdaWrapperDefault(T entity) {
         LambdaQueryWrapper<T> queryWrapper = getLambdaWrapper(entity);
-        if (ObjectUtil.isNull(queryWrapper))
-        {
+        if (ObjectUtil.isNull(queryWrapper)) {
             queryWrapper = new LambdaQueryWrapper<>(entity);
         }
         queryWrapper.setEntityClass((Class<T>) entity.getClass());
@@ -38,9 +39,10 @@ public class TenantDeleteUtil {
 
     /**
      * 获取mybatis-plus查询条件, 根据是否租户或者逻辑删除
+     *
      * @param entity
-     * @return
      * @param <T>
+     * @return
      */
     public static <T extends RootEntity> LambdaQueryWrapper<T> getLambdaWrapper(T entity) {
         WarmFlow flowConfig = FlowFactory.getFlowConfig();
@@ -65,14 +67,14 @@ public class TenantDeleteUtil {
 
     /**
      * 获取mybatis-plus查询条件, 根据是否租户或者逻辑删除，有默认值
+     *
      * @param entity
-     * @return
      * @param <T>
+     * @return
      */
     public static <T> QueryWrapper<T> getQueryWrapperDefault(T entity) {
         QueryWrapper<T> queryWrapper = getQueryWrapper(entity);
-        if (ObjectUtil.isNull(queryWrapper))
-        {
+        if (ObjectUtil.isNull(queryWrapper)) {
             queryWrapper = new QueryWrapper<>(entity);
         }
         queryWrapper.setEntityClass((Class<T>) entity.getClass());
@@ -81,9 +83,10 @@ public class TenantDeleteUtil {
 
     /**
      * 获取mybatis-plus查询条件, 根据是否租户或者逻辑删除
+     *
      * @param entity
-     * @return
      * @param <T>
+     * @return
      */
     public static <T> QueryWrapper<T> getQueryWrapper(T entity) {
         WarmFlow flowConfig = FlowFactory.getFlowConfig();
@@ -108,6 +111,7 @@ public class TenantDeleteUtil {
 
     /**
      * 设置租户和逻辑删除
+     *
      * @return
      */
     public static void getEntity(RootEntity entity) {

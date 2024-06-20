@@ -20,6 +20,7 @@ public interface HisTaskService extends IWarmService<HisTask> {
 
     /**
      * 根据任务id和协作类型查询
+     *
      * @param taskId
      * @param cooperateTypes
      * @return
@@ -45,17 +46,18 @@ public interface HisTaskService extends IWarmService<HisTask> {
     /**
      * 设置流程历史任务信息
      *
-     * @param task  当前任务
-     * @param nextNodes 后续任务
+     * @param task       当前任务
+     * @param nextNodes  后续任务
      * @param flowParams 参数
      */
     List<HisTask> setSkipInsHis(Task task, List<Node> nextNodes, FlowParams flowParams);
 
     /**
      * 设置协作历史记录
-     * @param task 当前任务
-     * @param node 当然任务节点
-     * @param flowParams 参数
+     *
+     * @param task          当前任务
+     * @param node          当然任务节点
+     * @param flowParams    参数
      * @param collaborators 协作人
      * @return
      */
@@ -64,6 +66,7 @@ public interface HisTaskService extends IWarmService<HisTask> {
 
     /**
      * 委派历史任务
+     *
      * @param task
      * @param flowParams
      * @param entrustedUser
@@ -73,6 +76,7 @@ public interface HisTaskService extends IWarmService<HisTask> {
 
     /**
      * 设置会签票签历史任务
+     *
      * @param task
      * @param flowParams
      * @param nodeRatio
@@ -83,6 +87,7 @@ public interface HisTaskService extends IWarmService<HisTask> {
 
     /**
      * 自动完成历史任务
+     *
      * @param flowStatus
      * @param task
      * @param userList

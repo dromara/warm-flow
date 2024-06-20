@@ -72,46 +72,51 @@ public interface TaskService extends IWarmService<Task> {
 
     /**
      * 转办, 默认删除当然办理用户权限，转办后，当前办理不可办理
-     * @param taskId 修改的任务id
-     * @param curUser 当前办理人唯一标识
+     *
+     * @param taskId         修改的任务id
+     * @param curUser        当前办理人唯一标识
      * @param permissionFlag 用户权限标识集合
-     * @param addHandlers 增加办理人：加签，转办，委托
-     * @param message 审批意见
+     * @param addHandlers    增加办理人：加签，转办，委托
+     * @param message        审批意见
      */
     boolean transfer(Long taskId, String curUser, List<String> permissionFlag, List<String> addHandlers, String message);
 
     /**
      * 委派, 默认删除当然办理用户权限，转办后，当前办理不可办理
-     * @param taskId 修改的任务id
-     * @param curUser 当前办理人唯一标识
+     *
+     * @param taskId         修改的任务id
+     * @param curUser        当前办理人唯一标识
      * @param permissionFlag 用户权限标识集合
-     * @param addHandlers 增加办理人：加签，转办，委托
-     * @param message 审批意见
+     * @param addHandlers    增加办理人：加签，转办，委托
+     * @param message        审批意见
      */
     boolean depute(Long taskId, String curUser, List<String> permissionFlag, List<String> addHandlers, String message);
 
     /**
      * 加签，增加办理人
-     * @param taskId 修改的任务id
-     * @param curUser 当前办理人唯一标识
+     *
+     * @param taskId         修改的任务id
+     * @param curUser        当前办理人唯一标识
      * @param permissionFlag 用户权限标识集合
-     * @param addHandlers 增加办理人：加签，转办，委托
-     * @param message 审批意见
+     * @param addHandlers    增加办理人：加签，转办，委托
+     * @param message        审批意见
      */
     boolean addSignature(Long taskId, String curUser, List<String> permissionFlag, List<String> addHandlers, String message);
 
     /**
      * 减签，减少办理人
-     * @param taskId 修改的任务id
-     * @param curUser 当前办理人唯一标识
-     * @param permissionFlag 用户权限标识集合
+     *
+     * @param taskId            修改的任务id
+     * @param curUser           当前办理人唯一标识
+     * @param permissionFlag    用户权限标识集合
      * @param reductionHandlers 增加办理人：加签，转办，委托
-     * @param message 审批意见
+     * @param message           审批意见
      */
     boolean reductionSignature(Long taskId, String curUser, List<String> permissionFlag, List<String> reductionHandlers, String message);
 
     /**
      * 修改办理人
+     *
      * @param modifyHandler 修改办理人参数
      */
     boolean updateHandler(ModifyHandler modifyHandler);

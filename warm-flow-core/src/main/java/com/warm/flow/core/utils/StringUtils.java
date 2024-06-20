@@ -50,13 +50,15 @@ public class StringUtils {
 
     /**
      * 如果字符串是空，则返回默认值
-     * @param str 字符串
+     *
+     * @param str        字符串
      * @param defaultStr 默认值
      * @return 结果
      */
     public static String emptyDefault(String str, String defaultStr) {
         return isEmpty(str) ? defaultStr : str;
     }
+
     /**
      * 指定字符串数组中，是否包含空字符串
      *
@@ -191,8 +193,8 @@ public class StringUtils {
     /**
      * 字符串转list
      *
-     * @param str         字符串
-     * @param sep         分隔符
+     * @param str 字符串
+     * @param sep 分隔符
      * @return list集合
      */
     public static List<String> str2List(String str, String sep) {

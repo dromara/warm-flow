@@ -1,7 +1,6 @@
 package com.warm.flow.core.service.impl;
 
 import com.warm.flow.core.FlowFactory;
-import com.warm.flow.core.constant.ExceptionCons;
 import com.warm.flow.core.dao.FlowUserDao;
 import com.warm.flow.core.entity.Task;
 import com.warm.flow.core.entity.User;
@@ -9,7 +8,6 @@ import com.warm.flow.core.enums.UserType;
 import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.UserService;
 import com.warm.flow.core.utils.ArrayUtil;
-import com.warm.flow.core.utils.AssertUtil;
 import com.warm.flow.core.utils.CollUtil;
 import com.warm.flow.core.utils.StreamUtils;
 
@@ -34,7 +32,7 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
     @Override
     public List<User> taskAddUsers(List<Task> addTasks) {
         List<User> taskUserList = new ArrayList<>();
-        if(CollUtil.isNotEmpty(addTasks)){
+        if (CollUtil.isNotEmpty(addTasks)) {
             StreamUtils.toList(addTasks, task -> taskUserList.addAll(taskAddUser(task)));
         }
         return taskUserList;
@@ -123,7 +121,7 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
     public boolean updatePermission(Long associated, List<String> permissions, String type, boolean clear,
                                     String handler) {
         // 判断是否clear，如果是true，则先删除当前关联id用户数据
-        if(clear){
+        if (clear) {
             getDao().delete(FlowFactory.newUser().setAssociated(associated).setCreateBy(handler));
         }
         // 再新增权限人

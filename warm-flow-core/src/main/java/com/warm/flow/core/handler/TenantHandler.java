@@ -9,6 +9,7 @@ public interface TenantHandler {
 
     /**
      * 获取租户ID
+     *
      * @return
      */
     String getTenantId();

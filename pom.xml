@@ -63,7 +63,7 @@
         <mysql.version>8.0.33</mysql.version>
         <HikariCP.version>4.0.3</HikariCP.version>
         <junit.version>4.13.2</junit.version>
-        <solon.version>2.5.3</solon.version>
+        <solon.version>2.8.3</solon.version>
         <snack3.version>3.2.88</snack3.version>
         <slf4j-api.version>1.7.36</slf4j-api.version>
         <oracle.version>11.2.0.4</oracle.version>
@@ -133,6 +133,25 @@
                 <groupId>org.noear</groupId>
                 <artifactId>mybatis-plus-solon-plugin</artifactId>
                 <version>${solon.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.noear</groupId>
+                <artifactId>solon-api</artifactId>
+                <version>${solon.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.noear</groupId>
+                <artifactId>solon.logging.logback</artifactId>
+                <version>${solon.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.noear</groupId>
+                <artifactId>solon-test</artifactId>
+                <version>${solon.version}</version>
+                <scope>test</scope>
             </dependency>
 
             <dependency>

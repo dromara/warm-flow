@@ -63,7 +63,9 @@
             <if test="entity.skipType != null and entity.skipType != ''">and t.skip_type =
                 #{entity.skipType}
             </if>
-            <if test="entity.skipCondition != null and entity.skipCondition != ''">and t.skip_condition =#{skipCondition}</if>
+            <if test="entity.skipCondition != null and entity.skipCondition != ''">and t.skip_condition
+                =#{skipCondition}
+            </if>
             <if test="entity.createTime != null">and t.create_time = #{entity.createTime}</if>
             <if test="entity.updateTime != null">and t.update_time = #{entity.updateTime}</if>
             <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
@@ -185,7 +187,8 @@
         set t.del_flag = #{logicDeleteValue}
         where t.id = #{id}
         <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
-        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag = #{logicNotDeleteValue}</if>
+        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag = #{logicNotDeleteValue}
+        </if>
     </update>
 
     <delete id="deleteByIds">
@@ -204,7 +207,8 @@
             #{id}
         </foreach>
         <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
-        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag = #{logicNotDeleteValue}</if>
+        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag = #{logicNotDeleteValue}
+        </if>
     </update>
 
 
@@ -233,18 +237,27 @@
         <where>
             <if test="entity.id != null">and t.id = #{entity.id}</if>
             <if test="entity.definitionId != null">and t.definition_id = #{entity.definitionId}</if>
-            <if test="entity.nowNodeCode != null and entity.nowNodeCode != ''">and t.now_node_code = #{entity.nowNodeCode}</if>
+            <if test="entity.nowNodeCode != null and entity.nowNodeCode != ''">and t.now_node_code =
+                #{entity.nowNodeCode}
+            </if>
             <if test="entity.nowNodeType != null">and t.now_node_type = #{entity.nowNodeType}</if>
-            <if test="entity.nextNodeCode != null and nextNodeCode != ''">and t.next_node_code = #{entity.nextNodeCode}</if>
+            <if test="entity.nextNodeCode != null and nextNodeCode != ''">and t.next_node_code =
+                #{entity.nextNodeCode}
+            </if>
             <if test="entity.nextNodeType != null">and t.next_node_type = #{entity.nextNodeType}</if>
             <if test="entity.skipName != null and entity.skipName != ''">and t.skip_name = #{entity.skipName}</if>
             <if test="entity.skipType != null">and t.skip_type = #{entity.skipType}</if>
-            <if test="entity.coordinate != null and entity.coordinate != ''">and t.coordinate = #{entity.coordinate}</if>
-            <if test="entity.skipCondition != null and entity.skipCondition != ''">and t.skip_condition = #{entity.skipCondition}</if>
+            <if test="entity.coordinate != null and entity.coordinate != ''">and t.coordinate = #{entity.coordinate}
+            </if>
+            <if test="entity.skipCondition != null and entity.skipCondition != ''">and t.skip_condition =
+                #{entity.skipCondition}
+            </if>
             <if test="entity.createTime != null">and t.create_time = #{entity.createTime}</if>
             <if test="entity.updateTime != null">and t.update_time = #{entity.updateTime}</if>
             <if test="entity.tenantId != null and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
-            <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag = #{logicNotDeleteValue}</if>
+            <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag =
+                #{logicNotDeleteValue}
+            </if>
         </where>
     </update>
 
@@ -264,7 +277,8 @@
             #{definitionId}
         </foreach>
         <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
-        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag = #{logicNotDeleteValue}</if>
+        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag = #{logicNotDeleteValue}
+        </if>
     </update>
 
     <insert id="saveBatch" parameterType="com.warm.flow.orm.entity.FlowSkip">

@@ -165,20 +165,16 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                 .setCreateTime(null)
                 .setUpdateTime(null);
 
-        nodeList.forEach(node -> {
-            node.setId(null)
+        nodeList.forEach(node -> node.setId(null)
                 .setDefinitionId(definition.getId())
                 .setCreateTime(null)
-                .setUpdateTime(null);
-        });
+                .setUpdateTime(null));
         FlowFactory.nodeService().saveBatch(nodeList);
 
-        skipList.forEach(skip -> {
-            skip.setId(null)
+        skipList.forEach(skip -> skip.setId(null)
                 .setDefinitionId(definition.getId())
                 .setCreateTime(null)
-                .setUpdateTime(null);
-        });
+                .setUpdateTime(null));
         FlowFactory.skipService().saveBatch(skipList);
         return save(definition);
     }
@@ -200,8 +196,8 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         graphics.setFont(new Font("宋体", Font.BOLD, 12));
         // 消除线条锯齿
         graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        // 对指定的矩形区域填充颜色
-        graphics.setColor(Color.WHITE);    // GREEN:绿色；  红色：RED;   灰色：GRAY
+        // 对指定的矩形区域填充颜色: GREEN:绿色；  红色：RED;   灰色：GRAY
+        graphics.setColor(Color.WHITE);
         graphics.fillRect(0, 0, width, height);
 
         flowChartChain.draw(graphics);
@@ -508,8 +504,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     private void updateFlow(Definition definition, List<Node> allNodes, List<Skip> allSkips) {
         List<String> flowCodeList = Collections.singletonList(definition.getFlowCode());
         List<Definition> definitions = getDao().queryByCodeList(flowCodeList);
-        for (int j = 0; j < definitions.size(); j++) {
-            Definition otherDef = definitions.get(j);
+        for (Definition otherDef : definitions) {
             if (definition.getFlowCode().equals(otherDef.getFlowCode())
                     && definition.getVersion().equals(otherDef.getVersion())) {
                 throw new FlowException(definition.getFlowCode() + "(" + definition.getVersion() + ")" + ExceptionCons.ALREADY_EXIST);

@@ -1,12 +1,15 @@
 package com.warm.flow.orm.entity;
 
 import com.warm.flow.core.entity.Skip;
+import com.warm.flow.core.utils.StringUtils;
+import com.warm.flow.orm.utils.JPAPredicateFunction;
 import com.warm.flow.orm.utils.JPAUpdateMergeFunction;
 import com.warm.flow.orm.utils.JPAUtil;
-import com.warm.flow.orm.utils.JPAPredicateFunction;
-import com.warm.flow.core.utils.StringUtils;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -33,19 +36,19 @@ public class FlowSkip extends JPARootEntity<FlowSkip> implements Skip {
     @Transient
     private JPAPredicateFunction<CriteriaBuilder, Root<FlowSkip>, List<Predicate>> entityPredicate =
             (criteriaBuilder, root, predicates) -> {
-                if  (Objects.nonNull(this.definitionId)) {
+                if (Objects.nonNull(this.definitionId)) {
                     predicates.add(criteriaBuilder.equal(root.get("definitionId"), this.definitionId));
                 }
-                if  (Objects.nonNull(this.nowNodeCode)) {
+                if (Objects.nonNull(this.nowNodeCode)) {
                     predicates.add(criteriaBuilder.equal(root.get("nowNodeCode"), this.nowNodeCode));
                 }
-                if  (Objects.nonNull(this.nowNodeType)) {
+                if (Objects.nonNull(this.nowNodeType)) {
                     predicates.add(criteriaBuilder.equal(root.get("nowNodeType"), this.nowNodeType));
                 }
                 if (StringUtils.isNotEmpty(this.nextNodeCode)) {
                     predicates.add(criteriaBuilder.equal(root.get("nextNodeCode"), this.nextNodeCode));
                 }
-                if  (Objects.nonNull(this.nextNodeType)) {
+                if (Objects.nonNull(this.nextNodeType)) {
                     predicates.add(criteriaBuilder.equal(root.get("nextNodeType"), this.nextNodeType));
                 }
                 if (StringUtils.isNotEmpty(this.skipName)) {
@@ -60,7 +63,7 @@ public class FlowSkip extends JPARootEntity<FlowSkip> implements Skip {
             };
 
     @Transient
-    private JPAUpdateMergeFunction<FlowSkip> entityMerge = (updateEntity) ->  {
+    private JPAUpdateMergeFunction<FlowSkip> entityMerge = (updateEntity) -> {
         if (Objects.nonNull(updateEntity.definitionId)) {
             this.definitionId = updateEntity.definitionId;
         }
@@ -118,7 +121,7 @@ public class FlowSkip extends JPARootEntity<FlowSkip> implements Skip {
     /**
      * 流程id
      */
-    @Column(name="definition_id")
+    @Column(name = "definition_id")
     private Long definitionId;
 
     /**
@@ -130,49 +133,49 @@ public class FlowSkip extends JPARootEntity<FlowSkip> implements Skip {
     /**
      * 当前流程节点的编码
      */
-    @Column(name="now_node_code")
+    @Column(name = "now_node_code")
     private String nowNodeCode;
 
     /**
      * 当前节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）
      */
-    @Column(name="now_node_type")
+    @Column(name = "now_node_type")
     private Integer nowNodeType;
 
     /**
      * 下一个流程节点的编码
      */
-    @Column(name="next_node_code")
+    @Column(name = "next_node_code")
     private String nextNodeCode;
 
     /**
      * 下一个节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）
      */
-    @Column(name="next_node_type")
+    @Column(name = "next_node_type")
     private Integer nextNodeType;
 
     /**
      * 跳转名称
      */
-    @Column(name="skip_name")
+    @Column(name = "skip_name")
     private String skipName;
 
     /**
      * 跳转类型（PASS审批通过 REJECT退回）
      */
-    @Column(name="skip_type")
+    @Column(name = "skip_type")
     private String skipType;
 
     /**
      * 跳转条件
      */
-    @Column(name="skip_condition")
+    @Column(name = "skip_condition")
     private String skipCondition;
 
     /**
      * 流程跳转坐标
      */
-    @Column(name="coordinate")
+    @Column(name = "coordinate")
     private String coordinate;
 
     @Override

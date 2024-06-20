@@ -13,10 +13,12 @@ import com.warm.flow.core.utils.ObjectUtil;
  */
 public class TenantDeleteUtil {
 
-    private TenantDeleteUtil() {}
+    private TenantDeleteUtil() {
+    }
 
     /**
      * 获取mybatis-plus查询条件, 根据是否租户或者逻辑删除
+     *
      * @param <T>
      */
     public static <T extends RootEntity> T getEntity(T entity) {

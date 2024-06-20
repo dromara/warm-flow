@@ -2,12 +2,14 @@ package com.warm.flow.orm.dao;
 
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.dao.FlowNodeDao;
-import com.warm.flow.orm.entity.FlowNode;
-import com.warm.flow.orm.utils.TenantDeleteUtil;
 import com.warm.flow.core.utils.CollUtil;
 import com.warm.flow.core.utils.StringUtils;
+import com.warm.flow.orm.entity.FlowNode;
+import com.warm.flow.orm.utils.TenantDeleteUtil;
 
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaDelete;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.CriteriaUpdate;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
@@ -65,7 +67,7 @@ public class FlowNodeDaoImpl extends WarmDaoImpl<FlowNode> implements FlowNodeDa
                 predicates.add(createIn(criteriaBuilder, root, "definitionId", defIds));
 
                 // 更新值
-                innerCriteriaUpdate.set(root.get("delFlag"),  FlowFactory.getFlowConfig().getLogicDeleteValue());
+                innerCriteriaUpdate.set(root.get("delFlag"), FlowFactory.getFlowConfig().getLogicDeleteValue());
             });
 
             return entityManager.createQuery(criteriaUpdate).executeUpdate();

@@ -2,9 +2,9 @@ package com.warm.flow.orm.dao;
 
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.dao.FlowSkipDao;
+import com.warm.flow.core.utils.StringUtils;
 import com.warm.flow.orm.entity.FlowSkip;
 import com.warm.flow.orm.utils.TenantDeleteUtil;
-import com.warm.flow.core.utils.StringUtils;
 
 import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaUpdate;
@@ -47,7 +47,7 @@ public class FlowSkipDaoImpl extends WarmDaoImpl<FlowSkip> implements FlowSkipDa
                 predicates.add(createIn(criteriaBuilder, root, "definitionId", defIds));
 
                 // 更新值
-                innerCriteriaUpdate.set(root.get("delFlag"),  FlowFactory.getFlowConfig().getLogicDeleteValue());
+                innerCriteriaUpdate.set(root.get("delFlag"), FlowFactory.getFlowConfig().getLogicDeleteValue());
             });
 
             return entityManager.createQuery(criteriaUpdate).executeUpdate();

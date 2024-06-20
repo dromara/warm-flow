@@ -100,12 +100,14 @@ public interface WarmDao<T> {
 
     /**
      * 批量新增
+     *
      * @param list 集合
      */
     void saveBatch(List<T> list);
 
     /**
      * 批量修改
+     *
      * @param list 集合
      */
     void updateBatch(List<T> list);

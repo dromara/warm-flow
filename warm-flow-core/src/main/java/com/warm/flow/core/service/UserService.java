@@ -23,11 +23,12 @@ public interface UserService extends IWarmService<User> {
      * @date 2024/5/10 13:59
      */
     List<User> taskAddUsers(List<Task> addTasks);
+
     /**
      * 设置流程用户
      *
      * @param addTasks 代办任务
-     * @param taskId 任务id
+     * @param taskId   任务id
      * @return List<User>
      * @author xiarg
      * @date 2024/5/10 13:59
@@ -43,6 +44,7 @@ public interface UserService extends IWarmService<User> {
      * @date 2024/5/10 15:45
      */
     List<User> taskAddUser(Task task);
+
     /**
      * 根据代办任务id删除流程用户
      *
@@ -56,7 +58,7 @@ public interface UserService extends IWarmService<User> {
      * 根据(代办任务，实例，历史表，节点等)id查询权限人或者处理人
      *
      * @param associated 代办任务id集合
-     * @param type 用户表类型
+     * @param type       用户表类型
      * @author xiarg
      * @date 2024/5/120 13:59
      */
@@ -66,7 +68,7 @@ public interface UserService extends IWarmService<User> {
      * 根据(代办任务，实例，历史表，节点等)id查询权限人或者处理人
      *
      * @param associated 代办任务id
-     * @param types 用户表类型
+     * @param types      用户表类型
      * @return
      */
     List<User> listByAssociatedAndTypes(Long associated, String... types);
@@ -75,7 +77,7 @@ public interface UserService extends IWarmService<User> {
      * 根据(代办任务，实例，历史表，节点等)id查询权限人或者处理人
      *
      * @param associateds (代办任务，实例，历史表，节点等)id集合
-     * @param types 用户表类型
+     * @param types       用户表类型
      * @return
      */
     List<User> getByAssociateds(List<Long> associateds, String... types);
@@ -83,9 +85,9 @@ public interface UserService extends IWarmService<User> {
     /**
      * 根据办理人查询
      *
-     * @param associated 代办任务id
+     * @param associated  代办任务id
      * @param processedBy 办理人
-     * @param types 用户表类型
+     * @param types       用户表类型
      * @return
      */
     List<User> listByProcessedBys(Long associated, String processedBy, String... types);
@@ -93,9 +95,9 @@ public interface UserService extends IWarmService<User> {
     /**
      * 根据办理人查询
      *
-     * @param associated 代办任务id
+     * @param associated   代办任务id
      * @param processedBys 办理人id集合
-     * @param types 用户表类型
+     * @param types        用户表类型
      * @return
      */
     List<User> getByProcessedBys(Long associated, List<String> processedBys, String... types);
@@ -103,11 +105,11 @@ public interface UserService extends IWarmService<User> {
     /**
      * 根据关联id更新权限人
      *
-     * @param associated 关联人id
+     * @param associated  关联人id
      * @param permissions 权限人
-     * @param type 权限人类型
-     * @param clear 是否清空代办任务的计划审批人
-     * @param handler 存储委派时的办理人
+     * @param type        权限人类型
+     * @param clear       是否清空代办任务的计划审批人
+     * @param handler     存储委派时的办理人
      * @return 结果
      * @author xiarg
      * @date 2024/5/10 11:19
@@ -116,18 +118,20 @@ public interface UserService extends IWarmService<User> {
 
     /**
      * 构造用户比表信息
-     * @param associated 关联id
+     *
+     * @param associated     关联id
      * @param permissionList 权限标识集合
-     * @param type 用户类型
+     * @param type           用户类型
      * @return 结果
      */
     List<User> structureUser(Long associated, List<String> permissionList, String type);
 
     /**
      * 构造用户比表信息
+     *
      * @param associated 关联id
      * @param permission 权限标识
-     * @param type 用户类型
+     * @param type       用户类型
      * @return 结果
      */
     User structureUser(Long associated, String permission, String type);
@@ -135,10 +139,10 @@ public interface UserService extends IWarmService<User> {
     /**
      * 构造用户比表信息
      *
-     * @param associated 关联id
+     * @param associated     关联id
      * @param permissionList 权限标识集合
-     * @param type 用户类型
-     * @param handler 办理人（记录委派人）
+     * @param type           用户类型
+     * @param handler        办理人（记录委派人）
      * @return 结果
      */
     List<User> structureUser(Long associated, List<String> permissionList, String type, String handler);
@@ -148,8 +152,8 @@ public interface UserService extends IWarmService<User> {
      *
      * @param associated 关联id
      * @param permission 权限标识
-     * @param type 用户类型
-     * @param handler 办理人（记录委派人）
+     * @param type       用户类型
+     * @param handler    办理人（记录委派人）
      * @return 结果
      */
     User structureUser(Long associated, String permission, String type, String handler);

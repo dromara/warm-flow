@@ -1,15 +1,21 @@
 package com.warm.flow.orm.entity;
 
 import com.warm.flow.core.entity.RootEntity;
+import com.warm.flow.orm.utils.JPAPredicateFunction;
 import com.warm.flow.orm.utils.JPAUpdateMergeFunction;
 import com.warm.flow.orm.utils.JPAUtil;
-import com.warm.flow.orm.utils.JPAPredicateFunction;
-
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Transient;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import java.util.*;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * @author vanlin
@@ -21,6 +27,7 @@ import java.util.*;
 public abstract class JPARootEntity<T extends RootEntity> implements RootEntity {
 
     protected static final HashMap<String, String> JPA_ROOT_ENTITY_MAPPING = new HashMap<>();
+
     static {
         JPAUtil.initMapping(JPARootEntity.class, JPA_ROOT_ENTITY_MAPPING);
     }
@@ -56,7 +63,9 @@ public abstract class JPARootEntity<T extends RootEntity> implements RootEntity 
 
     public JPAPredicateFunction<CriteriaBuilder, Root<T>, List<Predicate>> commonPredicate() {
         return this.commonPredicate;
-    };
+    }
+
+    ;
 
     /**
      * 主键
@@ -67,25 +76,25 @@ public abstract class JPARootEntity<T extends RootEntity> implements RootEntity 
     /**
      * 创建时间
      */
-    @Column(name="create_time")
+    @Column(name = "create_time")
     private Date createTime;
 
     /**
      * 更新时间
      */
-    @Column(name="update_time")
+    @Column(name = "update_time")
     private Date updateTime;
 
     /**
      * 租户ID
      */
-    @Column(name="tenant_id")
+    @Column(name = "tenant_id")
     private String tenantId;
 
     /**
      * 删除标记
      */
-    @Column(name="del_flag")
+    @Column(name = "del_flag")
     private String delFlag;
 
     @Override
@@ -97,7 +106,7 @@ public abstract class JPARootEntity<T extends RootEntity> implements RootEntity 
     @Override
     public T setId(Long id) {
         this.id = id;
-        return (T)this;
+        return (T) this;
     }
 
     @Override
@@ -109,7 +118,7 @@ public abstract class JPARootEntity<T extends RootEntity> implements RootEntity 
     @Override
     public T setCreateTime(Date createTime) {
         this.createTime = createTime;
-        return (T)this;
+        return (T) this;
     }
 
     @Override
@@ -121,7 +130,7 @@ public abstract class JPARootEntity<T extends RootEntity> implements RootEntity 
     @Override
     public T setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
-        return (T)this;
+        return (T) this;
     }
 
     @Override
@@ -133,7 +142,7 @@ public abstract class JPARootEntity<T extends RootEntity> implements RootEntity 
     @Override
     public T setTenantId(String tenantId) {
         this.tenantId = tenantId;
-        return (T)this;
+        return (T) this;
     }
 
     @Override
@@ -145,7 +154,7 @@ public abstract class JPARootEntity<T extends RootEntity> implements RootEntity 
     @Override
     public T setDelFlag(String delFlag) {
         this.delFlag = delFlag;
-        return (T)this;
+        return (T) this;
     }
 
     @Override

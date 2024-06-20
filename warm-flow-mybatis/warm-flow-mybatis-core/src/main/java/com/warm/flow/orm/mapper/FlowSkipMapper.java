@@ -1,6 +1,5 @@
 package com.warm.flow.orm.mapper;
 
-import com.warm.flow.orm.entity.FlowNode;
 import com.warm.flow.orm.entity.FlowSkip;
 import org.apache.ibatis.annotations.Param;
 

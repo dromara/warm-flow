@@ -8,6 +8,8 @@ import com.warm.flow.core.service.*;
 import com.warm.flow.core.service.impl.*;
 import com.warm.flow.orm.dao.*;
 import com.warm.flow.orm.invoker.EntityInvoker;
+import com.warm.flow.orm.utils.CommonUtil;
+import org.apache.ibatis.solon.annotation.Db;
 import org.noear.solon.Solon;
 import org.noear.solon.annotation.Bean;
 import org.noear.solon.annotation.Configuration;
@@ -96,12 +98,13 @@ public class FlowAutoConfig {
     }
 
     @Bean
-    public WarmFlow initFlow() {
+    public WarmFlow initFlow(@Db org.apache.ibatis.session.Configuration db1Cfg) {
         // 设置创建对象方法
         EntityInvoker.setNewEntity();
         FrameInvoker.setCfgFunction((key) -> Solon.cfg().get(key));
         FrameInvoker.setBeanFunction(Solon.context()::getBean);
         WarmFlow flowConfig = WarmFlow.init();
+        CommonUtil.setDataSourceType(flowConfig, db1Cfg);
         FlowFactory.setFlowConfig(flowConfig);
         log.info("warm-flow初始化结束");
         return FlowFactory.getFlowConfig();

@@ -23,12 +23,6 @@ public class FlowParams implements Serializable {
     private String handler;
 
     /**
-     * 用户账号，唯一标识就行（即将删除字段）
-     */
-    @Deprecated
-    private String createBy;
-
-    /**
      * 节点编码（如果要指定跳转节点，传入）
      */
     private String nodeCode;
@@ -37,10 +31,7 @@ public class FlowParams implements Serializable {
      * 用户权限标识
      */
     private List<String> permissionFlag;
-    /**
-     * 额外办理人：加减签，转办，委托，抄送人
-     */
-    private List<String> additionalHandler;
+
     /**
      * 跳转类型（PASS审批通过 REJECT退回）
      */
@@ -74,7 +65,7 @@ public class FlowParams implements Serializable {
     /**
      * 新增历史记录表扩展字段 存储业务详情
      */
-    private String taskExt;
+    private String hisTaskExt;
 
     public static FlowParams build() {
         return new FlowParams();
@@ -115,8 +106,8 @@ public class FlowParams implements Serializable {
         return this;
     }
 
-    public FlowParams taskExt(String taskExt) {
-        this.taskExt = taskExt;
+    public FlowParams hisTaskExt(String hisTaskExt) {
+        this.hisTaskExt = hisTaskExt;
         return this;
     }
 
@@ -130,15 +121,6 @@ public class FlowParams implements Serializable {
 
     public FlowParams permissionFlag(List<String> permissionFlag) {
         this.permissionFlag = permissionFlag;
-        return this;
-    }
-
-    public List<String> getAdditionalHandler() {
-        return additionalHandler;
-    }
-
-    public FlowParams additionalHandler(List<String> permissionList) {
-        this.additionalHandler = permissionList;
         return this;
     }
 
@@ -166,8 +148,8 @@ public class FlowParams implements Serializable {
         return ext;
     }
 
-    public String getTaskExt() {
-        return taskExt;
+    public String getHisTaskExt() {
+        return hisTaskExt;
     }
 
     public Integer getFlowStatus() {
@@ -188,10 +170,12 @@ public class FlowParams implements Serializable {
         return this;
     }
 
+    @Deprecated
     public String getCreateBy() {
         return handler;
     }
 
+    @Deprecated
     public FlowParams setCreateBy(String createBy) {
         this.handler = createBy;
         return this;

@@ -1,9 +1,6 @@
 package com.warm.flow.orm.utils;
 
 import com.warm.flow.core.entity.RootEntity;
-import com.warm.flow.orm.entity.JPARootEntity;
-
-import javax.persistence.EntityManager;
 
 /**
  * @author vanlin

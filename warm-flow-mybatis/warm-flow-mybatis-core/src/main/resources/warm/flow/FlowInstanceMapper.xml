@@ -186,7 +186,8 @@
         set t.del_flag = #{logicDeleteValue}
         where t.id = #{id}
         <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
-        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag = #{logicNotDeleteValue}</if>
+        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag = #{logicNotDeleteValue}
+        </if>
     </update>
 
     <delete id="deleteByIds">
@@ -205,7 +206,8 @@
             #{id}
         </foreach>
         <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
-        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag = #{logicNotDeleteValue}</if>
+        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag = #{logicNotDeleteValue}
+        </if>
     </update>
 
     <delete id="delete" parameterType="com.warm.flow.orm.entity.FlowInstance">
@@ -232,7 +234,8 @@
         set t.del_flag = #{logicDeleteValue}
         <where>
             <if test="entity.id != null">and t.id = #{entity.id}</if>
-            <if test="entity.businessId != null and entity.businessId != ''">and t.business_id = #{entity.businessId}</if>
+            <if test="entity.businessId != null and entity.businessId != ''">and t.business_id = #{entity.businessId}
+            </if>
             <if test="entity.definitionId != null">and t.definition_id = #{entity.definitionId}</if>
             <if test="entity.nodeCode != null and entity.nodeCode != ''">and t.node_code = #{entity.nodeCode}</if>
             <if test="entity.nodeName != null and entity.nodeName != ''">and t.node_name = #{entity.nodeName}</if>
@@ -244,7 +247,9 @@
             <if test="entity.updateTime != null">and t.update_time = #{entity.updateTime}</if>
             <if test="entity.tenantId != null and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
             <if test="entity.ext != null">and t.ext = #{entity.ext}</if>
-            <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag = #{logicNotDeleteValue}</if>
+            <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag =
+                #{logicNotDeleteValue}
+            </if>
         </where>
     </update>
 

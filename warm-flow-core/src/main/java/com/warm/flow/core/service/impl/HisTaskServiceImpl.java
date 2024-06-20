@@ -6,9 +6,10 @@ import com.warm.flow.core.dto.FlowParams;
 import com.warm.flow.core.entity.HisTask;
 import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.Task;
-import com.warm.flow.core.enums.CooperateType;
 import com.warm.flow.core.entity.User;
-import com.warm.flow.core.enums.*;
+import com.warm.flow.core.enums.CooperateType;
+import com.warm.flow.core.enums.FlowStatus;
+import com.warm.flow.core.enums.SkipType;
 import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.HisTaskService;
 import com.warm.flow.core.utils.ArrayUtil;
@@ -83,7 +84,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
             hisTask.setMessage(flowParams.getMessage());
             hisTask.setCreateTime(new Date());
             //业务详情添加至历史记录
-            hisTask.setExt(flowParams.getTaskExt());
+            hisTask.setExt(flowParams.getHisTaskExt());
             FlowFactory.dataFillHandler().idFill(hisTask);
             hisTasks.add(hisTask);
         }

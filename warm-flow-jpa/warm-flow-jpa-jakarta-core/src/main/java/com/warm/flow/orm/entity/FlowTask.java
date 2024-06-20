@@ -2,15 +2,18 @@ package com.warm.flow.orm.entity;
 
 import com.warm.flow.core.entity.Task;
 import com.warm.flow.core.entity.User;
+import com.warm.flow.core.utils.StringUtils;
+import com.warm.flow.orm.utils.JPAPredicateFunction;
 import com.warm.flow.orm.utils.JPAUpdateMergeFunction;
 import com.warm.flow.orm.utils.JPAUtil;
-import com.warm.flow.orm.utils.JPAPredicateFunction;
-import com.warm.flow.core.utils.StringUtils;
-
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -40,13 +43,13 @@ public class FlowTask extends JPARootEntity<FlowTask> implements Task {
                 if (StringUtils.isNotEmpty(this.nodeName)) {
                     predicates.add(criteriaBuilder.equal(root.get("nodeName"), this.nodeName));
                 }
-                if  (Objects.nonNull(this.nodeType)) {
+                if (Objects.nonNull(this.nodeType)) {
                     predicates.add(criteriaBuilder.equal(root.get("nodeType"), this.nodeType));
                 }
-                if  (Objects.nonNull(this.definitionId)) {
+                if (Objects.nonNull(this.definitionId)) {
                     predicates.add(criteriaBuilder.equal(root.get("definitionId"), this.definitionId));
                 }
-                if  (Objects.nonNull(this.instanceId)) {
+                if (Objects.nonNull(this.instanceId)) {
                     predicates.add(criteriaBuilder.equal(root.get("instanceId"), this.instanceId));
                 }
             };
@@ -99,13 +102,13 @@ public class FlowTask extends JPARootEntity<FlowTask> implements Task {
     /**
      * 对应flow_definition表的id
      */
-    @Column(name="definition_id")
+    @Column(name = "definition_id")
     private Long definitionId;
 
     /**
      * 流程实例表id
      */
-    @Column(name="instance_id")
+    @Column(name = "instance_id")
     private Long instanceId;
 
     /**
@@ -123,19 +126,19 @@ public class FlowTask extends JPARootEntity<FlowTask> implements Task {
     /**
      * 节点编码
      */
-    @Column(name="node_code")
+    @Column(name = "node_code")
     private String nodeCode;
 
     /**
      * 节点名称
      */
-    @Column(name="node_name")
+    @Column(name = "node_name")
     private String nodeName;
 
     /**
      * 节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）
      */
-    @Column(name="node_type")
+    @Column(name = "node_type")
     private Integer nodeType;
 
     /**

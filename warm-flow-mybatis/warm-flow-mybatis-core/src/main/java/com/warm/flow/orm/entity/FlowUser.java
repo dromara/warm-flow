@@ -10,7 +10,7 @@ import java.util.Date;
  * @author xiarg
  * @date 2024/5/10 10:58
  */
-public class FlowUser implements User{
+public class FlowUser implements User {
 
     /**
      * 主键

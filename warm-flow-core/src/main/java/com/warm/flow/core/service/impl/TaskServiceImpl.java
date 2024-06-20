@@ -53,7 +53,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         AssertUtil.isTrue(NodeType.isEnd(instance.getNodeType()), ExceptionCons.FLOW_FINISH);
 
         // 如果是受托人在处理任务，需要处理一条委派记录，并且更新委托人，回到计划审批人,然后直接返回流程实例
-        if(handleDepute(task, flowParams)) return instance;
+        if (handleDepute(task, flowParams)) {
+            return instance;
+        }
 
         // TODO min 后续考虑并发问题，待办任务和实例表不同步，可给代办任务id加锁，抽取所接口，方便后续兼容分布式锁
         // 非第一个记得跳转类型必传
@@ -61,27 +63,29 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             AssertUtil.isFalse(StringUtils.isNotEmpty(flowParams.getSkipType()), ExceptionCons.NULL_CONDITIONVALUE);
         }
 
-        Node NowNode = CollUtil.getOne(FlowFactory.nodeService()
+        Node nowNode = CollUtil.getOne(FlowFactory.nodeService()
                 .getByNodeCodes(Collections.singletonList(task.getNodeCode()), task.getDefinitionId()));
-        AssertUtil.isTrue(ObjectUtil.isNull(NowNode), ExceptionCons.LOST_CUR_NODE);
+        AssertUtil.isTrue(ObjectUtil.isNull(nowNode), ExceptionCons.LOST_CUR_NODE);
 
         //执行开始节点 开始监听器
         List<User> userList = FlowFactory.userService().listByAssociatedAndTypes(task.getId());
         task.setUserList(userList);
-        ListenerUtil.executeListener(new ListenerVariable(instance, NowNode, flowParams.getVariable(), task)
+        ListenerUtil.executeListener(new ListenerVariable(instance, nowNode, flowParams.getVariable(), task)
                 , Listener.LISTENER_START);
 
         //判断结点是否有权限监听器,有执行权限监听器NowNode.setPermissionFlag,无走数据库的权限标识符
-        ListenerUtil.executeGetNodePermission(new ListenerVariable(instance, flowParams.getVariable(), task), NowNode);
+        ListenerUtil.executeGetNodePermission(new ListenerVariable(instance, flowParams.getVariable(), task), nowNode);
 
         // 判断当前处理人是否有权限处理
-        checkAuth(NowNode, task, flowParams.getPermissionFlag());
+        checkAuth(nowNode, task, flowParams.getPermissionFlag());
 
         //或签、会签、票签逻辑处理
-        if (cooperate(NowNode, task, flowParams)) return instance;
+        if (cooperate(nowNode, task, flowParams)) {
+            return instance;
+        }
 
         // 获取关联的节点，判断当前处理人是否有权限处理
-        Node nextNode = getNextNode(NowNode, task, flowParams);
+        Node nextNode = getNextNode(nowNode, task, flowParams);
 
         // 如果是网关节点，则重新获取后续节点
         List<Node> nextNodes = getNextByCheckGateWay(flowParams, nextNode);
@@ -103,10 +107,10 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         setSkipInstance(instance, addTasks, flowParams);
 
         // 业务详情 存入历史记录
-        String taskExt = flowParams.getTaskExt();
+        String hisTaskExt = flowParams.getHisTaskExt();
 
         // 一票否决（谨慎使用），如果退回，退回指向节点后还存在其他正在执行的代办任务，转历史任务，状态都为失效,重走流程。
-        oneVoteVeto(task, flowParams.getSkipType(), nextNode.getNodeCode(),taskExt);
+        oneVoteVeto(task, flowParams.getSkipType(), nextNode.getNodeCode(), hisTaskExt);
 
         // 代办任务设置处理人
         List<User> users = FlowFactory.userService().setSkipUser(addTasks, task.getId());
@@ -115,11 +119,11 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         updateFlowInfo(task, instance, insHisList, addTasks, users);
 
         // 处理未完成的任务，当流程完成，还存在代办任务未完成，转历史任务，状态完成。
-        handUndoneTask(instance,taskExt);
+        handUndoneTask(instance, hisTaskExt);
 
         // 最后判断是否存在监听器，存在执行监听器
         ListenerUtil.executeListener(new ListenerVariable(instance, flowParams.getVariable(), task, addTasks)
-                , NowNode, nextNodes);
+                , nowNode, nextNodes);
         return instance;
     }
 
@@ -159,7 +163,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 删除流程相关办理人
         FlowFactory.userService().deleteByTaskIds(Collections.singletonList(task.getId()));
         // 处理未完成的任务，当流程完成，还存在代办任务未完成，转历史任务，状态完成。
-        handUndoneTask(instance,flowParams.getTaskExt());
+        handUndoneTask(instance, flowParams.getHisTaskExt());
         return instance;
     }
 
@@ -186,7 +190,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     @Override
-    public boolean depute(Long taskId, String curUser, List<String> permissionFlag, List<String> addHandlers, String message){
+    public boolean depute(Long taskId, String curUser, List<String> permissionFlag, List<String> addHandlers, String message) {
         List<User> users = FlowFactory.userService().getByProcessedBys(taskId, addHandlers, UserType.DEPUTE.getKey());
         AssertUtil.isTrue(CollUtil.isNotEmpty(users), ExceptionCons.IS_ALREADY_DEPUTE);
 
@@ -203,7 +207,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     @Override
-    public boolean addSignature(Long taskId, String curUser, List<String> permissionFlag, List<String> addHandlers, String message){
+    public boolean addSignature(Long taskId, String curUser, List<String> permissionFlag, List<String> addHandlers, String message) {
         List<User> users = FlowFactory.userService().getByProcessedBys(taskId, addHandlers, UserType.APPROVAL.getKey());
         AssertUtil.isTrue(CollUtil.isNotEmpty(users), ExceptionCons.IS_ALREADY_SIGN);
 
@@ -219,7 +223,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     @Override
-    public boolean reductionSignature(Long taskId, String curUser, List<String> permissionFlag, List<String> reductionHandlers, String message){
+    public boolean reductionSignature(Long taskId, String curUser, List<String> permissionFlag, List<String> reductionHandlers, String message) {
         List<User> users = FlowFactory.userService().list(FlowFactory.newUser().setAssociated(taskId)
                 .setType(UserType.APPROVAL.getKey()));
 
@@ -256,7 +260,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
         List<HisTask> hisTasks = null;
         // 删除对应的操作人
-        if(CollUtil.isNotEmpty(modifyHandler.getReductionHandlers())){
+        if (CollUtil.isNotEmpty(modifyHandler.getReductionHandlers())) {
             for (String reductionHandler : modifyHandler.getReductionHandlers()) {
                 FlowFactory.userService().remove(FlowFactory.newUser().setAssociated(modifyHandler.getTaskId())
                         .setProcessedBy(reductionHandler));
@@ -266,8 +270,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         }
 
         // 新增权限人
-        if(CollUtil.isNotEmpty(modifyHandler.getAddHandlers())){
-            String type;;
+        if (CollUtil.isNotEmpty(modifyHandler.getAddHandlers())) {
+            String type;
             if (CooperateType.TRANSFER.getKey().equals(modifyHandler.getCooperateType())) {
                 type = UserType.TRANSFER.getKey();
             } else if (CooperateType.DEPUTE.getKey().equals(modifyHandler.getCooperateType())) {
@@ -402,7 +406,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 获取受托人
         User entrustedUser = FlowFactory.userService().getOne(FlowFactory.newUser().setAssociated(task.getId())
                 .setProcessedBy(flowParams.getHandler()).setType(UserType.DEPUTE.getKey()));
-        if (ObjectUtil.isNull(entrustedUser)) return false;
+        if (ObjectUtil.isNull(entrustedUser)) {
+            return false;
+        }
 
         // 记录受托人处理任务记录
         HisTask hisTask = FlowFactory.hisTaskService().setDeputeHisTask(task, flowParams, entrustedUser);
@@ -425,6 +431,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     /**
      * 会签，票签，协作处理，返回true；或签或者会签、票签结束返回false
+     *
      * @param nowNode
      * @param task
      * @param flowParams
@@ -433,7 +440,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     private boolean cooperate(Node nowNode, Task task, FlowParams flowParams) {
         BigDecimal nodeRatio = nowNode.getNodeRatio();
         // 或签，直接返回
-        if (CooperateType.isOrSign(nodeRatio)) return false;
+        if (CooperateType.isOrSign(nodeRatio)) {
+            return false;
+        }
 
         // 办理人和转办人列表
         List<User> todoList = FlowFactory.userService().listByAssociatedAndTypes(task.getId()
@@ -445,7 +454,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         AssertUtil.isTrue(Objects.isNull(todoUser), ExceptionCons.NOT_AUTHORITY);
 
         // 当只剩一人时，他决定走向
-        if (todoList.size() == 1) return false;
+        if (todoList.size() == 1) {
+            return false;
+        }
 
         // 除当前办理人外剩余办理人列表
         List<User> restList = StreamUtils.filter(todoList, u -> !Objects.equals(u.getProcessedBy(), flowParams.getHandler()));
@@ -648,8 +659,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     /**
      * 判断当前处理人是否有权限处理
      *
-     * @param NowNode 当前节点权限（动态权限）
-     * @param task 当前任务（任务id）
+     * @param NowNode         当前节点权限（动态权限）
+     * @param task            当前任务（任务id）
      * @param permissionFlags 当前处理人的权限
      */
     private void checkAuth(Node NowNode, Task task, List<String> permissionFlags) {
@@ -715,7 +726,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
      * @param nextNodeCode
      * @return
      */
-    private void oneVoteVeto(Task task, String skipType, String nextNodeCode,String taskExt) {
+    private void oneVoteVeto(Task task, String skipType, String nextNodeCode, String hisTaskExt) {
         // 一票否决（谨慎使用），如果退回，退回指向节点后还存在其他正在执行的代办任务，转历史任务，状态失效,重走流程。
         if (SkipType.isReject(skipType)) {
             List<Task> tasks = list(FlowFactory.newTask().setInstanceId(task.getInstanceId()));
@@ -735,7 +746,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 }
             }
             if (CollUtil.isNotEmpty(noDoneTasks)) {
-                convertHisTask(noDoneTasks, FlowStatus.INVALID.getKey(),taskExt);
+                convertHisTask(noDoneTasks, FlowStatus.INVALID.getKey(), hisTaskExt);
             }
         }
     }
@@ -768,11 +779,11 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
      *
      * @param instance
      */
-    private void handUndoneTask(Instance instance,String taskExt) {
+    private void handUndoneTask(Instance instance, String hisTaskExt) {
         if (NodeType.isEnd(instance.getNodeType())) {
             List<Task> taskList = list(FlowFactory.newTask().setInstanceId(instance.getId()));
             if (CollUtil.isNotEmpty(taskList)) {
-                convertHisTask(taskList, FlowStatus.AUTO_PASS.getKey(),taskExt);
+                convertHisTask(taskList, FlowStatus.AUTO_PASS.getKey(), hisTaskExt);
             }
         }
     }
@@ -782,13 +793,13 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
      *
      * @param taskList
      */
-    private void convertHisTask(List<Task> taskList, Integer flowStatus, String taskExt) {
+    private void convertHisTask(List<Task> taskList, Integer flowStatus, String hisTaskExt) {
         List<HisTask> insHisList = new ArrayList<>();
         for (Task task : taskList) {
             List<User> userList = FlowFactory.userService().listByAssociatedAndTypes(task.getId());
             List<HisTask> hisTasks = FlowFactory.hisTaskService().autoHisTask(flowStatus, task, userList, CooperateType.APPROVAL.getKey());
             // 设置每个HisTask的ext字段
-            hisTasks.forEach(hisTask -> hisTask.setExt(taskExt));
+            hisTasks.forEach(hisTask -> hisTask.setExt(hisTaskExt));
             insHisList.addAll(hisTasks);
         }
         removeByIds(StreamUtils.toList(taskList, Task::getId));

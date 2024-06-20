@@ -18,7 +18,7 @@ public interface WarmMapper<T> {
     /**
      * 根据id查询
      *
-     * @param id 主键
+     * @param id     主键
      * @param entity 查询实体列表
      * @return 实体
      */
@@ -27,7 +27,7 @@ public interface WarmMapper<T> {
     /**
      * 根据ids查询
      *
-     * @param ids 主键
+     * @param ids    主键
      * @param entity 查询实体列表
      * @return 实体
      */
@@ -86,7 +86,7 @@ public interface WarmMapper<T> {
     /**
      * 根据id删除
      *
-     * @param id 主键
+     * @param id     主键
      * @param entity 查询实体列表
      * @return 结果
      */
@@ -104,7 +104,7 @@ public interface WarmMapper<T> {
     /**
      * 根据ids批量删除
      *
-     * @param ids 需要删除的数据主键集合
+     * @param ids    需要删除的数据主键集合
      * @param entity 查询实体列表
      * @return 结果
      */
