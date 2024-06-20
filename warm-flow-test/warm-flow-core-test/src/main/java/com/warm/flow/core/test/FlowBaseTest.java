@@ -22,7 +22,6 @@ public class FlowBaseTest {
         return FlowParams.build().flowCode("leaveFlow-serial1")
                 .handler("1")
                 .skipType(SkipType.PASS.getKey())
-                .additionalHandler(Arrays.asList("role:100", "role:101"))
                 .permissionFlag(Arrays.asList("role:1", "role:2"));
     }
 
