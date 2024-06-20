@@ -9,8 +9,6 @@ import com.warm.flow.core.service.impl.*;
 import com.warm.flow.orm.dao.*;
 import com.warm.flow.orm.invoker.EntityInvoker;
 import com.warm.flow.spring.boot.utils.SpringUtil;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +17,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
 
-import javax.sql.DataSource;
 import java.util.Objects;
 
 /**
@@ -43,7 +40,6 @@ public class FlowAutoConfig {
     public DefService definitionService(FlowDefinitionDao definitionDao) {
         return new DefServiceImpl().setDao(definitionDao);
     }
-
 
     @Bean
     public FlowNodeDao nodeDao() {
@@ -117,10 +113,4 @@ public class FlowAutoConfig {
         return FlowFactory.getFlowConfig();
     }
 
-    /*@Bean
-    public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
-        SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
-        sessionFactory.setDataSource(dataSource);
-        return sessionFactory.getObject();
-    }*/
 }

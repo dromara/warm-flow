@@ -12,6 +12,7 @@ import com.warm.flow.core.service.TaskService;
 import com.warm.flow.core.utils.page.Page;
 
 import java.io.FileInputStream;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,9 +31,13 @@ public class FlowBaseTest {
      * 部署流程
      */
     public void deployFlow(DefService defService) throws Exception {
-        // warm-flow-test\warm-flow-core-test\src\main\resources\leaveFlow-serial1.xml
-        String path = "D:\\java\\warm-flow\\warm-flow-doc\\leaveFlow-serial1_1.0.xml";
-        System.out.println("已部署流程的id：" + defService.importXml(new FileInputStream(path)).getId());
+        ClassLoader classLoader = getClass().getClassLoader();
+        URL resource = classLoader.getResource("");
+        String path = resource.getPath();
+        int i = path.indexOf("/warm-flow-test/");
+        String newPath = path.substring(0, i + 16) + "warm-flow-core-test/src/main/resources/leaveFlow-serial1.xml";
+
+        System.out.println("已部署流程的id：" + defService.importXml(new FileInputStream(newPath)).getId());
     }
 
     /**
