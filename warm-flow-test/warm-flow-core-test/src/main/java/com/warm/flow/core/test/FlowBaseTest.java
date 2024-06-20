@@ -20,7 +20,7 @@ import java.util.List;
 public class FlowBaseTest {
 
     public FlowParams getUser() {
-        return FlowParams.build().flowCode("leaveFlow-serial1")
+        return FlowParams.build().flowCode("serial1")
                 .handler("1")
                 .skipType(SkipType.PASS.getKey())
                 .additionalHandler(Arrays.asList("role:100", "role:101"))
@@ -35,7 +35,7 @@ public class FlowBaseTest {
         URL resource = classLoader.getResource("");
         String path = resource.getPath();
         int i = path.indexOf("/warm-flow-test/");
-        String newPath = path.substring(0, i + 16) + "warm-flow-core-test/src/main/resources/leaveFlow-serial1.xml";
+        String newPath = path.substring(0, i + 16) + "warm-flow-core-test/src/main/resources/leaveFlow-serial-内部测试用.xml";
 
         System.out.println("已部署流程的id：" + defService.importXml(new FileInputStream(newPath)).getId());
     }
@@ -44,7 +44,7 @@ public class FlowBaseTest {
      * 发布流程
      */
     public void publish(DefService defService) {
-        defService.publish(1253087350804844550L);
+        defService.publish(1253349489801039872L);
     }
 
     /**
@@ -59,7 +59,7 @@ public class FlowBaseTest {
      */
     public void skipFlow(InsService insService, TaskService taskService) {
         // 通过实例id流转
-        Instance instance = insService.skipByInsId(1239250784500191232L, getUser().skipType(SkipType.PASS.getKey())
+        Instance instance = insService.skipByInsId(1253350035974918144L, getUser().skipType(SkipType.PASS.getKey())
                 .permissionFlag(Arrays.asList("role:1", "role:2")));
         System.out.println("流转后流程实例：" + instance.toString());
 
