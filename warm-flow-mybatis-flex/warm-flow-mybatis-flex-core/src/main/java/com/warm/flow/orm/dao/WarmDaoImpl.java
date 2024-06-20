@@ -69,7 +69,7 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
     @Override
     public List<T> selectList(T entity, WarmQuery<T> query) {
         QueryWrapper queryWrapper = TenantDeleteUtil.getDefaultWrapper(entity);
-        if(StringUtils.isNotEmpty(query.getOrderBy())){
+        if (ObjectUtil.isNotNull(query)) {
             queryWrapper.orderBy(query.getOrderBy(), "asc".equals(query.getIsAsc()));
         }
         return getMapper().selectListByQuery(queryWrapper);
@@ -89,8 +89,8 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
 
     @Override
     public int updateById(T entity) {
-        TenantDeleteUtil.fillEntity(entity);
-        return getMapper().update(entity, true);
+        QueryWrapper queryWrapper = TenantDeleteUtil.getIdWrapper(entity);
+        return getMapper().updateByQuery(entity, true, queryWrapper);
     }
 
     @Override

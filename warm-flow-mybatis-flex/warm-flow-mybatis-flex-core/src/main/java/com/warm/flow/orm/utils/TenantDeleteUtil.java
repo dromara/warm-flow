@@ -27,6 +27,19 @@ public class TenantDeleteUtil {
     public static <T extends RootEntity> QueryWrapper getDefaultWrapper(T entity) {
         QueryWrapper queryWrapper = QueryWrapper.create(entity);
         WarmFlow flowConfig = FlowFactory.getFlowConfig();
+        handleQueryWrapper(queryWrapper, flowConfig);
+        return queryWrapper;
+    }
+
+
+    public static <T extends RootEntity> QueryWrapper getIdWrapper(T entity) {
+        QueryWrapper queryWrapper = QueryWrapper.create();
+        queryWrapper.eq("id", entity.getId());
+        WarmFlow flowConfig = FlowFactory.getFlowConfig();
+        handleQueryWrapper(queryWrapper, flowConfig);
+        return queryWrapper;
+    }
+    private static void handleQueryWrapper(QueryWrapper queryWrapper, WarmFlow flowConfig) {
         if (ObjectUtil.isNotNull(FlowFactory.tenantHandler())) {
             TenantHandler tenantHandler = FlowFactory.tenantHandler();
             queryWrapper.eq("tenant_Id", tenantHandler.getTenantId());
@@ -34,7 +47,6 @@ public class TenantDeleteUtil {
         if (flowConfig.isLogicDelete()) {
             queryWrapper.eq("del_Flag", flowConfig.getLogicNotDeleteValue());
         }
-        return queryWrapper;
     }
 
     /**
