@@ -43,7 +43,7 @@ public class FlowBaseTest {
      * 发布流程
      */
     public void publish(DefService defService) {
-        defService.publish(1253349489801039872L);
+        defService.publish(1253835335603982342L);
     }
 
     /**
@@ -58,7 +58,7 @@ public class FlowBaseTest {
      */
     public void skipFlow(InsService insService, TaskService taskService) {
         // 通过实例id流转
-        Instance instance = insService.skipByInsId(1253350035974918144L, getUser().skipType(SkipType.PASS.getKey())
+        Instance instance = insService.skipByInsId(1253835478407450624L, getUser().skipType(SkipType.PASS.getKey())
                 .permissionFlag(Arrays.asList("role:1", "role:2")));
         System.out.println("流转后流程实例：" + instance.toString());
 
@@ -74,15 +74,15 @@ public class FlowBaseTest {
     public void termination(TaskService taskService) {
         FlowParams flowParams = new FlowParams();
         flowParams.message("终止流程").handler("1");
-        taskService.termination(1239251891997773824L, flowParams);
+        taskService.termination(1253834874314428416L, flowParams);
     }
 
     /**
      * 跳转到指定节点 跳转到结束节点
      */
     public void skipAnyNode(TaskService taskService) {
-        Instance instance = taskService.skip(1239251185018474496L, getUser().skipType(SkipType.PASS.getKey())
-                .permissionFlag(Arrays.asList("role:1", "role:2")).nodeCode("9edc9b26-cab4-4fd4-9a30-c89f11626911"));
+        Instance instance = taskService.skip(1253834466326089728L, getUser().skipType(SkipType.PASS.getKey())
+                .permissionFlag(Arrays.asList("role:1", "role:2")).nodeCode("5"));
         System.out.println("流转后流程实例：" + instance.toString());
     }
 
@@ -101,7 +101,7 @@ public class FlowBaseTest {
      * 转办
      */
     public void transfer(TaskService taskService) {
-         taskService.transfer(1239301524417548289L
+         taskService.transfer(1253835478436810752L
                  , "1"
                  , Arrays.asList("role:1", "role:2", "user:1")
                  , Arrays.asList("2", "3")
@@ -112,7 +112,7 @@ public class FlowBaseTest {
      * 委派
      */
     public void depute(TaskService taskService){
-        taskService.transfer(1243308524025548800L
+        taskService.transfer(1253840790778679296L
                 , "1"
                 , Arrays.asList("role:1", "role:2", "user:1")
                 , Arrays.asList("2", "3")
@@ -123,7 +123,7 @@ public class FlowBaseTest {
      * 加签
      */
     public void addSignature(TaskService taskService){
-        taskService.transfer(1234425333428654080L
+        taskService.addSignature(1253841163543252992L
                 , "1"
                 , Arrays.asList("role:1", "role:2", "user:1")
                 , Arrays.asList("2", "3")
@@ -134,7 +134,7 @@ public class FlowBaseTest {
      * 减签
      */
     public void reductionSignature(TaskService taskService){
-        taskService.transfer(1234425333428654080L
+        taskService.reductionSignature(1253841163543252992L
                 , "1"
                 , Arrays.asList("role:1", "role:2", "user:1")
                 , Arrays.asList("2", "3")

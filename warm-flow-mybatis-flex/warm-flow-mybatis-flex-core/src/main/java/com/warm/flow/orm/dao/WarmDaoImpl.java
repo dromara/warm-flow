@@ -54,7 +54,10 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
     @Override
     public Page<T> selectPage(T entity, Page<T> page) {
         com.mybatisflex.core.paginate.Page<T> pageFlex =
-                new com.mybatisflex.core.paginate.Page<>(page.getPageNum(), page.getPageSize());
+                new com.mybatisflex.core.paginate.Page<>(
+                        (page.getPageNum()/page.getPageSize())+1,
+                        page.getPageSize()
+                );
         QueryWrapper queryWrapper = TenantDeleteUtil.getDefaultWrapper(entity);
         if(StringUtils.isNotEmpty(page.getOrderBy())){
             queryWrapper.orderBy(page.getOrderBy(), "asc".equals(page.getIsAsc()));
@@ -100,12 +103,12 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
 
     @Override
     public int deleteById(Serializable id) {
-        return delete(newEntity(), (uq) -> uq.eq(T::getId, id), (qw) -> qw.eq(T::getId, id));
+        return delete(newEntity(), (uq) -> uq.eq("id", id), (qw) -> qw.eq("id", id));
     }
 
     @Override
     public int deleteByIds(Collection<? extends Serializable> ids) {
-        return delete(newEntity(), (uq) -> uq.in(T::getId, ids), (qw) -> qw.in(T::getId, ids));
+        return delete(newEntity(), (uq) -> uq.in("id", ids), (qw) -> qw.in("id", ids));
     }
 
     @Override
@@ -123,8 +126,8 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
     }
 
     public int delete(T entry, Consumer<QueryWrapper> uq, Consumer<QueryWrapper> qw) {
-        TenantDeleteUtil.getDefaultWrapper(entry);
-        QueryWrapper queryWrapper = QueryWrapper.create(entry);
+        TenantDeleteUtil.delFillEntity(entry);
+        QueryWrapper queryWrapper = TenantDeleteUtil.getDefaultWrapper(entry);
         if (StringUtils.isNotEmpty(entry.getDelFlag())) {
             if (ObjectUtil.isNotNull(uq)) {
                 uq.accept(queryWrapper);
@@ -135,7 +138,7 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
             qw.accept(queryWrapper);
         }
         if(StringUtils.isNotEmpty(entry.getTenantId())){
-            queryWrapper.eq(T::getTenantId, entry.getTenantId());
+            queryWrapper.eq("tenant_Id", entry.getTenantId());
         }
         return getMapper().deleteByQuery(queryWrapper);
     }

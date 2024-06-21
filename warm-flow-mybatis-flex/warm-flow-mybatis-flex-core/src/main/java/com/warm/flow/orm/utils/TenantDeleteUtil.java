@@ -63,4 +63,15 @@ public class TenantDeleteUtil {
             entity.setTenantId(tenantHandler.getTenantId());
         }
     }
+
+    public static <T extends RootEntity> void delFillEntity(T entity) {
+        WarmFlow flowConfig = FlowFactory.getFlowConfig();
+        if (flowConfig.isLogicDelete()) {
+            entity.setDelFlag(flowConfig.getLogicDeleteValue());
+        }
+        if (ObjectUtil.isNotNull(FlowFactory.tenantHandler())) {
+            TenantHandler tenantHandler = FlowFactory.tenantHandler();
+            entity.setTenantId(tenantHandler.getTenantId());
+        }
+    }
 }
