@@ -8,16 +8,17 @@ import com.warm.flow.core.handler.TenantHandler;
 import com.warm.flow.core.utils.ObjectUtil;
 
 /**
- * mybatis-plus 租户和逻辑删除工具类
+ * mybatis-flex 租户和逻辑删除工具类
  *
- * @author warm
+ * @author xiarg
+ * @date 2024/5/10 11:16
  */
 public class TenantDeleteUtil {
 
     private TenantDeleteUtil() {}
 
     /**
-     * 流程用户Mapper接口
+     * 获取默认的 QueryWrapper 处理租户和逻辑删除
      *
      * @param entity 实体类
      * @return QueryWrapper
@@ -30,14 +31,28 @@ public class TenantDeleteUtil {
         handleQueryWrapper(queryWrapper, flowConfig);
         return queryWrapper;
     }
-
+    /**
+     * 获取默认的删除的 QueryWrapper 处理租户和逻辑删除
+     *
+     * @param entity 实体类
+     * @return QueryWrapper
+     * @author xiarg
+     * @date 2024/5/10 11:16
+     */
     public static <T extends RootEntity> QueryWrapper getDelWrapper(T entity) {
         QueryWrapper queryWrapper = QueryWrapper.create();
         WarmFlow flowConfig = FlowFactory.getFlowConfig();
         handleQueryWrapper(queryWrapper, flowConfig);
         return queryWrapper;
     }
-
+    /**
+     * 获取默认的根据id查询的 QueryWrapper 处理租户和逻辑删除
+     *
+     * @param entity 实体类
+     * @return QueryWrapper
+     * @author xiarg
+     * @date 2024/5/10 11:16
+     */
     public static <T extends RootEntity> QueryWrapper getIdWrapper(T entity) {
         QueryWrapper queryWrapper = QueryWrapper.create();
         queryWrapper.eq("id", entity.getId());
@@ -45,6 +60,14 @@ public class TenantDeleteUtil {
         handleQueryWrapper(queryWrapper, flowConfig);
         return queryWrapper;
     }
+    /**
+     * 获取默认的根据id查询的 QueryWrapper
+     *
+     * @param queryWrapper mybatis-flex 查询处理器
+     * @param flowConfig 流程配置
+     * @author xiarg
+     * @date 2024/5/10 11:16
+     */
     private static void handleQueryWrapper(QueryWrapper queryWrapper, WarmFlow flowConfig) {
         if (ObjectUtil.isNotNull(FlowFactory.tenantHandler())) {
             TenantHandler tenantHandler = FlowFactory.tenantHandler();
@@ -54,10 +77,12 @@ public class TenantDeleteUtil {
             queryWrapper.eq("del_Flag", flowConfig.getLogicNotDeleteValue());
         }
     }
-
     /**
-     * 获取mybatis-plus查询条件, 根据是否租户或者逻辑删除
-     * @param <T>
+     * 实体类处理租户和逻辑删除
+     *
+     * @param entity 实体类
+     * @author xiarg
+     * @date 2024/5/10 11:16
      */
     public static <T extends RootEntity> void fillEntity(T entity) {
         WarmFlow flowConfig = FlowFactory.getFlowConfig();
@@ -69,7 +94,13 @@ public class TenantDeleteUtil {
             entity.setTenantId(tenantHandler.getTenantId());
         }
     }
-
+    /**
+     * 删除时，实体类处理租户和逻辑删除
+     *
+     * @param entity 实体类
+     * @author xiarg
+     * @date 2024/5/10 11:16
+     */
     public static <T extends RootEntity> void delFillEntity(T entity) {
         WarmFlow flowConfig = FlowFactory.getFlowConfig();
         if (flowConfig.isLogicDelete()) {
