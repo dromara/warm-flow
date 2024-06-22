@@ -2,6 +2,7 @@ package com.warm.flow.orm.dao;
 
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.dao.FlowUserDao;
+import com.warm.flow.core.utils.ArrayUtil;
 import com.warm.flow.core.utils.CollUtil;
 import com.warm.flow.core.utils.StringUtils;
 import com.warm.flow.orm.entity.FlowUser;
@@ -72,13 +73,15 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser> implements FlowUserDa
         final CriteriaQuery<FlowUser> criteriaQuery = createCriteriaQuery((criteriaBuilder, root, predicates, innerCriteriaQuery) -> {
             entity.commonPredicate().process(criteriaBuilder, root, predicates);
 
-            if (CollUtil.isNotEmpty(associateds) && associateds.size() == 1) {
-                predicates.add(criteriaBuilder.equal(root.get("associated"), associateds.get(0)));
-            } else {
-                predicates.add(createIn(criteriaBuilder, root, "associated", associateds));
+            if (CollUtil.isNotEmpty(associateds)) {
+                if (associateds.size() == 1) {
+                    predicates.add(criteriaBuilder.equal(root.get("associated"), associateds.get(0)));
+                } else {
+                    predicates.add(createIn(criteriaBuilder, root, "associated", associateds));
+                }
             }
 
-            if (types != null && types.length > 0) {
+            if (ArrayUtil.isNotEmpty(types)) {
                 predicates.add(createIn(criteriaBuilder, root, "type", types));
             }
 
@@ -100,13 +103,15 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser> implements FlowUserDa
                 predicates.add(criteriaBuilder.equal(root.get("associated"), associated));
             }
 
-            if (CollUtil.isNotEmpty(processedBys) && processedBys.size() == 1) {
-                predicates.add(criteriaBuilder.equal(root.get("processed_by"), processedBys.get(0)));
-            } else {
-                predicates.add(createIn(criteriaBuilder, root, "processed_by", processedBys));
+            if (CollUtil.isNotEmpty(processedBys)) {
+                if (processedBys.size() == 1) {
+                    predicates.add(criteriaBuilder.equal(root.get("processed_by"), processedBys.get(0)));
+                } else {
+                    predicates.add(createIn(criteriaBuilder, root, "processed_by", processedBys));
+                }
             }
 
-            if (types != null && types.length > 0) {
+            if (ArrayUtil.isNotEmpty(types)) {
                 predicates.add(createIn(criteriaBuilder, root, "type", types));
             }
 

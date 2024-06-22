@@ -3,6 +3,7 @@ package com.warm.flow.orm.dao;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.warm.flow.core.dao.FlowUserDao;
 import com.warm.flow.core.invoker.FrameInvoker;
+import com.warm.flow.core.utils.ArrayUtil;
 import com.warm.flow.core.utils.CollUtil;
 import com.warm.flow.core.utils.ObjectUtil;
 import com.warm.flow.orm.entity.FlowUser;
@@ -38,12 +39,14 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser> implements FlowUserDa
     @Override
     public List<FlowUser> listByAssociatedAndTypes(List<Long> associateds, String[] types) {
         LambdaQueryWrapper<FlowUser> queryWrapper = TenantDeleteUtil.getLambdaWrapperDefault(newEntity());
-        if (CollUtil.isNotEmpty(associateds) && associateds.size() == 1) {
-            queryWrapper.eq(FlowUser::getAssociated, associateds.get(0));
-        } else {
-            queryWrapper.in(FlowUser::getAssociated, associateds);
+        if (CollUtil.isNotEmpty(associateds)) {
+            if (associateds.size() == 1) {
+                queryWrapper.eq(FlowUser::getAssociated, associateds.get(0));
+            } else {
+                queryWrapper.in(FlowUser::getAssociated, associateds);
+            }
         }
-        queryWrapper.in(FlowUser::getType, types);
+        queryWrapper.in(ArrayUtil.isNotEmpty(types), FlowUser::getType, types);
         return getMapper().selectList(queryWrapper);
     }
 
@@ -51,12 +54,14 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser> implements FlowUserDa
     public List<FlowUser> listByProcessedBys(Long associated, List<String> processedBys, String[] types) {
         LambdaQueryWrapper<FlowUser> queryWrapper = TenantDeleteUtil.getLambdaWrapperDefault(newEntity());
         queryWrapper.eq(ObjectUtil.isNotNull(associated), FlowUser::getAssociated, associated);
-        if (CollUtil.isNotEmpty(processedBys) && processedBys.size() == 1) {
-            queryWrapper.eq(FlowUser::getProcessedBy, processedBys.get(0));
-        } else {
-            queryWrapper.in(FlowUser::getProcessedBy, processedBys);
+        if (CollUtil.isNotEmpty(processedBys)) {
+            if (processedBys.size() == 1) {
+                queryWrapper.eq(FlowUser::getProcessedBy, processedBys.get(0));
+            } else {
+                queryWrapper.in(FlowUser::getProcessedBy, processedBys);
+            }
         }
-        queryWrapper.in(FlowUser::getType, types);
+        queryWrapper.in(ArrayUtil.isNotEmpty(types), FlowUser::getType, types);
         return getMapper().selectList(queryWrapper);
     }
 }

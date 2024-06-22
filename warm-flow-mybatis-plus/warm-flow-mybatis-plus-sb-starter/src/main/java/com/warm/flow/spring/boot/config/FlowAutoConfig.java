@@ -9,7 +9,6 @@ import com.warm.flow.core.service.impl.*;
 import com.warm.flow.orm.dao.*;
 import com.warm.flow.orm.invoker.EntityInvoker;
 import com.warm.flow.spring.boot.utils.SpringUtil;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +40,6 @@ public class FlowAutoConfig {
     public DefService definitionService(FlowDefinitionDao definitionDao) {
         return new DefServiceImpl().setDao(definitionDao);
     }
-
 
     @Bean
     public FlowNodeDao nodeDao() {
@@ -104,7 +102,7 @@ public class FlowAutoConfig {
     }
 
     @Bean
-    public WarmFlow initFlow(SqlSessionFactory sqlSessionFactory) {
+    public WarmFlow initFlow() {
         // 设置创建对象方法
         EntityInvoker.setNewEntity();
         FrameInvoker.setCfgFunction((key) -> Objects.requireNonNull(SpringUtil.getBean(Environment.class)).getProperty(key));
@@ -114,4 +112,5 @@ public class FlowAutoConfig {
         log.info("warm-flow初始化结束");
         return FlowFactory.getFlowConfig();
     }
+
 }

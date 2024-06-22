@@ -3,6 +3,7 @@ package com.warm.flow.orm.dao;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.warm.flow.core.dao.FlowUserDao;
 import com.warm.flow.core.invoker.FrameInvoker;
+import com.warm.flow.core.utils.ArrayUtil;
 import com.warm.flow.core.utils.CollUtil;
 import com.warm.flow.core.utils.ObjectUtil;
 import com.warm.flow.orm.entity.FlowUser;
@@ -45,7 +46,7 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser> implements FlowUserDa
                 queryWrapper.in(FlowUser::getAssociated, associatedList);
             }
         }
-        queryWrapper.in(FlowUser::getType, CollUtil.toList(types));
+        queryWrapper.in(FlowUser::getType, CollUtil.toList(types), ArrayUtil.isNotEmpty(types));
         return getMapper().selectListByQuery(queryWrapper);
     }
 
@@ -60,7 +61,7 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser> implements FlowUserDa
                 queryWrapper.in(FlowUser::getProcessedBy, processedBys);
             }
         }
-        queryWrapper.in(FlowUser::getType, CollUtil.toList(types));
+        queryWrapper.in(FlowUser::getType, CollUtil.toList(types), ArrayUtil.isNotEmpty(types));
         return getMapper().selectListByQuery(queryWrapper);
     }
 

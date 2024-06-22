@@ -151,15 +151,6 @@ public class FlowHisTask implements HisTask {
     private String fromPath;
 
     @Override
-    public String getExt(){
-        return ext;
-    }
-
-    public HisTask setExt(String ext){
-        this.ext = ext;
-        return this;
-    }
-    @Override
     public Long getId() {
         return id;
     }
@@ -391,6 +382,17 @@ public class FlowHisTask implements HisTask {
     }
 
     @Override
+    public String getExt() {
+        return ext;
+    }
+
+    @Override
+    public FlowHisTask setExt(String ext) {
+        this.ext = ext;
+        return this;
+    }
+
+    @Override
     public String getCreateBy() {
         return createBy;
     }
@@ -446,6 +448,7 @@ public class FlowHisTask implements HisTask {
                 ", permissionList=" + permissionList +
                 ", flowStatus=" + flowStatus +
                 ", message='" + message + '\'' +
+                ", ext='" + ext + '\'' +
                 ", createBy='" + createBy + '\'' +
                 ", fromCustom='" + fromCustom + '\'' +
                 ", fromPath='" + fromPath + '\'' +
