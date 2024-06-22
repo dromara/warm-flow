@@ -34,11 +34,12 @@ public class TenantDeleteUtil {
     /**
      * 获取默认的删除的 QueryWrapper 处理租户和逻辑删除
      *
+     * @param entity 实体类
      * @return QueryWrapper
      * @author xiarg
      * @date 2024/5/10 11:16
      */
-    public static <T extends RootEntity> QueryWrapper getDelWrapper() {
+    public static <T extends RootEntity> QueryWrapper getDelWrapper(T entity) {
         QueryWrapper queryWrapper = QueryWrapper.create();
         WarmFlow flowConfig = FlowFactory.getFlowConfig();
         handleQueryWrapper(queryWrapper, flowConfig);
@@ -97,13 +98,15 @@ public class TenantDeleteUtil {
      * 删除时，实体类处理租户和逻辑删除
      *
      * @param entity 实体类
+     * @return T
      * @author xiarg
      * @date 2024/5/10 11:16
      */
-    public static <T extends RootEntity> void delFillEntity(T entity) {
+    public static <T extends RootEntity> T delFillEntity(T entity) {
         WarmFlow flowConfig = FlowFactory.getFlowConfig();
         if (flowConfig.isLogicDelete()) {
             entity.setDelFlag(flowConfig.getLogicDeleteValue());
         }
+        return entity;
     }
 }

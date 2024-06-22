@@ -125,14 +125,14 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
         }
     }
 
-    public int delete(T entry, Consumer<QueryWrapper> uq, Consumer<QueryWrapper> qw) {
-        TenantDeleteUtil.delFillEntity(entry);
-        QueryWrapper queryWrapper = TenantDeleteUtil.getDelWrapper();
-        if (StringUtils.isNotEmpty(entry.getDelFlag())) {
+    public int delete(T entity, Consumer<QueryWrapper> uq, Consumer<QueryWrapper> qw) {
+        QueryWrapper queryWrapper = TenantDeleteUtil.getDelWrapper(entity);
+        T logicDelEntity = TenantDeleteUtil.delFillEntity(newEntity());
+        if (StringUtils.isNotEmpty(logicDelEntity.getDelFlag())) {
             if (ObjectUtil.isNotNull(uq)) {
                 uq.accept(queryWrapper);
             }
-            return getMapper().updateByQuery(entry, queryWrapper);
+            return getMapper().updateByQuery(logicDelEntity, queryWrapper);
         }
         if (ObjectUtil.isNotNull(qw)) {
             qw.accept(queryWrapper);
