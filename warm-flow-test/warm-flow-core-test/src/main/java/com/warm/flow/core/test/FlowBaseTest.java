@@ -43,7 +43,7 @@ public class FlowBaseTest {
      * 发布流程
      */
     public void publish(DefService defService) {
-        defService.publish(1253835335603982342L);
+        defService.publish(1254068660809633792L);
     }
 
     /**
@@ -58,7 +58,7 @@ public class FlowBaseTest {
      */
     public void skipFlow(InsService insService, TaskService taskService) {
         // 通过实例id流转
-        Instance instance = insService.skipByInsId(1253835478407450624L, getUser().skipType(SkipType.PASS.getKey())
+        Instance instance = insService.skipByInsId(1254069189707173888L, getUser().skipType(SkipType.PASS.getKey())
                 .permissionFlag(Arrays.asList("role:1", "role:2")));
         System.out.println("流转后流程实例：" + instance.toString());
 
@@ -74,7 +74,7 @@ public class FlowBaseTest {
     public void termination(TaskService taskService) {
         FlowParams flowParams = new FlowParams();
         flowParams.message("终止流程").handler("1");
-        taskService.termination(1253834874314428416L, flowParams);
+        taskService.termination(1254069429029965824L, flowParams);
     }
 
     /**
