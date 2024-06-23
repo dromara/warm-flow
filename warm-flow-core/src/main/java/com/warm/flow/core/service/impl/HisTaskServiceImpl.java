@@ -72,6 +72,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
             hisTask.setNodeName(task.getNodeName());
             hisTask.setNodeType(task.getNodeType());
             hisTask.setDefinitionId(task.getDefinitionId());
+            hisTask.setCreateTime(task.getCreateTime());
             hisTask.setTargetNodeCode(nextNode.getNodeCode());
             hisTask.setTargetNodeName(nextNode.getNodeName());
             hisTask.setApprover(flowParams.getHandler());
@@ -82,7 +83,6 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
                         ? FlowStatus.REJECT.getKey() : FlowStatus.PASS.getKey());
             }
             hisTask.setMessage(flowParams.getMessage());
-            hisTask.setCreateTime(new Date());
             //业务详情添加至历史记录
             hisTask.setExt(flowParams.getTaskExt());
             FlowFactory.dataFillHandler().idFill(hisTask);

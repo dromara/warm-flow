@@ -123,10 +123,10 @@ comment on column FLOW_HIS_TASK.FLOW_STATUS is '流程状态（1审批中 2 审�
 comment on column FLOW_HIS_TASK.MESSAGE is '审批意见'
 /
 
-comment on column FLOW_HIS_TASK.CREATE_TIME is '创建时间'
+comment on column FLOW_HIS_TASK.CREATE_TIME is '开始时间'
 /
 
-comment on column FLOW_HIS_TASK.UPDATE_TIME is '更新时间'
+comment on column FLOW_HIS_TASK.UPDATE_TIME is '完成时间'
 /
 
 comment on column FLOW_HIS_TASK.DEL_FLAG is '删除标志'

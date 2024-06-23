@@ -80,8 +80,8 @@ COMMENT ON COLUMN flow_his_task.cooperate_type IS '协作方式(1审批 2转办 
 COMMENT ON COLUMN flow_his_task.collaborator IS '协作人';
 COMMENT ON COLUMN flow_his_task.flow_status IS '流程状态（1审批中 2 审批通过 9已退回 10失效）';
 COMMENT ON COLUMN flow_his_task.message IS '审批意见';
-COMMENT ON COLUMN flow_his_task.create_time IS '创建时间';
-COMMENT ON COLUMN flow_his_task.update_time IS '更新时间';
+COMMENT ON COLUMN flow_his_task.create_time IS '开始时间';
+COMMENT ON COLUMN flow_his_task.update_time IS '完成时间';
 COMMENT ON COLUMN flow_his_task.del_flag IS '删除标志';
 COMMENT ON COLUMN flow_his_task.tenant_id IS '租户id';
 

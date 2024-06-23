@@ -31,8 +31,8 @@ CREATE TABLE `flow_his_task`
     `flow_status`      tinyint(1)          NOT NULL COMMENT '流程状态（1审批中 2 审批通过 9已退回 10失效）',
     `message`          varchar(500)                 DEFAULT NULL COMMENT '审批意见',
     `ext`              varchar(400)                 DEFAULT NULL COMMENT '业务详情 存业务表对象json字符串',
-    `create_time`      datetime                     DEFAULT NULL COMMENT '创建时间',
-    `update_time`      datetime                     DEFAULT NULL COMMENT '更新时间',
+    `create_time`      datetime                     DEFAULT NULL COMMENT '开始时间',
+    `update_time`      datetime                     DEFAULT NULL COMMENT '完成时间',
     `del_flag`         char(1)                      DEFAULT NULL COMMENT '删除标志',
     `tenant_id`        varchar(40)                  DEFAULT NULL COMMENT '租户id',
     PRIMARY KEY (`id`) USING BTREE
