@@ -14,6 +14,7 @@ import com.warm.flow.core.utils.page.Page;
 import java.io.FileInputStream;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -47,11 +48,26 @@ public class FlowBaseTest {
     }
 
     /**
+     * 删除流程定义
+     */
+    public void removeDef(DefService defService) {
+        defService.removeDef(Collections.singletonList(1254781363102552064L));
+    }
+
+    /**
      * 开启流程
      */
     public void startFlow(InsService insService) {
         System.out.println("已开启的流程实例id：" + insService.start("2", getUser()).getId());
     }
+
+    /**
+     * 删除流程实例
+     */
+    public void removeIns(InsService insService) {
+        insService.remove(Collections.singletonList(2L));
+    }
+
 
     /**
      * 办理

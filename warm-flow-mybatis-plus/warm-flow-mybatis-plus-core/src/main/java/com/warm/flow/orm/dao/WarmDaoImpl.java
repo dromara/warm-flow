@@ -37,11 +37,8 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
     @Override
     public T selectById(Serializable id) {
         LambdaQueryWrapper<T> queryWrapper = TenantDeleteUtil.getLambdaWrapper(newEntity());
-        if (ObjectUtil.isNotNull(queryWrapper)) {
-            queryWrapper.eq(T::getId, id);
-            return getMapper().selectOne(queryWrapper);
-        }
-        return getMapper().selectById(id);
+        queryWrapper.eq(T::getId, id);
+        return getMapper().selectOne(queryWrapper);
     }
 
     /**
@@ -53,11 +50,9 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
     @Override
     public List<T> selectByIds(Collection<? extends Serializable> ids) {
         LambdaQueryWrapper<T> queryWrapper = TenantDeleteUtil.getLambdaWrapper(newEntity());
-        if (ObjectUtil.isNotNull(queryWrapper)) {
-            queryWrapper.in(T::getId, ids);
-            return getMapper().selectList(queryWrapper);
-        }
-        return getMapper().selectBatchIds(ids);
+        queryWrapper.in(T::getId, ids);
+        queryWrapper.orderBy(true, false, T::getId);
+        return getMapper().selectList(queryWrapper);
     }
 
     @Override
@@ -91,20 +86,21 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
 
     @Override
     public long selectCount(T entity) {
-        QueryWrapper<T> queryWrapper = TenantDeleteUtil.getQueryWrapperDefault(entity);
+        LambdaQueryWrapper<T> queryWrapper = TenantDeleteUtil.getLambdaWrapperDefault(entity);
         return getMapper().selectCount(queryWrapper);
     }
 
     @Override
     public int save(T entity) {
-        TenantDeleteUtil.getEntity(entity);
+        TenantDeleteUtil.fillEntity(entity);
         return getMapper().insert(entity);
     }
 
     @Override
     public int updateById(T entity) {
-        TenantDeleteUtil.getEntity(entity);
-        return getMapper().updateById(entity);
+        LambdaQueryWrapper<T> queryWrapper = TenantDeleteUtil.getLambdaWrapperDefault(entity);
+        queryWrapper.eq(T::getId, entity.getId());
+        return getMapper().update(entity, queryWrapper);
     }
 
     @Override
@@ -136,18 +132,14 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
         }
     }
 
-    public int delete(T newEntity, Consumer<LambdaUpdateWrapper<T>> luw, Consumer<LambdaQueryWrapper<T>> qw) {
+    public int delete(T newEntity, Consumer<LambdaUpdateWrapper<T>> uwConsumer, Consumer<LambdaQueryWrapper<T>> qwConsumer) {
         LambdaUpdateWrapper<T> lambdaUpdateWrapper = TenantDeleteUtil.deleteWrapper(newEntity);
         if (ObjectUtil.isNotNull(lambdaUpdateWrapper)) {
-            if (ObjectUtil.isNotNull(luw)) {
-                luw.accept(lambdaUpdateWrapper);
-            }
+            uwConsumer.accept(lambdaUpdateWrapper);
             return getMapper().update(null, lambdaUpdateWrapper);
         }
         LambdaQueryWrapper<T> lqw = new LambdaQueryWrapper<>(newEntity);
-        if (ObjectUtil.isNotNull(qw)) {
-            qw.accept(lqw);
-        }
+        qwConsumer.accept(lqw);
         return getMapper().delete(lqw);
     }
 

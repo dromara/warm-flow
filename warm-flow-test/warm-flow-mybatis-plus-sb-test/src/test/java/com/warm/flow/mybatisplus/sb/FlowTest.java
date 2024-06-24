@@ -40,11 +40,27 @@ public class FlowTest extends FlowBaseTest {
     }
 
     /**
+     * 删除流程定义
+     */
+    @Test
+    public void removeDef() {
+        removeDef(defService);
+    }
+
+    /**
      * 开启流程
      */
     @Test
     public void startFlow() {
         startFlow(insService);
+    }
+
+    /**
+     * 删除流程实例
+     */
+    @Test
+    public void removeIns() {
+        removeIns(insService);
     }
 
     /**
