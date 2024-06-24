@@ -9,22 +9,14 @@
         <version>${revision}</version>
     </parent>
 
-    <artifactId>warm-flow-test</artifactId>
+    <artifactId>warm-flow-orm</artifactId>
     <packaging>pom</packaging>
 
     <modules>
-        <module>warm-flow-core-test</module>
-        <module>warm-flow-solon-test</module>
-        <module>warm-flow-springboot-test</module>
+        <module>warm-flow-jpa</module>
+        <module>warm-flow-mybatis</module>
+        <module>warm-flow-mybatis-flex</module>
+        <module>warm-flow-mybatis-plus</module>
     </modules>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>io.github.minliuhua</groupId>
-                <artifactId>warm-flow-core-test</artifactId>
-                <version>${revision}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 </project>
