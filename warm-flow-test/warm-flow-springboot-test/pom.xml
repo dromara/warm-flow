@@ -8,7 +8,7 @@
         <version>${revision}</version>
     </parent>
 
-    <artifactId>warm-flow-mybatis-flex-sb-test</artifactId>
+    <artifactId>warm-flow-springboot-test</artifactId>
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -25,11 +25,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>io.github.minliuhua</groupId>
-            <artifactId>warm-flow-mybatis-flex-sb-starter</artifactId>
         </dependency>
 
         <dependency>
@@ -52,7 +47,18 @@
         <!--<dependency>
             <groupId>com.oracle.database.jdbc</groupId>
             <artifactId>ojdbc6</artifactId>
+          </dependency>
+
+        <dependency>
+            <groupId>com.clickhouse</groupId>
+            <artifactId>clickhouse-jdbc</artifactId>
         </dependency>-->
+
+        <!--<dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>dynamic-datasource-spring-boot-starter</artifactId>
+        </dependency>-->
+
     </dependencies>
     <dependencyManagement>
         <dependencies>
@@ -65,6 +71,48 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <profiles>
+        <profile>
+            <id>mybatis</id>
+            <dependencies>
+                <dependency>
+                    <groupId>io.github.minliuhua</groupId>
+                    <artifactId>warm-flow-mybatis-sb-starter</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>mybatis-plus</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>io.github.minliuhua</groupId>
+                    <artifactId>warm-flow-mybatis-plus-sb-starter</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>mybatis-flex</id>
+            <dependencies>
+                <dependency>
+                    <groupId>io.github.minliuhua</groupId>
+                    <artifactId>warm-flow-mybatis-flex-sb-starter</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>jpa</id>
+            <dependencies>
+                <dependency>
+                    <groupId>io.github.minliuhua</groupId>
+                    <artifactId>warm-flow-jpa-sb-starter</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 
     <build>
         <plugins>
