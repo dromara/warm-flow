@@ -247,8 +247,8 @@
         <where>
             <if test="entity.id != null">and t.id = #{entity.id}</if>
             <if test="entity.type != null  and entity.type != ''">and t.type = #{type}</if>
-            <if test="entity.processedBy != null  and entity.processedBy != ''">and t.processed_by = #{processedBy}</if>
-            <if test="entity.associated != null">and t.associated = #{associated}</if>
+            <if test="entity.processedBy != null  and entity.processedBy != ''">and t.processed_by = #{entity.processedBy}</if>
+            <if test="entity.associated != null">and t.associated = #{entity.associated}</if>
             <if test="entity.createTime != null">and t.create_time = #{entity.createTime}</if>
             <if test="entity.updateTime != null">and t.update_time = #{entity.updateTime}</if>
             <if test="entity.createBy != null  and entity.createBy != ''">and t.create_by = #{entity.createBy}</if>
@@ -266,7 +266,7 @@
 
     <update id="updateByTaskIdsLogic">
         update flow_user t
-        set t.del_flag = #{logicDeleteValue}
+            set t.del_flag = #{logicDeleteValue}
         where t.associated in
         <foreach item="taskId" collection="taskIds" open="(" separator="," close=")">
             #{taskId}

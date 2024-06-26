@@ -18,7 +18,6 @@ import com.warm.flow.core.utils.SqlHelper;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -119,7 +118,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
                         ? FlowStatus.REJECT.getKey() : FlowStatus.PASS.getKey());
             }
             hisTask.setMessage(flowParams.getMessage());
-            hisTask.setCreateTime(new Date());
+            hisTask.setCreateTime(task.getCreateTime());
             FlowFactory.dataFillHandler().idFill(hisTask);
             hisTasks.add(hisTask);
         }
@@ -143,7 +142,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
                 .setFlowStatus(SkipType.isReject(flowParams.getSkipType())
                         ? FlowStatus.REJECT.getKey() : FlowStatus.PASS.getKey())
                 .setMessage(flowParams.getMessage())
-                .setCreateTime(new Date());
+                .setCreateTime(task.getCreateTime());;
         FlowFactory.dataFillHandler().idFill(hisTask);
         return hisTask;
     }
