@@ -12,17 +12,18 @@ import com.warm.flow.core.service.TaskService;
 import com.warm.flow.core.utils.page.Page;
 
 import java.io.FileInputStream;
+import java.net.URL;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 
 public class FlowBaseTest {
 
     public FlowParams getUser() {
-        return FlowParams.build().flowCode("leaveFlow-serial1")
+        return FlowParams.build().flowCode("serial1")
                 .handler("1")
                 .skipType(SkipType.PASS.getKey())
-                .additionalHandler(Arrays.asList("role:100", "role:101"))
                 .permissionFlag(Arrays.asList("role:1", "role:2"));
     }
 
@@ -30,16 +31,27 @@ public class FlowBaseTest {
      * 部署流程
      */
     public void deployFlow(DefService defService) throws Exception {
-        // warm-flow-test\warm-flow-core-test\src\main\resources\leaveFlow-serial1.xml
-        String path = "/Users/minliuhua/Desktop/mdata/file/IdeaProjects/min/RuoYi-Vue-Warm-Flow/warm-flow/warm-flow-test/warm-flow-core-test/src/main/resources/leaveFlow-serial1.xml";
-        System.out.println("已部署流程的id：" + defService.importXml(new FileInputStream(path)).getId());
+        ClassLoader classLoader = getClass().getClassLoader();
+        URL resource = classLoader.getResource("");
+        String path = resource.getPath();
+        int i = path.indexOf("/warm-flow-test/");
+        String newPath = path.substring(0, i + 16) + "warm-flow-core-test/src/main/resources/leaveFlow-serial-内部测试用.xml";
+
+        System.out.println("已部署流程的id：" + defService.importXml(new FileInputStream(newPath)).getId());
     }
 
     /**
      * 发布流程
      */
     public void publish(DefService defService) {
-        defService.publish(1239250377455570962L);
+        defService.publish(1254068660809633792L);
+    }
+
+    /**
+     * 删除流程定义
+     */
+    public void removeDef(DefService defService) {
+        defService.removeDef(Collections.singletonList(1254781363102552064L));
     }
 
     /**
@@ -50,11 +62,19 @@ public class FlowBaseTest {
     }
 
     /**
+     * 删除流程实例
+     */
+    public void removeIns(InsService insService) {
+        insService.remove(Collections.singletonList(2L));
+    }
+
+
+    /**
      * 办理
      */
     public void skipFlow(InsService insService, TaskService taskService) {
         // 通过实例id流转
-        Instance instance = insService.skipByInsId(1239250784500191232L, getUser().skipType(SkipType.PASS.getKey())
+        Instance instance = insService.skipByInsId(1254069189707173888L, getUser().skipType(SkipType.PASS.getKey())
                 .permissionFlag(Arrays.asList("role:1", "role:2")));
         System.out.println("流转后流程实例：" + instance.toString());
 
@@ -70,22 +90,22 @@ public class FlowBaseTest {
     public void termination(TaskService taskService) {
         FlowParams flowParams = new FlowParams();
         flowParams.message("终止流程").handler("1");
-        taskService.termination(1239251891997773824L, flowParams);
+        taskService.termination(1254069429029965824L, flowParams);
     }
 
     /**
      * 跳转到指定节点 跳转到结束节点
      */
     public void skipAnyNode(TaskService taskService) {
-        Instance instance = taskService.skip(1239251185018474496L, getUser().skipType(SkipType.PASS.getKey())
-                .permissionFlag(Arrays.asList("role:1", "role:2")).nodeCode("9edc9b26-cab4-4fd4-9a30-c89f11626911"));
+        Instance instance = taskService.skip(1253834466326089728L, getUser().skipType(SkipType.PASS.getKey())
+                .permissionFlag(Arrays.asList("role:1", "role:2")).nodeCode("5"));
         System.out.println("流转后流程实例：" + instance.toString());
     }
 
     /**
      * 分页
      */
-    public void page(DefService defService) {
+    public void page(DefService defService){
         Definition flowDefinition = FlowFactory.newDef();
         Page<Definition> page = Page.pageOf(1, 10);
         page = defService.orderByCreateTime().desc().page(flowDefinition, page);
@@ -97,44 +117,44 @@ public class FlowBaseTest {
      * 转办
      */
     public void transfer(TaskService taskService) {
-        taskService.transfer(1239301524417548289L
-                , "1"
-                , Arrays.asList("role:1", "role:2", "user:1")
-                , Arrays.asList("2", "3")
-                , "转办");
+         taskService.transfer(1253835478436810752L
+                 , "1"
+                 , Arrays.asList("role:1", "role:2", "user:1")
+                 , Arrays.asList("2", "3")
+                 ,"转办");
     }
 
     /**
      * 委派
      */
-    public void depute(TaskService taskService) {
-        taskService.transfer(1243308524025548800L
+    public void depute(TaskService taskService){
+        taskService.transfer(1253840790778679296L
                 , "1"
                 , Arrays.asList("role:1", "role:2", "user:1")
                 , Arrays.asList("2", "3")
-                , "委派");
+                ,"委派");
     }
 
     /**
      * 加签
      */
-    public void addSignature(TaskService taskService) {
-        taskService.transfer(1234425333428654080L
+    public void addSignature(TaskService taskService){
+        taskService.addSignature(1253841163543252992L
                 , "1"
                 , Arrays.asList("role:1", "role:2", "user:1")
                 , Arrays.asList("2", "3")
-                , "加签");
+                ,"加签");
     }
 
     /**
      * 减签
      */
-    public void reductionSignature(TaskService taskService) {
-        taskService.transfer(1234425333428654080L
+    public void reductionSignature(TaskService taskService){
+        taskService.reductionSignature(1253841163543252992L
                 , "1"
                 , Arrays.asList("role:1", "role:2", "user:1")
                 , Arrays.asList("2", "3")
-                , "减签");
+                ,"减签");
     }
 
 }

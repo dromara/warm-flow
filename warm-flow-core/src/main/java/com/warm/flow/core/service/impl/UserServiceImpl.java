@@ -85,10 +85,7 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
 
     @Override
     public List<User> getByAssociateds(List<Long> associateds, String... types) {
-        if (CollUtil.isEmpty(associateds)) {
-            return Collections.emptyList();
-        }
-        if (associateds.size() == 1) {
+        if (CollUtil.isNotEmpty(associateds) && associateds.size() == 1) {
             return listByAssociatedAndTypes(associateds.get(0), types);
         }
         return getDao().listByAssociatedAndTypes(associateds, types);
@@ -107,10 +104,7 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
 
     @Override
     public List<User> getByProcessedBys(Long associated, List<String> processedBys, String... types) {
-        if (CollUtil.isEmpty(processedBys)) {
-            return Collections.emptyList();
-        }
-        if (processedBys.size() == 1) {
+        if (CollUtil.isNotEmpty(processedBys) && processedBys.size() == 1) {
             return listByProcessedBys(associated, processedBys.get(0), types);
         }
         return getDao().listByProcessedBys(associated, processedBys, types);

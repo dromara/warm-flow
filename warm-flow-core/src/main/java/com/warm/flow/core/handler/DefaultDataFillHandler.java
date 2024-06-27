@@ -28,10 +28,8 @@ public class DefaultDataFillHandler implements DataFillHandler {
     public void insertFill(Object object) {
         RootEntity entity = (RootEntity) object;
         if (ObjectUtil.isNotNull(entity)) {
-            Date date = ObjectUtil.isNotNull(entity.getCreateTime())
-                    ? entity.getCreateTime() : new Date();
-            entity.setCreateTime(date);
-            entity.setUpdateTime(date);
+            entity.setCreateTime(ObjectUtil.isNotNull(entity.getCreateTime()) ? entity.getCreateTime() : new Date());
+            entity.setUpdateTime(ObjectUtil.isNotNull(entity.getUpdateTime()) ? entity.getCreateTime() : new Date());
         }
     }
 
@@ -39,7 +37,7 @@ public class DefaultDataFillHandler implements DataFillHandler {
     public void updateFill(Object object) {
         RootEntity entity = (RootEntity) object;
         if (ObjectUtil.isNotNull(entity)) {
-            entity.setUpdateTime(new Date());
+            entity.setUpdateTime(ObjectUtil.isNotNull(entity.getUpdateTime()) ? entity.getCreateTime() : new Date());
         }
     }
 }
