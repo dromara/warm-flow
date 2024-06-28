@@ -113,7 +113,7 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
 
     @Override
     public int updateById(T entity) {
-        LambdaQueryWrapper<T> queryWrapper = TenantDeleteUtil.getLambdaWrapperDefault(entity);
+        LambdaQueryWrapper<T> queryWrapper = TenantDeleteUtil.getLambdaWrapperDefault(newEntity());
         queryWrapper.eq(T::getId, entity.getId());
         return getMapper().update(entity, queryWrapper);
     }

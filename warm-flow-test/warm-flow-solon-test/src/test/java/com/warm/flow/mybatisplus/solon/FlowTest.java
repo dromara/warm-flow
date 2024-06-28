@@ -53,6 +53,14 @@ public class FlowTest extends FlowBaseTest {
     }
 
     /**
+     * 取消流程
+     */
+    @Test
+    public void unPublish() {
+        unPublish(defService);
+    }
+
+    /**
      * 开启流程
      */
     @Test

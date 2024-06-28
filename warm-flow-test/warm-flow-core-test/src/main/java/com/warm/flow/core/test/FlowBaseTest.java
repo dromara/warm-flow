@@ -59,7 +59,14 @@ public class FlowBaseTest {
      * 发布流程
      */
     public void publish(DefService defService) {
-        defService.publish(1254068660809633792L);
+        defService.publish(1256286164273467397L);
+    }
+
+    /**
+     * 取消流程
+     */
+    public void unPublish(DefService defService) {
+        defService.unPublish(1256286164273467397L);
     }
 
     /**
