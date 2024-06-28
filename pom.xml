@@ -102,11 +102,11 @@
                 <version>${mybatis-spring-boot}</version>
             </dependency>
 
-            <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>dynamic-datasource-spring-boot-starter</artifactId>
-                <version>${mybatis-plus.version}</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>com.baomidou</groupId>-->
+<!--                <artifactId>dynamic-datasource-spring-boot-starter</artifactId>-->
+<!--                <version>${mybatis-plus.version}</version>-->
+<!--            </dependency>-->
 
             <dependency>
                 <groupId>org.noear</groupId>
