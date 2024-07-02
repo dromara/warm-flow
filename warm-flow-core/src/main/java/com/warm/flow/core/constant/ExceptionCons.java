@@ -84,7 +84,7 @@ public class ExceptionCons {
 
     public static final String NOT_NODE_DATA = "流程节点数据缺失!";
 
-    public static final String NOT_PUBLISH_NODE = "不存在已发布的流程节点!";
+    public static final String NOT_PUBLISH_NODE = "此流程编码[%s]的流程节点未发布!";
 
     public static final String NOT_PUBLISH_TASK = "存在正在执行的代办任务，不可取消!";
 
@@ -92,11 +92,7 @@ public class ExceptionCons {
 
     public static final String FLOW_FINISH = "流程已完成！";
 
-    public static final String LOST_NEXT_PERMISSION = "下一节点审批人权限缺失";
-
     public static final String NOT_AUTHORITY = "请检查当前用户是否有权限!";
-
-    public static final String LOST_ADDITIONAL_PERMISSION = "调整的权限缺失";
 
     public static final String SIGN_NULL_HANDLER = "会签票签时，办理人标识不能为空";
 
