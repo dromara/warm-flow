@@ -23,8 +23,8 @@ package com.warm.flow.core.enums;
  */
 public enum UserType {
 
-    APPROVAL("1", "代办任务的审批人权限"),
-    TRANSFER("2", "代办任务的转办人权限"),
+    APPROVAL("1", "待办任务的审批人权限"),
+    TRANSFER("2", "待办任务的转办人权限"),
     DEPUTE("3", "待办任务的委托人权限");
 
     private String key;

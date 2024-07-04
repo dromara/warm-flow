@@ -118,7 +118,7 @@ CREATE TABLE `flow_task`
 CREATE TABLE `flow_user`
 (
     `id`              bigint unsigned NOT NULL COMMENT '主键id',
-    `type`            char(1)  NOT NULL COMMENT '人员类型（1代办任务的审批人权限 2代办任务的转办人权限 3待办任务的委托人权限）',
+    `type`            char(1)  NOT NULL COMMENT '人员类型（1待办任务的审批人权限 2待办任务的转办人权限 3待办任务的委托人权限）',
     `processed_by`    varchar(80) DEFAULT NULL COMMENT '权限人',
     `associated`      bigint NOT NULL COMMENT '关联表id',
     `create_time`     datetime     DEFAULT NULL COMMENT '创建时间',

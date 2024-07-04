@@ -418,7 +418,7 @@ comment on table FLOW_USER is '待办任务表'
 comment on column FLOW_USER.ID is '主键id'
 /
 
-comment on column FLOW_USER.TYPE is '人员类型（1代办任务的审批人权限 2代办任务的转办人权限 3待办任务的委托人权限）'
+comment on column FLOW_USER.TYPE is '人员类型（1待办任务的审批人权限 2待办任务的转办人权限 3待办任务的委托人权限）'
 /
 
 comment on column FLOW_USER.PROCESSED_BY is '权限人)'

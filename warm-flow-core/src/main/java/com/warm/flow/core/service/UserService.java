@@ -32,7 +32,7 @@ public interface UserService extends IWarmService<User> {
     /**
      * 设置流程用户
      *
-     * @param addTasks 代办任务
+     * @param addTasks 待办任务
      * @return List<User>
      * @author xiarg
      * @date 2024/5/10 13:59
@@ -42,7 +42,7 @@ public interface UserService extends IWarmService<User> {
     /**
      * 设置流程用户
      *
-     * @param addTasks 代办任务
+     * @param addTasks 待办任务
      * @param taskId   任务id
      * @return List<User>
      * @author xiarg
@@ -51,9 +51,9 @@ public interface UserService extends IWarmService<User> {
     List<User> setSkipUser(List<Task> addTasks, Long taskId);
 
     /**
-     * 代办任务增加流程人员
+     * 待办任务增加流程人员
      *
-     * @param task 代办任务任务信息
+     * @param task 待办任务任务信息
      * @return List<User>
      * @author xiarg
      * @date 2024/5/10 15:45
@@ -61,18 +61,18 @@ public interface UserService extends IWarmService<User> {
     List<User> taskAddUser(Task task);
 
     /**
-     * 根据代办任务id删除流程用户
+     * 根据待办任务id删除流程用户
      *
-     * @param ids 代办任务id集合
+     * @param ids 待办任务id集合
      * @author xiarg
      * @date 2024/5/10 13:59
      */
     void deleteByTaskIds(List<Long> ids);
 
     /**
-     * 根据(代办任务，实例，历史表，节点等)id查询权限人或者处理人
+     * 根据(待办任务，实例，历史表，节点等)id查询权限人或者处理人
      *
-     * @param associated 代办任务id集合
+     * @param associated 待办任务id集合
      * @param type       用户表类型
      * @author xiarg
      * @date 2024/5/120 13:59
@@ -80,18 +80,18 @@ public interface UserService extends IWarmService<User> {
     List<String> getPermission(Long associated, String... type);
 
     /**
-     * 根据(代办任务，实例，历史表，节点等)id查询权限人或者处理人
+     * 根据(待办任务，实例，历史表，节点等)id查询权限人或者处理人
      *
-     * @param associated 代办任务id
+     * @param associated 待办任务id
      * @param types      用户表类型
      * @return
      */
     List<User> listByAssociatedAndTypes(Long associated, String... types);
 
     /**
-     * 根据(代办任务，实例，历史表，节点等)id查询权限人或者处理人
+     * 根据(待办任务，实例，历史表，节点等)id查询权限人或者处理人
      *
-     * @param associateds (代办任务，实例，历史表，节点等)id集合
+     * @param associateds (待办任务，实例，历史表，节点等)id集合
      * @param types       用户表类型
      * @return
      */
@@ -100,7 +100,7 @@ public interface UserService extends IWarmService<User> {
     /**
      * 根据办理人查询
      *
-     * @param associated  代办任务id
+     * @param associated  待办任务id
      * @param processedBy 办理人
      * @param types       用户表类型
      * @return
@@ -110,7 +110,7 @@ public interface UserService extends IWarmService<User> {
     /**
      * 根据办理人查询
      *
-     * @param associated   代办任务id
+     * @param associated   待办任务id
      * @param processedBys 办理人id集合
      * @param types        用户表类型
      * @return
@@ -123,7 +123,7 @@ public interface UserService extends IWarmService<User> {
      * @param associated  关联人id
      * @param permissions 权限人
      * @param type        权限人类型
-     * @param clear       是否清空代办任务的计划审批人
+     * @param clear       是否清空待办任务的计划审批人
      * @param handler     存储委派时的办理人
      * @return 结果
      * @author xiarg

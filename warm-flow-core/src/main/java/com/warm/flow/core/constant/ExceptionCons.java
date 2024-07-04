@@ -78,7 +78,7 @@ public class ExceptionCons {
 
     public static final String NOT_FOUNT_TASK = "待办任务获取失败!";
 
-    public static final String TASK_NOT_ONE = "不能同时跳转多个代办任务!";
+    public static final String TASK_NOT_ONE = "不能同时跳转多个待办任务!";
 
     public static final String NOT_DEFINITION_ID = "流程定义id不能为空!";
 
@@ -86,7 +86,7 @@ public class ExceptionCons {
 
     public static final String NOT_PUBLISH_NODE = "此流程编码[%s]的流程节点未发布!";
 
-    public static final String NOT_PUBLISH_TASK = "存在正在执行的代办任务，不可取消!";
+    public static final String NOT_PUBLISH_TASK = "存在正在执行的待办任务，不可取消!";
 
     public static final String MSG_OVER_LENGTH = "意见长度过长!";
 

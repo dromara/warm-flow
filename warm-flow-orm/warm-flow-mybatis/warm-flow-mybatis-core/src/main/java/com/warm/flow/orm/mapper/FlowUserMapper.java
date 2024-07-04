@@ -33,7 +33,7 @@ public interface FlowUserMapper extends WarmMapper<FlowUser> {
     /**
      * 根据 taskIds 删除
      *
-     * @param taskIds 代办任务id集合
+     * @param taskIds 待办任务id集合
      * @return int
      * @author xiarg
      * @date 2024/5/11 11:24
@@ -44,7 +44,7 @@ public interface FlowUserMapper extends WarmMapper<FlowUser> {
     /**
      * 根据 taskIds 逻辑删除
      *
-     * @param taskIds 代办任务id集合
+     * @param taskIds 待办任务id集合
      * @return int
      * @author xiarg
      * @date 2024/5/11 11:24

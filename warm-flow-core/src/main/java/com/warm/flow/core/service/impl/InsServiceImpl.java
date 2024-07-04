@@ -80,7 +80,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         List<Task> addTasks = StreamUtils.toList(nextNodes, node -> FlowFactory.taskService()
                 .addTask(node, instance, flowParams));
 
-        // 代办任务设置处理人
+        // 待办任务设置处理人
         List<User> users = FlowFactory.userService().taskAddUsers(addTasks);
 
         // 开启流程，保存流程信息

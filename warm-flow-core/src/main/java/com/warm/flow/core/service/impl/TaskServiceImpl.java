@@ -72,7 +72,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             return instance;
         }
 
-        // TODO min 后续考虑并发问题，待办任务和实例表不同步，可给代办任务id加锁，抽取所接口，方便后续兼容分布式锁
+        // TODO min 后续考虑并发问题，待办任务和实例表不同步，可给待办任务id加锁，抽取所接口，方便后续兼容分布式锁
         // 非第一个记得跳转类型必传
         if (!NodeType.isStart(task.getNodeType())) {
             AssertUtil.isFalse(StringUtils.isNotEmpty(flowParams.getSkipType()), ExceptionCons.NULL_CONDITIONVALUE);
@@ -109,7 +109,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         ListenerUtil.executeGetNodePermission(new ListenerVariable(instance, flowParams.getVariable(), task)
                 , StreamUtils.toArray(nextNodes, Node[]::new));
 
-        // 构建增代办任务和设置结束任务历史记录
+        // 构建增待办任务和设置结束任务历史记录
         List<Task> addTasks = buildAddTasks(flowParams, task, instance, nextNodes, nextNode);
 
         // 设置流程历史任务信息
@@ -124,16 +124,16 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 业务详情 存入历史记录
         String hisTaskExt = flowParams.getHisTaskExt();
 
-        // 一票否决（谨慎使用），如果退回，退回指向节点后还存在其他正在执行的代办任务，转历史任务，状态都为失效,重走流程。
+        // 一票否决（谨慎使用），如果退回，退回指向节点后还存在其他正在执行的待办任务，转历史任务，状态都为失效,重走流程。
         oneVoteVeto(task, flowParams.getSkipType(), nextNode.getNodeCode(), hisTaskExt);
 
-        // 代办任务设置处理人
+        // 待办任务设置处理人
         List<User> users = FlowFactory.userService().setSkipUser(addTasks, task.getId());
 
         // 更新流程信息
         updateFlowInfo(task, instance, insHisList, addTasks, users);
 
-        // 处理未完成的任务，当流程完成，还存在代办任务未完成，转历史任务，状态完成。
+        // 处理未完成的任务，当流程完成，还存在待办任务未完成，转历史任务，状态完成。
         handUndoneTask(instance, hisTaskExt);
 
         // 最后判断是否存在监听器，存在执行监听器
@@ -155,10 +155,10 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     @Override
     public Instance termination(Instance instance, Task task, FlowParams flowParams) {
-        // 所有代办转历史
+        // 所有待办转历史
         Node endNode = FlowFactory.nodeService().getOne(FlowFactory.newNode()
                 .setDefinitionId(instance.getDefinitionId()).setNodeType(NodeType.END.getKey()));
-        // 代办任务转历史
+        // 待办任务转历史
         List<HisTask> insHisList = FlowFactory.hisTaskService().setSkipInsHis(task, Collections.singletonList(endNode)
                 , flowParams);
         FlowFactory.hisTaskService().saveBatch(insHisList);
@@ -177,7 +177,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
         // 删除流程相关办理人
         FlowFactory.userService().deleteByTaskIds(Collections.singletonList(task.getId()));
-        // 处理未完成的任务，当流程完成，还存在代办任务未完成，转历史任务，状态完成。
+        // 处理未完成的任务，当流程完成，还存在待办任务未完成，转历史任务，状态完成。
         handUndoneTask(instance, flowParams.getHisTaskExt());
         return instance;
     }
@@ -430,7 +430,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         FlowFactory.hisTaskService().saveBatch(CollUtil.toList(hisTask));
         FlowFactory.userService().removeById(entrustedUser.getId());
 
-        // 查询委托人，如果在flow_user不存在，则给委托人新增代办记录
+        // 查询委托人，如果在flow_user不存在，则给委托人新增待办记录
         User deputeUser = FlowFactory.userService().getOne(FlowFactory.newUser().setAssociated(task.getId())
                 .setProcessedBy(entrustedUser.getCreateBy()).setType(UserType.APPROVAL.getKey()));
         if (ObjectUtil.isNull(deputeUser)) {
@@ -539,7 +539,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     /**
-     * 构建增代办任务
+     * 构建增待办任务
      *
      * @param flowParams
      * @param task
@@ -550,7 +550,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     private List<Task> buildAddTasks(FlowParams flowParams, Task task, Instance instance
             , List<Node> nextNodes, Node nextNode) {
         boolean buildFlag = false;
-        // 下个节点非并行网关节点，可以直接生成下一个代办任务
+        // 下个节点非并行网关节点，可以直接生成下一个待办任务
         if (!NodeType.isGateWayParallel(nextNode.getNodeType())) {
             buildFlag = true;
         } else {
@@ -734,7 +734,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     /**
-     * 一票否决（谨慎使用），如果退回，退回指向节点后还存在其他正在执行的代办任务，转历史任务，状态都为退回,重走流程。
+     * 一票否决（谨慎使用），如果退回，退回指向节点后还存在其他正在执行的待办任务，转历史任务，状态都为退回,重走流程。
      *
      * @param task
      * @param skipType
@@ -742,7 +742,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
      * @return
      */
     private void oneVoteVeto(Task task, String skipType, String nextNodeCode, String hisTaskExt) {
-        // 一票否决（谨慎使用），如果退回，退回指向节点后还存在其他正在执行的代办任务，转历史任务，状态失效,重走流程。
+        // 一票否决（谨慎使用），如果退回，退回指向节点后还存在其他正在执行的待办任务，转历史任务，状态失效,重走流程。
         if (SkipType.isReject(skipType)) {
             List<Task> tasks = list(FlowFactory.newTask().setInstanceId(task.getInstanceId()));
             List<Skip> allSkips = FlowFactory.skipService().list(FlowFactory.newSkip()
@@ -790,7 +790,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     /**
-     * 处理未完成的任务，当流程完成，还存在代办任务未完成，转历史任务，状态完成。
+     * 处理未完成的任务，当流程完成，还存在待办任务未完成，转历史任务，状态完成。
      *
      * @param instance
      */
@@ -804,7 +804,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     /**
-     * 代办任务转历史任务。
+     * 待办任务转历史任务。
      *
      * @param taskList
      */
@@ -819,7 +819,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         }
         removeByIds(StreamUtils.toList(taskList, Task::getId));
         FlowFactory.hisTaskService().saveBatch(insHisList);
-        // 删除所有代办任务的权限人
+        // 删除所有待办任务的权限人
         FlowFactory.userService().deleteByTaskIds(StreamUtils.toList(taskList, Task::getId));
     }
 
@@ -839,7 +839,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             saveBatch(addTasks);
         }
         FlowFactory.insService().updateById(instance);
-        // 保存下一个代办任务的权限人和历史任务的处理人
+        // 保存下一个待办任务的权限人和历史任务的处理人
         FlowFactory.userService().saveBatch(users);
     }
 }
