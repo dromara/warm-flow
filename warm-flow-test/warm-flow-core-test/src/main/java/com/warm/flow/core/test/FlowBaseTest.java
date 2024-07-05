@@ -47,7 +47,7 @@ public class FlowBaseTest {
      */
     public void deployFlow(DefService defService) throws Exception {
         ClassLoader classLoader = getClass().getClassLoader();
-        URL resource = classLoader.getResource("");
+        URL resource = classLoader.getResource(".");
         String path = resource.getPath();
         int i = path.indexOf("/warm-flow-test/");
         String newPath = path.substring(0, i + 16) + "warm-flow-core-test/src/main/resources/leaveFlow-serial-内部测试用.xml";

@@ -13,7 +13,7 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.warm.flow.spring.boot.config;
+package com.warm.flow.solon.config;
 
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.config.WarmFlow;
@@ -23,20 +23,11 @@ import com.warm.flow.core.service.*;
 import com.warm.flow.core.service.impl.*;
 import com.warm.flow.orm.dao.*;
 import com.warm.flow.orm.invoker.EntityInvoker;
-import com.warm.flow.orm.utils.FlowJpaConfigCons;
-import com.warm.flow.spring.boot.utils.SpringUtil;
+import org.noear.solon.Solon;
+import org.noear.solon.annotation.Bean;
+import org.noear.solon.annotation.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.core.env.Environment;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-
-import javax.persistence.spi.PersistenceProvider;
-import javax.sql.DataSource;
 
 /**
  * @author warm
@@ -44,12 +35,11 @@ import javax.sql.DataSource;
  * @date: 2023/6/5 23:01
  */
 @Configuration
-@Import(SpringUtil.class)
 public class FlowAutoConfig {
 
     private static final Logger log = LoggerFactory.getLogger(FlowAutoConfig.class);
 
-    @Bean
+    @Bean(injected = true)
     public FlowDefinitionDao definitionDao() {
         return new FlowDefinitionDaoImpl();
     }
@@ -59,7 +49,7 @@ public class FlowAutoConfig {
         return new DefServiceImpl().setDao(definitionDao);
     }
 
-    @Bean
+    @Bean(injected = true)
     public FlowNodeDao nodeDao() {
         return new FlowNodeDaoImpl();
     }
@@ -69,7 +59,7 @@ public class FlowAutoConfig {
         return new NodeServiceImpl().setDao(nodeDao);
     }
 
-    @Bean
+    @Bean(injected = true)
     public FlowSkipDao skipDao() {
         return new FlowSkipDaoImpl();
     }
@@ -79,7 +69,7 @@ public class FlowAutoConfig {
         return new SkipServiceImpl().setDao(skipDao);
     }
 
-    @Bean
+    @Bean(injected = true)
     public FlowInstanceDao instanceDao() {
         return new FlowInstanceDaoImpl();
     }
@@ -89,7 +79,7 @@ public class FlowAutoConfig {
         return new InsServiceImpl().setDao(instanceDao);
     }
 
-    @Bean
+    @Bean(injected = true)
     public FlowTaskDao taskDao() {
         return new FlowTaskDaoImpl();
     }
@@ -99,7 +89,7 @@ public class FlowAutoConfig {
         return new TaskServiceImpl().setDao(taskDao);
     }
 
-    @Bean
+    @Bean(injected = true)
     public FlowHisTaskDao hisTaskDao() {
         return new FlowHisTaskDaoImpl();
     }
@@ -109,7 +99,7 @@ public class FlowAutoConfig {
         return new HisTaskServiceImpl().setDao(hisTaskDao);
     }
 
-    @Bean
+    @Bean(injected = true)
     public FlowUserDao userDao() {
         return new FlowUserDaoImpl();
     }
@@ -119,33 +109,12 @@ public class FlowAutoConfig {
         return new UserServiceImpl().setDao(userDao);
     }
 
-    @Bean
-    @ConditionalOnMissingBean
-    public JpaProperties jpaProperties() {
-        return new JpaProperties();
-    }
-
-    @SuppressWarnings({"unchecked"})
-    @Bean(name = "entityManagerFactoryWarmFlow")
-    public LocalContainerEntityManagerFactoryBean primaryEntityManagerFactory(DataSource dataSource, JpaProperties jpaProperties) throws ClassNotFoundException {
-        LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
-        factory.setDataSource(dataSource);
-        factory.setJpaPropertyMap(jpaProperties.getProperties());
-        factory.setMappingResources("META-INF/warm-flow-orm.xml");
-        factory.setPersistenceXmlLocation("classpath:/META-INF/warm-flow-persistence.xml");
-        String jpaPersistenceProvider = SpringUtil.getBean(Environment.class).getProperty(FlowJpaConfigCons.JPA_PERSISTENCE_PROVIDER);
-        log.info("warm-flow use jpa persistence provider to be: {}", jpaPersistenceProvider);
-        factory.setPersistenceProviderClass((Class<? extends PersistenceProvider>) Class.forName(jpaPersistenceProvider));
-        factory.setPersistenceUnitName("warm-flow-jpa");
-        return factory;
-    }
-
     @Bean("warmFlow")
     public WarmFlow initFlow() {
         // 设置创建对象方法
         EntityInvoker.setNewEntity();
-        FrameInvoker.setCfgFunction((key) -> SpringUtil.getBean(Environment.class).getProperty(key));
-        FrameInvoker.setBeanFunction(SpringUtil::getBean);
+        FrameInvoker.setCfgFunction((key) -> Solon.cfg().get(key));
+        FrameInvoker.setBeanFunction(Solon.context()::getBean);
         WarmFlow flowConfig = WarmFlow.init();
         FlowFactory.setFlowConfig(flowConfig);
         log.info("warm-flow初始化结束");
