@@ -37,7 +37,7 @@ public interface InsService extends IWarmService<Instance> {
      *                    - flowCode:流程编码 [必传]
      *                    - handler:办理人唯一标识[建议传]
      *                    - variable:流程变量[按需传输]
-     *                    - ext:扩展字段[按需传输]
+     *                    - ext:扩展字段，预留给业务系统使用[按需传输]
      * @return
      */
     Instance start(String businessId, FlowParams flowParams);

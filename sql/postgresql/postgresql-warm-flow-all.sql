@@ -104,7 +104,7 @@ CREATE TABLE flow_instance (
 	create_by varchar(64) NULL DEFAULT ''::character varying, -- 创建者
 	create_time timestamp NULL, -- 创建时间
 	update_time timestamp NULL, -- 更新时间
-	ext varchar(500) NULL, -- 扩展字段
+	ext varchar(500) NULL, -- 扩展字段，预留给业务系统使用
 	del_flag bpchar(1) NULL, -- 删除标志
 	tenant_id varchar(40) NULL, -- 租户id
 	CONSTRAINT flow_instance_pkey PRIMARY KEY (id)
@@ -124,7 +124,7 @@ COMMENT ON COLUMN flow_instance.flow_status IS '流程状态（0待提交 1审�
 COMMENT ON COLUMN flow_instance.create_by IS '创建者';
 COMMENT ON COLUMN flow_instance.create_time IS '创建时间';
 COMMENT ON COLUMN flow_instance.update_time IS '更新时间';
-COMMENT ON COLUMN flow_instance.ext IS '扩展字段';
+COMMENT ON COLUMN flow_instance.ext IS '扩展字段，预留给业务系统使用';
 COMMENT ON COLUMN flow_instance.del_flag IS '删除标志';
 COMMENT ON COLUMN flow_instance.tenant_id IS '租户id';
 

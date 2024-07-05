@@ -261,7 +261,7 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
     private String message;
 
     /**
-     * 扩展字段 可用于存储业务详情
+     * 扩展字段，预留给业务系统使用
      */
     @Column(name = "ext")
     private String ext;

@@ -108,7 +108,7 @@ public class FlowInstance implements Instance {
     private String fromPath;
 
     /**
-     * 扩展字段
+     * 扩展字段，预留给业务系统使用
      */
     private String ext;
 

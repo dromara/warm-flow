@@ -255,7 +255,7 @@ comment on column FLOW_INSTANCE.CREATE_TIME is '创建时间'
 comment on column FLOW_INSTANCE.UPDATE_TIME is '更新时间'
 /
 
-comment on column FLOW_INSTANCE.EXT is '扩展字段'
+comment on column FLOW_INSTANCE.EXT is '扩展字段，预留给业务系统使用'
 /
 
 comment on column FLOW_INSTANCE.DEL_FLAG is '删除标志'

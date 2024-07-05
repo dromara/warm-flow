@@ -52,7 +52,7 @@ CREATE TABLE `flow_instance`
     `create_by`     varchar(64)  DEFAULT '' COMMENT '创建者',
     `create_time`   datetime     DEFAULT NULL COMMENT '创建时间',
     `update_time`   datetime     DEFAULT NULL COMMENT '更新时间',
-    `ext`           varchar(500) DEFAULT NULL COMMENT '扩展字段',
+    `ext`           varchar(500) DEFAULT NULL COMMENT '扩展字段，预留给业务系统使用',
     `del_flag`    char(1)      DEFAULT NULL COMMENT '删除标志',
     `tenant_id`     varchar(40)  DEFAULT NULL COMMENT '租户id',
     PRIMARY KEY (`id`) USING BTREE

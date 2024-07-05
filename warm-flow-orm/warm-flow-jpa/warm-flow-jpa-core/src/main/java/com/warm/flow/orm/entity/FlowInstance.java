@@ -201,7 +201,7 @@ public class FlowInstance extends JPARootEntity<FlowInstance> implements Instanc
     private String fromPath;
 
     /**
-     * 扩展字段
+     * 扩展字段，预留给业务系统使用
      */
     @Column(name = "ext")
     private String ext;

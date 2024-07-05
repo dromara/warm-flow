@@ -222,7 +222,7 @@ public class FlowConfigUtil {
         allSkips.forEach(allSkip -> allSkip.setNextNodeType(skipMap.get(allSkip.getNextNodeCode())));
         AssertUtil.isTrue(startNum == 0, "[" + flowName + "]" + ExceptionCons.LOST_START_NODE);
         // 校验跳转节点的合法性
-        checkSkipNode(allSkips, nodeList);
+        checkSkipNode(allSkips);
         // 校验所有目标节点是否都存在
         validaIsExistDestNode(allSkips, nodeCodeSet);
         return combine;
@@ -232,21 +232,9 @@ public class FlowConfigUtil {
      * 校验跳转节点的合法性
      *
      * @param allSkips
-     * @param nodeList
      */
-    private static void checkSkipNode(List<Skip> allSkips, List<Node> nodeList) {
+    private static void checkSkipNode(List<Skip> allSkips) {
         Map<String, List<Skip>> allSkipMap = StreamUtils.groupByKey(allSkips, Skip::getNowNodeCode);
-        List<Skip> gatewaySkips = new ArrayList<>();
-        // 校验网关节点不可直连
-        if (CollUtil.isNotEmpty(gatewaySkips)) {
-            for (Skip gatewaySkip1 : gatewaySkips) {
-                for (Skip gatewaySkip2 : gatewaySkips) {
-                    AssertUtil.isTrue(gatewaySkip1.getNextNodeCode().equals(gatewaySkip2.getNowNodeCode())
-                                    && gatewaySkip1.getNowNodeType().equals(gatewaySkip2.getNowNodeType())
-                            , ExceptionCons.GATEWAY_NOT_CONNECT);
-                }
-            }
-        }
         // 不可同时通过或者退回到多个中间节点，必须先流转到网关节点
         allSkipMap.forEach((key, values) -> {
             AtomicInteger passNum = new AtomicInteger();
