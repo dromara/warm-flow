@@ -113,7 +113,7 @@ public class FlowAutoConfig {
     }
 
     @Bean
-    public void dbConfig(@Db("db1") org.apache.ibatis.session.Configuration cfg) {
+    public void dbConfig(@Db() org.apache.ibatis.session.Configuration cfg) {
         cfg.addMappers("com.warm.flow.orm.mapper", BaseMapper.class);
     }
 
