@@ -22,6 +22,7 @@ import com.warm.flow.core.service.TaskService;
 import com.warm.flow.core.test.FlowBaseTest;
 import org.junit.jupiter.api.Test;
 import org.noear.solon.annotation.Inject;
+import org.noear.solon.data.annotation.Tran;
 import org.noear.solon.test.SolonTest;
 
 @SolonTest(value = App.class)
@@ -40,6 +41,7 @@ public class FlowTest extends FlowBaseTest {
      * 部署流程
      */
     @Test
+    @Tran
     public void deployFlow() throws Exception {
         deployFlow(defService);
     }
@@ -48,6 +50,7 @@ public class FlowTest extends FlowBaseTest {
      * 发布流程
      */
     @Test
+    @Tran
     public void publish() {
         publish(defService);
     }
@@ -56,6 +59,7 @@ public class FlowTest extends FlowBaseTest {
      * 取消流程
      */
     @Test
+    @Tran
     public void unPublish() {
         unPublish(defService);
     }
@@ -64,6 +68,7 @@ public class FlowTest extends FlowBaseTest {
      * 开启流程
      */
     @Test
+    @Tran
     public void startFlow() {
         startFlow(insService);
     }
@@ -72,6 +77,7 @@ public class FlowTest extends FlowBaseTest {
      * 办理
      */
     @Test
+    @Tran
     public void skipFlow() {
         skipFlow(insService, taskService);
     }
@@ -80,6 +86,7 @@ public class FlowTest extends FlowBaseTest {
      * 终止流程实例
      */
     @Test
+    @Tran
     public void termination() {
         termination(taskService);
     }
@@ -88,6 +95,7 @@ public class FlowTest extends FlowBaseTest {
      * 跳转到指定节点 跳转到结束节点
      */
     @Test
+    @Tran
     public void skipAnyNode() {
         skipAnyNode(taskService);
     }
@@ -104,6 +112,7 @@ public class FlowTest extends FlowBaseTest {
      * 转办
      */
     @Test
+    @Tran
     public void transfer() {
         transfer(taskService);
     }
@@ -112,6 +121,7 @@ public class FlowTest extends FlowBaseTest {
      * 委派
      */
     @Test
+    @Tran
     public void depute() {
         depute(taskService);
     }
@@ -120,6 +130,7 @@ public class FlowTest extends FlowBaseTest {
      * 加签
      */
     @Test
+    @Tran
     public void addSignature() {
         addSignature(taskService);
     }
@@ -128,6 +139,7 @@ public class FlowTest extends FlowBaseTest {
      * 减签
      */
     @Test
+    @Tran
     public void reductionSignature() {
         reductionSignature(taskService);
     }

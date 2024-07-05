@@ -104,7 +104,7 @@
             </dependencies>
         </profile>
         <profile>
-            <id>jpa</id>
+            <id>spring-data-jpa</id>
             <dependencies>
                 <dependency>
                     <groupId>io.github.minliuhua</groupId>

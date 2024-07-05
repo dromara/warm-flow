@@ -15,7 +15,6 @@
     <modules>
         <module>warm-flow-core-test</module>
         <module>warm-flow-solon-test</module>
-        <module>warm-flow-jpa-solon-test</module>
         <module>warm-flow-springboot-test</module>
     </modules>
 
