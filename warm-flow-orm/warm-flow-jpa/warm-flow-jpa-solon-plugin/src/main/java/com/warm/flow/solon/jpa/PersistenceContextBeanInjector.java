@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 2024/6/28 10:07
  */
 public class PersistenceContextBeanInjector implements BeanInjector<PersistenceContext> {
-    private ConcurrentHashMap<String, EntityManagerFactory> factories = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, EntityManagerFactory> ENTITY_MANAGER_FACTORIES = new ConcurrentHashMap<>();
 
 
     @Override
@@ -46,7 +46,7 @@ public class PersistenceContextBeanInjector implements BeanInjector<PersistenceC
 
         final String datasource = dsProps.get("datasource");
         if (!Objects.equals(dsBw.name(), datasource)) {
-            // 数据源不匹配不进入注入操作
+            // 数据源不匹配不进行注入操作
             return;
         }
 
@@ -54,9 +54,8 @@ public class PersistenceContextBeanInjector implements BeanInjector<PersistenceC
 
         properties.put(AvailableSettings.DATASOURCE, dsBw.raw());
 
-        final String finalUnitName = unitName;
-        final EntityManagerFactory entityManagerFactory = factories.computeIfAbsent(unitName,
-                x -> Persistence.createEntityManagerFactory(finalUnitName, properties));
+        final EntityManagerFactory entityManagerFactory = ENTITY_MANAGER_FACTORIES.computeIfAbsent(unitName,
+                key -> Persistence.createEntityManagerFactory(key, properties));
 
         varH.setValue(new EntityManagerProxy(entityManagerFactory.createEntityManager()));
     }
