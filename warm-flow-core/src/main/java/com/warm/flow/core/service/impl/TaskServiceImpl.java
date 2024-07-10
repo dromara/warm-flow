@@ -434,13 +434,14 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         User deputeUser = FlowFactory.userService().getOne(FlowFactory.newUser().setAssociated(task.getId())
                 .setProcessedBy(entrustedUser.getCreateBy()).setType(UserType.APPROVAL.getKey()));
         if (ObjectUtil.isNull(deputeUser)) {
-            User newUser = FlowFactory.userService().structureUser(entrustedUser.getAssociated(), entrustedUser.getCreateBy()
+            User newUser = FlowFactory.userService().structureUser(entrustedUser.getAssociated()
+                    , entrustedUser.getCreateBy()
                     , UserType.APPROVAL.getKey(), entrustedUser.getProcessedBy());
             FlowFactory.userService().save(newUser);
         }
 
         // 删除受托人
-        FlowFactory.userService().removeById(deputeUser);
+        FlowFactory.userService().removeById(entrustedUser.getId());
         return true;
     }
 

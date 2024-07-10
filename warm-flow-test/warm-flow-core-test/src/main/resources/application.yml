@@ -25,6 +25,8 @@ warm-flow:
 #  data-fill-handler-path: com.warm.flow.core.test.handle.CustomDataFillHandler
   # 全局租户处理器（可配置文件注入，也可用@Bean/@Component方式）
 #  tenant_handler_path: com.warm.flow.core.test.handle.CustomTenantHandler
+# 当在spring boot 中使用JPA时指定JpaPersistenceProvider
+#  jpa_persistence_provider: org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider
   # 是否开启逻辑删除
   logic_delete: false
   # 逻辑删除字段值（开启后默认为2）

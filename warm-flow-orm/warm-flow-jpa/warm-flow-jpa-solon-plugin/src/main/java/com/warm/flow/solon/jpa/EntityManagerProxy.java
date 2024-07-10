@@ -29,7 +29,7 @@ public class EntityManagerProxy implements EntityManager {
         if(TranUtils.inTrans()){
             EntityTransaction transaction = entityManager.getTransaction();
 
-            if(transaction.isActive() == false) {
+            if(!transaction.isActive()) {
                 transaction.begin();
 
                 TranUtils.listen(new TranListener() {

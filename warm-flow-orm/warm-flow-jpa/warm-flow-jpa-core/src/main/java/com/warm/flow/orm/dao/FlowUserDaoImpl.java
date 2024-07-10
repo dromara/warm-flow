@@ -120,9 +120,9 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser> implements FlowUserDa
 
             if (CollUtil.isNotEmpty(processedBys)) {
                 if (processedBys.size() == 1) {
-                    predicates.add(criteriaBuilder.equal(root.get("processed_by"), processedBys.get(0)));
+                    predicates.add(criteriaBuilder.equal(root.get("processedBy"), processedBys.get(0)));
                 } else {
-                    predicates.add(createIn(criteriaBuilder, root, "processed_by", processedBys));
+                    predicates.add(createIn(criteriaBuilder, root, "processedBy", processedBys));
                 }
             }
 
