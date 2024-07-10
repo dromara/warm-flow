@@ -43,7 +43,6 @@ public class ExceptionCons {
     public static final String LOST_START_NODE = "流程缺少开始节点!";
 
     public static final String LOST_NODE_CODE = "节点编码缺失";
-    public static final String LOST_NEXT_NODE_CODE = "下一节点编码缺失";
 
     public static final String SAME_NODE_CODE = "同一流程中节点编码重复!";
 
