@@ -37,7 +37,11 @@ http://warm-flow.cn
 
 * [x] mysql
 * [x] oracle
-* [x] PostgreSQL
+* [x] postgresql
+* [ ] 达梦
+* [ ] 人大金仓
+* [ ] GaussDB
+* [ ] oceanbase
 * [ ] sqlserver
 * [ ] ......
 
