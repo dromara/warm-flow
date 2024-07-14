@@ -41,7 +41,7 @@
     <modules>
         <module>warm-flow-core</module>
         <module>warm-flow-orm</module>
-<!--        <module>warm-flow-test</module>-->
+        <module>warm-flow-test</module>
     </modules>
 
     <properties>
