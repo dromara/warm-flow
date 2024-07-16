@@ -28,7 +28,7 @@ warm-flow:
 # 当在spring boot 中使用JPA时指定JpaPersistenceProvider
 #  jpa_persistence_provider: org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider
   # 是否开启逻辑删除
-  logic_delete: false
+  logic_delete: true
   # 逻辑删除字段值（开启后默认为2）
   logic_delete_value: 2
   # 逻辑未删除字段（开启后默认为0）
