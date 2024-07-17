@@ -15,9 +15,14 @@
  */
 package com.warm.flow.solon;
 
+import com.mybatisflex.core.FlexGlobalConfig;
+import com.warm.flow.orm.mapper.*;
 import com.warm.flow.solon.config.FlowAutoConfig;
+import org.apache.ibatis.solon.MybatisAdapter;
+import org.apache.ibatis.solon.integration.MybatisAdapterManager;
 import org.noear.solon.core.AppContext;
 import org.noear.solon.core.Plugin;
+import org.noear.solon.core.event.EventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +38,25 @@ public class XPluginImpl implements Plugin {
     @Override
     public void start(AppContext context) {
         context.beanMake(FlowAutoConfig.class);
+        EventBus.subscribe(FlexGlobalConfig.class, e -> {
+            e.getConfiguration().addMapper(FlowDefinitionMapper.class);
+            e.getConfiguration().addMapper(FlowHisTaskMapper.class);
+            e.getConfiguration().addMapper(FlowInstanceMapper.class);
+            e.getConfiguration().addMapper(FlowNodeMapper.class);
+            e.getConfiguration().addMapper(FlowSkipMapper.class);
+            e.getConfiguration().addMapper(FlowTaskMapper.class);
+            e.getConfiguration().addMapper(FlowUserMapper.class);
+        });
+        context.lifecycle(() -> {
+            final MybatisAdapter mybatisAdapter = MybatisAdapterManager.getAll().values().iterator().next();
+            context.beanInject(mybatisAdapter.getMapper(FlowDefinitionMapper.class));
+            context.beanInject(mybatisAdapter.getMapper(FlowHisTaskMapper.class));
+            context.beanInject(mybatisAdapter.getMapper(FlowInstanceMapper.class));
+            context.beanInject(mybatisAdapter.getMapper(FlowNodeMapper.class));
+            context.beanInject(mybatisAdapter.getMapper(FlowSkipMapper.class));
+            context.beanInject(mybatisAdapter.getMapper(FlowTaskMapper.class));
+            context.beanInject(mybatisAdapter.getMapper(FlowUserMapper.class));
+        });
         log.debug("warm插件加载: 成功加载[Warm-Flow工作流]插件");
     }
 }

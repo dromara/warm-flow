@@ -15,7 +15,6 @@
  */
 package com.warm.flow.solon.config;
 
-import com.mybatisflex.core.BaseMapper;
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.config.WarmFlow;
 import com.warm.flow.core.dao.*;
@@ -24,7 +23,6 @@ import com.warm.flow.core.service.*;
 import com.warm.flow.core.service.impl.*;
 import com.warm.flow.orm.dao.*;
 import com.warm.flow.orm.invoker.EntityInvoker;
-import org.apache.ibatis.solon.annotation.Db;
 import org.noear.solon.Solon;
 import org.noear.solon.annotation.Bean;
 import org.noear.solon.annotation.Configuration;
@@ -113,11 +111,6 @@ public class FlowAutoConfig {
     }
 
     @Bean
-    public void dbConfig(@Db() org.apache.ibatis.session.Configuration cfg) {
-        cfg.addMappers("com.warm.flow.orm.mapper", BaseMapper.class);
-    }
-
-    @Bean
     public WarmFlow initFlow() {
         // 设置创建对象方法
         EntityInvoker.setNewEntity();
@@ -128,4 +121,5 @@ public class FlowAutoConfig {
         log.info("warm-flow初始化结束");
         return FlowFactory.getFlowConfig();
     }
+
 }
