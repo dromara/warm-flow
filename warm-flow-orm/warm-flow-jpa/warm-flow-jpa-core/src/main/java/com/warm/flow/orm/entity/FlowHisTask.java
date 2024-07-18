@@ -249,6 +249,12 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
     private List<String> permissionList;
 
     /**
+     * 跳转类型（PASS通过 REJECT退回 NONE无动作）
+     */
+    @Column(name = "skip_type")
+    private String skipType;
+
+    /**
      * 流程状态（1审批中 2 审批通过 9已退回 10失效）
      */
     @Column(name = "flow_status")
@@ -438,6 +444,17 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
     @Override
     public FlowHisTask setPermissionList(List<String> permissionList) {
         this.permissionList = permissionList;
+        return this;
+    }
+
+    @Override
+    public String getSkipType() {
+        return this.skipType;
+    }
+
+    @Override
+    public HisTask setSkipType(String skipType) {
+        this.skipType = skipType;
         return this;
     }
 

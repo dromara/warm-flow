@@ -469,7 +469,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         User todoUser = CollUtil.getOne(StreamUtils.filter(todoList, u -> Objects.equals(u.getProcessedBy(), flowParams.getHandler())));
         AssertUtil.isTrue(Objects.isNull(todoUser), ExceptionCons.NOT_AUTHORITY);
 
-        // 当只剩一人时，他决定走向
+        // 当只剩一位待办用户时，由当前用户决定走向
         if (todoList.size() == 1) {
             return false;
         }
@@ -494,10 +494,10 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         BigDecimal all = BigDecimal.ZERO.add(BigDecimal.valueOf(todoList.size())).add(BigDecimal.valueOf(doneList.size()));
 
         List<HisTask> donePassList = StreamUtils.filter(doneList
-                , hisTask -> Objects.equals(hisTask.getFlowStatus(), FlowStatus.PASS.getKey()));
+                , hisTask -> Objects.equals(hisTask.getSkipType(), SkipType.PASS.getKey()));
 
         List<HisTask> doneRejectList = StreamUtils.filter(doneList
-                , hisTask -> Objects.equals(hisTask.getFlowStatus(), FlowStatus.REJECT.getKey()));
+                , hisTask -> Objects.equals(hisTask.getSkipType(), SkipType.REJECT.getKey()));
 
         boolean isPass = SkipType.isPass(flowParams.getSkipType());
 
@@ -534,7 +534,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     private void cooperateAutoPass(Task task, List<User> userList, CooperateType cooperateType) {
         List<HisTask> hisTaskList = FlowFactory.hisTaskService()
-                .autoHisTask(FlowStatus.AUTO_PASS.getKey(), task, userList, cooperateType.getKey());
+                .autoHisTask(SkipType.NONE.getKey(), FlowStatus.AUTO_PASS.getKey(), task, userList, cooperateType.getKey());
         FlowFactory.hisTaskService().saveBatch(hisTaskList);
         FlowFactory.userService().removeByIds(StreamUtils.toList(userList, User::getId));
     }
@@ -762,7 +762,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 }
             }
             if (CollUtil.isNotEmpty(noDoneTasks)) {
-                convertHisTask(noDoneTasks, FlowStatus.INVALID.getKey(), hisTaskExt);
+                convertHisTask(noDoneTasks, skipType, FlowStatus.INVALID.getKey(), hisTaskExt);
             }
         }
     }
@@ -799,7 +799,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         if (NodeType.isEnd(instance.getNodeType())) {
             List<Task> taskList = list(FlowFactory.newTask().setInstanceId(instance.getId()));
             if (CollUtil.isNotEmpty(taskList)) {
-                convertHisTask(taskList, FlowStatus.AUTO_PASS.getKey(), hisTaskExt);
+                convertHisTask(taskList, SkipType.NONE.getKey(), FlowStatus.AUTO_PASS.getKey(), hisTaskExt);
             }
         }
     }
@@ -809,11 +809,11 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
      *
      * @param taskList
      */
-    private void convertHisTask(List<Task> taskList, Integer flowStatus, String hisTaskExt) {
+    private void convertHisTask(List<Task> taskList, String skipType, Integer flowStatus, String hisTaskExt) {
         List<HisTask> insHisList = new ArrayList<>();
         for (Task task : taskList) {
             List<User> userList = FlowFactory.userService().listByAssociatedAndTypes(task.getId());
-            List<HisTask> hisTasks = FlowFactory.hisTaskService().autoHisTask(flowStatus, task, userList, CooperateType.APPROVAL.getKey());
+            List<HisTask> hisTasks = FlowFactory.hisTaskService().autoHisTask(skipType, flowStatus, task, userList, CooperateType.APPROVAL.getKey());
             // 设置每个HisTask的ext字段
             hisTasks.forEach(hisTask -> hisTask.setExt(hisTaskExt));
             insHisList.addAll(hisTasks);
