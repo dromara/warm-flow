@@ -13,6 +13,7 @@
         <result property="targetNodeName" column="target_node_name"/>
         <result property="definitionId" column="definition_id"/>
         <result property="instanceId" column="instance_id"/>
+        <result property="skipType" column="skip_type"/>
         <result property="flowStatus" column="flow_status"/>
         <result property="message" column="message"/>
         <result property="ext" column="ext"/>
@@ -33,6 +34,7 @@
                t.target_node_name,
                t.definition_id,
                t.instance_id,
+               t.skip_type,
                t.flow_status,
                t.message,
                t.ext,

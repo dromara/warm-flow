@@ -82,6 +82,9 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
                 if (Objects.nonNull(this.taskId)) {
                     predicates.add(criteriaBuilder.equal(root.get("taskId"), this.taskId));
                 }
+                if (StringUtils.isNotEmpty(this.skipType)) {
+                    predicates.add(criteriaBuilder.equal(root.get("skipType"), this.skipType));
+                }
                 if (Objects.nonNull(this.flowStatus)) {
                     predicates.add(criteriaBuilder.equal(root.get("flowStatus"), this.flowStatus));
                 }
@@ -127,6 +130,9 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
         }
         if (Objects.nonNull(updateEntity.taskId)) {
             this.taskId = updateEntity.taskId;
+        }
+        if (StringUtils.isNotEmpty(updateEntity.skipType)) {
+            this.skipType = updateEntity.skipType;
         }
         if (Objects.nonNull(updateEntity.flowStatus)) {
             this.flowStatus = updateEntity.flowStatus;
@@ -247,6 +253,12 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
      */
     @Transient
     private List<String> permissionList;
+
+    /**
+     * 流程流转（PASS REJECT NONE）
+     */
+    @Column(name = "skip_type")
+    private String skipType;
 
     /**
      * 流程状态（1审批中 2 审批通过 9已退回 10失效）
@@ -442,6 +454,17 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
     }
 
     @Override
+    public String getSkipType() {
+        return this.skipType;
+    }
+
+    @Override
+    public HisTask setSkipType(String skipType) {
+        this.skipType = skipType;
+        return this;
+    }
+
+    @Override
     public Integer getFlowStatus() {
         return flowStatus;
     }
@@ -527,6 +550,7 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
                 ", targetNodeName='" + targetNodeName + '\'' +
                 ", approver='" + approver + '\'' +
                 ", permissionList=" + permissionList +
+                ", skipType=" + skipType +
                 ", flowStatus=" + flowStatus +
                 ", message='" + message + '\'' +
                 ", ext='" + ext + '\'' +

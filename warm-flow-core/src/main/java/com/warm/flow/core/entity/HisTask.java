@@ -102,6 +102,10 @@ public interface HisTask extends RootEntity {
 
     public HisTask setPermissionList(List<String> permissionList);
 
+    public String getSkipType();
+
+    public HisTask setSkipType(String skipType);
+
     public Integer getFlowStatus();
 
     public HisTask setFlowStatus(Integer flowStatus);

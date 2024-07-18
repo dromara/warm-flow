@@ -124,6 +124,11 @@ public class FlowHisTask implements HisTask {
     private List<String> permissionList;
 
     /**
+     * 跳转类型（PASS通过 REJECT退回 NONE无动作）
+     */
+    private String skipType;
+
+    /**
      * 流程状态（1审批中 2 审批通过 9已退回 10失效）
      */
     private Integer flowStatus;
@@ -364,6 +369,17 @@ public class FlowHisTask implements HisTask {
     }
 
     @Override
+    public String getSkipType() {
+        return this.skipType;
+    }
+
+    @Override
+    public HisTask setSkipType(String skipType) {
+        this.skipType = skipType;
+        return this;
+    }
+
+    @Override
     public Integer getFlowStatus() {
         return flowStatus;
     }
@@ -450,6 +466,7 @@ public class FlowHisTask implements HisTask {
                 ", approver='" + approver + '\'' +
                 ", collaborator='" + collaborator + '\'' +
                 ", permissionList=" + permissionList +
+                ", skipType=" + skipType +
                 ", flowStatus=" + flowStatus +
                 ", message='" + message + '\'' +
                 ", ext='" + ext + '\'' +
