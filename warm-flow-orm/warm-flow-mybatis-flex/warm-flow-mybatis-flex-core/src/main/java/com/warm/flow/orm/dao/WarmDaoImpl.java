@@ -149,8 +149,8 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
             }
             return getMapper().updateByQuery(logicDelEntity, queryWrapper);
         }
-        if (ObjectUtil.isNotNull(uwConsumer)) {
-            uwConsumer.accept(queryWrapper);
+        if (ObjectUtil.isNotNull(qwConsumer)) {
+            qwConsumer.accept(queryWrapper);
         }
         return getMapper().deleteByQuery(queryWrapper);
     }

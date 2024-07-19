@@ -98,20 +98,20 @@
             </dependencies>
         </profile>
         <profile>
-            <id>mybatis-flex</id>
-            <dependencies>
-                <dependency>
-                    <groupId>io.github.minliuhua</groupId>
-                    <artifactId>warm-flow-mybatis-solon-plugin</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
             <id>hibernate-jpa</id>
             <dependencies>
                 <dependency>
                     <groupId>io.github.minliuhua</groupId>
                     <artifactId>warm-flow-jpa-solon-plugin</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>mybatis-flex</id>
+            <dependencies>
+                <dependency>
+                    <groupId>io.github.minliuhua</groupId>
+                    <artifactId>warm-flow-mybatis-flex-solon-plugin</artifactId>
                 </dependency>
             </dependencies>
         </profile>

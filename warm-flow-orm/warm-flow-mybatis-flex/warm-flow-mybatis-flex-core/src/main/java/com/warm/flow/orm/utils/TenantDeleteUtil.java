@@ -55,7 +55,7 @@ public class TenantDeleteUtil {
      * @date 2024/5/10 11:16
      */
     public static <T extends RootEntity> QueryWrapper getDelWrapper(T entity) {
-        QueryWrapper queryWrapper = QueryWrapper.create();
+        QueryWrapper queryWrapper = QueryWrapper.create(entity);
         WarmFlow flowConfig = FlowFactory.getFlowConfig();
         handleQueryWrapper(queryWrapper, flowConfig);
         return queryWrapper;

@@ -293,7 +293,12 @@
             </dependency>
             <dependency>
                 <groupId>com.mybatis-flex</groupId>
-                <artifactId>mybatis-flex-spring</artifactId>
+                <artifactId>mybatis-flex-solon-plugin</artifactId>
+                <version>${mybatis-flex.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mybatis-flex</groupId>
+                <artifactId>mybatis-flex-core</artifactId>
                 <version>${mybatis-flex.version}</version>
             </dependency>
             <dependency>
@@ -307,10 +312,14 @@
                 <artifactId>warm-flow-mybatis-flex-core</artifactId>
                 <version>${revision}</version>
             </dependency>
-
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-mybatis-flex-sb-starter</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.minliuhua</groupId>
+                <artifactId>warm-flow-mybatis-flex-solon-plugin</artifactId>
                 <version>${revision}</version>
             </dependency>
         </dependencies>
