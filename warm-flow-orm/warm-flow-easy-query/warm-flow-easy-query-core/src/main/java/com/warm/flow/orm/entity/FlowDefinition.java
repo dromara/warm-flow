@@ -44,6 +44,7 @@ import java.util.List;
 public class FlowDefinition implements Definition,ProxyEntityAvailable<FlowDefinition, FlowDefinitionProxy> {
 
     /** 主键 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     @Column(value = "id", primaryKey = true)
     private Long id;
 
@@ -54,27 +55,35 @@ public class FlowDefinition implements Definition,ProxyEntityAvailable<FlowDefin
     private Date updateTime;
 
     /** 租户ID */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String tenantId;
 
     /** 删除标记 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String delFlag;
 
     /** 流程编码 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String flowCode;
 
     /** 流程名称 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String flowName;
 
     /** 流程版本 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String version;
 
     /** 是否发布（0未发布 1已发布 9失效） */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private Integer isPublish;
 
     /** 审批表单是否自定义（Y是 2否） */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String fromCustom;
 
     /** 审批表单是否自定义（Y是 2否） */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String fromPath;
 
     /** 审批表单是否自定义（Y是 2否） */

@@ -15,10 +15,7 @@
  */
 package com.warm.flow.orm.entity;
 
-import com.easy.query.core.annotation.Column;
-import com.easy.query.core.annotation.ColumnIgnore;
-import com.easy.query.core.annotation.EntityProxy;
-import com.easy.query.core.annotation.Table;
+import com.easy.query.core.annotation.*;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.warm.flow.core.entity.Instance;
 import com.warm.flow.orm.entity.proxy.FlowInstanceProxy;
@@ -41,81 +38,93 @@ import java.util.Date;
 @Table("flow_instance")
 public class FlowInstance implements Instance, ProxyEntityAvailable<FlowInstance, FlowInstanceProxy> {
 
-    /**主键     */
+    /** 主键 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     @Column(value = "id", primaryKey = true)
     private Long id;
 
-    /**创建时间     */
+    /** 创建时间 */
     private Date createTime;
 
-    /**更新时间     */
+    /** 更新时间 */
     private Date updateTime;
 
-    /**租户ID     */
+    /** 租户ID */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String tenantId;
 
-    /**删除标记     */
+    /** 删除标记 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String delFlag;
 
-    /**对应flow_definition表的id     */
+    /** 对应flow_definition表的id */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private Long definitionId;
 
-    /**流程名称     */
+    /** 流程名称 */
     @ColumnIgnore
     private String flowName;
 
-    /**业务id     */
+    /** 业务id */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String businessId;
 
-    /**节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）     */
+    /** 节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关） */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private Integer nodeType;
 
-    /**流程节点编码   每个流程的nodeCode是唯一的,即definitionId+nodeCode唯一,在数据库层面做了控制     */
+    /** 流程节点编码   每个流程的nodeCode是唯一的,即definitionId+nodeCode唯一,在数据库层面做了控制 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String nodeCode;
 
-    /**流程节点名称     */
+    /** 流程节点名称 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String nodeName;
 
-    /**流程变量     */
+    /** 流程变量 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String variable;
 
-    /**流程状态（0待提交 1审批中 2 审批通过 3自动通过 8已完成 9已退回 10失效）     */
+    /** 流程状态（0待提交 1审批中 2 审批通过 3自动通过 8已完成 9已退回 10失效） */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private Integer flowStatus;
 
-    /**创建者     */
+    /** 创建者 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String createBy;
 
-    /**审批表单是否自定义（Y是 2否）     */
+    /** 审批表单是否自定义（Y是 2否） */
     @ColumnIgnore
     private String fromCustom;
 
-    /**审批表单是否自定义（Y是 2否）     */
+    /** 审批表单是否自定义（Y是 2否） */
     @ColumnIgnore
     private String fromPath;
 
-    /**扩展字段     */
+    /** 扩展字段 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String ext;
 
 
     @Override
     public String toString() {
         return "FlowInstance{" +
-                "id=" + id +
-                ", createTime=" + createTime +
-                ", updateTime=" + updateTime +
-                ", definitionId=" + definitionId +
-                ", flowName='" + flowName + '\'' +
-                ", businessId='" + businessId + '\'' +
-                ", tenantId='" + tenantId + '\'' +
-                ", nodeType=" + nodeType +
-                ", nodeCode='" + nodeCode + '\'' +
-                ", nodeName='" + nodeName + '\'' +
-                ", variable='" + variable + '\'' +
-                ", flowStatus=" + flowStatus +
-                ", createBy='" + createBy + '\'' +
-                ", fromCustom='" + fromCustom + '\'' +
-                ", fromPath='" + fromPath + '\'' +
-                ", ext='" + ext + '\'' +
-                "} " + super.toString();
+            "id=" + id +
+            ", createTime=" + createTime +
+            ", updateTime=" + updateTime +
+            ", definitionId=" + definitionId +
+            ", flowName='" + flowName + '\'' +
+            ", businessId='" + businessId + '\'' +
+            ", tenantId='" + tenantId + '\'' +
+            ", nodeType=" + nodeType +
+            ", nodeCode='" + nodeCode + '\'' +
+            ", nodeName='" + nodeName + '\'' +
+            ", variable='" + variable + '\'' +
+            ", flowStatus=" + flowStatus +
+            ", createBy='" + createBy + '\'' +
+            ", fromCustom='" + fromCustom + '\'' +
+            ", fromPath='" + fromPath + '\'' +
+            ", ext='" + ext + '\'' +
+            "} " + super.toString();
     }
 }

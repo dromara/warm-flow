@@ -29,6 +29,10 @@ public class UISort implements ObjectSort {
 
     public static <T> UISort of(Page<T> page) {
 
+        if (Objects.isNull(page) || StringUtils.isEmpty(page.getOrderBy())) {
+            return null;
+        }
+
         String orderBy = page.getOrderBy();
         // orderBy 要转为驼峰模式， 不然无法适配eq属性
         orderBy = StringUtils.toCamelCase(orderBy);

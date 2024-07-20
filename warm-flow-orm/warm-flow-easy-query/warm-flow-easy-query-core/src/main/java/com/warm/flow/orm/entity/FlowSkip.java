@@ -15,10 +15,7 @@
  */
 package com.warm.flow.orm.entity;
 
-import com.easy.query.core.annotation.Column;
-import com.easy.query.core.annotation.ColumnIgnore;
-import com.easy.query.core.annotation.EntityProxy;
-import com.easy.query.core.annotation.Table;
+import com.easy.query.core.annotation.*;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.warm.flow.core.entity.Skip;
 import com.warm.flow.orm.entity.proxy.FlowSkipProxy;
@@ -41,71 +38,83 @@ import java.util.Date;
 @Table("flow_skip")
 public class FlowSkip implements Skip, ProxyEntityAvailable<FlowSkip, FlowSkipProxy> {
 
-    /** 主键     */
-    @Column(value = "id",primaryKey = true)
+    /** 主键 */
+    @Column(value = "id", primaryKey = true)
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private Long id;
 
-    /** 创建时间     */
+    /** 创建时间 */
+
     private Date createTime;
 
-    /** 更新时间     */
+    /** 更新时间 */
     private Date updateTime;
 
-    /** 租户ID     */
+    /** 租户ID */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String tenantId;
 
-    /** 删除标记     */
+    /** 删除标记 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String delFlag;
 
-    /** 流程id     */
+    /** 流程id */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private Long definitionId;
 
-    /** 节点id     */
+    /** 节点id */
     @ColumnIgnore
     private Long nodeId;
 
-    /** 当前流程节点的编码     */
+    /** 当前流程节点的编码 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String nowNodeCode;
 
-    /** 当前节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）     */
+    /** 当前节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关） */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private Integer nowNodeType;
 
-    /** 下一个流程节点的编码     */
+    /** 下一个流程节点的编码 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String nextNodeCode;
 
-    /** 下一个节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）     */
+    /** 下一个节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关） */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private Integer nextNodeType;
 
-    /** 跳转名称     */
+    /** 跳转名称 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String skipName;
 
-    /** 跳转类型（PASS审批通过 REJECT退回）     */
+    /** 跳转类型（PASS审批通过 REJECT退回） */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String skipType;
 
-    /** 跳转条件     */
+    /** 跳转条件 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String skipCondition;
 
-    /** 流程跳转坐标     */
+    /** 流程跳转坐标 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String coordinate;
-
 
 
     @Override
     public String toString() {
         return "FlowSkip{" +
-                "id=" + id +
-                ", createTime=" + createTime +
-                ", updateTime=" + updateTime +
-                ", definitionId=" + definitionId +
-                ", nodeId=" + nodeId +
-                ", nowNodeCode='" + nowNodeCode + '\'' +
-                ", nowNodeType=" + nowNodeType +
-                ", nextNodeCode='" + nextNodeCode + '\'' +
-                ", nextNodeType=" + nextNodeType +
-                ", skipName='" + skipName + '\'' +
-                ", skipType='" + skipType + '\'' +
-                ", skipCondition='" + skipCondition + '\'' +
-                ", coordinate='" + coordinate + '\'' +
-                "} " + super.toString();
+            "id=" + id +
+            ", createTime=" + createTime +
+            ", updateTime=" + updateTime +
+            ", definitionId=" + definitionId +
+            ", nodeId=" + nodeId +
+            ", nowNodeCode='" + nowNodeCode + '\'' +
+            ", nowNodeType=" + nowNodeType +
+            ", nextNodeCode='" + nextNodeCode + '\'' +
+            ", nextNodeType=" + nextNodeType +
+            ", skipName='" + skipName + '\'' +
+            ", skipType='" + skipType + '\'' +
+            ", skipCondition='" + skipCondition + '\'' +
+            ", coordinate='" + coordinate + '\'' +
+            "} " + super.toString();
     }
 }

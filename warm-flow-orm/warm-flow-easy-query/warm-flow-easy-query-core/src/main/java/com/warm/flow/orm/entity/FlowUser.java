@@ -16,6 +16,7 @@
 package com.warm.flow.orm.entity;
 
 import com.easy.query.core.annotation.Column;
+import com.easy.query.core.annotation.EasyWhereCondition;
 import com.easy.query.core.annotation.EntityProxy;
 import com.easy.query.core.annotation.Table;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
@@ -41,46 +42,53 @@ import java.util.Date;
 @Table("flow_user")
 public class FlowUser implements User, ProxyEntityAvailable<FlowUser, FlowUserProxy> {
 
-    /** 主键     */
+    /** 主键 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     @Column(value = "id", primaryKey = true)
     private Long id;
 
-    /** 创建时间     */
+    /** 创建时间 */
     private Date createTime;
 
-    /** 更新时间     */
+    /** 更新时间 */
     private Date updateTime;
 
-    /** 租户ID     */
+    /** 租户ID */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String tenantId;
 
-    /** 删除标记     */
+    /** 删除标记 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String delFlag;
 
-    /** 人员类型（1代办任务的审批人权限 2代办任务的转办人权限 3待办任务的委托人权限）     */
+    /** 人员类型（1代办任务的审批人权限 2代办任务的转办人权限 3待办任务的委托人权限） */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String type;
 
-    /** 权限人     */
+    /** 权限人 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String processedBy;
 
-    /** 关联表id     */
+    /** 关联表id */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private Long associated;
 
-    /** 创建人：比如作为委托的人保存     */
+    /** 创建人：比如作为委托的人保存 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String createBy;
 
 
     @Override
     public String toString() {
         return "FlowUser{" +
-                "id=" + id +
-                ", createTime=" + createTime +
-                ", updateTime=" + updateTime +
-                ", tenantId='" + tenantId + '\'' +
-                ", delFlag='" + delFlag + '\'' +
-                ", type='" + type + '\'' +
-                ", processed_by='" + processedBy + '\'' +
-                ", associated=" + associated +
-                '}';
+            "id=" + id +
+            ", createTime=" + createTime +
+            ", updateTime=" + updateTime +
+            ", tenantId='" + tenantId + '\'' +
+            ", delFlag='" + delFlag + '\'' +
+            ", type='" + type + '\'' +
+            ", processed_by='" + processedBy + '\'' +
+            ", associated=" + associated +
+            '}';
     }
 }

@@ -41,6 +41,7 @@ import java.util.List;
 public class FlowHisTask implements HisTask, ProxyEntityAvailable<FlowHisTask, FlowHisTaskProxy> {
 
     /** 主键 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     @Column(value = "id", primaryKey = true)
     private Long id;
 
@@ -51,12 +52,15 @@ public class FlowHisTask implements HisTask, ProxyEntityAvailable<FlowHisTask, F
     private Date updateTime;
 
     /** 租户ID */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String tenantId;
 
     /** 删除标记 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String delFlag;
 
     /** 对应flow_definition表的id */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private Long definitionId;
 
     /** 流程名称 */
@@ -64,12 +68,15 @@ public class FlowHisTask implements HisTask, ProxyEntityAvailable<FlowHisTask, F
     private String flowName;
 
     /** 流程实例表id */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private Long instanceId;
 
     /** 任务表id */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private Long taskId;
 
     /** 协作方式(1审批 2转办 3委派 4会签 5票签 6加签 7减签) */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private Integer cooperateType;
 
     /** 业务id */
@@ -77,24 +84,31 @@ public class FlowHisTask implements HisTask, ProxyEntityAvailable<FlowHisTask, F
     private String businessId;
 
     /** 开始节点编码 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String nodeCode;
 
     /** 开始节点名称 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String nodeName;
 
     /** 开始节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关） */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private Integer nodeType;
 
     /** 目标节点编码 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String targetNodeCode;
 
     /** 结束节点名称 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String targetNodeName;
 
     /** 审批者 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String approver;
 
     /** 协作人(只有转办、会签、票签、委派) */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String collaborator;
 
     /** 权限标识 permissionFlag的list形式 */

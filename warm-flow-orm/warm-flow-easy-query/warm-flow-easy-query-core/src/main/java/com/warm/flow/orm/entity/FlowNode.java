@@ -15,10 +15,7 @@
  */
 package com.warm.flow.orm.entity;
 
-import com.easy.query.core.annotation.Column;
-import com.easy.query.core.annotation.ColumnIgnore;
-import com.easy.query.core.annotation.EntityProxy;
-import com.easy.query.core.annotation.Table;
+import com.easy.query.core.annotation.*;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.Skip;
@@ -49,47 +46,78 @@ public class FlowNode implements Node, ProxyEntityAvailable<FlowNode, FlowNodePr
     @ColumnIgnore
     List<Skip> skipList = new ArrayList<>();
     /** 主键 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     @Column(value = "id", primaryKey = true)
     private Long id;
+
     /** 创建时间 */
     private Date createTime;
+
     /** 更新时间 */
     private Date updateTime;
 
     /** 租户ID */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String tenantId;
 
     /** 删除标记 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String delFlag;
 
     /** 节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关） */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private Integer nodeType;
+
     /** 流程id */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private Long definitionId;
+
     /** 流程节点编码   每个流程的nodeCode是唯一的,即definitionId+nodeCode唯一,在数据库层面做了控制 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String nodeCode;
+
     /** 流程节点名称 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String nodeName;
+
     /** 权限标识（权限类型:权限标识，可以多个，用逗号隔开) */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String permissionFlag;
+
     /** 流程签署比例值 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private BigDecimal nodeRatio;
+
     /** 动态权限标识（权限类型:权限标识，可以多个，如role:1,role:2) */
     @ColumnIgnore
     private List<String> dynamicPermissionFlagList;
+
     /** 流程节点坐标 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String coordinate;
+
     /** 版本 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String version;
+
     /** 是否可以跳转任意节点（Y是 N否） */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String skipAnyNode;
+
     /** 监听器类型 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String listenerType;
+
     /** 监听器路径 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String listenerPath;
+
     /** 处理器类型 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String handlerType;
+
     /** 处理器路径 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String handlerPath;
 
 

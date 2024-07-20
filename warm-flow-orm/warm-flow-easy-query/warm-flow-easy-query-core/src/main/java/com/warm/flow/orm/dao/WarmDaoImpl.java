@@ -73,10 +73,11 @@ public abstract class WarmDaoImpl<T extends RootEntity & ProxyEntityAvailable<T,
             .whereObject(entity)
             .count();
         if (total > 0) {
+            UISort objectSort = UISort.of(page);
             EasyPageResult<T> pageResult = entityQuery().queryable(entityClass())
                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT) // 忽略空值查询
                 .whereObject(entity)
-                .orderByObject(UISort.of(page))
+                .orderByObject(Objects.nonNull(objectSort), objectSort)
                 .toPageResult(page.getPageNum(), page.getPageSize(), total);
             return new Page<>(pageResult.getData(), total);
         }

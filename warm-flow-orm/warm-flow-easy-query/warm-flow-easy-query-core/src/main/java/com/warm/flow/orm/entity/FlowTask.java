@@ -16,10 +16,7 @@
 package com.warm.flow.orm.entity;
 
 
-import com.easy.query.core.annotation.Column;
-import com.easy.query.core.annotation.ColumnIgnore;
-import com.easy.query.core.annotation.EntityProxy;
-import com.easy.query.core.annotation.Table;
+import com.easy.query.core.annotation.*;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.warm.flow.core.entity.Task;
 import com.warm.flow.core.entity.User;
@@ -42,83 +39,90 @@ import java.util.List;
 @Accessors(chain = true)
 @EntityProxy
 @Table("flow_task")
-public class FlowTask implements Task , ProxyEntityAvailable<FlowTask, FlowTaskProxy> {
+public class FlowTask implements Task, ProxyEntityAvailable<FlowTask, FlowTaskProxy> {
 
-    /** 主键     */
+    /** 主键 */
     @Column(value = "id", primaryKey = true)
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private Long id;
 
-    /** 创建时间     */
+    /** 创建时间 */
     private Date createTime;
 
-    /** 更新时间     */
+    /** 更新时间 */
     private Date updateTime;
 
-    /** 租户ID     */
+    /** 租户ID */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String tenantId;
 
-    /** 删除标记     */
+    /** 删除标记 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String delFlag;
 
-    /** 对应flow_definition表的id     */
+    /** 对应flow_definition表的id */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private Long definitionId;
 
-    /** 流程实例表id     */
+    /** 流程实例表id */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private Long instanceId;
 
-    /** 流程名称     */
+    /** 流程名称 */
     @ColumnIgnore
     private String flowName;
 
-    /** 业务id     */
+    /** 业务id */
     @ColumnIgnore
     private String businessId;
 
-    /** 节点编码     */
+    /** 节点编码 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String nodeCode;
 
-    /** 节点名称     */
+    /** 节点名称 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String nodeName;
 
-    /** 节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）     */
+    /** 节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关） */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private Integer nodeType;
 
-    /** 权限标识 permissionFlag的list形式     */
+    /** 权限标识 permissionFlag的list形式 */
     @ColumnIgnore
     private List<String> permissionList;
 
-    /** 流程用户列表     */
+    /** 流程用户列表 */
     @ColumnIgnore
     private List<User> userList;
 
-    /** 审批表单是否自定义（Y是 2否）     */
+    /** 审批表单是否自定义（Y是 2否） */
     @ColumnIgnore
     private String fromCustom;
 
-    /** 审批表单是否自定义（Y是 2否）     */
+    /** 审批表单是否自定义（Y是 2否） */
     @ColumnIgnore
     private String fromPath;
-
 
 
     @Override
     public String toString() {
         return "FlowTask{" +
-                "id=" + id +
-                ", createTime=" + createTime +
-                ", updateTime=" + updateTime +
-                ", definitionId=" + definitionId +
-                ", instanceId=" + instanceId +
-                ", tenantId='" + tenantId + '\'' +
-                ", flowName='" + flowName + '\'' +
-                ", businessId='" + businessId + '\'' +
-                ", nodeCode='" + nodeCode + '\'' +
-                ", nodeName='" + nodeName + '\'' +
-                ", nodeType=" + nodeType +
-                ", permissionList=" + permissionList +
-                ", userList=" + userList +
-                ", fromCustom='" + fromCustom + '\'' +
-                ", fromPath='" + fromPath + '\'' +
-                "} " + super.toString();
+            "id=" + id +
+            ", createTime=" + createTime +
+            ", updateTime=" + updateTime +
+            ", definitionId=" + definitionId +
+            ", instanceId=" + instanceId +
+            ", tenantId='" + tenantId + '\'' +
+            ", flowName='" + flowName + '\'' +
+            ", businessId='" + businessId + '\'' +
+            ", nodeCode='" + nodeCode + '\'' +
+            ", nodeName='" + nodeName + '\'' +
+            ", nodeType=" + nodeType +
+            ", permissionList=" + permissionList +
+            ", userList=" + userList +
+            ", fromCustom='" + fromCustom + '\'' +
+            ", fromPath='" + fromPath + '\'' +
+            "} " + super.toString();
     }
 }
