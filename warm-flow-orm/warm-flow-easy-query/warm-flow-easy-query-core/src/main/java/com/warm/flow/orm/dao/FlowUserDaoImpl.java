@@ -30,7 +30,7 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser, FlowUserProxy> implem
                     proxy.tenantId().eq(StringUtils.isNotEmpty(entity.getTenantId()), entity.getTenantId()); // 租户ID
                     proxy.delFlag().eq(FlowFactory.getFlowConfig().getLogicNotDeleteValue()); // 删除标记
                 })
-                .setColumns(proxy -> proxy.delFlag().eq(FlowFactory.getFlowConfig().getLogicDeleteValue()))
+                .setColumns(proxy -> proxy.delFlag().set(FlowFactory.getFlowConfig().getLogicDeleteValue()))
                 .executeRows();
         }
 
@@ -97,7 +97,7 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser, FlowUserProxy> implem
                 .where(proxy -> {
                     buildDeleteEqCondition(entity, proxy);
                 })
-                .setColumns(proxy -> proxy.delFlag().eq(FlowFactory.getFlowConfig().getLogicDeleteValue()))
+                .setColumns(proxy -> proxy.delFlag().set(FlowFactory.getFlowConfig().getLogicDeleteValue()))
                 .executeRows();
         }
         // 没有使用逻辑删除， 直接物理删除

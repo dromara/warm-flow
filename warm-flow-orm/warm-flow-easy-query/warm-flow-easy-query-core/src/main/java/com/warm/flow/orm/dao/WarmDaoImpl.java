@@ -125,7 +125,7 @@ public abstract class WarmDaoImpl<T extends RootEntity & ProxyEntityAvailable<T,
     public int deleteById(Serializable id) {
         if (FlowFactory.getFlowConfig().isLogicDelete()) {
             return (int) entityQuery().getEasyQueryClient().updatable(entityClass())
-                .set("del_flag", FlowFactory.getFlowConfig().getLogicDeleteValue())
+                .set("delFlag", FlowFactory.getFlowConfig().getLogicDeleteValue())
                 .whereById(id)
                 .executeRows();
         }
@@ -140,7 +140,7 @@ public abstract class WarmDaoImpl<T extends RootEntity & ProxyEntityAvailable<T,
     public int deleteByIds(Collection<? extends Serializable> ids) {
         if (FlowFactory.getFlowConfig().isLogicDelete()) {
            return (int) entityQuery().getEasyQueryClient().updatable(entityClass())
-                .set("del_flag", FlowFactory.getFlowConfig().getLogicDeleteValue())
+                .set("delFlag", FlowFactory.getFlowConfig().getLogicDeleteValue())
                 .whereByIds(ids)
                 .executeRows();
         }

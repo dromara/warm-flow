@@ -16,15 +16,22 @@
 package com.warm.flow.easyquery.sb;
 
 
+import com.warm.flow.core.dto.FlowParams;
+import com.warm.flow.core.entity.Instance;
+import com.warm.flow.core.entity.Task;
+import com.warm.flow.core.enums.SkipType;
 import com.warm.flow.core.service.DefService;
 import com.warm.flow.core.service.InsService;
 import com.warm.flow.core.service.TaskService;
 import com.warm.flow.core.test.FlowBaseTest;
+import com.warm.flow.orm.entity.FlowTask;
 import io.github.minliuhua.EasyQueryTestApplication;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
+import java.util.Collections;
 
 
 @SpringBootTest(classes = EasyQueryTestApplication.class)
@@ -92,7 +99,16 @@ public class FlowTest extends FlowBaseTest {
      */
     @Test
     public void skipFlow() {
-        skipFlow(insService, taskService);
+        // 开启流程
+        Instance instance = insService.start("2", getUser());
+
+        // 通过实例id流转
+        instance = insService.skipByInsId(instance.getId(), getUser().skipType(SkipType.PASS.getKey())
+                .permissionFlag(Arrays.asList("role:1", "role:2")));
+        System.out.println("流转后流程实例：" + instance.toString());
+
+        // 删除流程
+        insService.remove(Collections.singletonList(instance.getId()));
     }
 
     /**
@@ -100,7 +116,22 @@ public class FlowTest extends FlowBaseTest {
      */
     @Test
     public void termination() {
-        termination(taskService);
+        // 开启流程
+        Instance instance = insService.start("2", getUser());
+
+        // 查找任务
+        FlowTask entity = new FlowTask();
+        Task task = taskService.list(entity.setInstanceId(instance.getId()))
+                .stream().findFirst().orElseThrow(() -> new RuntimeException("未找到任务"));
+
+        // 终止流程
+        FlowParams flowParams = new FlowParams();
+        flowParams.message("终止流程").handler("1");
+        instance = taskService.termination(task.getId(), flowParams);
+
+        // 删除流程
+        insService.remove(Collections.singletonList(instance.getId()));
+
     }
 
     /**
