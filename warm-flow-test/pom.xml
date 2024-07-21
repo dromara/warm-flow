@@ -17,6 +17,7 @@
         <module>warm-flow-solon-test</module>
         <module>warm-flow-easy-query-solon-test</module>
         <module>warm-flow-springboot-test</module>
+        <module>warm-flow-easy-query-springboot-test</module>
     </modules>
 
     <dependencyManagement>

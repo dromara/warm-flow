@@ -13,7 +13,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>warm-flow-easy-query-core</module>
-<!--        <module>warm-flow-easy-query-sb-starter</module>-->
+        <module>warm-flow-easy-query-sb-starter</module>
         <module>warm-flow-easy-query-solon-plugin</module>
     </modules>
     <properties>
