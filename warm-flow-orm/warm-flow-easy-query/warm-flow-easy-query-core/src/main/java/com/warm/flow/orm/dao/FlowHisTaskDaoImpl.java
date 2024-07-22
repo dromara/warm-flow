@@ -28,6 +28,7 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask, FlowHisTaskProx
                 proxy.targetNodeCode().eq(StringUtils.isNotEmpty(targetNodeCode), targetNodeCode); // 目标节点编码
                 proxy.instanceId().eq(instanceId); // 流程实例表id
                 proxy.flowStatus().eq(FlowStatus.PASS.getKey()); // 流程状态（1审批中 2 审批通过 9已退回 10失效）
+                proxy.skipType().eq(StringUtils.isNotEmpty(entity.getSkipType()), entity.getSkipType()); // 跳转类型（PASS通过 REJECT退回 NONE无动作）
                 proxy.delFlag().eq(StringUtils.isNotEmpty(entity.getDelFlag()), entity.getDelFlag()); // 逻辑删除过滤
                 proxy.tenantId().eq(StringUtils.isNotEmpty(entity.getTenantId()),entity.getTenantId()); // 租户ID
             })
@@ -123,6 +124,7 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask, FlowHisTaskProx
         proxy.taskId().eq(Objects.nonNull(entity.getTaskId()), entity.getTaskId()); // 任务表id
         proxy.cooperateType().eq(Objects.nonNull(entity.getCooperateType()), entity.getCooperateType()); // 协作方式(1审批 2转办 3委派 4会签 5票签 6加签 7减签)
         proxy.flowStatus().eq(Objects.nonNull(entity.getFlowStatus()), entity.getFlowStatus()); // 流程状态（1审批中 2 审批通过 9已退回 10失效）
+        proxy.skipType().eq(StringUtils.isNotEmpty(entity.getSkipType()), entity.getSkipType()); // 跳转类型（PASS通过 REJECT退回 NONE无动作）
         proxy.message().eq(StringUtils.isNotEmpty(entity.getMessage()), entity.getMessage()); // 审批意见
         proxy.ext().eq(StringUtils.isNotEmpty(entity.getExt()), entity.getExt()); // 业务详情 存业务类的json
         proxy.createTime().eq(Objects.nonNull(entity.getCreateTime()), entity.getCreateTime()); // 创建时间

@@ -479,13 +479,13 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
         // 会签并且当前人驳回直接返回
         if (CooperateType.isCountersign(nodeRatio) && SkipType.isReject(flowParams.getSkipType())) {
-            cooperateAutoPass(task, restList, CooperateType.COUNTERSIGN);
             return false;
         }
 
         // 查询会签票签已办列表
+
         List<HisTask> doneList = FlowFactory.hisTaskService().listByTaskIdAndCooperateTypes(task.getId()
-                , CooperateType.COUNTERSIGN.getKey(), CooperateType.VOTE.getKey());
+                , CooperateType.isCountersign(nodeRatio) ? CooperateType.COUNTERSIGN.getKey() : CooperateType.VOTE.getKey());
         doneList = CollUtil.emptyDefault(doneList, Collections.emptyList());
 
         // TODO 这里处理 cooperation handler 获取下面的 passRatio rejectRatio all 值，能获取使用 handler的值，不能获取使用以下全自动计算代码
@@ -513,13 +513,11 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
         if (!isPass && rejectRatio.compareTo(CooperateType.ONE_HUNDRED.subtract(nodeRatio)) > 0) {
             // 驳回，并且当前是驳回
-            cooperateAutoPass(task, restList, CooperateType.VOTE);
             return false;
         }
 
         if (passRatio.compareTo(nodeRatio) >= 0) {
             // 大于等于 nodeRatio 设置值结束任务
-            cooperateAutoPass(task, restList, CooperateType.VOTE);
             return false;
         }
 

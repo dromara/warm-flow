@@ -544,6 +544,7 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
                 ", targetNodeName='" + targetNodeName + '\'' +
                 ", approver='" + approver + '\'' +
                 ", permissionList=" + permissionList +
+                ", skipType=" + skipType +
                 ", flowStatus=" + flowStatus +
                 ", message='" + message + '\'' +
                 ", ext='" + ext + '\'' +

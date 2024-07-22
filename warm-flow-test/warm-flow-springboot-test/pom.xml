@@ -74,6 +74,19 @@
 
     <profiles>
         <profile>
+            <id>easy-query</id>
+            <dependencies>
+                <dependency>
+                    <groupId>io.github.minliuhua</groupId>
+                    <artifactId>warm-flow-easy-query-sb-starter</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-aop</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
             <id>mybatis</id>
             <dependencies>
                 <dependency>
