@@ -3,39 +3,145 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>quick-admin</title>
+    <title>warm-flow-ui</title>
+    
     <!-- 引入 core包 -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@logicflow/core@1.2.27/dist/style/index.css" />
-    <script src="https://cdn.jsdelivr.net/npm/@logicflow/core@1.2.27/dist/logic-flow.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@logicflow/core@2.0.0-beta.4/dist/index.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@logicflow/core@2.0.0-beta.4/dist/index.css" />
 
     <!-- 引入 extension包样式 -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@logicflow/extension@1.2.27/lib/style/index.css" />
-
-    <!-- 插件支持单个引入-->
-    <script src="https://cdn.jsdelivr.net/npm/@logicflow/extension@1.2.27/lib/BpmnElement.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@logicflow/extension@1.2.27/lib/BpmnAdapter.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@logicflow/extension@1.2.27/lib/DndPanel.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@logicflow/extension@1.2.27/lib/SelectionSelect.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@logicflow/extension@1.2.27/lib/Control.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@logicflow/extension@2.0.0-beta.4/dist/index.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@logicflow/extension@2.0.0-beta.4/dist/index.css" />
     
-
     <style>
       #container {
         width: 1000px;
         height: 500px
       }
     </style>
+    <style>
+    .drawer {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 300px;
+      height: 100%;
+      background-color: #f1f1f1;
+      transition: right 0.3s ease-in-out;
+      padding: 20px;
+      box-sizing: border-box;
+      z-index: 1000;
+    }
+
+    .drawer.open {
+      right: 0;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      display: none;
+    }
+
+    .overlay.show {
+      display: block;
+    }
+
+    .drawer-button {
+      margin: 10px;
+    }
+  </style>
   </head>
   <body>
     <div id="container"></div>
-        <script>
+
+
+    <div>
+        <div class="overlay" onclick="closeDrawer()"></div>
+
+        <div class="drawer" id="bpmn:startEvent">
+            <div>
+              start-event-drawer
+            </div>
+            <div>
+              <div>节点编码 <input type="" name="" /> </div>
+              <div>节点名称 <input type="" name="" /> </div>
+              <div>监听器类型 <select> <option>任务创建</option></select> </div>
+              <div>监听器路径 <textarea name=""></textarea> </div>
+            </div>
+        </div>
+        <div class="drawer" id="bpmn:userTask">
+            <div>
+              user-task-drawer
+            </div>
+            <div>
+              <div>节点编码 <input type="" name="" /> </div>
+              <div>节点名称 <input type="" name="" /> </div>
+              <div>协作方式 
+                <input type="radio" name=""/>或签
+                <input type="radio" name=""/>票签
+                <input type="radio" name=""/>会签
+              </div>
+              <div>权限标识 <select> <option>任务创建</option></select> </div>
+              <div>是否可以跳转任意节点
+                <input type="radio" name=""/>否
+                <input type="radio" name=""/>是
+              </div>
+              <div>监听器类型 <select> <option>任务创建</option></select> </div>
+              <div>监听器路径 <textarea name=""></textarea> </div>
+            </div>
+        </div>
+        <div class="drawer" id="bpmn:exclusiveGateway">
+            <div>
+              exclusive-gateway-drawer
+            </div>
+            <div>
+              <div>节点编码 <input type="" name="" /> </div>
+              <div>节点名称 <input type="" name="" /> </div>
+            </div>
+        </div>
+        <div class="drawer" id="bpmn:parallelGateway">
+            <div>
+              parallel-gateway-drawer
+            </div>
+            <div>
+              <div>节点编码 <input type="" name="" /> </div>
+              <div>节点名称 <input type="" name="" /> </div>
+            </div>
+        </div>
+        <div class="drawer" id="bpmn:endEvent">
+            <div>
+              end-event-drawer
+            </div>
+            <div>
+              <div>节点编码 <input type="" name="" /> </div>
+              <div>节点名称 <input type="" name="" /> </div>
+            </div>
+        </div>
+        <div class="drawer" id="bpmn:sequenceFlow">
+            <div>
+              sequence-flow-drawer
+            </div>
+            <div>
+              <div>跳转类型 <select> <option>审批通过</option> <option>退回</option></select> </div>
+            </div>
+        </div>
+    </div>
+    
+
+    <script>
       window.onload = function () {
         InitLogicFlow();
       }
 
       function InitLogicFlow() {
         // LogicFlow配置选项
-        const lf = new LogicFlow({
+        const lf = new Core.LogicFlow({
           container: document.querySelector("#container"),
           grid: {
             visible: true,
@@ -51,7 +157,7 @@
           keyboard: {
             enabled: true
           },
-          plugins: [BpmnElement,BpmnXmlAdapter, SelectionSelect, DndPanel, Control]
+          plugins: [Extension.BpmnElement, Extension.BPMNElements, Extension.BpmnXmlAdapter, Extension.SelectionSelect, Extension.DndPanel, Extension.Control]
         })
 
         // 拖拽面板
@@ -112,11 +218,14 @@
         lf.on('node:click', data => {
           console.log('data.type', data)
 
+          openDrawer(data.data.type)
+
         })
 
         // 监听被点击节点
         lf.on('edge:click', data => {
           console.log('data.type', data)
+          openDrawer(data.data.type)
         })
 
         lf.render({})
@@ -126,5 +235,23 @@
 
       }
     </script>
+
+  <script type="text/javascript">
+
+    function openDrawer(drawerId) {
+      const drawer = document.getElementById(drawerId);
+      drawer.classList.add('open');
+      document.querySelector('.overlay').classList.add('show');
+    }
+
+    function closeDrawer() {
+      const drawers = document.querySelectorAll('.drawer');
+      drawers.forEach(drawer => {
+        drawer.classList.remove('open');
+      });
+      document.querySelector('.overlay').classList.remove('show');
+    }
+
+  </script>
   </body>
 </html>
