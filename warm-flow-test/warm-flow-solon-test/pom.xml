@@ -58,6 +58,25 @@
 
     <profiles>
         <profile>
+            <id>easy-query</id>
+            <dependencies>
+                <dependency>
+                    <groupId>io.github.minliuhua</groupId>
+                    <artifactId>warm-flow-easy-query-solon-plugin</artifactId>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>org.noear</groupId>
+                            <artifactId>solon.data</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.noear</groupId>
+                            <artifactId>solon.logging</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
             <id>mybatis</id>
             <dependencies>
                 <dependency>

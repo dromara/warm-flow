@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.github.minliuhua</groupId>
+        <artifactId>warm-flow-easy-query</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <artifactId>warm-flow-easy-query-solon-plugin</artifactId>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+
+  <dependencies>
+    <dependency>
+      <groupId>org.noear</groupId>
+      <artifactId>solon</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.github.minliuhua</groupId>
+      <artifactId>warm-flow-easy-query-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.easy-query</groupId>
+      <artifactId>sql-solon-plugin</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.noear</groupId>
+          <artifactId>solon</artifactId>
+        </exclusion>
+        <exclusion>
+          <artifactId>solon.data</artifactId>
+          <groupId>org.noear</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>solon.logging</artifactId>
+          <groupId>org.noear</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+  </dependencies>
+
+</project>
