@@ -115,6 +115,12 @@ public class FlowHisTask implements HisTask, ProxyEntityAvailable<FlowHisTask, F
     @ColumnIgnore
     private List<String> permissionList;
 
+    /**
+     * 跳转类型（PASS通过 REJECT退回 NONE无动作）
+     */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
+    private String skipType;
+
     /** 流程状态（1审批中 2 审批通过 9已退回 10失效） */
     private Integer flowStatus;
 
@@ -159,6 +165,7 @@ public class FlowHisTask implements HisTask, ProxyEntityAvailable<FlowHisTask, F
             ", approver='" + approver + '\'' +
             ", collaborator='" + collaborator + '\'' +
             ", permissionList=" + permissionList +
+            ", skipType=" + skipType +
             ", flowStatus=" + flowStatus +
             ", message='" + message + '\'' +
             ", ext='" + ext + '\'' +

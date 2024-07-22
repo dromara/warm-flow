@@ -82,6 +82,16 @@ public enum SkipType {
         return StringUtils.isNotEmpty(Key) && (SkipType.REJECT.getKey().equals(Key));
     }
 
+    /**
+     * 判断是否无动作类型
+     *
+     * @param Key
+     * @return
+     */
+    public static Boolean isNone(String Key) {
+        return StringUtils.isNotEmpty(Key) && (SkipType.NONE.getKey().equals(Key));
+    }
+
     public String getKey() {
         return key;
     }
