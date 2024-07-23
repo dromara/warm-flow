@@ -140,12 +140,6 @@
 
             <dependency>
                 <groupId>org.noear</groupId>
-                <artifactId>solon-data</artifactId>
-                <version>${solon.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.noear</groupId>
                 <artifactId>solon.logging.logback</artifactId>
                 <version>${solon.version}</version>
             </dependency>
