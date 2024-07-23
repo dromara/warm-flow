@@ -84,12 +84,12 @@ public class FlowDefinition implements Definition {
     /**
      * 审批表单是否自定义（Y是 2否）
      */
-    private String fromCustom;
+    private String formCustom;
 
     /**
      * 审批表单是否自定义（Y是 2否）
      */
-    private String fromPath;
+    private String formPath;
 
     /**
      * 审批表单是否自定义（Y是 2否）
@@ -203,24 +203,24 @@ public class FlowDefinition implements Definition {
     }
 
     @Override
-    public String getFromCustom() {
-        return fromCustom;
+    public String getFormCustom() {
+        return formCustom;
     }
 
     @Override
-    public FlowDefinition setFromCustom(String fromCustom) {
-        this.fromCustom = fromCustom;
+    public FlowDefinition setFormCustom(String formCustom) {
+        this.formCustom = formCustom;
         return this;
     }
 
     @Override
-    public String getFromPath() {
-        return fromPath;
+    public String getFormPath() {
+        return formPath;
     }
 
     @Override
-    public FlowDefinition setFromPath(String fromPath) {
-        this.fromPath = fromPath;
+    public FlowDefinition setFormPath(String formPath) {
+        this.formPath = formPath;
         return this;
     }
 
@@ -267,8 +267,8 @@ public class FlowDefinition implements Definition {
                 ", flowName='" + flowName + '\'' +
                 ", version='" + version + '\'' +
                 ", isPublish=" + isPublish +
-                ", fromCustom='" + fromCustom + '\'' +
-                ", fromPath='" + fromPath + '\'' +
+                ", formCustom='" + formCustom + '\'' +
+                ", formPath='" + formPath + '\'' +
                 ", xmlString='" + xmlString + '\'' +
                 ", nodeList=" + nodeList +
                 '}';

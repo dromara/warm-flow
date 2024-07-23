@@ -120,6 +120,17 @@ public class FlowNode implements Node, ProxyEntityAvailable<FlowNode, FlowNodePr
     @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String handlerPath;
 
+    /**
+     * 审批表单是否自定义（Y是 2否）
+     */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
+    private String formCustom;
+
+    /**
+     * 审批表单是否自定义（Y是 2否）
+     */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
+    private String formPath;
 
     @Override
     public String toString() {
@@ -144,6 +155,8 @@ public class FlowNode implements Node, ProxyEntityAvailable<FlowNode, FlowNodePr
             ", listenerPath='" + listenerPath + '\'' +
             ", handlerType='" + handlerType + '\'' +
             ", handlerPath='" + handlerPath + '\'' +
+            ", formCustom='" + formCustom + '\'' +
+            ", formPath='" + formPath + '\'' +
             '}';
     }
 }

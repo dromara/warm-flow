@@ -100,8 +100,8 @@ public class FlowDefinitionDaoImpl extends WarmDaoImpl<FlowDefinition, FlowDefin
         proxy.flowName().eq(StringUtils.isNotEmpty(entity.getFlowName()), entity.getFlowName()); // 流程名称
         proxy.version().eq(StringUtils.isNotEmpty(entity.getVersion()), entity.getVersion()); // 流程版本
         proxy.isPublish().eq(Objects.nonNull(entity.getIsPublish()), entity.getIsPublish()); // 是否发布
-        proxy.fromCustom().eq(StringUtils.isNotEmpty(entity.getFromCustom()), entity.getFromCustom()); // 审批表单是否自定义
-        proxy.fromPath().eq(StringUtils.isNotEmpty(entity.getFromPath()), entity.getFromPath()); // 审批表单是否自定义
+        proxy.formCustom().eq(StringUtils.isNotEmpty(entity.getFormCustom()), entity.getFormCustom()); // 审批表单是否自定义
+        proxy.formPath().eq(StringUtils.isNotEmpty(entity.getFormPath()), entity.getFormPath()); // 审批表单是否自定义
         proxy.tenantId().eq(StringUtils.isNotEmpty(entity.getTenantId()), entity.getTenantId()); // 租户ID
         proxy.createTime().eq(Objects.nonNull(entity.getCreateTime()), entity.getCreateTime()); // 创建时间
         proxy.updateTime().eq(Objects.nonNull(entity.getUpdateTime()), entity.getUpdateTime()); // 更新时间

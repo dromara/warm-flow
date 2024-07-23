@@ -70,8 +70,8 @@ public class FlowConfigUtil {
         definition.setFlowCode(definitionElement.attributeValue("flowCode"));
         definition.setFlowName(definitionElement.attributeValue("flowName"));
         definition.setVersion(definitionElement.attributeValue("version"));
-        definition.setFromCustom(definitionElement.attributeValue("fromCustom"));
-        definition.setFromPath(definitionElement.attributeValue("fromPath"));
+        definition.setFormCustom(definitionElement.attributeValue("fromCustom"));
+        definition.setFormPath(definitionElement.attributeValue("fromPath"));
 
         List<Element> nodesElement = definitionElement.elements();
         // 遍历一个流程中的各个节点
@@ -109,6 +109,10 @@ public class FlowConfigUtil {
         node.setSkipAnyNode(nodeElement.attributeValue("skipAnyNode"));
         node.setListenerType(nodeElement.attributeValue("listenerType"));
         node.setListenerPath(nodeElement.attributeValue("listenerPath"));
+        node.setHandlerType(nodeElement.attributeValue("handlerType"));
+        node.setHandlerPath(nodeElement.attributeValue("handlerPath"));
+        node.setFormCustom(nodeElement.attributeValue("formCustom"));
+        node.setFormPath(nodeElement.attributeValue("formPath"));
         FlowFactory.dataFillHandler().idFill(node);
 
         List<Element> skipsElement = nodeElement.elements();
@@ -141,8 +145,8 @@ public class FlowConfigUtil {
         definitionElement.addAttribute("flowCode", definition.getFlowCode());
         definitionElement.addAttribute("flowName", definition.getFlowName());
         definitionElement.addAttribute("version", definition.getVersion());
-        definitionElement.addAttribute("fromCustom", definition.getFromCustom());
-        definitionElement.addAttribute("fromPath", definition.getFromPath());
+        definitionElement.addAttribute("formCustom", definition.getFormCustom());
+        definitionElement.addAttribute("formPath", definition.getFormPath());
 
         List<Node> nodeList = definition.getNodeList();
         for (Node node : nodeList) {
@@ -159,6 +163,10 @@ public class FlowConfigUtil {
             nodeElement.addAttribute("skipAnyNode", node.getSkipAnyNode());
             nodeElement.addAttribute("listenerType", node.getListenerType());
             nodeElement.addAttribute("listenerPath", node.getListenerPath());
+            nodeElement.addAttribute("handlerType", node.getHandlerType());
+            nodeElement.addAttribute("handlerPath", node.getHandlerPath());
+            nodeElement.addAttribute("formCustom", node.getFormCustom());
+            nodeElement.addAttribute("formPath", node.getFormPath());
 
             List<Skip> skipList = node.getSkipList();
             if (CollUtil.isNotEmpty(skipList)) {

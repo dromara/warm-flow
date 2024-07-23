@@ -113,6 +113,8 @@ public class FlowNodeDaoImpl extends WarmDaoImpl<FlowNode, FlowNodeProxy> implem
         proxy.listenerPath().eq(StringUtils.isNotEmpty(entity.getListenerPath()), entity.getListenerPath()); // 监听器路径
         proxy.handlerType().eq(StringUtils.isNotEmpty(entity.getHandlerType()), entity.getHandlerType()); // 处理器类型
         proxy.handlerPath().eq(StringUtils.isNotEmpty(entity.getHandlerPath()), entity.getHandlerPath()); // 处理器路径
+        proxy.formCustom().eq(StringUtils.isNotEmpty(entity.getFormCustom()), entity.getFormCustom()); // 处理器类型
+        proxy.formPath().eq(StringUtils.isNotEmpty(entity.getFormPath()), entity.getFormPath()); // 处理器路径
         proxy.version().eq(StringUtils.isNotEmpty(entity.getVersion()), entity.getVersion()); // 版本
         proxy.createTime().eq(Objects.nonNull(entity.getCreateTime()), entity.getCreateTime()); // 创建时间
         proxy.updateTime().eq(Objects.nonNull(entity.getUpdateTime()), entity.getUpdateTime()); // 更新时间

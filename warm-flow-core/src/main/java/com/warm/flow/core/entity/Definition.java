@@ -61,13 +61,13 @@ public interface Definition extends RootEntity {
 
     public Definition setIsPublish(Integer isPublish);
 
-    public String getFromCustom();
+    public String getFormCustom();
 
-    public Definition setFromCustom(String fromCustom);
+    public Definition setFormCustom(String formCustom);
 
-    public String getFromPath();
+    public String getFormPath();
 
-    public Definition setFromPath(String fromPath);
+    public Definition setFormPath(String formPath);
 
     public List<Node> getNodeList();
 

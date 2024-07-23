@@ -18,6 +18,8 @@
         <result property="listenerPath" column="listener_path"/>
         <result property="handlerType" column="handler_type"/>
         <result property="handlerPath" column="handler_path"/>
+        <result property="formCustom" column="form_custom"/>
+        <result property="formPath" column="form_path"/>
         <result property="version" column="version"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
@@ -39,6 +41,8 @@
                t.listener_path,
                t.handler_type,
                t.handler_path,
+               t.form_custom,
+               t.form_path,
                t.version,
                t.create_time,
                t.update_time,
@@ -79,8 +83,10 @@
             <if test="entity.listenerPath != null and entity.listenerPath != ''">and t.listener_path =
                 #{entity.listenerPath}
             </if>
-            <if test="entity.handlerType != null and entity.handlerType != ''">and t.handler_type = #{handlerType}</if>
-            <if test="entity.handlerPath != null and entity.handlerPath != ''">and t.handler_path = #{handlerPath}</if>
+            <if test="entity.handlerType != null and entity.handlerType != ''">and t.handler_type = #{entity.handlerType}</if>
+            <if test="entity.handlerPath != null and entity.handlerPath != ''">and t.handler_path = #{entity.handlerPath}</if>
+            <if test="entity.formCustom != null and entity.formCustom != ''">and t.form_custom = #{entity.formCustom}</if>
+            <if test="entity.formPath != null and entity.formPath != ''">and t.form_path = #{entity.formPath}</if>
             <if test="entity.version != null and entity.version != ''">and t.version = #{entity.version}</if>
             <if test="entity.createTime != null">and t.create_time = #{entity.createTime}</if>
             <if test="entity.updateTime != null">and t.update_time = #{entity.updateTime}</if>
@@ -165,6 +171,8 @@
             <if test="listenerPath != null and listenerPath != ''">listener_path,</if>
             <if test="handlerType != null and handlerType != ''">handler_type,</if>
             <if test="handlerPath != null and handlerPath != ''">handler_path,</if>
+            <if test="formCustom != null and formCustom != ''">form_custom,</if>
+            <if test="formPath != null and formPath != ''">form_path,</if>
             <if test="version != null and version != ''">version,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
@@ -186,6 +194,8 @@
             <if test="listenerPath != null and listenerPath != ''">#{listenerPath},</if>
             <if test="handlerType != null and handlerType != ''">#{handlerType},</if>
             <if test="handlerPath != null and handlerPath != ''">#{handlerPath},</if>
+            <if test="formCustom != null and formCustom != ''">#{formCustom},</if>
+            <if test="formPath != null and formPath != ''">#{formPath},</if>
             <if test="version != null and version != ''">#{version},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
@@ -209,6 +219,8 @@
             <if test="listenerPath != null and listenerPath != ''">t.listener_path = #{listenerPath},</if>
             <if test="handlerType != null and handlerType != ''">t.handler_type = #{handlerType},</if>
             <if test="handlerPath != null and handlerPath != ''">t.handler_path = #{handlerPath},</if>
+            <if test="formCustom != null and formCustom != ''">t.form_custom = #{formCustom},</if>
+            <if test="formPath != null and formPath != ''">t.form_path = #{formPath},</if>
             <if test="version != null and version != ''">t.version = #{version},</if>
             <if test="createTime != null">t.create_time = #{createTime},</if>
             <if test="updateTime != null">t.update_time = #{updateTime},</if>
@@ -270,6 +282,8 @@
             <if test="listenerPath != null and listenerPath != ''">and listener_path = #{listenerPath}</if>
             <if test="handlerType != null and handlerType != ''">and handler_type = #{handlerType},</if>
             <if test="handlerPath != null and handlerPath != ''">and handler_path = #{handlerPath},</if>
+            <if test="formCustom != null and formCustom != ''">and form_custom = #{formCustom},</if>
+            <if test="formPath != null and formPath != ''">and form_path = #{formPath},</if>
             <if test="version != null and version != ''">and version = #{version}</if>
             <if test="createTime != null">and create_time = #{createTime}</if>
             <if test="updateTime != null">and update_time = #{updateTime}</if>
@@ -307,6 +321,8 @@
             <if test="entity.handlerPath != null and entity.handlerPath != ''">and t.handler_path =
                 #{entity.handlerPath}
             </if>
+            <if test="entity.formCustom != null and entity.formCustom != ''">and t.form_custom = #{entity.formCustom}</if>
+            <if test="entity.formPath != null and entity.formPath != ''">and t.form_path = #{entity.formPath}</if>
             <if test="entity.version != null and entity.version != ''">and t.version = #{entity.version}</if>
             <if test="entity.createTime != null">and t.create_time = #{entity.createTime}</if>
             <if test="entity.updateTime != null">and t.update_time = #{entity.updateTime}</if>
@@ -352,6 +368,8 @@
         listener_path,
         handler_type,
         handler_path,
+        form_custom,
+        form_path,
         version,
         create_time,
         update_time,
@@ -374,6 +392,8 @@
             #{item.listenerPath},
             #{item.handlerType},
             #{item.handlerPath},
+            #{item.formCustom},
+            #{item.formPath},
             #{item.version},
             #{item.createTime},
             #{item.updateTime},

@@ -99,6 +99,14 @@ public interface Node extends RootEntity {
 
     Node setHandlerPath(String listenerPath);
 
+    public String getFormCustom();
+
+    public Node setFormCustom(String formCustom);
+
+    public String getFormPath();
+
+    public Node setFormPath(String formPath);
+
     public String getVersion();
 
     public Node setVersion(String version);

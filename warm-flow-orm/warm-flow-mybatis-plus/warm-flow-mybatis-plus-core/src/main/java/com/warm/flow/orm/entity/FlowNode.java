@@ -122,6 +122,16 @@ public class FlowNode implements Node {
      */
     private String handlerPath;
 
+    /**
+     * 审批表单是否自定义（Y是 2否）
+     */
+    private String formCustom;
+
+    /**
+     * 审批表单是否自定义（Y是 2否）
+     */
+    private String formPath;
+
     @Override
     public Long getId() {
         return id;
@@ -332,6 +342,28 @@ public class FlowNode implements Node {
     }
 
     @Override
+    public String getFormCustom() {
+        return formCustom;
+    }
+
+    @Override
+    public FlowNode setFormCustom(String formCustom) {
+        this.formCustom = formCustom;
+        return this;
+    }
+
+    @Override
+    public String getFormPath() {
+        return formPath;
+    }
+
+    @Override
+    public FlowNode setFormPath(String formPath) {
+        this.formPath = formPath;
+        return this;
+    }
+
+    @Override
     public List<Skip> getSkipList() {
         return skipList;
     }
@@ -365,6 +397,8 @@ public class FlowNode implements Node {
                 ", listenerPath='" + listenerPath + '\'' +
                 ", handlerType='" + handlerType + '\'' +
                 ", handlerPath='" + handlerPath + '\'' +
+                ", formCustom='" + formCustom + '\'' +
+                ", formPath='" + formPath + '\'' +
                 '}';
     }
 }
