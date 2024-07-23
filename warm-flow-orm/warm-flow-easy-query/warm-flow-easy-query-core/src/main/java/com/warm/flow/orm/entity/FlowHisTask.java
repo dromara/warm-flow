@@ -137,11 +137,11 @@ public class FlowHisTask implements HisTask, ProxyEntityAvailable<FlowHisTask, F
 
     /** 审批表单是否自定义（Y是 2否） */
     @ColumnIgnore
-    private String fromCustom;
+    private String formCustom;
 
     /** 审批表单是否自定义（Y是 2否） */
     @ColumnIgnore
-    private String fromPath;
+    private String formPath;
 
 
     @Override
@@ -170,8 +170,8 @@ public class FlowHisTask implements HisTask, ProxyEntityAvailable<FlowHisTask, F
             ", message='" + message + '\'' +
             ", ext='" + ext + '\'' +
             ", createBy='" + createBy + '\'' +
-            ", fromCustom='" + fromCustom + '\'' +
-            ", fromPath='" + fromPath + '\'' +
+            ", formCustom='" + formCustom + '\'' +
+            ", formPath='" + formPath + '\'' +
             "} " + super.toString();
     }
 }

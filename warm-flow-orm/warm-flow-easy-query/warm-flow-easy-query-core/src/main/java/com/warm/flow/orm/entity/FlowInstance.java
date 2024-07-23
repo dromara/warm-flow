@@ -95,11 +95,11 @@ public class FlowInstance implements Instance, ProxyEntityAvailable<FlowInstance
 
     /** 审批表单是否自定义（Y是 2否） */
     @ColumnIgnore
-    private String fromCustom;
+    private String formCustom;
 
     /** 审批表单是否自定义（Y是 2否） */
     @ColumnIgnore
-    private String fromPath;
+    private String formPath;
 
     /** 扩展字段 */
     @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
@@ -122,8 +122,8 @@ public class FlowInstance implements Instance, ProxyEntityAvailable<FlowInstance
             ", variable='" + variable + '\'' +
             ", flowStatus=" + flowStatus +
             ", createBy='" + createBy + '\'' +
-            ", fromCustom='" + fromCustom + '\'' +
-            ", fromPath='" + fromPath + '\'' +
+            ", formCustom='" + formCustom + '\'' +
+            ", formPath='" + formPath + '\'' +
             ", ext='" + ext + '\'' +
             "} " + super.toString();
     }

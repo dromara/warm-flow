@@ -98,11 +98,11 @@ public class FlowTask implements Task, ProxyEntityAvailable<FlowTask, FlowTaskPr
 
     /** 审批表单是否自定义（Y是 2否） */
     @ColumnIgnore
-    private String fromCustom;
+    private String formCustom;
 
     /** 审批表单是否自定义（Y是 2否） */
     @ColumnIgnore
-    private String fromPath;
+    private String formPath;
 
 
     @Override
@@ -121,8 +121,8 @@ public class FlowTask implements Task, ProxyEntityAvailable<FlowTask, FlowTaskPr
             ", nodeType=" + nodeType +
             ", permissionList=" + permissionList +
             ", userList=" + userList +
-            ", fromCustom='" + fromCustom + '\'' +
-            ", fromPath='" + fromPath + '\'' +
+            ", formCustom='" + formCustom + '\'' +
+            ", formPath='" + formPath + '\'' +
             "} " + super.toString();
     }
 }

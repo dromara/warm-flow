@@ -70,8 +70,8 @@ public class FlowConfigUtil {
         definition.setFlowCode(definitionElement.attributeValue("flowCode"));
         definition.setFlowName(definitionElement.attributeValue("flowName"));
         definition.setVersion(definitionElement.attributeValue("version"));
-        definition.setFormCustom(definitionElement.attributeValue("fromCustom"));
-        definition.setFormPath(definitionElement.attributeValue("fromPath"));
+        definition.setFormCustom(definitionElement.attributeValue("formCustom"));
+        definition.setFormPath(definitionElement.attributeValue("formPath"));
 
         List<Element> nodesElement = definitionElement.elements();
         // 遍历一个流程中的各个节点

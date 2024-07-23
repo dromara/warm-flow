@@ -162,13 +162,13 @@ public class FlowHisTask implements HisTask {
      * 审批表单是否自定义（Y是 2否）
      */
     @Column(ignore = true)
-    private String fromCustom;
+    private String formCustom;
 
     /**
      * 审批表单是否自定义（Y是 2否）
      */
     @Column(ignore = true)
-    private String fromPath;
+    private String formPath;
 
     @Override
     public Long getId() {
@@ -435,24 +435,24 @@ public class FlowHisTask implements HisTask {
     }
 
     @Override
-    public String getFromCustom() {
-        return fromCustom;
+    public String getFormCustom() {
+        return formCustom;
     }
 
     @Override
-    public FlowHisTask setFromCustom(String fromCustom) {
-        this.fromCustom = fromCustom;
+    public FlowHisTask setFormCustom(String formCustom) {
+        this.formCustom = formCustom;
         return this;
     }
 
     @Override
-    public String getFromPath() {
-        return fromPath;
+    public String getFormPath() {
+        return formPath;
     }
 
     @Override
-    public FlowHisTask setFromPath(String fromPath) {
-        this.fromPath = fromPath;
+    public FlowHisTask setFormPath(String formPath) {
+        this.formPath = formPath;
         return this;
     }
 
@@ -481,8 +481,8 @@ public class FlowHisTask implements HisTask {
                 ", message='" + message + '\'' +
                 ", ext='" + ext + '\'' +
                 ", createBy='" + createBy + '\'' +
-                ", fromCustom='" + fromCustom + '\'' +
-                ", fromPath='" + fromPath + '\'' +
+                ", formCustom='" + formCustom + '\'' +
+                ", formPath='" + formPath + '\'' +
                 "} " + super.toString();
     }
 }

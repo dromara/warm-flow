@@ -11,14 +11,13 @@
         <result property="nodeType" column="node_type"/>
         <result property="definitionId" column="definition_id"/>
         <result property="instanceId" column="instance_id"/>
-        <result property="flowStatus" column="flow_status"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
         <result property="tenantId" column="tenant_id"/>
         <result property="businessId" column="business_id"/>
         <result property="flowName" column="flow_name"/>
-        <result property="fromCustom" column="from_custom"/>
-        <result property="fromPath" column="from_path"/>
+        <result property="formCustom" column="form_custom"/>
+        <result property="formPath" column="form_path"/>
     </resultMap>
 
 

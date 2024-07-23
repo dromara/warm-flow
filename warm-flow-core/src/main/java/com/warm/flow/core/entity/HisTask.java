@@ -122,12 +122,12 @@ public interface HisTask extends RootEntity {
 
     public HisTask setCreateBy(String createBy);
 
-    public String getFromCustom();
+    public String getFormCustom();
 
-    public HisTask setFromCustom(String fromCustom);
+    public HisTask setFormCustom(String formCustom);
 
-    public String getFromPath();
+    public String getFormPath();
 
-    public HisTask setFromPath(String fromPath);
+    public HisTask setFormPath(String formPath);
 
 }

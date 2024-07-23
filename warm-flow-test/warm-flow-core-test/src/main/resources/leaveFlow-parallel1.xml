@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<definition flowCode="leaveFlow-parallel1" flowName="并行-汇聚" version="1.0" fromCustom="N"
-            fromPath="system/leave/approve">
+<definition flowCode="leaveFlow-parallel1" flowName="并行-汇聚" version="1.0" formCustom="N"
+            formPath="system/leave/approve">
     <node nodeType="start" nodeCode="1" nodeName="开始" coordinate="140,180|140,180" skipAnyNode="N"
           listenerType="start,assignment,finish,permission,create"
           listenerPath="com.ruoyi.system.Listener.StartListener@@323@@com.ruoyi.system.Listener.FinishListener@@com.ruoyi.system.Listener.PermissionListener@@com.ruoyi.system.Listener.CreateListener">

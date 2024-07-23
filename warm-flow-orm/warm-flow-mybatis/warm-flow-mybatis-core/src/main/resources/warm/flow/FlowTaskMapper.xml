@@ -16,8 +16,8 @@
         <result property="tenantId" column="tenant_id"/>
         <result property="businessId" column="business_id"/>
         <result property="flowName" column="flow_name"/>
-        <result property="fromCustom" column="from_custom"/>
-        <result property="fromPath" column="from_path"/>
+        <result property="formCustom" column="form_custom"/>
+        <result property="formPath" column="form_path"/>
         <result property="delFlag" column="del_flag"/>
     </resultMap>
 

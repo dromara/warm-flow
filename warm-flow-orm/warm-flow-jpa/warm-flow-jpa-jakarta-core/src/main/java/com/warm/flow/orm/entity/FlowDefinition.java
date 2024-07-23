@@ -155,13 +155,13 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
     /**
      * 审批表单是否自定义（Y是 2否）
      */
-    @Column(name = "from_custom")
+    @Column(name = "form_custom")
     private String formCustom;
 
     /**
      * 审批表单是否自定义（Y是 2否）
      */
-    @Column(name = "from_path")
+    @Column(name = "form_path")
     private String formPath;
 
     /**

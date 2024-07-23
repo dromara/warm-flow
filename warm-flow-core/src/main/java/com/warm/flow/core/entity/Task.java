@@ -82,11 +82,11 @@ public interface Task extends RootEntity {
 
     public Task setUserList(List<User> userList);
 
-    public String getFromCustom();
+    public String getFormCustom();
 
-    public Task setFromCustom(String fromCustom);
+    public Task setFormCustom(String formCustom);
 
-    public String getFromPath();
+    public String getFormPath();
 
-    public Task setFromPath(String fromPath);
+    public Task setFormPath(String formPath);
 }
