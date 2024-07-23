@@ -184,7 +184,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
     }
 
     @Override
-    public List<HisTask> autoHisTask(String skipType, Integer flowStatus, Task task, List<User> userList, Integer cooperateType) {
+    public List<HisTask> autoHisTask(FlowParams flowParams, Integer flowStatus, Task task, List<User> userList, Integer cooperateType) {
         List<HisTask> hisTasks = new ArrayList<>();
         for (User user : userList) {
             HisTask hisTask = FlowFactory.newHisTask()
@@ -197,8 +197,10 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
                     .setDefinitionId(task.getDefinitionId())
                     .setCreateTime(task.getCreateTime())
                     .setApprover(user.getProcessedBy())
-                    .setSkipType(skipType)
-                    .setFlowStatus(flowStatus);
+                    .setSkipType(flowParams.getSkipType())
+                    .setFlowStatus(flowStatus)
+                    .setFlowStatus(Objects.nonNull(flowParams.getFlowStatus())
+                            ? flowParams.getFlowStatus()  : flowStatus); // TODO 待验证;
             FlowFactory.dataFillHandler().idFill(hisTask);
             hisTasks.add(hisTask);
         }

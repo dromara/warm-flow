@@ -103,11 +103,11 @@ public interface HisTaskService extends IWarmService<HisTask> {
     /**
      * 自动完成历史任务
      *
-     * @param skipType
+     * @param flowParams
      * @param flowStatus
      * @param task
      * @param userList
      */
-    List<HisTask> autoHisTask(String skipType, Integer flowStatus, Task task, List<User> userList, Integer cooperateType);
+    List<HisTask> autoHisTask(FlowParams flowParams, Integer flowStatus, Task task, List<User> userList, Integer cooperateType);
 
 }

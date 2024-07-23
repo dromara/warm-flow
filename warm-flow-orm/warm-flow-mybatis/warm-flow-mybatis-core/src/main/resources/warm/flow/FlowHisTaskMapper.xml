@@ -17,7 +17,7 @@
         <result property="instanceId" column="instance_id"/>
         <result property="taskId" column="task_id"/>
         <result property="cooperateType" column="cooperate_type"/>
-        <result property="skipType" column="skip_tye"/>
+        <result property="skipType" column="skip_type"/>
         <result property="flowStatus" column="flow_status"/>
         <result property="message" column="message"/>
         <result property="ext" column="ext"/>
