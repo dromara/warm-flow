@@ -35,7 +35,7 @@ public class ListenerVariable {
     private Instance instance;
 
     /**
-     * 当前节点
+     * 监听器对应的节点(权限监听器会执行两次，一次当前节点，一次下一节点)
      */
     private Node node;
 
