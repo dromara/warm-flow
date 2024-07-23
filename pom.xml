@@ -51,7 +51,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
         <spring.boot.version>2.5.14</spring.boot.version>
-        <dom4j.version>2.1.1</dom4j.version>
+        <dom4j.version>2.1.3</dom4j.version>
         <mybatis.version>3.5.15</mybatis.version>
         <mybatis-spring-boot>2.3.0</mybatis-spring-boot>
         <mybatis-plus.version>3.5.1</mybatis-plus.version>
