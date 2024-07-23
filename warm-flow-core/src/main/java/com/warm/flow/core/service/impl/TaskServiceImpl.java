@@ -471,8 +471,12 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             return false;
         }
 
+        // 除当前办理人外剩余办理人列表
+        List<User> restList = StreamUtils.filter(todoList, u -> !Objects.equals(u.getProcessedBy(), flowParams.getHandler()));
+
         // 会签并且当前人驳回直接返回
         if (CooperateType.isCountersign(nodeRatio) && SkipType.isReject(flowParams.getSkipType())) {
+            FlowFactory.userService().removeByIds(StreamUtils.toList(restList, User::getId));
             return false;
         }
 
@@ -507,11 +511,13 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
         if (!isPass && rejectRatio.compareTo(CooperateType.ONE_HUNDRED.subtract(nodeRatio)) > 0) {
             // 驳回，并且当前是驳回
+            FlowFactory.userService().removeByIds(StreamUtils.toList(restList, User::getId));
             return false;
         }
 
         if (passRatio.compareTo(nodeRatio) >= 0) {
             // 大于等于 nodeRatio 设置值结束任务
+            FlowFactory.userService().removeByIds(StreamUtils.toList(restList, User::getId));
             return false;
         }
 
@@ -523,14 +529,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         FlowFactory.userService().removeById(todoUser.getId());
         return true;
     }
-
-//    TODO min 暂时注释，后续观察如果没用就删除
-//    private void cooperateAutoPass(Task task, List<User> userList, CooperateType cooperateType) {
-//        List<HisTask> hisTaskList = FlowFactory.hisTaskService()
-//                .autoHisTask(SkipType.NONE.getKey(), FlowStatus.AUTO_PASS.getKey(), task, userList, cooperateType.getKey());
-//        FlowFactory.hisTaskService().saveBatch(hisTaskList);
-//        FlowFactory.userService().removeByIds(StreamUtils.toList(userList, User::getId));
-//    }
 
     /**
      * 构建增待办任务
