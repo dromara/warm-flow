@@ -4,6 +4,7 @@ import com.easy.query.core.util.EasyArrayUtil;
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.dao.FlowHisTaskDao;
 import com.warm.flow.core.enums.FlowStatus;
+import com.warm.flow.core.enums.SkipType;
 import com.warm.flow.core.utils.StringUtils;
 import com.warm.flow.orm.entity.FlowHisTask;
 import com.warm.flow.orm.entity.proxy.FlowHisTaskProxy;
@@ -27,8 +28,7 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask, FlowHisTaskProx
                 proxy.nodeCode().eq(nodeCode); // 开始节点编码
                 proxy.targetNodeCode().eq(StringUtils.isNotEmpty(targetNodeCode), targetNodeCode); // 目标节点编码
                 proxy.instanceId().eq(instanceId); // 流程实例表id
-                proxy.flowStatus().eq(FlowStatus.PASS.getKey()); // 流程状态（1审批中 2 审批通过 9已退回 10失效）
-                proxy.skipType().eq(StringUtils.isNotEmpty(entity.getSkipType()), entity.getSkipType()); // 跳转类型（PASS通过 REJECT退回 NONE无动作）
+                proxy.skipType().eq(SkipType.PASS.getKey()); // 跳转类型（PASS通过 REJECT退回 NONE无动作）
                 proxy.delFlag().eq(StringUtils.isNotEmpty(entity.getDelFlag()), entity.getDelFlag()); // 逻辑删除过滤
                 proxy.tenantId().eq(StringUtils.isNotEmpty(entity.getTenantId()),entity.getTenantId()); // 租户ID
             })
