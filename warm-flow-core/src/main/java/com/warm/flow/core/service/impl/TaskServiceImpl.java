@@ -88,9 +88,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         ListenerUtil.executeListener(new ListenerVariable(instance, nowNode, flowParams.getVariable(), task)
                 , Listener.LISTENER_START);
 
-        //判断结点是否有权限监听器,有执行权限监听器NowNode.setPermissionFlag,无走数据库的权限标识符
-        ListenerUtil.executeGetNodePermission(new ListenerVariable(instance, flowParams.getVariable(), task), nowNode);
-
         // 判断当前处理人是否有权限处理
         checkAuth(nowNode, task, flowParams.getPermissionFlag());
 

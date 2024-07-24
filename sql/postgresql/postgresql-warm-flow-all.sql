@@ -10,8 +10,8 @@ CREATE TABLE flow_definition (
 	flow_name varchar(100) NOT NULL, -- 流程名称
 	"version" varchar(20) NOT NULL, -- 流程版本
 	is_publish int2 NOT NULL DEFAULT 0, -- 是否发布（0未发布 1已发布 9失效）
-	from_custom bpchar(1) NULL DEFAULT 'N'::character varying, -- 审批表单是否自定义（Y是 N否）
-	from_path varchar(100) NULL, -- 审批表单路径
+	form_custom bpchar(1) NULL DEFAULT 'N'::character varying, -- 审批表单是否自定义（Y是 N否）
+	form_path varchar(100) NULL, -- 审批表单路径
 	create_time timestamp NULL, -- 创建时间
 	update_time timestamp NULL, -- 更新时间
 	del_flag bpchar(1) NULL, -- 删除标志
@@ -27,8 +27,8 @@ COMMENT ON COLUMN flow_definition.flow_code IS '流程编码';
 COMMENT ON COLUMN flow_definition.flow_name IS '流程名称';
 COMMENT ON COLUMN flow_definition."version" IS '流程版本';
 COMMENT ON COLUMN flow_definition.is_publish IS '是否发布（0未发布 1已发布 9失效）';
-COMMENT ON COLUMN flow_definition.from_custom IS '审批表单是否自定义（Y是 N否）';
-COMMENT ON COLUMN flow_definition.from_path IS '审批表单路径';
+COMMENT ON COLUMN flow_definition.form_custom IS '审批表单是否自定义（Y是 N否）';
+COMMENT ON COLUMN flow_definition.form_path IS '审批表单路径';
 COMMENT ON COLUMN flow_definition.create_time IS '创建时间';
 COMMENT ON COLUMN flow_definition.update_time IS '更新时间';
 COMMENT ON COLUMN flow_definition.del_flag IS '删除标志';
@@ -54,6 +54,7 @@ CREATE TABLE flow_his_task (
 	approver varchar(40) NULL, -- 审批者
 	cooperate_type int2 NOT NULL DEFAULT 0, -- 协作方式(1审批 2转办 3委派 4会签 5票签 6加签 7减签)
 	collaborator varchar(40) NULL, -- 协作人(只有转办、会签、票签、委派)
+	skip_type varchar(10) NULL, -- 流转类型（PASS通过 REJECT退回 NONE无动作）
 	flow_status int2 NOT NULL, -- 流程状态（0待提交 1审批中 2 审批通过 8已完成 9已退回 10失效）
 	message varchar(500) NULL, -- 审批意见
 	create_time timestamp NULL, -- 创建时间
@@ -78,6 +79,7 @@ COMMENT ON COLUMN flow_his_task.target_node_name IS '结束节点名称';
 COMMENT ON COLUMN flow_his_task.approver IS '审批者';
 COMMENT ON COLUMN flow_his_task.cooperate_type IS '协作方式(1审批 2转办 3委派 4会签 5票签 6加签 7减签)';
 COMMENT ON COLUMN flow_his_task.collaborator IS '协作人';
+COMMENT ON COLUMN flow_his_task.skip_type IS '流转类型（PASS通过 REJECT退回 NONE无动作）';
 COMMENT ON COLUMN flow_his_task.flow_status IS '流程状态（1审批中 2 审批通过 9已退回 10失效）';
 COMMENT ON COLUMN flow_his_task.message IS '审批意见';
 COMMENT ON COLUMN flow_his_task.create_time IS '开始时间';
@@ -149,6 +151,8 @@ CREATE TABLE flow_node (
 	listener_path varchar(400) NULL, -- 监听器路径
 	handler_type varchar(100) NULL, -- 处理器类型
 	handler_path varchar(400) NULL, -- 处理器路径
+    form_custom bpchar(1) NULL DEFAULT 'N'::character varying, -- 审批表单是否自定义（Y是 N否）
+    form_path varchar(100) NULL, -- 审批表单路径
 	"version" varchar(20) NOT NULL, -- 版本
 	create_time timestamp NULL, -- 创建时间
 	update_time timestamp NULL, -- 更新时间
@@ -174,6 +178,8 @@ COMMENT ON COLUMN flow_node.listener_type IS '监听器类型';
 COMMENT ON COLUMN flow_node.listener_path IS '监听器路径';
 COMMENT ON COLUMN flow_node.handler_type IS '处理器类型';
 COMMENT ON COLUMN flow_node.handler_path IS '处理器路径';
+COMMENT ON COLUMN flow_node.form_custom IS '审批表单是否自定义（Y是 N否）';
+COMMENT ON COLUMN flow_node.form_path IS '审批表单路径';
 COMMENT ON COLUMN flow_node."version" IS '版本';
 COMMENT ON COLUMN flow_node.create_time IS '创建时间';
 COMMENT ON COLUMN flow_node.update_time IS '更新时间';

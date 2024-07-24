@@ -75,6 +75,7 @@ create table FLOW_HIS_TASK
 	NODE_TYPE NUMBER(1),
 	TARGET_NODE_CODE VARCHAR2(100),
 	TARGET_NODE_NAME VARCHAR2(100),
+    SKIP_TYPE VARCHAR2(10),
 	FLOW_STATUS NUMBER(2),
 	MESSAGE VARCHAR2(500),
 	CREATE_TIME DATE,
@@ -117,6 +118,9 @@ comment on column FLOW_HIS_TASK.TARGET_NODE_CODE is '目标节点编码'
 comment on column FLOW_HIS_TASK.TARGET_NODE_NAME is '目标节点名称'
 /
 
+comment on column FLOW_HIS_TASK.SKIP_TYPE is '流转类型（PASS通过 REJECT退回 NONE无动作）'
+/
+
 comment on column FLOW_HIS_TASK.FLOW_STATUS is '流程状态（1审批中 2 审批通过 9已退回 10失效）'
 /
 
@@ -153,8 +157,8 @@ create table FLOW_DEFINITION
 	FLOW_NAME VARCHAR2(100) not null,
 	VERSION VARCHAR2(20) not null,
 	IS_PUBLISH NUMBER(1) default 0 not null,
-	FROM_CUSTOM VARCHAR2(1) default 'N',
-	FROM_PATH VARCHAR2(100),
+	FORM_CUSTOM VARCHAR2(1) default 'N',
+	FORM_PATH VARCHAR2(100),
 	CREATE_TIME DATE,
 	UPDATE_TIME DATE,
 	DEL_FLAG VARCHAR2(1),
@@ -180,10 +184,10 @@ comment on column FLOW_DEFINITION.VERSION is '流程版本'
 comment on column FLOW_DEFINITION.IS_PUBLISH is '是否发布 (0未发布 1已发布 9失效)'
 /
 
-comment on column FLOW_DEFINITION.FROM_CUSTOM is '审批表单是否自定义 (Y是 N否)'
+comment on column FLOW_DEFINITION.FORM_CUSTOM is '审批表单是否自定义 (Y是 N否)'
 /
 
-comment on column FLOW_DEFINITION.FROM_PATH is '审批表单路径'
+comment on column FLOW_DEFINITION.FORM_PATH is '审批表单路径'
 /
 
 comment on column FLOW_DEFINITION.CREATE_TIME is '创建时间'
@@ -280,6 +284,8 @@ create table FLOW_NODE
 	LISTENER_PATH VARCHAR2(500),
 	HANDLER_TYPE VARCHAR2(100),
 	HANDLER_PATH VARCHAR2(400),
+    FORM_CUSTOM VARCHAR2(1) default 'N',
+    FORM_PATH VARCHAR2(100),
 	VERSION VARCHAR2(20),
 	CREATE_TIME DATE,
 	UPDATE_TIME DATE,
@@ -326,6 +332,12 @@ comment on column FLOW_NODE.HANDLER_TYPE is '处理器类型'
 /
 
 comment on column FLOW_NODE.HANDLER_PATH is '处理器路径'
+/
+
+comment on column FLOW_NODE.FORM_CUSTOM is '审批表单是否自定义 (Y是 N否)'
+/
+
+comment on column FLOW_NODE.FORM_PATH is '审批表单路径'
 /
 
 comment on column FLOW_NODE.VERSION is '版本'
