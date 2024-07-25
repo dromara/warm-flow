@@ -82,9 +82,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 .getByNodeCodes(Collections.singletonList(task.getNodeCode()), task.getDefinitionId()));
         AssertUtil.isTrue(ObjectUtil.isNull(nowNode), ExceptionCons.LOST_CUR_NODE);
 
-        //执行开始节点 开始监听器
-        List<User> userList = FlowFactory.userService().listByAssociatedAndTypes(task.getId());
-        task.setUserList(userList);
+        task.setUserList(FlowFactory.userService().listByAssociatedAndTypes(task.getId()));
+        //执行开始监听器
         ListenerUtil.executeListener(new ListenerVariable(instance, nowNode, flowParams.getVariable(), task)
                 , Listener.LISTENER_START);
 
@@ -109,29 +108,21 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 构建增待办任务和设置结束任务历史记录
         List<Task> addTasks = buildAddTasks(flowParams, task, instance, nextNodes, nextNode);
 
-        // 设置流程历史任务信息
-        List<HisTask> insHisList = FlowFactory.hisTaskService().setSkipInsHis(task, nextNodes, flowParams);
+        // 执行分派监听器
+        ListenerUtil.executeListener(new ListenerVariable(instance, nowNode, flowParams.getVariable(), task, nextNodes
+                , addTasks), Listener.LISTENER_ASSIGNMENT);
 
-        // 设置结束节点相关信息
-        setEndInfo(instance, addTasks);
-
-        // 设置流程实例信息
-        setSkipInstance(instance, addTasks, flowParams);
+        // 更新流程信息
+        updateFlowInfo(task, instance, addTasks, flowParams, nextNodes);
 
         // 一票否决（谨慎使用），如果退回，退回指向节点后还存在其他正在执行的待办任务，转历史任务，状态都为失效,重走流程。
         oneVoteVeto(task, flowParams, nextNode.getNodeCode());
-
-        // 待办任务设置处理人
-        List<User> users = FlowFactory.userService().setSkipUser(addTasks, task.getId());
-
-        // 更新流程信息
-        updateFlowInfo(task, instance, insHisList, addTasks, users);
 
         // 处理未完成的任务，当流程完成，还存在待办任务未完成，转历史任务，状态完成。
         handUndoneTask(instance, flowParams);
 
         // 最后判断是否存在监听器，存在执行监听器
-        ListenerUtil.executeListener(new ListenerVariable(instance, flowParams.getVariable(), task, addTasks)
+        ListenerUtil.endCreateListener(new ListenerVariable(instance, flowParams.getVariable(), task, addTasks)
                 , nowNode, nextNodes);
         return instance;
     }
@@ -817,11 +808,22 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
      *
      * @param task
      * @param instance
-     * @param insHisList
      * @param addTasks
+     * @param flowParams
+     * @param nextNodes
      */
-    private void updateFlowInfo(Task task, Instance instance, List<HisTask> insHisList
-            , List<Task> addTasks, List<User> users) {
+    private void updateFlowInfo(Task task, Instance instance, List<Task> addTasks, FlowParams flowParams
+            , List<Node> nextNodes) {
+        // 设置流程历史任务信息
+        List<HisTask> insHisList = FlowFactory.hisTaskService().setSkipInsHis(task, nextNodes, flowParams);
+
+        // 设置结束节点相关信息
+        setEndInfo(instance, addTasks);
+
+        // 设置流程实例信息
+        setSkipInstance(instance, addTasks, flowParams);
+        // 待办任务设置处理人
+        List<User> users = FlowFactory.userService().setSkipUser(addTasks, task.getId());
         removeById(task.getId());
         FlowFactory.hisTaskService().saveBatch(insHisList);
         if (CollUtil.isNotEmpty(addTasks)) {

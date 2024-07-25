@@ -65,7 +65,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         // 设置流程实例对象
         Instance instance = setStartInstance(nextNodes.get(0), businessId, flowParams);
 
-        //执行开始节点 开始监听器
+        //执行开始监听器
         ListenerUtil.executeListener(new ListenerVariable(instance, startNode, flowParams.getVariable())
                 , Listener.LISTENER_START);
 
@@ -80,14 +80,11 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         List<Task> addTasks = StreamUtils.toList(nextNodes, node -> FlowFactory.taskService()
                 .addTask(node, instance, flowParams));
 
-        // 待办任务设置处理人
-        List<User> users = FlowFactory.userService().taskAddUsers(addTasks);
-
         // 开启流程，保存流程信息
-        saveFlowInfo(instance, addTasks, hisTasks, users);
+        saveFlowInfo(instance, addTasks, hisTasks);
 
         // 执行结束监听器和下一节点的开始监听器
-        ListenerUtil.executeListener(new ListenerVariable(instance, flowParams.getVariable(), null, addTasks)
+        ListenerUtil.endCreateListener(new ListenerVariable(instance, flowParams.getVariable(), null, addTasks)
                 , startNode, nextNodes);
         return instance;
     }
@@ -152,9 +149,10 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
      * @param instance
      * @param addTasks
      * @param hisTasks
-     * @param users
      */
-    private void saveFlowInfo(Instance instance, List<Task> addTasks, List<HisTask> hisTasks, List<User> users) {
+    private void saveFlowInfo(Instance instance, List<Task> addTasks, List<HisTask> hisTasks) {
+        // 待办任务设置处理人
+        List<User> users = FlowFactory.userService().taskAddUsers(addTasks);
         FlowFactory.hisTaskService().saveBatch(hisTasks);
         FlowFactory.taskService().saveBatch(addTasks);
         FlowFactory.userService().saveBatch(users);

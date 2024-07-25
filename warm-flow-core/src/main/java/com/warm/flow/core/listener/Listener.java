@@ -35,12 +35,12 @@ public interface Listener extends Serializable {
     String LISTENER_END = "finish";
 
     /**
-     * 分派办理人监听器，分派后执行
+     * 分派监听器，动态修改代办任务信息
      */
     String LISTENER_ASSIGNMENT = "assignment";
 
     /**
-     * 权限监听器，办理任务动态设置权限
+     * 权限监听器，办理任务动态设置权限(1.2.4版本还是建议使用分派监听器修改办理人)
      */
     String LISTENER_PERMISSION = "permission";
 

@@ -74,12 +74,12 @@ public class ListenerUtil {
      * @param NowNode
      * @param nextNodes
      */
-    public static void executeListener(ListenerVariable listenerVariable, Node NowNode, List<Node> nextNodes) {
+    public static void endCreateListener(ListenerVariable listenerVariable, Node NowNode, List<Node> nextNodes) {
         // 执行任务完成监听器
-        executeListener(listenerVariable.setNode(NowNode), Listener.LISTENER_END);
+        executeListener(listenerVariable.setNode(NowNode).setNextNodes(nextNodes), Listener.LISTENER_END);
         // 执行任务开始监听器
         nextNodes.forEach(node -> {
-            executeListener(listenerVariable.setNode(node), Listener.LISTENER_CREATE);
+            executeListener(listenerVariable.setNode(node).setNextNodes(nextNodes), Listener.LISTENER_CREATE);
         });
     }
 
