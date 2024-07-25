@@ -16,9 +16,6 @@
         <module>warm-flow-easy-query-sb-starter</module>
         <module>warm-flow-easy-query-solon-plugin</module>
     </modules>
-    <properties>
-        <easy-query.version>2.0.45</easy-query.version>
-    </properties>
 
     <dependencyManagement>
         <dependencies>
