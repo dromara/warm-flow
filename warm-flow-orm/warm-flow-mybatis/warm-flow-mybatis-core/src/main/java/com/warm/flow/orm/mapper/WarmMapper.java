@@ -138,9 +138,10 @@ public interface WarmMapper<T> {
     /**
      * 批量插入
      *
-     * @param list 需要插入的集合元素
+     * @param list           需要插入的集合元素
+     * @param dataSourceType 数据源类型
      * @return 插入的数量
      */
-    int saveBatch(@Param("list") Collection<T> list);
+    int saveBatch(@Param("list") Collection<T> list, @Param("dataSourceType") String dataSourceType);
 
 }

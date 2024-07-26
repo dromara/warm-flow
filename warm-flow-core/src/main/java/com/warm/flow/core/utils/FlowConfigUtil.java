@@ -104,6 +104,8 @@ public class FlowConfigUtil {
         node.setPermissionFlag(nodeElement.attributeValue("permissionFlag"));
         if (StringUtils.isNotEmpty(nodeElement.attributeValue("nodeRatio"))) {
             node.setNodeRatio(new BigDecimal(nodeElement.attributeValue("nodeRatio")));
+        } else {
+            node.setNodeRatio(new BigDecimal("0"));
         }
         node.setCoordinate(nodeElement.attributeValue("coordinate"));
         node.setSkipAnyNode(nodeElement.attributeValue("skipAnyNode"));

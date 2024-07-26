@@ -58,6 +58,69 @@
         </where>
     </sql>
 
+    <sql id="mysql_insert_batch">
+        insert into flow_definition(
+        id,
+        flow_code,
+        flow_name,
+        version,
+        is_publish,
+        form_custom,
+        form_path,
+        create_time,
+        update_time,
+        del_flag,
+        tenant_id
+        )
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.id},
+            #{item.flowCode},
+            #{item.flowName},
+            #{item.version},
+            #{item.isPublish},
+            #{item.formCustom},
+            #{item.formPath},
+            #{item.createTime},
+            #{item.updateTime},
+            #{item.delFlag},
+            #{item.tenantId}
+            )
+        </foreach>
+    </sql>
+
+    <sql id="oracle_insert_batch">
+        insert into flow_definition(
+        id,
+        flow_code,
+        flow_name,
+        version,
+        is_publish,
+        form_custom,
+        form_path,
+        create_time,
+        update_time,
+        del_flag,
+        tenant_id
+        )
+        <foreach collection="list" item="item" separator=" union all">
+            select
+            #{item.id},
+            #{item.flowCode},
+            #{item.flowName},
+            #{item.version},
+            #{item.isPublish},
+            #{item.formCustom},
+            #{item.formPath},
+            #{item.createTime},
+            #{item.updateTime},
+            #{item.delFlag},
+            #{item.tenantId}
+            from dual
+        </foreach>
+    </sql>
+
     <select id="selectList" parameterType="com.warm.flow.orm.entity.FlowDefinition"
             resultMap="FlowDefinitionResult">
         <choose>
@@ -246,34 +309,13 @@
     </update>
 
     <insert id="saveBatch" parameterType="com.warm.flow.orm.entity.FlowDefinition">
-        insert into flow_definition(
-        id,
-        flow_code,
-        flow_name,
-        version,
-        is_publish,
-        form_custom,
-        form_path,
-        create_time,
-        update_time,
-        del_flag,
-        tenant_id
-        )
-        values
-        <foreach collection="list" item="item" separator=",">
-            (
-            #{item.id},
-            #{item.flowCode},
-            #{item.flowName},
-            #{item.version},
-            #{item.isPublish},
-            #{item.formCustom},
-            #{item.formPath},
-            #{item.createTime},
-            #{item.updateTime},
-            #{item.delFlag},
-            #{item.tenantId}
-            )
-        </foreach>
+        <choose>
+            <when test="dataSourceType == 'oracle'.toString()">
+                <include refid="oracle_insert_batch"/>
+            </when>
+            <otherwise>
+                <include refid="mysql_insert_batch"/>
+            </otherwise>
+        </choose>
     </insert>
 </mapper>

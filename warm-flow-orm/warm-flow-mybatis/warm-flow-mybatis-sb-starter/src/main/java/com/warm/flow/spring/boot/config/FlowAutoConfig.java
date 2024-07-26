@@ -28,6 +28,7 @@ import com.warm.flow.spring.boot.utils.SpringUtil;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.type.JdbcType;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -141,6 +142,7 @@ public class FlowAutoConfig {
                 , "warm/flow/FlowInstanceMapper.xml", "warm/flow/FlowNodeMapper.xml"
                 , "warm/flow/FlowSkipMapper.xml", "warm/flow/FlowTaskMapper.xml", "warm/flow/FlowUserMapper.xml");
         org.apache.ibatis.session.Configuration configuration = sqlSessionFactory.getConfiguration();
+        configuration.setJdbcTypeForNull(JdbcType.NULL);
         try {
             for (String mapper : mapperList) {
                 XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(Resources.getResourceAsStream(mapper),

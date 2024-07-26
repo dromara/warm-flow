@@ -122,6 +122,105 @@
         <include refid="order_by"/>
     </sql>
 
+    <sql id="mysql_insert_batch">
+        insert into flow_his_task(
+        id,
+        node_code,
+        node_name,
+        node_type,
+        target_node_code,
+        target_node_name,
+        approver,
+        collaborator,
+        definition_id,
+        instance_id,
+        task_id,
+        cooperate_type,
+        skip_type,
+        flow_status,
+        message,
+        ext,
+        create_time,
+        update_time,
+        tenant_id,
+        del_flag
+        )
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.id},
+            #{item.nodeCode},
+            #{item.nodeName},
+            #{item.nodeType},
+            #{item.targetNodeCode},
+            #{item.targetNodeName},
+            #{item.approver},
+            #{item.collaborator},
+            #{item.definitionId},
+            #{item.instanceId},
+            #{item.taskId},
+            #{item.cooperateType},
+            #{item.skipType},
+            #{item.flowStatus},
+            #{item.message},
+            #{item.ext},
+            #{item.createTime},
+            #{item.updateTime},
+            #{item.tenantId},
+            #{item.delFlag}
+            )
+        </foreach>
+    </sql>
+
+    <sql id="oracle_insert_batch">
+        insert into flow_his_task(
+        id,
+        node_code,
+        node_name,
+        node_type,
+        target_node_code,
+        target_node_name,
+        approver,
+        collaborator,
+        definition_id,
+        instance_id,
+        task_id,
+        cooperate_type,
+        skip_type,
+        flow_status,
+        message,
+        ext,
+        create_time,
+        update_time,
+        tenant_id,
+        del_flag
+        )
+        <foreach collection="list" item="item" separator=" union all">
+            select
+            #{item.id},
+            #{item.nodeCode},
+            #{item.nodeName},
+            #{item.nodeType},
+            #{item.targetNodeCode},
+            #{item.targetNodeName},
+            #{item.approver},
+            #{item.collaborator},
+            #{item.definitionId},
+            #{item.instanceId},
+            #{item.taskId},
+            #{item.cooperateType},
+            #{item.skipType},
+            #{item.flowStatus},
+            #{item.message},
+            #{item.ext},
+            #{item.createTime},
+            #{item.updateTime},
+            #{item.tenantId},
+            #{item.delFlag}
+            from dual
+        </foreach>
+    </sql>
+
     <select id="selectByIds" resultMap="FlowHisTaskResult">
         <include refid="selectVo"/>
         where t.id in
@@ -357,52 +456,13 @@
     </update>
 
     <insert id="saveBatch" parameterType="com.warm.flow.orm.entity.FlowHisTask">
-        insert into flow_his_task(
-        id,
-        node_code,
-        node_name,
-        node_type,
-        target_node_code,
-        target_node_name,
-        approver,
-        collaborator,
-        definition_id,
-        instance_id,
-        task_id,
-        cooperate_type,
-        skip_type,
-        flow_status,
-        message,
-        ext,
-        create_time,
-        update_time,
-        tenant_id,
-        del_flag
-        )
-        values
-        <foreach collection="list" item="item" separator=",">
-            (
-            #{item.id},
-            #{item.nodeCode},
-            #{item.nodeName},
-            #{item.nodeType},
-            #{item.targetNodeCode},
-            #{item.targetNodeName},
-            #{item.approver},
-            #{item.collaborator},
-            #{item.definitionId},
-            #{item.instanceId},
-            #{item.taskId},
-            #{item.cooperateType},
-            #{item.skipType},
-            #{item.flowStatus},
-            #{item.message},
-            #{item.ext},
-            #{item.createTime},
-            #{item.updateTime},
-            #{item.tenantId},
-            #{item.delFlag}
-            )
-        </foreach>
+        <choose>
+            <when test="dataSourceType == 'oracle'.toString()">
+                <include refid="oracle_insert_batch"/>
+            </when>
+            <otherwise>
+                <include refid="mysql_insert_batch"/>
+            </otherwise>
+        </choose>
     </insert>
 </mapper>

@@ -134,7 +134,8 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
         for (T record : list) {
             TenantDeleteUtil.getEntity(record);
         }
-        getMapper().saveBatch(list);
+        String dataSourceType = FlowFactory.dataSourceType();
+        getMapper().saveBatch(list, dataSourceType);
     }
 
     @Override
