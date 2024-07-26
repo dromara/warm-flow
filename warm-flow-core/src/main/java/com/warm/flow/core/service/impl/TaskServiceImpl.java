@@ -17,7 +17,6 @@ package com.warm.flow.core.service.impl;
 
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.constant.ExceptionCons;
-import com.warm.flow.core.constant.FlowCons;
 import com.warm.flow.core.dao.FlowTaskDao;
 import com.warm.flow.core.dto.FlowParams;
 import com.warm.flow.core.dto.ModifyHandler;
@@ -358,20 +357,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         addTask.setNodeName(node.getNodeName());
         addTask.setNodeType(node.getNodeType());
         addTask.setCreateTime(date);
-        List<String> permissionList;
-        if (CollUtil.isNotEmpty(node.getDynamicPermissionFlagList())) {
-            permissionList = node.getDynamicPermissionFlagList();
-        } else {
-            permissionList = StringUtils.str2List(node.getPermissionFlag(), ",");
-            // 如果设置了发起人审批，则需要动态替换权限标识
-            for (int i = 0; i < permissionList.size(); i++) {
-                String permission = permissionList.get(i);
-                if (StringUtils.isNotEmpty(permission) && permission.contains(FlowCons.WARMFLOWINITIATOR)) {
-                    permissionList.set(i, permission.replace(FlowCons.WARMFLOWINITIATOR, instance.getCreateBy()));
-                }
-            }
-        }
-        addTask.setPermissionList(permissionList);
+        addTask.setPermissionList(CollUtil.isNotEmpty(node.getDynamicPermissionFlagList()) ?
+                node.getDynamicPermissionFlagList() :
+                StringUtils.str2List(node.getPermissionFlag(), ","));
         return addTask;
     }
 

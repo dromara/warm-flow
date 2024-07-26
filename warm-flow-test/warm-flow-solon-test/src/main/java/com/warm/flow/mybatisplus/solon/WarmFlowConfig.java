@@ -16,10 +16,7 @@
 package com.warm.flow.mybatisplus.solon;
 
 import com.warm.flow.core.handler.DataFillHandler;
-import com.warm.flow.core.test.Listener.CreateListener;
-import com.warm.flow.core.test.Listener.FinishListener;
-import com.warm.flow.core.test.Listener.PermissionListener;
-import com.warm.flow.core.test.Listener.StartListener;
+import com.warm.flow.core.test.Listener.*;
 import com.warm.flow.core.test.handle.CustomDataFillHandler;
 import com.zaxxer.hikari.HikariDataSource;
 import org.noear.solon.annotation.Bean;
@@ -83,6 +80,14 @@ public class WarmFlowConfig {
     @Bean
     public StartListener startListener() {
         return new StartListener();
+    }
+
+    /**
+     * 分配监听器，可用@Bean/@Component方式注入
+     */
+    @Bean
+    public AssignmentListener assignmentListener() {
+        return new AssignmentListener();
     }
 
 }

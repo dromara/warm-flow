@@ -41,11 +41,11 @@ public class FlowBaseTest {
     }
 
     public Long getInsId() {
-        return 1266365429186695168L;
+        return 1266421892739371014L;
     }
 
     public Long getTaskId() {
-        return 1266365429249609728L;
+        return 1266424585176354816L;
     }
 
     public String getBusinessId() {

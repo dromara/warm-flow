@@ -65,7 +65,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         // 设置流程实例对象
         Instance instance = setStartInstance(nextNodes.get(0), businessId, flowParams);
 
-        //执行开始监听器
+        // 执行开始监听器
         ListenerUtil.executeListener(new ListenerVariable(instance, startNode, flowParams.getVariable())
                 , Listener.LISTENER_START);
 
@@ -79,6 +79,10 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         // 设置新增任务
         List<Task> addTasks = StreamUtils.toList(nextNodes, node -> FlowFactory.taskService()
                 .addTask(node, instance, flowParams));
+
+        // 开启分配监听器
+        ListenerUtil.executeListener(new ListenerVariable(instance, startNode, flowParams.getVariable(), null, nextNodes
+                , addTasks), Listener.LISTENER_ASSIGNMENT);
 
         // 开启流程，保存流程信息
         saveFlowInfo(instance, addTasks, hisTasks);
