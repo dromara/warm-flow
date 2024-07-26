@@ -56,7 +56,8 @@ CREATE TABLE flow_his_task (
 	collaborator varchar(40) NULL, -- 协作人(只有转办、会签、票签、委派)
 	skip_type varchar(10) NULL, -- 流转类型（PASS通过 REJECT退回 NONE无动作）
 	flow_status int2 NOT NULL, -- 流程状态（0待提交 1审批中 2 审批通过 8已完成 9已退回 10失效）
-	message varchar(500) NULL, -- 审批意见
+    ext varchar(500) NULL, -- 扩展字段，预留给业务系统使用
+    message varchar(500) NULL, -- 审批意见
 	create_time timestamp NULL, -- 创建时间
 	update_time timestamp NULL, -- 更新时间
 	del_flag bpchar(1) NULL, -- 删除标志
@@ -82,8 +83,9 @@ COMMENT ON COLUMN flow_his_task.collaborator IS '协作人';
 COMMENT ON COLUMN flow_his_task.skip_type IS '流转类型（PASS通过 REJECT退回 NONE无动作）';
 COMMENT ON COLUMN flow_his_task.flow_status IS '流程状态（1审批中 2 审批通过 9已退回 10失效）';
 COMMENT ON COLUMN flow_his_task.message IS '审批意见';
+COMMENT ON COLUMN flow_his_task.ext IS '扩展字段，预留给业务系统使用';
 COMMENT ON COLUMN flow_his_task.create_time IS '开始时间';
-COMMENT ON COLUMN flow_his_task.update_time IS '完成时间';
+COMMENT ON COLUMN flow_his_task.update_time IS '结束时间';
 COMMENT ON COLUMN flow_his_task.del_flag IS '删除标志';
 COMMENT ON COLUMN flow_his_task.tenant_id IS '租户id';
 
