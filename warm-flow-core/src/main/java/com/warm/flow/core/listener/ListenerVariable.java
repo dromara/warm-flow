@@ -92,14 +92,16 @@ public class ListenerVariable {
         this.task = task;
     }
 
-    public ListenerVariable(Instance instance, Map<String, Object> variable, Task task, List<Task> nextTasks) {
+    public ListenerVariable(Instance instance, Node node, Map<String, Object> variable, Task task, List<Node> nextNodes) {
         this.instance = instance;
+        this.node = node;
         this.variable = variable;
         this.task = task;
-        this.nextTasks = nextTasks;
+        this.nextNodes = nextNodes;
     }
 
-    public ListenerVariable(Instance instance, Node node , Map<String, Object> variable, Task task, List<Node> nextNodes, List<Task> nextTasks) {
+    public ListenerVariable(Instance instance, Node node , Map<String, Object> variable, Task task
+            , List<Node> nextNodes, List<Task> nextTasks) {
         this.instance = instance;
         this.node = node;
         this.variable = variable;

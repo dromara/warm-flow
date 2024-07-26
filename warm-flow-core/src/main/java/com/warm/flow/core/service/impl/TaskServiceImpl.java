@@ -102,8 +102,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         List<Node> nextNodes = getNextByCheckGateWay(flowParams, nextNode);
 
         //判断下一结点是否有权限监听器,有执行权限监听器nextNode.setPermissionFlag,无走数据库的权限标识符
-        ListenerUtil.executeGetNodePermission(new ListenerVariable(instance, flowParams.getVariable(), task)
-                , StreamUtils.toArray(nextNodes, Node[]::new));
+        ListenerUtil.executeGetNodePermission(new ListenerVariable(instance, nowNode, flowParams.getVariable(), task
+                , nextNodes));
 
         // 构建增待办任务和设置结束任务历史记录
         List<Task> addTasks = buildAddTasks(flowParams, task, instance, nextNodes, nextNode);
@@ -122,8 +122,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         handUndoneTask(instance, flowParams);
 
         // 最后判断是否存在监听器，存在执行监听器
-        ListenerUtil.endCreateListener(new ListenerVariable(instance, flowParams.getVariable(), task, addTasks)
-                , nowNode, nextNodes);
+        ListenerUtil.endCreateListener(new ListenerVariable(instance, nowNode, flowParams.getVariable(), task
+                , nextNodes, addTasks));
         return instance;
     }
 

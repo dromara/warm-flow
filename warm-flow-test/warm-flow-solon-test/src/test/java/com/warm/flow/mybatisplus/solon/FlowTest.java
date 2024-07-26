@@ -70,7 +70,7 @@ public class FlowTest extends FlowBaseTest {
     @Test
     @Tran
     public void startFlow() {
-        startFlow(insService);
+        startFlow(insService, taskService);
     }
 
     /**

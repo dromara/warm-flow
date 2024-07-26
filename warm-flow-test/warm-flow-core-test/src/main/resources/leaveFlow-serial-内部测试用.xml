@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<definition flowCode="serial1" flowName="串行-简单" version="1.0" formCustom="N" formPath="system/leave/approve">
+<definition flowCode="serial55" flowName="串行-简单" version="1.0" formCustom="N" formPath="system/leave/approve">
     <node nodeType="start" nodeCode="1" nodeName="开始" coordinate="120,280|120,280" skipAnyNode="N" 
           listenerType="start,assignment,finish,permission,create" 
           listenerPath="com.warm.flow.core.test.Listener.StartListener@@323@@com.warm.flow.core.test.Listener.FinishListener@@com.warm.flow.core.test.Listener.PermissionListener@@com.warm.flow.core.test.Listener.CreateListener">

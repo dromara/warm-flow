@@ -70,8 +70,8 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
                 , Listener.LISTENER_START);
 
         //判断开始结点和下一结点是否有权限监听器,有执行权限监听器node.setPermissionFlag,无走数据库的权限标识符
-        ListenerUtil.executeGetNodePermission(new ListenerVariable(instance, flowParams.getVariable())
-                , StreamUtils.toArray(CollUtil.listAddToNew(nextNodes, startNode), Node[]::new));
+        ListenerUtil.executeGetNodePermission(new ListenerVariable(instance, startNode, flowParams.getVariable()
+                        ,null , nextNodes));
 
         // 设置历史任务
         List<HisTask> hisTasks = setHisTask(nextNodes, flowParams, startNode, instance.getId());
@@ -84,8 +84,8 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         saveFlowInfo(instance, addTasks, hisTasks);
 
         // 执行结束监听器和下一节点的开始监听器
-        ListenerUtil.endCreateListener(new ListenerVariable(instance, flowParams.getVariable(), null, addTasks)
-                , startNode, nextNodes);
+        ListenerUtil.endCreateListener(new ListenerVariable(instance, startNode, flowParams.getVariable(), null
+                , nextNodes,  addTasks));
         return instance;
     }
 
