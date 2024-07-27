@@ -79,6 +79,61 @@
         <include refid="order_by"/>
     </sql>
 
+    <sql id="mysql_insert_batch">
+        insert into flow_user(
+        id,
+        type,
+        processed_by,
+        associated,
+        create_time,
+        update_time,
+        create_by,
+        del_flag,
+        tenant_id
+        )
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.id},
+            #{item.type},
+            #{item.processedBy},
+            #{item.associated},
+            #{item.createTime},
+            #{item.updateTime},
+            #{item.createBy},
+            #{item.delFlag},
+            #{item.tenantId}
+            )
+        </foreach>
+    </sql>
+
+    <sql id="oracle_insert_batch">
+        insert into flow_user(
+        id,
+        type,
+        processed_by,
+        associated,
+        create_time,
+        update_time,
+        create_by,
+        del_flag,
+        tenant_id
+        )
+        <foreach collection="list" item="item" separator=" union all">
+            select
+            #{item.id},
+            #{item.type},
+            #{item.processedBy},
+            #{item.associated},
+            #{item.createTime},
+            #{item.updateTime},
+            #{item.createBy},
+            #{item.delFlag},
+            #{item.tenantId}
+            from dual
+        </foreach>
+    </sql>
+
     <select id="selectByIds" resultMap="FlowUserResult">
         <include refid="selectVo"/>
         where t.id in
@@ -277,30 +332,13 @@
     </update>
 
     <insert id="saveBatch" parameterType="com.warm.flow.orm.entity.FlowUser">
-        insert into flow_user(
-        id,
-        type,
-        processed_by,
-        associated,
-        create_time,
-        update_time,
-        create_by,
-        del_flag,
-        tenant_id
-        )
-        values
-        <foreach collection="list" item="item" separator=",">
-            (
-            #{item.id},
-            #{item.type},
-            #{item.processedBy},
-            #{item.associated},
-            #{item.createTime},
-            #{item.updateTime},
-            #{item.createBy},
-            #{item.delFlag},
-            #{item.tenantId}
-            )
-        </foreach>
+        <choose>
+            <when test="dataSourceType == 'oracle'.toString()">
+                <include refid="oracle_insert_batch"/>
+            </when>
+            <otherwise>
+                <include refid="mysql_insert_batch"/>
+            </otherwise>
+        </choose>
     </insert>
 </mapper>

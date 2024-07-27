@@ -61,6 +61,65 @@
         </where>
     </sql>
 
+    <sql id="mysql_insert_batch">
+        insert into flow_task(
+        id,
+        node_code,
+        node_name,
+        node_type,
+        definition_id,
+        instance_id,
+        create_time,
+        update_time,
+        del_flag,
+        tenant_id
+        )
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.id},
+            #{item.nodeCode},
+            #{item.nodeName},
+            #{item.nodeType},
+            #{item.definitionId},
+            #{item.instanceId},
+            #{item.createTime},
+            #{item.updateTime},
+            #{item.delFlag},
+            #{item.tenantId}
+            )
+        </foreach>
+    </sql>
+
+    <sql id="oracle_insert_batch">
+        insert into flow_task(
+        id,
+        node_code,
+        node_name,
+        node_type,
+        definition_id,
+        instance_id,
+        create_time,
+        update_time,
+        del_flag,
+        tenant_id
+        )
+        <foreach collection="list" item="item" separator=" union all">
+            select
+            #{item.id},
+            #{item.nodeCode},
+            #{item.nodeName},
+            #{item.nodeType},
+            #{item.definitionId},
+            #{item.instanceId},
+            #{item.createTime},
+            #{item.updateTime},
+            #{item.delFlag},
+            #{item.tenantId}
+            from dual
+        </foreach>
+    </sql>
+
     <select id="selectCount" parameterType="com.warm.flow.orm.entity.FlowTask" resultType="java.lang.Long">
         select count(*) from flow_task t
         <include refid="select_parameter"/>
@@ -242,32 +301,13 @@
     </update>
 
     <insert id="saveBatch" parameterType="com.warm.flow.orm.entity.FlowTask">
-        insert into flow_task(
-        id,
-        node_code,
-        node_name,
-        node_type,
-        definition_id,
-        instance_id,
-        create_time,
-        update_time,
-        del_flag,
-        tenant_id
-        )
-        values
-        <foreach collection="list" item="item" separator=",">
-            (
-            #{item.id},
-            #{item.nodeCode},
-            #{item.nodeName},
-            #{item.nodeType},
-            #{item.definitionId},
-            #{item.instanceId},
-            #{item.createTime},
-            #{item.updateTime},
-            #{item.delFlag},
-            #{item.tenantId}
-            )
-        </foreach>
+        <choose>
+            <when test="dataSourceType == 'oracle'.toString()">
+                <include refid="oracle_insert_batch"/>
+            </when>
+            <otherwise>
+                <include refid="mysql_insert_batch"/>
+            </otherwise>
+        </choose>
     </insert>
 </mapper>

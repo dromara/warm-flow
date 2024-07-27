@@ -95,6 +95,107 @@
         </where>
     </sql>
 
+    <sql id="mysql_insert_batch">
+        insert into flow_node(
+        id,
+        node_type,
+        definition_id,
+        node_code,
+        node_name,
+        permission_flag,
+        node_ratio,
+        coordinate,
+        skip_any_node,
+        listener_type,
+        listener_path,
+        handler_type,
+        handler_path,
+        form_custom,
+        form_path,
+        version,
+        create_time,
+        update_time,
+        del_flag,
+        tenant_id
+        )
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.id},
+            #{item.nodeType},
+            #{item.definitionId},
+            #{item.nodeCode},
+            #{item.nodeName},
+            #{item.permissionFlag},
+            #{item.nodeRatio},
+            #{item.coordinate},
+            #{item.skipAnyNode},
+            #{item.listenerType},
+            #{item.listenerPath},
+            #{item.handlerType},
+            #{item.handlerPath},
+            #{item.formCustom},
+            #{item.formPath},
+            #{item.version},
+            #{item.createTime},
+            #{item.updateTime},
+            #{item.delFlag},
+            #{item.tenantId}
+            )
+        </foreach>
+    </sql>
+
+    <sql id="oracle_insert_batch">
+        insert
+        into
+        flow_node(
+        id,
+        node_type,
+        definition_id,
+        node_code,
+        node_name,
+        permission_flag,
+        node_ratio,
+        coordinate,
+        skip_any_node,
+        listener_type,
+        listener_path,
+        handler_type,
+        handler_path,
+        form_custom,
+        form_path,
+        version,
+        create_time,
+        update_time,
+        del_flag,
+        tenant_id
+        )
+        <foreach collection="list" item="item" separator=" union all">
+            select
+            #{item.id},
+            #{item.nodeType},
+            #{item.definitionId},
+            #{item.nodeCode},
+            #{item.nodeName},
+            #{item.permissionFlag},
+            #{item.nodeRatio},
+            #{item.coordinate},
+            #{item.skipAnyNode},
+            #{item.listenerType},
+            #{item.listenerPath},
+            #{item.handlerType},
+            #{item.handlerPath},
+            #{item.formCustom},
+            #{item.formPath},
+            #{item.version},
+            #{item.createTime},
+            #{item.updateTime},
+            #{item.delFlag},
+            #{item.tenantId}
+            from dual
+        </foreach>
+    </sql>
+
     <select id="selectCount" parameterType="com.warm.flow.orm.entity.FlowNode" resultType="java.lang.Long">
         select count(*) from flow_node t
         <include refid="select_parameter"/>
@@ -354,52 +455,13 @@
     </update>
 
     <insert id="saveBatch" parameterType="com.warm.flow.orm.entity.FlowNode">
-        insert into flow_node(
-        id,
-        node_type,
-        definition_id,
-        node_code,
-        node_name,
-        permission_flag,
-        node_ratio,
-        coordinate,
-        skip_any_node,
-        listener_type,
-        listener_path,
-        handler_type,
-        handler_path,
-        form_custom,
-        form_path,
-        version,
-        create_time,
-        update_time,
-        del_flag,
-        tenant_id
-        )
-        values
-        <foreach collection="list" item="item" separator=",">
-            (
-            #{item.id},
-            #{item.nodeType},
-            #{item.definitionId},
-            #{item.nodeCode},
-            #{item.nodeName},
-            #{item.permissionFlag},
-            #{item.nodeRatio},
-            #{item.coordinate},
-            #{item.skipAnyNode},
-            #{item.listenerType},
-            #{item.listenerPath},
-            #{item.handlerType},
-            #{item.handlerPath},
-            #{item.formCustom},
-            #{item.formPath},
-            #{item.version},
-            #{item.createTime},
-            #{item.updateTime},
-            #{item.delFlag},
-            #{item.tenantId}
-            )
-        </foreach>
+        <choose>
+            <when test="dataSourceType == 'oracle'.toString()">
+                <include refid="oracle_insert_batch"/>
+            </when>
+            <otherwise>
+                <include refid="mysql_insert_batch"/>
+            </otherwise>
+        </choose>
     </insert>
 </mapper>
