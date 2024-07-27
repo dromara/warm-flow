@@ -80,6 +80,8 @@ create table FLOW_HIS_TASK
     COLLABORATOR VARCHAR2(40),
     SKIP_TYPE VARCHAR2(10),
 	FLOW_STATUS NUMBER(2),
+    FORM_CUSTOM VARCHAR2(1) default 'N',
+    FORM_PATH VARCHAR2(100),
 	MESSAGE VARCHAR2(500),
     EXT VARCHAR2(500),
 	CREATE_TIME DATE,
@@ -124,6 +126,12 @@ comment on column FLOW_HIS_TASK.SKIP_TYPE is '流转类型（PASS通过 REJECT�
 /
 
 comment on column FLOW_HIS_TASK.FLOW_STATUS is '流程状态（1审批中 2 审批通过 9已退回 10失效）'
+/
+
+comment on column FLOW_HIS_TASK.FORM_CUSTOM is '审批表单是否自定义 (Y是 N否)'
+/
+
+comment on column FLOW_HIS_TASK.FORM_PATH is '审批表单路径'
 /
 
 comment on column FLOW_HIS_TASK.MESSAGE is '审批意见'
@@ -373,6 +381,8 @@ create table FLOW_TASK
 	NODE_CODE VARCHAR2(100),
 	NODE_NAME VARCHAR2(100),
 	NODE_TYPE NUMBER(1),
+    FORM_CUSTOM VARCHAR2(1) default 'N',
+    FORM_PATH VARCHAR2(100),
 	CREATE_TIME DATE,
 	UPDATE_TIME DATE,
 	DEL_FLAG VARCHAR2(1),
@@ -399,6 +409,12 @@ comment on column FLOW_TASK.NODE_NAME is '节点名称'
 /
 
 comment on column FLOW_TASK.NODE_TYPE is '节点类型 (0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关)'
+/
+
+comment on column FLOW_TASK.FORM_CUSTOM is '审批表单是否自定义 (Y是 N否)'
+/
+
+comment on column FLOW_TASK.FORM_PATH is '审批表单路径'
 /
 
 comment on column FLOW_TASK.CREATE_TIME is '创建时间'

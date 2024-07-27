@@ -56,6 +56,8 @@ CREATE TABLE flow_his_task (
 	collaborator varchar(40) NULL, -- 协作人(只有转办、会签、票签、委派)
 	skip_type varchar(10) NULL, -- 流转类型（PASS通过 REJECT退回 NONE无动作）
 	flow_status int2 NOT NULL, -- 流程状态（0待提交 1审批中 2 审批通过 8已完成 9已退回 10失效）
+    form_custom bpchar(1) NULL DEFAULT 'N'::character varying, -- 审批表单是否自定义（Y是 N否）
+    form_path varchar(100) NULL, -- 审批表单路径
     ext varchar(500) NULL, -- 扩展字段，预留给业务系统使用
     message varchar(500) NULL, -- 审批意见
 	create_time timestamp NULL, -- 创建时间
@@ -82,6 +84,8 @@ COMMENT ON COLUMN flow_his_task.cooperate_type IS '协作方式(1审批 2转办 
 COMMENT ON COLUMN flow_his_task.collaborator IS '协作人';
 COMMENT ON COLUMN flow_his_task.skip_type IS '流转类型（PASS通过 REJECT退回 NONE无动作）';
 COMMENT ON COLUMN flow_his_task.flow_status IS '流程状态（1审批中 2 审批通过 9已退回 10失效）';
+COMMENT ON COLUMN flow_his_task.form_custom IS '审批表单是否自定义（Y是 N否）';
+COMMENT ON COLUMN flow_his_task.form_path IS '审批表单路径';
 COMMENT ON COLUMN flow_his_task.message IS '审批意见';
 COMMENT ON COLUMN flow_his_task.ext IS '扩展字段，预留给业务系统使用';
 COMMENT ON COLUMN flow_his_task.create_time IS '开始时间';
@@ -245,6 +249,8 @@ CREATE TABLE flow_task (
 	node_code varchar(100) NOT NULL, -- 节点编码
 	node_name varchar(100) NULL, -- 节点名称
 	node_type int2 NOT NULL, -- 节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）
+    form_custom bpchar(1) NULL DEFAULT 'N'::character varying, -- 审批表单是否自定义（Y是 N否）
+    form_path varchar(100) NULL, -- 审批表单路径
 	create_time timestamp NULL, -- 创建时间
 	update_time timestamp NULL, -- 更新时间
 	del_flag bpchar(1) NULL, -- 删除标志
@@ -261,6 +267,8 @@ COMMENT ON COLUMN flow_task.instance_id IS '对应flow_instance表的id';
 COMMENT ON COLUMN flow_task.node_code IS '节点编码';
 COMMENT ON COLUMN flow_task.node_name IS '节点名称';
 COMMENT ON COLUMN flow_task.node_type IS '节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）';
+COMMENT ON COLUMN flow_task.form_custom IS '审批表单是否自定义（Y是 N否）';
+COMMENT ON COLUMN flow_task.form_path IS '审批表单路径';
 COMMENT ON COLUMN flow_task.create_time IS '创建时间';
 COMMENT ON COLUMN flow_task.update_time IS '更新时间';
 COMMENT ON COLUMN flow_task.del_flag IS '删除标志';

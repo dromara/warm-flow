@@ -97,11 +97,11 @@ public class FlowTask implements Task, ProxyEntityAvailable<FlowTask, FlowTaskPr
     private List<User> userList;
 
     /** 审批表单是否自定义（Y是 2否） */
-    @ColumnIgnore
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String formCustom;
 
     /** 审批表单是否自定义（Y是 2否） */
-    @ColumnIgnore
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String formPath;
 
 

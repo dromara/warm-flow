@@ -77,8 +77,10 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         List<HisTask> hisTasks = setHisTask(nextNodes, flowParams, startNode, instance.getId());
 
         // 设置新增任务
+        Definition definition = FlowFactory.defService().getById(instance.getDefinitionId());
+
         List<Task> addTasks = StreamUtils.toList(nextNodes, node -> FlowFactory.taskService()
-                .addTask(node, instance, flowParams));
+                .addTask(node, instance, definition, flowParams));
 
         // 开启分配监听器
         ListenerUtil.executeListener(new ListenerVariable(instance, startNode, flowParams.getVariable(), null, nextNodes

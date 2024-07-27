@@ -347,7 +347,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     @Override
-    public Task addTask(Node node, Instance instance, FlowParams flowParams) {
+    public Task addTask(Node node, Instance instance, Definition definition, FlowParams flowParams) {
         Task addTask = FlowFactory.newTask();
         Date date = new Date();
         FlowFactory.dataFillHandler().idFill(addTask);
@@ -360,6 +360,17 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         addTask.setPermissionList(CollUtil.isNotEmpty(node.getDynamicPermissionFlagList()) ?
                 node.getDynamicPermissionFlagList() :
                 StringUtils.str2List(node.getPermissionFlag(), ","));
+
+        if (StringUtils.isNotEmpty(node.getFormCustom())
+                && Objects.equals(node.getFormCustom(), "Y")) {
+            // 节点有自定义表单则使用
+            addTask.setFormCustom(node.getFormCustom());
+            addTask.setFormPath(node.getFormPath());
+        } else {
+            addTask.setFormCustom(definition.getFormCustom());
+            addTask.setFormPath(definition.getFormPath());
+        }
+
         return addTask;
     }
 
@@ -530,8 +541,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
         if (buildFlag) {
             List<Task> addTasks = new ArrayList<>();
+            Definition definition = FlowFactory.defService().getById(instance.getDefinitionId());
             for (Node node : nextNodes) {
-                addTasks.add(addTask(node, instance, flowParams));
+                addTasks.add(addTask(node, instance, definition, flowParams));
             }
             return addTasks;
         }

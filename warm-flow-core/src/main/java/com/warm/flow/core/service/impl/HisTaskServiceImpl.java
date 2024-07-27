@@ -95,6 +95,8 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
             hisTask.setFlowStatus(Objects.nonNull(flowParams.getFlowStatus())
                     ? flowParams.getFlowStatus() : SkipType.isReject(flowParams.getSkipType())
                     ? FlowStatus.REJECT.getKey() : FlowStatus.PASS.getKey());
+            hisTask.setFormCustom(task.getFormCustom());
+            hisTask.setFormPath(task.getFormPath());
             hisTask.setMessage(flowParams.getMessage());
             //业务详情添加至历史记录
             hisTask.setExt(flowParams.getHisTaskExt());
@@ -129,6 +131,8 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
             hisTask.setFlowStatus(Objects.nonNull(flowParams.getFlowStatus())
                     ? flowParams.getFlowStatus() : SkipType.isReject(flowParams.getSkipType())
                     ? FlowStatus.REJECT.getKey() : FlowStatus.PASS.getKey());
+            hisTask.setFormCustom(task.getFormCustom());
+            hisTask.setFormPath(task.getFormPath());
             hisTask.setMessage(flowParams.getMessage());
             hisTask.setCreateTime(task.getCreateTime());
             FlowFactory.dataFillHandler().idFill(hisTask);
@@ -155,6 +159,8 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
                 .setFlowStatus(Objects.nonNull(flowParams.getFlowStatus())
                         ? flowParams.getFlowStatus() : SkipType.isReject(flowParams.getSkipType())
                         ? FlowStatus.REJECT.getKey() : FlowStatus.PASS.getKey()) // TODO 待验证
+                .setFormCustom(task.getFormCustom())
+                .setFormPath(task.getFormPath())
                 .setMessage(flowParams.getMessage())
                 .setCreateTime(task.getCreateTime());;
         FlowFactory.dataFillHandler().idFill(hisTask);
@@ -178,6 +184,8 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
                 .setFlowStatus(Objects.nonNull(flowParams.getFlowStatus())
                         ? flowParams.getFlowStatus()  : isPass
                         ? FlowStatus.PASS.getKey() : FlowStatus.REJECT.getKey()) // TODO 待验证
+                .setFormCustom(task.getFormCustom())
+                .setFormPath(task.getFormPath())
                 .setCreateTime(task.getCreateTime());
         FlowFactory.dataFillHandler().idFill(hisTask);
         return hisTask;
@@ -199,6 +207,8 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
                     .setApprover(user.getProcessedBy())
                     .setSkipType(flowParams.getSkipType())
                     .setFlowStatus(flowStatus)
+                    .setFormCustom(task.getFormCustom())
+                    .setFormPath(task.getFormPath())
                     .setFlowStatus(Objects.nonNull(flowParams.getFlowStatus())
                             ? flowParams.getFlowStatus()  : flowStatus); // TODO 待验证;
             FlowFactory.dataFillHandler().idFill(hisTask);

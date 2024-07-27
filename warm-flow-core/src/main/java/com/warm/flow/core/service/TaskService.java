@@ -17,6 +17,7 @@ package com.warm.flow.core.service;
 
 import com.warm.flow.core.dto.FlowParams;
 import com.warm.flow.core.dto.ModifyHandler;
+import com.warm.flow.core.entity.Definition;
 import com.warm.flow.core.entity.Instance;
 import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.Task;
@@ -164,7 +165,7 @@ public interface TaskService extends IWarmService<Task> {
      * @param flowParams
      * @return
      */
-    Task addTask(Node node, Instance instance, FlowParams flowParams);
+    Task addTask(Node node, Instance instance, Definition definition, FlowParams flowParams);
 
     /**
      * 设置流程实例和代码任务流程状态
