@@ -161,13 +161,11 @@ public class FlowHisTask implements HisTask {
     /**
      * 审批表单是否自定义（Y是 2否）
      */
-    @Column(ignore = true)
     private String formCustom;
 
     /**
-     * 审批表单是否自定义（Y是 2否）
+     * 审批表单路径
      */
-    @Column(ignore = true)
     private String formPath;
 
     @Override

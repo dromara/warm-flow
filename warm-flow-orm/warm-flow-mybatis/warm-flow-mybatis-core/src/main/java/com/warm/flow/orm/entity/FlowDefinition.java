@@ -87,6 +87,11 @@ public class FlowDefinition implements Definition {
     private String formPath;
 
     /**
+     * 扩展字段，预留给业务系统使用
+     */
+    private String ext;
+
+    /**
      * 审批表单是否自定义（Y是 2否）
      */
     private String xmlString;
@@ -220,6 +225,17 @@ public class FlowDefinition implements Definition {
     }
 
     @Override
+    public String getExt() {
+        return ext;
+    }
+
+    @Override
+    public FlowDefinition setExt(String ext) {
+        this.ext = ext;
+        return this;
+    }
+
+    @Override
     public String getXmlString() {
         return xmlString;
     }
@@ -266,6 +282,7 @@ public class FlowDefinition implements Definition {
                 ", isPublish=" + isPublish +
                 ", formCustom='" + formCustom + '\'' +
                 ", formPath='" + formPath + '\'' +
+                ", ext='" + ext + '\'' +
                 ", xmlString='" + xmlString + '\'' +
                 ", nodeList=" + nodeList +
                 ", userList=" + userList +

@@ -136,11 +136,11 @@ public class FlowHisTask implements HisTask, ProxyEntityAvailable<FlowHisTask, F
 
 
     /** 审批表单是否自定义（Y是 2否） */
-    @ColumnIgnore
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String formCustom;
 
     /** 审批表单是否自定义（Y是 2否） */
-    @ColumnIgnore
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String formPath;
 
 

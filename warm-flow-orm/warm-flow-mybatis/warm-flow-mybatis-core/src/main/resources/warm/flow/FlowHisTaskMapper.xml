@@ -19,6 +19,8 @@
         <result property="cooperateType" column="cooperate_type"/>
         <result property="skipType" column="skip_type"/>
         <result property="flowStatus" column="flow_status"/>
+        <result property="formCustom" column="form_custom"/>
+        <result property="formPath" column="form_path"/>
         <result property="message" column="message"/>
         <result property="ext" column="ext"/>
         <result property="createTime" column="create_time"/>
@@ -44,6 +46,8 @@
                t.cooperate_type,
                t.skip_type,
                t.flow_status,
+               t.form_custom,
+               t.form_path,
                t.message,
                t.ext,
                t.create_time,
@@ -84,6 +88,8 @@
             <if test="entity.cooperateType != null ">and t.cooperate_type = #{entity.cooperateType}</if>
             <if test="entity.skipType != null  and entity.skipType != ''">and t.skip_type = #{entity.skipType}</if>
             <if test="entity.flowStatus != null">and t.flow_status = #{fentity.flowStatus}</if>
+            <if test="entity.formCustom != null  and entity.formCustom != ''">and t.form_custom = #{entity.formCustom}</if>
+            <if test="entity.formPath != null  and entity.formPath != ''">and t.form_path = #{entity.formPath}</if>
             <if test="entity.message != null  and entity.message != ''">and t.message = #{entity.message}</if>
             <if test="entity.ext != null  and entity.ext != ''">and t.ext = #{entity.ext}</if>
             <if test="entity.createTime != null">and t.create_time = #{entity.createTime}</if>
@@ -138,6 +144,8 @@
         cooperate_type,
         skip_type,
         flow_status,
+        form_custom,
+        form_path,
         message,
         ext,
         create_time,
@@ -162,6 +170,8 @@
             #{item.cooperateType},
             #{item.skipType},
             #{item.flowStatus},
+            #{item.formCustom},
+            #{item.formPath},
             #{item.message},
             #{item.ext},
             #{item.createTime},
@@ -188,6 +198,8 @@
         cooperate_type,
         skip_type,
         flow_status,
+        form_custom,
+        form_path,
         message,
         ext,
         create_time,
@@ -211,6 +223,8 @@
             #{item.cooperateType},
             #{item.skipType},
             #{item.flowStatus},
+            #{item.formCustom},
+            #{item.formPath},
             #{item.message},
             #{item.ext},
             #{item.createTime},
@@ -284,6 +298,8 @@
             <if test="cooperateType != null">cooperate_type,</if>
             <if test="skipType != null and skipType != ''">skip_type,</if>
             <if test="flowStatus != null">flow_status,</if>
+            <if test="formCustom != null and formCustom != ''">form_custom,</if>
+            <if test="formPath != null and formPath != ''">form_path,</if>
             <if test="message != null">message,</if>
             <if test="ext != null">ext,</if>
             <if test="createTime != null">create_time,</if>
@@ -306,6 +322,8 @@
             <if test="cooperateType != null">#{cooperateType},</if>
             <if test="skipType != null and skipType != ''">#{skipType},</if>
             <if test="flowStatus != null">#{flowStatus},</if>
+            <if test="formCustom != null and formCustom != ''">#{formCustom},</if>
+            <if test="formPath != null and formPath != ''">#{formPath},</if>
             <if test="message != null">#{message},</if>
             <if test="ext != null">#{ext},</if>
             <if test="createTime != null">#{createTime},</if>
@@ -330,6 +348,8 @@
             <if test="cooperateType != null">t.cooperate_type = #{cooperateType},</if>
             <if test="skipType != null and skipType != ''">t.skip_type = #{skipType},</if>
             <if test="flowStatus != null">t.flow_status = #{flowStatus},</if>
+            <if test="formCustom != null and formCustom != ''">t.form_custom = #{formCustom},</if>
+            <if test="formPath != null and formPath != ''">t.form_path = #{formPath},</if>
             <if test="message != null">t.message = #{message},</if>
             <if test="ext != null">t.ext = #{ext},</if>
             <if test="createTime != null">t.create_time = #{createTime},</if>
@@ -412,6 +432,8 @@
             <if test="cooperateType != null">and cooperate_type = #{cooperateType}</if>
             <if test="skipType != null and skipType != ''">and skip_type = #{skipType}</if>
             <if test="flowStatus != null">and flow_status = #{flowStatus}</if>
+            <if test="formCustom != null and formCustom != ''">and form_custom = #{formCustom}</if>
+            <if test="formPath != null and formPath != ''">and form_path = #{formPath}</if>
             <if test="message != null">and message = #{message}</if>
             <if test="ext != null">and ext = #{ext}</if>
             <if test="createTime != null">and create_time = #{createTime}</if>
@@ -444,6 +466,8 @@
             <if test="entity.cooperateType != null">and t.cooperate_type = #{entity.cooperateType}</if>
             <if test="entity.skipType != null and entity.skipType != ''">and t.skip_type = #{entity.skipType}</if>
             <if test="entity.flowStatus != null">and t.flow_status = #{entity.flowStatus}</if>
+            <if test="entity.formCustom != null and entity.formCustom != ''">and t.form_custom = #{entity.formCustom}</if>
+            <if test="entity.formPath != null and entity.formPath != ''">and t.form_path = #{entity.formPath}</if>
             <if test="entity.message != null">and t.message = #{entity.message}</if>
             <if test="entity.ext != null">and t.ext = #{entity.ext}</if>
             <if test="entity.createTime != null">and t.create_time = #{entity.createTime}</if>

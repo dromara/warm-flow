@@ -28,7 +28,8 @@
                t.node_type,
                t.definition_id,
                t.instance_id,
-               t.flow_status,
+               t.form_custom,
+               t.form_path,
                t.create_time,
                t.update_time,
                t.tenant_id

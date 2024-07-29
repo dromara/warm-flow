@@ -11,6 +11,7 @@
         <result property="isPublish" column="is_publish"/>
         <result property="formCustom" column="form_custom"/>
         <result property="formPath" column="form_path"/>
+        <result property="ext" column="ext"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
         <result property="delFlag" column="del_flag"/>
@@ -25,6 +26,7 @@
                t.is_publish,
                t.form_custom,
                t.form_path,
+               t.ext,
                t.create_time,
                t.update_time,
                t.del_flag,
@@ -51,6 +53,7 @@
             <if test="entity.isPublish != null ">and t.is_publish = #{entity.isPublish}</if>
             <if test="entity.formCustom != null">and t.form_custom = #{entity.formCustom}</if>
             <if test="entity.formPath != null">and t.form_path = #{entity.formPath}</if>
+            <if test="entity.ext != null  and entity.ext != ''">and t.ext = #{entity.ext}</if>
             <if test="entity.createTime != null">and t.create_time = #{entity.createTime}</if>
             <if test="entity.updateTime != null">and t.update_time = #{entity.updateTime}</if>
             <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
@@ -67,6 +70,7 @@
         is_publish,
         form_custom,
         form_path,
+        ext,
         create_time,
         update_time,
         del_flag,
@@ -82,6 +86,7 @@
             #{item.isPublish},
             #{item.formCustom},
             #{item.formPath},
+            #{item.ext},
             #{item.createTime},
             #{item.updateTime},
             #{item.delFlag},
@@ -99,6 +104,7 @@
         is_publish,
         form_custom,
         form_path,
+        ext,
         create_time,
         update_time,
         del_flag,
@@ -113,6 +119,7 @@
             #{item.isPublish},
             #{item.formCustom},
             #{item.formPath},
+            #{item.ext},
             #{item.createTime},
             #{item.updateTime},
             #{item.delFlag},
@@ -189,6 +196,7 @@
             <if test="isPublish != null">is_publish,</if>
             <if test="formCustom != null">form_custom,</if>
             <if test="formPath != null">form_path,</if>
+            <if test="ext != null and ext != ''">ext,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
             <if test="delFlag != null and delFlag != ''">del_flag,</if>
@@ -202,6 +210,7 @@
             <if test="isPublish != null">#{isPublish},</if>
             <if test="formCustom != null">#{formCustom},</if>
             <if test="formPath != null">#{formPath},</if>
+            <if test="ext != null and ext != ''">#{ext},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
             <if test="delFlag != null and delFlag != ''">#{delFlag},</if>
@@ -218,6 +227,7 @@
             <if test="isPublish != null">t.is_publish = #{isPublish},</if>
             <if test="formCustom != null">t.form_custom = #{formCustom},</if>
             <if test="formPath != null">t.form_path = #{formPath},</if>
+            <if test="ext != null and ext != ''">t.ext = #{ext},</if>
             <if test="createTime != null">t.create_time = #{createTime},</if>
             <if test="updateTime != null">t.update_time = #{updateTime},</if>
         </trim>
@@ -282,6 +292,7 @@
             <if test="isPublish != null">and is_publish = #{isPublish}</if>
             <if test="formCustom != null">and form_custom = #{formCustom}</if>
             <if test="formPath != null">and form_path = #{formPath}</if>
+            <if test="ext != null and ext != ''">and ext = #{ext}</if>
             <if test="createTime != null">and create_time = #{createTime}</if>
             <if test="updateTime != null">and update_time = #{updateTime}</if>
             <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
@@ -299,6 +310,7 @@
             <if test="entity.isPublish != null">and t.is_publish = #{entity.isPublish}</if>
             <if test="entity.formCustom != null">and t.form_custom = #{entity.formCustom}</if>
             <if test="entity.formPath != null">and t.form_path = #{entity.formPath}</if>
+            <if test="entity.ext != null and entity.ext != ''">and t.ext = #{entity.ext}</if>
             <if test="entity.createTime != null">and t.create_time = #{entity.createTime}</if>
             <if test="entity.updateTime != null">and t.update_time = #{entity.updateTime}</if>
             <if test="entity.tenantId != null and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>

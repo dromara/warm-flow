@@ -91,10 +91,12 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
             hisTask.setTargetNodeCode(nextNode.getNodeCode());
             hisTask.setTargetNodeName(nextNode.getNodeName());
             hisTask.setApprover(flowParams.getHandler());
-            hisTask.setSkipType(flowParams.getSkipType()); // TODO 待验证
+            hisTask.setSkipType(flowParams.getSkipType());
             hisTask.setFlowStatus(Objects.nonNull(flowParams.getFlowStatus())
                     ? flowParams.getFlowStatus() : SkipType.isReject(flowParams.getSkipType())
                     ? FlowStatus.REJECT.getKey() : FlowStatus.PASS.getKey());
+            hisTask.setFormCustom(task.getFormCustom());
+            hisTask.setFormPath(task.getFormPath());
             hisTask.setMessage(flowParams.getMessage());
             //业务详情添加至历史记录
             hisTask.setExt(flowParams.getHisTaskExt());
@@ -125,10 +127,12 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
             hisTask.setTargetNodeCode(node.getNodeCode());
             hisTask.setTargetNodeName(node.getNodeName());
             hisTask.setApprover(flowParams.getHandler());
-            hisTask.setSkipType(flowParams.getSkipType()); // TODO 待验证
+            hisTask.setSkipType(flowParams.getSkipType());
             hisTask.setFlowStatus(Objects.nonNull(flowParams.getFlowStatus())
                     ? flowParams.getFlowStatus() : SkipType.isReject(flowParams.getSkipType())
                     ? FlowStatus.REJECT.getKey() : FlowStatus.PASS.getKey());
+            hisTask.setFormCustom(task.getFormCustom());
+            hisTask.setFormPath(task.getFormPath());
             hisTask.setMessage(flowParams.getMessage());
             hisTask.setCreateTime(task.getCreateTime());
             FlowFactory.dataFillHandler().idFill(hisTask);
@@ -154,7 +158,9 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
                 .setSkipType(flowParams.getSkipType())
                 .setFlowStatus(Objects.nonNull(flowParams.getFlowStatus())
                         ? flowParams.getFlowStatus() : SkipType.isReject(flowParams.getSkipType())
-                        ? FlowStatus.REJECT.getKey() : FlowStatus.PASS.getKey()) // TODO 待验证
+                        ? FlowStatus.REJECT.getKey() : FlowStatus.PASS.getKey())
+                .setFormCustom(task.getFormCustom())
+                .setFormPath(task.getFormPath())
                 .setMessage(flowParams.getMessage())
                 .setCreateTime(task.getCreateTime());;
         FlowFactory.dataFillHandler().idFill(hisTask);
@@ -177,7 +183,9 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
                 .setSkipType(isPass ? SkipType.PASS.getKey() : SkipType.REJECT.getKey())
                 .setFlowStatus(Objects.nonNull(flowParams.getFlowStatus())
                         ? flowParams.getFlowStatus()  : isPass
-                        ? FlowStatus.PASS.getKey() : FlowStatus.REJECT.getKey()) // TODO 待验证
+                        ? FlowStatus.PASS.getKey() : FlowStatus.REJECT.getKey())
+                .setFormCustom(task.getFormCustom())
+                .setFormPath(task.getFormPath())
                 .setCreateTime(task.getCreateTime());
         FlowFactory.dataFillHandler().idFill(hisTask);
         return hisTask;
@@ -198,9 +206,10 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
                     .setCreateTime(task.getCreateTime())
                     .setApprover(user.getProcessedBy())
                     .setSkipType(flowParams.getSkipType())
-                    .setFlowStatus(flowStatus)
+                    .setFormCustom(task.getFormCustom())
+                    .setFormPath(task.getFormPath())
                     .setFlowStatus(Objects.nonNull(flowParams.getFlowStatus())
-                            ? flowParams.getFlowStatus()  : flowStatus); // TODO 待验证;
+                            ? flowParams.getFlowStatus()  : flowStatus);
             FlowFactory.dataFillHandler().idFill(hisTask);
             hisTasks.add(hisTask);
         }

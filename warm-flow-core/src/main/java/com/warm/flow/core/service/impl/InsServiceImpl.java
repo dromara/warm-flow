@@ -77,8 +77,10 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         List<HisTask> hisTasks = setHisTask(nextNodes, flowParams, startNode, instance.getId());
 
         // 设置新增任务
+        Definition definition = FlowFactory.defService().getById(instance.getDefinitionId());
+
         List<Task> addTasks = StreamUtils.toList(nextNodes, node -> FlowFactory.taskService()
-                .addTask(node, instance, flowParams));
+                .addTask(node, instance, definition, flowParams));
 
         // 开启分配监听器
         ListenerUtil.executeListener(new ListenerVariable(instance, startNode, flowParams.getVariable(), null, nextNodes
@@ -180,7 +182,8 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         instance.setNodeType(firstBetweenNode.getNodeType());
         instance.setNodeCode(firstBetweenNode.getNodeCode());
         instance.setNodeName(firstBetweenNode.getNodeName());
-        instance.setFlowStatus(FlowStatus.TOBESUBMIT.getKey());
+        instance.setFlowStatus(ObjectUtil.isNotNull(flowParams.getFlowStatus())
+                ? flowParams.getFlowStatus() :FlowStatus.TOBESUBMIT.getKey());
         Map<String, Object> variable = flowParams.getVariable();
         if (MapUtil.isNotEmpty(variable)) {
             instance.setVariable(ONode.serialize(variable));

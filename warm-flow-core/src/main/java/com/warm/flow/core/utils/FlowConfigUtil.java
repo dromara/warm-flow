@@ -72,6 +72,7 @@ public class FlowConfigUtil {
         definition.setVersion(definitionElement.attributeValue("version"));
         definition.setFormCustom(definitionElement.attributeValue("formCustom"));
         definition.setFormPath(definitionElement.attributeValue("formPath"));
+        definition.setExt(definitionElement.attributeValue("ext"));
 
         List<Element> nodesElement = definitionElement.elements();
         // 遍历一个流程中的各个节点
@@ -149,6 +150,7 @@ public class FlowConfigUtil {
         definitionElement.addAttribute("version", definition.getVersion());
         definitionElement.addAttribute("formCustom", definition.getFormCustom());
         definitionElement.addAttribute("formPath", definition.getFormPath());
+        definitionElement.addAttribute("ext", definition.getExt());
 
         List<Node> nodeList = definition.getNodeList();
         for (Node node : nodeList) {

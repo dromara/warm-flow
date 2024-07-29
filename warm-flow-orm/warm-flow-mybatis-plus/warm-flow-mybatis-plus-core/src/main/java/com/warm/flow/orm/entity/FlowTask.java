@@ -111,13 +111,11 @@ public class FlowTask implements Task {
     /**
      * 审批表单是否自定义（Y是 2否）
      */
-    @TableField(exist = false)
     private String formCustom;
 
     /**
-     * 审批表单是否自定义（Y是 2否）
+     * 审批表单
      */
-    @TableField(exist = false)
     private String formPath;
 
     @Override

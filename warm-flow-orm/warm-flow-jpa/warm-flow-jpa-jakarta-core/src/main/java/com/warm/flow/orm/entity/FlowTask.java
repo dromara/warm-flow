@@ -67,6 +67,12 @@ public class FlowTask extends JPARootEntity<FlowTask> implements Task {
                 if (Objects.nonNull(this.instanceId)) {
                     predicates.add(criteriaBuilder.equal(root.get("instanceId"), this.instanceId));
                 }
+                if (StringUtils.isNotEmpty(this.formCustom)) {
+                    predicates.add(criteriaBuilder.equal(root.get("formCustom"), this.formCustom));
+                }
+                if (StringUtils.isNotEmpty(this.formPath)) {
+                    predicates.add(criteriaBuilder.equal(root.get("formPath"), this.formPath));
+                }
             };
 
     @Transient
@@ -85,6 +91,12 @@ public class FlowTask extends JPARootEntity<FlowTask> implements Task {
         }
         if (Objects.nonNull(updateEntity.instanceId)) {
             this.instanceId = updateEntity.instanceId;
+        }
+        if (StringUtils.isNotEmpty(updateEntity.formCustom)) {
+            this.formCustom = updateEntity.formCustom;
+        }
+        if (StringUtils.isNotEmpty(updateEntity.formPath)) {
+            this.formPath = updateEntity.formPath;
         }
         if (Objects.nonNull(updateEntity.getCreateTime())) {
             this.setCreateTime(updateEntity.getCreateTime());
@@ -171,13 +183,13 @@ public class FlowTask extends JPARootEntity<FlowTask> implements Task {
     /**
      * 审批表单是否自定义（Y是 2否）
      */
-    @Transient
+    @Column(name = "form_custom")
     private String formCustom;
 
     /**
-     * 审批表单是否自定义（Y是 2否）
+     * 审批表单路径
      */
-    @Transient
+    @Column(name = "form_path")
     private String formPath;
 
 
