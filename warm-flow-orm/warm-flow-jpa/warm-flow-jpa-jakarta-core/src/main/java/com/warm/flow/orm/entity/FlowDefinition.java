@@ -74,6 +74,9 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
                 if (Objects.nonNull(this.formPath)) {
                     predicates.add(criteriaBuilder.equal(root.get("formPath"), this.formPath));
                 }
+                if (StringUtils.isNotEmpty(this.ext)) {
+                    predicates.add(criteriaBuilder.equal(root.get("ext"), this.ext));
+                }
             };
 
     @Transient
@@ -101,6 +104,9 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
         }
         if (Objects.nonNull(updateEntity.getUpdateTime())) {
             this.setUpdateTime(updateEntity.getUpdateTime());
+        }
+        if (StringUtils.isNotEmpty(updateEntity.ext)) {
+            this.ext = updateEntity.ext;
         }
     };
 
@@ -163,6 +169,12 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
      */
     @Column(name = "form_path")
     private String formPath;
+
+    /**
+     * 扩展字段，预留给业务系统使用
+     */
+    @Column(name = "ext")
+    private String ext;
 
     /**
      * 审批表单是否自定义（Y是 2否）
@@ -243,6 +255,18 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
     }
 
     @Override
+    public String getExt() {
+        return ext;
+    }
+
+    @Override
+    public FlowDefinition setExt(String ext) {
+        this.ext = ext;
+        return this;
+    }
+
+
+    @Override
     public String getXmlString() {
         return xmlString;
     }
@@ -287,6 +311,7 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
                 ", isPublish=" + isPublish +
                 ", formCustom='" + formCustom + '\'' +
                 ", formPath='" + formPath + '\'' +
+                ", ext='" + ext + '\'' +
                 ", xmlString='" + xmlString + '\'' +
                 ", nodeList=" + nodeList +
                 '}';

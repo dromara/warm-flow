@@ -14,3 +14,6 @@ ALTER TABLE `flow_definition`
 
 ALTER TABLE `flow_definition`
     CHANGE COLUMN `from_path` `form_path` varchar(100) DEFAULT NULL COMMENT '审批表单路径' COLLATE 'utf8mb4_general_ci' AFTER `form_custom`;
+
+ALTER TABLE `flow_definition`
+    ADD COLUMN `ext` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '扩展字段，预留给业务系统使用' AFTER `form_path`
