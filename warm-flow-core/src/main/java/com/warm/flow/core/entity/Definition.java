@@ -69,6 +69,10 @@ public interface Definition extends RootEntity {
 
     public Definition setFormPath(String formPath);
 
+    public String getExt();
+
+    public Definition setExt(String ext);
+
     public List<Node> getNodeList();
 
     public Definition setNodeList(List<Node> nodeList);

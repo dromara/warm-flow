@@ -86,6 +86,10 @@ public class FlowDefinition implements Definition,ProxyEntityAvailable<FlowDefin
     @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String formPath;
 
+    /** 扩展字段 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
+    private String ext;
+
     /** 审批表单是否自定义（Y是 2否） */
     @ColumnIgnore
     private String xmlString;
@@ -109,6 +113,7 @@ public class FlowDefinition implements Definition,ProxyEntityAvailable<FlowDefin
             ", isPublish=" + isPublish +
             ", formCustom='" + formCustom + '\'' +
             ", formPath='" + formPath + '\'' +
+            ", ext='" + ext + '\'' +
             ", xmlString='" + xmlString + '\'' +
             ", nodeList=" + nodeList +
             '}';

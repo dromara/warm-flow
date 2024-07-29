@@ -151,11 +151,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         instance.setNodeType(endNode.getNodeType());
         instance.setNodeCode(endNode.getNodeCode());
         instance.setNodeName(endNode.getNodeName());
-        if (ObjectUtil.isNotNull(flowParams.getFlowStatus())) {
-            instance.setFlowStatus(flowParams.getFlowStatus());
-        } else {
-            instance.setFlowStatus(FlowStatus.AUTO_PASS.getKey());
-        }
+        instance.setFlowStatus(ObjectUtil.isNotNull(flowParams.getFlowStatus()) ? flowParams.getFlowStatus()
+                : FlowStatus.AUTO_PASS.getKey());
 
         FlowFactory.insService().updateById(instance);
 
@@ -672,22 +669,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     // 设置结束节点相关信息
-    private void setEndInfo(Instance instance, List<Task> addTasks) {
-        if (CollUtil.isNotEmpty(addTasks)) {
-            addTasks.removeIf(addTask -> {
-                if (NodeType.isEnd(addTask.getNodeType())) {
-                    instance.setNodeType(addTask.getNodeType());
-                    instance.setNodeCode(addTask.getNodeCode());
-                    instance.setNodeName(addTask.getNodeName());
-                    instance.setFlowStatus(FlowStatus.FINISHED.getKey());
-                    return true;
-                }
-                return false;
-            });
-        }
-    }
-
-    private void setSkipInstance(Instance instance, List<Task> addTasks, FlowParams flowParams) {
+    private void setEndInfo(Instance instance, List<Task> addTasks, FlowParams flowParams) {
         instance.setUpdateTime(new Date());
         Map<String, Object> variable = flowParams.getVariable();
         if (MapUtil.isNotEmpty(variable)) {
@@ -701,14 +683,16 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             deserialize.putAll(variable);
             instance.setVariable(ONode.serialize(deserialize));
         }
-
-        // 存在后续任务，才重新设置流程信息
+        if (CollUtil.isNotEmpty(addTasks)) {
+            addTasks.removeIf(addTask -> NodeType.isEnd(addTask.getNodeType()));
+        }
         if (CollUtil.isNotEmpty(addTasks)) {
             Task nextTask = getNextTask(addTasks);
             instance.setNodeType(nextTask.getNodeType());
             instance.setNodeCode(nextTask.getNodeCode());
             instance.setNodeName(nextTask.getNodeName());
-            instance.setFlowStatus(setFlowStatus(nextTask.getNodeType(), flowParams.getSkipType()));
+            instance.setFlowStatus(ObjectUtil.isNotNull(flowParams.getFlowStatus()) ? flowParams.getFlowStatus()
+                    : setFlowStatus(nextTask.getNodeType(), flowParams.getSkipType()));
         }
     }
 
@@ -817,10 +801,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         List<HisTask> insHisList = FlowFactory.hisTaskService().setSkipInsHis(task, nextNodes, flowParams);
 
         // 设置结束节点相关信息
-        setEndInfo(instance, addTasks);
+        setEndInfo(instance, addTasks, flowParams);
 
-        // 设置流程实例信息
-        setSkipInstance(instance, addTasks, flowParams);
         // 待办任务设置处理人
         List<User> users = FlowFactory.userService().setSkipUser(addTasks, task.getId());
         removeById(task.getId());

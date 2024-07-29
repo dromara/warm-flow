@@ -182,7 +182,8 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         instance.setNodeType(firstBetweenNode.getNodeType());
         instance.setNodeCode(firstBetweenNode.getNodeCode());
         instance.setNodeName(firstBetweenNode.getNodeName());
-        instance.setFlowStatus(FlowStatus.TOBESUBMIT.getKey());
+        instance.setFlowStatus(ObjectUtil.isNotNull(flowParams.getFlowStatus())
+                ? flowParams.getFlowStatus() :FlowStatus.TOBESUBMIT.getKey());
         Map<String, Object> variable = flowParams.getVariable();
         if (MapUtil.isNotEmpty(variable)) {
             instance.setVariable(ONode.serialize(variable));
