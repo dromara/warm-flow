@@ -15,8 +15,10 @@
  */
 package com.warm.flow.spring.boot.utils;
 
-import lombok.Getter;
+import com.sun.xml.internal.ws.util.UtilException;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.ListableBeanFactory;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
@@ -27,12 +29,18 @@ import org.springframework.stereotype.Component;
 @Component
 public class SpringUtil implements ApplicationContextAware {
 
-    /**
-     * -- GETTER --
-     *  获取applicationContext，应用上下文
-     */
-    @Getter
     private static ApplicationContext applicationContext;
+
+    private static ConfigurableListableBeanFactory beanFactory;
+
+    /**
+     * 获取applicationContext，应用上下文
+     *
+     * @return
+     */
+    public static ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -41,6 +49,9 @@ public class SpringUtil implements ApplicationContextAware {
         }
     }
 
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+        SpringUtil.beanFactory = beanFactory;
+    }
     /**
      * 通过class获取Bean
      */
@@ -48,5 +59,13 @@ public class SpringUtil implements ApplicationContextAware {
         return getApplicationContext().getBean(clazz);
     }
 
+    public static ListableBeanFactory getBeanFactory() {
+        ListableBeanFactory factory = null == beanFactory ? applicationContext : beanFactory;
+        if (null == factory) {
+            throw new UtilException("No ConfigurableListableBeanFactory or ApplicationContext injected, maybe not in the Spring environment?");
+        } else {
+            return (ListableBeanFactory)factory;
+        }
+    }
 }
 

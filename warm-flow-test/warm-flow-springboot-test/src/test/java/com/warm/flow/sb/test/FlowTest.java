@@ -13,7 +13,7 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.warm.flow.mybatisplus.solon;
+package com.warm.flow.sb.test;
 
 
 import com.warm.flow.core.service.DefService;
@@ -21,27 +21,27 @@ import com.warm.flow.core.service.InsService;
 import com.warm.flow.core.service.TaskService;
 import com.warm.flow.core.test.FlowBaseTest;
 import org.junit.jupiter.api.Test;
-import org.noear.solon.annotation.Inject;
-import org.noear.solon.data.annotation.Tran;
-import org.noear.solon.test.SolonTest;
+import org.springframework.boot.test.context.SpringBootTest;
 
-@SolonTest(value = App.class)
+import javax.annotation.Resource;
+
+
+@SpringBootTest
 public class FlowTest extends FlowBaseTest {
 
-    @Inject
+    @Resource
     private DefService defService;
 
-    @Inject
+    @Resource
     private InsService insService;
 
-    @Inject
+    @Resource
     private TaskService taskService;
 
     /**
      * 部署流程
      */
     @Test
-    @Tran
     public void deployFlow() throws Exception {
         deployFlow(defService);
     }
@@ -50,7 +50,6 @@ public class FlowTest extends FlowBaseTest {
      * 发布流程
      */
     @Test
-    @Tran
     public void publish() {
         publish(defService);
     }
@@ -59,25 +58,38 @@ public class FlowTest extends FlowBaseTest {
      * 取消流程
      */
     @Test
-    @Tran
     public void unPublish() {
         unPublish(defService);
+    }
+
+    /**
+     * 删除流程定义
+     */
+    @Test
+    public void removeDef() {
+        removeDef(defService);
     }
 
     /**
      * 开启流程
      */
     @Test
-    @Tran
     public void startFlow() {
         startFlow(insService, taskService);
+    }
+
+    /**
+     * 删除流程实例
+     */
+    @Test
+    public void removeIns() {
+        removeIns(insService);
     }
 
     /**
      * 办理
      */
     @Test
-    @Tran
     public void skipFlow() {
         skipFlow(insService, taskService);
     }
@@ -86,7 +98,6 @@ public class FlowTest extends FlowBaseTest {
      * 终止流程实例
      */
     @Test
-    @Tran
     public void termination() {
         termination(taskService);
     }
@@ -95,7 +106,6 @@ public class FlowTest extends FlowBaseTest {
      * 跳转到指定节点 跳转到结束节点
      */
     @Test
-    @Tran
     public void skipAnyNode() {
         skipAnyNode(taskService);
     }
@@ -112,7 +122,6 @@ public class FlowTest extends FlowBaseTest {
      * 转办
      */
     @Test
-    @Tran
     public void transfer() {
         transfer(taskService);
     }
@@ -121,7 +130,6 @@ public class FlowTest extends FlowBaseTest {
      * 委派
      */
     @Test
-    @Tran
     public void depute() {
         depute(taskService);
     }
@@ -130,7 +138,6 @@ public class FlowTest extends FlowBaseTest {
      * 加签
      */
     @Test
-    @Tran
     public void addSignature() {
         addSignature(taskService);
     }
@@ -139,7 +146,6 @@ public class FlowTest extends FlowBaseTest {
      * 减签
      */
     @Test
-    @Tran
     public void reductionSignature() {
         reductionSignature(taskService);
     }

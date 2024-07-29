@@ -13,15 +13,15 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.warm.flow.mybatisplus.sb;
+package com.warm.flow.sb.test;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class MybatisPlusTestApplication {
+public class SbTestApplication {
     public static void main(String[] args) {
-        SpringApplication.run(MybatisPlusTestApplication.class, args);
+        SpringApplication.run(SbTestApplication.class, args);
 
     }
 

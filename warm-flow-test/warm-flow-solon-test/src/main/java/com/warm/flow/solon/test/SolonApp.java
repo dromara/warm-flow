@@ -13,14 +13,14 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.warm.flow.mybatisplus.solon;
+package com.warm.flow.solon.test;
 
 import org.noear.solon.Solon;
 import org.noear.solon.annotation.SolonMain;
 
 @SolonMain
-public class App {
+public class SolonApp {
     public static void main(String[] args) {
-        Solon.start(App.class, args);
+        Solon.start(SolonApp.class, args);
     }
 }

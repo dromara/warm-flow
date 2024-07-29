@@ -31,7 +31,7 @@ import java.util.Map;
 public abstract class ExpressionStrategyAbstract implements ExpressionStrategy {
 
     /**
-     * @param expression @@eq@@|flag@@eq@@4
+     * @param expression flag@@eq@@4
      * @param variable
      * @return
      */
@@ -47,10 +47,6 @@ public abstract class ExpressionStrategyAbstract implements ExpressionStrategy {
         Object o = variable.get(split[0].trim());
         if (MapUtil.isEmpty(variable) && ObjectUtil.isNull(o)) {
             throw new FlowException(ExceptionCons.NULL_CONDITIONVALUE);
-        }
-        // 判断 variable.get(split[0].trim()) 是否为 String 类型
-        if (!(o instanceof String)) {
-            throw new FlowException(ExceptionCons.CONDITIONVALUE_STRING);
         }
     }
 

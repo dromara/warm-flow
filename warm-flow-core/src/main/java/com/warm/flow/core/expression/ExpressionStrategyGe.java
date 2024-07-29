@@ -19,7 +19,7 @@ import com.warm.flow.core.constant.FlowCons;
 import com.warm.flow.core.utils.MathUtil;
 
 /**
- * 条件表达式大于等于
+ * 条件表达式大于等于 @@ge@@|flag@@ge@@4
  *
  * @author warm
  */

@@ -13,21 +13,26 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.warm.flow.mybatisplus.sb.config;
+package com.warm.flow.solon.test.config;
 
 import com.warm.flow.core.handler.DataFillHandler;
 import com.warm.flow.core.test.Listener.*;
 import com.warm.flow.core.test.handle.CustomDataFillHandler;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import com.zaxxer.hikari.HikariDataSource;
+import org.noear.solon.annotation.Bean;
+import org.noear.solon.annotation.Configuration;
+import org.noear.solon.annotation.Inject;
 
-/**
- * warm-flow配置文件
- *
- * @author warm
- */
+import javax.sql.DataSource;
+
 @Configuration
 public class WarmFlowConfig {
+    //此下的 db1 与 mybatis.db1 将对应在起来 //可以用 @Db("db1") 注入mapper
+    //typed=true，表示默认数据源。@Db 可不带名字注入 
+    @Bean(value = "db1", typed = true)
+    public DataSource db1(@Inject("${demo.db1}") HikariDataSource ds) {
+        return ds;
+    }
 
     /**
      * 自定义填充 （可配置文件注入，也可用@Bean/@Component方式）
@@ -84,4 +89,5 @@ public class WarmFlowConfig {
     public AssignmentListener assignmentListener() {
         return new AssignmentListener();
     }
+
 }
