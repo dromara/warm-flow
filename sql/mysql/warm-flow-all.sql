@@ -7,6 +7,7 @@ CREATE TABLE `flow_definition`
     `is_publish`  tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否发布（0未发布 1已发布 9失效）',
     `form_custom` char(1)      DEFAULT 'N' COMMENT '审批表单是否自定义（Y是 N否）',
     `form_path`   varchar(100) DEFAULT NULL COMMENT '审批表单路径',
+    `ext`         varchar(400) DEFAULT NULL COMMENT '业务详情 存业务表对象json字符串',
     `create_time` datetime     DEFAULT NULL COMMENT '创建时间',
     `update_time` datetime     DEFAULT NULL COMMENT '更新时间',
     `del_flag`    char(1)      DEFAULT NULL COMMENT '删除标志',

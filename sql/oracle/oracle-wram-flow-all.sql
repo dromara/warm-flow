@@ -172,7 +172,8 @@ create table FLOW_DEFINITION
 	IS_PUBLISH NUMBER(1) default 0 not null,
 	FORM_CUSTOM VARCHAR2(1) default 'N',
 	FORM_PATH VARCHAR2(100),
-	CREATE_TIME DATE,
+    EXT VARCHAR2(500),
+    CREATE_TIME DATE,
 	UPDATE_TIME DATE,
 	DEL_FLAG VARCHAR2(1),
 	TENANT_ID VARCHAR2(40)
@@ -201,6 +202,9 @@ comment on column FLOW_DEFINITION.FORM_CUSTOM is '审批表单是否自定义 (Y
 /
 
 comment on column FLOW_DEFINITION.FORM_PATH is '审批表单路径'
+/
+
+comment on column FLOW_DEFINITION.EXT is '扩展字段，预留给业务系统使用'
 /
 
 comment on column FLOW_DEFINITION.CREATE_TIME is '创建时间'

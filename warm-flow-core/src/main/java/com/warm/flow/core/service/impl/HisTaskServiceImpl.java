@@ -91,7 +91,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
             hisTask.setTargetNodeCode(nextNode.getNodeCode());
             hisTask.setTargetNodeName(nextNode.getNodeName());
             hisTask.setApprover(flowParams.getHandler());
-            hisTask.setSkipType(flowParams.getSkipType()); // TODO 待验证
+            hisTask.setSkipType(flowParams.getSkipType());
             hisTask.setFlowStatus(Objects.nonNull(flowParams.getFlowStatus())
                     ? flowParams.getFlowStatus() : SkipType.isReject(flowParams.getSkipType())
                     ? FlowStatus.REJECT.getKey() : FlowStatus.PASS.getKey());
@@ -127,7 +127,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
             hisTask.setTargetNodeCode(node.getNodeCode());
             hisTask.setTargetNodeName(node.getNodeName());
             hisTask.setApprover(flowParams.getHandler());
-            hisTask.setSkipType(flowParams.getSkipType()); // TODO 待验证
+            hisTask.setSkipType(flowParams.getSkipType());
             hisTask.setFlowStatus(Objects.nonNull(flowParams.getFlowStatus())
                     ? flowParams.getFlowStatus() : SkipType.isReject(flowParams.getSkipType())
                     ? FlowStatus.REJECT.getKey() : FlowStatus.PASS.getKey());
@@ -158,7 +158,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
                 .setSkipType(flowParams.getSkipType())
                 .setFlowStatus(Objects.nonNull(flowParams.getFlowStatus())
                         ? flowParams.getFlowStatus() : SkipType.isReject(flowParams.getSkipType())
-                        ? FlowStatus.REJECT.getKey() : FlowStatus.PASS.getKey()) // TODO 待验证
+                        ? FlowStatus.REJECT.getKey() : FlowStatus.PASS.getKey())
                 .setFormCustom(task.getFormCustom())
                 .setFormPath(task.getFormPath())
                 .setMessage(flowParams.getMessage())
@@ -183,7 +183,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
                 .setSkipType(isPass ? SkipType.PASS.getKey() : SkipType.REJECT.getKey())
                 .setFlowStatus(Objects.nonNull(flowParams.getFlowStatus())
                         ? flowParams.getFlowStatus()  : isPass
-                        ? FlowStatus.PASS.getKey() : FlowStatus.REJECT.getKey()) // TODO 待验证
+                        ? FlowStatus.PASS.getKey() : FlowStatus.REJECT.getKey())
                 .setFormCustom(task.getFormCustom())
                 .setFormPath(task.getFormPath())
                 .setCreateTime(task.getCreateTime());
