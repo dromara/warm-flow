@@ -198,7 +198,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
                     .setCreateTime(task.getCreateTime())
                     .setApprover(user.getProcessedBy())
                     .setSkipType(flowParams.getSkipType())
-                    .setFlowStatus(flowStatus)
+                    .setFlowStatus(Objects.nonNull(flowParams.getFlowStatus()) ? flowParams.getFlowStatus() : flowStatus)
                     .setFlowStatus(Objects.nonNull(flowParams.getFlowStatus())
                             ? flowParams.getFlowStatus()  : flowStatus); // TODO 待验证;
             FlowFactory.dataFillHandler().idFill(hisTask);
