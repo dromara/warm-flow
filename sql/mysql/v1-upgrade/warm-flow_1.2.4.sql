@@ -20,3 +20,9 @@ ALTER TABLE `flow_definition`
 
 ALTER TABLE `flow_definition`
     CHANGE COLUMN `from_path` `form_path` varchar(100) DEFAULT NULL COMMENT '审批表单路径' COLLATE 'utf8mb4_general_ci' AFTER `form_custom`;
+
+ALTER TABLE `flow_his_task`
+    ADD COLUMN `form_custom`     char(1)      DEFAULT 'N' COMMENT '审批表单是否自定义（Y是 N否）' AFTER `flow_status`;
+
+ALTER TABLE `flow_his_task`
+    ADD COLUMN `form_path`    varchar(100)      DEFAULT NULL COMMENT '审批表单路径' AFTER `form_custom`;

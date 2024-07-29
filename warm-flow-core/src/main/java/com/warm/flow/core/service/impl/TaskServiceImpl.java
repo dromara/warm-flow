@@ -361,8 +361,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 node.getDynamicPermissionFlagList() :
                 StringUtils.str2List(node.getPermissionFlag(), ","));
 
-        if (StringUtils.isNotEmpty(node.getFormCustom())
-                && Objects.equals(node.getFormCustom(), "Y")) {
+        if (StringUtils.isNotEmpty(node.getFormCustom())) {
             // 节点有自定义表单则使用
             addTask.setFormCustom(node.getFormCustom());
             addTask.setFormPath(node.getFormPath());
