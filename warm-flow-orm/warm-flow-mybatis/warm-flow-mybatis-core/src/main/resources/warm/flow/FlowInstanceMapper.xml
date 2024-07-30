@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.warm.flow.orm.mapper.FlowInstanceMapper">
+
+    <resultMap type="com.warm.flow.orm.entity.FlowInstance" id="FlowInstanceResult">
+        <result property="id" column="id"/>
+        <result property="businessId" column="business_id"/>
+        <result property="definitionId" column="definition_id"/>
+        <result property="tenantId" column="tenant_id"/>
+        <result property="flowName" column="flow_name"/>
+        <result property="nodeType" column="node_type"/>
+        <result property="nodeCode" column="node_code"/>
+        <result property="nodeName" column="node_name"/>
+        <result property="variable" column="variable"/>
+        <result property="flowStatus" column="flow_status"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="tenantId" column="tenant_id"/>
+        <result property="ext" column="ext"/>
+    </resultMap>
+
+    <sql id="selectVo">
+        select t.id,
+               t.business_id,
+               t.definition_id,
+               t.tenant_id,
+               t.node_type,
+               t.node_code,
+               t.node_name,
+               t.variable,
+               t.flow_status,
+               t.create_by,
+               t.create_time,
+               t.update_time,
+               t.del_flag,
+               t.tenant_id,
+               t.ext
+        from flow_instance t
+    </sql>
+
+    <sql id="paging_end">
+        <if test="page !=null and page.pageNum != null and page.pageSize != null">LIMIT
+            #{page.pageNum} offset #{page.pageSize}
+        </if>
+    </sql>
+
+    <sql id="order_by">
+        <if test="order != null and order != ''">order by ${order}</if>
+    </sql>
+
+    <sql id="select_parameter">
+        <where>
+            <if test="entity.id != null ">and t.id = #{entity.id}</if>
+            <if test="entity.businessId != null  and entity.businessId != ''">and t.business_id = #{entity.businessId}
+            </if>
+            <if test="entity.definitionId != null ">and t.definition_id = #{entity.definitionId}</if>
+            <if test="entity.nodeCode != null and nodeCode != ''">and t.node_code = #{entity.nodeCode}</if>
+            <if test="entity.nodeName != null and nodeName != ''">and t.node_name = #{entity.nodeName}</if>
+            <if test="entity.variable != null">and t.variable = #{entity.variable}</if>
+            <if test="entity.flowStatus != null">and t.flow_status = #{entity.flowStatus}</if>
+            <if test="entity.createBy != null  and entity.createBy != ''">and t.create_by = #{entity.createBy}</if>
+            <if test="entity.createTime != null">and t.create_time = #{entity.createTime}</if>
+            <if test="entity.updateTime != null">and t.update_time = #{entity.updateTime}</if>
+            <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
+            <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+            <if test="entity.ext != null">and t.ext = #{entity.ext}</if>
+        </where>
+    </sql>
+
+    <select id="selectCount" parameterType="com.warm.flow.orm.entity.FlowInstance" resultType="java.lang.Long">
+        select count(*) from flow_instance t
+        <include refid="select_parameter"/>
+    </select>
+
+    <select id="selectList" parameterType="com.warm.flow.orm.entity.FlowInstance"
+            resultMap="FlowInstanceResult">
+        <choose>
+            <when test="dataSourceType == 'oracle'.toString()">
+                <if test="page !=null and page.pageNum != null and page.pageSize != null">
+                    SELECT * FROM ( SELECT TMP.*, ROWNUM ROW_ID FROM (
+                </if>
+                <include refid="includeAll"/>
+                <if test="page !=null and page.pageNum != null and page.pageSize != null">
+                    ) TMP WHERE ROWNUM &lt;= #{page.pageSize}) WHERE ROW_ID &gt; #{page.pageNum}
+                </if>
+            </when>
+            <otherwise>
+                <include refid="includeAll"/>
+                <include refid="paging_end"/>
+            </otherwise>
+        </choose>
+    </select>
+
+    <sql id="includeAll">
+        <include refid="selectVo"/>
+        <include refid="select_parameter"/>
+        <include refid="order_by"/>
+    </sql>
+
+    <sql id="mysql_insert_batch">
+        insert into flow_instance(
+        id,
+        business_id,
+        definition_id,
+        node_code,
+        node_name,
+        node_type,
+        variable,
+        flow_status,
+        create_by,
+        create_time,
+        update_time,
+        del_flag,
+        tenant_id,
+        ext
+        )
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.id},
+            #{item.businessId},
+            #{item.definitionId},
+            #{item.nodeCode},
+            #{item.nodeName},
+            #{item.nodeType},
+            #{item.variable},
+            #{item.flowStatus},
+            #{item.createBy},
+            #{item.createTime},
+            #{item.updateTime},
+            #{item.delFlag},
+            #{item.tenantId},
+            #{item.ext}
+            )
+        </foreach>
+    </sql>
+
+    <sql id="oracle_insert_batch">
+        insert into flow_instance(
+        id,
+        business_id,
+        definition_id,
+        node_code,
+        node_name,
+        node_type,
+        variable,
+        flow_status,
+        create_by,
+        create_time,
+        update_time,
+        del_flag,
+        tenant_id,
+        ext
+        )
+        <foreach collection="list" item="item" separator=" union all">
+            (
+            #{item.id},
+            #{item.businessId},
+            #{item.definitionId},
+            #{item.nodeCode},
+            #{item.nodeName},
+            #{item.nodeType},
+            #{item.variable},
+            #{item.flowStatus},
+            #{item.createBy},
+            #{item.createTime},
+            #{item.updateTime},
+            #{item.delFlag},
+            #{item.tenantId},
+            #{item.ext}
+            )
+        </foreach>
+    </sql>
+
+    <select id="selectByIds" resultMap="FlowInstanceResult">
+        <include refid="selectVo"/>
+        where t.id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+    </select>
+
+    <select id="selectById" resultMap="FlowInstanceResult">
+        <include refid="selectVo"/>
+        where t.id = #{id}
+        <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+    </select>
+
+    <insert id="insert" parameterType="com.warm.flow.orm.entity.FlowInstance">
+        insert into flow_instance
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="businessId != null and businessId != ''">business_id,</if>
+            <if test="definitionId != null">definition_id,</if>
+            <if test="nodeCode != null and nodeCode != ''">node_code,</if>
+            <if test="nodeName != null and nodeName != ''">node_name,</if>
+            <if test="nodeType != null">node_type,</if>
+            <if test="variable != null">variable,</if>
+            <if test="flowStatus != null">flow_status,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null and delFlag != ''">del_flag,</if>
+            <if test="tenantId != null and tenantId != ''">tenant_id,</if>
+            <if test="ext != null">ext,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="businessId != null and businessId != ''">#{businessId},</if>
+            <if test="definitionId != null">#{definitionId},</if>
+            <if test="nodeCode != null and nodeCode != ''">#{nodeCode},</if>
+            <if test="nodeName != null and nodeName != ''">#{nodeName},</if>
+            <if test="nodeType != null">#{nodeType},</if>
+            <if test="variable != null">#{variable},</if>
+            <if test="flowStatus != null">#{flowStatus},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null and delFlag != ''">#{delFlag},</if>
+            <if test="tenantId != null and tenantId != ''">#{tenantId},</if>
+            <if test="ext != null">#{ext},</if>
+        </trim>
+    </insert>
+
+    <update id="updateById" parameterType="com.warm.flow.orm.entity.FlowInstance">
+        update flow_instance t
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="businessId != null and businessId != ''">t.business_id = #{businessId},</if>
+            <if test="definitionId != null">t.definition_id = #{definitionId},</if>
+            <if test="nodeType != null">t.node_type = #{nodeType},</if>
+            <if test="nodeCode != null and nodeCode != ''">t.node_code = #{nodeCode},</if>
+            <if test="nodeName != null and nodeName != ''">t.node_name = #{nodeName},</if>
+            <if test="variable != null">t.variable = #{variable},</if>
+            <if test="flowStatus != null">t.flow_status = #{flowStatus},</if>
+            <if test="createBy != null and createBy != ''">t.create_by = #{createBy},</if>
+            <if test="createTime != null">t.create_time = #{createTime},</if>
+            <if test="updateTime != null">t.update_time = #{updateTime},</if>
+            <if test="ext != null">t.ext = #{ext},</if>
+        </trim>
+        where t.id = #{id}
+        <if test="delFlag != null  and delFlag != ''">and del_flag = #{delFlag}</if>
+        <if test="tenantId != null  and tenantId != ''">and tenant_id = #{tenantId}</if>
+    </update>
+
+    <delete id="deleteById">
+        delete
+        from flow_instance
+        where id = #{id}
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and tenant_id = #{entity.tenantId}</if>
+    </delete>
+
+    <update id="updateByIdLogic">
+        update flow_instance t
+        set t.del_flag = #{logicDeleteValue}
+        where t.id = #{id}
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag = #{logicNotDeleteValue}
+        </if>
+    </update>
+
+    <delete id="deleteByIds">
+        delete from flow_instance where id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and tenant_id = #{entity.tenantId}</if>
+    </delete>
+
+    <update id="updateByIdsLogic">
+        update flow_instance t
+        set t.del_flag = #{logicDeleteValue}
+        where t.id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag = #{logicNotDeleteValue}
+        </if>
+    </update>
+
+    <delete id="delete" parameterType="com.warm.flow.orm.entity.FlowInstance">
+        delete from flow_instance
+        <where>
+            <if test="id != null">and id = #{id}</if>
+            <if test="businessId != null and businessId != ''">and business_id = #{businessId}</if>
+            <if test="definitionId != null">and definition_id = #{definitionId}</if>
+            <if test="nodeCode != null and nodeCode != ''">and node_code = #{nodeCode}</if>
+            <if test="nodeName != null and nodeName != ''">and node_name = #{nodeName}</if>
+            <if test="nodeType != null">and node_type = #{nodeType}</if>
+            <if test="flowStatus != null">and flow_status = #{flowStatus}</if>
+            <if test="variable != null">and flow_status = #{variable}</if>
+            <if test="createBy != null and createBy != ''">and create_by = #{createBy}</if>
+            <if test="createTime != null">and create_time = #{createTime}</if>
+            <if test="updateTime != null">and update_time = #{updateTime}</if>
+            <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
+            <if test="ext != null">and ext = #{ext}</if>
+        </where>
+    </delete>
+
+    <update id="updateLogic">
+        update flow_instance t
+        set t.del_flag = #{logicDeleteValue}
+        <where>
+            <if test="entity.id != null">and t.id = #{entity.id}</if>
+            <if test="entity.businessId != null and entity.businessId != ''">and t.business_id = #{entity.businessId}
+            </if>
+            <if test="entity.definitionId != null">and t.definition_id = #{entity.definitionId}</if>
+            <if test="entity.nodeCode != null and entity.nodeCode != ''">and t.node_code = #{entity.nodeCode}</if>
+            <if test="entity.nodeName != null and entity.nodeName != ''">and t.node_name = #{entity.nodeName}</if>
+            <if test="entity.nodeType != null">and t.node_type = #{entity.nodeType}</if>
+            <if test="entity.flowStatus != null">and t.flow_status = #{entity.flowStatus}</if>
+            <if test="entity.variable != null">and t.flow_status = #{entity.variable}</if>
+            <if test="entity.createBy != null and entity.createBy != ''">and t.create_by = #{entity.createBy}</if>
+            <if test="entity.createTime != null">and t.create_time = #{entity.createTime}</if>
+            <if test="entity.updateTime != null">and t.update_time = #{entity.updateTime}</if>
+            <if test="entity.tenantId != null and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+            <if test="entity.ext != null">and t.ext = #{entity.ext}</if>
+            <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag =
+                #{logicNotDeleteValue}
+            </if>
+        </where>
+    </update>
+
+    <insert id="saveBatch" parameterType="com.warm.flow.orm.entity.FlowInstance">
+        <choose>
+            <when test="dataSourceType == 'oracle'.toString()">
+                <include refid="oracle_insert_batch"/>
+            </when>
+            <otherwise>
+                <include refid="mysql_insert_batch"/>
+            </otherwise>
+        </choose>
+    </insert>
+</mapper>

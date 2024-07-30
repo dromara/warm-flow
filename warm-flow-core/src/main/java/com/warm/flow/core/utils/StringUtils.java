@@ -1,3 +1,18 @@
+/*
+ *    Copyright 2024-2025, Warm-Flow (290631660@qq.com).
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *       https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.warm.flow.core.utils;
 
 import java.util.*;
@@ -50,13 +65,15 @@ public class StringUtils {
 
     /**
      * 如果字符串是空，则返回默认值
-     * @param str 字符串
+     *
+     * @param str        字符串
      * @param defaultStr 默认值
      * @return 结果
      */
     public static String emptyDefault(String str, String defaultStr) {
         return isEmpty(str) ? defaultStr : str;
     }
+
     /**
      * 指定字符串数组中，是否包含空字符串
      *
@@ -191,8 +208,8 @@ public class StringUtils {
     /**
      * 字符串转list
      *
-     * @param str         字符串
-     * @param sep         分隔符
+     * @param str 字符串
+     * @param sep 分隔符
      * @return list集合
      */
     public static List<String> str2List(String str, String sep) {

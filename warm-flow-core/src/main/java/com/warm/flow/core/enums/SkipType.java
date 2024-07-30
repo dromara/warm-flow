@@ -1,3 +1,18 @@
+/*
+ *    Copyright 2024-2025, Warm-Flow (290631660@qq.com).
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *       https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.warm.flow.core.enums;
 
 import com.warm.flow.core.utils.StringUtils;
@@ -9,7 +24,8 @@ import com.warm.flow.core.utils.StringUtils;
  */
 public enum SkipType {
     PASS("PASS", "审批通过"),
-    REJECT("REJECT", "退回");
+    REJECT("REJECT", "退回"),
+    NONE("NONE", "无动作");
 
     private String key;
     private String value;
@@ -64,6 +80,16 @@ public enum SkipType {
      */
     public static Boolean isReject(String Key) {
         return StringUtils.isNotEmpty(Key) && (SkipType.REJECT.getKey().equals(Key));
+    }
+
+    /**
+     * 判断是否无动作类型
+     *
+     * @param Key
+     * @return
+     */
+    public static Boolean isNone(String Key) {
+        return StringUtils.isNotEmpty(Key) && (SkipType.NONE.getKey().equals(Key));
     }
 
     public String getKey() {

@@ -14,9 +14,8 @@
 
     <modules>
         <module>warm-flow-core-test</module>
-        <module>warm-flow-jpa-sb-test</module>
-        <module>warm-flow-mybatis-sb-test</module>
-        <module>warm-flow-mybatis-plus-sb-test</module>
+        <module>warm-flow-solon-test</module>
+        <module>warm-flow-springboot-test</module>
     </modules>
 
     <dependencyManagement>

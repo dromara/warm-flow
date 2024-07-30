@@ -1,3 +1,18 @@
+/*
+ *    Copyright 2024-2025, Warm-Flow (290631660@qq.com).
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *       https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.warm.flow.core.dto;
 
 import java.io.Serializable;
@@ -23,12 +38,6 @@ public class FlowParams implements Serializable {
     private String handler;
 
     /**
-     * 用户账号，唯一标识就行（即将删除字段）
-     */
-    @Deprecated
-    private String createBy;
-
-    /**
      * 节点编码（如果要指定跳转节点，传入）
      */
     private String nodeCode;
@@ -37,10 +46,7 @@ public class FlowParams implements Serializable {
      * 用户权限标识
      */
     private List<String> permissionFlag;
-    /**
-     * 额外办理人：加减签，转办，委托，抄送人
-     */
-    private List<String> additionalHandler;
+
     /**
      * 跳转类型（PASS审批通过 REJECT退回）
      */
@@ -67,9 +73,14 @@ public class FlowParams implements Serializable {
     private Integer cooperateType;
 
     /**
-     * 扩展字段
+     * 扩展字段，预留给业务系统使用
      */
     private String ext;
+
+    /**
+     * 扩展字段，预留给业务系统使用
+     */
+    private String hisTaskExt;
 
     public static FlowParams build() {
         return new FlowParams();
@@ -110,6 +121,11 @@ public class FlowParams implements Serializable {
         return this;
     }
 
+    public FlowParams hisTaskExt(String hisTaskExt) {
+        this.hisTaskExt = hisTaskExt;
+        return this;
+    }
+
     public Map<String, Object> getVariable() {
         return variable;
     }
@@ -120,15 +136,6 @@ public class FlowParams implements Serializable {
 
     public FlowParams permissionFlag(List<String> permissionFlag) {
         this.permissionFlag = permissionFlag;
-        return this;
-    }
-
-    public List<String> getAdditionalHandler() {
-        return additionalHandler;
-    }
-
-    public FlowParams additionalHandler(List<String> permissionList) {
-        this.additionalHandler = permissionList;
         return this;
     }
 
@@ -156,6 +163,10 @@ public class FlowParams implements Serializable {
         return ext;
     }
 
+    public String getHisTaskExt() {
+        return hisTaskExt;
+    }
+
     public Integer getFlowStatus() {
         return flowStatus;
     }
@@ -174,10 +185,12 @@ public class FlowParams implements Serializable {
         return this;
     }
 
+    @Deprecated
     public String getCreateBy() {
         return handler;
     }
 
+    @Deprecated
     public FlowParams setCreateBy(String createBy) {
         this.handler = createBy;
         return this;

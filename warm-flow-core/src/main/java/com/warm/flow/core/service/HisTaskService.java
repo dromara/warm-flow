@@ -1,3 +1,18 @@
+/*
+ *    Copyright 2024-2025, Warm-Flow (290631660@qq.com).
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *       https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.warm.flow.core.service;
 
 import com.warm.flow.core.dto.FlowParams;
@@ -20,6 +35,7 @@ public interface HisTaskService extends IWarmService<HisTask> {
 
     /**
      * 根据任务id和协作类型查询
+     *
      * @param taskId
      * @param cooperateTypes
      * @return
@@ -45,17 +61,18 @@ public interface HisTaskService extends IWarmService<HisTask> {
     /**
      * 设置流程历史任务信息
      *
-     * @param task  当前任务
-     * @param nextNodes 后续任务
+     * @param task       当前任务
+     * @param nextNodes  后续任务
      * @param flowParams 参数
      */
     List<HisTask> setSkipInsHis(Task task, List<Node> nextNodes, FlowParams flowParams);
 
     /**
      * 设置协作历史记录
-     * @param task 当前任务
-     * @param node 当然任务节点
-     * @param flowParams 参数
+     *
+     * @param task          当前任务
+     * @param node          当然任务节点
+     * @param flowParams    参数
      * @param collaborators 协作人
      * @return
      */
@@ -64,6 +81,7 @@ public interface HisTaskService extends IWarmService<HisTask> {
 
     /**
      * 委派历史任务
+     *
      * @param task
      * @param flowParams
      * @param entrustedUser
@@ -73,6 +91,7 @@ public interface HisTaskService extends IWarmService<HisTask> {
 
     /**
      * 设置会签票签历史任务
+     *
      * @param task
      * @param flowParams
      * @param nodeRatio
@@ -83,10 +102,12 @@ public interface HisTaskService extends IWarmService<HisTask> {
 
     /**
      * 自动完成历史任务
+     *
+     * @param flowParams
      * @param flowStatus
      * @param task
      * @param userList
      */
-    List<HisTask> autoHisTask(Integer flowStatus, Task task, List<User> userList, Integer cooperateType);
+    List<HisTask> autoHisTask(FlowParams flowParams, Integer flowStatus, Task task, List<User> userList, Integer cooperateType);
 
 }

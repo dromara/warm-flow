@@ -1,3 +1,18 @@
+/*
+ *    Copyright 2024-2025, Warm-Flow (290631660@qq.com).
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *       https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.warm.flow.core.service.impl;
 
 import com.warm.flow.core.FlowFactory;
@@ -70,13 +85,8 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
         Node nowNode = FlowFactory.nodeService().getByNodeCode(nowNodeCode, definitionId);
         AssertUtil.isNull(nowNode, ExceptionCons.LOST_DEST_NODE);
         //是否可以跳转任意节点,如是,返回nextNodeCode的节点
-        if (FlowCons.SKIP_ANY_Y.equals(nowNode.getSkipAnyNode())) {
-            AssertUtil.isBlank(nextNodeCode, ExceptionCons.LOST_NEXT_NODE_CODE);
-
-            Node nextNode = FlowFactory.nodeService().getByNodeCode(nextNodeCode, definitionId);
-            ArrayList<Node> arrayList = new ArrayList<>();
-            arrayList.add(nextNode);
-            return arrayList;
+        if (StringUtils.isNotEmpty(nextNodeCode)) {
+            return Collections.singletonList(FlowFactory.nodeService().getByNodeCode(nextNodeCode, definitionId));
         }
         //获取跳转关系
         List<Skip> skips = FlowFactory.skipService().list(FlowFactory.newSkip().setDefinitionId(definitionId)

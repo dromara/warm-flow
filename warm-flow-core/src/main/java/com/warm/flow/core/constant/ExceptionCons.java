@@ -1,3 +1,18 @@
+/*
+ *    Copyright 2024-2025, Warm-Flow (290631660@qq.com).
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *       https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.warm.flow.core.constant;
 
 /**
@@ -28,7 +43,6 @@ public class ExceptionCons {
     public static final String LOST_START_NODE = "流程缺少开始节点!";
 
     public static final String LOST_NODE_CODE = "节点编码缺失";
-    public static final String LOST_NEXT_NODE_CODE = "下一节点编码缺失";
 
     public static final String SAME_NODE_CODE = "同一流程中节点编码重复!";
 
@@ -63,25 +77,21 @@ public class ExceptionCons {
 
     public static final String NOT_FOUNT_TASK = "待办任务获取失败!";
 
-    public static final String TASK_NOT_ONE = "不能同时跳转多个代办任务!";
+    public static final String TASK_NOT_ONE = "不能同时跳转多个待办任务!";
 
     public static final String NOT_DEFINITION_ID = "流程定义id不能为空!";
 
     public static final String NOT_NODE_DATA = "流程节点数据缺失!";
 
-    public static final String NOT_PUBLISH_NODE = "不存在已发布的流程节点!";
+    public static final String NOT_PUBLISH_NODE = "此流程编码[%s]的流程节点未发布!";
 
-    public static final String NOT_PUBLISH_TASK = "存在正在执行的代办任务，不可取消!";
+    public static final String NOT_PUBLISH_TASK = "存在正在执行的待办任务，不可取消!";
 
     public static final String MSG_OVER_LENGTH = "意见长度过长!";
 
     public static final String FLOW_FINISH = "流程已完成！";
 
-    public static final String LOST_NEXT_PERMISSION = "下一节点审批人权限缺失";
-
     public static final String NOT_AUTHORITY = "请检查当前用户是否有权限!";
-
-    public static final String LOST_ADDITIONAL_PERMISSION = "调整的权限缺失";
 
     public static final String SIGN_NULL_HANDLER = "会签票签时，办理人标识不能为空";
 
@@ -92,5 +102,7 @@ public class ExceptionCons {
     public static final String IS_ALREADY_TRANSFER = "已经是转办人，不可转办";
 
     public static final String IS_ALREADY_DEPUTE = "已经是受托人，不可委托";
+
+    public static final String LOAD_EXPRESSION_STRATEGY_ERROR = "SPI加载条件表达式失败!";
 
 }

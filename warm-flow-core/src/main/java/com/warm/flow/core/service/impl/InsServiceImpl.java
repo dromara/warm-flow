@@ -1,3 +1,18 @@
+/*
+ *    Copyright 2024-2025, Warm-Flow (290631660@qq.com).
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *       https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.warm.flow.core.service.impl;
 
 import com.warm.flow.core.FlowFactory;
@@ -38,7 +53,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         AssertUtil.isTrue(StringUtils.isEmpty(businessId), ExceptionCons.NULL_BUSINESS_ID);
         // 获取已发布的流程节点
         List<Node> nodes = FlowFactory.nodeService().getByFlowCode(flowParams.getFlowCode());
-        AssertUtil.isTrue(CollUtil.isEmpty(nodes), ExceptionCons.NOT_PUBLISH_NODE);
+        AssertUtil.isTrue(CollUtil.isEmpty(nodes), String.format(ExceptionCons.NOT_PUBLISH_NODE, flowParams.getFlowCode()));
         // 获取开始节点
         Node startNode = nodes.stream().filter(t -> NodeType.isStart(t.getNodeType())).findFirst().orElse(null);
         AssertUtil.isNull(startNode, ExceptionCons.LOST_START_NODE);
@@ -50,30 +65,33 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         // 设置流程实例对象
         Instance instance = setStartInstance(nextNodes.get(0), businessId, flowParams);
 
-        //执行开始节点 开始监听器
+        // 执行开始监听器
         ListenerUtil.executeListener(new ListenerVariable(instance, startNode, flowParams.getVariable())
                 , Listener.LISTENER_START);
 
         //判断开始结点和下一结点是否有权限监听器,有执行权限监听器node.setPermissionFlag,无走数据库的权限标识符
-        ListenerUtil.executeGetNodePermission(new ListenerVariable(instance, flowParams.getVariable())
-                , StreamUtils.toArray(CollUtil.listAddToNew(nextNodes, startNode), Node[]::new));
+        ListenerUtil.executeGetNodePermission(new ListenerVariable(instance, startNode, flowParams.getVariable()
+                        ,null , nextNodes));
 
         // 设置历史任务
         List<HisTask> hisTasks = setHisTask(nextNodes, flowParams, startNode, instance.getId());
 
         // 设置新增任务
-        List<Task> addTasks = StreamUtils.toList(nextNodes, node -> FlowFactory.taskService()
-                .addTask(node, instance, flowParams));
+        Definition definition = FlowFactory.defService().getById(instance.getDefinitionId());
 
-        // 代办任务设置处理人
-        List<User> users = FlowFactory.userService().taskAddUsers(addTasks);
+        List<Task> addTasks = StreamUtils.toList(nextNodes, node -> FlowFactory.taskService()
+                .addTask(node, instance, definition, flowParams));
+
+        // 开启分配监听器
+        ListenerUtil.executeListener(new ListenerVariable(instance, startNode, flowParams.getVariable(), null, nextNodes
+                , addTasks), Listener.LISTENER_ASSIGNMENT);
 
         // 开启流程，保存流程信息
-        saveFlowInfo(instance, addTasks, hisTasks, users);
+        saveFlowInfo(instance, addTasks, hisTasks);
 
         // 执行结束监听器和下一节点的开始监听器
-        ListenerUtil.executeListener(new ListenerVariable(instance, flowParams.getVariable(), null, addTasks)
-                , startNode, nextNodes);
+        ListenerUtil.endCreateListener(new ListenerVariable(instance, startNode, flowParams.getVariable(), null
+                , nextNodes,  addTasks));
         return instance;
     }
 
@@ -137,9 +155,10 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
      * @param instance
      * @param addTasks
      * @param hisTasks
-     * @param users
      */
-    private void saveFlowInfo(Instance instance, List<Task> addTasks, List<HisTask> hisTasks, List<User> users) {
+    private void saveFlowInfo(Instance instance, List<Task> addTasks, List<HisTask> hisTasks) {
+        // 待办任务设置处理人
+        List<User> users = FlowFactory.userService().taskAddUsers(addTasks);
         FlowFactory.hisTaskService().saveBatch(hisTasks);
         FlowFactory.taskService().saveBatch(addTasks);
         FlowFactory.userService().saveBatch(users);
@@ -163,7 +182,8 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         instance.setNodeType(firstBetweenNode.getNodeType());
         instance.setNodeCode(firstBetweenNode.getNodeCode());
         instance.setNodeName(firstBetweenNode.getNodeName());
-        instance.setFlowStatus(FlowStatus.TOBESUBMIT.getKey());
+        instance.setFlowStatus(ObjectUtil.isNotNull(flowParams.getFlowStatus())
+                ? flowParams.getFlowStatus() :FlowStatus.TOBESUBMIT.getKey());
         Map<String, Object> variable = flowParams.getVariable();
         if (MapUtil.isNotEmpty(variable)) {
             instance.setVariable(ONode.serialize(variable));

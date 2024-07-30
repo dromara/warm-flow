@@ -1,7 +1,21 @@
+/*
+ *    Copyright 2024-2025, Warm-Flow (290631660@qq.com).
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *       https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.warm.flow.core.service.impl;
 
 import com.warm.flow.core.FlowFactory;
-import com.warm.flow.core.constant.ExceptionCons;
 import com.warm.flow.core.dao.FlowUserDao;
 import com.warm.flow.core.entity.Task;
 import com.warm.flow.core.entity.User;
@@ -9,7 +23,6 @@ import com.warm.flow.core.enums.UserType;
 import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.UserService;
 import com.warm.flow.core.utils.ArrayUtil;
-import com.warm.flow.core.utils.AssertUtil;
 import com.warm.flow.core.utils.CollUtil;
 import com.warm.flow.core.utils.StreamUtils;
 
@@ -34,7 +47,7 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
     @Override
     public List<User> taskAddUsers(List<Task> addTasks) {
         List<User> taskUserList = new ArrayList<>();
-        if(CollUtil.isNotEmpty(addTasks)){
+        if (CollUtil.isNotEmpty(addTasks)) {
             StreamUtils.toList(addTasks, task -> taskUserList.addAll(taskAddUser(task)));
         }
         return taskUserList;
@@ -42,15 +55,13 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
 
     @Override
     public List<User> setSkipUser(List<Task> addTasks, Long taskId) {
-        // 删除已执行的代办任务的权限人
+        // 删除已执行的待办任务的权限人
         deleteByTaskIds(CollUtil.toList(taskId));
         return taskAddUsers(addTasks);
     }
 
     @Override
     public List<User> taskAddUser(Task task) {
-        // 审批人权限不能为空
-        AssertUtil.isTrue(CollUtil.isEmpty(task.getPermissionList()), ExceptionCons.LOST_NEXT_PERMISSION);
         // 遍历权限集合，生成流程节点的权限
         List<User> userList = StreamUtils.toList(task.getPermissionList()
                 , permission -> structureUser(task.getId(), permission, UserType.APPROVAL.getKey()));
@@ -89,10 +100,7 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
 
     @Override
     public List<User> getByAssociateds(List<Long> associateds, String... types) {
-        if (CollUtil.isEmpty(associateds)) {
-            return Collections.emptyList();
-        }
-        if (associateds.size() == 1) {
+        if (CollUtil.isNotEmpty(associateds) && associateds.size() == 1) {
             return listByAssociatedAndTypes(associateds.get(0), types);
         }
         return getDao().listByAssociatedAndTypes(associateds, types);
@@ -111,10 +119,7 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
 
     @Override
     public List<User> getByProcessedBys(Long associated, List<String> processedBys, String... types) {
-        if (CollUtil.isEmpty(processedBys)) {
-            return Collections.emptyList();
-        }
-        if (processedBys.size() == 1) {
+        if (CollUtil.isNotEmpty(processedBys) && processedBys.size() == 1) {
             return listByProcessedBys(associated, processedBys.get(0), types);
         }
         return getDao().listByProcessedBys(associated, processedBys, types);
@@ -125,7 +130,7 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
     public boolean updatePermission(Long associated, List<String> permissions, String type, boolean clear,
                                     String handler) {
         // 判断是否clear，如果是true，则先删除当前关联id用户数据
-        if(clear){
+        if (clear) {
             getDao().delete(FlowFactory.newUser().setAssociated(associated).setCreateBy(handler));
         }
         // 再新增权限人

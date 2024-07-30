@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.warm.flow.orm.mapper.FlowDefinitionMapper">
+    <resultMap type="com.warm.flow.orm.entity.FlowDefinition" id="FlowDefinitionResult">
+        <result property="id" column="id"/>
+        <result property="flowCode" column="flow_code"/>
+        <result property="flowName" column="flow_name"/>
+        <result property="version" column="version"/>
+        <result property="isPublish" column="is_publish"/>
+        <result property="formCustom" column="form_custom"/>
+        <result property="formPath" column="form_path"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="selectVo">
+        select t.id,
+               t.flow_code,
+               t.flow_name,
+               t.version,
+               t.is_publish,
+               t.form_custom,
+               t.form_path,
+               t.create_time,
+               t.update_time
+        from flow_definition t
+    </sql>
+
+</mapper>

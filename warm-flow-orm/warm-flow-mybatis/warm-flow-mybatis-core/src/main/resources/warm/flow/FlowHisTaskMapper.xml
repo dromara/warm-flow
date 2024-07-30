@@ -1,0 +1,492 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.warm.flow.orm.mapper.FlowHisTaskMapper">
+
+    <resultMap type="com.warm.flow.orm.entity.FlowHisTask" id="FlowHisTaskResult">
+        <result property="id" column="id"/>
+        <result property="nodeCode" column="node_code"/>
+        <result property="nodeName" column="node_name"/>
+        <result property="nodeType" column="node_type"/>
+        <result property="targetNodeCode" column="target_node_code"/>
+        <result property="targetNodeName" column="target_node_name"/>
+        <result property="approver" column="approver"/>
+        <result property="collaborator" column="collaborator"/>
+        <result property="definitionId" column="definition_id"/>
+        <result property="instanceId" column="instance_id"/>
+        <result property="taskId" column="task_id"/>
+        <result property="cooperateType" column="cooperate_type"/>
+        <result property="skipType" column="skip_type"/>
+        <result property="flowStatus" column="flow_status"/>
+        <result property="formCustom" column="form_custom"/>
+        <result property="formPath" column="form_path"/>
+        <result property="message" column="message"/>
+        <result property="ext" column="ext"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="businessId" column="business_id"/>
+        <result property="tenantId" column="tenant_id"/>
+        <result property="flowName" column="flow_name"/>
+        <result property="delFlag" column="del_flag"/>
+    </resultMap>
+
+    <sql id="selectVo">
+        select t.id,
+               t.node_code,
+               t.node_name,
+               t.node_type,
+               t.target_node_code,
+               t.target_node_name,
+               t.approver,
+               t.collaborator,
+               t.definition_id,
+               t.instance_id,
+               t.task_id,
+               t.cooperate_type,
+               t.skip_type,
+               t.flow_status,
+               t.form_custom,
+               t.form_path,
+               t.message,
+               t.ext,
+               t.create_time,
+               t.update_time,
+               t.tenant_id,
+               t.del_flag
+        from flow_his_task t
+    </sql>
+
+    <sql id="paging_end">
+        <if test="page !=null and page.pageNum != null and page.pageSize != null">LIMIT
+            #{page.pageNum} offset #{page.pageSize}
+        </if>
+    </sql>
+
+    <sql id="order_by">
+        <if test="order != null and order != ''">order by ${order}</if>
+    </sql>
+
+    <sql id="select_parameter">
+        <where>
+            <if test="entity.id != null ">and t.id = #{id}</if>
+            <if test="entity.nodeCode != null  and entity.nodeCode != ''">and t.node_code = #{entity.nodeCode}</if>
+            <if test="entity.nodeName != null  and entity.nodeName != ''">and t.node_name = #{entity.nodeName}</if>
+            <if test="entity.targetNodeCode != null  and entity.targetNodeCode != ''">and t.target_node_code =
+                #{entity.targetNodeCode}
+            </if>
+            <if test="entity.targetNodeName != null  and entity.targetNodeName != ''">and t.target_node_name =
+                #{entity.targetNodeName}
+            </if>
+            <if test="entity.approver != null  and entity.approver != ''">and t.approver = #{entity.approver}</if>
+            <if test="entity.collaborator != null  and entity.collaborator != ''">and t.collaborator =
+                #{entity.collaborator}
+            </if>
+            <if test="entity.definitionId != null ">and t.definition_id = #{entity.definitionId}</if>
+            <if test="entity.instanceId != null ">and t.instance_id = #{entity.instanceId}</if>
+            <if test="entity.taskId != null ">and t.task_id = #{entity.taskId}</if>
+            <if test="entity.cooperateType != null ">and t.cooperate_type = #{entity.cooperateType}</if>
+            <if test="entity.skipType != null  and entity.skipType != ''">and t.skip_type = #{entity.skipType}</if>
+            <if test="entity.flowStatus != null">and t.flow_status = #{fentity.flowStatus}</if>
+            <if test="entity.formCustom != null  and entity.formCustom != ''">and t.form_custom = #{entity.formCustom}</if>
+            <if test="entity.formPath != null  and entity.formPath != ''">and t.form_path = #{entity.formPath}</if>
+            <if test="entity.message != null  and entity.message != ''">and t.message = #{entity.message}</if>
+            <if test="entity.ext != null  and entity.ext != ''">and t.ext = #{entity.ext}</if>
+            <if test="entity.createTime != null">and t.create_time = #{entity.createTime}</if>
+            <if test="entity.updateTime != null">and t.update_time = #{entity.updateTime}</if>
+            <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
+            <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+        </where>
+    </sql>
+
+    <select id="selectCount" parameterType="com.warm.flow.orm.entity.FlowHisTask" resultType="java.lang.Long">
+        select count(*) from flow_his_task t
+        <include refid="select_parameter"/>
+    </select>
+
+    <select id="selectList" parameterType="com.warm.flow.orm.entity.FlowHisTask" resultMap="FlowHisTaskResult">
+        <choose>
+            <when test="dataSourceType == 'oracle'.toString()">
+                <if test="page !=null and page.pageNum != null and page.pageSize != null">
+                    SELECT * FROM ( SELECT TMP.*, ROWNUM ROW_ID FROM (
+                </if>
+                <include refid="includeAll"/>
+                <if test="page !=null and page.pageNum != null and page.pageSize != null">
+                    ) TMP WHERE ROWNUM &lt;= #{page.pageSize}) WHERE ROW_ID &gt; #{page.pageNum}
+                </if>
+            </when>
+            <otherwise>
+                <include refid="includeAll"/>
+                <include refid="paging_end"/>
+            </otherwise>
+        </choose>
+    </select>
+
+    <sql id="includeAll">
+        <include refid="selectVo"/>
+        <include refid="select_parameter"/>
+        <include refid="order_by"/>
+    </sql>
+
+    <sql id="mysql_insert_batch">
+        insert into flow_his_task(
+        id,
+        node_code,
+        node_name,
+        node_type,
+        target_node_code,
+        target_node_name,
+        approver,
+        collaborator,
+        definition_id,
+        instance_id,
+        task_id,
+        cooperate_type,
+        skip_type,
+        flow_status,
+        form_custom,
+        form_path,
+        message,
+        ext,
+        create_time,
+        update_time,
+        tenant_id,
+        del_flag
+        )
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.id},
+            #{item.nodeCode},
+            #{item.nodeName},
+            #{item.nodeType},
+            #{item.targetNodeCode},
+            #{item.targetNodeName},
+            #{item.approver},
+            #{item.collaborator},
+            #{item.definitionId},
+            #{item.instanceId},
+            #{item.taskId},
+            #{item.cooperateType},
+            #{item.skipType},
+            #{item.flowStatus},
+            #{item.formCustom},
+            #{item.formPath},
+            #{item.message},
+            #{item.ext},
+            #{item.createTime},
+            #{item.updateTime},
+            #{item.tenantId},
+            #{item.delFlag}
+            )
+        </foreach>
+    </sql>
+
+    <sql id="oracle_insert_batch">
+        insert into flow_his_task(
+        id,
+        node_code,
+        node_name,
+        node_type,
+        target_node_code,
+        target_node_name,
+        approver,
+        collaborator,
+        definition_id,
+        instance_id,
+        task_id,
+        cooperate_type,
+        skip_type,
+        flow_status,
+        form_custom,
+        form_path,
+        message,
+        ext,
+        create_time,
+        update_time,
+        tenant_id,
+        del_flag
+        )
+        <foreach collection="list" item="item" separator=" union all">
+            select
+            #{item.id},
+            #{item.nodeCode},
+            #{item.nodeName},
+            #{item.nodeType},
+            #{item.targetNodeCode},
+            #{item.targetNodeName},
+            #{item.approver},
+            #{item.collaborator},
+            #{item.definitionId},
+            #{item.instanceId},
+            #{item.taskId},
+            #{item.cooperateType},
+            #{item.skipType},
+            #{item.flowStatus},
+            #{item.formCustom},
+            #{item.formPath},
+            #{item.message},
+            #{item.ext},
+            #{item.createTime},
+            #{item.updateTime},
+            #{item.tenantId},
+            #{item.delFlag}
+            from dual
+        </foreach>
+    </sql>
+
+    <select id="selectByIds" resultMap="FlowHisTaskResult">
+        <include refid="selectVo"/>
+        where t.id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+    </select>
+
+    <select id="selectById" resultMap="FlowHisTaskResult">
+        <include refid="selectVo"/>
+        where t.id = #{id}
+        <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+    </select>
+
+    <select id="getNoReject" resultMap="FlowHisTaskResult">
+        <include refid="selectVo"/>
+        where t.node_code = #{nodeCode}
+        and t.instance_id = #{instanceId}
+        and t.skip_type = 'PASS'
+        <if test="entity.targetNodeCode != null and entity.targetNodeCode != ''">and t.target_node_code =
+            #{entity.targetNodeCode}
+        </if>
+        <if test="entity.delFlag != null and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
+        <if test="entity.tenantId != null and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+        order by t.create_time desc
+    </select>
+
+    <select id="listByTaskIdAndCooperateTypes" resultMap="FlowHisTaskResult">
+        <include refid="selectVo"/>
+        <where>
+            <if test="entity.taskId != null  and entity.taskId != ''">and t.task_id = #{entity.taskId}</if>
+            <if test="cooperateTypes != null and cooperateTypes.length > 0">
+                AND `cooperate_type` in
+                <foreach item="item" collection="cooperateTypes" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
+            <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+        </where>
+
+    </select>
+
+    <insert id="insert" parameterType="com.warm.flow.orm.entity.FlowHisTask">
+        insert into flow_his_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="nodeCode != null and nodeCode != ''">node_code,</if>
+            <if test="nodeName != null and nodeName != ''">node_name,</if>
+            <if test="nodeType != null">node_type,</if>
+            <if test="targetNodeCode != null and targetNodeCode != ''">target_node_code,</if>
+            <if test="targetNodeName != null and targetNodeName != ''">target_node_name,</if>
+            <if test="approver != null and approver != ''">approver,</if>
+            <if test="collaborator != null and collaborator != ''">collaborator,</if>
+            <if test="definitionId != null">definition_id,</if>
+            <if test="instanceId != null">instance_id,</if>
+            <if test="taskId != null">task_id,</if>
+            <if test="cooperateType != null">cooperate_type,</if>
+            <if test="skipType != null and skipType != ''">skip_type,</if>
+            <if test="flowStatus != null">flow_status,</if>
+            <if test="formCustom != null and formCustom != ''">form_custom,</if>
+            <if test="formPath != null and formPath != ''">form_path,</if>
+            <if test="message != null">message,</if>
+            <if test="ext != null">ext,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="tenantId != null and tenantId != ''">tenant_id,</if>
+            <if test="delFlag != null and delFlag != ''">del_flag,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="nodeCode != null and nodeCode != ''">#{nodeCode},</if>
+            <if test="nodeName != null and nodeName != ''">#{nodeName},</if>
+            <if test="nodeType != null">#{nodeType},</if>
+            <if test="targetNodeCode != null and targetNodeCode != ''">#{targetNodeCode},</if>
+            <if test="targetNodeName != null and targetNodeName != ''">#{targetNodeName},</if>
+            <if test="approver != null and approver != ''">#{approver},</if>
+            <if test="collaborator != null and collaborator != ''">#{collaborator},</if>
+            <if test="definitionId != null">#{definitionId},</if>
+            <if test="instanceId != null">#{instanceId},</if>
+            <if test="taskId != null">#{taskId},</if>
+            <if test="cooperateType != null">#{cooperateType},</if>
+            <if test="skipType != null and skipType != ''">#{skipType},</if>
+            <if test="flowStatus != null">#{flowStatus},</if>
+            <if test="formCustom != null and formCustom != ''">#{formCustom},</if>
+            <if test="formPath != null and formPath != ''">#{formPath},</if>
+            <if test="message != null">#{message},</if>
+            <if test="ext != null">#{ext},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="tenantId != null and tenantId != ''">#{tenantId},</if>
+            <if test="delFlag != null and delFlag != ''">#{delFlag},</if>
+        </trim>
+    </insert>
+
+    <update id="updateById" parameterType="com.warm.flow.orm.entity.FlowHisTask">
+        update flow_his_task t
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="nodeCode != null and nodeCode != ''">t.node_code = #{nodeCode},</if>
+            <if test="nodeName != null and nodeName != ''">t.node_name = #{nodeName},</if>
+            <if test="nodeType != null">t.node_type = #{nodeType},</if>
+            <if test="targetNodeCode != null and targetNodeCode != ''">t.target_node_code = #{targetNodeCode},</if>
+            <if test="targetNodeName != null and targetNodeName != ''">t.target_node_name = #{targetNodeName},</if>
+            <if test="collaborator != null and collaborator != ''">t.collaborator = #{collaborator},</if>
+            <if test="definitionId != null">t.definition_id = #{definitionId},</if>
+            <if test="instanceId != null">t.instance_id = #{instanceId},</if>
+            <if test="taskId != null">t.task_id = #{taskId},</if>
+            <if test="cooperateType != null">t.cooperate_type = #{cooperateType},</if>
+            <if test="skipType != null and skipType != ''">t.skip_type = #{skipType},</if>
+            <if test="flowStatus != null">t.flow_status = #{flowStatus},</if>
+            <if test="formCustom != null and formCustom != ''">t.form_custom = #{formCustom},</if>
+            <if test="formPath != null and formPath != ''">t.form_path = #{formPath},</if>
+            <if test="message != null">t.message = #{message},</if>
+            <if test="ext != null">t.ext = #{ext},</if>
+            <if test="createTime != null">t.create_time = #{createTime},</if>
+            <if test="updateTime != null">t.update_time = #{updateTime},</if>
+        </trim>
+        where t.id = #{id}
+        <if test="delFlag != null  and delFlag != ''">and del_flag = #{delFlag}</if>
+        <if test="tenantId != null  and tenantId != ''">and tenant_id = #{tenantId}</if>
+    </update>
+
+    <delete id="deleteById">
+        delete
+        from flow_his_task
+        where id = #{id}
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and tenant_id = #{entity.tenantId}</if>
+    </delete>
+
+    <update id="updateByIdLogic">
+        update flow_his_task t
+        set t.del_flag = #{logicDeleteValue}
+        where t.id = #{id}
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag = #{logicNotDeleteValue}
+        </if>
+    </update>
+
+    <delete id="deleteByInsIds">
+        delete from flow_his_task where instance_id in
+        <foreach item="instanceId" collection="instanceIds" open="(" separator="," close=")">
+            #{instanceId}
+        </foreach>
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and tenant_id = #{entity.tenantId}</if>
+    </delete>
+
+    <update id="updateByInsIdsLogic">
+        update flow_his_task t
+        set t.del_flag = #{logicDeleteValue}
+        where t.instance_id in
+        <foreach item="instanceId" collection="instanceIds" open="(" separator="," close=")">
+            #{instanceId}
+        </foreach>
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag = #{logicNotDeleteValue}
+        </if>
+    </update>
+
+    <delete id="deleteByIds">
+        delete from flow_his_task where id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and tenant_id = #{entity.tenantId}</if>
+    </delete>
+
+    <update id="updateByIdsLogic">
+        update flow_his_task t
+        set t.del_flag = #{logicDeleteValue}
+        where t.id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag = #{logicNotDeleteValue}
+        </if>
+    </update>
+
+    <delete id="delete" parameterType="com.warm.flow.orm.entity.FlowHisTask">
+        delete from flow_his_task
+        <where>
+            <if test="id != null">and id = #{id}</if>
+            <if test="nodeCode != null and nodeCode != ''">and node_code = #{nodeCode}</if>
+            <if test="nodeName != null and nodeName != ''">and node_name = #{nodeName}</if>
+            <if test="nodeType != null">and node_type = #{nodeType}</if>
+            <if test="targetNodeCode != null and targetNodeCode != ''">and target_node_code = #{targetNodeCode}</if>
+            <if test="targetNodeName != null and targetNodeName != ''">and target_node_name = #{targetNodeName}</if>
+            <if test="collaborator != null and collaborator != ''">and collaborator = #{collaborator}</if>
+            <if test="definitionId != null">and definition_id = #{definitionId}</if>
+            <if test="instanceId != null">and instance_id = #{instanceId}</if>
+            <if test="taskId != null">and task_id = #{taskId}</if>
+            <if test="cooperateType != null">and cooperate_type = #{cooperateType}</if>
+            <if test="skipType != null and skipType != ''">and skip_type = #{skipType}</if>
+            <if test="flowStatus != null">and flow_status = #{flowStatus}</if>
+            <if test="formCustom != null and formCustom != ''">and form_custom = #{formCustom}</if>
+            <if test="formPath != null and formPath != ''">and form_path = #{formPath}</if>
+            <if test="message != null">and message = #{message}</if>
+            <if test="ext != null">and ext = #{ext}</if>
+            <if test="createTime != null">and create_time = #{createTime}</if>
+            <if test="updateTime != null">and update_time = #{updateTime}</if>
+            <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
+        </where>
+    </delete>
+
+    <update id="updateLogic">
+        update flow_his_task t
+        set t.del_flag = #{logicDeleteValue}
+        <where>
+            <if test="entity.id != null">and t.id = #{entity.id}</if>
+            <if test="entity.nodeCode != null and entity.nodeCode != ''">and t.node_code = #{entity.nodeCode}</if>
+            <if test="entity.nodeName != null and entity.nodeName != ''">and t.node_name = #{entity.nodeName}</if>
+            <if test="entity.nodeType != null">and t.node_type = #{entity.nodeType}</if>
+            <if test="entity.targetNodeCode != null and entity.targetNodeCode != ''">and t.target_node_code =
+                #{entity.targetNodeCode}
+            </if>
+            <if test="entity.targetNodeName != null and entity.targetNodeName != ''">and t.target_node_name =
+                #{entity.targetNodeName}
+            </if>
+            <if test="entity.approver != null and entity.approver != ''">and t.approver = #{entity.approver}</if>
+            <if test="entity.collaborator != null and entity.collaborator != ''">and t.collaborator =
+                #{entity.collaborator}
+            </if>
+            <if test="entity.definitionId != null">and t.definition_id = #{entity.definitionId}</if>
+            <if test="entity.instanceId != null">and t.instance_id = #{entity.instanceId}</if>
+            <if test="entity.taskId != null">and t.task_id = #{entity.taskId}</if>
+            <if test="entity.cooperateType != null">and t.cooperate_type = #{entity.cooperateType}</if>
+            <if test="entity.skipType != null and entity.skipType != ''">and t.skip_type = #{entity.skipType}</if>
+            <if test="entity.flowStatus != null">and t.flow_status = #{entity.flowStatus}</if>
+            <if test="entity.formCustom != null and entity.formCustom != ''">and t.form_custom = #{entity.formCustom}</if>
+            <if test="entity.formPath != null and entity.formPath != ''">and t.form_path = #{entity.formPath}</if>
+            <if test="entity.message != null">and t.message = #{entity.message}</if>
+            <if test="entity.ext != null">and t.ext = #{entity.ext}</if>
+            <if test="entity.createTime != null">and t.create_time = #{entity.createTime}</if>
+            <if test="entity.updateTime != null">and t.update_time = #{entity.updateTime}</if>
+            <if test="entity.tenantId != null and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+            <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag =
+                #{logicNotDeleteValue}
+            </if>
+        </where>
+    </update>
+
+    <insert id="saveBatch" parameterType="com.warm.flow.orm.entity.FlowHisTask">
+        <choose>
+            <when test="dataSourceType == 'oracle'.toString()">
+                <include refid="oracle_insert_batch"/>
+            </when>
+            <otherwise>
+                <include refid="mysql_insert_batch"/>
+            </otherwise>
+        </choose>
+    </insert>
+</mapper>

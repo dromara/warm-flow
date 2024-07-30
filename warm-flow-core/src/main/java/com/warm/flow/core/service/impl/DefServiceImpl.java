@@ -1,3 +1,18 @@
+/*
+ *    Copyright 2024-2025, Warm-Flow (290631660@qq.com).
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *       https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.warm.flow.core.service.impl;
 
 import com.warm.flow.core.FlowFactory;
@@ -165,20 +180,16 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                 .setCreateTime(null)
                 .setUpdateTime(null);
 
-        nodeList.forEach(node -> {
-            node.setId(null)
+        nodeList.forEach(node -> node.setId(null)
                 .setDefinitionId(definition.getId())
                 .setCreateTime(null)
-                .setUpdateTime(null);
-        });
+                .setUpdateTime(null));
         FlowFactory.nodeService().saveBatch(nodeList);
 
-        skipList.forEach(skip -> {
-            skip.setId(null)
+        skipList.forEach(skip -> skip.setId(null)
                 .setDefinitionId(definition.getId())
                 .setCreateTime(null)
-                .setUpdateTime(null);
-        });
+                .setUpdateTime(null));
         FlowFactory.skipService().saveBatch(skipList);
         return save(definition);
     }
@@ -200,8 +211,8 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         graphics.setFont(new Font("宋体", Font.BOLD, 12));
         // 消除线条锯齿
         graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        // 对指定的矩形区域填充颜色
-        graphics.setColor(Color.WHITE);    // GREEN:绿色；  红色：RED;   灰色：GRAY
+        // 对指定的矩形区域填充颜色: GREEN:绿色；  红色：RED;   灰色：GRAY
+        graphics.setColor(Color.WHITE);
         graphics.fillRect(0, 0, width, height);
 
         flowChartChain.draw(graphics);
@@ -334,7 +345,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     }
 
     /**
-     * 获取代办任务节点后的所有节点
+     * 获取待办任务节点后的所有节点
      *
      * @param nextkips
      * @param allNextNode
@@ -508,8 +519,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     private void updateFlow(Definition definition, List<Node> allNodes, List<Skip> allSkips) {
         List<String> flowCodeList = Collections.singletonList(definition.getFlowCode());
         List<Definition> definitions = getDao().queryByCodeList(flowCodeList);
-        for (int j = 0; j < definitions.size(); j++) {
-            Definition otherDef = definitions.get(j);
+        for (Definition otherDef : definitions) {
             if (definition.getFlowCode().equals(otherDef.getFlowCode())
                     && definition.getVersion().equals(otherDef.getVersion())) {
                 throw new FlowException(definition.getFlowCode() + "(" + definition.getVersion() + ")" + ExceptionCons.ALREADY_EXIST);

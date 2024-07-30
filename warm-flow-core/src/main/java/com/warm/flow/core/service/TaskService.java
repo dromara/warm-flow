@@ -1,7 +1,23 @@
+/*
+ *    Copyright 2024-2025, Warm-Flow (290631660@qq.com).
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *       https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.warm.flow.core.service;
 
 import com.warm.flow.core.dto.FlowParams;
 import com.warm.flow.core.dto.ModifyHandler;
+import com.warm.flow.core.entity.Definition;
 import com.warm.flow.core.entity.Instance;
 import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.Task;
@@ -44,7 +60,7 @@ public interface TaskService extends IWarmService<Task> {
     Instance skip(FlowParams flowParams, Task task);
 
     /**
-     * 终止流程，提前结束流程，将所有代办任务转历史
+     * 终止流程，提前结束流程，将所有待办任务转历史
      *
      * @param taskId:流程任务id[必传]
      * @param flowParams:包含流程相关参数的对象 - message:审批意见  [按需传输]
@@ -53,7 +69,7 @@ public interface TaskService extends IWarmService<Task> {
     Instance termination(Long taskId, FlowParams flowParams);
 
     /**
-     * 终止流程，提前结束流程，将所有代办任务转历史
+     * 终止流程，提前结束流程，将所有待办任务转历史
      *
      * @param instance:流程实例
      * @param task:流程任务
@@ -72,46 +88,51 @@ public interface TaskService extends IWarmService<Task> {
 
     /**
      * 转办, 默认删除当然办理用户权限，转办后，当前办理不可办理
-     * @param taskId 修改的任务id
-     * @param curUser 当前办理人唯一标识
+     *
+     * @param taskId         修改的任务id
+     * @param curUser        当前办理人唯一标识
      * @param permissionFlag 用户权限标识集合
-     * @param addHandlers 增加办理人：加签，转办，委托
-     * @param message 审批意见
+     * @param addHandlers    增加办理人：加签，转办，委托
+     * @param message        审批意见
      */
     boolean transfer(Long taskId, String curUser, List<String> permissionFlag, List<String> addHandlers, String message);
 
     /**
      * 委派, 默认删除当然办理用户权限，转办后，当前办理不可办理
-     * @param taskId 修改的任务id
-     * @param curUser 当前办理人唯一标识
+     *
+     * @param taskId         修改的任务id
+     * @param curUser        当前办理人唯一标识
      * @param permissionFlag 用户权限标识集合
-     * @param addHandlers 增加办理人：加签，转办，委托
-     * @param message 审批意见
+     * @param addHandlers    增加办理人：加签，转办，委托
+     * @param message        审批意见
      */
     boolean depute(Long taskId, String curUser, List<String> permissionFlag, List<String> addHandlers, String message);
 
     /**
      * 加签，增加办理人
-     * @param taskId 修改的任务id
-     * @param curUser 当前办理人唯一标识
+     *
+     * @param taskId         修改的任务id
+     * @param curUser        当前办理人唯一标识
      * @param permissionFlag 用户权限标识集合
-     * @param addHandlers 增加办理人：加签，转办，委托
-     * @param message 审批意见
+     * @param addHandlers    增加办理人：加签，转办，委托
+     * @param message        审批意见
      */
     boolean addSignature(Long taskId, String curUser, List<String> permissionFlag, List<String> addHandlers, String message);
 
     /**
      * 减签，减少办理人
-     * @param taskId 修改的任务id
-     * @param curUser 当前办理人唯一标识
-     * @param permissionFlag 用户权限标识集合
+     *
+     * @param taskId            修改的任务id
+     * @param curUser           当前办理人唯一标识
+     * @param permissionFlag    用户权限标识集合
      * @param reductionHandlers 增加办理人：加签，转办，委托
-     * @param message 审批意见
+     * @param message           审批意见
      */
     boolean reductionSignature(Long taskId, String curUser, List<String> permissionFlag, List<String> reductionHandlers, String message);
 
     /**
      * 修改办理人
+     *
      * @param modifyHandler 修改办理人参数
      */
     boolean updateHandler(ModifyHandler modifyHandler);
@@ -144,7 +165,7 @@ public interface TaskService extends IWarmService<Task> {
      * @param flowParams
      * @return
      */
-    Task addTask(Node node, Instance instance, FlowParams flowParams);
+    Task addTask(Node node, Instance instance, Definition definition, FlowParams flowParams);
 
     /**
      * 设置流程实例和代码任务流程状态

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.warm.flow.orm.mapper.FlowTaskMapper">
+
+    <resultMap type="com.warm.flow.orm.entity.FlowTask" id="FlowTaskResult">
+        <result property="id" column="id"/>
+        <result property="nodeCode" column="node_code"/>
+        <result property="nodeName" column="node_name"/>
+        <result property="nodeType" column="node_type"/>
+        <result property="definitionId" column="definition_id"/>
+        <result property="instanceId" column="instance_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="tenantId" column="tenant_id"/>
+        <result property="businessId" column="business_id"/>
+        <result property="flowName" column="flow_name"/>
+        <result property="formCustom" column="form_custom"/>
+        <result property="formPath" column="form_path"/>
+    </resultMap>
+
+
+    <sql id="selectVo">
+        select t.id,
+               t.node_code,
+               t.node_name,
+               t.node_type,
+               t.definition_id,
+               t.instance_id,
+               t.form_custom,
+               t.form_path,
+               t.create_time,
+               t.update_time,
+               t.tenant_id
+        from flow_task t
+    </sql>
+
+</mapper>

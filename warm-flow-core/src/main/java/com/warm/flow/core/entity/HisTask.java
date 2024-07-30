@@ -1,3 +1,18 @@
+/*
+ *    Copyright 2024-2025, Warm-Flow (290631660@qq.com).
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *       https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.warm.flow.core.entity;
 
 import java.util.Date;
@@ -87,6 +102,10 @@ public interface HisTask extends RootEntity {
 
     public HisTask setPermissionList(List<String> permissionList);
 
+    public String getSkipType();
+
+    public HisTask setSkipType(String skipType);
+
     public Integer getFlowStatus();
 
     public HisTask setFlowStatus(Integer flowStatus);
@@ -95,16 +114,20 @@ public interface HisTask extends RootEntity {
 
     public HisTask setMessage(String message);
 
+    public String getExt();
+
+    public HisTask setExt(String ext);
+
     public String getCreateBy();
 
     public HisTask setCreateBy(String createBy);
 
-    public String getFromCustom();
+    public String getFormCustom();
 
-    public HisTask setFromCustom(String fromCustom);
+    public HisTask setFormCustom(String formCustom);
 
-    public String getFromPath();
+    public String getFormPath();
 
-    public HisTask setFromPath(String fromPath);
+    public HisTask setFormPath(String formPath);
 
 }

@@ -1,3 +1,18 @@
+/*
+ *    Copyright 2024-2025, Warm-Flow (290631660@qq.com).
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *       https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.warm.flow.core.utils;
 
 import java.util.*;
@@ -41,7 +56,8 @@ public class CollUtil {
 
     /**
      * 如果集合是空，则返回默认值
-     * @param list 集合
+     *
+     * @param list        集合
      * @param defaultList 默认值
      * @return 结果
      */
@@ -88,6 +104,7 @@ public class CollUtil {
             return false;
         }
     }
+
     /**
      * 判断给定的collection1列表中是否包含collection2 判断给定的collection2中是否完全不包含给定的元素value
      *
@@ -134,11 +151,12 @@ public class CollUtil {
         newList.addAll(list);
         return newList;
     }
+
     /**
      * 几个元素生成一个集合
      *
      * @param paramArr 对象数组
-     * @param <T> 泛型
+     * @param <T>      泛型
      * @author xiar
      * @date 2024/5/10 15:45
      */
@@ -150,36 +168,38 @@ public class CollUtil {
         arrayList.addAll(Arrays.asList(paramArr));
         return arrayList;
     }
+
     /**
      * 将collection转化为List集合，其中一个List集合中包含多个集合<br>
      * <B>{@code Collection<T>和Collection<Collection<T>> ------>  List<T> } </B>
      *
-     * @param list 需要合并得集合
+     * @param list  需要合并得集合
      * @param lists 需要合并得包含多个集合得集合
-     * @param <T>        List中的泛型
+     * @param <T>   List中的泛型
      * @return List<T>
      * @author xiarg
      * @date 2024/5/10 15:45
      */
     public static <T> List<T> listAddListsToNew(List<T> list, List<List<T>> lists) {
         List<T> newList = new ArrayList<>();
-        if(isNotEmpty(lists)){
+        if (isNotEmpty(lists)) {
             for (List<T> ts : lists) {
-                if(isNotEmpty(ts)){
+                if (isNotEmpty(ts)) {
                     newList.addAll(ts);
                 }
             }
         }
-        if(isNotEmpty(list)){
+        if (isNotEmpty(list)) {
             newList.addAll(list);
         }
         return newList;
     }
+
     /**
      * 字符串集合拼接字符串
      *
      * @param list 字符串集合
-     * @param sep 分隔符
+     * @param sep  分隔符
      * @return String
      * @author xiar
      * @date 2024/5/10 15:45

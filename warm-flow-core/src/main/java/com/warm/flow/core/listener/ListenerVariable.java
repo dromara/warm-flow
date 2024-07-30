@@ -1,3 +1,18 @@
+/*
+ *    Copyright 2024-2025, Warm-Flow (290631660@qq.com).
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *       https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.warm.flow.core.listener;
 
 import com.warm.flow.core.entity.Instance;
@@ -20,17 +35,22 @@ public class ListenerVariable {
     private Instance instance;
 
     /**
-     * 当前节点
+     * 监听器对应的节点
      */
     private Node node;
 
     /**
-     * 当前任务（启动流程时开始和权限监听器不会传入）
+     * 当前任务
      */
     private Task task;
 
     /**
-     * 新创建任务集合（只有完成监听器和创建监听器会传入）
+     * 下一次执行的节点集合
+     */
+    private List<Node> nextNodes;
+
+    /**
+     * 新创建任务集合
      */
     private List<Task> nextTasks;
 
@@ -38,10 +58,7 @@ public class ListenerVariable {
      * 流程变量
      */
     private Map<String, Object> variable;
-    /**
-     * 监听器自定义参数
-     */
-    private String params;
+
     /**
      * 权限监听器使用
      * 权限标识 例如：[role:admin,user:2]
@@ -75,18 +92,22 @@ public class ListenerVariable {
         this.task = task;
     }
 
-    public ListenerVariable(Instance instance, Map<String, Object> variable, Task task, List<Task> nextTasks) {
-        this.instance = instance;
-        this.variable = variable;
-        this.task = task;
-        this.nextTasks = nextTasks;
-    }
-
-    public ListenerVariable(Instance instance, Node node, Map<String, Object> variable, String params) {
+    public ListenerVariable(Instance instance, Node node, Map<String, Object> variable, Task task, List<Node> nextNodes) {
         this.instance = instance;
         this.node = node;
         this.variable = variable;
-        this.params = params;
+        this.task = task;
+        this.nextNodes = nextNodes;
+    }
+
+    public ListenerVariable(Instance instance, Node node , Map<String, Object> variable, Task task
+            , List<Node> nextNodes, List<Task> nextTasks) {
+        this.instance = instance;
+        this.node = node;
+        this.variable = variable;
+        this.task = task;
+        this.nextNodes = nextNodes;
+        this.nextTasks = nextTasks;
     }
 
     public Instance getInstance() {
@@ -116,6 +137,15 @@ public class ListenerVariable {
         return this;
     }
 
+    public List<Node> getNextNodes() {
+        return nextNodes;
+    }
+
+    public ListenerVariable setNextNodes(List<Node> nextNodes) {
+        this.nextNodes = nextNodes;
+        return this;
+    }
+
     public List<Task> getNextTasks() {
         return nextTasks;
     }
@@ -131,15 +161,6 @@ public class ListenerVariable {
 
     public ListenerVariable setVariable(Map<String, Object> variable) {
         this.variable = variable;
-        return this;
-    }
-
-    public String getParams() {
-        return params;
-    }
-
-    public ListenerVariable setParams(String params) {
-        this.params = params;
         return this;
     }
 
@@ -164,7 +185,6 @@ public class ListenerVariable {
                 "instance=" + instance +
                 ", node=" + node +
                 ", variable=" + variable +
-                ", params='" + params + '\'' +
                 ", nodePermissionList=" + nodePermissionList +
                 '}';
     }

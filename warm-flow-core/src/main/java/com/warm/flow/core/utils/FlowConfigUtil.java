@@ -1,3 +1,18 @@
+/*
+ *    Copyright 2024-2025, Warm-Flow (290631660@qq.com).
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *       https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.warm.flow.core.utils;
 
 import com.warm.flow.core.FlowFactory;
@@ -55,8 +70,9 @@ public class FlowConfigUtil {
         definition.setFlowCode(definitionElement.attributeValue("flowCode"));
         definition.setFlowName(definitionElement.attributeValue("flowName"));
         definition.setVersion(definitionElement.attributeValue("version"));
-        definition.setFromCustom(definitionElement.attributeValue("fromCustom"));
-        definition.setFromPath(definitionElement.attributeValue("fromPath"));
+        definition.setFormCustom(definitionElement.attributeValue("formCustom"));
+        definition.setFormPath(definitionElement.attributeValue("formPath"));
+        definition.setExt(definitionElement.attributeValue("ext"));
 
         List<Element> nodesElement = definitionElement.elements();
         // 遍历一个流程中的各个节点
@@ -89,11 +105,17 @@ public class FlowConfigUtil {
         node.setPermissionFlag(nodeElement.attributeValue("permissionFlag"));
         if (StringUtils.isNotEmpty(nodeElement.attributeValue("nodeRatio"))) {
             node.setNodeRatio(new BigDecimal(nodeElement.attributeValue("nodeRatio")));
+        } else {
+            node.setNodeRatio(new BigDecimal("0"));
         }
         node.setCoordinate(nodeElement.attributeValue("coordinate"));
         node.setSkipAnyNode(nodeElement.attributeValue("skipAnyNode"));
         node.setListenerType(nodeElement.attributeValue("listenerType"));
         node.setListenerPath(nodeElement.attributeValue("listenerPath"));
+        node.setHandlerType(nodeElement.attributeValue("handlerType"));
+        node.setHandlerPath(nodeElement.attributeValue("handlerPath"));
+        node.setFormCustom(nodeElement.attributeValue("formCustom"));
+        node.setFormPath(nodeElement.attributeValue("formPath"));
         FlowFactory.dataFillHandler().idFill(node);
 
         List<Element> skipsElement = nodeElement.elements();
@@ -126,8 +148,9 @@ public class FlowConfigUtil {
         definitionElement.addAttribute("flowCode", definition.getFlowCode());
         definitionElement.addAttribute("flowName", definition.getFlowName());
         definitionElement.addAttribute("version", definition.getVersion());
-        definitionElement.addAttribute("fromCustom", definition.getFromCustom());
-        definitionElement.addAttribute("fromPath", definition.getFromPath());
+        definitionElement.addAttribute("formCustom", definition.getFormCustom());
+        definitionElement.addAttribute("formPath", definition.getFormPath());
+        definitionElement.addAttribute("ext", definition.getExt());
 
         List<Node> nodeList = definition.getNodeList();
         for (Node node : nodeList) {
@@ -144,6 +167,10 @@ public class FlowConfigUtil {
             nodeElement.addAttribute("skipAnyNode", node.getSkipAnyNode());
             nodeElement.addAttribute("listenerType", node.getListenerType());
             nodeElement.addAttribute("listenerPath", node.getListenerPath());
+            nodeElement.addAttribute("handlerType", node.getHandlerType());
+            nodeElement.addAttribute("handlerPath", node.getHandlerPath());
+            nodeElement.addAttribute("formCustom", node.getFormCustom());
+            nodeElement.addAttribute("formPath", node.getFormPath());
 
             List<Skip> skipList = node.getSkipList();
             if (CollUtil.isNotEmpty(skipList)) {
@@ -207,7 +234,7 @@ public class FlowConfigUtil {
         allSkips.forEach(allSkip -> allSkip.setNextNodeType(skipMap.get(allSkip.getNextNodeCode())));
         AssertUtil.isTrue(startNum == 0, "[" + flowName + "]" + ExceptionCons.LOST_START_NODE);
         // 校验跳转节点的合法性
-        checkSkipNode(allSkips, nodeList);
+        checkSkipNode(allSkips);
         // 校验所有目标节点是否都存在
         validaIsExistDestNode(allSkips, nodeCodeSet);
         return combine;
@@ -217,21 +244,9 @@ public class FlowConfigUtil {
      * 校验跳转节点的合法性
      *
      * @param allSkips
-     * @param nodeList
      */
-    private static void checkSkipNode(List<Skip> allSkips, List<Node> nodeList) {
+    private static void checkSkipNode(List<Skip> allSkips) {
         Map<String, List<Skip>> allSkipMap = StreamUtils.groupByKey(allSkips, Skip::getNowNodeCode);
-        List<Skip> gatewaySkips = new ArrayList<>();
-        // 校验网关节点不可直连
-        if (CollUtil.isNotEmpty(gatewaySkips)) {
-            for (Skip gatewaySkip1 : gatewaySkips) {
-                for (Skip gatewaySkip2 : gatewaySkips) {
-                    AssertUtil.isTrue(gatewaySkip1.getNextNodeCode().equals(gatewaySkip2.getNowNodeCode())
-                                    && gatewaySkip1.getNowNodeType().equals(gatewaySkip2.getNowNodeType())
-                            , ExceptionCons.GATEWAY_NOT_CONNECT);
-                }
-            }
-        }
         // 不可同时通过或者退回到多个中间节点，必须先流转到网关节点
         allSkipMap.forEach((key, values) -> {
             AtomicInteger passNum = new AtomicInteger();
