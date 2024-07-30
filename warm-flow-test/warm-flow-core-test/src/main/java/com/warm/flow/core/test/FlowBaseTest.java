@@ -28,6 +28,7 @@ import com.warm.flow.core.utils.page.Page;
 
 import java.io.FileInputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -35,8 +36,24 @@ import java.util.List;
 
 public class FlowBaseTest {
 
+    public String getFlowCode() {
+        return "serial55";
+    }
+
+    public Long getInsId() {
+        return 1266421892739371014L;
+    }
+
+    public Long getTaskId() {
+        return 1266424585176354816L;
+    }
+
+    public String getBusinessId() {
+        return "2";
+    }
+
     public FlowParams getUser() {
-        return FlowParams.build().flowCode("serial1")
+        return FlowParams.build().flowCode(getFlowCode())
                 .handler("1")
                 .skipType(SkipType.PASS.getKey())
                 .permissionFlag(Arrays.asList("role:1", "role:2"));
@@ -47,7 +64,7 @@ public class FlowBaseTest {
      */
     public void deployFlow(DefService defService) throws Exception {
         ClassLoader classLoader = getClass().getClassLoader();
-        URL resource = classLoader.getResource("");
+        URL resource = classLoader.getResource(".");
         String path = resource.getPath();
         int i = path.indexOf("/warm-flow-test/");
         String newPath = path.substring(0, i + 16) + "warm-flow-core-test/src/main/resources/leaveFlow-serial-内部测试用.xml";
@@ -55,18 +72,25 @@ public class FlowBaseTest {
         System.out.println("已部署流程的id：" + defService.importXml(new FileInputStream(newPath)).getId());
     }
 
+    public Long getTestDefId(DefService defService) {
+        ArrayList<String> flowCodeList = new ArrayList<>();
+        flowCodeList.add(getFlowCode());
+        return defService.queryByCodeList(flowCodeList).stream().findFirst().map(Definition::getId).orElse(0L);
+    }
+
     /**
      * 发布流程
      */
     public void publish(DefService defService) {
-        defService.publish(1256286164273467397L);
+
+        defService.publish(getTestDefId(defService));
     }
 
     /**
      * 取消流程
      */
     public void unPublish(DefService defService) {
-        defService.unPublish(1256286164273467397L);
+        defService.unPublish(getTestDefId(defService));
     }
 
     /**
@@ -79,8 +103,10 @@ public class FlowBaseTest {
     /**
      * 开启流程
      */
-    public void startFlow(InsService insService) {
-        System.out.println("已开启的流程实例id：" + insService.start("2", getUser()).getId());
+    public void startFlow(InsService insService, TaskService taskService) {
+        System.out.println("已开启的流程实例id：" + insService.start(getBusinessId(), getUser()).getId());
+        taskService.list(FlowFactory.newTask().setInstanceId(getInsId()))
+                .forEach(task -> System.out.println("流转后任务id实例：" + task.getId()));
     }
 
     /**
@@ -95,31 +121,34 @@ public class FlowBaseTest {
      * 办理
      */
     public void skipFlow(InsService insService, TaskService taskService) {
-        // 通过实例id流转
-        Instance instance = insService.skipByInsId(1254069189707173888L, getUser().skipType(SkipType.PASS.getKey())
-                .permissionFlag(Arrays.asList("role:1", "role:2")));
-        System.out.println("流转后流程实例：" + instance.toString());
-
-//        // 通过任务id流转
-//        Instance instance = taskService.skip(1219286332145274880L, getUser().skipType(SkipType.PASS.getKey())
+//        // 通过实例id流转
+//        Instance instance = insService.skipByInsId(getInsId(), getUser().skipType(SkipType.PASS.getKey())
 //                .permissionFlag(Arrays.asList("role:1", "role:2")));
 //        System.out.println("流转后流程实例：" + instance.toString());
+
+        // 通过任务id流转
+        Instance instance = taskService.skip(getTaskId(), getUser().skipType(SkipType.PASS.getKey())
+                .permissionFlag(Arrays.asList("role:1", "role:2")));
+        System.out.println("流转后流程实例：" + instance.toString());
+        taskService.list(FlowFactory.newTask().setInstanceId(getInsId()))
+                .forEach(task -> System.out.println("流转后任务id实例：" + task.getId()));
     }
 
     /**
      * 终止流程实例
      */
     public void termination(TaskService taskService) {
+
         FlowParams flowParams = new FlowParams();
         flowParams.message("终止流程").handler("1");
-        taskService.termination(1254069429029965824L, flowParams);
+        taskService.termination(1260200517360029696L, flowParams);
     }
 
     /**
      * 跳转到指定节点 跳转到结束节点
      */
     public void skipAnyNode(TaskService taskService) {
-        Instance instance = taskService.skip(1253834466326089728L, getUser().skipType(SkipType.PASS.getKey())
+        Instance instance = taskService.skip(1260200765054652416L, getUser().skipType(SkipType.PASS.getKey())
                 .permissionFlag(Arrays.asList("role:1", "role:2")).nodeCode("5"));
         System.out.println("流转后流程实例：" + instance.toString());
     }
@@ -139,7 +168,7 @@ public class FlowBaseTest {
      * 转办
      */
     public void transfer(TaskService taskService) {
-         taskService.transfer(1253835478436810752L
+         taskService.transfer(getTaskId()
                  , "1"
                  , Arrays.asList("role:1", "role:2", "user:1")
                  , Arrays.asList("2", "3")
@@ -150,7 +179,7 @@ public class FlowBaseTest {
      * 委派
      */
     public void depute(TaskService taskService){
-        taskService.transfer(1253840790778679296L
+        taskService.transfer(getTaskId()
                 , "1"
                 , Arrays.asList("role:1", "role:2", "user:1")
                 , Arrays.asList("2", "3")
@@ -161,7 +190,7 @@ public class FlowBaseTest {
      * 加签
      */
     public void addSignature(TaskService taskService){
-        taskService.addSignature(1253841163543252992L
+        taskService.addSignature(getTaskId()
                 , "1"
                 , Arrays.asList("role:1", "role:2", "user:1")
                 , Arrays.asList("2", "3")
@@ -172,7 +201,7 @@ public class FlowBaseTest {
      * 减签
      */
     public void reductionSignature(TaskService taskService){
-        taskService.reductionSignature(1253841163543252992L
+        taskService.reductionSignature(getTaskId()
                 , "1"
                 , Arrays.asList("role:1", "role:2", "user:1")
                 , Arrays.asList("2", "3")

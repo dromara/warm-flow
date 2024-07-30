@@ -73,12 +73,12 @@ public class FlowParams implements Serializable {
     private Integer cooperateType;
 
     /**
-     * 扩展字段
+     * 扩展字段，预留给业务系统使用
      */
     private String ext;
 
     /**
-     * 新增历史记录表扩展字段 存储业务详情
+     * 扩展字段，预留给业务系统使用
      */
     private String hisTaskExt;
 

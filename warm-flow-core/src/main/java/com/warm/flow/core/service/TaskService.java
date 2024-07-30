@@ -17,6 +17,7 @@ package com.warm.flow.core.service;
 
 import com.warm.flow.core.dto.FlowParams;
 import com.warm.flow.core.dto.ModifyHandler;
+import com.warm.flow.core.entity.Definition;
 import com.warm.flow.core.entity.Instance;
 import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.Task;
@@ -59,7 +60,7 @@ public interface TaskService extends IWarmService<Task> {
     Instance skip(FlowParams flowParams, Task task);
 
     /**
-     * 终止流程，提前结束流程，将所有代办任务转历史
+     * 终止流程，提前结束流程，将所有待办任务转历史
      *
      * @param taskId:流程任务id[必传]
      * @param flowParams:包含流程相关参数的对象 - message:审批意见  [按需传输]
@@ -68,7 +69,7 @@ public interface TaskService extends IWarmService<Task> {
     Instance termination(Long taskId, FlowParams flowParams);
 
     /**
-     * 终止流程，提前结束流程，将所有代办任务转历史
+     * 终止流程，提前结束流程，将所有待办任务转历史
      *
      * @param instance:流程实例
      * @param task:流程任务
@@ -164,7 +165,7 @@ public interface TaskService extends IWarmService<Task> {
      * @param flowParams
      * @return
      */
-    Task addTask(Node node, Instance instance, FlowParams flowParams);
+    Task addTask(Node node, Instance instance, Definition definition, FlowParams flowParams);
 
     /**
      * 设置流程实例和代码任务流程状态

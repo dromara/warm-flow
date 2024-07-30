@@ -19,7 +19,7 @@ import com.warm.flow.core.constant.FlowCons;
 import com.warm.flow.core.utils.MathUtil;
 
 /**
- * 条件表达式小于
+ * 条件表达式小于 @@lt@@|flag@@lt@@4
  *
  * @author warm
  */

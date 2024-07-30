@@ -18,7 +18,7 @@ package com.warm.flow.core.expression;
 import com.warm.flow.core.constant.FlowCons;
 
 /**
- * 条件表达式不包含
+ * 条件表达式不包含 @@notNike@@|flag@@notNike@@4
  *
  * @author warm
  */

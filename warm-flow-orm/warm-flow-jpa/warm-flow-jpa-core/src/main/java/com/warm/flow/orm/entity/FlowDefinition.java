@@ -68,11 +68,14 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
                 if (Objects.nonNull(this.isPublish)) {
                     predicates.add(criteriaBuilder.equal(root.get("isPublish"), this.isPublish));
                 }
-                if (Objects.nonNull(this.fromCustom)) {
-                    predicates.add(criteriaBuilder.equal(root.get("fromCustom"), this.fromCustom));
+                if (Objects.nonNull(this.formCustom)) {
+                    predicates.add(criteriaBuilder.equal(root.get("formCustom"), this.formCustom));
                 }
-                if (Objects.nonNull(this.fromPath)) {
-                    predicates.add(criteriaBuilder.equal(root.get("fromPath"), this.fromPath));
+                if (Objects.nonNull(this.formPath)) {
+                    predicates.add(criteriaBuilder.equal(root.get("formPath"), this.formPath));
+                }
+                if (StringUtils.isNotEmpty(this.ext)) {
+                    predicates.add(criteriaBuilder.equal(root.get("ext"), this.ext));
                 }
             };
 
@@ -90,17 +93,20 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
         if (Objects.nonNull(updateEntity.isPublish)) {
             this.isPublish = updateEntity.isPublish;
         }
-        if (Objects.nonNull(updateEntity.fromCustom)) {
-            this.fromCustom = updateEntity.fromCustom;
+        if (Objects.nonNull(updateEntity.formCustom)) {
+            this.formCustom = updateEntity.formCustom;
         }
-        if (Objects.nonNull(updateEntity.fromPath)) {
-            this.fromPath = updateEntity.fromPath;
+        if (Objects.nonNull(updateEntity.formPath)) {
+            this.formPath = updateEntity.formPath;
         }
         if (Objects.nonNull(updateEntity.getCreateTime())) {
             this.setCreateTime(updateEntity.getCreateTime());
         }
         if (Objects.nonNull(updateEntity.getUpdateTime())) {
             this.setUpdateTime(updateEntity.getUpdateTime());
+        }
+        if (StringUtils.isNotEmpty(updateEntity.ext)) {
+            this.ext = updateEntity.ext;
         }
     };
 
@@ -124,8 +130,8 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
         if (Objects.isNull(this.isPublish)) {
             this.isPublish = PublishStatus.UNPUBLISHED.getKey();
         }
-        if (Objects.isNull(this.fromCustom)) {
-            this.fromCustom = "N";
+        if (Objects.isNull(this.formCustom)) {
+            this.formCustom = "N";
         }
     }
 
@@ -155,14 +161,20 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
     /**
      * 审批表单是否自定义（Y是 2否）
      */
-    @Column(name = "from_custom")
-    private String fromCustom;
+    @Column(name = "form_custom")
+    private String formCustom;
 
     /**
      * 审批表单是否自定义（Y是 2否）
      */
-    @Column(name = "from_path")
-    private String fromPath;
+    @Column(name = "form_path")
+    private String formPath;
+
+    /**
+     * 扩展字段，预留给业务系统使用
+     */
+    @Column(name = "ext")
+    private String ext;
 
     /**
      * 审批表单是否自定义（Y是 2否）
@@ -221,24 +233,35 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
     }
 
     @Override
-    public String getFromCustom() {
-        return fromCustom;
+    public String getFormCustom() {
+        return formCustom;
     }
 
     @Override
-    public FlowDefinition setFromCustom(String fromCustom) {
-        this.fromCustom = fromCustom;
+    public FlowDefinition setFormCustom(String formCustom) {
+        this.formCustom = formCustom;
         return this;
     }
 
     @Override
-    public String getFromPath() {
-        return fromPath;
+    public String getFormPath() {
+        return formPath;
     }
 
     @Override
-    public FlowDefinition setFromPath(String fromPath) {
-        this.fromPath = fromPath;
+    public FlowDefinition setFormPath(String formPath) {
+        this.formPath = formPath;
+        return this;
+    }
+
+    @Override
+    public String getExt() {
+        return ext;
+    }
+
+    @Override
+    public FlowDefinition setExt(String ext) {
+        this.ext = ext;
         return this;
     }
 
@@ -285,8 +308,9 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
                 ", flowName='" + flowName + '\'' +
                 ", version='" + version + '\'' +
                 ", isPublish=" + isPublish +
-                ", fromCustom='" + fromCustom + '\'' +
-                ", fromPath='" + fromPath + '\'' +
+                ", formCustom='" + formCustom + '\'' +
+                ", formPath='" + formPath + '\'' +
+                ", ext='" + ext + '\'' +
                 ", xmlString='" + xmlString + '\'' +
                 ", nodeList=" + nodeList +
                 '}';

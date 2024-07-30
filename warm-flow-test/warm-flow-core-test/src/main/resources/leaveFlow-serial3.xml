@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<definition flowCode="leaveFlow-serial3" flowName="串行-驳回互斥" version="1.0" fromCustom="N"
-            fromPath="system/leave/approve">
+<definition flowCode="leaveFlow-serial3" flowName="串行-驳回互斥" version="1.0" formCustom="N"
+            formPath="system/leave/approve">
     <node nodeType="start" nodeCode="1" nodeName="开始" nodeRatio="0.000" coordinate="160,200|160,200" skipAnyNode="N"
           listenerType="start,assignment,finish,permission,create"
-          listenerPath="com.ruoyi.system.Listener.StartListener@@323@@com.ruoyi.system.Listener.FinishListener@@com.ruoyi.system.Listener.PermissionListener@@com.ruoyi.system.Listener.CreateListener">
+          listenerPath="com.ruoyi.system.Listener.StartListener@@com.ruoyi.system.Listener.AssignmentListener@@com.ruoyi.system.Listener.FinishListener@@com.ruoyi.system.Listener.PermissionListener@@com.ruoyi.system.Listener.CreateListener">
         <skip coordinate="180,200;330,200" skipType="PASS">2</skip>
     </node>
     <node nodeType="between" nodeCode="2" nodeName="组长审批" permissionFlag="role:1" coordinate="380,200|380,200"
           skipAnyNode="N" nodeRatio="0"
           listenerType="start,assignment,finish,permission,create"
-          listenerPath="com.ruoyi.system.Listener.StartListener@@323@@com.ruoyi.system.Listener.FinishListener@@com.ruoyi.system.Listener.PermissionListener@@com.ruoyi.system.Listener.CreateListener">
+          listenerPath="com.ruoyi.system.Listener.StartListener@@com.ruoyi.system.Listener.AssignmentListener@@com.ruoyi.system.Listener.FinishListener@@com.ruoyi.system.Listener.PermissionListener@@com.ruoyi.system.Listener.CreateListener">
         <skip coordinate="430,200;550,200" skipType="PASS">3</skip>
     </node>
     <node nodeType="between" nodeCode="3" nodeName="hr审批" permissionFlag="role:1" coordinate="600,200|600,200"
           skipAnyNode="N" nodeRatio="0"
           listenerType="start,assignment,finish,permission,create"
-          listenerPath="com.ruoyi.system.Listener.StartListener@@323@@com.ruoyi.system.Listener.FinishListener@@com.ruoyi.system.Listener.PermissionListener@@com.ruoyi.system.Listener.CreateListener">
+          listenerPath="com.ruoyi.system.Listener.StartListener@@com.ruoyi.system.Listener.AssignmentListener@@com.ruoyi.system.Listener.FinishListener@@com.ruoyi.system.Listener.PermissionListener@@com.ruoyi.system.Listener.CreateListener">
         <skip coordinate="650,200;790,200" skipType="PASS">4</skip>
     </node>
     <node nodeType="between" nodeCode="4" nodeName="董事长审批" permissionFlag="role:1" coordinate="840,200|840,200"
           skipAnyNode="N" nodeRatio="0"
           listenerType="start,assignment,finish,permission,create"
-          listenerPath="com.ruoyi.system.Listener.StartListener@@323@@com.ruoyi.system.Listener.FinishListener@@com.ruoyi.system.Listener.PermissionListener@@com.ruoyi.system.Listener.CreateListener">
+          listenerPath="com.ruoyi.system.Listener.StartListener@@com.ruoyi.system.Listener.AssignmentListener@@com.ruoyi.system.Listener.FinishListener@@com.ruoyi.system.Listener.PermissionListener@@com.ruoyi.system.Listener.CreateListener">
         <skip coordinate="890,200;1040,200" skipType="PASS">6</skip>
         <skip coordinate="840,160;840,79;724,79" skipType="REJECT">5</skip>
     </node>
     <node nodeType="serial" nodeCode="5" coordinate="700,80" skipAnyNode="N"
           listenerType="start,assignment,finish,permission,create"
-          listenerPath="com.ruoyi.system.Listener.StartListener@@323@@com.ruoyi.system.Listener.FinishListener@@com.ruoyi.system.Listener.PermissionListener@@com.ruoyi.system.Listener.CreateListener">
+          listenerPath="com.ruoyi.system.Listener.StartListener@@com.ruoyi.system.Listener.AssignmentListener@@com.ruoyi.system.Listener.FinishListener@@com.ruoyi.system.Listener.PermissionListener@@com.ruoyi.system.Listener.CreateListener">
         <skip coordinate="675,80;600,80;600,160|600,80" skipType="REJECT" skipName="请假时间大于4天"
               skipCondition="@@gt@@|flag@@gt@@4">3
         </skip>
@@ -38,5 +38,5 @@
     </node>
     <node nodeType="end" nodeCode="6" nodeName="结束" coordinate="1060,200|1060,200" skipAnyNode="N"
           listenerType="start,assignment,finish,permission,create"
-          listenerPath="com.ruoyi.system.Listener.StartListener@@323@@com.ruoyi.system.Listener.FinishListener@@com.ruoyi.system.Listener.PermissionListener@@com.ruoyi.system.Listener.CreateListener"/>
+          listenerPath="com.ruoyi.system.Listener.StartListener@@com.ruoyi.system.Listener.AssignmentListener@@com.ruoyi.system.Listener.FinishListener@@com.ruoyi.system.Listener.PermissionListener@@com.ruoyi.system.Listener.CreateListener"/>
 </definition>

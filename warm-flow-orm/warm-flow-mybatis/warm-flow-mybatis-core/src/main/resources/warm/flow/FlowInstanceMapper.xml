@@ -101,6 +101,81 @@
         <include refid="order_by"/>
     </sql>
 
+    <sql id="mysql_insert_batch">
+        insert into flow_instance(
+        id,
+        business_id,
+        definition_id,
+        node_code,
+        node_name,
+        node_type,
+        variable,
+        flow_status,
+        create_by,
+        create_time,
+        update_time,
+        del_flag,
+        tenant_id,
+        ext
+        )
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.id},
+            #{item.businessId},
+            #{item.definitionId},
+            #{item.nodeCode},
+            #{item.nodeName},
+            #{item.nodeType},
+            #{item.variable},
+            #{item.flowStatus},
+            #{item.createBy},
+            #{item.createTime},
+            #{item.updateTime},
+            #{item.delFlag},
+            #{item.tenantId},
+            #{item.ext}
+            )
+        </foreach>
+    </sql>
+
+    <sql id="oracle_insert_batch">
+        insert into flow_instance(
+        id,
+        business_id,
+        definition_id,
+        node_code,
+        node_name,
+        node_type,
+        variable,
+        flow_status,
+        create_by,
+        create_time,
+        update_time,
+        del_flag,
+        tenant_id,
+        ext
+        )
+        <foreach collection="list" item="item" separator=" union all">
+            (
+            #{item.id},
+            #{item.businessId},
+            #{item.definitionId},
+            #{item.nodeCode},
+            #{item.nodeName},
+            #{item.nodeType},
+            #{item.variable},
+            #{item.flowStatus},
+            #{item.createBy},
+            #{item.createTime},
+            #{item.updateTime},
+            #{item.delFlag},
+            #{item.tenantId},
+            #{item.ext}
+            )
+        </foreach>
+    </sql>
+
     <select id="selectByIds" resultMap="FlowInstanceResult">
         <include refid="selectVo"/>
         where t.id in
@@ -254,40 +329,13 @@
     </update>
 
     <insert id="saveBatch" parameterType="com.warm.flow.orm.entity.FlowInstance">
-        insert into flow_instance(
-        id,
-        business_id,
-        definition_id,
-        node_code,
-        node_name,
-        node_type,
-        variable,
-        flow_status,
-        create_by,
-        create_time,
-        update_time,
-        del_flag,
-        tenant_id,
-        ext
-        )
-        values
-        <foreach collection="list" item="item" separator=",">
-            (
-            #{item.id},
-            #{item.businessId},
-            #{item.definitionId},
-            #{item.nodeCode},
-            #{item.nodeName},
-            #{item.nodeType},
-            #{item.variable},
-            #{item.flowStatus},
-            #{item.createBy},
-            #{item.createTime},
-            #{item.updateTime},
-            #{item.delFlag},
-            #{item.tenantId},
-            #{item.ext}
-            )
-        </foreach>
+        <choose>
+            <when test="dataSourceType == 'oracle'.toString()">
+                <include refid="oracle_insert_batch"/>
+            </when>
+            <otherwise>
+                <include refid="mysql_insert_batch"/>
+            </otherwise>
+        </choose>
     </insert>
 </mapper>

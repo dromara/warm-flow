@@ -82,6 +82,9 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
                 if (Objects.nonNull(this.taskId)) {
                     predicates.add(criteriaBuilder.equal(root.get("taskId"), this.taskId));
                 }
+                if (StringUtils.isNotEmpty(this.skipType)) {
+                    predicates.add(criteriaBuilder.equal(root.get("skipType"), this.skipType));
+                }
                 if (Objects.nonNull(this.flowStatus)) {
                     predicates.add(criteriaBuilder.equal(root.get("flowStatus"), this.flowStatus));
                 }
@@ -90,6 +93,12 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
                 }
                 if (Objects.nonNull(this.ext)) {
                     predicates.add(criteriaBuilder.equal(root.get("ext"), this.ext));
+                }
+                if (StringUtils.isNotEmpty(this.formCustom)) {
+                    predicates.add(criteriaBuilder.equal(root.get("formCustom"), this.formCustom));
+                }
+                if (StringUtils.isNotEmpty(this.formPath)) {
+                    predicates.add(criteriaBuilder.equal(root.get("formPath"), this.formPath));
                 }
             };
 
@@ -128,6 +137,9 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
         if (Objects.nonNull(updateEntity.taskId)) {
             this.taskId = updateEntity.taskId;
         }
+        if (StringUtils.isNotEmpty(updateEntity.skipType)) {
+            this.skipType = updateEntity.skipType;
+        }
         if (Objects.nonNull(updateEntity.flowStatus)) {
             this.flowStatus = updateEntity.flowStatus;
         }
@@ -136,6 +148,12 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
         }
         if (Objects.nonNull(updateEntity.ext)) {
             this.ext = updateEntity.ext;
+        }
+        if (StringUtils.isNotEmpty(updateEntity.formCustom)) {
+            this.formCustom = updateEntity.formCustom;
+        }
+        if (StringUtils.isNotEmpty(updateEntity.formPath)) {
+            this.formPath = updateEntity.formPath;
         }
         if (Objects.nonNull(updateEntity.getCreateTime())) {
             this.setCreateTime(updateEntity.getCreateTime());
@@ -249,6 +267,12 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
     private List<String> permissionList;
 
     /**
+     * 流程流转（PASS REJECT NONE）
+     */
+    @Column(name = "skip_type")
+    private String skipType;
+
+    /**
      * 流程状态（1审批中 2 审批通过 9已退回 10失效）
      */
     @Column(name = "flow_status")
@@ -272,18 +296,17 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
     @Transient
     private String createBy;
 
-
     /**
      * 审批表单是否自定义（Y是 2否）
      */
-    @Transient
-    private String fromCustom;
+    @Column(name = "form_custom")
+    private String formCustom;
 
     /**
-     * 审批表单是否自定义（Y是 2否）
+     * 审批表单路径
      */
-    @Transient
-    private String fromPath;
+    @Column(name = "form_path")
+    private String formPath;
 
 
     @Override
@@ -442,6 +465,17 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
     }
 
     @Override
+    public String getSkipType() {
+        return this.skipType;
+    }
+
+    @Override
+    public HisTask setSkipType(String skipType) {
+        this.skipType = skipType;
+        return this;
+    }
+
+    @Override
     public Integer getFlowStatus() {
         return flowStatus;
     }
@@ -486,24 +520,24 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
     }
 
     @Override
-    public String getFromCustom() {
-        return fromCustom;
+    public String getFormCustom() {
+        return formCustom;
     }
 
     @Override
-    public FlowHisTask setFromCustom(String fromCustom) {
-        this.fromCustom = fromCustom;
+    public FlowHisTask setFormCustom(String formCustom) {
+        this.formCustom = formCustom;
         return this;
     }
 
     @Override
-    public String getFromPath() {
-        return fromPath;
+    public String getFormPath() {
+        return formPath;
     }
 
     @Override
-    public FlowHisTask setFromPath(String fromPath) {
-        this.fromPath = fromPath;
+    public FlowHisTask setFormPath(String formPath) {
+        this.formPath = formPath;
         return this;
     }
 
@@ -527,12 +561,13 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
                 ", targetNodeName='" + targetNodeName + '\'' +
                 ", approver='" + approver + '\'' +
                 ", permissionList=" + permissionList +
+                ", skipType=" + skipType +
                 ", flowStatus=" + flowStatus +
                 ", message='" + message + '\'' +
                 ", ext='" + ext + '\'' +
                 ", createBy='" + createBy + '\'' +
-                ", fromCustom='" + fromCustom + '\'' +
-                ", fromPath='" + fromPath + '\'' +
+                ", formCustom='" + formCustom + '\'' +
+                ", formPath='" + formPath + '\'' +
                 "}";
     }
 }

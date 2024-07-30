@@ -17,7 +17,10 @@
         <result property="instanceId" column="instance_id"/>
         <result property="taskId" column="task_id"/>
         <result property="cooperateType" column="cooperate_type"/>
+        <result property="skipType" column="skip_type"/>
         <result property="flowStatus" column="flow_status"/>
+        <result property="formCustom" column="form_custom"/>
+        <result property="formPath" column="form_path"/>
         <result property="message" column="message"/>
         <result property="ext" column="ext"/>
         <result property="createTime" column="create_time"/>
@@ -41,7 +44,10 @@
                t.instance_id,
                t.task_id,
                t.cooperate_type,
+               t.skip_type,
                t.flow_status,
+               t.form_custom,
+               t.form_path,
                t.message,
                t.ext,
                t.create_time,
@@ -80,7 +86,10 @@
             <if test="entity.instanceId != null ">and t.instance_id = #{entity.instanceId}</if>
             <if test="entity.taskId != null ">and t.task_id = #{entity.taskId}</if>
             <if test="entity.cooperateType != null ">and t.cooperate_type = #{entity.cooperateType}</if>
+            <if test="entity.skipType != null  and entity.skipType != ''">and t.skip_type = #{entity.skipType}</if>
             <if test="entity.flowStatus != null">and t.flow_status = #{fentity.flowStatus}</if>
+            <if test="entity.formCustom != null  and entity.formCustom != ''">and t.form_custom = #{entity.formCustom}</if>
+            <if test="entity.formPath != null  and entity.formPath != ''">and t.form_path = #{entity.formPath}</if>
             <if test="entity.message != null  and entity.message != ''">and t.message = #{entity.message}</if>
             <if test="entity.ext != null  and entity.ext != ''">and t.ext = #{entity.ext}</if>
             <if test="entity.createTime != null">and t.create_time = #{entity.createTime}</if>
@@ -119,6 +128,113 @@
         <include refid="order_by"/>
     </sql>
 
+    <sql id="mysql_insert_batch">
+        insert into flow_his_task(
+        id,
+        node_code,
+        node_name,
+        node_type,
+        target_node_code,
+        target_node_name,
+        approver,
+        collaborator,
+        definition_id,
+        instance_id,
+        task_id,
+        cooperate_type,
+        skip_type,
+        flow_status,
+        form_custom,
+        form_path,
+        message,
+        ext,
+        create_time,
+        update_time,
+        tenant_id,
+        del_flag
+        )
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.id},
+            #{item.nodeCode},
+            #{item.nodeName},
+            #{item.nodeType},
+            #{item.targetNodeCode},
+            #{item.targetNodeName},
+            #{item.approver},
+            #{item.collaborator},
+            #{item.definitionId},
+            #{item.instanceId},
+            #{item.taskId},
+            #{item.cooperateType},
+            #{item.skipType},
+            #{item.flowStatus},
+            #{item.formCustom},
+            #{item.formPath},
+            #{item.message},
+            #{item.ext},
+            #{item.createTime},
+            #{item.updateTime},
+            #{item.tenantId},
+            #{item.delFlag}
+            )
+        </foreach>
+    </sql>
+
+    <sql id="oracle_insert_batch">
+        insert into flow_his_task(
+        id,
+        node_code,
+        node_name,
+        node_type,
+        target_node_code,
+        target_node_name,
+        approver,
+        collaborator,
+        definition_id,
+        instance_id,
+        task_id,
+        cooperate_type,
+        skip_type,
+        flow_status,
+        form_custom,
+        form_path,
+        message,
+        ext,
+        create_time,
+        update_time,
+        tenant_id,
+        del_flag
+        )
+        <foreach collection="list" item="item" separator=" union all">
+            select
+            #{item.id},
+            #{item.nodeCode},
+            #{item.nodeName},
+            #{item.nodeType},
+            #{item.targetNodeCode},
+            #{item.targetNodeName},
+            #{item.approver},
+            #{item.collaborator},
+            #{item.definitionId},
+            #{item.instanceId},
+            #{item.taskId},
+            #{item.cooperateType},
+            #{item.skipType},
+            #{item.flowStatus},
+            #{item.formCustom},
+            #{item.formPath},
+            #{item.message},
+            #{item.ext},
+            #{item.createTime},
+            #{item.updateTime},
+            #{item.tenantId},
+            #{item.delFlag}
+            from dual
+        </foreach>
+    </sql>
+
     <select id="selectByIds" resultMap="FlowHisTaskResult">
         <include refid="selectVo"/>
         where t.id in
@@ -140,7 +256,7 @@
         <include refid="selectVo"/>
         where t.node_code = #{nodeCode}
         and t.instance_id = #{instanceId}
-        and t.flow_status = 2
+        and t.skip_type = 'PASS'
         <if test="entity.targetNodeCode != null and entity.targetNodeCode != ''">and t.target_node_code =
             #{entity.targetNodeCode}
         </if>
@@ -180,7 +296,10 @@
             <if test="instanceId != null">instance_id,</if>
             <if test="taskId != null">task_id,</if>
             <if test="cooperateType != null">cooperate_type,</if>
+            <if test="skipType != null and skipType != ''">skip_type,</if>
             <if test="flowStatus != null">flow_status,</if>
+            <if test="formCustom != null and formCustom != ''">form_custom,</if>
+            <if test="formPath != null and formPath != ''">form_path,</if>
             <if test="message != null">message,</if>
             <if test="ext != null">ext,</if>
             <if test="createTime != null">create_time,</if>
@@ -201,7 +320,10 @@
             <if test="instanceId != null">#{instanceId},</if>
             <if test="taskId != null">#{taskId},</if>
             <if test="cooperateType != null">#{cooperateType},</if>
+            <if test="skipType != null and skipType != ''">#{skipType},</if>
             <if test="flowStatus != null">#{flowStatus},</if>
+            <if test="formCustom != null and formCustom != ''">#{formCustom},</if>
+            <if test="formPath != null and formPath != ''">#{formPath},</if>
             <if test="message != null">#{message},</if>
             <if test="ext != null">#{ext},</if>
             <if test="createTime != null">#{createTime},</if>
@@ -224,7 +346,10 @@
             <if test="instanceId != null">t.instance_id = #{instanceId},</if>
             <if test="taskId != null">t.task_id = #{taskId},</if>
             <if test="cooperateType != null">t.cooperate_type = #{cooperateType},</if>
+            <if test="skipType != null and skipType != ''">t.skip_type = #{skipType},</if>
             <if test="flowStatus != null">t.flow_status = #{flowStatus},</if>
+            <if test="formCustom != null and formCustom != ''">t.form_custom = #{formCustom},</if>
+            <if test="formPath != null and formPath != ''">t.form_path = #{formPath},</if>
             <if test="message != null">t.message = #{message},</if>
             <if test="ext != null">t.ext = #{ext},</if>
             <if test="createTime != null">t.create_time = #{createTime},</if>
@@ -305,7 +430,10 @@
             <if test="instanceId != null">and instance_id = #{instanceId}</if>
             <if test="taskId != null">and task_id = #{taskId}</if>
             <if test="cooperateType != null">and cooperate_type = #{cooperateType}</if>
+            <if test="skipType != null and skipType != ''">and skip_type = #{skipType}</if>
             <if test="flowStatus != null">and flow_status = #{flowStatus}</if>
+            <if test="formCustom != null and formCustom != ''">and form_custom = #{formCustom}</if>
+            <if test="formPath != null and formPath != ''">and form_path = #{formPath}</if>
             <if test="message != null">and message = #{message}</if>
             <if test="ext != null">and ext = #{ext}</if>
             <if test="createTime != null">and create_time = #{createTime}</if>
@@ -336,7 +464,10 @@
             <if test="entity.instanceId != null">and t.instance_id = #{entity.instanceId}</if>
             <if test="entity.taskId != null">and t.task_id = #{entity.taskId}</if>
             <if test="entity.cooperateType != null">and t.cooperate_type = #{entity.cooperateType}</if>
+            <if test="entity.skipType != null and entity.skipType != ''">and t.skip_type = #{entity.skipType}</if>
             <if test="entity.flowStatus != null">and t.flow_status = #{entity.flowStatus}</if>
+            <if test="entity.formCustom != null and entity.formCustom != ''">and t.form_custom = #{entity.formCustom}</if>
+            <if test="entity.formPath != null and entity.formPath != ''">and t.form_path = #{entity.formPath}</if>
             <if test="entity.message != null">and t.message = #{entity.message}</if>
             <if test="entity.ext != null">and t.ext = #{entity.ext}</if>
             <if test="entity.createTime != null">and t.create_time = #{entity.createTime}</if>
@@ -349,50 +480,13 @@
     </update>
 
     <insert id="saveBatch" parameterType="com.warm.flow.orm.entity.FlowHisTask">
-        insert into flow_his_task(
-        id,
-        node_code,
-        node_name,
-        node_type,
-        target_node_code,
-        target_node_name,
-        approver,
-        collaborator,
-        definition_id,
-        instance_id,
-        task_id,
-        cooperate_type,
-        flow_status,
-        message,
-        ext,
-        create_time,
-        update_time,
-        tenant_id,
-        del_flag
-        )
-        values
-        <foreach collection="list" item="item" separator=",">
-            (
-            #{item.id},
-            #{item.nodeCode},
-            #{item.nodeName},
-            #{item.nodeType},
-            #{item.targetNodeCode},
-            #{item.targetNodeName},
-            #{item.approver},
-            #{item.collaborator},
-            #{item.definitionId},
-            #{item.instanceId},
-            #{item.taskId},
-            #{item.cooperateType},
-            #{item.flowStatus},
-            #{item.message},
-            #{item.ext},
-            #{item.createTime},
-            #{item.updateTime},
-            #{item.tenantId},
-            #{item.delFlag}
-            )
-        </foreach>
+        <choose>
+            <when test="dataSourceType == 'oracle'.toString()">
+                <include refid="oracle_insert_batch"/>
+            </when>
+            <otherwise>
+                <include refid="mysql_insert_batch"/>
+            </otherwise>
+        </choose>
     </insert>
 </mapper>

@@ -15,6 +15,7 @@
     <modules>
         <module>warm-flow-mybatis-flex-core</module>
         <module>warm-flow-mybatis-flex-sb-starter</module>
+        <module>warm-flow-mybatis-flex-solon-plugin</module>
     </modules>
 
 </project>

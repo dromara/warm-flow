@@ -75,15 +75,20 @@ create table FLOW_HIS_TASK
 	NODE_TYPE NUMBER(1),
 	TARGET_NODE_CODE VARCHAR2(100),
 	TARGET_NODE_NAME VARCHAR2(100),
+    APPROVER VARCHAR2(40),
+    COOPERATE_TYPE NUMBER(1) default 0,
+    COLLABORATOR VARCHAR2(40),
+    SKIP_TYPE VARCHAR2(10),
 	FLOW_STATUS NUMBER(2),
+    FORM_CUSTOM VARCHAR2(1) default 'N',
+    FORM_PATH VARCHAR2(100),
 	MESSAGE VARCHAR2(500),
+    EXT VARCHAR2(500),
 	CREATE_TIME DATE,
 	UPDATE_TIME DATE,
 	DEL_FLAG VARCHAR2(1),
-	TENANT_ID VARCHAR2(40),
-	APPROVER VARCHAR2(40),
-	COOPERATE_TYPE NUMBER(1) default 0,
-	COLLABORATOR VARCHAR2(40)
+	TENANT_ID VARCHAR2(40)
+
 )
 /
 
@@ -117,16 +122,28 @@ comment on column FLOW_HIS_TASK.TARGET_NODE_CODE is '目标节点编码'
 comment on column FLOW_HIS_TASK.TARGET_NODE_NAME is '目标节点名称'
 /
 
+comment on column FLOW_HIS_TASK.SKIP_TYPE is '流转类型（PASS通过 REJECT退回 NONE无动作）'
+/
+
 comment on column FLOW_HIS_TASK.FLOW_STATUS is '流程状态（1审批中 2 审批通过 9已退回 10失效）'
+/
+
+comment on column FLOW_HIS_TASK.FORM_CUSTOM is '审批表单是否自定义 (Y是 N否)'
+/
+
+comment on column FLOW_HIS_TASK.FORM_PATH is '审批表单路径'
 /
 
 comment on column FLOW_HIS_TASK.MESSAGE is '审批意见'
 /
 
+comment on column FLOW_HIS_TASK.EXT is '扩展字段，预留给业务系统使用'
+/
+
 comment on column FLOW_HIS_TASK.CREATE_TIME is '开始时间'
 /
 
-comment on column FLOW_HIS_TASK.UPDATE_TIME is '完成时间'
+comment on column FLOW_HIS_TASK.UPDATE_TIME is '结束时间'
 /
 
 comment on column FLOW_HIS_TASK.DEL_FLAG is '删除标志'
@@ -153,9 +170,10 @@ create table FLOW_DEFINITION
 	FLOW_NAME VARCHAR2(100) not null,
 	VERSION VARCHAR2(20) not null,
 	IS_PUBLISH NUMBER(1) default 0 not null,
-	FROM_CUSTOM VARCHAR2(1) default 'N',
-	FROM_PATH VARCHAR2(100),
-	CREATE_TIME DATE,
+	FORM_CUSTOM VARCHAR2(1) default 'N',
+	FORM_PATH VARCHAR2(100),
+    EXT VARCHAR2(500),
+    CREATE_TIME DATE,
 	UPDATE_TIME DATE,
 	DEL_FLAG VARCHAR2(1),
 	TENANT_ID VARCHAR2(40)
@@ -180,10 +198,13 @@ comment on column FLOW_DEFINITION.VERSION is '流程版本'
 comment on column FLOW_DEFINITION.IS_PUBLISH is '是否发布 (0未发布 1已发布 9失效)'
 /
 
-comment on column FLOW_DEFINITION.FROM_CUSTOM is '审批表单是否自定义 (Y是 N否)'
+comment on column FLOW_DEFINITION.FORM_CUSTOM is '审批表单是否自定义 (Y是 N否)'
 /
 
-comment on column FLOW_DEFINITION.FROM_PATH is '审批表单路径'
+comment on column FLOW_DEFINITION.FORM_PATH is '审批表单路径'
+/
+
+comment on column FLOW_DEFINITION.EXT is '扩展字段，预留给业务系统使用'
 /
 
 comment on column FLOW_DEFINITION.CREATE_TIME is '创建时间'
@@ -255,7 +276,7 @@ comment on column FLOW_INSTANCE.CREATE_TIME is '创建时间'
 comment on column FLOW_INSTANCE.UPDATE_TIME is '更新时间'
 /
 
-comment on column FLOW_INSTANCE.EXT is '扩展字段'
+comment on column FLOW_INSTANCE.EXT is '扩展字段，预留给业务系统使用'
 /
 
 comment on column FLOW_INSTANCE.DEL_FLAG is '删除标志'
@@ -280,6 +301,8 @@ create table FLOW_NODE
 	LISTENER_PATH VARCHAR2(500),
 	HANDLER_TYPE VARCHAR2(100),
 	HANDLER_PATH VARCHAR2(400),
+    FORM_CUSTOM VARCHAR2(1) default 'N',
+    FORM_PATH VARCHAR2(100),
 	VERSION VARCHAR2(20),
 	CREATE_TIME DATE,
 	UPDATE_TIME DATE,
@@ -328,6 +351,12 @@ comment on column FLOW_NODE.HANDLER_TYPE is '处理器类型'
 comment on column FLOW_NODE.HANDLER_PATH is '处理器路径'
 /
 
+comment on column FLOW_NODE.FORM_CUSTOM is '审批表单是否自定义 (Y是 N否)'
+/
+
+comment on column FLOW_NODE.FORM_PATH is '审批表单路径'
+/
+
 comment on column FLOW_NODE.VERSION is '版本'
 /
 
@@ -356,6 +385,8 @@ create table FLOW_TASK
 	NODE_CODE VARCHAR2(100),
 	NODE_NAME VARCHAR2(100),
 	NODE_TYPE NUMBER(1),
+    FORM_CUSTOM VARCHAR2(1) default 'N',
+    FORM_PATH VARCHAR2(100),
 	CREATE_TIME DATE,
 	UPDATE_TIME DATE,
 	DEL_FLAG VARCHAR2(1),
@@ -382,6 +413,12 @@ comment on column FLOW_TASK.NODE_NAME is '节点名称'
 /
 
 comment on column FLOW_TASK.NODE_TYPE is '节点类型 (0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关)'
+/
+
+comment on column FLOW_TASK.FORM_CUSTOM is '审批表单是否自定义 (Y是 N否)'
+/
+
+comment on column FLOW_TASK.FORM_PATH is '审批表单路径'
 /
 
 comment on column FLOW_TASK.CREATE_TIME is '创建时间'
@@ -418,7 +455,7 @@ comment on table FLOW_USER is '待办任务表'
 comment on column FLOW_USER.ID is '主键id'
 /
 
-comment on column FLOW_USER.TYPE is '人员类型（1代办任务的审批人权限 2代办任务的转办人权限 3待办任务的委托人权限）'
+comment on column FLOW_USER.TYPE is '人员类型（1待办任务的审批人权限 2待办任务的转办人权限 3待办任务的委托人权限）'
 /
 
 comment on column FLOW_USER.PROCESSED_BY is '权限人)'

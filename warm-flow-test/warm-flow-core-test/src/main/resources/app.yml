@@ -34,3 +34,18 @@ warm-flow:
   logic_delete_value: 2
   # 逻辑未删除字段（开启后默认为0）
   logic_not_delete_value: 0
+
+# warm-flow-jpa 的hibernate jpa配置 此处属于固定配置
+warm-flow-jpa:
+# jpa 与 数据源绑定，此处填写数据源名称
+  datasource: db1
+# hibernate 配置配置
+  properties:
+    hibernate:
+      hbm2ddl:
+        auto: none
+      show_sql: true
+      format_sql: true
+      dialect: org.hibernate.dialect.MySQL8Dialect
+      connection:
+        isolaction: 4 # 事务隔离级别 4 可重复度

@@ -19,7 +19,7 @@ import com.warm.flow.core.constant.FlowCons;
 import com.warm.flow.core.utils.MathUtil;
 
 /**
- * 条件表达式不等于
+ * 条件表达式不等于 @@ne@@|flag@@ne@@4
  *
  * @author warm
  */

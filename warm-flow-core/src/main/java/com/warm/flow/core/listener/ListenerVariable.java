@@ -35,17 +35,22 @@ public class ListenerVariable {
     private Instance instance;
 
     /**
-     * 当前节点
+     * 监听器对应的节点
      */
     private Node node;
 
     /**
-     * 当前任务（启动流程时开始和权限监听器不会传入）
+     * 当前任务
      */
     private Task task;
 
     /**
-     * 新创建任务集合（只有完成监听器和创建监听器会传入）
+     * 下一次执行的节点集合
+     */
+    private List<Node> nextNodes;
+
+    /**
+     * 新创建任务集合
      */
     private List<Task> nextTasks;
 
@@ -87,10 +92,21 @@ public class ListenerVariable {
         this.task = task;
     }
 
-    public ListenerVariable(Instance instance, Map<String, Object> variable, Task task, List<Task> nextTasks) {
+    public ListenerVariable(Instance instance, Node node, Map<String, Object> variable, Task task, List<Node> nextNodes) {
         this.instance = instance;
+        this.node = node;
         this.variable = variable;
         this.task = task;
+        this.nextNodes = nextNodes;
+    }
+
+    public ListenerVariable(Instance instance, Node node , Map<String, Object> variable, Task task
+            , List<Node> nextNodes, List<Task> nextTasks) {
+        this.instance = instance;
+        this.node = node;
+        this.variable = variable;
+        this.task = task;
+        this.nextNodes = nextNodes;
         this.nextTasks = nextTasks;
     }
 
@@ -118,6 +134,15 @@ public class ListenerVariable {
 
     public ListenerVariable setTask(Task task) {
         this.task = task;
+        return this;
+    }
+
+    public List<Node> getNextNodes() {
+        return nextNodes;
+    }
+
+    public ListenerVariable setNextNodes(List<Node> nextNodes) {
+        this.nextNodes = nextNodes;
         return this;
     }
 

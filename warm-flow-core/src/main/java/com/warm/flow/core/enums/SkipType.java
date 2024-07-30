@@ -24,7 +24,8 @@ import com.warm.flow.core.utils.StringUtils;
  */
 public enum SkipType {
     PASS("PASS", "审批通过"),
-    REJECT("REJECT", "退回");
+    REJECT("REJECT", "退回"),
+    NONE("NONE", "无动作");
 
     private String key;
     private String value;
@@ -79,6 +80,16 @@ public enum SkipType {
      */
     public static Boolean isReject(String Key) {
         return StringUtils.isNotEmpty(Key) && (SkipType.REJECT.getKey().equals(Key));
+    }
+
+    /**
+     * 判断是否无动作类型
+     *
+     * @param Key
+     * @return
+     */
+    public static Boolean isNone(String Key) {
+        return StringUtils.isNotEmpty(Key) && (SkipType.NONE.getKey().equals(Key));
     }
 
     public String getKey() {

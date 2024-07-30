@@ -81,13 +81,13 @@ public interface Instance extends RootEntity {
 
     public Instance setCreateBy(String createBy);
 
-    public String getFromCustom();
+    public String getFormCustom();
 
-    public Instance setFromCustom(String fromCustom);
+    public Instance setFormCustom(String formCustom);
 
-    public String getFromPath();
+    public String getFormPath();
 
-    public Instance setFromPath(String fromPath);
+    public Instance setFormPath(String formPath);
 
     public String getExt();
 

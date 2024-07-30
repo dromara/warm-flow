@@ -85,13 +85,8 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
         Node nowNode = FlowFactory.nodeService().getByNodeCode(nowNodeCode, definitionId);
         AssertUtil.isNull(nowNode, ExceptionCons.LOST_DEST_NODE);
         //是否可以跳转任意节点,如是,返回nextNodeCode的节点
-        if (FlowCons.SKIP_ANY_Y.equals(nowNode.getSkipAnyNode())) {
-            AssertUtil.isBlank(nextNodeCode, ExceptionCons.LOST_NEXT_NODE_CODE);
-
-            Node nextNode = FlowFactory.nodeService().getByNodeCode(nextNodeCode, definitionId);
-            ArrayList<Node> arrayList = new ArrayList<>();
-            arrayList.add(nextNode);
-            return arrayList;
+        if (StringUtils.isNotEmpty(nextNodeCode)) {
+            return Collections.singletonList(FlowFactory.nodeService().getByNodeCode(nextNodeCode, definitionId));
         }
         //获取跳转关系
         List<Skip> skips = FlowFactory.skipService().list(FlowFactory.newSkip().setDefinitionId(definitionId)

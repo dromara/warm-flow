@@ -87,6 +87,12 @@ public class FlowNode extends JPARootEntity<FlowNode> implements Node {
                 if (StringUtils.isNotEmpty(this.handlerPath)) {
                     predicates.add(criteriaBuilder.equal(root.get("handlerPath"), this.handlerPath));
                 }
+                if (StringUtils.isNotEmpty(this.formCustom)) {
+                    predicates.add(criteriaBuilder.equal(root.get("formCustom"), this.formCustom));
+                }
+                if (StringUtils.isNotEmpty(this.formPath)) {
+                    predicates.add(criteriaBuilder.equal(root.get("formPath"), this.formPath));
+                }
                 if (StringUtils.isNotEmpty(this.version)) {
                     predicates.add(criteriaBuilder.equal(root.get("version"), this.version));
                 }
@@ -126,6 +132,12 @@ public class FlowNode extends JPARootEntity<FlowNode> implements Node {
         }
         if (StringUtils.isNotEmpty(updateEntity.handlerPath)) {
             this.handlerPath = updateEntity.handlerPath;
+        }
+        if (StringUtils.isNotEmpty(updateEntity.formCustom)) {
+            this.formCustom = updateEntity.formCustom;
+        }
+        if (StringUtils.isNotEmpty(updateEntity.formPath)) {
+            this.formPath = updateEntity.formPath;
         }
         if (StringUtils.isNotEmpty(updateEntity.version)) {
             this.version = updateEntity.version;
@@ -239,6 +251,18 @@ public class FlowNode extends JPARootEntity<FlowNode> implements Node {
      */
     @Column(name = "handler_path")
     private String handlerPath;
+
+    /**
+     * 审批表单是否自定义（Y是 2否）
+     */
+    @Column(name = "form_custom")
+    private String formCustom;
+
+    /**
+     * 审批表单是否自定义（Y是 2否）
+     */
+    @Column(name = "form_path")
+    private String formPath;
 
     @Override
     public Integer getNodeType() {
@@ -395,6 +419,28 @@ public class FlowNode extends JPARootEntity<FlowNode> implements Node {
     }
 
     @Override
+    public String getFormCustom() {
+        return formCustom;
+    }
+
+    @Override
+    public FlowNode setFormCustom(String formCustom) {
+        this.formCustom = formCustom;
+        return this;
+    }
+
+    @Override
+    public String getFormPath() {
+        return formPath;
+    }
+
+    @Override
+    public FlowNode setFormPath(String formPath) {
+        this.formPath = formPath;
+        return this;
+    }
+
+    @Override
     public List<Skip> getSkipList() {
         return skipList;
     }
@@ -428,6 +474,8 @@ public class FlowNode extends JPARootEntity<FlowNode> implements Node {
                 ", listenerPath='" + listenerPath + '\'' +
                 ", handlerType='" + handlerType + '\'' +
                 ", handlerPath='" + handlerPath + '\'' +
+                ", formCustom='" + formCustom + '\'' +
+                ", formPath='" + formPath + '\'' +
                 "}";
     }
 }

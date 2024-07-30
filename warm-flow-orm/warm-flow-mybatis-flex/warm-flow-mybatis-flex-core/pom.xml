@@ -19,7 +19,7 @@
 
         <dependency>
             <groupId>com.mybatis-flex</groupId>
-            <artifactId>mybatis-flex-spring</artifactId>
+            <artifactId>mybatis-flex-core</artifactId>
         </dependency>
         <dependency>
             <groupId>com.mybatis-flex</groupId>

@@ -43,14 +43,12 @@ public class ListenerUtil {
      * 执行节点的权限监听器,并赋值权限值集合
      *
      * @param listenerVariable
-     * @param nodes
      */
-    public static void executeGetNodePermission(ListenerVariable listenerVariable, Node... nodes) {
-        for (Node node : nodes) {
+    public static void executeGetNodePermission(ListenerVariable listenerVariable) {
+        for (Node node : listenerVariable.getNextNodes()) {
             if (StringUtils.isNotEmpty(node.getListenerType()) && node.getListenerType().contains(Listener.LISTENER_PERMISSION)) {
                 //执行权限监听器
-                listenerVariable.setNode(node);
-                executeListener(listenerVariable, Listener.LISTENER_PERMISSION);
+                executeListener(listenerVariable, Listener.LISTENER_PERMISSION, node);
 
                 //拿到监听器内的权限标识 给NowNode.的PermissionFlag 赋值
                 if (CollUtil.isNotEmpty(listenerVariable.getNodePermissionList())) {
@@ -71,29 +69,29 @@ public class ListenerUtil {
      * 执行结束监听器和下一节点的开始监听器
      *
      * @param listenerVariable
-     * @param NowNode
-     * @param nextNodes
      */
-    public static void executeListener(ListenerVariable listenerVariable, Node NowNode, List<Node> nextNodes) {
+    public static void endCreateListener(ListenerVariable listenerVariable) {
         // 执行任务完成监听器
-        executeListener(listenerVariable.setNode(NowNode), Listener.LISTENER_END);
+        executeListener(listenerVariable, Listener.LISTENER_END);
         // 执行任务开始监听器
-        nextNodes.forEach(node -> {
-            executeListener(listenerVariable.setNode(node), Listener.LISTENER_CREATE);
-        });
+        listenerVariable.getNextNodes().forEach(node -> executeListener(listenerVariable, Listener.LISTENER_CREATE, node));
     }
 
     public static void executeListener(ListenerVariable listenerVariable, String lisType) {
+        executeListener(listenerVariable, lisType, listenerVariable.getNode());
+    }
+
+    public static void executeListener(ListenerVariable listenerVariable, String lisType, Node listenerNode) {
         // 执行监听器
         //listenerPath({"name": "John Doe", "age": 30})@@listenerPath@@listenerPath
-        String listenerType = listenerVariable.getNode().getListenerType();
+        String listenerType = listenerNode.getListenerType();
         if (StringUtils.isNotEmpty(listenerType)) {
             String[] listenerTypeArr = listenerType.split(",");
             for (int i = 0; i < listenerTypeArr.length; i++) {
                 String listenerTypeStr = listenerTypeArr[i].trim();
                 if (listenerTypeStr.equals(lisType)) {
                     //"listenerPath1({\"name\": \"John Doe\", \"age\": 30})@@listenerPath2";
-                    String listenerPathStr = listenerVariable.getNode().getListenerPath();
+                    String listenerPathStr = listenerNode.getListenerPath();
                     if (StringUtils.isNotEmpty(listenerPathStr)) {
                         //"listenerPath1({\"name\": \"John Doe\", \"age\": 30})";
                         //listenerPath2

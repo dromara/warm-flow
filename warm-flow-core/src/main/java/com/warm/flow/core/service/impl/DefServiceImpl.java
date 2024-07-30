@@ -345,7 +345,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     }
 
     /**
-     * 获取代办任务节点后的所有节点
+     * 获取待办任务节点后的所有节点
      *
      * @param nextkips
      * @param allNextNode

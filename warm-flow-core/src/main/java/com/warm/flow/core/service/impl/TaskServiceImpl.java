@@ -17,7 +17,6 @@ package com.warm.flow.core.service.impl;
 
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.constant.ExceptionCons;
-import com.warm.flow.core.constant.FlowCons;
 import com.warm.flow.core.dao.FlowTaskDao;
 import com.warm.flow.core.dto.FlowParams;
 import com.warm.flow.core.dto.ModifyHandler;
@@ -72,7 +71,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             return instance;
         }
 
-        // TODO min 后续考虑并发问题，待办任务和实例表不同步，可给代办任务id加锁，抽取所接口，方便后续兼容分布式锁
+        // TODO min 后续考虑并发问题，待办任务和实例表不同步，可给待办任务id加锁，抽取所接口，方便后续兼容分布式锁
         // 非第一个记得跳转类型必传
         if (!NodeType.isStart(task.getNodeType())) {
             AssertUtil.isFalse(StringUtils.isNotEmpty(flowParams.getSkipType()), ExceptionCons.NULL_CONDITIONVALUE);
@@ -82,14 +81,10 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 .getByNodeCodes(Collections.singletonList(task.getNodeCode()), task.getDefinitionId()));
         AssertUtil.isTrue(ObjectUtil.isNull(nowNode), ExceptionCons.LOST_CUR_NODE);
 
-        //执行开始节点 开始监听器
-        List<User> userList = FlowFactory.userService().listByAssociatedAndTypes(task.getId());
-        task.setUserList(userList);
+        task.setUserList(FlowFactory.userService().listByAssociatedAndTypes(task.getId()));
+        //执行开始监听器
         ListenerUtil.executeListener(new ListenerVariable(instance, nowNode, flowParams.getVariable(), task)
                 , Listener.LISTENER_START);
-
-        //判断结点是否有权限监听器,有执行权限监听器NowNode.setPermissionFlag,无走数据库的权限标识符
-        ListenerUtil.executeGetNodePermission(new ListenerVariable(instance, flowParams.getVariable(), task), nowNode);
 
         // 判断当前处理人是否有权限处理
         checkAuth(nowNode, task, flowParams.getPermissionFlag());
@@ -106,39 +101,28 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         List<Node> nextNodes = getNextByCheckGateWay(flowParams, nextNode);
 
         //判断下一结点是否有权限监听器,有执行权限监听器nextNode.setPermissionFlag,无走数据库的权限标识符
-        ListenerUtil.executeGetNodePermission(new ListenerVariable(instance, flowParams.getVariable(), task)
-                , StreamUtils.toArray(nextNodes, Node[]::new));
+        ListenerUtil.executeGetNodePermission(new ListenerVariable(instance, nowNode, flowParams.getVariable(), task
+                , nextNodes));
 
-        // 构建增代办任务和设置结束任务历史记录
+        // 构建增待办任务和设置结束任务历史记录
         List<Task> addTasks = buildAddTasks(flowParams, task, instance, nextNodes, nextNode);
 
-        // 设置流程历史任务信息
-        List<HisTask> insHisList = FlowFactory.hisTaskService().setSkipInsHis(task, nextNodes, flowParams);
-
-        // 设置结束节点相关信息
-        setEndInfo(instance, addTasks);
-
-        // 设置流程实例信息
-        setSkipInstance(instance, addTasks, flowParams);
-
-        // 业务详情 存入历史记录
-        String hisTaskExt = flowParams.getHisTaskExt();
-
-        // 一票否决（谨慎使用），如果退回，退回指向节点后还存在其他正在执行的代办任务，转历史任务，状态都为失效,重走流程。
-        oneVoteVeto(task, flowParams.getSkipType(), nextNode.getNodeCode(), hisTaskExt);
-
-        // 代办任务设置处理人
-        List<User> users = FlowFactory.userService().setSkipUser(addTasks, task.getId());
+        // 执行分派监听器
+        ListenerUtil.executeListener(new ListenerVariable(instance, nowNode, flowParams.getVariable(), task, nextNodes
+                , addTasks), Listener.LISTENER_ASSIGNMENT);
 
         // 更新流程信息
-        updateFlowInfo(task, instance, insHisList, addTasks, users);
+        updateFlowInfo(task, instance, addTasks, flowParams, nextNodes);
 
-        // 处理未完成的任务，当流程完成，还存在代办任务未完成，转历史任务，状态完成。
-        handUndoneTask(instance, hisTaskExt);
+        // 一票否决（谨慎使用），如果退回，退回指向节点后还存在其他正在执行的待办任务，转历史任务，状态都为失效,重走流程。
+        oneVoteVeto(task, flowParams, nextNode.getNodeCode());
+
+        // 处理未完成的任务，当流程完成，还存在待办任务未完成，转历史任务，状态完成。
+        handUndoneTask(instance, flowParams);
 
         // 最后判断是否存在监听器，存在执行监听器
-        ListenerUtil.executeListener(new ListenerVariable(instance, flowParams.getVariable(), task, addTasks)
-                , nowNode, nextNodes);
+        ListenerUtil.endCreateListener(new ListenerVariable(instance, nowNode, flowParams.getVariable(), task
+                , nextNodes, addTasks));
         return instance;
     }
 
@@ -155,10 +139,10 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     @Override
     public Instance termination(Instance instance, Task task, FlowParams flowParams) {
-        // 所有代办转历史
+        // 所有待办转历史
         Node endNode = FlowFactory.nodeService().getOne(FlowFactory.newNode()
                 .setDefinitionId(instance.getDefinitionId()).setNodeType(NodeType.END.getKey()));
-        // 代办任务转历史
+        // 待办任务转历史
         List<HisTask> insHisList = FlowFactory.hisTaskService().setSkipInsHis(task, Collections.singletonList(endNode)
                 , flowParams);
         FlowFactory.hisTaskService().saveBatch(insHisList);
@@ -167,18 +151,15 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         instance.setNodeType(endNode.getNodeType());
         instance.setNodeCode(endNode.getNodeCode());
         instance.setNodeName(endNode.getNodeName());
-        if (ObjectUtil.isNotNull(flowParams.getFlowStatus())) {
-            instance.setFlowStatus(flowParams.getFlowStatus());
-        } else {
-            instance.setFlowStatus(FlowStatus.AUTO_PASS.getKey());
-        }
+        instance.setFlowStatus(ObjectUtil.isNotNull(flowParams.getFlowStatus()) ? flowParams.getFlowStatus()
+                : FlowStatus.AUTO_PASS.getKey());
 
         FlowFactory.insService().updateById(instance);
 
         // 删除流程相关办理人
         FlowFactory.userService().deleteByTaskIds(Collections.singletonList(task.getId()));
-        // 处理未完成的任务，当流程完成，还存在代办任务未完成，转历史任务，状态完成。
-        handUndoneTask(instance, flowParams.getHisTaskExt());
+        // 处理未完成的任务，当流程完成，还存在待办任务未完成，转历史任务，状态完成。
+        handUndoneTask(instance, flowParams);
         return instance;
     }
 
@@ -363,7 +344,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     @Override
-    public Task addTask(Node node, Instance instance, FlowParams flowParams) {
+    public Task addTask(Node node, Instance instance, Definition definition, FlowParams flowParams) {
         Task addTask = FlowFactory.newTask();
         Date date = new Date();
         FlowFactory.dataFillHandler().idFill(addTask);
@@ -373,20 +354,19 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         addTask.setNodeName(node.getNodeName());
         addTask.setNodeType(node.getNodeType());
         addTask.setCreateTime(date);
-        List<String> permissionList;
-        if (CollUtil.isNotEmpty(node.getDynamicPermissionFlagList())) {
-            permissionList = node.getDynamicPermissionFlagList();
+        addTask.setPermissionList(CollUtil.isNotEmpty(node.getDynamicPermissionFlagList()) ?
+                node.getDynamicPermissionFlagList() :
+                StringUtils.str2List(node.getPermissionFlag(), ","));
+
+        if (StringUtils.isNotEmpty(node.getFormCustom())) {
+            // 节点有自定义表单则使用
+            addTask.setFormCustom(node.getFormCustom());
+            addTask.setFormPath(node.getFormPath());
         } else {
-            permissionList = StringUtils.str2List(node.getPermissionFlag(), ",");
-            // 如果设置了发起人审批，则需要动态替换权限标识
-            for (int i = 0; i < permissionList.size(); i++) {
-                String permission = permissionList.get(i);
-                if (StringUtils.isNotEmpty(permission) && permission.contains(FlowCons.WARMFLOWINITIATOR)) {
-                    permissionList.set(i, permission.replace(FlowCons.WARMFLOWINITIATOR, instance.getCreateBy()));
-                }
-            }
+            addTask.setFormCustom(definition.getFormCustom());
+            addTask.setFormPath(definition.getFormPath());
         }
-        addTask.setPermissionList(permissionList);
+
         return addTask;
     }
 
@@ -430,17 +410,18 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         FlowFactory.hisTaskService().saveBatch(CollUtil.toList(hisTask));
         FlowFactory.userService().removeById(entrustedUser.getId());
 
-        // 查询委托人，如果在flow_user不存在，则给委托人新增代办记录
+        // 查询委托人，如果在flow_user不存在，则给委托人新增待办记录
         User deputeUser = FlowFactory.userService().getOne(FlowFactory.newUser().setAssociated(task.getId())
                 .setProcessedBy(entrustedUser.getCreateBy()).setType(UserType.APPROVAL.getKey()));
         if (ObjectUtil.isNull(deputeUser)) {
-            User newUser = FlowFactory.userService().structureUser(entrustedUser.getAssociated(), entrustedUser.getCreateBy()
+            User newUser = FlowFactory.userService().structureUser(entrustedUser.getAssociated()
+                    , entrustedUser.getCreateBy()
                     , UserType.APPROVAL.getKey(), entrustedUser.getProcessedBy());
             FlowFactory.userService().save(newUser);
         }
 
         // 删除受托人
-        FlowFactory.userService().removeById(deputeUser);
+        FlowFactory.userService().removeById(entrustedUser.getId());
         return true;
     }
 
@@ -468,7 +449,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         User todoUser = CollUtil.getOne(StreamUtils.filter(todoList, u -> Objects.equals(u.getProcessedBy(), flowParams.getHandler())));
         AssertUtil.isTrue(Objects.isNull(todoUser), ExceptionCons.NOT_AUTHORITY);
 
-        // 当只剩一人时，他决定走向
+        // 当只剩一位待办用户时，由当前用户决定走向
         if (todoList.size() == 1) {
             return false;
         }
@@ -478,13 +459,14 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
         // 会签并且当前人驳回直接返回
         if (CooperateType.isCountersign(nodeRatio) && SkipType.isReject(flowParams.getSkipType())) {
-            cooperateAutoPass(task, restList, CooperateType.COUNTERSIGN);
+            FlowFactory.userService().removeByIds(StreamUtils.toList(restList, User::getId));
             return false;
         }
 
         // 查询会签票签已办列表
+
         List<HisTask> doneList = FlowFactory.hisTaskService().listByTaskIdAndCooperateTypes(task.getId()
-                , CooperateType.COUNTERSIGN.getKey(), CooperateType.VOTE.getKey());
+                , CooperateType.isCountersign(nodeRatio) ? CooperateType.COUNTERSIGN.getKey() : CooperateType.VOTE.getKey());
         doneList = CollUtil.emptyDefault(doneList, Collections.emptyList());
 
         // TODO 这里处理 cooperation handler 获取下面的 passRatio rejectRatio all 值，能获取使用 handler的值，不能获取使用以下全自动计算代码
@@ -493,10 +475,10 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         BigDecimal all = BigDecimal.ZERO.add(BigDecimal.valueOf(todoList.size())).add(BigDecimal.valueOf(doneList.size()));
 
         List<HisTask> donePassList = StreamUtils.filter(doneList
-                , hisTask -> Objects.equals(hisTask.getFlowStatus(), FlowStatus.PASS.getKey()));
+                , hisTask -> Objects.equals(hisTask.getSkipType(), SkipType.PASS.getKey()));
 
         List<HisTask> doneRejectList = StreamUtils.filter(doneList
-                , hisTask -> Objects.equals(hisTask.getFlowStatus(), FlowStatus.REJECT.getKey()));
+                , hisTask -> Objects.equals(hisTask.getSkipType(), SkipType.REJECT.getKey()));
 
         boolean isPass = SkipType.isPass(flowParams.getSkipType());
 
@@ -512,13 +494,13 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
         if (!isPass && rejectRatio.compareTo(CooperateType.ONE_HUNDRED.subtract(nodeRatio)) > 0) {
             // 驳回，并且当前是驳回
-            cooperateAutoPass(task, restList, CooperateType.VOTE);
+            FlowFactory.userService().removeByIds(StreamUtils.toList(restList, User::getId));
             return false;
         }
 
         if (passRatio.compareTo(nodeRatio) >= 0) {
             // 大于等于 nodeRatio 设置值结束任务
-            cooperateAutoPass(task, restList, CooperateType.VOTE);
+            FlowFactory.userService().removeByIds(StreamUtils.toList(restList, User::getId));
             return false;
         }
 
@@ -531,15 +513,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         return true;
     }
 
-    private void cooperateAutoPass(Task task, List<User> userList, CooperateType cooperateType) {
-        List<HisTask> hisTaskList = FlowFactory.hisTaskService()
-                .autoHisTask(FlowStatus.AUTO_PASS.getKey(), task, userList, cooperateType.getKey());
-        FlowFactory.hisTaskService().saveBatch(hisTaskList);
-        FlowFactory.userService().removeByIds(StreamUtils.toList(userList, User::getId));
-    }
-
     /**
-     * 构建增代办任务
+     * 构建增待办任务
      *
      * @param flowParams
      * @param task
@@ -550,7 +525,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     private List<Task> buildAddTasks(FlowParams flowParams, Task task, Instance instance
             , List<Node> nextNodes, Node nextNode) {
         boolean buildFlag = false;
-        // 下个节点非并行网关节点，可以直接生成下一个代办任务
+        // 下个节点非并行网关节点，可以直接生成下一个待办任务
         if (!NodeType.isGateWayParallel(nextNode.getNodeType())) {
             buildFlag = true;
         } else {
@@ -562,8 +537,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
         if (buildFlag) {
             List<Task> addTasks = new ArrayList<>();
+            Definition definition = FlowFactory.defService().getById(instance.getDefinitionId());
             for (Node node : nextNodes) {
-                addTasks.add(addTask(node, instance, flowParams));
+                addTasks.add(addTask(node, instance, definition, flowParams));
             }
             return addTasks;
         }
@@ -693,22 +669,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     // 设置结束节点相关信息
-    private void setEndInfo(Instance instance, List<Task> addTasks) {
-        if (CollUtil.isNotEmpty(addTasks)) {
-            addTasks.removeIf(addTask -> {
-                if (NodeType.isEnd(addTask.getNodeType())) {
-                    instance.setNodeType(addTask.getNodeType());
-                    instance.setNodeCode(addTask.getNodeCode());
-                    instance.setNodeName(addTask.getNodeName());
-                    instance.setFlowStatus(FlowStatus.FINISHED.getKey());
-                    return true;
-                }
-                return false;
-            });
-        }
-    }
-
-    private void setSkipInstance(Instance instance, List<Task> addTasks, FlowParams flowParams) {
+    private void setEndInfo(Instance instance, List<Task> addTasks, FlowParams flowParams) {
         instance.setUpdateTime(new Date());
         Map<String, Object> variable = flowParams.getVariable();
         if (MapUtil.isNotEmpty(variable)) {
@@ -722,28 +683,30 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             deserialize.putAll(variable);
             instance.setVariable(ONode.serialize(deserialize));
         }
-
-        // 存在后续任务，才重新设置流程信息
+        if (CollUtil.isNotEmpty(addTasks)) {
+            addTasks.removeIf(addTask -> NodeType.isEnd(addTask.getNodeType()));
+        }
         if (CollUtil.isNotEmpty(addTasks)) {
             Task nextTask = getNextTask(addTasks);
             instance.setNodeType(nextTask.getNodeType());
             instance.setNodeCode(nextTask.getNodeCode());
             instance.setNodeName(nextTask.getNodeName());
-            instance.setFlowStatus(setFlowStatus(nextTask.getNodeType(), flowParams.getSkipType()));
+            instance.setFlowStatus(ObjectUtil.isNotNull(flowParams.getFlowStatus()) ? flowParams.getFlowStatus()
+                    : setFlowStatus(nextTask.getNodeType(), flowParams.getSkipType()));
         }
     }
 
     /**
-     * 一票否决（谨慎使用），如果退回，退回指向节点后还存在其他正在执行的代办任务，转历史任务，状态都为退回,重走流程。
+     * 一票否决（谨慎使用），如果退回，退回指向节点后还存在其他正在执行的待办任务，转历史任务，状态都为退回,重走流程。
      *
      * @param task
-     * @param skipType
+     * @param flowParams
      * @param nextNodeCode
      * @return
      */
-    private void oneVoteVeto(Task task, String skipType, String nextNodeCode, String hisTaskExt) {
-        // 一票否决（谨慎使用），如果退回，退回指向节点后还存在其他正在执行的代办任务，转历史任务，状态失效,重走流程。
-        if (SkipType.isReject(skipType)) {
+    private void oneVoteVeto(Task task, FlowParams flowParams, String nextNodeCode) {
+        // 一票否决（谨慎使用），如果退回，退回指向节点后还存在其他正在执行的待办任务，转历史任务，状态失效,重走流程。
+        if (SkipType.isReject(flowParams.getSkipType())) {
             List<Task> tasks = list(FlowFactory.newTask().setInstanceId(task.getInstanceId()));
             List<Skip> allSkips = FlowFactory.skipService().list(FlowFactory.newSkip()
                     .setDefinitionId(task.getDefinitionId()));
@@ -761,7 +724,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 }
             }
             if (CollUtil.isNotEmpty(noDoneTasks)) {
-                convertHisTask(noDoneTasks, FlowStatus.INVALID.getKey(), hisTaskExt);
+                convertHisTask(noDoneTasks, flowParams, FlowStatus.INVALID.getKey());
             }
         }
     }
@@ -790,36 +753,36 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     /**
-     * 处理未完成的任务，当流程完成，还存在代办任务未完成，转历史任务，状态完成。
+     * 处理未完成的任务，当流程完成，还存在待办任务未完成，转历史任务，状态完成。
      *
      * @param instance
      */
-    private void handUndoneTask(Instance instance, String hisTaskExt) {
+    private void handUndoneTask(Instance instance, FlowParams flowParams) {
         if (NodeType.isEnd(instance.getNodeType())) {
             List<Task> taskList = list(FlowFactory.newTask().setInstanceId(instance.getId()));
             if (CollUtil.isNotEmpty(taskList)) {
-                convertHisTask(taskList, FlowStatus.AUTO_PASS.getKey(), hisTaskExt);
+                convertHisTask(taskList, flowParams, FlowStatus.AUTO_PASS.getKey());
             }
         }
     }
 
     /**
-     * 代办任务转历史任务。
+     * 待办任务转历史任务。
      *
      * @param taskList
      */
-    private void convertHisTask(List<Task> taskList, Integer flowStatus, String hisTaskExt) {
+    private void convertHisTask(List<Task> taskList, FlowParams flowParams, Integer flowStatus) {
         List<HisTask> insHisList = new ArrayList<>();
         for (Task task : taskList) {
             List<User> userList = FlowFactory.userService().listByAssociatedAndTypes(task.getId());
-            List<HisTask> hisTasks = FlowFactory.hisTaskService().autoHisTask(flowStatus, task, userList, CooperateType.APPROVAL.getKey());
+            List<HisTask> hisTasks = FlowFactory.hisTaskService().autoHisTask(flowParams, flowStatus, task, userList, CooperateType.APPROVAL.getKey());
             // 设置每个HisTask的ext字段
-            hisTasks.forEach(hisTask -> hisTask.setExt(hisTaskExt));
+            hisTasks.forEach(hisTask -> hisTask.setExt(flowParams.getHisTaskExt()));
             insHisList.addAll(hisTasks);
         }
         removeByIds(StreamUtils.toList(taskList, Task::getId));
         FlowFactory.hisTaskService().saveBatch(insHisList);
-        // 删除所有代办任务的权限人
+        // 删除所有待办任务的权限人
         FlowFactory.userService().deleteByTaskIds(StreamUtils.toList(taskList, Task::getId));
     }
 
@@ -828,18 +791,27 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
      *
      * @param task
      * @param instance
-     * @param insHisList
      * @param addTasks
+     * @param flowParams
+     * @param nextNodes
      */
-    private void updateFlowInfo(Task task, Instance instance, List<HisTask> insHisList
-            , List<Task> addTasks, List<User> users) {
+    private void updateFlowInfo(Task task, Instance instance, List<Task> addTasks, FlowParams flowParams
+            , List<Node> nextNodes) {
+        // 设置流程历史任务信息
+        List<HisTask> insHisList = FlowFactory.hisTaskService().setSkipInsHis(task, nextNodes, flowParams);
+
+        // 设置结束节点相关信息
+        setEndInfo(instance, addTasks, flowParams);
+
+        // 待办任务设置处理人
+        List<User> users = FlowFactory.userService().setSkipUser(addTasks, task.getId());
         removeById(task.getId());
         FlowFactory.hisTaskService().saveBatch(insHisList);
         if (CollUtil.isNotEmpty(addTasks)) {
             saveBatch(addTasks);
         }
         FlowFactory.insService().updateById(instance);
-        // 保存下一个代办任务的权限人和历史任务的处理人
+        // 保存下一个待办任务的权限人和历史任务的处理人
         FlowFactory.userService().saveBatch(users);
     }
 }
