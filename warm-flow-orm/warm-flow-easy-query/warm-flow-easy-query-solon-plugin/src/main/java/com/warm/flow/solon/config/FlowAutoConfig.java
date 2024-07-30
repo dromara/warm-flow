@@ -20,15 +20,9 @@ import com.easy.query.api.proxy.client.EasyEntityQuery;
 import com.easy.query.solon.annotation.Db;
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.config.WarmFlow;
-import com.warm.flow.core.dao.*;
 import com.warm.flow.core.invoker.FrameInvoker;
-import com.warm.flow.core.service.*;
-import com.warm.flow.core.service.impl.*;
-import com.warm.flow.orm.dao.*;
-import com.warm.flow.orm.invoker.EntityInvoker;
+import com.warm.plugin.modes.solon.config.BeanConfig;
 import org.noear.solon.Solon;
-import org.noear.solon.annotation.Bean;
-import org.noear.solon.annotation.Condition;
 import org.noear.solon.annotation.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,105 +34,22 @@ import org.slf4j.LoggerFactory;
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Configuration
-public class FlowAutoConfig {
+public class FlowAutoConfig extends BeanConfig {
 
     private static final Logger log = LoggerFactory.getLogger(FlowAutoConfig.class);
 
+    @Db
+    private EasyEntityQuery entityQuery;
 
-
-    @Bean
-    public FlowDefinitionDao definitionDao() {
-        return new FlowDefinitionDaoImpl();
-    }
-
-    @Bean
-    public DefService definitionService(FlowDefinitionDao definitionDao) {
-        return new DefServiceImpl().setDao(definitionDao);
-    }
-
-
-    @Bean
-    public FlowNodeDao nodeDao() {
-        return new FlowNodeDaoImpl();
-    }
-
-    @Bean
-    public NodeService nodeService(FlowNodeDao nodeDao) {
-        return new NodeServiceImpl().setDao(nodeDao);
-    }
-
-    @Bean
-    public FlowSkipDao skipDao() {
-        return new FlowSkipDaoImpl();
-    }
-
-    @Bean
-    public SkipService skipService(FlowSkipDao skipDao) {
-        return new SkipServiceImpl().setDao(skipDao);
-    }
-
-    @Bean
-    public FlowInstanceDao instanceDao() {
-        return new FlowInstanceDaoImpl();
-    }
-
-    @Bean
-    public InsService instanceService(FlowInstanceDao instanceDao) {
-        return new InsServiceImpl().setDao(instanceDao);
-    }
-
-    @Bean
-    public FlowTaskDao taskDao() {
-        return new FlowTaskDaoImpl();
-    }
-
-    @Bean
-    public TaskService taskService(FlowTaskDao taskDao) {
-        return new TaskServiceImpl().setDao(taskDao);
-    }
-
-    @Bean
-    public FlowHisTaskDao hisTaskDao() {
-        return new FlowHisTaskDaoImpl();
-    }
-
-    @Bean
-    public HisTaskService hisTaskService(FlowHisTaskDao hisTaskDao) {
-        return new HisTaskServiceImpl().setDao(hisTaskDao);
-    }
-
-    @Bean
-    public FlowUserDao userDao() {
-        return new FlowUserDaoImpl();
-    }
-
-    @Bean
-    public UserService flowUserService(FlowUserDao userDao) {
-        return new UserServiceImpl().setDao(userDao);
-    }
-
-
-    /**
-     * 初始化流程
-     * @param entityQuery 直接注入默认的数据源<br/> 如果需要自定义数据源，请自行复制该方法注入
-     * @return WarmFlow
-     */
-    @Bean
-    @Condition(onMissingBean = WarmFlow.class)
-    public WarmFlow initFlow(@Db EasyEntityQuery entityQuery) {
-        // 设置创建对象方法
-        EntityInvoker.setNewEntity();
-        FrameInvoker.setCfgFunction((key) -> Solon.cfg().get(key));
+    @Override
+    public WarmFlow after(WarmFlow flowConfig) {
         FrameInvoker.setBeanFunction((clazz)->{
             if (clazz.isAssignableFrom(EasyEntityQuery.class)) {
-//                 return DbManager.dbMap.get("db1").getEntityQuery();
                 return entityQuery;
             }
             return Solon.context().getBean(clazz);
         });
-        WarmFlow flowConfig = WarmFlow.init();
-        FlowFactory.setFlowConfig(flowConfig);
-        log.info("warm-flow初始化结束");
+        log.info("【warm-flow】，easy-query的solon扩展包初始化结束");
         return FlowFactory.getFlowConfig();
     }
 }

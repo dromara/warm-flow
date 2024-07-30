@@ -15,14 +15,6 @@
  */
 package com.warm.flow.spring.boot.config;
 
-import com.warm.flow.core.FlowFactory;
-import com.warm.flow.core.config.WarmFlow;
-import com.warm.flow.core.dao.*;
-import com.warm.flow.core.invoker.FrameInvoker;
-import com.warm.flow.core.service.*;
-import com.warm.flow.core.service.impl.*;
-import com.warm.flow.orm.dao.*;
-import com.warm.flow.orm.invoker.EntityInvoker;
 import com.warm.flow.orm.utils.FlowJpaConfigCons;
 import com.warm.plugin.modes.sb.utils.SpringUtil;
 import jakarta.persistence.spi.PersistenceProvider;
@@ -45,78 +37,12 @@ import javax.sql.DataSource;
  */
 @Configuration
 @Import(SpringUtil.class)
-public class FlowAutoConfig {
+public class FlowAutoConfig  extends BeanConfig {
 
     private static final Logger log = LoggerFactory.getLogger(FlowAutoConfig.class);
 
-    @Bean
-    public FlowDefinitionDao definitionDao() {
-        return new FlowDefinitionDaoImpl();
-    }
-
-    @Bean
-    public DefService definitionService(FlowDefinitionDao definitionDao) {
-        return new DefServiceImpl().setDao(definitionDao);
-    }
-
-    @Bean
-    public FlowNodeDao nodeDao() {
-        return new FlowNodeDaoImpl();
-    }
-
-    @Bean
-    public NodeService nodeService(FlowNodeDao nodeDao) {
-        return new NodeServiceImpl().setDao(nodeDao);
-    }
-
-    @Bean
-    public FlowSkipDao skipDao() {
-        return new FlowSkipDaoImpl();
-    }
-
-    @Bean
-    public SkipService skipService(FlowSkipDao skipDao) {
-        return new SkipServiceImpl().setDao(skipDao);
-    }
-
-    @Bean
-    public FlowInstanceDao instanceDao() {
-        return new FlowInstanceDaoImpl();
-    }
-
-    @Bean
-    public InsService instanceService(FlowInstanceDao instanceDao) {
-        return new InsServiceImpl().setDao(instanceDao);
-    }
-
-    @Bean
-    public FlowTaskDao taskDao() {
-        return new FlowTaskDaoImpl();
-    }
-
-    @Bean
-    public TaskService taskService(FlowTaskDao taskDao) {
-        return new TaskServiceImpl().setDao(taskDao);
-    }
-
-    @Bean
-    public FlowHisTaskDao hisTaskDao() {
-        return new FlowHisTaskDaoImpl();
-    }
-
-    @Bean
-    public HisTaskService hisTaskService(FlowHisTaskDao hisTaskDao) {
-        return new HisTaskServiceImpl().setDao(hisTaskDao);
-    }
-
-    @Bean
-    public FlowUserDao userDao() {
-        return new FlowUserDaoImpl();
-    }
-
-    @Bean
-    public UserService flowUserService(FlowUserDao userDao) {
-        return new UserServiceImpl().setDao(userDao);
+    static {
+        log.info("【warm-flow】，jpa-jakarta的springboot扩展包初始化开始");
     }
 
     @Bean
@@ -138,17 +64,4 @@ public class FlowAutoConfig {
         factory.setPersistenceUnitName("warm-flow-jpa");
         return factory;
     }
-
-    @Bean("warmFlow")
-    public WarmFlow initFlow() {
-        // 设置创建对象方法
-        EntityInvoker.setNewEntity();
-        FrameInvoker.setCfgFunction((key) -> SpringUtil.getBean(Environment.class).getProperty(key));
-        FrameInvoker.setBeanFunction(SpringUtil::getBean);
-        WarmFlow flowConfig = WarmFlow.init();
-        FlowFactory.setFlowConfig(flowConfig);
-        log.info("warm-flow初始化结束");
-        return FlowFactory.getFlowConfig();
-    }
-
 }

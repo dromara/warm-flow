@@ -29,6 +29,11 @@
             <groupId>com.mybatis-flex</groupId>
             <artifactId>mybatis-flex-solon-plugin</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>io.github.minliuhua</groupId>
+            <artifactId>warm-flow-plugin-modes-solon</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

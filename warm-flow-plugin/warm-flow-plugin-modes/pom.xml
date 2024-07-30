@@ -14,6 +14,7 @@
 
     <modules>
         <module>warm-flow-plugin-modes-sb</module>
+        <module>warm-flow-plugin-modes-solon</module>
     </modules>
 
 </project>
