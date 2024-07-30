@@ -23,6 +23,7 @@ import com.warm.flow.core.config.WarmFlow;
 import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.plugin.modes.solon.config.BeanConfig;
 import org.noear.solon.Solon;
+import org.noear.solon.annotation.Bean;
 import org.noear.solon.annotation.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,8 +42,8 @@ public class FlowAutoConfig extends BeanConfig {
     @Db
     private EasyEntityQuery entityQuery;
 
-    @Override
-    public WarmFlow after(WarmFlow flowConfig) {
+    @Bean
+    public WarmFlow initFlow(WarmFlow flowConfig) {
         FrameInvoker.setBeanFunction((clazz)->{
             if (clazz.isAssignableFrom(EasyEntityQuery.class)) {
                 return entityQuery;
