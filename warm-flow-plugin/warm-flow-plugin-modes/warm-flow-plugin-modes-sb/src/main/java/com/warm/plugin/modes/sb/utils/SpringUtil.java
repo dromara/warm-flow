@@ -15,7 +15,7 @@
  */
 package com.warm.plugin.modes.sb.utils;
 
-import com.sun.xml.internal.ws.util.UtilException;
+import com.warm.flow.core.exception.FlowException;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -62,9 +62,9 @@ public class SpringUtil implements ApplicationContextAware {
     public static ListableBeanFactory getBeanFactory() {
         ListableBeanFactory factory = null == beanFactory ? applicationContext : beanFactory;
         if (null == factory) {
-            throw new UtilException("No ConfigurableListableBeanFactory or ApplicationContext injected, maybe not in the Spring environment?");
+            throw new FlowException("No ConfigurableListableBeanFactory or ApplicationContext injected, maybe not in the Spring environment?");
         } else {
-            return (ListableBeanFactory)factory;
+            return factory;
         }
     }
 }
