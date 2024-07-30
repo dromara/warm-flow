@@ -17,6 +17,7 @@ package com.warm.flow.core.config;
 
 import com.warm.flow.core.constant.FlowConfigCons;
 import com.warm.flow.core.invoker.FrameInvoker;
+import com.warm.flow.core.utils.ExpressionUtil;
 import com.warm.flow.core.utils.ObjectUtil;
 import com.warm.flow.core.utils.StringUtils;
 
@@ -82,6 +83,9 @@ public class WarmFlow {
         // 设置数据源类型
         flowConfig.setDataSourceType(FrameInvoker.getCfg(FlowConfigCons.DATA_SOURCE_TYPE));
         printBanner(flowConfig);
+
+        // 通过SPI机制加载条件表达式策略实现类
+        ExpressionUtil.load();
         return flowConfig;
     }
 

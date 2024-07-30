@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component("user")
 public class User {
 
-    public boolean eval(String aa) {
-        return "yes".equals(aa);
+    public boolean eval() {
+        return true;
     }
 }

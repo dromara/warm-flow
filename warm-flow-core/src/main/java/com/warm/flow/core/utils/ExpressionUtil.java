@@ -18,9 +18,13 @@ package com.warm.flow.core.utils;
 import com.warm.flow.core.constant.ExceptionCons;
 import com.warm.flow.core.exception.FlowException;
 import com.warm.flow.core.expression.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -29,6 +33,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author warm
  */
 public class ExpressionUtil {
+
+    private static final Logger log = LoggerFactory.getLogger(ExpressionUtil.class);
 
     private static final Map<String, ExpressionStrategy> map = new HashMap<>();
 
@@ -66,5 +72,18 @@ public class ExpressionUtil {
             }
         });
         return flag.get();
+    }
+
+    public static void load() {
+        ServiceLoader<ExpressionStrategy> loadedAPIs = ServiceLoader.load(ExpressionStrategy.class);
+        Iterator<ExpressionStrategy> apiIterator = loadedAPIs.iterator();
+        try {
+            while (apiIterator.hasNext()) {
+                ExpressionStrategy expressionStrategy = apiIterator.next();
+                setExpression(expressionStrategy);
+            }
+        } catch (Throwable t) {
+            log.error(ExceptionCons.LOAD_EXPRESSION_STRATEGY_ERROR, t);
+        }
     }
 }

@@ -320,7 +320,12 @@
             </dependency>
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
-                <artifactId>warm-flow-plugin-expression</artifactId>
+                <artifactId>warm-flow-plugin-spel</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.minliuhua</groupId>
+                <artifactId>warm-flow-plugin-modes-sb</artifactId>
                 <version>${revision}</version>
             </dependency>
         </dependencies>

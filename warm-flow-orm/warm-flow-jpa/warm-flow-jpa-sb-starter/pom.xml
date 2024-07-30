@@ -38,6 +38,10 @@
             <artifactId>spring-context</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>io.github.minliuhua</groupId>
+            <artifactId>warm-flow-plugin-modes-sb</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

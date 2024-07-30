@@ -5,17 +5,17 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.github.minliuhua</groupId>
-        <artifactId>warm-flow</artifactId>
+        <artifactId>warm-flow-plugin-modes</artifactId>
         <version>${revision}</version>
     </parent>
 
-    <artifactId>warm-flow-plugin</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>warm-flow-plugin-modes-sb</artifactId>
 
-    <modules>
-        <module>warm-flow-plugin-expression</module>
-        <module>warm-flow-plugin-modes</module>
-    </modules>
-
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>

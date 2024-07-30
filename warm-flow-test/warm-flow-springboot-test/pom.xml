@@ -43,6 +43,11 @@
             <scope>compile</scope>
         </dependency>
 
+        <dependency>
+            <groupId>io.github.minliuhua</groupId>
+            <artifactId>warm-flow-plugin-spel</artifactId>
+        </dependency>
+
         <!-- Oracle数据库时打开 -->
         <!--<dependency>
             <groupId>com.oracle.database.jdbc</groupId>

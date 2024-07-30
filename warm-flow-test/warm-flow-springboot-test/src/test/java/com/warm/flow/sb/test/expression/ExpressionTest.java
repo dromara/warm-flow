@@ -18,7 +18,6 @@ package com.warm.flow.sb.test.expression;
 
 import com.warm.flow.core.test.FlowBaseTest;
 import com.warm.flow.core.utils.ExpressionUtil;
-import com.warm.flow.sb.test.spel.ExpressionStrategySpel;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,7 +35,6 @@ public class ExpressionTest extends FlowBaseTest {
      */
     @Test
     public void testSpel() {
-        ExpressionUtil.setExpression(new ExpressionStrategySpel());
         Map<String, Object> variable = new HashMap<>();
         variable.put("aa", "yes");
         log.info("spel结果:{}", ExpressionUtil.eval("@@spel@@|#{@user.eval()}", null));

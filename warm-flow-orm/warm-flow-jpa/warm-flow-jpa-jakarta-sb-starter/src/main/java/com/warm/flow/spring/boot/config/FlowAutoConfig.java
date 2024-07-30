@@ -24,7 +24,7 @@ import com.warm.flow.core.service.impl.*;
 import com.warm.flow.orm.dao.*;
 import com.warm.flow.orm.invoker.EntityInvoker;
 import com.warm.flow.orm.utils.FlowJpaConfigCons;
-import com.warm.flow.spring.boot.utils.SpringUtil;
+import com.warm.plugin.modes.sb.utils.SpringUtil;
 import jakarta.persistence.spi.PersistenceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

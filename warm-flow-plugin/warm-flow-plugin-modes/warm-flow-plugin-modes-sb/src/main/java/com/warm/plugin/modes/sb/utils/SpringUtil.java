@@ -13,7 +13,7 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.warm.flow.spring.boot.utils;
+package com.warm.plugin.modes.sb.utils;
 
 import com.sun.xml.internal.ws.util.UtilException;
 import org.springframework.beans.BeansException;
