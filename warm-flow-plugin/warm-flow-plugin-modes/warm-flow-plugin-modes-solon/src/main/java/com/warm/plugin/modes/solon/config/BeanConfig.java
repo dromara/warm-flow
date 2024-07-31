@@ -117,7 +117,6 @@ public class BeanConfig {
         FrameInvoker.setBeanFunction(Solon.context()::getBean);
         WarmFlow flowConfig = WarmFlow.init();
         FlowFactory.setFlowConfig(flowConfig);
-//        after(flowConfig);
         log.info("【warm-flow】，加载完成");
         return FlowFactory.getFlowConfig();
     }
@@ -132,7 +131,4 @@ public class BeanConfig {
         FlowFactory.setNewUser(FlowUser::new);
     }
 
-    public WarmFlow after(WarmFlow flowConfig) {
-        return flowConfig;
-    }
 }

@@ -15,11 +15,6 @@
  */
 package com.warm.flow.solon.config;
 
-import com.warm.flow.core.FlowFactory;
-import com.warm.flow.core.config.WarmFlow;
-import com.warm.flow.core.invoker.FrameInvoker;
-import org.noear.solon.Solon;
-import org.noear.solon.annotation.Bean;
 import org.noear.solon.annotation.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,15 +29,8 @@ public class FlowAutoConfig {
 
     private static final Logger log = LoggerFactory.getLogger(FlowAutoConfig.class);
 
-
-    @Bean("warmFlow")
-    public WarmFlow initFlow() {
-        FrameInvoker.setCfgFunction((key) -> Solon.cfg().get(key));
-        FrameInvoker.setBeanFunction(Solon.context()::getBean);
-        WarmFlow flowConfig = WarmFlow.init();
-        FlowFactory.setFlowConfig(flowConfig);
-        log.info("【warm-flow】，jpa的solon扩展包初始化结束");
-        return FlowFactory.getFlowConfig();
+    static {
+        log.info("【warm-flow】，jpa的solon扩展包初始化开始");
     }
 
 }

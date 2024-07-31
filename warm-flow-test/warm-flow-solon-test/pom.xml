@@ -98,7 +98,7 @@
             </dependencies>
         </profile>
         <profile>
-            <id>hibernate-jpa</id>
+            <id>jpa</id>
             <dependencies>
                 <dependency>
                     <groupId>io.github.minliuhua</groupId>

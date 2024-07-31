@@ -54,7 +54,6 @@ public class FlowAutoConfig extends BeanConfig {
     public WarmFlow after(WarmFlow flowConfig) {
         loadXml(sqlSessionFactory);
         CommonUtil.setDataSourceType(flowConfig, sqlSessionFactory.getConfiguration());
-        log.info("【warm-flow】，mybatis的springboot扩展包初始化结束");
         return FlowFactory.getFlowConfig();
     }
 

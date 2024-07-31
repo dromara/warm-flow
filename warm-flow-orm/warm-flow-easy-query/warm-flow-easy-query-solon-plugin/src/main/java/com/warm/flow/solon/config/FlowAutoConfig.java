@@ -21,7 +21,6 @@ import com.easy.query.solon.annotation.Db;
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.config.WarmFlow;
 import com.warm.flow.core.invoker.FrameInvoker;
-import com.warm.plugin.modes.solon.config.BeanConfig;
 import org.noear.solon.Solon;
 import org.noear.solon.annotation.Bean;
 import org.noear.solon.annotation.Configuration;
@@ -35,9 +34,13 @@ import org.slf4j.LoggerFactory;
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Configuration
-public class FlowAutoConfig extends BeanConfig {
+public class FlowAutoConfig {
 
     private static final Logger log = LoggerFactory.getLogger(FlowAutoConfig.class);
+
+    static {
+        log.info("【warm-flow】，easy-query的solon扩展包初始化开始");
+    }
 
     @Db
     private EasyEntityQuery entityQuery;
@@ -50,7 +53,6 @@ public class FlowAutoConfig extends BeanConfig {
             }
             return Solon.context().getBean(clazz);
         });
-        log.info("【warm-flow】，easy-query的solon扩展包初始化结束");
         return FlowFactory.getFlowConfig();
     }
 }
