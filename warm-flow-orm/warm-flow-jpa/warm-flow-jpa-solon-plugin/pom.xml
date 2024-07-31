@@ -23,6 +23,11 @@
             <artifactId>hibernate-solon-plugin</artifactId>
             <version>${solon.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>io.github.minliuhua</groupId>
+            <artifactId>warm-flow-plugin-modes-solon</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

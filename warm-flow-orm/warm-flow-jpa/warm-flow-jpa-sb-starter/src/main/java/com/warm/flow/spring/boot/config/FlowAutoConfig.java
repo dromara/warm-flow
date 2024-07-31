@@ -15,6 +15,8 @@
  */
 package com.warm.flow.spring.boot.config;
 
+import com.warm.flow.core.constant.ExceptionCons;
+import com.warm.flow.core.exception.FlowException;
 import com.warm.flow.orm.utils.FlowJpaConfigCons;
 import com.warm.plugin.modes.sb.config.BeanConfig;
 import com.warm.plugin.modes.sb.utils.SpringUtil;
@@ -25,8 +27,6 @@ import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Import;
-import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
@@ -63,6 +63,9 @@ public class FlowAutoConfig extends BeanConfig {
         factory.setPersistenceXmlLocation("classpath:/META-INF/warm-flow-persistence.xml");
         String jpaPersistenceProvider = SpringUtil.getBean(Environment.class).getProperty(FlowJpaConfigCons.JPA_PERSISTENCE_PROVIDER);
         log.info("warm-flow use jpa persistence provider to be: {}", jpaPersistenceProvider);
+        if (jpaPersistenceProvider == null) {
+            throw new FlowException(ExceptionCons.JPA_PERSISTENCE_PROVIDER_NOT_FOUND);
+        }
         factory.setPersistenceProviderClass((Class<? extends PersistenceProvider>) Class.forName(jpaPersistenceProvider));
         factory.setPersistenceUnitName("warm-flow-jpa");
         return factory;
