@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 /**
  * @author PMB
  */
-@Component
+@Component("warmFlowSpringUtil")
 public class SpringUtil implements ApplicationContextAware {
 
     private static ApplicationContext applicationContext;
