@@ -28,7 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.List;
 
@@ -47,8 +46,11 @@ public class FlowAutoConfig extends BeanConfig {
         log.info("【warm-flow】，mybatis的springboot扩展包初始化开始");
     }
 
-    @Resource
-    private SqlSessionFactory sqlSessionFactory;
+    private final SqlSessionFactory sqlSessionFactory;
+
+    public FlowAutoConfig(SqlSessionFactory sqlSessionFactory) {
+        this.sqlSessionFactory = sqlSessionFactory;
+    }
 
     @Override
     public WarmFlow after(WarmFlow flowConfig) {
