@@ -24,6 +24,7 @@ import com.warm.flow.core.entity.Task;
 import com.warm.flow.core.entity.User;
 import com.warm.flow.core.enums.CooperateType;
 import com.warm.flow.core.enums.FlowStatus;
+import com.warm.flow.core.enums.NodeType;
 import com.warm.flow.core.enums.SkipType;
 import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.HisTaskService;
@@ -91,7 +92,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
             hisTask.setTargetNodeCode(nextNode.getNodeCode());
             hisTask.setTargetNodeName(nextNode.getNodeName());
             hisTask.setApprover(flowParams.getHandler());
-            hisTask.setSkipType(flowParams.getSkipType());
+            hisTask.setSkipType(NodeType.isStart(task.getNodeType()) ? SkipType.PASS.getKey() : flowParams.getSkipType());
             hisTask.setFlowStatus(Objects.nonNull(flowParams.getFlowStatus())
                     ? flowParams.getFlowStatus() : SkipType.isReject(flowParams.getSkipType())
                     ? FlowStatus.REJECT.getKey() : FlowStatus.PASS.getKey());

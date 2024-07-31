@@ -155,6 +155,11 @@ public class FlowParams implements Serializable {
         return skipType;
     }
 
+    public FlowParams setSkipType(String skipType) {
+        this.skipType = skipType;
+        return this;
+    }
+
     public String getMessage() {
         return message;
     }
