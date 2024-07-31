@@ -28,7 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 
 import java.util.Objects;
@@ -114,7 +113,6 @@ public class BeanConfig {
     }
 
     @Bean
-    @Order(100)
     public WarmFlow initFlow() {
         setNewEntity();
         FrameInvoker.setCfgFunction((key) -> Objects.requireNonNull(SpringUtil.getBean(Environment.class)).getProperty(key));
