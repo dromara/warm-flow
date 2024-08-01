@@ -163,17 +163,25 @@
                 and t.associated = #{entity.associated}
             </if>
             <if test="associateds != null and associateds.size > 0">
-                AND `associated` in
+                AND associated in
                 <foreach item="item" collection="associateds" open="(" separator="," close=")">
                     #{item}
                 </foreach>
             </if>
             <if test="types != null and types.length > 0">
-                AND `type` in
+                <choose>
+                    <when test="dataSourceType == 'postgresql'.toString() ">
+                        and t."type" in
+                    </when>
+                    <otherwise>
+                        AND t.`type` in
+                    </otherwise>
+                </choose>
                 <foreach item="item" collection="types" open="(" separator="," close=")">
                     #{item}
                 </foreach>
             </if>
+
             <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
             <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
         </where>
@@ -189,17 +197,25 @@
                 and t.processed_by = #{processedBy}
             </if>
             <if test="processedBys != null and processedBys.size > 0">
-                AND `processed_by` in
+                AND processed_by in
                 <foreach item="item" collection="processedBys" open="(" separator="," close=")">
                     #{item}
                 </foreach>
             </if>
             <if test="types != null and types.length > 0">
-                AND `type` in
+                <choose>
+                    <when test="dataSourceType == 'postgresql'.toString()">
+                        and t."type" in
+                    </when>
+                    <otherwise>
+                        and t.`type` in
+                    </otherwise>
+                </choose>
                 <foreach item="item" collection="types" open="(" separator="," close=")">
                     #{item}
                 </foreach>
             </if>
+
             <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
             <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
         </where>

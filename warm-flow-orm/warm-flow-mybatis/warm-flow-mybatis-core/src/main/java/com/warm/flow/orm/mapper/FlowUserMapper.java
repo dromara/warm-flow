@@ -56,10 +56,10 @@ public interface FlowUserMapper extends WarmMapper<FlowUser> {
 
     List<FlowUser> listByAssociatedAndTypes(@Param("types") String[] types
             , @Param("associateds") List<Long> associateds
-            , @Param("entity") FlowUser entity);
+            , @Param("entity") FlowUser entity,  @Param("dataSourceType") String dataSourceType);
 
     List<FlowUser> listByProcessedBys(@Param("types") String[] types
             , @Param("processedBys") List<String> processedBys
-            , @Param("entity") FlowUser entity);
+            , @Param("entity") FlowUser entity,  @Param("dataSourceType") String dataSourceType);
 
 }
