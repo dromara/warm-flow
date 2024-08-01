@@ -684,9 +684,18 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             instance.setVariable(ONode.serialize(deserialize));
         }
         if (CollUtil.isNotEmpty(addTasks)) {
-            addTasks.removeIf(addTask -> NodeType.isEnd(addTask.getNodeType()));
+            addTasks.removeIf(addTask -> {
+                if (NodeType.isEnd(addTask.getNodeType())) {
+                    instance.setNodeType(addTask.getNodeType());
+                    instance.setNodeCode(addTask.getNodeCode());
+                    instance.setNodeName(addTask.getNodeName());
+                    instance.setFlowStatus(FlowStatus.FINISHED.getKey());
+                    return true;
+                }
+                return false;
+            });
         }
-        if (CollUtil.isNotEmpty(addTasks)) {
+        if (CollUtil.isNotEmpty(addTasks) && !NodeType.isEnd(instance.getNodeType())) {
             Task nextTask = getNextTask(addTasks);
             instance.setNodeType(nextTask.getNodeType());
             instance.setNodeCode(nextTask.getNodeCode());
