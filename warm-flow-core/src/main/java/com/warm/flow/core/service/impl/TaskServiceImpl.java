@@ -625,7 +625,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     /**
-     * 通过校验调整类型获取跳转集合
+     * 通过校验跳转类型获取跳转集合
      *
      * @param task
      * @param skips
