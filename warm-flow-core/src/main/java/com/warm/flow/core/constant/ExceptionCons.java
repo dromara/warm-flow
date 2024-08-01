@@ -105,5 +105,6 @@ public class ExceptionCons {
 
     public static final String LOAD_EXPRESSION_STRATEGY_ERROR = "SPI加载条件表达式失败!";
     public static final String JPA_PERSISTENCE_PROVIDER_NOT_FOUND = "jpa_persistence_provider配置不能为空";
+    public static final String BUSINESSID_REPEAT = "同一个流程定义，多个流程实例，不能存在业务id相同并且未审批结束";
 
 }

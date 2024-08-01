@@ -54,6 +54,12 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         // 获取已发布的流程节点
         List<Node> nodes = FlowFactory.nodeService().getByFlowCode(flowParams.getFlowCode());
         AssertUtil.isTrue(CollUtil.isEmpty(nodes), String.format(ExceptionCons.NOT_PUBLISH_NODE, flowParams.getFlowCode()));
+
+        // 同一个流程定义，多个流程实例，不能存在业务id相同并且未审批结束
+        List<Instance> instanceList = FlowFactory.insService().list(FlowFactory.newIns().setBusinessId(businessId)
+                .setDefinitionId(nodes.get(0).getDefinitionId()));
+        AssertUtil.isTrue(CollUtil.isNotEmpty(instanceList), ExceptionCons.BUSINESSID_REPEAT);
+
         // 获取开始节点
         Node startNode = nodes.stream().filter(t -> NodeType.isStart(t.getNodeType())).findFirst().orElse(null);
         AssertUtil.isNull(startNode, ExceptionCons.LOST_START_NODE);
