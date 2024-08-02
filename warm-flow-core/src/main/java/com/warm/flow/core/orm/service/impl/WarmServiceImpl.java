@@ -83,6 +83,12 @@ public abstract class WarmServiceImpl<M extends WarmDao<T>, T> implements IWarmS
     }
 
     @Override
+    public Boolean exists(T entity) {
+        long count = selectCount(entity);
+        return count > 0;
+    }
+
+    @Override
     public boolean save(T entity) {
         insertFill(entity);
         return SqlHelper.retBool(getDao().save(entity));

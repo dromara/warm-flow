@@ -61,30 +61,35 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     @Override
     public Instance skip(FlowParams flowParams, Task task) {
-        // 获取当前流程
+        // TODO min 后续考虑并发问题，待办任务和实例表不同步，可给待办任务id加锁，抽取所接口，方便后续兼容分布式锁
+        // 流程开启前正确性校验
         Instance instance = FlowFactory.insService().getById(task.getInstanceId());
         AssertUtil.isTrue(ObjectUtil.isNull(instance), ExceptionCons.NOT_FOUNT_INSTANCE);
         AssertUtil.isTrue(NodeType.isEnd(instance.getNodeType()), ExceptionCons.FLOW_FINISH);
+        Node nowNode = CollUtil.getOne(FlowFactory.nodeService()
+                .getByNodeCodes(Collections.singletonList(task.getNodeCode()), task.getDefinitionId()));
+        AssertUtil.isTrue(ObjectUtil.isNull(nowNode), ExceptionCons.LOST_CUR_NODE);
+        // 非第一个记得跳转类型必传
+        if (!NodeType.isStart(task.getNodeType())) {
+            AssertUtil.isFalse(StringUtils.isNotEmpty(flowParams.getSkipType()), ExceptionCons.NULL_CONDITIONVALUE);
+        }
+        // 不能退回，未完成过任务
+        if (SkipType.isReject(flowParams.getSkipType())) {
+            Boolean exists = FlowFactory.hisTaskService().exists(FlowFactory.newHisTask().setInstanceId(task.getInstanceId())
+                    .setNodeCode(task.getNodeCode()));
+            AssertUtil.isFalse(exists, ExceptionCons.BACK_TASK_NOT_EXECUTED);
+        }
+
+
+        //执行开始监听器
+        task.setUserList(FlowFactory.userService().listByAssociatedAndTypes(task.getId()));
+        ListenerUtil.executeListener(new ListenerVariable(instance, nowNode, flowParams.getVariable(), task)
+                , Listener.LISTENER_START);
 
         // 如果是受托人在处理任务，需要处理一条委派记录，并且更新委托人，回到计划审批人,然后直接返回流程实例
         if (handleDepute(task, flowParams)) {
             return instance;
         }
-
-        // TODO min 后续考虑并发问题，待办任务和实例表不同步，可给待办任务id加锁，抽取所接口，方便后续兼容分布式锁
-        // 非第一个记得跳转类型必传
-        if (!NodeType.isStart(task.getNodeType())) {
-            AssertUtil.isFalse(StringUtils.isNotEmpty(flowParams.getSkipType()), ExceptionCons.NULL_CONDITIONVALUE);
-        }
-
-        Node nowNode = CollUtil.getOne(FlowFactory.nodeService()
-                .getByNodeCodes(Collections.singletonList(task.getNodeCode()), task.getDefinitionId()));
-        AssertUtil.isTrue(ObjectUtil.isNull(nowNode), ExceptionCons.LOST_CUR_NODE);
-
-        task.setUserList(FlowFactory.userService().listByAssociatedAndTypes(task.getId()));
-        //执行开始监听器
-        ListenerUtil.executeListener(new ListenerVariable(instance, nowNode, flowParams.getVariable(), task)
-                , Listener.LISTENER_START);
 
         // 判断当前处理人是否有权限处理
         checkAuth(nowNode, task, flowParams.getPermissionFlag());

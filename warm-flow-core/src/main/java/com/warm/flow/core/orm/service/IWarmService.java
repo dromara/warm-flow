@@ -91,6 +91,8 @@ public interface IWarmService<T> {
      */
     long selectCount(T entity);
 
+    Boolean exists(T entity);
+
     /**
      * 新增
      *
