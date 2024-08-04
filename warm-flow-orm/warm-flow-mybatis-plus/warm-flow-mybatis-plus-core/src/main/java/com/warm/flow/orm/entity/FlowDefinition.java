@@ -15,9 +15,7 @@
  */
 package com.warm.flow.orm.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.warm.flow.core.entity.Definition;
 import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.User;
@@ -44,11 +42,13 @@ public class FlowDefinition implements Definition {
     /**
      * 创建时间
      */
+    @TableField(fill = FieldFill.INSERT)
     private Date createTime;
 
     /**
      * 更新时间
      */
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updateTime;
 
     /**
@@ -59,6 +59,7 @@ public class FlowDefinition implements Definition {
     /**
      * 删除标记
      */
+    @TableLogic
     private String delFlag;
 
     /**

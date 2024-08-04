@@ -4,34 +4,4 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.warm.flow.orm.mapper.FlowNodeMapper">
 
-    <resultMap type="com.warm.flow.orm.entity.FlowNode" id="FlowNodeResult">
-        <result property="id" column="id"/>
-        <result property="nodeType" column="node_type"/>
-        <result property="definitionId" column="definition_id"/>
-        <result property="nodeCode" column="node_code"/>
-        <result property="nodeName" column="node_name"/>
-        <result property="coordinate" column="coordinate"/>
-        <result property="skipAnyNode" column="skip_any_node"/>
-        <result property="listenerType" column="listener_type"/>
-        <result property="listenerPath" column="listener_path"/>
-        <result property="version" column="version"/>
-        <result property="createTime" column="create_time"/>
-        <result property="updateTime" column="update_time"/>
-    </resultMap>
-
-    <sql id="selectVo">
-        select t.id,
-               t.node_type,
-               t.definition_id,
-               t.node_code,
-               t.node_name,
-               t.coordinate,
-               t.skip_any_node,
-               t.listener_type,
-               t.listener_path,
-               t.version,
-               t.create_time,
-               t.update_time
-        from flow_node t
-    </sql>
 </mapper>

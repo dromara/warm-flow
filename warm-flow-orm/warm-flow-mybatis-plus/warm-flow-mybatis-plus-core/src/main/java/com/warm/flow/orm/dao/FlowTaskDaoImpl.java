@@ -48,7 +48,6 @@ public class FlowTaskDaoImpl extends WarmDaoImpl<FlowTask> implements FlowTaskDa
      */
     @Override
     public int deleteByInsIds(List<Long> instanceIds) {
-        return delete(newEntity(), (luw) -> luw.in(FlowTask::getInstanceId, instanceIds)
-                , (lqw) -> lqw.in(FlowTask::getInstanceId, instanceIds));
+        return getMapper().deleteBatchIds(instanceIds);
     }
 }

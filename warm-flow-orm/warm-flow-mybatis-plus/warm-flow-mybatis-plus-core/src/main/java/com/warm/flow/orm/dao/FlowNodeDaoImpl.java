@@ -21,7 +21,6 @@ import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.core.utils.CollUtil;
 import com.warm.flow.orm.entity.FlowNode;
 import com.warm.flow.orm.mapper.FlowNodeMapper;
-import com.warm.flow.orm.utils.TenantDeleteUtil;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -48,7 +47,7 @@ public class FlowNodeDaoImpl extends WarmDaoImpl<FlowNode> implements FlowNodeDa
 
     @Override
     public List<FlowNode> getByNodeCodes(List<String> nodeCodes, Long definitionId) {
-        LambdaQueryWrapper<FlowNode> queryWrapper = TenantDeleteUtil.getLambdaWrapperDefault(newEntity());
+        LambdaQueryWrapper<FlowNode> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.in(CollUtil.isNotEmpty(nodeCodes), FlowNode::getNodeCode, nodeCodes)
                 .eq(FlowNode::getDefinitionId, definitionId);
         return getMapper().selectList(queryWrapper);
@@ -62,8 +61,7 @@ public class FlowNodeDaoImpl extends WarmDaoImpl<FlowNode> implements FlowNodeDa
      */
     @Override
     public int deleteNodeByDefIds(Collection<? extends Serializable> defIds) {
-        return delete(newEntity(), (luw) -> luw.in(FlowNode::getDefinitionId, defIds)
-                , (lqw) -> lqw.in(FlowNode::getDefinitionId, defIds));
+        return getMapper().deleteBatchIds(defIds);
     }
 
 }

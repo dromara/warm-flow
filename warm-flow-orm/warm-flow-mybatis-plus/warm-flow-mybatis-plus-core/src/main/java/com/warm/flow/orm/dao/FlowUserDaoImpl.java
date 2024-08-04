@@ -23,8 +23,8 @@ import com.warm.flow.core.utils.CollUtil;
 import com.warm.flow.core.utils.ObjectUtil;
 import com.warm.flow.orm.entity.FlowUser;
 import com.warm.flow.orm.mapper.FlowUserMapper;
-import com.warm.flow.orm.utils.TenantDeleteUtil;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -47,13 +47,12 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser> implements FlowUserDa
 
     @Override
     public int deleteByTaskIds(List<Long> taskIdList) {
-        return delete(newEntity(), (luw) -> luw.in(FlowUser::getAssociated, taskIdList)
-                , (lqw) -> lqw.in(FlowUser::getAssociated, taskIdList));
+        return getMapper().deleteBatchIds(taskIdList);
     }
 
     @Override
     public List<FlowUser> listByAssociatedAndTypes(List<Long> associateds, String[] types) {
-        LambdaQueryWrapper<FlowUser> queryWrapper = TenantDeleteUtil.getLambdaWrapperDefault(newEntity());
+        LambdaQueryWrapper<FlowUser> queryWrapper = new LambdaQueryWrapper<>();
         if (CollUtil.isNotEmpty(associateds)) {
             if (associateds.size() == 1) {
                 queryWrapper.eq(FlowUser::getAssociated, associateds.get(0));
@@ -61,13 +60,13 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser> implements FlowUserDa
                 queryWrapper.in(FlowUser::getAssociated, associateds);
             }
         }
-        queryWrapper.in(ArrayUtil.isNotEmpty(types), FlowUser::getType, types);
+        queryWrapper.in(ArrayUtil.isNotEmpty(types), FlowUser::getType, Arrays.asList(types));
         return getMapper().selectList(queryWrapper);
     }
 
     @Override
     public List<FlowUser> listByProcessedBys(Long associated, List<String> processedBys, String[] types) {
-        LambdaQueryWrapper<FlowUser> queryWrapper = TenantDeleteUtil.getLambdaWrapperDefault(newEntity());
+        LambdaQueryWrapper<FlowUser> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(ObjectUtil.isNotNull(associated), FlowUser::getAssociated, associated);
         if (CollUtil.isNotEmpty(processedBys)) {
             if (processedBys.size() == 1) {

@@ -49,7 +49,6 @@ public class FlowSkipDaoImpl extends WarmDaoImpl<FlowSkip> implements FlowSkipDa
      */
     @Override
     public int deleteSkipByDefIds(Collection<? extends Serializable> defIds) {
-        return delete(newEntity(), (luw) -> luw.in(FlowSkip::getDefinitionId, defIds)
-                , (lqw) -> lqw.in(FlowSkip::getDefinitionId, defIds));
+        return getMapper().deleteBatchIds(defIds);
     }
 }
