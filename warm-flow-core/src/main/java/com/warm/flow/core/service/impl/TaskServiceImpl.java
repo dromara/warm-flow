@@ -590,8 +590,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                         for (Skip threeLastSkip : threeLastSkips) {
                             HisTask threeLastHisTask = CollUtil.getOne(FlowFactory.hisTaskService()
                                     .getNoReject(threeLastSkip.getNowNodeCode(), null, instance.getId()));
-                            if (ObjectUtil.isNotNull(threeLastHisTask) && threeLastHisTask.getCreateTime()
-                                    .before(oneLastHisTask.getCreateTime())) {
+                            if (ObjectUtil.isNotNull(threeLastHisTask) && (threeLastHisTask.getCreateTime()
+                                    .before(oneLastHisTask.getCreateTime()) || threeLastHisTask.getCreateTime()
+                                    .equals(oneLastHisTask.getCreateTime()))) {
                                 return true;
                             }
                         }
@@ -599,8 +600,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                         HisTask twoLastHisTask = CollUtil.getOne(FlowFactory.hisTaskService()
                                 .getNoReject(twoLastSkip.getNowNodeCode(), null, instance.getId()));
                         // 前前置节点完成时间是否早于前置节点，如果是串行网关，那前前置节点必须只有一个完成，如果是并行网关都要完成
-                        if (ObjectUtil.isNotNull(twoLastHisTask) && twoLastHisTask.getCreateTime()
-                                .before(oneLastHisTask.getCreateTime())) {
+                        if (ObjectUtil.isNotNull(twoLastHisTask) && (twoLastHisTask.getCreateTime()
+                                .before(oneLastHisTask.getCreateTime()) || twoLastHisTask.getCreateTime()
+                                .equals(oneLastHisTask.getCreateTime()))) {
                             return true;
                         }
                     }

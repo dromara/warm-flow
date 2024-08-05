@@ -376,6 +376,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         Map<String, List<Skip>> skipNextMap = StreamUtils.groupByKey(allSkips, Skip::getNowNodeCode);
         for (Node node : nodeList) {
             List<Skip> oneNextSkips = skipNextMap.get(node.getNodeCode());
+            List<Skip> oneLastSkips = skipLastMap.get(node.getNodeCode());
             if (NodeType.isStart(node.getNodeType())) {
                 colorPut(colorMap, "node:" + node.getNodeCode(), Color.GREEN);
                 if (CollUtil.isNotEmpty(oneNextSkips)) {
@@ -385,6 +386,9 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
             }
             if (NodeType.isEnd(node.getNodeType()) && NodeType.isEnd(instance.getNodeType())) {
                 colorPut(colorMap, "node:" + node.getNodeCode(), Color.GREEN);
+                if (CollUtil.isNotEmpty(oneLastSkips)) {
+                    oneLastSkips.forEach(oneLastSkip -> colorPut(colorMap, "skip:" + oneLastSkip.getId().toString(), Color.GREEN));
+                }
                 continue;
             }
             if (NodeType.isGateWay(node.getNodeType())) {
@@ -395,7 +399,6 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
             HisTask curHisTask = CollUtil.getOne(FlowFactory.hisTaskService()
                     .getNoReject(node.getNodeCode(), null, instance.getId()));
 
-            List<Skip> oneLastSkips = skipLastMap.get(node.getNodeCode());
             if (CollUtil.isNotEmpty(oneLastSkips)) {
                 for (Skip oneLastSkip : oneLastSkips) {
                     if (NodeType.isStart(oneLastSkip.getNowNodeType()) && task == null) {
@@ -406,7 +409,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                         // 如果前置节点是网关，那网关前任意一个任务完成就算完成
                         List<Skip> twoLastSkips = skipLastMap.get(oneLastSkip.getNowNodeCode());
                         for (Skip twoLastSkip : twoLastSkips) {
-                            HisTask twoLastHisTask = CollUtil.getOne(FlowFactory.hisTaskService()
+                             HisTask twoLastHisTask = CollUtil.getOne(FlowFactory.hisTaskService()
                                     .getNoReject(twoLastSkip.getNowNodeCode(), node.getNodeCode(), instance.getId()));
 
                             Color c;
@@ -417,8 +420,9 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                                     colorPut(colorMap, "skip:" + oneLastSkip.getId().toString(), Color.GREEN);
                                 }
                             } else {
-                                if (curHisTask != null && ObjectUtil.isNotNull(twoLastHisTask) && twoLastHisTask.getCreateTime()
-                                        .before(curHisTask.getCreateTime())) {
+                                if (curHisTask != null && ObjectUtil.isNotNull(twoLastHisTask) && (twoLastHisTask.getCreateTime()
+                                        .before(curHisTask.getCreateTime()) || twoLastHisTask.getCreateTime()
+                                        .equals(curHisTask.getCreateTime()))) {
                                     c = Color.GREEN;
                                 } else {
                                     c = Color.BLACK;
@@ -428,7 +432,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                                 }
                             }
                             colorPut(colorMap, "node:" + node.getNodeCode(), c);
-                            setNextColorMap(colorMap, oneNextSkips, c, skipNextMap);
+                            setNextColorMap(colorMap, oneNextSkips, c);
                         }
                     } else {
                         HisTask oneLastHisTask = CollUtil.getOne(FlowFactory.hisTaskService()
@@ -448,7 +452,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                             colorPut(colorMap, "skip:" + oneLastSkip.getId().toString(), c);
                         }
                         colorPut(colorMap, "node:" + node.getNodeCode(), c);
-                        setNextColorMap(colorMap, oneNextSkips, c, skipNextMap);
+                        setNextColorMap(colorMap, oneNextSkips, c);
                     }
                 }
             }
@@ -461,9 +465,8 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
      * @param colorMap
      * @param oneNextSkips
      * @param c
-     * @param skipNextMap
      */
-    private void setNextColorMap(Map<String, Color> colorMap, List<Skip> oneNextSkips, Color c, Map<String, List<Skip>> skipNextMap) {
+    private void setNextColorMap(Map<String, Color> colorMap, List<Skip> oneNextSkips, Color c) {
         if (CollUtil.isNotEmpty(oneNextSkips)) {
             oneNextSkips.forEach(oneNextSkip -> {
                 colorPut(colorMap, "skip:" + oneNextSkip.getId().toString(), c);
