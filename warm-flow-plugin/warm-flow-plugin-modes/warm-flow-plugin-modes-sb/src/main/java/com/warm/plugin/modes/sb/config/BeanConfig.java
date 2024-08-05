@@ -37,6 +37,7 @@ import java.util.Objects;
  * @description: 工作流bean注册配置
  * @date: 2023/6/5 23:01
  */
+@SuppressWarnings("rawtypes unchecked")
 @Import(SpringUtil.class)
 public class BeanConfig {
 

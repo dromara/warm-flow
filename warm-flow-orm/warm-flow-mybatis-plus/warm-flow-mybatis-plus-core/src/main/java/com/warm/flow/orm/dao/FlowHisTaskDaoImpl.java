@@ -17,14 +17,13 @@ package com.warm.flow.orm.dao;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.warm.flow.core.dao.FlowHisTaskDao;
-import com.warm.flow.core.enums.FlowStatus;
 import com.warm.flow.core.enums.SkipType;
 import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.core.utils.StringUtils;
 import com.warm.flow.orm.entity.FlowHisTask;
 import com.warm.flow.orm.mapper.FlowHisTaskMapper;
-import com.warm.flow.orm.utils.TenantDeleteUtil;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -47,7 +46,7 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask> implements Flow
 
     @Override
     public List<FlowHisTask> getNoReject(String nodeCode, String targetNodeCode, Long instanceId) {
-        LambdaQueryWrapper<FlowHisTask> queryWrapper = TenantDeleteUtil.getLambdaWrapperDefault(newEntity());
+        LambdaQueryWrapper<FlowHisTask> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(FlowHisTask::getNodeCode, nodeCode)
                 .eq(StringUtils.isNotEmpty(targetNodeCode), FlowHisTask::getTargetNodeCode, targetNodeCode)
                 .eq(FlowHisTask::getInstanceId, instanceId)
@@ -58,14 +57,13 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask> implements Flow
 
     @Override
     public int deleteByInsIds(List<Long> instanceIds) {
-        return delete(newEntity(), (luw) -> luw.in(FlowHisTask::getInstanceId, instanceIds)
-                , (lqw) -> lqw.in(FlowHisTask::getInstanceId, instanceIds));
+        return getMapper().deleteBatchIds(instanceIds);
     }
 
     @Override
     public List<FlowHisTask> listByTaskIdAndCooperateTypes(Long taskId, Integer[] cooperateTypes) {
-        LambdaQueryWrapper<FlowHisTask> queryWrapper = TenantDeleteUtil.getLambdaWrapperDefault(newEntity());
-        queryWrapper.eq(FlowHisTask::getTaskId, taskId).in(FlowHisTask::getCooperateType, cooperateTypes);
+        LambdaQueryWrapper<FlowHisTask> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(FlowHisTask::getTaskId, taskId).in(FlowHisTask::getCooperateType,  Arrays.asList(cooperateTypes));
         return getMapper().selectList(queryWrapper);
     }
 

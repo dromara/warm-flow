@@ -16,6 +16,7 @@
 package com.warm.flow.orm.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.warm.flow.core.entity.RootEntity;
 
 /**
  * BaseMapper接口
@@ -23,6 +24,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author warm
  * @date 2023-03-17
  */
-public interface WarmMapper<T> extends BaseMapper<T> {
+public interface WarmMapper<T extends RootEntity> extends BaseMapper<T> {
 
 }

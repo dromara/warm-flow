@@ -15,8 +15,7 @@
  */
 package com.warm.flow.orm.entity;
 
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.warm.flow.core.entity.User;
 
 import java.util.Date;
@@ -39,11 +38,13 @@ public class FlowUser implements User {
     /**
      * 创建时间
      */
+    @TableField(fill = FieldFill.INSERT)
     private Date createTime;
 
     /**
      * 更新时间
      */
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updateTime;
 
     /**
@@ -54,6 +55,7 @@ public class FlowUser implements User {
     /**
      * 删除标记
      */
+    @TableLogic
     private String delFlag;
 
     /**

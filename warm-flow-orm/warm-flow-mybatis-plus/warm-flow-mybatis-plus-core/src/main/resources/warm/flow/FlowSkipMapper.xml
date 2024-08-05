@@ -4,34 +4,4 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.warm.flow.orm.mapper.FlowSkipMapper">
 
-    <resultMap type="com.warm.flow.orm.entity.FlowSkip" id="FlowSkipResult">
-        <result property="id" column="id"/>
-        <result property="definitionId" column="definition_id"/>
-        <result property="nowNodeCode" column="now_node_code"/>
-        <result property="nowNodeType" column="now_node_type"/>
-        <result property="nextNodeCode" column="next_node_code"/>
-        <result property="nextNodeType" column="next_node_type"/>
-        <result property="skipName" column="skip_name"/>
-        <result property="skipType" column="skip_type"/>
-        <result property="skipCondition" column="skip_condition"/>
-        <result property="coordinate" column="coordinate"/>
-        <result property="createTime" column="create_time"/>
-        <result property="updateTime" column="update_time"/>
-    </resultMap>
-
-    <sql id="selectVo">
-        select t.id,
-               t.definition_id,
-               t.now_node_code,
-               t.now_node_type,
-               t.next_node_code,
-               t.next_node_type,
-               t.skip_name,
-               t.skip_type,
-               t.skip_condition,
-               t.coordinate,
-               t.create_time,
-               t.update_time
-        from flow_skip t
-    </sql>
 </mapper>

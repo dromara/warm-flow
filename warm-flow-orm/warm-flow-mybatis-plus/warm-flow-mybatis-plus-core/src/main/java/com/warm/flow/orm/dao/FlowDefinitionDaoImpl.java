@@ -21,7 +21,6 @@ import com.warm.flow.core.enums.PublishStatus;
 import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.orm.entity.FlowDefinition;
 import com.warm.flow.orm.mapper.FlowDefinitionMapper;
-import com.warm.flow.orm.utils.TenantDeleteUtil;
 
 import java.util.List;
 
@@ -45,14 +44,14 @@ public class FlowDefinitionDaoImpl extends WarmDaoImpl<FlowDefinition> implement
 
     @Override
     public List<FlowDefinition> queryByCodeList(List<String> flowCodeList) {
-        LambdaQueryWrapper<FlowDefinition> queryWrapper = TenantDeleteUtil.getLambdaWrapperDefault(newEntity());
+        LambdaQueryWrapper<FlowDefinition> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.in(FlowDefinition::getFlowCode, flowCodeList);
         return getMapper().selectList(queryWrapper);
     }
 
     @Override
     public void closeFlowByCodeList(List<String> flowCodeList) {
-        LambdaQueryWrapper<FlowDefinition> queryWrapper = TenantDeleteUtil.getLambdaWrapperDefault(newEntity());
+        LambdaQueryWrapper<FlowDefinition> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.in(FlowDefinition::getFlowCode, flowCodeList);
         getMapper().update(new FlowDefinition().setIsPublish(PublishStatus.EXPIRED.getKey()), queryWrapper);
     }
