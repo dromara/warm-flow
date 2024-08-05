@@ -56,21 +56,23 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser> implements FlowUserDa
 
     @Override
     public List<FlowUser> listByAssociatedAndTypes(List<Long> associateds, String[] types) {
+        String dataSourceType = FlowFactory.dataSourceType();
         if (CollUtil.isNotEmpty(associateds) && associateds.size() == 1) {
             return getMapper().listByAssociatedAndTypes(types, null
-                    , TenantDeleteUtil.getEntity(newEntity()).setAssociated(associateds.get(0)));
+                    , TenantDeleteUtil.getEntity(newEntity()).setAssociated(associateds.get(0)), dataSourceType);
         }
         return getMapper().listByAssociatedAndTypes(types, associateds
-                , TenantDeleteUtil.getEntity(newEntity()));
+                , TenantDeleteUtil.getEntity(newEntity()), dataSourceType);
     }
 
     @Override
     public List<FlowUser> listByProcessedBys(Long associated, List<String> processedBys, String[] types) {
+        String dataSourceType = FlowFactory.dataSourceType();
         if (CollUtil.isNotEmpty(processedBys) && processedBys.size() == 1) {
             return getMapper().listByProcessedBys(types, null, TenantDeleteUtil
-                    .getEntity(newEntity()).setAssociated(associated).setProcessedBy(processedBys.get(0)));
+                    .getEntity(newEntity()).setAssociated(associated).setProcessedBy(processedBys.get(0)), dataSourceType);
         }
         return getMapper().listByProcessedBys(types, processedBys
-                , TenantDeleteUtil.getEntity(newEntity()).setAssociated(associated));
+                , TenantDeleteUtil.getEntity(newEntity()).setAssociated(associated), dataSourceType);
     }
 }
