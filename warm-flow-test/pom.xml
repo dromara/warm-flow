@@ -14,8 +14,16 @@
 
     <modules>
         <module>warm-flow-core-test</module>
-        <module>warm-flow-solon-test</module>
-        <module>warm-flow-springboot-test</module>
+        <module>warm-flow-mybatis-plus-sb-test</module>
+        <module>warm-flow-mybatis-plus-solon-test</module>
+        <module>warm-flow-mybatis-sb-test</module>
+        <module>warm-flow-mybatis-solon-test</module>
+        <module>warm-flow-mybatis-flex-sb-test</module>
+        <module>warm-flow-mybatis-flex-solon-test</module>
+        <module>warm-flow-easy-query-sb-test</module>
+        <module>warm-flow-easy-query-solon-test</module>
+        <module>warm-flow-jpa-sb-test</module>
+        <module>warm-flow-jpa-solon-test</module>
     </modules>
 
     <dependencyManagement>

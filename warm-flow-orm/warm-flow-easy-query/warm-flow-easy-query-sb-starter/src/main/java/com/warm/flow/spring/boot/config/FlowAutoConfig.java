@@ -16,8 +16,6 @@
 package com.warm.flow.spring.boot.config;
 
 import com.warm.plugin.modes.sb.config.BeanConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -29,9 +27,4 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class FlowAutoConfig extends BeanConfig {
 
-    private static final Logger log = LoggerFactory.getLogger(FlowAutoConfig.class);
-
-    static {
-        log.info("【warm-flow】，easy-query的springboot扩展包初始化开始");
-    }
 }

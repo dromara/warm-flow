@@ -43,9 +43,6 @@ public class FlowAutoConfig extends BeanConfig {
 
     private static final Logger log = LoggerFactory.getLogger(FlowAutoConfig.class);
 
-    static {
-        log.info("【warm-flow】，jpa扩展包的springboot初始化开始");
-    }
     @Bean
     @ConditionalOnMissingBean
     public JpaProperties jpaProperties() {

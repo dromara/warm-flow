@@ -24,8 +24,6 @@ import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.JdbcType;
 import org.mybatis.spring.annotation.MapperScan;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Arrays;
@@ -39,12 +37,6 @@ import java.util.List;
 @Configuration
 @MapperScan("com.warm.flow.orm.mapper")
 public class FlowAutoConfig extends BeanConfig {
-
-    private static final Logger log = LoggerFactory.getLogger(FlowAutoConfig.class);
-
-    static {
-        log.info("【warm-flow】，mybatis的springboot扩展包初始化开始");
-    }
 
     private final SqlSessionFactory sqlSessionFactory;
 

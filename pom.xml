@@ -130,7 +130,7 @@
 
             <dependency>
                 <groupId>org.noear</groupId>
-                <artifactId>mybatis-plus-solon-plugin</artifactId>
+                <artifactId>mybatis-plus-extension-solon-plugin</artifactId>
                 <version>${solon.version}</version>
             </dependency>
 

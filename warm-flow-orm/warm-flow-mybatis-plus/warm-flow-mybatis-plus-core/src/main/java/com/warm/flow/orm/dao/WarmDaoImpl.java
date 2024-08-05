@@ -53,7 +53,7 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
                 new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(page.getPageNum(), page.getPageSize());
 
         QueryWrapper<T> queryWrapper = new QueryWrapper<>();
-
+        queryWrapper.setEntityClass((Class<T>) entity.getClass());
         queryWrapper.orderBy(StringUtils.isNotEmpty(page.getOrderBy())
                 , page.getIsAsc().equals(SqlKeyword.ASC.getSqlSegment()), page.getOrderBy());
 
@@ -69,6 +69,7 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
     @Override
     public List<T> selectList(T entity, WarmQuery<T> query) {
         QueryWrapper<T> queryWrapper = new QueryWrapper<>();
+        queryWrapper.setEntityClass((Class<T>) entity.getClass());
         if (ObjectUtil.isNotNull(query)) {
             queryWrapper.orderBy(StringUtils.isNotEmpty(query.getOrderBy())
                     , query.getIsAsc().equals(SqlKeyword.ASC.getSqlSegment()), query.getOrderBy());
@@ -79,6 +80,7 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
     @Override
     public long selectCount(T entity) {
         LambdaQueryWrapper<T> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.setEntityClass((Class<T>) entity.getClass());
         return getMapper().selectCount(queryWrapper);
     }
 
@@ -90,6 +92,7 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
     @Override
     public int updateById(T entity) {
         LambdaQueryWrapper<T> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.setEntityClass((Class<T>) entity.getClass());
         queryWrapper.eq(T::getId, entity.getId());
         return getMapper().update(entity, queryWrapper);
     }

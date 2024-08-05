@@ -40,11 +40,6 @@ import javax.sql.DataSource;
 public class FlowAutoConfig  extends BeanConfig {
 
     private static final Logger log = LoggerFactory.getLogger(FlowAutoConfig.class);
-
-    static {
-        log.info("【warm-flow】，jpa-jakarta的springboot扩展包初始化开始");
-    }
-
     @Bean
     @ConditionalOnMissingBean
     public JpaProperties jpaProperties() {

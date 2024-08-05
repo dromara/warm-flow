@@ -1,0 +1,30 @@
+server.port: 8080
+
+solon.app:
+  name: 'demo-app'
+  group: 'demo'
+
+demo.db1:
+  schema: rock
+  jdbcUrl: jdbc:mysql://localhost:3306/ry-vue?useUnicode=true&characterEncoding=utf8&autoReconnect=true&rewriteBatchedStatements=true
+  driverClassName: com.mysql.cj.jdbc.Driver
+  username: root
+  password: 123456
+
+# 配置数据源对应的 mybatis 信息（要与 DataSource bean 的名字对上）
+mybatis.db1:
+  configuration: #扩展配置（要与 MybatisConfiguration 类的属性一一对应）
+    cacheEnabled: false
+    mapperVerifyEnabled: false #如果为 true，则要求所有 mapper 有 @Mapper 主解
+    mapUnderscoreToCamelCase: true
+  globalConfig: #全局配置（要与 GlobalConfig 类的属性一一对应）
+    banner: false
+    logicDeleteValue: 2 # 逻辑已删除值
+    logicNotDeleteValue: 0 # 逻辑未删除值
+
+# warm-flow工作流配置
+warm-flow:
+  # 是否显示banner图，默认是
+  banner: true
+  # 填充器 （可配置文件注入，也可用@Bean/@Component方式）
+#  data-fill-handler-path: com.warm.flow.core.test.handle.CustomDataFillHandler

@@ -16,8 +16,6 @@
 package com.warm.flow.solon.config;
 
 import org.noear.solon.annotation.Configuration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author warm
@@ -26,11 +24,5 @@ import org.slf4j.LoggerFactory;
  */
 @Configuration
 public class FlowAutoConfig {
-
-    private static final Logger log = LoggerFactory.getLogger(FlowAutoConfig.class);
-
-    static {
-        log.info("【warm-flow】，mybatis-plus的solon扩展包初始化开始");
-    }
 
 }

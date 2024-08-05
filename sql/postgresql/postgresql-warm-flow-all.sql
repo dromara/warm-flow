@@ -15,7 +15,7 @@ CREATE TABLE flow_definition (
     ext varchar(500) NULL, -- 扩展字段，预留给业务系统使用
     create_time timestamp NULL, -- 创建时间
 	update_time timestamp NULL, -- 更新时间
-	del_flag bpchar(1) NULL, -- 删除标志
+	del_flag bpchar(1) NULL DEFAULT '0'::character varying, -- 删除标志
 	tenant_id varchar(40) NULL, -- 租户id
 	CONSTRAINT flow_definition_pkey PRIMARY KEY (id)
 );
@@ -64,7 +64,7 @@ CREATE TABLE flow_his_task (
     message varchar(500) NULL, -- 审批意见
 	create_time timestamp NULL, -- 创建时间
 	update_time timestamp NULL, -- 更新时间
-	del_flag bpchar(1) NULL, -- 删除标志
+	del_flag bpchar(1) NULL DEFAULT '0'::character varying, -- 删除标志
 	tenant_id varchar(40) NULL, -- 租户id
 	CONSTRAINT flow_his_task_pkey PRIMARY KEY (id)
 );
@@ -115,7 +115,7 @@ CREATE TABLE flow_instance (
 	create_time timestamp NULL, -- 创建时间
 	update_time timestamp NULL, -- 更新时间
 	ext varchar(500) NULL, -- 扩展字段，预留给业务系统使用
-	del_flag bpchar(1) NULL, -- 删除标志
+	del_flag bpchar(1) NULL DEFAULT '0'::character varying, -- 删除标志
 	tenant_id varchar(40) NULL, -- 租户id
 	CONSTRAINT flow_instance_pkey PRIMARY KEY (id)
 );
@@ -164,7 +164,7 @@ CREATE TABLE flow_node (
 	"version" varchar(20) NOT NULL, -- 版本
 	create_time timestamp NULL, -- 创建时间
 	update_time timestamp NULL, -- 更新时间
-	del_flag bpchar(1) NULL, -- 删除标志
+	del_flag bpchar(1) NULL DEFAULT '0'::character varying, -- 删除标志
 	tenant_id varchar(40) NULL, -- 租户id
 	CONSTRAINT flow_node_pkey PRIMARY KEY (id),
 	CONSTRAINT info_id_code UNIQUE (definition_id, node_code)
@@ -214,7 +214,7 @@ CREATE TABLE flow_skip (
 	coordinate varchar(100) NULL, -- 坐标
 	create_time timestamp NULL, -- 创建时间
 	update_time timestamp NULL, -- 更新时间
-	del_flag bpchar(1) NULL, -- 删除标志
+	del_flag bpchar(1) NULL DEFAULT '0'::character varying, -- 删除标志
 	tenant_id varchar(40) NULL, -- 租户id
 	CONSTRAINT flow_skip_pkey PRIMARY KEY (id)
 );
@@ -255,7 +255,7 @@ CREATE TABLE flow_task (
     form_path varchar(100) NULL, -- 审批表单路径
 	create_time timestamp NULL, -- 创建时间
 	update_time timestamp NULL, -- 更新时间
-	del_flag bpchar(1) NULL, -- 删除标志
+	del_flag bpchar(1) NULL DEFAULT '0'::character varying, -- 删除标志
 	tenant_id varchar(40) NULL, -- 租户id
 	CONSTRAINT flow_task_pkey PRIMARY KEY (id)
 );
@@ -291,7 +291,7 @@ CREATE TABLE flow_user (
 	create_time timestamp NULL, -- 创建时间
 	create_by varchar(80) NULL, -- 创建人
 	update_time timestamp NULL, -- 更新时间
-	del_flag bpchar(1) NULL, -- 删除标志
+	del_flag bpchar(1) NULL DEFAULT '0'::character varying, -- 删除标志
 	tenant_id varchar(40) NULL, -- 租户id
 	CONSTRAINT flow_user_pk PRIMARY KEY (id)
 );

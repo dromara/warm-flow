@@ -28,5 +28,22 @@ ALTER TABLE `flow_his_task`
     ADD COLUMN `form_path`    varchar(100)      DEFAULT NULL COMMENT '审批表单路径' AFTER `form_custom`;
     
 ALTER TABLE `flow_definition`
-    ADD COLUMN `ext` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '扩展字段，预留给业务系统使用' AFTER `form_path`;
+    ADD COLUMN `ext` varchar(500)  DEFAULT NULL COMMENT '扩展字段，预留给业务系统使用' AFTER `form_path`;
 
+ALTER TABLE `flow_his_task`
+    MODIFY COLUMN `del_flag` char(1) DEFAULT '0' COMMENT '删除标志' AFTER `update_time`;
+
+ALTER TABLE `flow_instance`
+    MODIFY COLUMN `del_flag` char(1) DEFAULT '0' COMMENT '删除标志' AFTER `update_time`;
+
+ALTER TABLE `flow_node`
+    MODIFY COLUMN `del_flag` char(1) DEFAULT '0' COMMENT '删除标志' AFTER `update_time`;
+
+ALTER TABLE `flow_skip`
+    MODIFY COLUMN `del_flag` char(1) DEFAULT '0' COMMENT '删除标志' AFTER `update_time`;
+
+ALTER TABLE `flow_task`
+    MODIFY COLUMN `del_flag` char(1) DEFAULT '0' COMMENT '删除标志' AFTER `update_time`;
+
+ALTER TABLE `flow_user`
+    MODIFY COLUMN `del_flag` char(1) DEFAULT '0' COMMENT '删除标志' AFTER `update_time`;

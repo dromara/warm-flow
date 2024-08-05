@@ -17,14 +17,7 @@ package com.warm.expression.spel;
 
 import com.warm.flow.core.constant.FlowCons;
 import com.warm.flow.core.expression.ExpressionStrategy;
-import com.warm.plugin.modes.sb.utils.SpringUtil;
-import org.springframework.context.expression.BeanFactoryResolver;
-import org.springframework.expression.BeanResolver;
-import org.springframework.expression.ExpressionParser;
-import org.springframework.expression.ParserContext;
-import org.springframework.expression.common.TemplateParserContext;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
-import org.springframework.expression.spel.support.StandardEvaluationContext;
+import com.warm.plugin.modes.sb.utils.SpelHelper;
 
 import java.util.Map;
 
@@ -34,15 +27,6 @@ import java.util.Map;
  * @author warm
  */
 public class ExpressionStrategySpel implements ExpressionStrategy {
-
-    private final ExpressionParser parser = new SpelExpressionParser();
-    private final ParserContext parserContext = new TemplateParserContext();
-
-
-    /**
-     * bean解析器 用于处理 spel 表达式中对 bean 的调用
-     */
-    private final BeanResolver beanResolver = new BeanFactoryResolver(SpringUtil.getBeanFactory());
 
     @Override
     public String getType() {
@@ -56,11 +40,6 @@ public class ExpressionStrategySpel implements ExpressionStrategy {
      */
     @Override
     public boolean eval(String expression, Map<String, Object> variable) {
-        StandardEvaluationContext context = new StandardEvaluationContext();
-        context.setBeanResolver(beanResolver);
-        return Boolean.TRUE.equals(parser.parseExpression(expression, parserContext).getValue(context, Boolean.class));
+        return Boolean.TRUE.equals(SpelHelper.parseExpression(expression));
     }
-
-
-
 }

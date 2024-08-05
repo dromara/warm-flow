@@ -20,8 +20,6 @@ import com.warm.flow.orm.utils.CommonUtil;
 import org.apache.ibatis.solon.annotation.Db;
 import org.noear.solon.annotation.Bean;
 import org.noear.solon.annotation.Configuration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author warm
@@ -31,11 +29,6 @@ import org.slf4j.LoggerFactory;
 @Configuration
 public class FlowAutoConfig {
 
-    private static final Logger log = LoggerFactory.getLogger(FlowAutoConfig.class);
-
-    static {
-        log.info("【warm-flow】，mybatis的solon扩展包初始化开始");
-    }
     @Bean
     public WarmFlow initFlow(@Db org.apache.ibatis.session.Configuration db1Cfg, WarmFlow flowConfig) {
         CommonUtil.setDataSourceType(flowConfig, db1Cfg);
