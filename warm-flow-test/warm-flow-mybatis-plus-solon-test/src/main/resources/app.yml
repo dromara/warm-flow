@@ -24,6 +24,8 @@ mybatis.db1:
 
 # warm-flow工作流配置
 warm-flow:
+  # 是否开启工作流，默认true
+  enabled: true
   # 是否显示banner图，默认是
   banner: true
   # # 填充器 （可通过配置文件注入，也可用@Bean/@Component方式）

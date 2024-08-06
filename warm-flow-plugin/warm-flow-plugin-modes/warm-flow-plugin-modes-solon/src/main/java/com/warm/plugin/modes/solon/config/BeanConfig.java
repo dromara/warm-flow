@@ -25,6 +25,7 @@ import com.warm.flow.orm.dao.*;
 import com.warm.flow.orm.entity.*;
 import org.noear.solon.Solon;
 import org.noear.solon.annotation.Bean;
+import org.noear.solon.annotation.Condition;
 import org.noear.solon.annotation.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,7 @@ import org.slf4j.LoggerFactory;
  * @date: 2023/6/5 23:01
  */
 @Configuration
+@Condition(onProperty="${warm-flow.enabled:true} = true")
 public class BeanConfig {
 
     private static final Logger log = LoggerFactory.getLogger(BeanConfig.class);

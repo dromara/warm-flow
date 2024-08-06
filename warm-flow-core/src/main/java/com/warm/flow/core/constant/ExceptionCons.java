@@ -28,8 +28,6 @@ public class ExceptionCons {
 
     public static final String SAME_DEST_NODE = "并行网关，同一个节点不能跳转同一个目标节点!";
 
-    public static final String GATEWAY_NOT_CONNECT = "网关节点不可直连!";
-
     public static final String MUL_START_NODE = "开始节点不能超过1个!";
 
     public static final String MUL_SKIP_BETWEEN = "不可同时通过或者退回到多个中间节点，必须先流转到网关节点!";
@@ -51,8 +49,6 @@ public class ExceptionCons {
     public static final String NULL_CONDITIONVALUE_NODE = "未找到跳转条件，不支持跳转!";
 
     public static final String NULL_CONDITIONVALUE = "跳转条件不能为空!";
-
-    public static final String CONDITIONVALUE_STRING = "跳转条件需为字符串!";
 
     public static final String NULL_EXPRESSION_STRATEGY = "条件表达式不能为空!";
 
