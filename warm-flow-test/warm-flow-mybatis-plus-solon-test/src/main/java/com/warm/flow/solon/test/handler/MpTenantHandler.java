@@ -29,6 +29,7 @@ public class MpTenantHandler implements TenantLineHandler {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(tableName);
         List<TableFieldInfo> fieldList = tableInfo.getFieldList();
         fieldList.forEach(field -> {
+            // 如果业务和工作流引擎中的租户字段不一致，可以通过这种方式动态切换
             if (field.getColumn().equals("tenant_id") || field.getColumn().equals("tenant_code")) {
                 threadLocal.set(field.getColumn());
             }

@@ -83,7 +83,7 @@ public class WarmFlowConfig {
     }
 
     /**
-     * 分配监听器，可用@Bean/@Component方式注入
+     * 分派监听器，可用@Bean/@Component方式注入
      */
     @Bean
     public AssignmentListener assignmentListener() {

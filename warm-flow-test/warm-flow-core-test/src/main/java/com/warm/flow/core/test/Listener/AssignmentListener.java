@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 /**
- * 分配监听器
+ * 分派监听器
  */
 public class AssignmentListener implements Listener {
 
@@ -35,7 +35,7 @@ public class AssignmentListener implements Listener {
 
     @Override
     public void notify(ListenerVariable variable) {
-        log.info("分配监听器开始执行......");
+        log.info("分派监听器开始执行......");
         List<Task> tasks = variable.getNextTasks();
         Instance instance = variable.getInstance();
         for (Task task : tasks) {
@@ -48,6 +48,6 @@ public class AssignmentListener implements Listener {
                 }
             }
         }
-        log.info("分配监听器执行结束......");
+        log.info("分派监听器执行结束......");
     }
 }

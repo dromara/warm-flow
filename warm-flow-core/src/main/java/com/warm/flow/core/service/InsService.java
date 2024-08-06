@@ -37,6 +37,7 @@ public interface InsService extends IWarmService<Instance> {
      *                    - flowCode:流程编码 [必传]
      *                    - handler:办理人唯一标识[建议传]
      *                    - variable:流程变量[按需传输]
+     *                    - flowStatus:流程状态，自定义流程状态[按需传输]
      *                    - ext:扩展字段，预留给业务系统使用[按需传输]
      * @return
      */
@@ -53,6 +54,7 @@ public interface InsService extends IWarmService<Instance> {
      *                               - message:审批意见[按需传输]
      *                               - handler:办理人唯一标识[建议传]
      *                               - variable:流程变量[按需传输,跳转条件放入流程变量<互斥网关必传>]
+     *                               - flowStatus:流程状态，自定义流程状态[按需传输]
      * @return
      */
     Instance skipByInsId(Long instanceId, FlowParams flowParams);
@@ -63,6 +65,7 @@ public interface InsService extends IWarmService<Instance> {
      * @param instanceId:流程实例id[必传]
      * @param flowParams:包含流程相关参数的对象 - message:审批意见  [按需传输]
      *                               - handler:办理人唯一标识[建议传]
+     *                               - flowStatus:流程状态，自定义流程状态[按需传输]
      */
     Instance termination(Long instanceId, FlowParams flowParams);
 

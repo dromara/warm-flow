@@ -15,13 +15,9 @@
  */
 package com.warm.flow.solon.test.config;
 
-import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.inner.BlockAttackInnerInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
 import com.warm.flow.core.handler.DataFillHandler;
 import com.warm.flow.core.test.Listener.*;
@@ -55,12 +51,6 @@ public class WarmFlowConfig {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
         // 多租户插件 必须放到第一位
         interceptor.addInnerInterceptor(tenantLineInnerInterceptor());
-//        // 分页插件
-//        interceptor.addInnerInterceptor(paginationInnerInterceptor());
-//        // 乐观锁插件
-//        interceptor.addInnerInterceptor(optimisticLockerInnerInterceptor());
-//        // 阻断插件
-//        interceptor.addInnerInterceptor(blockAttackInnerInterceptor());
         cfg.addInterceptor(interceptor);
     }
 
@@ -112,43 +102,12 @@ public class WarmFlowConfig {
     }
 
     /**
-     * 分配监听器，可用@Bean/@Component方式注入
+     * 分派监听器，可用@Bean/@Component方式注入
      */
     @Bean
     public AssignmentListener assignmentListener() {
         return new AssignmentListener();
     }
 
-    /**
-     * 分页插件，自动识别数据库类型 https://baomidou.com/guide/interceptor-pagination.html
-     */
-    public PaginationInnerInterceptor paginationInnerInterceptor()
-    {
-        PaginationInnerInterceptor paginationInnerInterceptor = new PaginationInnerInterceptor();
-        // 设置数据库类型为mysql
-        paginationInnerInterceptor.setDbType(DbType.MYSQL);
-        // 设置最大单页限制数量，默认 500 条，-1 不受限制
-        paginationInnerInterceptor.setMaxLimit(-1L);
-        // 分页合理化
-        paginationInnerInterceptor.setOverflow(true);
-        return paginationInnerInterceptor;
-    }
-
-    /**
-     * 乐观锁插件 https://baomidou.com/guide/interceptor-optimistic-locker.html
-     */
-    public OptimisticLockerInnerInterceptor optimisticLockerInnerInterceptor()
-    {
-        return new OptimisticLockerInnerInterceptor();
-    }
-
-
-    /**
-     * 如果是对全表的删除或更新操作，就会终止该操作 https://baomidou.com/guide/interceptor-block-attack.html
-     */
-    public BlockAttackInnerInterceptor blockAttackInnerInterceptor()
-    {
-        return new BlockAttackInnerInterceptor();
-    }
 
 }
