@@ -36,7 +36,11 @@ http://warm-flow.cn
 
 * [x] mysql
 * [x] oracle
-* [x] PostgreSQL
+* [x] postgresql
+* [ ] 达梦
+* [ ] 人大金仓
+* [ ] GaussDB
+* [ ] oceanbase
 * [ ] sqlserver
 * [ ] ......
 
@@ -46,7 +50,8 @@ http://warm-flow.cn
 * [x] mybatis
 * [x] mybatis-plus
 * [x] jpa
-* [ ] mybatis-flex
+* [x] mybatis-flex
+* [ ] easy-query
 * [ ] ......
 
 
