@@ -24,7 +24,7 @@ import java.util.Date;
 import java.util.Objects;
 
 /**
- * 填充器 （可配置文件注入，也可用@Bean/@Component方式）
+ * # 填充器 （可通过配置文件注入，也可用@Bean/@Component方式）
  *
  * @author warm
  */

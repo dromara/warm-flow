@@ -21,13 +21,13 @@ logging:
 warm-flow:
   # 是否显示banner图，默认是
   banner: true
-  # 填充器 （可配置文件注入，也可用@Bean/@Component方式）
+  # # 填充器 （可通过配置文件注入，也可用@Bean/@Component方式）
 #  data-fill-handler-path: com.warm.flow.core.test.handle.CustomDataFillHandler
-  # 全局租户处理器（可配置文件注入，也可用@Bean/@Component方式）
+  # 全局租户处理器（可通过配置文件注入，也可用@Bean/@Component方式
 #  tenant_handler_path: com.warm.flow.core.test.handle.CustomTenantHandler
 # 当在spring boot 中使用JPA时指定JpaPersistenceProvider
   jpa_persistence_provider: org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider
-  # 是否开启逻辑删除
+  # 是否开启逻辑删除（orm框架本身不支持逻辑删除，可通过这种方式开启，比如jpa）
   logic_delete: true
   # 逻辑删除字段值（开启后默认为2）
   logic_delete_value: 2

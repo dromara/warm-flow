@@ -21,7 +21,7 @@ logging:
 warm-flow:
   # 是否显示banner图，默认是
   banner: true
-  # 填充器 （可配置文件注入，也可用@Bean/@Component方式）
+  # # 填充器 （可通过配置文件注入，也可用@Bean/@Component方式）
 #  data-fill-handler-path: com.warm.flow.core.test.handle.CustomDataFillHandler
 
 # mybatis-plus配置
