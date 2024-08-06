@@ -406,8 +406,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                 for (Skip oneLastSkip : oneLastSkips) {
                     if (NodeType.isStart(oneLastSkip.getNowNodeType()) && task == null) {
                         colorPut(colorMap, "node:" + node.getNodeCode(), Color.GREEN);
-                        colorPut(colorMap, "skip:" + oneLastSkip.getId().toString(), Color.GREEN);
-                        oneNextSkips.forEach(oneNextSkip -> colorPut(colorMap, "skip:" + oneNextSkip.getId().toString(), Color.GREEN));
+                        setNextColorMap(colorMap, oneNextSkips, Color.GREEN);
                     } else if (NodeType.isGateWay(oneLastSkip.getNowNodeType())) {
                         // 如果前置节点是网关，那网关前任意一个任务完成就算完成
                         List<Skip> twoLastSkips = skipLastMap.get(oneLastSkip.getNowNodeCode());
