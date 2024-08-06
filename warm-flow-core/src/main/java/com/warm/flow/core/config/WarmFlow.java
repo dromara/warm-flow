@@ -27,6 +27,12 @@ import com.warm.flow.core.utils.StringUtils;
  * @author warm
  */
 public class WarmFlow {
+
+    /**
+     * 开关
+     */
+    private boolean enabled = true;
+
     /**
      * 启动banner
      */
@@ -116,6 +122,14 @@ public class WarmFlow {
                     "\033[32m   :: Warm-Flow ::     (v" + WarmFlow.class.getPackage()
                     .getImplementationVersion() + ")\033[0m\n");
         }
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public boolean isBanner() {

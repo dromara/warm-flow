@@ -15,19 +15,15 @@
  */
 package com.warm.flow.spring.boot.config;
 
-import com.warm.plugin.modes.sb.config.BeanConfig;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import com.warm.flow.core.config.WarmFlow;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * @author warm
- * @description: 工作流bean注册配置
- * @date: 2023/6/5 23:01
+ * WarmFlow属性配置文件
+ *
+ * @author Lion Li
  */
-@Configuration
-@ConditionalOnProperty(value = "warm-flow.enabled", havingValue = "true", matchIfMissing = true)
-@EnableConfigurationProperties(WarmFlowProperties.class)
-public class FlowAutoConfig extends BeanConfig {
+@ConfigurationProperties("warm-flow")
+public class WarmFlowProperties extends WarmFlow {
 
 }
