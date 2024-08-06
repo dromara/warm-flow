@@ -208,7 +208,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         // 获取图形上下文,graphics想象成一个画笔
         Graphics2D graphics = image.createGraphics();
         graphics.setStroke(new BasicStroke(2f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND));
-        Font font = new Font("微软雅黑", Font.PLAIN, 15);
+        Font font = new Font("微软雅黑", Font.PLAIN, 13);
         graphics.setFont(font);
         // 消除线条锯齿
         graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
