@@ -208,9 +208,12 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         // 获取图形上下文,graphics想象成一个画笔
         Graphics2D graphics = image.createGraphics();
         graphics.setStroke(new BasicStroke(2f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND));
-        graphics.setFont(new Font("宋体", Font.BOLD, 12));
+        Font font = new Font("微软雅黑", Font.PLAIN, 15);
+        graphics.setFont(font);
         // 消除线条锯齿
+        graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
         // 对指定的矩形区域填充颜色: GREEN:绿色；  红色：RED;   灰色：GRAY
         graphics.setColor(Color.WHITE);
         graphics.fillRect(0, 0, width, height);
