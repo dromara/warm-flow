@@ -68,6 +68,7 @@
             <plugin>
                 <groupId>org.noear</groupId>
                 <artifactId>solon-maven-plugin</artifactId>
+                <version>${solon.version}</version>
             </plugin>
         </plugins>
     </build>
