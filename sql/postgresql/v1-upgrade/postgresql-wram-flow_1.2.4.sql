@@ -43,5 +43,5 @@ ALTER TABLE flow_skip ALTER COLUMN del_flag SET DEFAULT '0'::character varying;
 
 ALTER TABLE flow_task ALTER COLUMN del_flag SET DEFAULT '0'::character varying;
 
-ALTER TABLE flow_user ALTER COLUMN del_flag SET DEFAULT 0;
+ALTER TABLE flow_user ALTER COLUMN del_flag SET DEFAULT '0'::character varying;
 
