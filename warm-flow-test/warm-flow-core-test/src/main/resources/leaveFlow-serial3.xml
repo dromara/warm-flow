@@ -30,11 +30,9 @@
           listenerType="start,assignment,finish,permission,create"
           listenerPath="com.ruoyi.system.Listener.StartListener@@com.ruoyi.system.Listener.AssignmentListener@@com.ruoyi.system.Listener.FinishListener@@com.ruoyi.system.Listener.PermissionListener@@com.ruoyi.system.Listener.CreateListener">
         <skip coordinate="675,80;600,80;600,160|600,80" skipType="REJECT" skipName="请假时间大于4天"
-              skipCondition="@@gt@@|flag@@gt@@4">3
-        </skip>
+              skipCondition="@@gt@@|flag@@gt@@4">3</skip>
         <skip coordinate="700,55;700,35;380,35;380,160|540,35" skipType="REJECT" skipName="请假时间小于等于4天"
-              skipCondition="@@le@@|flag@@le@@4">2
-        </skip>
+              skipCondition="@@le@@|flag@@le@@4">2</skip>
     </node>
     <node nodeType="end" nodeCode="6" nodeName="结束" coordinate="1060,200|1060,200" skipAnyNode="N"
           listenerType="start,assignment,finish,permission,create"
