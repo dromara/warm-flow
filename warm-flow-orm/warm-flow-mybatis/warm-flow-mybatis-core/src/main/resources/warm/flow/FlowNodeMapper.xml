@@ -306,27 +306,27 @@
     </insert>
 
     <update id="updateById" parameterType="com.warm.flow.orm.entity.FlowNode">
-        update flow_node t
+        update flow_node
         <trim prefix="SET" suffixOverrides=",">
-            <if test="nodeType != null">t.node_type = #{nodeType},</if>
-            <if test="definitionId != null">t.definition_id = #{definitionId},</if>
-            <if test="nodeCode != null and nodeCode != ''">t.node_code = #{nodeCode},</if>
-            <if test="nodeName != null and nodeName != ''">t.node_name = #{nodeName},</if>
-            <if test="permissionFlag != null and permissionFlag != ''">t.permission_flag = #{permissionFlag},</if>
-            <if test="nodeRatio != null">t.node_ratio = #{nodeRatio},</if>
-            <if test="coordinate != null and coordinate != ''">t.coordinate = #{coordinate},</if>
-            <if test="skipAnyNode != null and skipAnyNode != ''">t.skip_any_node = #{skipAnyNode},</if>
-            <if test="listenerType != null and listenerType != ''">t.listener_type = #{listenerType},</if>
-            <if test="listenerPath != null and listenerPath != ''">t.listener_path = #{listenerPath},</if>
-            <if test="handlerType != null and handlerType != ''">t.handler_type = #{handlerType},</if>
-            <if test="handlerPath != null and handlerPath != ''">t.handler_path = #{handlerPath},</if>
-            <if test="formCustom != null and formCustom != ''">t.form_custom = #{formCustom},</if>
-            <if test="formPath != null and formPath != ''">t.form_path = #{formPath},</if>
-            <if test="version != null and version != ''">t.version = #{version},</if>
-            <if test="createTime != null">t.create_time = #{createTime},</if>
-            <if test="updateTime != null">t.update_time = #{updateTime},</if>
+            <if test="nodeType != null">node_type = #{nodeType},</if>
+            <if test="definitionId != null">definition_id = #{definitionId},</if>
+            <if test="nodeCode != null and nodeCode != ''">node_code = #{nodeCode},</if>
+            <if test="nodeName != null and nodeName != ''">node_name = #{nodeName},</if>
+            <if test="permissionFlag != null and permissionFlag != ''">permission_flag = #{permissionFlag},</if>
+            <if test="nodeRatio != null">node_ratio = #{nodeRatio},</if>
+            <if test="coordinate != null and coordinate != ''">coordinate = #{coordinate},</if>
+            <if test="skipAnyNode != null and skipAnyNode != ''">skip_any_node = #{skipAnyNode},</if>
+            <if test="listenerType != null and listenerType != ''">listener_type = #{listenerType},</if>
+            <if test="listenerPath != null and listenerPath != ''">listener_path = #{listenerPath},</if>
+            <if test="handlerType != null and handlerType != ''">handler_type = #{handlerType},</if>
+            <if test="handlerPath != null and handlerPath != ''">handler_path = #{handlerPath},</if>
+            <if test="formCustom != null and formCustom != ''">form_custom = #{formCustom},</if>
+            <if test="formPath != null and formPath != ''">form_path = #{formPath},</if>
+            <if test="version != null and version != ''">version = #{version},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
         </trim>
-        where t.id = #{id}
+        where id = #{id}
         <if test="delFlag != null  and delFlag != ''">and del_flag = #{delFlag}</if>
         <if test="tenantId != null  and tenantId != ''">and tenant_id = #{tenantId}</if>
     </update>
@@ -339,11 +339,11 @@
     </delete>
 
     <update id="updateByIdLogic">
-        update flow_node t
-        set t.del_flag = #{logicDeleteValue}
-        where t.id = #{id}
-        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
-        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag = #{logicNotDeleteValue}
+        update flow_node
+        set del_flag = #{logicDeleteValue}
+        where id = #{id}
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and tenant_id = #{entity.tenantId}</if>
+        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and del_flag = #{logicNotDeleteValue}
         </if>
     </update>
 
@@ -356,14 +356,14 @@
     </delete>
 
     <update id="updateByIdsLogic">
-        update flow_node t
-        set t.del_flag = #{logicDeleteValue}
-        where t.id in
+        update flow_node
+        set del_flag = #{logicDeleteValue}
+        where id in
         <foreach item="id" collection="ids" open="(" separator="," close=")">
             #{id}
         </foreach>
-        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
-        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag = #{logicNotDeleteValue}
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and tenant_id = #{entity.tenantId}</if>
+        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and del_flag = #{logicNotDeleteValue}
         </if>
     </update>
 
@@ -393,42 +393,42 @@
     </delete>
 
     <update id="updateLogic">
-        update flow_node t
-        set t.del_flag = #{logicDeleteValue}
+        update flow_node
+        set del_flag = #{logicDeleteValue}
         <where>
-            <if test="entity.id != null">and t.id = #{entity.id}</if>
-            <if test="entity.nodeType != null">and t.node_type = #{entity.nodeType}</if>
-            <if test="entity.definitionId != null">and t.definition_id = #{entity.definitionId}</if>
-            <if test="entity.nodeCode != null and entity.nodeCode != ''">and t.node_code = #{entity.nodeCode}</if>
-            <if test="entity.nodeName != null and entity.nodeName != ''">and t.node_name = #{entity.nodeName}</if>
-            <if test="entity.permissionFlag != null and entity.permissionFlag != ''">and t.permission_flag =
+            <if test="entity.id != null">and id = #{entity.id}</if>
+            <if test="entity.nodeType != null">and node_type = #{entity.nodeType}</if>
+            <if test="entity.definitionId != null">and definition_id = #{entity.definitionId}</if>
+            <if test="entity.nodeCode != null and entity.nodeCode != ''">and node_code = #{entity.nodeCode}</if>
+            <if test="entity.nodeName != null and entity.nodeName != ''">and node_name = #{entity.nodeName}</if>
+            <if test="entity.permissionFlag != null and entity.permissionFlag != ''">and permission_flag =
                 #{entity.permissionFlag}
             </if>
-            <if test="entity.nodeRatio != null">and t.node_ratio = #{entity.nodeRatio}</if>
-            <if test="entity.coordinate != null and entity.coordinate != ''">and t.coordinate = #{entity.coordinate}
+            <if test="entity.nodeRatio != null">and node_ratio = #{entity.nodeRatio}</if>
+            <if test="entity.coordinate != null and entity.coordinate != ''">and coordinate = #{entity.coordinate}
             </if>
-            <if test="entity.skipAnyNode != null and entity.skipAnyNode != ''">and t.skip_any_node =
+            <if test="entity.skipAnyNode != null and entity.skipAnyNode != ''">and skip_any_node =
                 #{entity.skipAnyNode}
             </if>
-            <if test="entity.listenerType != null and entity.listenerType != ''">and t.listener_type =
+            <if test="entity.listenerType != null and entity.listenerType != ''">and listener_type =
                 #{entity.listenerType}
             </if>
-            <if test="entity.listenerPath != null and entity.listenerPath != ''">and t.listener_path =
+            <if test="entity.listenerPath != null and entity.listenerPath != ''">and listener_path =
                 #{entity.listenerPath}
             </if>
-            <if test="entity.handlerType != null and entity.handlerType != ''">and t.handler_type =
+            <if test="entity.handlerType != null and entity.handlerType != ''">and handler_type =
                 #{entity.handlerType}
             </if>
-            <if test="entity.handlerPath != null and entity.handlerPath != ''">and t.handler_path =
+            <if test="entity.handlerPath != null and entity.handlerPath != ''">and handler_path =
                 #{entity.handlerPath}
             </if>
-            <if test="entity.formCustom != null and entity.formCustom != ''">and t.form_custom = #{entity.formCustom}</if>
-            <if test="entity.formPath != null and entity.formPath != ''">and t.form_path = #{entity.formPath}</if>
-            <if test="entity.version != null and entity.version != ''">and t.version = #{entity.version}</if>
-            <if test="entity.createTime != null">and t.create_time = #{entity.createTime}</if>
-            <if test="entity.updateTime != null">and t.update_time = #{entity.updateTime}</if>
-            <if test="entity.tenantId != null and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
-            <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag =
+            <if test="entity.formCustom != null and entity.formCustom != ''">and form_custom = #{entity.formCustom}</if>
+            <if test="entity.formPath != null and entity.formPath != ''">and form_path = #{entity.formPath}</if>
+            <if test="entity.version != null and entity.version != ''">and version = #{entity.version}</if>
+            <if test="entity.createTime != null">and create_time = #{entity.createTime}</if>
+            <if test="entity.updateTime != null">and update_time = #{entity.updateTime}</if>
+            <if test="entity.tenantId != null and entity.tenantId != ''">and tenant_id = #{entity.tenantId}</if>
+            <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and del_flag =
                 #{logicNotDeleteValue}
             </if>
         </where>
@@ -443,14 +443,14 @@
     </delete>
 
     <update id="updateNodeByDefIdsLogic">
-        update flow_node t
-        set t.del_flag = #{logicDeleteValue}
-        where t.definition_id in
+        update flow_node
+        set del_flag = #{logicDeleteValue}
+        where definition_id in
         <foreach item="definitionId" collection="defIds" open="(" separator="," close=")">
             #{definitionId}
         </foreach>
-        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
-        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag = #{logicNotDeleteValue}
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and tenant_id = #{entity.tenantId}</if>
+        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and del_flag = #{logicNotDeleteValue}
         </if>
     </update>
 

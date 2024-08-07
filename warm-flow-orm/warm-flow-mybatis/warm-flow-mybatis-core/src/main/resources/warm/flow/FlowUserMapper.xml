@@ -248,14 +248,14 @@
     </insert>
 
     <update id="updateById" parameterType="com.warm.flow.orm.entity.FlowUser">
-        update flow_user t
+        update flow_user
         <trim prefix="SET" suffixOverrides=",">
-            <if test="type != null and type != ''">t.type = #{type},</if>
-            <if test="processedBy != null and processedBy != ''">t.processed_by = #{processedBy},</if>
-            <if test="associated != null">t.associated = #{associated},</if>
-            <if test="createTime != null">t.create_time = #{createTime},</if>
-            <if test="updateTime != null">t.update_time = #{updateTime},</if>
-            <if test="createBy != null">t.create_by = #{createBy},</if>
+            <if test="type != null and type != ''">type = #{type},</if>
+            <if test="processedBy != null and processedBy != ''">processed_by = #{processedBy},</if>
+            <if test="associated != null">associated = #{associated},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
         </trim>
         where id = #{id}
         <if test="delFlag != null  and delFlag != ''">and del_flag = #{delFlag}</if>
@@ -270,11 +270,11 @@
     </delete>
 
     <update id="updateByIdLogic">
-        update flow_user t
-        set t.del_flag = #{logicDeleteValue}
-        where t.id = #{id}
-        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
-        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag = #{logicNotDeleteValue}
+        update flow_user
+        set del_flag = #{logicDeleteValue}
+        where id = #{id}
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and tenant_id = #{entity.tenantId}</if>
+        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and del_flag = #{logicNotDeleteValue}
         </if>
     </update>
 
@@ -287,14 +287,14 @@
     </delete>
 
     <update id="updateByIdsLogic">
-        update flow_user t
-        set t.del_flag = #{logicDeleteValue}
-        where t.id in
+        update flow_user
+        set del_flag = #{logicDeleteValue}
+        where id in
         <foreach item="id" collection="ids" open="(" separator="," close=")">
             #{id}
         </foreach>
-        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
-        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag = #{logicNotDeleteValue}
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and tenant_id = #{entity.tenantId}</if>
+        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and del_flag = #{logicNotDeleteValue}
         </if>
     </update>
 
@@ -313,18 +313,18 @@
     </delete>
 
     <update id="updateLogic">
-        update flow_user t
-        set t.del_flag = #{logicDeleteValue}
+        update flow_user
+        set del_flag = #{logicDeleteValue}
         <where>
-            <if test="entity.id != null">and t.id = #{entity.id}</if>
-            <if test="entity.type != null  and entity.type != ''">and t.type = #{type}</if>
-            <if test="entity.processedBy != null  and entity.processedBy != ''">and t.processed_by = #{entity.processedBy}</if>
-            <if test="entity.associated != null">and t.associated = #{entity.associated}</if>
-            <if test="entity.createTime != null">and t.create_time = #{entity.createTime}</if>
-            <if test="entity.updateTime != null">and t.update_time = #{entity.updateTime}</if>
-            <if test="entity.createBy != null  and entity.createBy != ''">and t.create_by = #{entity.createBy}</if>
-            <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
-            <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
+            <if test="entity.id != null">and id = #{entity.id}</if>
+            <if test="entity.type != null  and entity.type != ''">and type = #{type}</if>
+            <if test="entity.processedBy != null  and entity.processedBy != ''">and processed_by = #{entity.processedBy}</if>
+            <if test="entity.associated != null">and associated = #{entity.associated}</if>
+            <if test="entity.createTime != null">and create_time = #{entity.createTime}</if>
+            <if test="entity.updateTime != null">and update_time = #{entity.updateTime}</if>
+            <if test="entity.createBy != null  and entity.createBy != ''">and create_by = #{entity.createBy}</if>
+            <if test="entity.tenantId != null  and entity.tenantId != ''">and tenant_id = #{entity.tenantId}</if>
+            <if test="entity.delFlag != null  and entity.delFlag != ''">and del_flag = #{entity.delFlag}</if>
         </where>
     </update>
 
@@ -336,14 +336,14 @@
     </delete>
 
     <update id="updateByTaskIdsLogic">
-        update flow_user t
-            set t.del_flag = #{logicDeleteValue}
-        where t.associated in
+        update flow_user
+            set del_flag = #{logicDeleteValue}
+        where associated in
         <foreach item="taskId" collection="taskIds" open="(" separator="," close=")">
             #{taskId}
         </foreach>
-        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
-        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag = #{logicNotDeleteValue}
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and tenant_id = #{entity.tenantId}</if>
+        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and del_flag = #{logicNotDeleteValue}
         </if>
     </update>
 

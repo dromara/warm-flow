@@ -230,21 +230,21 @@
     </insert>
 
     <update id="updateById" parameterType="com.warm.flow.orm.entity.FlowInstance">
-        update flow_instance t
+        update flow_instance
         <trim prefix="SET" suffixOverrides=",">
-            <if test="businessId != null and businessId != ''">t.business_id = #{businessId},</if>
-            <if test="definitionId != null">t.definition_id = #{definitionId},</if>
-            <if test="nodeType != null">t.node_type = #{nodeType},</if>
-            <if test="nodeCode != null and nodeCode != ''">t.node_code = #{nodeCode},</if>
-            <if test="nodeName != null and nodeName != ''">t.node_name = #{nodeName},</if>
-            <if test="variable != null">t.variable = #{variable},</if>
-            <if test="flowStatus != null">t.flow_status = #{flowStatus},</if>
-            <if test="createBy != null and createBy != ''">t.create_by = #{createBy},</if>
-            <if test="createTime != null">t.create_time = #{createTime},</if>
-            <if test="updateTime != null">t.update_time = #{updateTime},</if>
-            <if test="ext != null">t.ext = #{ext},</if>
+            <if test="businessId != null and businessId != ''">business_id = #{businessId},</if>
+            <if test="definitionId != null">definition_id = #{definitionId},</if>
+            <if test="nodeType != null">node_type = #{nodeType},</if>
+            <if test="nodeCode != null and nodeCode != ''">node_code = #{nodeCode},</if>
+            <if test="nodeName != null and nodeName != ''">node_name = #{nodeName},</if>
+            <if test="variable != null">variable = #{variable},</if>
+            <if test="flowStatus != null">flow_status = #{flowStatus},</if>
+            <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="ext != null">ext = #{ext},</if>
         </trim>
-        where t.id = #{id}
+        where id = #{id}
         <if test="delFlag != null  and delFlag != ''">and del_flag = #{delFlag}</if>
         <if test="tenantId != null  and tenantId != ''">and tenant_id = #{tenantId}</if>
     </update>
@@ -257,11 +257,11 @@
     </delete>
 
     <update id="updateByIdLogic">
-        update flow_instance t
-        set t.del_flag = #{logicDeleteValue}
-        where t.id = #{id}
-        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
-        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag = #{logicNotDeleteValue}
+        update flow_instance
+        set del_flag = #{logicDeleteValue}
+        where id = #{id}
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and tenant_id = #{entity.tenantId}</if>
+        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and del_flag = #{logicNotDeleteValue}
         </if>
     </update>
 
@@ -274,14 +274,14 @@
     </delete>
 
     <update id="updateByIdsLogic">
-        update flow_instance t
-        set t.del_flag = #{logicDeleteValue}
-        where t.id in
+        update flow_instance
+        set del_flag = #{logicDeleteValue}
+        where id in
         <foreach item="id" collection="ids" open="(" separator="," close=")">
             #{id}
         </foreach>
-        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
-        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag = #{logicNotDeleteValue}
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and tenant_id = #{entity.tenantId}</if>
+        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and del_flag = #{logicNotDeleteValue}
         </if>
     </update>
 
@@ -305,24 +305,24 @@
     </delete>
 
     <update id="updateLogic">
-        update flow_instance t
-        set t.del_flag = #{logicDeleteValue}
+        update flow_instance
+        set del_flag = #{logicDeleteValue}
         <where>
-            <if test="entity.id != null">and t.id = #{entity.id}</if>
-            <if test="entity.businessId != null and entity.businessId != ''">and t.business_id = #{entity.businessId}
+            <if test="entity.id != null">and id = #{entity.id}</if>
+            <if test="entity.businessId != null and entity.businessId != ''">and business_id = #{entity.businessId}
             </if>
-            <if test="entity.definitionId != null">and t.definition_id = #{entity.definitionId}</if>
-            <if test="entity.nodeCode != null and entity.nodeCode != ''">and t.node_code = #{entity.nodeCode}</if>
-            <if test="entity.nodeName != null and entity.nodeName != ''">and t.node_name = #{entity.nodeName}</if>
-            <if test="entity.nodeType != null">and t.node_type = #{entity.nodeType}</if>
-            <if test="entity.flowStatus != null">and t.flow_status = #{entity.flowStatus}</if>
-            <if test="entity.variable != null">and t.flow_status = #{entity.variable}</if>
-            <if test="entity.createBy != null and entity.createBy != ''">and t.create_by = #{entity.createBy}</if>
-            <if test="entity.createTime != null">and t.create_time = #{entity.createTime}</if>
-            <if test="entity.updateTime != null">and t.update_time = #{entity.updateTime}</if>
-            <if test="entity.tenantId != null and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
-            <if test="entity.ext != null">and t.ext = #{entity.ext}</if>
-            <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and t.del_flag =
+            <if test="entity.definitionId != null">and definition_id = #{entity.definitionId}</if>
+            <if test="entity.nodeCode != null and entity.nodeCode != ''">and node_code = #{entity.nodeCode}</if>
+            <if test="entity.nodeName != null and entity.nodeName != ''">and node_name = #{entity.nodeName}</if>
+            <if test="entity.nodeType != null">and node_type = #{entity.nodeType}</if>
+            <if test="entity.flowStatus != null">and flow_status = #{entity.flowStatus}</if>
+            <if test="entity.variable != null">and flow_status = #{entity.variable}</if>
+            <if test="entity.createBy != null and entity.createBy != ''">and create_by = #{entity.createBy}</if>
+            <if test="entity.createTime != null">and create_time = #{entity.createTime}</if>
+            <if test="entity.updateTime != null">and update_time = #{entity.updateTime}</if>
+            <if test="entity.tenantId != null and entity.tenantId != ''">and tenant_id = #{entity.tenantId}</if>
+            <if test="entity.ext != null">and ext = #{entity.ext}</if>
+            <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and del_flag =
                 #{logicNotDeleteValue}
             </if>
         </where>
