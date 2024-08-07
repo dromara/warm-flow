@@ -67,8 +67,10 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
 
     @Override
     public HisTask getNoReject(String nodeCode, String targetNodeCode, List<HisTask> hisTasks) {
-        List<HisTask> hisTaskList = StreamUtils.filter(hisTasks, hisTask -> hisTask.getNodeCode().equals(nodeCode)
-                && (StringUtils.isEmpty(targetNodeCode) || hisTask.getTargetNodeCode().equals(targetNodeCode)));
+        List<HisTask> hisTaskList = StreamUtils.filter(hisTasks, hisTask -> (StringUtils.isEmpty(nodeCode)
+                || hisTask.getNodeCode().equals(nodeCode))
+                && (StringUtils.isEmpty(targetNodeCode)
+                || hisTask.getTargetNodeCode().equals(targetNodeCode)));
         return CollUtil.getOne(hisTaskList);
     }
 

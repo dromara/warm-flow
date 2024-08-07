@@ -148,6 +148,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         Node endNode = FlowFactory.nodeService().getOne(FlowFactory.newNode()
                 .setDefinitionId(instance.getDefinitionId()).setNodeType(NodeType.END.getKey()));
         // 待办任务转历史
+        flowParams.setSkipType(SkipType.PASS.getKey());
         List<HisTask> insHisList = FlowFactory.hisTaskService().setSkipInsHis(task, Collections.singletonList(endNode)
                 , flowParams);
         FlowFactory.hisTaskService().saveBatch(insHisList);
@@ -256,6 +257,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 .setDefinitionId(task.getDefinitionId()));
         FlowParams flowParams = new FlowParams().handler(modifyHandler.getCurUser())
                 .setFlowStatus(FlowStatus.APPROVAL.getKey())
+                .setSkipType(SkipType.NONE.getKey())
                 .message(modifyHandler.getMessage())
                 .setCooperateType(modifyHandler.getCooperateType());
 
@@ -572,11 +574,11 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         if (CollUtil.isEmpty(oneLastSkips)) {
             return true;
         }
-        List<HisTask> oneLastHisTasks = FlowFactory.hisTaskService().getNoReject(instance.getId());
+        List<HisTask> hisTaskList = FlowFactory.hisTaskService().getNoReject(instance.getId());
         if (CollUtil.isNotEmpty(oneLastSkips)) {
             for (Skip oneLastSkip : oneLastSkips) {
                 HisTask oneLastHisTask = FlowFactory.hisTaskService()
-                        .getNoReject(oneLastSkip.getNowNodeCode(), null, oneLastHisTasks);
+                        .getNoReject(oneLastSkip.getNowNodeCode(), null, hisTaskList);
                 // 查询前置节点是否有完成记录
                 if (ObjectUtil.isNull(oneLastHisTask)) {
                     return false;
@@ -590,7 +592,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                         List<Skip> threeLastSkips = skipNextMap.get(twoLastSkip.getNowNodeCode());
                         for (Skip threeLastSkip : threeLastSkips) {
                             HisTask threeLastHisTask = FlowFactory.hisTaskService()
-                                    .getNoReject(threeLastSkip.getNowNodeCode(), null, oneLastHisTasks);
+                                    .getNoReject(threeLastSkip.getNowNodeCode(), null, hisTaskList);
                             if (ObjectUtil.isNotNull(threeLastHisTask) && (threeLastHisTask.getCreateTime()
                                     .before(oneLastHisTask.getCreateTime()) || threeLastHisTask.getCreateTime()
                                     .equals(oneLastHisTask.getCreateTime()))) {
@@ -599,7 +601,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                         }
                     } else {
                         HisTask twoLastHisTask = FlowFactory.hisTaskService()
-                                .getNoReject(twoLastSkip.getNowNodeCode(), null, oneLastHisTasks);
+                                .getNoReject(twoLastSkip.getNowNodeCode(), null, hisTaskList);
                         // 前前置节点完成时间是否早于前置节点，如果是串行网关，那前前置节点必须只有一个完成，如果是并行网关都要完成
                         if (ObjectUtil.isNotNull(twoLastHisTask) && (twoLastHisTask.getCreateTime()
                                 .before(oneLastHisTask.getCreateTime()) || twoLastHisTask.getCreateTime()
