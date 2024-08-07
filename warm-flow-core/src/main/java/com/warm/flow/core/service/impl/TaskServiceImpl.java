@@ -572,10 +572,11 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         if (CollUtil.isEmpty(oneLastSkips)) {
             return true;
         }
+        List<HisTask> oneLastHisTasks = FlowFactory.hisTaskService().getNoReject(instance.getId());
         if (CollUtil.isNotEmpty(oneLastSkips)) {
             for (Skip oneLastSkip : oneLastSkips) {
-                HisTask oneLastHisTask = CollUtil.getOne(FlowFactory.hisTaskService()
-                        .getNoReject(oneLastSkip.getNowNodeCode(), null, instance.getId()));
+                HisTask oneLastHisTask = FlowFactory.hisTaskService()
+                        .getNoReject(oneLastSkip.getNowNodeCode(), null, oneLastHisTasks);
                 // 查询前置节点是否有完成记录
                 if (ObjectUtil.isNull(oneLastHisTask)) {
                     return false;
@@ -588,8 +589,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                         // 如果前前置节点是网关，那网关前任意一个任务完成就算完成
                         List<Skip> threeLastSkips = skipNextMap.get(twoLastSkip.getNowNodeCode());
                         for (Skip threeLastSkip : threeLastSkips) {
-                            HisTask threeLastHisTask = CollUtil.getOne(FlowFactory.hisTaskService()
-                                    .getNoReject(threeLastSkip.getNowNodeCode(), null, instance.getId()));
+                            HisTask threeLastHisTask = FlowFactory.hisTaskService()
+                                    .getNoReject(threeLastSkip.getNowNodeCode(), null, oneLastHisTasks);
                             if (ObjectUtil.isNotNull(threeLastHisTask) && (threeLastHisTask.getCreateTime()
                                     .before(oneLastHisTask.getCreateTime()) || threeLastHisTask.getCreateTime()
                                     .equals(oneLastHisTask.getCreateTime()))) {
@@ -597,8 +598,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                             }
                         }
                     } else {
-                        HisTask twoLastHisTask = CollUtil.getOne(FlowFactory.hisTaskService()
-                                .getNoReject(twoLastSkip.getNowNodeCode(), null, instance.getId()));
+                        HisTask twoLastHisTask = FlowFactory.hisTaskService()
+                                .getNoReject(twoLastSkip.getNowNodeCode(), null, oneLastHisTasks);
                         // 前前置节点完成时间是否早于前置节点，如果是串行网关，那前前置节点必须只有一个完成，如果是并行网关都要完成
                         if (ObjectUtil.isNotNull(twoLastHisTask) && (twoLastHisTask.getCreateTime()
                                 .before(oneLastHisTask.getCreateTime()) || twoLastHisTask.getCreateTime()

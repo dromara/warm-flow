@@ -17,7 +17,6 @@ package com.warm.flow.orm.dao;
 
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.dao.FlowHisTaskDao;
-import com.warm.flow.core.enums.FlowStatus;
 import com.warm.flow.core.enums.SkipType;
 import com.warm.flow.core.utils.StringUtils;
 import com.warm.flow.orm.entity.FlowHisTask;
@@ -48,23 +47,18 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask> implements Flow
     }
 
     /**
-     * 根据nodeCode获取未退回的历史记录
+     * 根据instanceId获取未退回的历史记录
      *
-     * @param nodeCode
      * @param instanceId
      * @return
      */
     @Override
-    public List<FlowHisTask> getNoReject(String nodeCode, String targetNodeCode, Long instanceId) {
+    public List<FlowHisTask> getNoReject(Long instanceId) {
         FlowHisTask entity = TenantDeleteUtil.getEntity(newEntity());
 
         final CriteriaQuery<FlowHisTask> criteriaQuery = createCriteriaQuery((criteriaBuilder, root, predicates, innerCriteriaQuery) -> {
             entity.commonPredicate().process(criteriaBuilder, root, predicates);
 
-            predicates.add(criteriaBuilder.equal(root.get("nodeCode"), nodeCode));
-            if (StringUtils.isNotEmpty(targetNodeCode)) {
-                predicates.add(criteriaBuilder.equal(root.get("targetNodeCode"), targetNodeCode));
-            }
             predicates.add(criteriaBuilder.equal(root.get("instanceId"), instanceId));
 
             // 流程流转（PASS REJECT NONE）

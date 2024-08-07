@@ -28,14 +28,12 @@ import java.util.List;
 public interface FlowHisTaskDao<T extends HisTask> extends WarmDao<T> {
 
     /**
-     * 根据nodeCode获取未退回的历史记录
+     * 根据instanceId获取未退回的历史记录
      *
-     * @param nodeCode
-     * @param targetNodeCode
      * @param instanceId
      * @return
      */
-    List<T> getNoReject(String nodeCode, String targetNodeCode, Long instanceId);
+    List<T> getNoReject( Long instanceId);
 
     /**
      * 根据instanceIds删除

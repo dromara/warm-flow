@@ -44,8 +44,8 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask> implements Flow
     }
 
     @Override
-    public List<FlowHisTask> getNoReject(String nodeCode, String targetNodeCode, Long instanceId) {
-        return getMapper().getNoReject(nodeCode, targetNodeCode, instanceId, TenantDeleteUtil.getEntity(newEntity()));
+    public List<FlowHisTask> getNoReject(Long instanceId) {
+        return getMapper().getNoReject(instanceId, TenantDeleteUtil.getEntity(newEntity()));
     }
 
     @Override

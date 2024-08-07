@@ -254,10 +254,8 @@
 
     <select id="getNoReject" resultMap="FlowHisTaskResult">
         <include refid="selectVo"/>
-        where t.node_code = #{nodeCode}
-        and t.instance_id = #{instanceId}
+        where t.instance_id = #{instanceId}
         and t.skip_type = 'PASS'
-        <if test="targetNodeCode != null and targetNodeCode != ''">and t.target_node_code = #{targetNodeCode}</if>
         <if test="entity.delFlag != null and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
         <if test="entity.tenantId != null and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
         order by t.create_time desc

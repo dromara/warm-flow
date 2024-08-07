@@ -19,7 +19,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.warm.flow.core.dao.FlowHisTaskDao;
 import com.warm.flow.core.enums.SkipType;
 import com.warm.flow.core.invoker.FrameInvoker;
-import com.warm.flow.core.utils.StringUtils;
 import com.warm.flow.orm.entity.FlowHisTask;
 import com.warm.flow.orm.mapper.FlowHisTaskMapper;
 
@@ -45,11 +44,9 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask> implements Flow
     }
 
     @Override
-    public List<FlowHisTask> getNoReject(String nodeCode, String targetNodeCode, Long instanceId) {
+    public List<FlowHisTask> getNoReject(Long instanceId) {
         LambdaQueryWrapper<FlowHisTask> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(FlowHisTask::getNodeCode, nodeCode)
-                .eq(StringUtils.isNotEmpty(targetNodeCode), FlowHisTask::getTargetNodeCode, targetNodeCode)
-                .eq(FlowHisTask::getInstanceId, instanceId)
+        queryWrapper.eq(FlowHisTask::getInstanceId, instanceId)
                 .eq(FlowHisTask::getSkipType, SkipType.PASS.getKey())
                 .orderByDesc(FlowHisTask::getCreateTime);
         return getMapper().selectList(queryWrapper);

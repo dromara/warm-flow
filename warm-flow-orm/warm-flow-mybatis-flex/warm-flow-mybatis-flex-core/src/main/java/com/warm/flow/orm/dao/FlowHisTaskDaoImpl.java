@@ -17,10 +17,8 @@ package com.warm.flow.orm.dao;
 
 import com.mybatisflex.core.query.QueryWrapper;
 import com.warm.flow.core.dao.FlowHisTaskDao;
-import com.warm.flow.core.enums.FlowStatus;
 import com.warm.flow.core.enums.SkipType;
 import com.warm.flow.core.invoker.FrameInvoker;
-import com.warm.flow.core.utils.StringUtils;
 import com.warm.flow.orm.entity.FlowHisTask;
 import com.warm.flow.orm.mapper.FlowHisTaskMapper;
 import com.warm.flow.orm.utils.TenantDeleteUtil;
@@ -46,11 +44,9 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask> implements Flow
     }
 
     @Override
-    public List<FlowHisTask> getNoReject(String nodeCode, String targetNodeCode, Long instanceId) {
+    public List<FlowHisTask> getNoReject(Long instanceId) {
         QueryWrapper queryWrapper = TenantDeleteUtil.getDefaultWrapper(newEntity());
-        queryWrapper.eq(FlowHisTask::getNodeCode, nodeCode)
-                .eq(FlowHisTask::getTargetNodeCode, targetNodeCode, StringUtils.isNotEmpty(targetNodeCode))
-                .eq(FlowHisTask::getInstanceId, instanceId)
+        queryWrapper.eq(FlowHisTask::getInstanceId, instanceId)
                 .eq(FlowHisTask::getSkipType, SkipType.PASS.getKey())
                 .orderBy(FlowHisTask::getCreateTime, false);
         return getMapper().selectListByQuery(queryWrapper);

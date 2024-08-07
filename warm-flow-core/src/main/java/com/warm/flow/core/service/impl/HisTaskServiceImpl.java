@@ -28,9 +28,7 @@ import com.warm.flow.core.enums.NodeType;
 import com.warm.flow.core.enums.SkipType;
 import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.HisTaskService;
-import com.warm.flow.core.utils.ArrayUtil;
-import com.warm.flow.core.utils.ObjectUtil;
-import com.warm.flow.core.utils.SqlHelper;
+import com.warm.flow.core.utils.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -63,8 +61,15 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
     }
 
     @Override
-    public List<HisTask> getNoReject(String nodeCode, String targetNodeCode, Long instanceId) {
-        return getDao().getNoReject(nodeCode, targetNodeCode, instanceId);
+    public List<HisTask> getNoReject(Long instanceId) {
+        return getDao().getNoReject(instanceId);
+    }
+
+    @Override
+    public HisTask getNoReject(String nodeCode, String targetNodeCode, List<HisTask> hisTasks) {
+        List<HisTask> hisTaskList = StreamUtils.filter(hisTasks, hisTask -> hisTask.getNodeCode().equals(nodeCode)
+                && (StringUtils.isEmpty(targetNodeCode) || hisTask.getTargetNodeCode().equals(targetNodeCode)));
+        return CollUtil.getOne(hisTaskList);
     }
 
     @Override

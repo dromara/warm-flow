@@ -43,12 +43,20 @@ public interface HisTaskService extends IWarmService<HisTask> {
     List<HisTask> listByTaskIdAndCooperateTypes(Long taskId, Integer... cooperateTypes);
 
     /**
-     * 根据nodeCode获取未退回的历史记录
+     * 根据instanceId获取未退回的历史记录
      *
-     * @param nodeCode
      * @param instanceId
      */
-    List<HisTask> getNoReject(String nodeCode, String targetNodeCode, Long instanceId);
+    List<HisTask> getNoReject(Long instanceId);
+
+    /**
+     * 根据nodeCode和targetNodeCode获取未退回的历史记录
+     * @param nodeCode
+     * @param targetNodeCode
+     * @param hisTasks
+     * @return
+     */
+    HisTask getNoReject(String nodeCode, String targetNodeCode, List<HisTask> hisTasks);
 
     /**
      * 根据instanceIds删除

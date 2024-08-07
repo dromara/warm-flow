@@ -3,7 +3,6 @@ package com.warm.flow.orm.dao;
 import com.easy.query.core.util.EasyArrayUtil;
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.dao.FlowHisTaskDao;
-import com.warm.flow.core.enums.FlowStatus;
 import com.warm.flow.core.enums.SkipType;
 import com.warm.flow.core.utils.StringUtils;
 import com.warm.flow.orm.entity.FlowHisTask;
@@ -19,14 +18,12 @@ import java.util.Objects;
  */
 public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask, FlowHisTaskProxy> implements FlowHisTaskDao<FlowHisTask> {
 
-    /** 根据nodeCode获取未退回的历史记录 */
+    /** 根据instanceId获取未退回的历史记录 */
     @Override
-    public List<FlowHisTask> getNoReject(String nodeCode, String targetNodeCode, Long instanceId) {
+    public List<FlowHisTask> getNoReject(Long instanceId) {
         FlowHisTask entity = TenantDeleteUtil.getEntity(newEntity());
         return entityQuery().queryable(entityClass())
             .where(proxy -> {
-                proxy.nodeCode().eq(nodeCode); // 开始节点编码
-                proxy.targetNodeCode().eq(StringUtils.isNotEmpty(targetNodeCode), targetNodeCode); // 目标节点编码
                 proxy.instanceId().eq(instanceId); // 流程实例表id
                 proxy.skipType().eq(SkipType.PASS.getKey()); // 跳转类型（PASS通过 REJECT退回 NONE无动作）
                 proxy.delFlag().eq(StringUtils.isNotEmpty(entity.getDelFlag()), entity.getDelFlag()); // 逻辑删除过滤
