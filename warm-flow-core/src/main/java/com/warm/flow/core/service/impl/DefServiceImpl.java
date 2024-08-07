@@ -442,6 +442,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                                 }
                             }
                             colorPut(colorMap, "node:" + node.getNodeCode(), c);
+                            colorPut(colorMap, "node:" + oneLastSkip.getNowNodeCode(), c);
                             setNextColorMap(colorMap, oneNextSkips, c);
                         }
                     } else if (NodeType.isEnd(node.getNodeType()) && NodeType.isEnd(instance.getNodeType())) {
