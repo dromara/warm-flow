@@ -97,7 +97,7 @@ public class FlowBaseTest {
      * 删除流程定义
      */
     public void removeDef(DefService defService) {
-        defService.removeDef(Collections.singletonList(1254781363102552064L));
+        defService.removeDef(Collections.singletonList(1270719853770182658L));
     }
 
     /**
