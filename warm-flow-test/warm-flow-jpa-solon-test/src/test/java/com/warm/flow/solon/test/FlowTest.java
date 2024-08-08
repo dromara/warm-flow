@@ -65,6 +65,16 @@ public class FlowTest extends FlowBaseTest {
     }
 
     /**
+     * 获取流程定义xml的字符串
+     *
+     * @return
+     */
+    @Test
+    public void xmlString() {
+        xmlString(defService);
+    }
+
+    /**
      * 删除流程定义
      */
     @Test

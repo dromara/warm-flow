@@ -94,6 +94,13 @@ public class FlowBaseTest {
     }
 
     /**
+     * 获取流程定义xml的字符串
+     */
+    public void xmlString(DefService defService) {
+        System.out.println("流程定义xml的字符串：" + defService.xmlString(getTestDefId(defService)));
+    }
+
+    /**
      * 删除流程定义
      */
     public void removeDef(DefService defService) {
