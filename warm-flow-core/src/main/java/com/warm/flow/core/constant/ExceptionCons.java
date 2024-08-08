@@ -101,6 +101,6 @@ public class ExceptionCons {
 
     public static final String LOAD_EXPRESSION_STRATEGY_ERROR = "SPI加载条件表达式失败!";
     public static final String JPA_PERSISTENCE_PROVIDER_NOT_FOUND = "jpa_persistence_provider配置不能为空";
-    public static final String BACK_TASK_NOT_EXECUTED = "不能退回，未完成过任务";
+    public static final String BACK_TASK_NOT_EXECUTED = "未完成过任务, 不能退回";
 
 }

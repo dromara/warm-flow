@@ -49,6 +49,11 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask> implements Flow
     }
 
     @Override
+    public List<FlowHisTask> getByInsAndNodeCodes(Long instanceId, List<String> nodeCodes) {
+        return getMapper().getByInsAndNodeCodes(instanceId, nodeCodes, TenantDeleteUtil.getEntity(newEntity()));
+    }
+
+    @Override
     public int deleteByInsIds(List<Long> instanceIds) {
         FlowHisTask entity = TenantDeleteUtil.getEntity(newEntity());
         if (StringUtils.isNotEmpty(entity.getDelFlag())) {

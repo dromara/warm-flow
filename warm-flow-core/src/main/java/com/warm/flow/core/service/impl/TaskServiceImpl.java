@@ -73,13 +73,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         if (!NodeType.isStart(task.getNodeType())) {
             AssertUtil.isFalse(StringUtils.isNotEmpty(flowParams.getSkipType()), ExceptionCons.NULL_CONDITIONVALUE);
         }
-        // 不能退回，未完成过任务
-        if (SkipType.isReject(flowParams.getSkipType())) {
-            Boolean exists = FlowFactory.hisTaskService().exists(FlowFactory.newHisTask().setInstanceId(task.getInstanceId())
-                    .setNodeCode(task.getNodeCode()));
-            AssertUtil.isFalse(exists, ExceptionCons.BACK_TASK_NOT_EXECUTED);
-        }
-
 
         //执行开始监听器
         task.setUserList(FlowFactory.userService().listByAssociatedAndTypes(task.getId()));
@@ -104,6 +97,13 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
         // 如果是网关节点，则重新获取后续节点
         List<Node> nextNodes = getNextByCheckGateWay(flowParams, nextNode);
+
+        // 不能退回，未完成过任务
+        if (SkipType.isReject(flowParams.getSkipType())) {
+            List<HisTask> rejectHisTasks = FlowFactory.hisTaskService()
+                    .getByInsAndNodeCodes(task.getInstanceId(), StreamUtils.toList(nextNodes, Node::getNodeCode));
+            AssertUtil.isTrue(CollUtil.isEmpty(rejectHisTasks), ExceptionCons.BACK_TASK_NOT_EXECUTED);
+        }
 
         //判断下一结点是否有权限监听器,有执行权限监听器nextNode.setPermissionFlag,无走数据库的权限标识符
         ListenerUtil.executeGetNodePermission(new ListenerVariable(instance, nowNode, flowParams.getVariable(), task

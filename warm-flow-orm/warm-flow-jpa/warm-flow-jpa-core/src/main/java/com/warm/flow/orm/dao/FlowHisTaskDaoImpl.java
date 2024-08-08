@@ -70,6 +70,23 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask> implements Flow
         return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
+    @Override
+    public List<FlowHisTask> getByInsAndNodeCodes(Long instanceId, List<String> nodeCodes) {
+        FlowHisTask entity = TenantDeleteUtil.getEntity(newEntity());
+
+        final CriteriaQuery<FlowHisTask> criteriaQuery = createCriteriaQuery((criteriaBuilder, root, predicates, innerCriteriaQuery) -> {
+            entity.commonPredicate().process(criteriaBuilder, root, predicates);
+
+            predicates.add(criteriaBuilder.equal(root.get("instanceId"), instanceId));
+
+            predicates.add(createIn(criteriaBuilder, root, "nodeCode", nodeCodes));
+
+            // orderBy
+            innerCriteriaQuery.orderBy(criteriaBuilder.desc(root.get("createTime")));
+        });
+        return entityManager.createQuery(criteriaQuery).getResultList();
+    }
+
     /**
      * 根据instanceIds删除
      *

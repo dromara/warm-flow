@@ -53,6 +53,15 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask> implements Flow
     }
 
     @Override
+    public List<FlowHisTask> getByInsAndNodeCodes(Long instanceId, List<String> nodeCodes) {
+        QueryWrapper queryWrapper = TenantDeleteUtil.getDefaultWrapper(newEntity());
+        queryWrapper.eq(FlowHisTask::getInstanceId, instanceId)
+                .in(FlowHisTask::getNodeCode, nodeCodes)
+                .orderBy(FlowHisTask::getCreateTime, false);
+        return getMapper().selectListByQuery(queryWrapper);
+    }
+
+    @Override
     public int deleteByInsIds(List<Long> instanceIds) {
         return delete(newEntity(), (uq) -> uq.in(FlowHisTask::getInstanceId, instanceIds)
                 , (qw) -> qw.in(FlowHisTask::getInstanceId, instanceIds));

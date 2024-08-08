@@ -75,6 +75,11 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
     }
 
     @Override
+    public List<HisTask> getByInsAndNodeCodes(Long instanceId, List<String> nodeCodes) {
+        return getDao().getByInsAndNodeCodes(instanceId, nodeCodes);
+    }
+
+    @Override
     public boolean deleteByInsIds(List<Long> instanceIds) {
         return SqlHelper.retBool(getDao().deleteByInsIds(instanceIds));
     }

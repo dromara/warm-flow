@@ -33,6 +33,19 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask, FlowHisTaskProx
     }
 
     @Override
+    public List<FlowHisTask> getByInsAndNodeCodes(Long instanceId, List<String> nodeCodes) {
+        FlowHisTask entity = TenantDeleteUtil.getEntity(newEntity());
+        return entityQuery().queryable(entityClass())
+            .where(proxy -> {
+                proxy.instanceId().eq(instanceId); // 流程实例表id
+                proxy.nodeCode().in(nodeCodes); // 跳转类型（PASS通过 REJECT退回 NONE无动作）
+                proxy.delFlag().eq(StringUtils.isNotEmpty(entity.getDelFlag()), entity.getDelFlag()); // 逻辑删除过滤
+                proxy.tenantId().eq(StringUtils.isNotEmpty(entity.getTenantId()),entity.getTenantId()); // 租户ID
+            })
+            .orderBy(hisTask -> hisTask.createTime().desc()).toList();
+    }
+
+    @Override
     public int deleteByInsIds(List<Long> instanceIds) {
         FlowHisTask entityFilter = TenantDeleteUtil.getEntity(newEntity());
 

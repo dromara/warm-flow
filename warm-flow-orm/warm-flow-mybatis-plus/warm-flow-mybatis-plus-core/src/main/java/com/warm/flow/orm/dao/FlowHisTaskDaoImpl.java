@@ -53,6 +53,15 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask> implements Flow
     }
 
     @Override
+    public List<FlowHisTask> getByInsAndNodeCodes(Long instanceId, List<String> nodeCodes) {
+        LambdaQueryWrapper<FlowHisTask> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(FlowHisTask::getInstanceId, instanceId)
+                .in(FlowHisTask::getNodeCode, nodeCodes)
+                .orderByDesc(FlowHisTask::getCreateTime);
+        return getMapper().selectList(queryWrapper);
+    }
+
+    @Override
     public int deleteByInsIds(List<Long> instanceIds) {
         return getMapper().deleteBatchIds(instanceIds);
     }

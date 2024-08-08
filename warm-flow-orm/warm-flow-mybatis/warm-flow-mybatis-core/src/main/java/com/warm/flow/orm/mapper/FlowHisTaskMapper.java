@@ -41,6 +41,18 @@ public interface FlowHisTaskMapper extends WarmMapper<FlowHisTask> {
             , @Param("entity") FlowHisTask entity);
 
     /**
+     * 根据instanceId和流程编码获取未退回的历史记录
+     *
+     * @param instanceId
+     * @param nodeCodes
+     * @return
+     */
+    List<FlowHisTask> getByInsAndNodeCodes(@Param("instanceId") Long instanceId
+            , @Param("nodeCodes") List<String> nodeCodes
+            , @Param("entity") FlowHisTask entity);
+
+
+    /**
      * 根据instanceIds删除
      *
      * @param instanceIds 主键
