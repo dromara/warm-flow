@@ -115,4 +115,14 @@ public interface DefService extends IWarmService<Definition> {
      * @throws IOException
      */
     String flowChart(Long instanceId) throws IOException;
+
+    /**
+     * 激活流程
+     */
+    boolean active(Long defId);
+
+    /**
+     * 挂起流程
+     */
+    boolean unActive(Long defId);
 }

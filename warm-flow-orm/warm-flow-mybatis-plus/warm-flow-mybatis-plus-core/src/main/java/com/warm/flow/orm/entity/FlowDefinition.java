@@ -93,6 +93,11 @@ public class FlowDefinition implements Definition {
     private String formPath;
 
     /**
+     * 流程激活状态（0挂起 1激活）
+     */
+    private Integer activityStatus;
+
+    /**
      * 扩展字段，预留给业务系统使用
      */
     private String ext;
@@ -231,6 +236,17 @@ public class FlowDefinition implements Definition {
     }
 
     @Override
+    public Integer getActivityStatus() {
+        return activityStatus;
+    }
+
+    @Override
+    public Definition setActivityStatus(Integer activityStatus) {
+        this.activityStatus = activityStatus;
+        return this;
+    }
+
+    @Override
     public String getExt() {
         return ext;
     }
@@ -286,6 +302,7 @@ public class FlowDefinition implements Definition {
                 ", isPublish=" + isPublish +
                 ", formCustom='" + formCustom + '\'' +
                 ", formPath='" + formPath + '\'' +
+                ", activityStatus=" + activityStatus +
                 ", ext='" + ext + '\'' +
                 ", xmlString='" + xmlString + '\'' +
                 ", nodeList=" + nodeList +

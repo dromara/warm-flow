@@ -18,7 +18,6 @@ package com.warm.flow.orm.dao;
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.dao.FlowDefinitionDao;
 import com.warm.flow.core.utils.StringUtils;
-import com.warm.flow.orm.entity.FlowDefinition;
 import com.warm.flow.orm.entity.proxy.FlowDefinitionProxy;
 import com.warm.flow.orm.utils.TenantDeleteUtil;
 

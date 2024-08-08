@@ -87,6 +87,20 @@ public class FlowBaseTest {
     }
 
     /**
+     * 激活流程
+     */
+    public void active(DefService defService) {
+        defService.active(getTestDefId(defService));
+    }
+
+    /**
+     * 挂起流程
+     */
+    public void unActive(DefService defService){
+        defService.unActive(getTestDefId(defService));
+    }
+
+    /**
      * 取消流程
      */
     public void unPublish(DefService defService) {
@@ -116,6 +130,19 @@ public class FlowBaseTest {
         insService.remove(Collections.singletonList(2L));
     }
 
+    /**
+     * 激活流程实例
+     */
+    public void activeIns(InsService insService,TaskService taskService) {
+        insService.active(taskService.getById(getTaskId()).getInstanceId());
+    }
+
+    /**
+     * 挂起流程实例
+     */
+    public void unActiveIns(InsService insService,TaskService taskService) {
+        insService.unActive(taskService.getById(getTaskId()).getInstanceId());
+    }
 
     /**
      * 办理

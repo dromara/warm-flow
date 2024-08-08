@@ -68,6 +68,11 @@ public class FlowParams implements Serializable {
     private Integer flowStatus;
 
     /**
+     * 流程激活状态（0挂起 1激活）
+     */
+    private Integer activityStatus;
+
+    /**
      * 协作方式(1审批 2转办 3委派 4会签 5票签 6加签 7减签)
      */
     private Integer cooperateType;
@@ -178,6 +183,15 @@ public class FlowParams implements Serializable {
 
     public FlowParams setFlowStatus(Integer flowStatus) {
         this.flowStatus = flowStatus;
+        return this;
+    }
+
+    public Integer getActivityStatus() {
+        return activityStatus;
+    }
+
+    public FlowParams setActivityStatus(Integer activityStatus) {
+        this.activityStatus = activityStatus;
         return this;
     }
 

@@ -15,6 +15,7 @@
         <result property="nodeName" column="node_name"/>
         <result property="variable" column="variable"/>
         <result property="flowStatus" column="flow_status"/>
+        <result property="activityStatus" column="activity_status"/>
         <result property="createBy" column="create_by"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
@@ -33,6 +34,7 @@
                t.node_name,
                t.variable,
                t.flow_status,
+               t.activity_status,
                t.create_by,
                t.create_time,
                t.update_time,
@@ -62,6 +64,7 @@
             <if test="entity.nodeName != null and nodeName != ''">and t.node_name = #{entity.nodeName}</if>
             <if test="entity.variable != null">and t.variable = #{entity.variable}</if>
             <if test="entity.flowStatus != null">and t.flow_status = #{entity.flowStatus}</if>
+            <if test="entity.activityStatus != null">and t.activity_status = #{entity.activityStatus}</if>
             <if test="entity.createBy != null  and entity.createBy != ''">and t.create_by = #{entity.createBy}</if>
             <if test="entity.createTime != null">and t.create_time = #{entity.createTime}</if>
             <if test="entity.updateTime != null">and t.update_time = #{entity.updateTime}</if>
@@ -111,6 +114,7 @@
         node_type,
         variable,
         flow_status,
+        activity_status,
         create_by,
         create_time,
         update_time,
@@ -129,6 +133,7 @@
             #{item.nodeType},
             #{item.variable},
             #{item.flowStatus},
+            #{item.activityStatus},
             #{item.createBy},
             #{item.createTime},
             #{item.updateTime},
@@ -149,6 +154,7 @@
         node_type,
         variable,
         flow_status,
+        activity_status,
         create_by,
         create_time,
         update_time,
@@ -166,6 +172,7 @@
             #{item.nodeType},
             #{item.variable},
             #{item.flowStatus},
+            #{item.activityStatus},
             #{item.createBy},
             #{item.createTime},
             #{item.updateTime},
@@ -204,6 +211,7 @@
             <if test="nodeType != null">node_type,</if>
             <if test="variable != null">variable,</if>
             <if test="flowStatus != null">flow_status,</if>
+            <if test="activityStatus != null">activity_status,</if>
             <if test="createBy != null and createBy != ''">create_by,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
@@ -220,6 +228,7 @@
             <if test="nodeType != null">#{nodeType},</if>
             <if test="variable != null">#{variable},</if>
             <if test="flowStatus != null">#{flowStatus},</if>
+            <if test="activityStatus != null">#{activityStatus},</if>
             <if test="createBy != null and createBy != ''">#{createBy},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
@@ -239,6 +248,7 @@
             <if test="nodeName != null and nodeName != ''">node_name = #{nodeName},</if>
             <if test="variable != null">variable = #{variable},</if>
             <if test="flowStatus != null">flow_status = #{flowStatus},</if>
+            <if test="activityStatus != null">activity_status = #{activityStatus},</if>
             <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
@@ -296,6 +306,7 @@
             <if test="nodeType != null">and node_type = #{nodeType}</if>
             <if test="flowStatus != null">and flow_status = #{flowStatus}</if>
             <if test="variable != null">and flow_status = #{variable}</if>
+            <if test="activityStatus != null">and activity_status = #{activityStatus}</if>
             <if test="createBy != null and createBy != ''">and create_by = #{createBy}</if>
             <if test="createTime != null">and create_time = #{createTime}</if>
             <if test="updateTime != null">and update_time = #{updateTime}</if>
@@ -317,6 +328,7 @@
             <if test="entity.nodeType != null">and node_type = #{entity.nodeType}</if>
             <if test="entity.flowStatus != null">and flow_status = #{entity.flowStatus}</if>
             <if test="entity.variable != null">and flow_status = #{entity.variable}</if>
+            <if test="entity.activityStatus != null">and activity_status = #{entity.activityStatus}</if>
             <if test="entity.createBy != null and entity.createBy != ''">and create_by = #{entity.createBy}</if>
             <if test="entity.createTime != null">and create_time = #{entity.createTime}</if>
             <if test="entity.updateTime != null">and update_time = #{entity.updateTime}</if>
