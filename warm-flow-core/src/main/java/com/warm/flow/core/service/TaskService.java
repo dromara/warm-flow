@@ -136,8 +136,14 @@ public interface TaskService extends IWarmService<Task> {
 
     /**
      * 修改办理人
-     *
-     * @param modifyHandler 修改办理人参数
+     * @param modifyHandler: 修改办理人参数的对象 - taskId:修改的任务id[必传]
+     *                               - curUser:办理人唯一标识[按需传输]
+     *                               - ignore: 转办忽略权限校验（true：忽略，false：不忽略）[按需传输]
+     *                               - permissionFlag: 用户所拥有的权限标识[按需传输，ignore为false，则必传]
+     *                               - addHandlers: 增加办理人：加签，转办，委托[按需传输]
+     *                               - reductionHandlers: 减少办理人：减签，委托[按需传输]
+     *                               - message: 审批意见[按需传输]
+     *                               - cooperateType: 协作方式(1审批 2转办 3委派 4会签 5票签 6加签 7减签）[按需传输]
      */
     boolean updateHandler(ModifyHandler modifyHandler);
 

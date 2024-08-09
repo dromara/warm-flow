@@ -35,7 +35,7 @@ public class ModifyHandler {
     private String curUser;
 
     /**
-     * 用户权限标识
+     * 用户所拥有的权限标识
      */
     private List<String> permissionFlag;
 
@@ -55,7 +55,7 @@ public class ModifyHandler {
     private String message;
 
     /**
-     * 转办忽略权限校验（true - 忽略，false - 不忽略）
+     * 转办忽略权限校验（true：忽略，false：不忽略）
      */
     private boolean ignore;
 

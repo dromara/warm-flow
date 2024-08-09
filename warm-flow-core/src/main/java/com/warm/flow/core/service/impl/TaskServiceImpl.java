@@ -248,7 +248,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             // 判断当前处理人是否有权限，获取当前办理人的权限
             List<String> permissions = modifyHandler.getPermissionFlag();
             // 获取任务权限人
-            List<String> taskPermissions = FlowFactory.userService().getPermission(modifyHandler.getTaskId(), UserType.APPROVAL.getKey());
+            List<String> taskPermissions = FlowFactory.userService().getPermission(modifyHandler.getTaskId()
+                    , UserType.APPROVAL.getKey(), UserType.TRANSFER.getKey(), UserType.DEPUTE.getKey());
             AssertUtil.isTrue(CollUtil.notContainsAny(permissions, taskPermissions), ExceptionCons.NOT_AUTHORITY);
         }
         // 留存历史记录
@@ -256,7 +257,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         Node node = FlowFactory.nodeService().getOne(FlowFactory.newNode().setNodeCode(task.getNodeCode())
                 .setDefinitionId(task.getDefinitionId()));
         FlowParams flowParams = new FlowParams().handler(modifyHandler.getCurUser())
-                .setFlowStatus(FlowStatus.APPROVAL.getKey())
                 .setSkipType(SkipType.NONE.getKey())
                 .message(modifyHandler.getMessage())
                 .setCooperateType(modifyHandler.getCooperateType());
@@ -288,8 +288,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             hisTasks = FlowFactory.hisTaskService().setCooperateHis(task, node
                     , flowParams, modifyHandler.getAddHandlers());
         }
-
-        FlowFactory.hisTaskService().saveBatch(hisTasks);
+        if (CollUtil.isNotEmpty(hisTasks)) {
+            FlowFactory.hisTaskService().saveBatch(hisTasks);
+        }
         return true;
     }
 

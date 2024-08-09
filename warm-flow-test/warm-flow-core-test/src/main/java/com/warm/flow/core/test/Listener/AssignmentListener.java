@@ -20,6 +20,7 @@ import com.warm.flow.core.entity.Instance;
 import com.warm.flow.core.entity.Task;
 import com.warm.flow.core.listener.Listener;
 import com.warm.flow.core.listener.ListenerVariable;
+import com.warm.flow.core.utils.CollUtil;
 import com.warm.flow.core.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,13 +39,15 @@ public class AssignmentListener implements Listener {
         log.info("分派监听器开始执行......");
         List<Task> tasks = variable.getNextTasks();
         Instance instance = variable.getInstance();
-        for (Task task : tasks) {
-            List<String> permissionList = task.getPermissionList();
-            // 如果设置了发起人审批，则需要动态替换权限标识
-            for (int i = 0; i < permissionList.size(); i++) {
-                String permission = permissionList.get(i);
-                if (StringUtils.isNotEmpty(permission) && permission.contains(FlowCons.WARMFLOWINITIATOR)) {
-                    permissionList.set(i, permission.replace(FlowCons.WARMFLOWINITIATOR, instance.getCreateBy()));
+        if (CollUtil.isNotEmpty(tasks)) {
+            for (Task task : tasks) {
+                List<String> permissionList = task.getPermissionList();
+                // 如果设置了发起人审批，则需要动态替换权限标识
+                for (int i = 0; i < permissionList.size(); i++) {
+                    String permission = permissionList.get(i);
+                    if (StringUtils.isNotEmpty(permission) && permission.contains(FlowCons.WARMFLOWINITIATOR)) {
+                        permissionList.set(i, permission.replace(FlowCons.WARMFLOWINITIATOR, instance.getCreateBy()));
+                    }
                 }
             }
         }

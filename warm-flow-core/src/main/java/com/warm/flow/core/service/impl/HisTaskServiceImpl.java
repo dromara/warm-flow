@@ -67,10 +67,9 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
 
     @Override
     public HisTask getNoReject(String nodeCode, String targetNodeCode, List<HisTask> hisTasks) {
-        List<HisTask> hisTaskList = StreamUtils.filter(hisTasks, hisTask -> (StringUtils.isEmpty(nodeCode)
-                || hisTask.getNodeCode().equals(nodeCode))
-                && (StringUtils.isEmpty(targetNodeCode)
-                || hisTask.getTargetNodeCode().equals(targetNodeCode)));
+        List<HisTask> hisTaskList = StreamUtils.filter(hisTasks, hisTask ->
+                (StringUtils.isEmpty(nodeCode)|| nodeCode.equals(hisTask.getNodeCode()))
+                && (StringUtils.isEmpty(targetNodeCode)|| targetNodeCode.equals(hisTask.getTargetNodeCode())));
         return CollUtil.getOne(hisTaskList);
     }
 
@@ -142,8 +141,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
             hisTask.setApprover(flowParams.getHandler());
             hisTask.setSkipType(flowParams.getSkipType());
             hisTask.setFlowStatus(Objects.nonNull(flowParams.getFlowStatus())
-                    ? flowParams.getFlowStatus() : SkipType.isReject(flowParams.getSkipType())
-                    ? FlowStatus.REJECT.getKey() : FlowStatus.PASS.getKey());
+                    ? flowParams.getFlowStatus() : FlowStatus.APPROVAL.getKey());
             hisTask.setFormCustom(task.getFormCustom());
             hisTask.setFormPath(task.getFormPath());
             hisTask.setMessage(flowParams.getMessage());
