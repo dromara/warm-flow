@@ -180,6 +180,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         Instance instance = FlowFactory.newIns();
         Date now = new Date();
         Definition definition = FlowFactory.defService().getById(firstBetweenNode.getDefinitionId());
+        AssertUtil.isTrue(definition.getActivityStatus().equals(ActivityStatus.SUSPENDED.getKey()),ExceptionCons.NOT_DEFINITION_ACTIVITY);
         FlowFactory.dataFillHandler().idFill(instance);
         instance.setDefinitionId(firstBetweenNode.getDefinitionId());
         instance.setBusinessId(businessId);
@@ -188,7 +189,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         instance.setNodeName(firstBetweenNode.getNodeName());
         instance.setFlowStatus(ObjectUtil.isNotNull(flowParams.getFlowStatus())
                 ? flowParams.getFlowStatus() :FlowStatus.TOBESUBMIT.getKey());
-        instance.setActivityStatus(definition.getActivityStatus());
+        instance.setActivityStatus(ActivityStatus.ACTIVITY.getKey());
         Map<String, Object> variable = flowParams.getVariable();
         if (MapUtil.isNotEmpty(variable)) {
             instance.setVariable(ONode.serialize(variable));
@@ -228,9 +229,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
     @Override
     public boolean active(Long insId) {
         Instance instance = getById(insId);
-        if (Objects.equals(instance.getActivityStatus(), ActivityStatus.ACTIVITY.getKey())) {
-            return true;
-        }
+        AssertUtil.isTrue(instance.getActivityStatus().equals(ActivityStatus.ACTIVITY.getKey()),ExceptionCons.INSTANCE_ALREADY_ACTIVITY);
         instance.setActivityStatus(ActivityStatus.ACTIVITY.getKey());
         return updateById(instance);
     }
@@ -238,9 +237,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
     @Override
     public boolean unActive(Long insId) {
         Instance instance = getById(insId);
-        if (Objects.equals(instance.getActivityStatus(), ActivityStatus.SUSPENDED.getKey())) {
-            return true;
-        }
+        AssertUtil.isTrue(instance.getActivityStatus().equals(ActivityStatus.SUSPENDED.getKey()),ExceptionCons.INSTANCE_ALREADY_SUSPENDED);
         instance.setActivityStatus(ActivityStatus.SUSPENDED.getKey());
         return updateById(instance);
     }

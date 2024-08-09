@@ -556,9 +556,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     @Override
     public boolean active(Long defId) {
         Definition definition = getById(defId);
-        if (Objects.equals(definition.getActivityStatus(), ActivityStatus.ACTIVITY.getKey())) {
-            return true;
-        }
+        AssertUtil.isTrue(definition.getActivityStatus().equals(ActivityStatus.ACTIVITY.getKey()),ExceptionCons.DEFINITION_ALREADY_ACTIVITY);
         definition.setActivityStatus(ActivityStatus.ACTIVITY.getKey());
         return updateById(definition);
     }
@@ -566,9 +564,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     @Override
     public boolean unActive(Long defId) {
         Definition definition = getById(defId);
-        if (Objects.equals(definition.getActivityStatus(),ActivityStatus.SUSPENDED.getKey())) {
-            return true;
-        }
+        AssertUtil.isTrue(definition.getActivityStatus().equals(ActivityStatus.SUSPENDED.getKey()),ExceptionCons.DEFINITION_ALREADY_SUSPENDED);
         definition.setActivityStatus(ActivityStatus.SUSPENDED.getKey());
         return updateById(definition);
     }
