@@ -26,6 +26,11 @@ public class MpTenantHandler implements TenantLineHandler {
         return threadLocal.get();
     }
 
+    /**
+     * 指定租户字段
+     * @param tableName 表名
+     * @return
+     */
     @Override
     public boolean ignoreTable(String tableName) {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(tableName);
@@ -39,5 +44,31 @@ public class MpTenantHandler implements TenantLineHandler {
         // 获取表字段
         return false;
     }
+
+//    /**
+//     * 如果业务系统不开启租户，使用下面方法，指定流程表才开启
+//     * @param tableName 表名
+//     * @return
+//     */
+//    @Override
+//    public boolean ignoreTable(String tableName) {
+//        // 流程表
+//        List<String> flowTableName = Arrays.asList("flow_definition", "flow_his_task", "flow_instance", "flow_node"
+//            ,"flow_skip", "flow_task", "flow_user");
+//        TableInfo tableInfo = TableInfoHelper.getTableInfo(tableName);
+//        AtomicBoolean flag = new AtomicBoolean(true);
+//        if (flowTableName.contains(tableInfo.getTableName())) {
+//            flag.set(false);
+//        }
+//        List<TableFieldInfo> fieldList = tableInfo.getFieldList();
+//        fieldList.forEach(field -> {
+//            // 如果业务和工作流引擎中的租户字段不一致，可以通过这种方式动态切换
+//            if (field.getColumn().equals("tenant_id")) {
+//                threadLocal.set(field.getColumn());
+//            }
+//        });
+//        // 获取表字段
+//        return flag.get();
+//    }
 
 }
