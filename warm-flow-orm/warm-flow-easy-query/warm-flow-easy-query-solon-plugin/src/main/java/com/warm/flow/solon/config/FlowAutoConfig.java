@@ -17,6 +17,7 @@ package com.warm.flow.solon.config;
 
 
 import com.easy.query.api.proxy.client.EasyEntityQuery;
+import com.easy.query.solon.annotation.Db;
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.config.WarmFlow;
 import com.warm.flow.core.invoker.FrameInvoker;
@@ -33,9 +34,8 @@ import org.noear.solon.annotation.Configuration;
 @Configuration
 public class FlowAutoConfig {
 
-
     @Bean
-    public WarmFlow initFlow(EasyEntityQuery entityQuery, WarmFlow flowConfig) {
+    public WarmFlow initFlow(@Db EasyEntityQuery entityQuery, WarmFlow flowConfig) {
         FrameInvoker.setBeanFunction((clazz)->{
             if (clazz.isAssignableFrom(EasyEntityQuery.class)) {
                 return entityQuery;
