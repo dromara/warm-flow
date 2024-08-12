@@ -93,4 +93,8 @@ public interface Instance extends RootEntity {
 
     public Instance setExt(String ext);
 
+    public Integer getActivityStatus();
+
+    public Instance setActivityStatus(Integer activityStatus);
+
 }

@@ -72,6 +72,9 @@ public class FlowInstance extends JPARootEntity<FlowInstance> implements Instanc
                 if (Objects.nonNull(this.flowStatus)) {
                     predicates.add(criteriaBuilder.equal(root.get("flowStatus"), this.flowStatus));
                 }
+                if (Objects.nonNull(this.activityStatus)) {
+                    predicates.add(criteriaBuilder.equal(root.get("activityStatus"),this.activityStatus));
+                }
                 if (Objects.nonNull(this.ext)) {
                     predicates.add(criteriaBuilder.equal(root.get("ext"), this.ext));
                 }
@@ -99,6 +102,9 @@ public class FlowInstance extends JPARootEntity<FlowInstance> implements Instanc
         }
         if (Objects.nonNull(updateEntity.flowStatus)) {
             this.flowStatus = updateEntity.flowStatus;
+        }
+        if (Objects.nonNull(updateEntity.activityStatus)) {
+            this.activityStatus = updateEntity.activityStatus;
         }
         if (StringUtils.isNotEmpty(updateEntity.createBy)) {
             this.createBy = updateEntity.createBy;
@@ -181,6 +187,12 @@ public class FlowInstance extends JPARootEntity<FlowInstance> implements Instanc
      */
     @Column(name = "flow_status")
     private Integer flowStatus;
+
+    /**
+     * 流程激活状态（0挂起 1激活）
+     */
+    @Column(name = "activity_status")
+    private Integer activityStatus;
 
     /**
      * 创建者
@@ -294,6 +306,16 @@ public class FlowInstance extends JPARootEntity<FlowInstance> implements Instanc
         this.flowStatus = flowStatus;
         return this;
     }
+    @Override
+    public Integer getActivityStatus() {
+        return activityStatus;
+    }
+
+    @Override
+    public Instance setActivityStatus(Integer activityStatus) {
+        this.activityStatus = activityStatus;
+        return this;
+    }
 
     @Override
     public String getCreateBy() {
@@ -355,6 +377,7 @@ public class FlowInstance extends JPARootEntity<FlowInstance> implements Instanc
                 ", nodeName='" + nodeName + '\'' +
                 ", variable='" + variable + '\'' +
                 ", flowStatus=" + flowStatus +
+                ", activityStatus=" + activityStatus +
                 ", createBy='" + createBy + '\'' +
                 ", formCustom='" + formCustom + '\'' +
                 ", formPath='" + formPath + '\'' +

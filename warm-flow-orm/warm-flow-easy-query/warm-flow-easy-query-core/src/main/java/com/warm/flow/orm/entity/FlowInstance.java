@@ -89,6 +89,10 @@ public class FlowInstance implements Instance, ProxyEntityAvailable<FlowInstance
     @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private Integer flowStatus;
 
+    /** 流程激活状态（0挂起 1激活）*/
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
+    private Integer activityStatus;
+
     /** 创建者 */
     @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String createBy;
@@ -121,6 +125,7 @@ public class FlowInstance implements Instance, ProxyEntityAvailable<FlowInstance
             ", nodeName='" + nodeName + '\'' +
             ", variable='" + variable + '\'' +
             ", flowStatus=" + flowStatus +
+            ", activityStatus=" + activityStatus +
             ", createBy='" + createBy + '\'' +
             ", formCustom='" + formCustom + '\'' +
             ", formPath='" + formPath + '\'' +

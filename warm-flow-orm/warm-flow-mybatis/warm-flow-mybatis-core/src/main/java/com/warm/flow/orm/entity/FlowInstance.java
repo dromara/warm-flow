@@ -93,6 +93,11 @@ public class FlowInstance implements Instance {
     private Integer flowStatus;
 
     /**
+     * 流程激活状态（0挂起 1激活）
+     */
+    private Integer activityStatus;
+
+    /**
      * 创建者
      */
     private String createBy;
@@ -256,6 +261,16 @@ public class FlowInstance implements Instance {
     }
 
     @Override
+    public Integer getActivityStatus() {
+        return activityStatus;
+    }
+
+    @Override
+    public Instance setActivityStatus(Integer activityStatus) {
+        this.activityStatus = activityStatus;
+        return this;
+    }
+    @Override
     public String getCreateBy() {
         return createBy;
     }
@@ -314,6 +329,7 @@ public class FlowInstance implements Instance {
                 ", nodeName='" + nodeName + '\'' +
                 ", variable='" + variable + '\'' +
                 ", flowStatus=" + flowStatus +
+                ", activityStatus=" + activityStatus +
                 ", createBy='" + createBy + '\'' +
                 ", formCustom='" + formCustom + '\'' +
                 ", formPath='" + formPath + '\'' +

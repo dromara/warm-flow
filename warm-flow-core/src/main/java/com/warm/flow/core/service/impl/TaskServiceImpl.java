@@ -65,6 +65,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 流程开启前正确性校验
         Instance instance = FlowFactory.insService().getById(task.getInstanceId());
         AssertUtil.isTrue(ObjectUtil.isNull(instance), ExceptionCons.NOT_FOUNT_INSTANCE);
+        AssertUtil.isFalse(judgeActivityStatus(instance),ExceptionCons.NOT_ACTIVITY);
         AssertUtil.isTrue(NodeType.isEnd(instance.getNodeType()), ExceptionCons.FLOW_FINISH);
         Node nowNode = CollUtil.getOne(FlowFactory.nodeService()
                 .getByNodeCodes(Collections.singletonList(task.getNodeCode()), task.getDefinitionId()));
@@ -139,11 +140,13 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 获取当前流程
         Instance instance = FlowFactory.insService().getById(task.getInstanceId());
         AssertUtil.isTrue(ObjectUtil.isNull(instance), ExceptionCons.NOT_FOUNT_INSTANCE);
+        AssertUtil.isFalse(judgeActivityStatus(instance),ExceptionCons.NOT_ACTIVITY);
         return termination(instance, task, flowParams);
     }
 
     @Override
     public Instance termination(Instance instance, Task task, FlowParams flowParams) {
+        AssertUtil.isFalse(judgeActivityStatus(instance),ExceptionCons.NOT_ACTIVITY);
         // 所有待办转历史
         Node endNode = FlowFactory.nodeService().getOne(FlowFactory.newNode()
                 .setDefinitionId(instance.getDefinitionId()).setNodeType(NodeType.END.getKey()));
@@ -171,6 +174,10 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     @Override
     public boolean deleteByInsIds(List<Long> instanceIds) {
+        List<Instance> instanceList = FlowFactory.insService().getByIds(instanceIds);
+        for (Instance instance : instanceList) {
+            AssertUtil.isFalse(judgeActivityStatus(instance),ExceptionCons.NOT_ACTIVITY);
+        }
         return SqlHelper.retBool(getDao().deleteByInsIds(instanceIds));
     }
 
@@ -243,6 +250,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     @Override
     public boolean updateHandler(ModifyHandler modifyHandler) {
+        AssertUtil.isFalse(judgeActivityStatus(modifyHandler.getTaskId()),ExceptionCons.NOT_ACTIVITY);
         // 获取给谁的权限
         if (!modifyHandler.isIgnore()) {
             // 判断当前处理人是否有权限，获取当前办理人的权限
@@ -833,5 +841,14 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         FlowFactory.insService().updateById(instance);
         // 保存下一个待办任务的权限人和历史任务的处理人
         FlowFactory.userService().saveBatch(users);
+    }
+
+    private boolean judgeActivityStatus(Instance instance) {
+        return Objects.equals(instance.getActivityStatus(), ActivityStatus.ACTIVITY.getKey());
+    }
+    private boolean judgeActivityStatus(Long taskId) {
+        Long instanceId = getById(taskId).getInstanceId();
+        Integer activityStatus = FlowFactory.insService().getById(instanceId).getActivityStatus();
+        return Objects.equals(activityStatus, ActivityStatus.ACTIVITY.getKey());
     }
 }

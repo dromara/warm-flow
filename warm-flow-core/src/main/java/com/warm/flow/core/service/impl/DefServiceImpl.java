@@ -21,6 +21,7 @@ import com.warm.flow.core.constant.ExceptionCons;
 import com.warm.flow.core.dao.FlowDefinitionDao;
 import com.warm.flow.core.dto.FlowCombine;
 import com.warm.flow.core.entity.*;
+import com.warm.flow.core.enums.ActivityStatus;
 import com.warm.flow.core.enums.NodeType;
 import com.warm.flow.core.enums.PublishStatus;
 import com.warm.flow.core.enums.SkipType;
@@ -549,5 +550,22 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         FlowFactory.defService().save(definition);
         FlowFactory.nodeService().saveBatch(allNodes);
         FlowFactory.skipService().saveBatch(allSkips);
+    }
+
+
+    @Override
+    public boolean active(Long defId) {
+        Definition definition = getById(defId);
+        AssertUtil.isTrue(definition.getActivityStatus().equals(ActivityStatus.ACTIVITY.getKey()),ExceptionCons.DEFINITION_ALREADY_ACTIVITY);
+        definition.setActivityStatus(ActivityStatus.ACTIVITY.getKey());
+        return updateById(definition);
+    }
+
+    @Override
+    public boolean unActive(Long defId) {
+        Definition definition = getById(defId);
+        AssertUtil.isTrue(definition.getActivityStatus().equals(ActivityStatus.SUSPENDED.getKey()),ExceptionCons.DEFINITION_ALREADY_SUSPENDED);
+        definition.setActivityStatus(ActivityStatus.SUSPENDED.getKey());
+        return updateById(definition);
     }
 }

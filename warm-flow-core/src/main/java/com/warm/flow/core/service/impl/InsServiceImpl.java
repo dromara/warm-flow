@@ -20,6 +20,7 @@ import com.warm.flow.core.constant.ExceptionCons;
 import com.warm.flow.core.dao.FlowInstanceDao;
 import com.warm.flow.core.dto.FlowParams;
 import com.warm.flow.core.entity.*;
+import com.warm.flow.core.enums.ActivityStatus;
 import com.warm.flow.core.enums.FlowStatus;
 import com.warm.flow.core.enums.NodeType;
 import com.warm.flow.core.listener.Listener;
@@ -32,6 +33,7 @@ import org.noear.snack.ONode;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 流程实例Service业务层处理
@@ -177,6 +179,8 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
             , FlowParams flowParams) {
         Instance instance = FlowFactory.newIns();
         Date now = new Date();
+        Definition definition = FlowFactory.defService().getById(firstBetweenNode.getDefinitionId());
+        AssertUtil.isTrue(definition.getActivityStatus().equals(ActivityStatus.SUSPENDED.getKey()),ExceptionCons.NOT_DEFINITION_ACTIVITY);
         FlowFactory.dataFillHandler().idFill(instance);
         instance.setDefinitionId(firstBetweenNode.getDefinitionId());
         instance.setBusinessId(businessId);
@@ -185,6 +189,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         instance.setNodeName(firstBetweenNode.getNodeName());
         instance.setFlowStatus(ObjectUtil.isNotNull(flowParams.getFlowStatus())
                 ? flowParams.getFlowStatus() :FlowStatus.TOBESUBMIT.getKey());
+        instance.setActivityStatus(ActivityStatus.ACTIVITY.getKey());
         Map<String, Object> variable = flowParams.getVariable();
         if (MapUtil.isNotEmpty(variable)) {
             instance.setVariable(ONode.serialize(variable));
@@ -219,5 +224,21 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
             return FlowFactory.insService().removeByIds(instanceIds);
         }
         return false;
+    }
+
+    @Override
+    public boolean active(Long insId) {
+        Instance instance = getById(insId);
+        AssertUtil.isTrue(instance.getActivityStatus().equals(ActivityStatus.ACTIVITY.getKey()),ExceptionCons.INSTANCE_ALREADY_ACTIVITY);
+        instance.setActivityStatus(ActivityStatus.ACTIVITY.getKey());
+        return updateById(instance);
+    }
+
+    @Override
+    public boolean unActive(Long insId) {
+        Instance instance = getById(insId);
+        AssertUtil.isTrue(instance.getActivityStatus().equals(ActivityStatus.SUSPENDED.getKey()),ExceptionCons.INSTANCE_ALREADY_SUSPENDED);
+        instance.setActivityStatus(ActivityStatus.SUSPENDED.getKey());
+        return updateById(instance);
     }
 }

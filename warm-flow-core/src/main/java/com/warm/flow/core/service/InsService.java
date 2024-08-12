@@ -77,4 +77,13 @@ public interface InsService extends IWarmService<Instance> {
      */
     boolean remove(List<Long> instanceIds);
 
+    /**
+     * 激活流程
+     */
+    boolean active(Long insId);
+
+    /**
+     * 挂起流程
+     */
+    boolean unActive(Long insId);
 }

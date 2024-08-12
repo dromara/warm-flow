@@ -55,6 +55,25 @@ public class FlowTest extends FlowBaseTest {
         publish(defService);
     }
 
+
+    /**
+     * 激活流程
+     */
+    @Test
+    @Tran
+    public void active() {
+        active(defService);
+    }
+
+    /**
+     * 挂起流程
+     */
+    @Test
+    @Tran
+    public void unActive() {
+        unActive(defService);
+    }
+
     /**
      * 取消流程
      */
@@ -91,6 +110,24 @@ public class FlowTest extends FlowBaseTest {
         startFlow(insService, taskService);
     }
 
+
+    /**
+     * 激活流程实例
+     */
+    @Test
+    @Tran
+    public void activeIns() {
+        activeIns(insService,taskService);
+    }
+
+    /**
+     * 挂起流程实例
+     */
+    @Test
+    @Tran
+    public void unActiveIns() {
+        unActiveIns(insService,taskService);
+    }
     /**
      * 办理
      */

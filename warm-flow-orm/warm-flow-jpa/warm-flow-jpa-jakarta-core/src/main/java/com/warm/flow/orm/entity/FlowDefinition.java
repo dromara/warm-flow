@@ -74,6 +74,9 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
                 if (Objects.nonNull(this.formPath)) {
                     predicates.add(criteriaBuilder.equal(root.get("formPath"), this.formPath));
                 }
+                if (Objects.nonNull(this.activityStatus)) {
+                    predicates.add(criteriaBuilder.equal(root.get("activityStatus"),this.activityStatus));
+                }
                 if (StringUtils.isNotEmpty(this.ext)) {
                     predicates.add(criteriaBuilder.equal(root.get("ext"), this.ext));
                 }
@@ -98,6 +101,9 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
         }
         if (Objects.nonNull(updateEntity.formPath)) {
             this.formPath = updateEntity.formPath;
+        }
+        if (Objects.nonNull(updateEntity.activityStatus)) {
+            this.activityStatus = updateEntity.activityStatus;
         }
         if (Objects.nonNull(updateEntity.getCreateTime())) {
             this.setCreateTime(updateEntity.getCreateTime());
@@ -169,6 +175,12 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
      */
     @Column(name = "form_path")
     private String formPath;
+
+    /**
+     * 流程激活状态（0挂起 1激活）
+     */
+    @Column(name = "activity_status")
+    private Integer activityStatus;
 
     /**
      * 扩展字段，预留给业务系统使用
@@ -255,6 +267,18 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
     }
 
     @Override
+    public Integer getActivityStatus() {
+        return activityStatus;
+    }
+
+    @Override
+    public Definition setActivityStatus(Integer activityStatus) {
+        this.activityStatus = activityStatus;
+        return this;
+    }
+
+
+    @Override
     public String getExt() {
         return ext;
     }
@@ -311,6 +335,7 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
                 ", isPublish=" + isPublish +
                 ", formCustom='" + formCustom + '\'' +
                 ", formPath='" + formPath + '\'' +
+                ", activityStatus=" + activityStatus +
                 ", ext='" + ext + '\'' +
                 ", xmlString='" + xmlString + '\'' +
                 ", nodeList=" + nodeList +
