@@ -183,6 +183,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
 
         nodeList.forEach(node -> node.setId(null)
                 .setDefinitionId(definition.getId())
+                .setVersion(definition.getVersion())
                 .setCreateTime(null)
                 .setUpdateTime(null));
         FlowFactory.nodeService().saveBatch(nodeList);
