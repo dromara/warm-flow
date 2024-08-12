@@ -21,6 +21,7 @@ import com.warm.flow.core.dto.FlowCombine;
 import com.warm.flow.core.entity.Definition;
 import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.Skip;
+import com.warm.flow.core.enums.ActivityStatus;
 import com.warm.flow.core.enums.NodeType;
 import com.warm.flow.core.enums.SkipType;
 import org.dom4j.Document;
@@ -73,6 +74,7 @@ public class FlowConfigUtil {
         definition.setFormCustom(definitionElement.attributeValue("formCustom"));
         definition.setFormPath(definitionElement.attributeValue("formPath"));
         definition.setExt(definitionElement.attributeValue("ext"));
+        definition.setActivityStatus(ActivityStatus.ACTIVITY.getKey());
 
         List<Element> nodesElement = definitionElement.elements();
         // 遍历一个流程中的各个节点

@@ -138,6 +138,9 @@ public class FlowInstance extends JPARootEntity<FlowInstance> implements Instanc
 
     @Override
     public void initDefaultValue() {
+        if (Objects.isNull(this.activityStatus)) {
+            this.activityStatus = 1;
+        }
     }
 
     /**

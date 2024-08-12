@@ -42,3 +42,8 @@ ALTER TABLE flow_task ALTER COLUMN del_flag SET DEFAULT '0'::character varying;
 
 ALTER TABLE flow_user ALTER COLUMN del_flag SET DEFAULT '0'::character varying;
 
+ALTER TABLE flow_definition ADD activity_status int2 NOT NULL DEFAULT 1;
+COMMENT ON COLUMN flow_definition.activity_status IS '流程激活状态（0挂起 1激活）';
+
+ALTER TABLE flow_instance ADD activity_status int2 NOT NULL DEFAULT 1;
+COMMENT ON COLUMN flow_instance.activity_status IS '流程激活状态（0挂起 1激活）';
