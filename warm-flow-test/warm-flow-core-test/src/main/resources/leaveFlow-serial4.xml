@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<definition flowCode="leaveFlow-serial4" flowName="串行-复杂互斥" version="1.0" formCustom="N" formPath="">
+    <node nodeType="start" nodeCode="c4119826-9d6f-4dc3-9fd7-5bf3b006d2cc" nodeName="开始" nodeRatio="0.000" coordinate="140,260|140,260" listenerType="create,assignment,finish" listenerPath="org.springblade.modules.flow.Listener.CreateListener@@org.springblade.modules.flow.Listener.AssignmentListener@@org.springblade.modules.flow.Listener.FinishListener">
+        <skip coordinate="160,260;295,260" skipType="PASS">71bccb3e-46a1-4351-9790-54824bccaba9</skip>
+    </node>
+    <node nodeType="serial" nodeCode="71bccb3e-46a1-4351-9790-54824bccaba9" nodeRatio="0.000" coordinate="320,260">
+        <skip coordinate="320,285;320,360|320,322" skipType="PASS" skipName="flag&gt;1" skipCondition="@@gt@@|flag@@gt@@1">b37236bf-6a72-4721-b564-31144ce65907</skip>
+        <skip coordinate="345,260;540,260;540,360|442,260" skipType="PASS" skipName="flag&lt;=1" skipCondition="@@le@@|flag@@le@@1">891823e2-f407-4385-9a89-591cbe8fbfec</skip>
+    </node>
+    <node nodeType="between" nodeCode="b37236bf-6a72-4721-b564-31144ce65907" nodeName="组长审批" permissionFlag="role:1,role:3" nodeRatio="0.000" coordinate="320,400|320,400" skipAnyNode="N" listenerType="create,assignment,finish" listenerPath="org.springblade.modules.flow.Listener.CreateListener@@org.springblade.modules.flow.Listener.AssignmentListener@@org.springblade.modules.flow.Listener.FinishListener">
+        <skip coordinate="370,400;490,400" skipType="PASS">891823e2-f407-4385-9a89-591cbe8fbfec</skip>
+    </node>
+    <node nodeType="between" nodeCode="891823e2-f407-4385-9a89-591cbe8fbfec" nodeName="主管审批" permissionFlag="role:1,role:3" nodeRatio="0.000" coordinate="540,400|540,400" skipAnyNode="N" listenerType="create,assignment,finish" listenerPath="org.springblade.modules.flow.Listener.CreateListener@@org.springblade.modules.flow.Listener.AssignmentListener@@org.springblade.modules.flow.Listener.FinishListener">
+        <skip coordinate="590,400;675,400" skipType="PASS">f142d25a-920c-46cc-b313-76339d6a830f</skip>
+    </node>
+    <node nodeType="serial" nodeCode="f142d25a-920c-46cc-b313-76339d6a830f" nodeRatio="0.000" coordinate="700,400">
+        <skip coordinate="700,375;700,300|700,337" skipType="PASS" skipName="flag&gt;2" skipCondition="@@gt@@|flag@@gt@@2">f462e579-eae4-4689-897e-cfd8371131c8</skip>
+        <skip coordinate="725,400;840,400|782,400" skipType="PASS" skipName="flag&lt;=2" skipCondition="@@le@@|flag@@le@@2">35f62e44-63db-4bd4-95ae-46c3d302ef80</skip>
+    </node>
+    <node nodeType="between" nodeCode="f462e579-eae4-4689-897e-cfd8371131c8" nodeName="经理审批" permissionFlag="role:1,role:3" nodeRatio="0.000" coordinate="700,260|700,260" skipAnyNode="N" listenerType="create,assignment,finish" listenerPath="org.springblade.modules.flow.Listener.CreateListener@@org.springblade.modules.flow.Listener.AssignmentListener@@org.springblade.modules.flow.Listener.FinishListener">
+        <skip coordinate="750,260;835,260" skipType="PASS">7f61c3b9-497d-48d7-9bbd-ab54ebabea64</skip>
+    </node>
+    <node nodeType="serial" nodeCode="7f61c3b9-497d-48d7-9bbd-ab54ebabea64" nodeRatio="0.000" coordinate="860,260">
+        <skip coordinate="885,260;990,260|937,260" skipType="PASS" skipName="flag&gt;3" skipCondition="@@gt@@|flag@@gt@@3">8185658b-1cf7-4303-b6d3-2747c974fb7b</skip>
+        <skip coordinate="860,285;860,380|860,332" skipType="PASS" skipName="flag&lt;=3" skipCondition="@@le@@|flag@@le@@3">35f62e44-63db-4bd4-95ae-46c3d302ef80</skip>
+    </node>
+    <node nodeType="between" nodeCode="8185658b-1cf7-4303-b6d3-2747c974fb7b" nodeName="总经理审批" permissionFlag="role:1,role:3" nodeRatio="0.000" coordinate="1040,260|1040,260" skipAnyNode="N" listenerType="assignment" listenerPath="org.springblade.modules.flow.Listener.AssignmentListener">
+        <skip coordinate="1090,260;1155,260" skipType="PASS">e9a282c1-9888-486f-adbd-4eb8c4877419</skip>
+    </node>
+    <node nodeType="serial" nodeCode="e9a282c1-9888-486f-adbd-4eb8c4877419" nodeRatio="0.000" coordinate="1180,260">
+        <skip coordinate="1204,260;1310,260|1257,260" skipType="PASS" skipName="flag&gt;4" skipCondition="@@gt@@|flag@@gt@@4">9c0abb64-741b-4fdf-8bdf-77b83803f180</skip>
+        <skip coordinate="1180,285;1180,360;860,360;860,380|1180,322" skipType="PASS" skipName="flag&lt;=4" skipCondition="@@le@@|flag@@le@@4">35f62e44-63db-4bd4-95ae-46c3d302ef80</skip>
+    </node>
+    <node nodeType="between" nodeCode="9c0abb64-741b-4fdf-8bdf-77b83803f180" nodeName="董事长审批" permissionFlag="role:1,role:3" nodeRatio="0.000" coordinate="1360,260|1360,260" skipAnyNode="N" listenerType="assignment" listenerPath="org.springblade.modules.flow.Listener.AssignmentListener">
+        <skip coordinate="1360,300;1360,400;880,400" skipType="PASS">35f62e44-63db-4bd4-95ae-46c3d302ef80</skip>
+    </node>
+    <node nodeType="end" nodeCode="35f62e44-63db-4bd4-95ae-46c3d302ef80" nodeName="结束" nodeRatio="0.000" coordinate="860,400|860,400"/>
+</definition>

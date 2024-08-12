@@ -416,6 +416,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                                 c = color;
                                 if (ObjectUtil.isNotNull(twoLastHisTask)) {
                                     colorPut(colorMap, "skip:" + oneLastSkip.getId().toString(), Color.GREEN);
+                                    colorPut(colorMap, "node:" + oneLastSkip.getNowNodeCode(), Color.GREEN);
                                 }
                             } else {
                                 if (NodeType.isEnd(node.getNodeType()) && NodeType.isEnd(instance.getNodeType())) {
@@ -427,12 +428,14 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                                                 .getNoReject(twoLastSkip.getNowNodeCode(), node.getNodeCode(), hisTaskList);
                                         if (ObjectUtil.isNotNull(curHisTaskN)) {
                                             colorPut(colorMap, "skip:" + oneLastSkip.getId().toString(), c);
+                                            colorPut(colorMap, "node:" + oneLastSkip.getNowNodeCode(), c);
                                         }
                                     }
                                 } else if (curHisTask != null && ObjectUtil.isNotNull(twoLastHisTask) && (twoLastHisTask.getCreateTime()
                                         .before(curHisTask.getCreateTime()) || twoLastHisTask.getCreateTime()
                                         .equals(curHisTask.getCreateTime()))) {
                                     c = Color.GREEN;
+                                    colorPut(colorMap, "node:" + oneLastSkip.getNowNodeCode(), c);
                                 } else {
                                     c = Color.BLACK;
                                 }
@@ -441,7 +444,6 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                                 }
                             }
                             colorPut(colorMap, "node:" + node.getNodeCode(), c);
-                            colorPut(colorMap, "node:" + oneLastSkip.getNowNodeCode(), c);
                             setNextColorMap(colorMap, oneNextSkips, c);
                         }
                     } else if (NodeType.isEnd(node.getNodeType()) && NodeType.isEnd(instance.getNodeType())) {
