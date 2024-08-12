@@ -97,7 +97,8 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
 
     @Override
     public int delete(T entity) {
-        return getMapper().deleteById(entity);
+        LambdaQueryWrapper<T> queryWrapper = new LambdaQueryWrapper<>(entity);
+        return getMapper().delete(queryWrapper);
     }
 
     @Override
