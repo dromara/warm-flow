@@ -30,7 +30,6 @@ import org.noear.solon.annotation.Configuration;
  * @description: 工作流bean注册配置
  * @date: 2023/6/5 23:01
  */
-@SuppressWarnings({"rawtypes", "unchecked"})
 @Configuration
 public class FlowAutoConfig {
 
