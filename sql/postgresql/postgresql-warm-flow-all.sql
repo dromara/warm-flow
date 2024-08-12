@@ -12,6 +12,7 @@ CREATE TABLE flow_definition (
 	is_publish int2 NOT NULL DEFAULT 0, -- 是否发布（0未发布 1已发布 9失效）
 	form_custom bpchar(1) NULL DEFAULT 'N'::character varying, -- 审批表单是否自定义（Y是 N否）
 	form_path varchar(100) NULL, -- 审批表单路径
+    activity_status int2 NOT NULL DEFAULT 1, -- 流程激活状态（0挂起 1激活）
     ext varchar(500) NULL, -- 扩展字段，预留给业务系统使用
     create_time timestamp NULL, -- 创建时间
 	update_time timestamp NULL, -- 更新时间
@@ -30,6 +31,7 @@ COMMENT ON COLUMN flow_definition."version" IS '流程版本';
 COMMENT ON COLUMN flow_definition.is_publish IS '是否发布（0未发布 1已发布 9失效）';
 COMMENT ON COLUMN flow_definition.form_custom IS '审批表单是否自定义（Y是 N否）';
 COMMENT ON COLUMN flow_definition.form_path IS '审批表单路径';
+COMMENT ON COLUMN flow_definition.activity_status IS '流程激活状态（0挂起 1激活）';
 COMMENT ON COLUMN flow_definition.ext IS '扩展字段，预留给业务系统使用';
 COMMENT ON COLUMN flow_definition.create_time IS '创建时间';
 COMMENT ON COLUMN flow_definition.update_time IS '更新时间';
@@ -111,6 +113,7 @@ CREATE TABLE flow_instance (
 	node_name varchar(100) NULL, -- 流程节点名称
 	variable text NULL, -- 任务变量
 	flow_status int2 NOT NULL, -- 流程状态（0待提交 1审批中 2 审批通过 8已完成 9已退回 10失效）
+    activity_status int2 NOT NULL DEFAULT 1, -- 流程激活状态（0挂起 1激活）
 	create_by varchar(64) NULL DEFAULT ''::character varying, -- 创建者
 	create_time timestamp NULL, -- 创建时间
 	update_time timestamp NULL, -- 更新时间
@@ -131,6 +134,7 @@ COMMENT ON COLUMN flow_instance.node_code IS '流程节点编码';
 COMMENT ON COLUMN flow_instance.node_name IS '流程节点名称';
 COMMENT ON COLUMN flow_instance.variable IS '任务变量';
 COMMENT ON COLUMN flow_instance.flow_status IS '流程状态（0待提交 1审批中 2 审批通过 3自动通过 8已完成 9已退回 10失效）';
+COMMENT ON COLUMN flow_instance.activity_status IS '流程激活状态（0挂起 1激活）';
 COMMENT ON COLUMN flow_instance.create_by IS '创建者';
 COMMENT ON COLUMN flow_instance.create_time IS '创建时间';
 COMMENT ON COLUMN flow_instance.update_time IS '更新时间';

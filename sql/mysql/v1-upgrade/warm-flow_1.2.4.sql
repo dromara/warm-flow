@@ -52,7 +52,7 @@ ALTER TABLE `flow_user`
     MODIFY COLUMN `del_flag` char(1) DEFAULT '0' COMMENT '删除标志' AFTER `update_time`;
 
 ALTER TABLE `flow_definition`
-    ADD COLUMN `activity_status` tinyint(1) NOT NULL COMMENT '流程激活状态（0挂起 1激活）' AFTER `from_path`;
+    ADD COLUMN `activity_status` tinyint(1) NOT NULL COMMENT '流程激活状态（0挂起 1激活）' AFTER `form_path`;
 
 ALTER TABLE `flow_instance`
     ADD COLUMN `activity_status` tinyint(1) NOT NULL COMMENT '流程激活状态（0挂起 1激活）' AFTER `flow_status`;

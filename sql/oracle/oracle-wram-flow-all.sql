@@ -172,6 +172,7 @@ create table FLOW_DEFINITION
 	IS_PUBLISH NUMBER(1) default 0 not null,
 	FORM_CUSTOM VARCHAR2(1) default 'N',
 	FORM_PATH VARCHAR2(100),
+    ACTIVITY_STATUS NUMBER(1) default 1,
     EXT VARCHAR2(500),
     CREATE_TIME DATE,
 	UPDATE_TIME DATE,
@@ -204,6 +205,9 @@ comment on column FLOW_DEFINITION.FORM_CUSTOM is '审批表单是否自定义 (Y
 comment on column FLOW_DEFINITION.FORM_PATH is '审批表单路径'
 /
 
+comment on column FLOW_DEFINITION.ACTIVITY_STATUS is '流程激活状态（0挂起 1激活）'
+/
+
 comment on column FLOW_DEFINITION.EXT is '扩展字段，预留给业务系统使用'
 /
 
@@ -231,6 +235,7 @@ create table FLOW_INSTANCE
 	NODE_NAME VARCHAR2(100),
 	VARIABLE CLOB,
 	FLOW_STATUS NUMBER(2),
+    ACTIVITY_STATUS NUMBER(1) default 1,
 	CREATE_BY VARCHAR2(64) default '',
 	CREATE_TIME DATE,
 	UPDATE_TIME DATE,
@@ -265,6 +270,9 @@ comment on column FLOW_INSTANCE.VARIABLE is '任务变量'
 /
 
 comment on column FLOW_INSTANCE.FLOW_STATUS is '流程状态（0待提交 1审批中 2 审批通过 3自动通过 8已完成 9已退回 10失效）'
+/
+
+comment on column FLOW_INSTANCE.ACTIVITY_STATUS is '流程激活状态（0挂起 1激活）'
 /
 
 comment on column FLOW_INSTANCE.CREATE_BY is '创建者'

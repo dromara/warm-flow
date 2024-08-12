@@ -139,6 +139,9 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
         if (Objects.isNull(this.formCustom)) {
             this.formCustom = "N";
         }
+        if (Objects.isNull(this.activityStatus)) {
+            this.activityStatus = 1;
+        }
     }
 
     /**
