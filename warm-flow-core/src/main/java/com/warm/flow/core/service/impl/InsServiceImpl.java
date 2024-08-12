@@ -33,7 +33,6 @@ import org.noear.snack.ONode;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * 流程实例Service业务层处理
@@ -52,19 +51,20 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
     @Override
     public Instance start(String businessId, FlowParams flowParams) {
         AssertUtil.isNull(flowParams.getFlowCode(), ExceptionCons.NULL_FLOW_CODE);
-        AssertUtil.isTrue(StringUtils.isEmpty(businessId), ExceptionCons.NULL_BUSINESS_ID);
+        AssertUtil.isBlank(businessId, ExceptionCons.NULL_BUSINESS_ID);
         // 获取已发布的流程节点
         List<Node> nodes = FlowFactory.nodeService().getByFlowCode(flowParams.getFlowCode());
         AssertUtil.isTrue(CollUtil.isEmpty(nodes), String.format(ExceptionCons.NOT_PUBLISH_NODE, flowParams.getFlowCode()));
-
         // 获取开始节点
         Node startNode = nodes.stream().filter(t -> NodeType.isStart(t.getNodeType())).findFirst().orElse(null);
         AssertUtil.isNull(startNode, ExceptionCons.LOST_START_NODE);
-
         // 获取下一个节点，如果是网关节点，则重新获取后续节点
         List<Node> nextNodes = FlowFactory.taskService().getNextByCheckGateWay(flowParams, getFirstBetween(startNode));
+        // 判断流程定义是否激活状态
+        Definition definition = FlowFactory.defService().getById(nextNodes.get(0).getDefinitionId());
+        AssertUtil.isTrue(definition.getActivityStatus().equals(ActivityStatus.SUSPENDED.getKey())
+                , ExceptionCons.NOT_DEFINITION_ACTIVITY);
 
-        AssertUtil.isBlank(businessId, ExceptionCons.NULL_BUSINESS_ID);
         // 设置流程实例对象
         Instance instance = setStartInstance(nextNodes.get(0), businessId, flowParams);
 
@@ -78,9 +78,6 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
 
         // 设置历史任务
         List<HisTask> hisTasks = setHisTask(nextNodes, flowParams, startNode, instance.getId());
-
-        // 设置新增任务
-        Definition definition = FlowFactory.defService().getById(instance.getDefinitionId());
 
         List<Task> addTasks = StreamUtils.toList(nextNodes, node -> FlowFactory.taskService()
                 .addTask(node, instance, definition, flowParams));
@@ -179,8 +176,6 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
             , FlowParams flowParams) {
         Instance instance = FlowFactory.newIns();
         Date now = new Date();
-        Definition definition = FlowFactory.defService().getById(firstBetweenNode.getDefinitionId());
-        AssertUtil.isTrue(definition.getActivityStatus().equals(ActivityStatus.SUSPENDED.getKey()),ExceptionCons.NOT_DEFINITION_ACTIVITY);
         FlowFactory.dataFillHandler().idFill(instance);
         instance.setDefinitionId(firstBetweenNode.getDefinitionId());
         instance.setBusinessId(businessId);
