@@ -109,7 +109,7 @@ public class FlowTest extends FlowBaseTest {
      */
     @Test
     public void activeIns() {
-        activeIns(insService,taskService);
+        activeIns(insService);
     }
 
     /**
@@ -117,7 +117,7 @@ public class FlowTest extends FlowBaseTest {
      */
     @Test
     public void unActiveIns() {
-        unActiveIns(insService,taskService);
+        unActiveIns(insService);
     }
 
     /**

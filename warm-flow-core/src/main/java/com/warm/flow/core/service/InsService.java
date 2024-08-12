@@ -73,17 +73,18 @@ public interface InsService extends IWarmService<Instance> {
      * 根据实例ids，删除流程
      *
      * @param instanceIds: 流程实例集合[必传]
-     * @return
      */
     boolean remove(List<Long> instanceIds);
 
     /**
-     * 激活流程
+     * 激活实例
+     * @param id 流程实例id: [必传]
      */
-    boolean active(Long insId);
+    boolean active(Long id);
 
     /**
-     * 挂起流程
+     * 挂起实例，流程实例挂起后，该流程实例无法继续流转
+     * @param id 流程实例id: [必传]
      */
-    boolean unActive(Long insId);
+    boolean unActive(Long id);
 }

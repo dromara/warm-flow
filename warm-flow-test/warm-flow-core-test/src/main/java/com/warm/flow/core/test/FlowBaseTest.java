@@ -41,7 +41,7 @@ public class FlowBaseTest {
     }
 
     public Long getInsId() {
-        return 1266421892739371014L;
+        return 1272533054795157504L;
     }
 
     public Long getTaskId() {
@@ -125,8 +125,9 @@ public class FlowBaseTest {
      * 开启流程
      */
     public void startFlow(InsService insService, TaskService taskService) {
-        System.out.println("已开启的流程实例id：" + insService.start(getBusinessId(), getUser()).getId());
-        taskService.list(FlowFactory.newTask().setInstanceId(getInsId()))
+        Instance instance = insService.start(getBusinessId(), getUser());
+        System.out.println("已开启的流程实例id：" + instance.getId());
+        taskService.list(FlowFactory.newTask().setInstanceId(instance.getId()))
                 .forEach(task -> System.out.println("流转后任务id实例：" + task.getId()));
     }
 
@@ -140,31 +141,31 @@ public class FlowBaseTest {
     /**
      * 激活流程实例
      */
-    public void activeIns(InsService insService,TaskService taskService) {
-        insService.active(taskService.getById(getTaskId()).getInstanceId());
+    public void activeIns(InsService insService) {
+        insService.active(getInsId());
     }
 
     /**
      * 挂起流程实例
      */
-    public void unActiveIns(InsService insService,TaskService taskService) {
-        insService.unActive(taskService.getById(getTaskId()).getInstanceId());
+    public void unActiveIns(InsService insService) {
+        insService.unActive(getInsId());
     }
 
     /**
      * 办理
      */
     public void skipFlow(InsService insService, TaskService taskService) {
-//        // 通过实例id流转
-//        Instance instance = insService.skipByInsId(getInsId(), getUser().skipType(SkipType.PASS.getKey())
-//                .permissionFlag(Arrays.asList("role:1", "role:2")));
-//        System.out.println("流转后流程实例：" + instance.toString());
-
-        // 通过任务id流转
-        Instance instance = taskService.skip(getTaskId(), getUser().skipType(SkipType.PASS.getKey())
+        // 通过实例id流转
+        Instance instance = insService.skipByInsId(getInsId(), getUser().skipType(SkipType.PASS.getKey())
                 .permissionFlag(Arrays.asList("role:1", "role:2")));
         System.out.println("流转后流程实例：" + instance.toString());
-        taskService.list(FlowFactory.newTask().setInstanceId(getInsId()))
+
+//        // 通过任务id流转
+//        Instance instance = taskService.skip(getTaskId(), getUser().skipType(SkipType.PASS.getKey())
+//                .permissionFlag(Arrays.asList("role:1", "role:2")));
+        System.out.println("流转后流程实例：" + instance.toString());
+        taskService.list(FlowFactory.newTask().setInstanceId(instance.getId()))
                 .forEach(task -> System.out.println("流转后任务id实例：" + task.getId()));
     }
 

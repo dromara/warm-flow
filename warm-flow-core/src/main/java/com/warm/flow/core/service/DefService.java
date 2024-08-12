@@ -118,11 +118,13 @@ public interface DefService extends IWarmService<Definition> {
 
     /**
      * 激活流程
+     * @param id 流程定义id: [必传]
      */
-    boolean active(Long defId);
+    boolean active(Long id);
 
     /**
-     * 挂起流程
+     * 挂起流程：流程定义挂起后，相关的流程实例都无法继续流转
+     * @param id 流程定义id: [必传]
      */
-    boolean unActive(Long defId);
+    boolean unActive(Long id);
 }

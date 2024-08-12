@@ -222,16 +222,16 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
     }
 
     @Override
-    public boolean active(Long insId) {
-        Instance instance = getById(insId);
+    public boolean active(Long id) {
+        Instance instance = getById(id);
         AssertUtil.isTrue(instance.getActivityStatus().equals(ActivityStatus.ACTIVITY.getKey()),ExceptionCons.INSTANCE_ALREADY_ACTIVITY);
         instance.setActivityStatus(ActivityStatus.ACTIVITY.getKey());
         return updateById(instance);
     }
 
     @Override
-    public boolean unActive(Long insId) {
-        Instance instance = getById(insId);
+    public boolean unActive(Long id) {
+        Instance instance = getById(id);
         AssertUtil.isTrue(instance.getActivityStatus().equals(ActivityStatus.SUSPENDED.getKey()),ExceptionCons.INSTANCE_ALREADY_SUSPENDED);
         instance.setActivityStatus(ActivityStatus.SUSPENDED.getKey());
         return updateById(instance);
