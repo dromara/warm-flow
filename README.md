@@ -51,7 +51,7 @@ http://warm-flow.cn
 * [x] mybatis-plus
 * [x] jpa
 * [x] mybatis-flex
-* [ ] easy-query
+* [x] easy-query
 * [ ] ......
 
 
