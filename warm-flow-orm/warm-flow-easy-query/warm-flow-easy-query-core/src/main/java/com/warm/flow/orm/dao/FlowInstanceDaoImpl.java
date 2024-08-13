@@ -1,5 +1,6 @@
 package com.warm.flow.orm.dao;
 
+import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.dao.FlowInstanceDao;
 import com.warm.flow.core.utils.StringUtils;
 import com.warm.flow.orm.entity.FlowInstance;
@@ -27,20 +28,14 @@ public class FlowInstanceDaoImpl extends WarmDaoImpl<FlowInstance, FlowInstanceP
     @Override
     public int delete(FlowInstance entity) {
 
-        TenantDeleteUtil.getEntity(entity);
+        TenantDeleteUtil.applyContextCondition(entity);
+        final boolean logicDelete = FlowFactory.getFlowConfig().isLogicDelete();
 
-        if (StringUtils.isNotEmpty(entity.getDelFlag())) {
-            // 有逻辑删除
-            return (int) entityQuery().updatable(entityClass())
-                .where(proxy -> {
-                    buildDeleteEqCondition(entity, proxy);
-                })
-                .executeRows();
-        }
 
 
         return (int) entityQuery().deletable(entityClass())
-            .allowDeleteStatement(true)
+            .useLogicDelete(logicDelete)
+            .allowDeleteStatement(!logicDelete)
             .where(proxy -> buildDeleteEqCondition(entity, proxy))
             .executeRows();
     }
@@ -60,6 +55,5 @@ public class FlowInstanceDaoImpl extends WarmDaoImpl<FlowInstance, FlowInstanceP
         proxy.updateTime().eq(Objects.nonNull(entity.getUpdateTime()), entity.getUpdateTime()); // 更新时间
         proxy.ext().eq(StringUtils.isNotEmpty(entity.getExt()), entity.getExt()); // 扩展字段
         proxy.tenantId().eq(StringUtils.isNotEmpty(entity.getTenantId()), entity.getTenantId()); // 租户id
-        proxy.delFlag().eq(StringUtils.isNotEmpty(entity.getDelFlag()), entity.getDelFlag()); // 删除标记
     }
 }

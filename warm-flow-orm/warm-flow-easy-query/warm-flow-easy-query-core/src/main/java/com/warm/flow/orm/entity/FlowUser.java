@@ -15,10 +15,8 @@
  */
 package com.warm.flow.orm.entity;
 
-import com.easy.query.core.annotation.Column;
-import com.easy.query.core.annotation.EasyWhereCondition;
-import com.easy.query.core.annotation.EntityProxy;
-import com.easy.query.core.annotation.Table;
+import com.easy.query.core.annotation.*;
+import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.warm.flow.core.entity.User;
 import com.warm.flow.orm.dao.FlowUserDaoImpl;
@@ -58,7 +56,7 @@ public class FlowUser implements User, ProxyEntityAvailable<FlowUser, FlowUserPr
     private String tenantId;
 
     /** 删除标记 */
-    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
+    @LogicDelete(strategy = LogicDeleteStrategyEnum.CUSTOM,strategyName = "WarmFlowLogicDelete")
     private String delFlag;
 
     /** 人员类型（1代办任务的审批人权限 2代办任务的转办人权限 3待办任务的委托人权限） */

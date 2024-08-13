@@ -19,28 +19,17 @@ public class FlowSkipDaoImpl extends WarmDaoImpl<FlowSkip, FlowSkipProxy> implem
     @Override
     public int deleteSkipByDefIds(Collection<? extends Serializable> defIds) {
         FlowSkip entity = newEntity();
-        TenantDeleteUtil.getEntity(entity);
+        TenantDeleteUtil.applyContextCondition(entity);
+        final boolean logicDelete = FlowFactory.getFlowConfig().isLogicDelete();
 
-        if (StringUtils.isNotEmpty(entity.getDelFlag())) {
-            // 使用了逻辑删除
-            return (int) entityQuery().updatable(entityClass())
-                .where(proxy -> {
-                    //noinspection unchecked
-                    proxy.definitionId().in((Collection<? extends Long>) defIds);
-                    proxy.tenantId().eq(StringUtils.isNotEmpty(entity.getTenantId()), entity.getTenantId());
-                    proxy.delFlag().eq(StringUtils.isNotEmpty(entity.getDelFlag()), FlowFactory.getFlowConfig().getLogicNotDeleteValue());
-                })
-                .setColumns(proxy -> proxy.delFlag().set(FlowFactory.getFlowConfig().getLogicDeleteValue()))
-                .executeRows();
-        }
-        // 没有使用逻辑删除， 直接物理删除
         return (int) entityQuery().deletable(entityClass())
             .where(proxy -> {
                 //noinspection unchecked
                 proxy.definitionId().in((Collection<? extends Long>) defIds);
                 proxy.tenantId().eq(StringUtils.isNotEmpty(entity.getTenantId()), entity.getTenantId());
             })
-            .allowDeleteStatement(true)
+            .useLogicDelete(logicDelete)
+            .allowDeleteStatement(!logicDelete)
             .executeRows();
     }
 
@@ -56,24 +45,15 @@ public class FlowSkipDaoImpl extends WarmDaoImpl<FlowSkip, FlowSkipProxy> implem
 
     @Override
     public int delete(FlowSkip entity) {
-        TenantDeleteUtil.getEntity(entity);
+        TenantDeleteUtil.applyContextCondition(entity);
+        final boolean logicDelete = FlowFactory.getFlowConfig().isLogicDelete();
 
-        if (StringUtils.isNotEmpty(entity.getDelFlag())) {
-            // 使用了逻辑删除
-            return (int) entityQuery().updatable(entityClass())
-                .where(proxy -> {
-                    buildDeleteEqCondition(entity, proxy);
-                })
-                .setColumns(proxy -> proxy.delFlag().set(FlowFactory.getFlowConfig().getLogicDeleteValue()))
-                .executeRows();
-        }
-
-        // 没有使用逻辑删除， 直接物理删除
         return (int) entityQuery().deletable(entityClass())
             .where(proxy -> {
                 buildDeleteEqCondition(entity, proxy);
             })
-            .allowDeleteStatement(true)
+            .useLogicDelete(logicDelete)
+            .allowDeleteStatement(!logicDelete)
             .executeRows();
     }
 
@@ -93,6 +73,5 @@ public class FlowSkipDaoImpl extends WarmDaoImpl<FlowSkip, FlowSkipProxy> implem
         proxy.createTime().eq(Objects.nonNull(entity.getCreateTime()), entity.getCreateTime());// 创建时间
         proxy.updateTime().eq(Objects.nonNull(entity.getUpdateTime()), entity.getUpdateTime());// 更新时间
         proxy.tenantId().eq(StringUtils.isNotEmpty(entity.getTenantId()), entity.getTenantId());// 租户ID
-        proxy.delFlag().eq(StringUtils.isNotEmpty(entity.getDelFlag()), entity.getDelFlag());// 删除标记
     }
 }

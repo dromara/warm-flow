@@ -21,12 +21,13 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask, FlowHisTaskProx
     /** 根据instanceId获取未退回的历史记录 */
     @Override
     public List<FlowHisTask> getNoReject(Long instanceId) {
-        FlowHisTask entity = TenantDeleteUtil.getEntity(newEntity());
+        FlowHisTask entity = TenantDeleteUtil.applyContextCondition(newEntity());
+        final boolean logicDelete = FlowFactory.getFlowConfig().isLogicDelete();
         return entityQuery().queryable(entityClass())
+            .useLogicDelete(logicDelete)
             .where(proxy -> {
                 proxy.instanceId().eq(instanceId); // 流程实例表id
                 proxy.skipType().eq(SkipType.PASS.getKey()); // 跳转类型（PASS通过 REJECT退回 NONE无动作）
-                proxy.delFlag().eq(StringUtils.isNotEmpty(entity.getDelFlag()), entity.getDelFlag()); // 逻辑删除过滤
                 proxy.tenantId().eq(StringUtils.isNotEmpty(entity.getTenantId()),entity.getTenantId()); // 租户ID
             })
             .orderBy(hisTask -> hisTask.createTime().desc()).toList();
@@ -34,12 +35,13 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask, FlowHisTaskProx
 
     @Override
     public List<FlowHisTask> getByInsAndNodeCodes(Long instanceId, List<String> nodeCodes) {
-        FlowHisTask entity = TenantDeleteUtil.getEntity(newEntity());
+        FlowHisTask entity = TenantDeleteUtil.applyContextCondition(newEntity());
+        final boolean logicDelete = FlowFactory.getFlowConfig().isLogicDelete();
         return entityQuery().queryable(entityClass())
+            .useLogicDelete(logicDelete)
             .where(proxy -> {
                 proxy.instanceId().eq(instanceId); // 流程实例表id
                 proxy.nodeCode().in(nodeCodes); // 跳转类型（PASS通过 REJECT退回 NONE无动作）
-                proxy.delFlag().eq(StringUtils.isNotEmpty(entity.getDelFlag()), entity.getDelFlag()); // 逻辑删除过滤
                 proxy.tenantId().eq(StringUtils.isNotEmpty(entity.getTenantId()),entity.getTenantId()); // 租户ID
             })
             .orderBy(hisTask -> hisTask.createTime().desc()).toList();
@@ -47,24 +49,13 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask, FlowHisTaskProx
 
     @Override
     public int deleteByInsIds(List<Long> instanceIds) {
-        FlowHisTask entityFilter = TenantDeleteUtil.getEntity(newEntity());
+        FlowHisTask entityFilter = TenantDeleteUtil.applyContextCondition(newEntity());
 
-        if (StringUtils.isNotEmpty(entityFilter.getDelFlag())) {
-            // 有逻辑删除标识
-            return (int) entityQuery().updatable(entityClass())
-                .where(f -> f.instanceId().in(instanceIds))
-                // 如果有租户则添加租户过滤
-                .where(f -> f.tenantId().eq(StringUtils.isNotEmpty(entityFilter.getTenantId()), entityFilter.getTenantId()))
-                // 更新为逻辑删除
-                .setColumns(f -> f.delFlag().set(FlowFactory.getFlowConfig().getLogicDeleteValue()))
-
-                .executeRows();
-
-
-        }
+        final boolean logicDelete = FlowFactory.getFlowConfig().isLogicDelete();
 
         return (int) entityQuery().deletable(entityClass())
-            .allowDeleteStatement(true)
+            .useLogicDelete(logicDelete)
+            .allowDeleteStatement(!logicDelete)
             .where(proxy -> proxy.instanceId().in(instanceIds))
             .where(f -> {
                 // 如果有租户， 则添加租户过滤
@@ -78,14 +69,15 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask, FlowHisTaskProx
 
 
         FlowHisTask entity = newEntity();
-        TenantDeleteUtil.getEntity(entity);
+        TenantDeleteUtil.applyContextCondition(entity);
+        final boolean logicDelete = FlowFactory.getFlowConfig().isLogicDelete();
 
 
         return entityQuery().queryable(entityClass())
+            .useLogicDelete(logicDelete)
             .where(proxy -> {
                 proxy.taskId().eq(Objects.nonNull(proxy.taskId()), taskId); // 任务表id
                 proxy.cooperateType().in(EasyArrayUtil.isNotEmpty(cooperateTypes), cooperateTypes); //协作方式(1审批 2转办 3委派 4会签 5票签 6加签 7减签)
-                proxy.delFlag().eq(StringUtils.isNotEmpty(entity.getDelFlag()), entity.getDelFlag()); // 删除标记
                 proxy.tenantId().eq(StringUtils.isNotEmpty(entity.getTenantId()), entity.getTenantId()); // 租户ID
             })
             .toList();
@@ -103,18 +95,13 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask, FlowHisTaskProx
 
     @Override
     public int delete(FlowHisTask entity) {
-        TenantDeleteUtil.getEntity(entity);
-        if (StringUtils.isNotEmpty(entity.getDelFlag())) {
-            // 启用了逻辑删除
-           return (int) entityQuery().updatable(entityClass())
-                .where(proxy -> buildDeleteEqCondition(entity, proxy))
-                .setColumns(f -> f.delFlag().eq(FlowFactory.getFlowConfig().getLogicDeleteValue()))
-                .executeRows();
-        }
+        TenantDeleteUtil.applyContextCondition(entity);
+        final boolean logicDelete = FlowFactory.getFlowConfig().isLogicDelete();
 
         // 没有启用逻辑删除， 执行物理删除
         return (int) entityQuery().deletable(entityClass())
-            .allowDeleteStatement(true)
+            .useLogicDelete(logicDelete)
+            .allowDeleteStatement(!logicDelete)
             .where(proxy -> buildDeleteEqCondition(entity, proxy))
             .executeRows();
 
@@ -140,6 +127,5 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask, FlowHisTaskProx
         proxy.createTime().eq(Objects.nonNull(entity.getCreateTime()), entity.getCreateTime()); // 创建时间
         proxy.updateTime().eq(Objects.nonNull(entity.getUpdateTime()), entity.getUpdateTime()); // 更新时间
         proxy.tenantId().eq(StringUtils.isNotEmpty(entity.getTenantId()), entity.getTenantId()); // 租户ID
-        proxy.delFlag().eq(StringUtils.isNotEmpty(entity.getDelFlag()), entity.getDelFlag()); // 删除标记
     }
 }

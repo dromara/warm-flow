@@ -17,10 +17,14 @@ package com.warm.flow.solon.config;
 
 
 import com.easy.query.api.proxy.client.EasyEntityQuery;
+import com.easy.query.core.configuration.QueryConfiguration;
+import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.solon.annotation.Db;
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.config.WarmFlow;
 import com.warm.flow.core.invoker.FrameInvoker;
+import com.warm.flow.orm.config.WarmFlowLogicDeleteFakeStrategy;
+import com.warm.flow.orm.config.WarmFlowLogicDeleteStrategy;
 import org.noear.solon.Solon;
 import org.noear.solon.annotation.Bean;
 import org.noear.solon.annotation.Configuration;
@@ -41,6 +45,22 @@ public class FlowAutoConfig {
             }
             return Solon.context().getBean(clazz);
         });
+
+        //region 注入逻辑删除策略 http://www.easy-query.com/easy-query-doc/guide/adv/logic-delete.html
+        QueryRuntimeContext runtimeContext = entityQuery.getRuntimeContext();
+        QueryConfiguration queryConfiguration = runtimeContext.getQueryConfiguration();
+
+        //  逻辑删除策略
+        if (flowConfig.isLogicDelete()){
+            // 注入正常的逻辑删除策略
+            queryConfiguration.applyLogicDeleteStrategy(new WarmFlowLogicDeleteStrategy());
+        }else{
+            // 注入空的逻辑删除策略（同名的空逻辑 逻辑删除策略，保证eq运行不会因找不到策略报错）
+            queryConfiguration.applyLogicDeleteStrategy(new WarmFlowLogicDeleteFakeStrategy());
+        }
+        //endregion
+
+
         return FlowFactory.getFlowConfig();
     }
 }

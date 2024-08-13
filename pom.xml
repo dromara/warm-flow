@@ -65,7 +65,7 @@
         <snack3.version>3.2.88</snack3.version>
         <slf4j-api.version>1.7.36</slf4j-api.version>
         <oracle.version>11.2.0.4</oracle.version>
-        <easy-query.version>2.0.45</easy-query.version>
+        <easy-query.version>2.0.63</easy-query.version>
     </properties>
 
     <dependencyManagement>

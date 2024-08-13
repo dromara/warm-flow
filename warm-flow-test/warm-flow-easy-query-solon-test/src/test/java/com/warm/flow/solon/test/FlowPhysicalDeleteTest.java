@@ -25,8 +25,9 @@ import org.noear.solon.annotation.Inject;
 import org.noear.solon.data.annotation.Tran;
 import org.noear.solon.test.SolonTest;
 
-@SolonTest(value = SolonApp.class)
-public class FlowTest extends FlowBaseTest {
+
+@SolonTest(value = SolonApp.class,properties = {"warm-flow.logic_delete=false"})
+public class FlowPhysicalDeleteTest extends FlowBaseTest {
 
     @Inject
     private DefService defService;
@@ -128,6 +129,7 @@ public class FlowTest extends FlowBaseTest {
     public void unActiveIns() {
         unActiveIns(insService);
     }
+
     /**
      * 办理
      */

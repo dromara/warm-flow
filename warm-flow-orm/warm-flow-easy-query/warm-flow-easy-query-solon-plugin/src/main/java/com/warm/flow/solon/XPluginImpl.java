@@ -15,7 +15,13 @@
  */
 package com.warm.flow.solon;
 
+import com.easy.query.api.proxy.client.EasyBaseQuery;
+import com.easy.query.api.proxy.client.EasyEntityQuery;
+import com.easy.query.core.configuration.QueryConfiguration;
+import com.easy.query.core.context.QueryRuntimeContext;
+import com.warm.flow.orm.config.WarmFlowLogicDeleteStrategy;
 import com.warm.flow.solon.config.FlowAutoConfig;
+import org.noear.solon.Solon;
 import org.noear.solon.core.AppContext;
 import org.noear.solon.core.Plugin;
 import org.slf4j.Logger;

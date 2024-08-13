@@ -52,7 +52,9 @@ public abstract class WarmDaoImpl<T extends RootEntity & ProxyEntityAvailable<T,
 
     @Override
     public T selectById(Serializable id) {
+        boolean logicDelete = FlowFactory.getFlowConfig().isLogicDelete();
         return entityQuery().queryable(entityClass())
+            .useLogicDelete(logicDelete)
             .whereById(id)
             .singleOrNull();
     }
@@ -60,22 +62,27 @@ public abstract class WarmDaoImpl<T extends RootEntity & ProxyEntityAvailable<T,
 
     @Override
     public List<T> selectByIds(Collection<? extends Serializable> ids) {
+        final boolean logicDelete = FlowFactory.getFlowConfig().isLogicDelete();
         return entityQuery().queryable(entityClass())
+            .useLogicDelete(logicDelete)
             .whereByIds(ids)
             .toList();
     }
 
     @Override
     public Page<T> selectPage(T entity, Page<T> page) {
-        TenantDeleteUtil.getEntity(entity);
+        final boolean logicDelete = FlowFactory.getFlowConfig().isLogicDelete();
+        TenantDeleteUtil.applyContextCondition(entity);
         long total = entityQuery().queryable(entityClass())
             .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT) // 忽略空值查询
+            .useLogicDelete(logicDelete)
             .whereObject(entity)
             .count();
         if (total > 0) {
             UISort objectSort = UISort.of(page);
             EasyPageResult<T> pageResult = entityQuery().queryable(entityClass())
                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT) // 忽略空值查询
+                .useLogicDelete(logicDelete)
                 .whereObject(entity)
                 .orderByObject(Objects.nonNull(objectSort), objectSort)
                 .toPageResult(page.getPageNum(), page.getPageSize(), total);
@@ -87,11 +94,12 @@ public abstract class WarmDaoImpl<T extends RootEntity & ProxyEntityAvailable<T,
 
     @Override
     public List<T> selectList(T entity, WarmQuery<T> query) {
-        TenantDeleteUtil.getEntity(entity);
-
+        TenantDeleteUtil.applyContextCondition(entity);
+        final boolean logicDelete = FlowFactory.getFlowConfig().isLogicDelete();
         UISort uiSort = UISort.of(query);
         return entityQuery().queryable(entityClass())
             .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT) // 忽略空值查询
+            .useLogicDelete(logicDelete)
             .whereObject(entity)
             .orderByObject(Objects.nonNull(uiSort),uiSort)
             .toList();
@@ -99,23 +107,27 @@ public abstract class WarmDaoImpl<T extends RootEntity & ProxyEntityAvailable<T,
 
     @Override
     public long selectCount(T entity) {
-        TenantDeleteUtil.getEntity(entity);
+        final boolean logicDelete = FlowFactory.getFlowConfig().isLogicDelete();
+        TenantDeleteUtil.applyContextCondition(entity);
         return entityQuery().queryable(entityClass())
             .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT) // 忽略空值查询
+            .useLogicDelete(logicDelete)
             .whereObject(entity)
             .count();
     }
 
     @Override
     public int save(T entity) {
-        TenantDeleteUtil.getEntity(entity);
+        TenantDeleteUtil.applyContextCondition(entity);
         return (int) entityQuery().insertable(entity).executeRows();
     }
 
     @Override
     public int updateById(T entity) {
-        TenantDeleteUtil.getEntity(entity);
+        TenantDeleteUtil.applyContextCondition(entity);
+        final boolean logicDelete = FlowFactory.getFlowConfig().isLogicDelete();
         return (int) entityQuery().updatable(entity)
+            .useLogicDelete(logicDelete)
             .setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS) // 只更新非空字段
             .executeRows();
     }
@@ -123,29 +135,20 @@ public abstract class WarmDaoImpl<T extends RootEntity & ProxyEntityAvailable<T,
 
     @Override
     public int deleteById(Serializable id) {
-        if (FlowFactory.getFlowConfig().isLogicDelete()) {
-            return (int) entityQuery().getEasyQueryClient().updatable(entityClass())
-                .set("delFlag", FlowFactory.getFlowConfig().getLogicDeleteValue())
-                .whereById(id)
-                .executeRows();
-        }
-
+        final boolean logicDelete = FlowFactory.getFlowConfig().isLogicDelete();
         return (int) entityQuery().deletable(entityClass())
-            .allowDeleteStatement(true)
+            .useLogicDelete(logicDelete)
+            .allowDeleteStatement(!logicDelete)
             .whereById(id)
             .executeRows();
     }
 
     @Override
     public int deleteByIds(Collection<? extends Serializable> ids) {
-        if (FlowFactory.getFlowConfig().isLogicDelete()) {
-           return (int) entityQuery().getEasyQueryClient().updatable(entityClass())
-                .set("delFlag", FlowFactory.getFlowConfig().getLogicDeleteValue())
-                .whereByIds(ids)
-                .executeRows();
-        }
+        final boolean logicDelete = FlowFactory.getFlowConfig().isLogicDelete();
         return (int) entityQuery().deletable(entityClass())
-            .allowDeleteStatement(true)
+            .useLogicDelete(logicDelete)
+            .allowDeleteStatement(!logicDelete)
             .whereByIds(ids)
             .executeRows();
     }
@@ -153,7 +156,7 @@ public abstract class WarmDaoImpl<T extends RootEntity & ProxyEntityAvailable<T,
     @Override
     public void saveBatch(List<T> list) {
         for (T record : list) {
-            TenantDeleteUtil.getEntity(record);
+            TenantDeleteUtil.applyContextCondition(record);
         }
         entityQuery().insertable(list)
             .batch()
@@ -164,9 +167,11 @@ public abstract class WarmDaoImpl<T extends RootEntity & ProxyEntityAvailable<T,
     @Override
     public void updateBatch(List<T> list) {
         for (T record : list) {
-            TenantDeleteUtil.getEntity(record);
+            TenantDeleteUtil.applyContextCondition(record);
         }
+        final boolean logicDelete = FlowFactory.getFlowConfig().isLogicDelete();
         entityQuery().updatable(list)
+            .useLogicDelete(logicDelete)
             .batch()
             .executeRows();
 

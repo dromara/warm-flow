@@ -16,7 +16,6 @@
 package com.warm.flow.orm.utils;
 
 import com.warm.flow.core.FlowFactory;
-import com.warm.flow.core.config.WarmFlow;
 import com.warm.flow.core.entity.RootEntity;
 import com.warm.flow.core.handler.TenantHandler;
 import com.warm.flow.core.utils.ObjectUtil;
@@ -32,16 +31,9 @@ public class TenantDeleteUtil {
     }
 
     /**
-     * 获取查询条件, 根据是否租户或者逻辑删除
+     * 填充上下文条件
      */
-    public static <T extends RootEntity> T getEntity(final T entity) {
-        WarmFlow flowConfig = FlowFactory.getFlowConfig();
-
-        if (flowConfig.isLogicDelete()) {
-            // 是否开启逻辑删除标识， 未开启则不设置， 如果开启则设置未删除标识
-            entity.setDelFlag(flowConfig.getLogicNotDeleteValue());
-        }
-
+    public static <T extends RootEntity> T applyContextCondition(final T entity) {
         if (ObjectUtil.isNotNull(FlowFactory.tenantHandler())) {
             TenantHandler tenantHandler = FlowFactory.tenantHandler();
             entity.setTenantId(tenantHandler.getTenantId());

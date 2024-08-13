@@ -15,7 +15,13 @@
  */
 package com.warm.flow.spring.boot.config;
 
+import com.easy.query.api.proxy.client.EasyEntityQuery;
+import com.warm.flow.core.config.WarmFlow;
+import com.warm.flow.core.invoker.FrameInvoker;
+import com.warm.flow.orm.config.WarmFlowLogicDeleteFakeStrategy;
+import com.warm.flow.orm.config.WarmFlowLogicDeleteStrategy;
 import com.warm.plugin.modes.sb.config.BeanConfig;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -30,4 +36,19 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(WarmFlowProperties.class)
 public class FlowAutoConfig extends BeanConfig {
 
+    @Override
+    public WarmFlow after(WarmFlow flowConfig) {
+
+        EasyEntityQuery entityQuery = FrameInvoker.getBean(EasyEntityQuery.class);
+        if (entityQuery == null) {
+            throw new BeanCreationException("EasyEntityQuery is not found, please check the configuration");
+        }
+        if (flowConfig.isLogicDelete()) {
+            entityQuery.getRuntimeContext().getQueryConfiguration().applyLogicDeleteStrategy(new WarmFlowLogicDeleteStrategy());
+        }else{
+            entityQuery.getRuntimeContext().getQueryConfiguration().applyLogicDeleteStrategy(new WarmFlowLogicDeleteFakeStrategy());
+        }
+
+        return super.after(flowConfig);
+    }
 }

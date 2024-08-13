@@ -16,6 +16,7 @@
 package com.warm.flow.orm.entity;
 
 import com.easy.query.core.annotation.*;
+import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.Skip;
@@ -61,7 +62,7 @@ public class FlowNode implements Node, ProxyEntityAvailable<FlowNode, FlowNodePr
     private String tenantId;
 
     /** 删除标记 */
-    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
+    @LogicDelete(strategy = LogicDeleteStrategyEnum.CUSTOM,strategyName = "WarmFlowLogicDelete")
     private String delFlag;
 
     /** 节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关） */
