@@ -198,11 +198,20 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
 
     @Override
     public String flowChart(Long instanceId) throws IOException {
+        return basicFlowChart(instanceId,true);
+    }
+
+    @Override
+    public String flowChartNoColor(Long instanceId) throws IOException {
+        return basicFlowChart(instanceId,false);
+    }
+
+    public String basicFlowChart(Long instanceId,boolean colorFlag) throws IOException {
         FlowChartChain flowChartChain = new FlowChartChain();
         Instance instance = FlowFactory.insService().getById(instanceId);
         Map<String, Color> colorMap = new HashMap<>();
-        Map<String, Integer> nodeXY = addNodeChart(colorMap, instance, flowChartChain);
-        addSkipChart(colorMap, instance, flowChartChain);
+        Map<String, Integer> nodeXY = addNodeChart(colorMap, instance, flowChartChain,colorFlag);
+        addSkipChart(colorMap, instance, flowChartChain,colorFlag);
 
         int width = nodeXY.get("maxX") + nodeXY.get("minX");
         int height = nodeXY.get("maxY") + nodeXY.get("minY");
@@ -239,7 +248,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
      * @param instance
      * @param flowChartChain
      */
-    private void addSkipChart(Map<String, Color> colorMap, Instance instance, FlowChartChain flowChartChain) {
+    private void addSkipChart(Map<String, Color> colorMap, Instance instance, FlowChartChain flowChartChain,boolean colorFlag) {
         List<Skip> skipList = FlowFactory.skipService().list(FlowFactory.newSkip().setDefinitionId(instance.getDefinitionId()));
         for (Skip skip : skipList) {
             if (StringUtils.isNotEmpty(skip.getCoordinate())) {
@@ -259,7 +268,12 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                     skipX[i] = Integer.parseInt(skipSplit[i].split(",")[0].split("\\.")[0]);
                     skipY[i] = Integer.parseInt(skipSplit[i].split(",")[1].split("\\.")[0]);
                 }
-                Color c = colorGet(colorMap, "skip:" + skip.getId().toString());
+                Color c;
+                if (colorFlag) {
+                    c = colorGet(colorMap, "skip:" + skip.getId().toString());
+                } else {
+                    c = Color.BLACK;
+                }
                 flowChartChain.addFlowChart(new SkipChart(skipX, skipY, c, textChart));
             }
         }
@@ -271,13 +285,15 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
      * @param instance
      * @param flowChartChain
      */
-    private Map<String, Integer> addNodeChart(Map<String, Color> colorMap, Instance instance, FlowChartChain flowChartChain) {
+    private Map<String, Integer> addNodeChart(Map<String, Color> colorMap, Instance instance, FlowChartChain flowChartChain,boolean colorFlag) {
         List<Node> nodeList = FlowFactory.nodeService().list(FlowFactory.newNode().setDefinitionId(instance.getDefinitionId()));
         List<Skip> allSkips = FlowFactory.skipService().list(FlowFactory.newSkip()
                 .setDefinitionId(instance.getDefinitionId()).setSkipType(SkipType.PASS.getKey()));
-        // 流程图渲染，过滤掉所有后置节点
-        List<Node> needChartNodes = filterNodes(instance, allSkips, nodeList);
-        setColorMap(colorMap, instance, allSkips, needChartNodes);
+        if (colorFlag) {
+            // 流程图渲染，过滤掉所有后置节点
+            List<Node> needChartNodes = filterNodes(instance, allSkips, nodeList);
+            setColorMap(colorMap, instance, allSkips, needChartNodes);
+        }
 
         Map<String, Integer> maxR = new HashMap<>();
         maxR.put("minX", 999999999);
@@ -310,9 +326,14 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                     int textY = Integer.parseInt(textSplit[1].split("\\.")[0]);
                     textChart = new TextChart(textX, textY, node.getNodeName());
                 }
-                Color c = colorGet(colorMap, "node:" + node.getNodeCode());
+                Color c;
+                if (colorFlag) {
+                    c = colorGet(colorMap, "node:" + node.getNodeCode());
+                } else {
+                    c = Color.BLACK;
+                }
                 if (NodeType.isStart(node.getNodeType())) {
-                    flowChartChain.addFlowChart(new OvalChart(nodeX, nodeY, Color.GREEN, textChart));
+                    flowChartChain.addFlowChart(new OvalChart(nodeX, nodeY, colorFlag ? Color.GREEN : Color.BLACK, textChart));
                 } else if (NodeType.isBetween(node.getNodeType())) {
                     flowChartChain.addFlowChart(new BetweenChart(nodeX, nodeY, c, textChart));
                 } else if (NodeType.isGateWaySerial(node.getNodeType())) {
