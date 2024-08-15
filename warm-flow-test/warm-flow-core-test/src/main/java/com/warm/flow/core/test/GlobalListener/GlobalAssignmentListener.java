@@ -13,13 +13,14 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.warm.flow.core.test.Listener;
+package com.warm.flow.core.test.GlobalListener;
 
 import com.warm.flow.core.constant.FlowCons;
 import com.warm.flow.core.entity.Instance;
 import com.warm.flow.core.entity.Task;
+import com.warm.flow.core.listener.GlobalListener;
 import com.warm.flow.core.listener.ListenerVariable;
-import com.warm.flow.core.listener.NodeListener;
+import com.warm.flow.core.test.Listener.AssignmentListener;
 import com.warm.flow.core.utils.CollUtil;
 import com.warm.flow.core.utils.StringUtils;
 import org.slf4j.Logger;
@@ -30,13 +31,13 @@ import java.util.List;
 /**
  * 分派监听器
  */
-public class AssignmentListener implements NodeListener {
+public class GlobalAssignmentListener implements GlobalListener {
 
     private static final Logger log = LoggerFactory.getLogger(AssignmentListener.class);
 
     @Override
     public void notify(ListenerVariable variable) {
-        log.info("节点分派监听器开始执行......");
+        log.info("全局分派监听器开始执行......");
         List<Task> tasks = variable.getNextTasks();
         Instance instance = variable.getInstance();
         if (CollUtil.isNotEmpty(tasks)) {
@@ -51,6 +52,6 @@ public class AssignmentListener implements NodeListener {
                 }
             }
         }
-        log.info("节点分派监听器执行结束......");
+        log.info("全局分派监听器执行结束......");
     }
 }

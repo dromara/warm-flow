@@ -13,26 +13,27 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.warm.flow.core.test.Listener;
+package com.warm.flow.core.test.GlobalListener;
 
 import com.warm.flow.core.entity.Instance;
+import com.warm.flow.core.listener.GlobalListener;
 import com.warm.flow.core.listener.ListenerVariable;
-import com.warm.flow.core.listener.NodeListener;
+import com.warm.flow.core.test.Listener.StartListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-public class StartListener implements NodeListener {
+public class GlobalStartListener implements GlobalListener {
 
 
     private static final Logger log = LoggerFactory.getLogger(StartListener.class);
 
     @Override
     public void notify(ListenerVariable variable) {
-        log.info("节点开始监听器");
+        log.info("全局开始监听器");
         Instance instance = variable.getInstance();
         Map<String, Object> variableMap = variable.getVariable();
-        log.info("节点开始监听器结束;{}", "开启流程完成");
+        log.info("全局开始监听器结束;{}", "开启流程完成");
     }
 }

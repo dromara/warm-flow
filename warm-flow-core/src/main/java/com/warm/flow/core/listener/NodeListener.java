@@ -17,30 +17,33 @@ package com.warm.flow.core.listener;
 
 import java.io.Serializable;
 
-public interface Listener extends Serializable {
+/**
+ * 节点监听器，与节点绑定
+ */
+public interface NodeListener extends Serializable {
 
     /**
-     * 创建监听器，任务创建时执行
+     * 节点创建监听器，任务创建时执行
      */
     String LISTENER_CREATE = "create";
 
     /**
-     * 开始监听器，任务开始办理时执行
+     * 节点开始开始监听器，任务开始办理时执行
      */
     String LISTENER_START = "start";
 
     /**
-     * 结束监听器，当前任务完成后执行
+     * 节点结束结束监听器，当前任务完成后执行
      */
     String LISTENER_END = "finish";
 
     /**
-     * 分派监听器，动态修改代办任务信息
+     * 节点分派监听器，动态修改代办任务信息
      */
     String LISTENER_ASSIGNMENT = "assignment";
 
     /**
-     * 权限监听器，办理任务动态设置权限(1.2.4版本后建议使用分派监听器修改办理人)
+     * 节点权限监听器，办理任务动态设置权限(1.2.4版本后建议使用分派监听器修改办理人)
      */
     String LISTENER_PERMISSION = "permission";
 

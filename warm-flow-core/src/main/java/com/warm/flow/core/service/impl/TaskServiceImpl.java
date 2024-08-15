@@ -22,8 +22,9 @@ import com.warm.flow.core.dto.FlowParams;
 import com.warm.flow.core.dto.ModifyHandler;
 import com.warm.flow.core.entity.*;
 import com.warm.flow.core.enums.*;
-import com.warm.flow.core.listener.Listener;
+import com.warm.flow.core.listener.GlobalListener;
 import com.warm.flow.core.listener.ListenerVariable;
+import com.warm.flow.core.listener.NodeListener;
 import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.TaskService;
 import com.warm.flow.core.utils.*;
@@ -76,11 +77,13 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             AssertUtil.isFalse(StringUtils.isNotEmpty(flowParams.getSkipType()), ExceptionCons.NULL_CONDITIONVALUE);
         }
 
-        //执行开始监听器
+        // 执行节点开始监听器
         task.setUserList(FlowFactory.userService().listByAssociatedAndTypes(task.getId()));
-        ListenerUtil.executeListener(new ListenerVariable(instance, nowNode, flowParams.getVariable(), task)
-                , Listener.LISTENER_START);
-
+        NodeListenerUtil.executeListener(new ListenerVariable(instance, nowNode, flowParams.getVariable(), task)
+                , NodeListener.LISTENER_START);
+        // 执行全局开始监听器
+        GlobalListenerUtil.executeGlobalListener(new ListenerVariable(instance, nowNode, flowParams.getVariable(), task)
+                , GlobalListener.LISTENER_START);
         // 如果是受托人在处理任务，需要处理一条委派记录，并且更新委托人，回到计划审批人,然后直接返回流程实例
         if (handleDepute(task, flowParams)) {
             return instance;
@@ -107,17 +110,22 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             AssertUtil.isTrue(CollUtil.isEmpty(rejectHisTasks), ExceptionCons.BACK_TASK_NOT_EXECUTED);
         }
 
-        //判断下一结点是否有权限监听器,有执行权限监听器nextNode.setPermissionFlag,无走数据库的权限标识符
-        ListenerUtil.executeGetNodePermission(new ListenerVariable(instance, nowNode, flowParams.getVariable(), task
+        // 判断下一结点是否有节点权限监听器,有执行权限监听器nextNode.setPermissionFlag,无走数据库的权限标识符
+        NodeListenerUtil.executeGetNodePermission(new ListenerVariable(instance, nowNode, flowParams.getVariable(), task
+                , nextNodes));
+        // 判断是否有全局权限监听器,有执行权限监听器nextNode.setPermissionFlag,无走数据库的权限标识符
+        GlobalListenerUtil.executeGetNodePermission(new ListenerVariable(instance, nowNode, flowParams.getVariable(), task
                 , nextNodes));
 
         // 构建增待办任务和设置结束任务历史记录
         List<Task> addTasks = buildAddTasks(flowParams, task, instance, nextNodes, nextNode, definition);
 
-        // 执行分派监听器
-        ListenerUtil.executeListener(new ListenerVariable(instance, nowNode, flowParams.getVariable(), task, nextNodes
-                , addTasks), Listener.LISTENER_ASSIGNMENT);
-
+        // 执行节点分派监听器
+        NodeListenerUtil.executeListener(new ListenerVariable(instance, nowNode, flowParams.getVariable(), task, nextNodes
+                , addTasks), NodeListener.LISTENER_ASSIGNMENT);
+        // 执行全局分派监听器
+        GlobalListenerUtil.executeGlobalListener(new ListenerVariable(instance, nowNode, flowParams.getVariable(), task, nextNodes
+                , addTasks), GlobalListener.LISTENER_ASSIGNMENT);
         // 更新流程信息
         updateFlowInfo(task, instance, addTasks, flowParams, nextNodes);
 
@@ -127,8 +135,11 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 处理未完成的任务，当流程完成，还存在待办任务未完成，转历史任务，状态完成。
         handUndoneTask(instance, flowParams);
 
-        // 最后判断是否存在监听器，存在执行监听器
-        ListenerUtil.endCreateListener(new ListenerVariable(instance, nowNode, flowParams.getVariable(), task
+        // 最后判断是否存在节点监听器，存在执行节点监听器
+        NodeListenerUtil.endCreateListener(new ListenerVariable(instance, nowNode, flowParams.getVariable(), task
+                , nextNodes, addTasks));
+        // 最后判断是否存在全局监听器，存在执行全局监听器
+        GlobalListenerUtil.endCreateGlobalListener(new ListenerVariable(instance, nowNode, flowParams.getVariable(), task
                 , nextNodes, addTasks));
         return instance;
     }
@@ -142,14 +153,14 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         Instance instance = FlowFactory.insService().getById(task.getInstanceId());
         AssertUtil.isTrue(ObjectUtil.isNull(instance), ExceptionCons.NOT_FOUNT_INSTANCE);
         Definition definition = FlowFactory.defService().getById(instance.getDefinitionId());
-        AssertUtil.isFalse(judgeActivityStatus(definition, instance),ExceptionCons.NOT_ACTIVITY);
+        AssertUtil.isFalse(judgeActivityStatus(definition, instance), ExceptionCons.NOT_ACTIVITY);
         return termination(instance, task, flowParams);
     }
 
     @Override
     public Instance termination(Instance instance, Task task, FlowParams flowParams) {
         Definition definition = FlowFactory.defService().getById(instance.getDefinitionId());
-        AssertUtil.isFalse(judgeActivityStatus(definition, instance),ExceptionCons.NOT_ACTIVITY);
+        AssertUtil.isFalse(judgeActivityStatus(definition, instance), ExceptionCons.NOT_ACTIVITY);
         // 所有待办转历史
         Node endNode = FlowFactory.nodeService().getOne(FlowFactory.newNode()
                 .setDefinitionId(instance.getDefinitionId()).setNodeType(NodeType.END.getKey()));
@@ -181,7 +192,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         Definition definition;
         for (Instance instance : instanceList) {
             definition = FlowFactory.defService().getById(instance.getDefinitionId());
-            AssertUtil.isFalse(judgeActivityStatus(definition, instance),ExceptionCons.NOT_ACTIVITY);
+            AssertUtil.isFalse(judgeActivityStatus(definition, instance), ExceptionCons.NOT_ACTIVITY);
         }
         return SqlHelper.retBool(getDao().deleteByInsIds(instanceIds));
     }
@@ -856,7 +867,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     private boolean judgeActivityStatus(Definition definition, Instance instance) {
-        return  Objects.equals(definition.getActivityStatus(), ActivityStatus.ACTIVITY.getKey())
+        return Objects.equals(definition.getActivityStatus(), ActivityStatus.ACTIVITY.getKey())
                 && Objects.equals(instance.getActivityStatus(), ActivityStatus.ACTIVITY.getKey());
     }
 }

@@ -13,23 +13,24 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.warm.flow.core.test.Listener;
+package com.warm.flow.core.test.GlobalListener;
 
 import com.warm.flow.core.entity.Instance;
+import com.warm.flow.core.listener.GlobalListener;
 import com.warm.flow.core.listener.ListenerVariable;
-import com.warm.flow.core.listener.NodeListener;
+import com.warm.flow.core.test.Listener.PermissionListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-public class PermissionListener implements NodeListener {
+public class GlobalPermissionListener implements GlobalListener {
 
     private static final Logger log = LoggerFactory.getLogger(PermissionListener.class);
 
     @Override
     public void notify(ListenerVariable variable) {
-        log.info("节点权限监听器开始");
+        log.info("全局权限监听器开始");
         Instance instance = variable.getInstance();
 //        List<NodePermission> nodePermissionList = new ArrayList<>();
 //        // 动态传入组件权限标识
@@ -48,6 +49,6 @@ public class PermissionListener implements NodeListener {
 //        nodePermissionList.add(nodePermission3);
 //        variable.setNodePermissionList(nodePermissionList);
         Map<String, Object> variableMap = variable.getVariable();
-        log.info("节点权限监听器结束");
+        log.info("全局权限监听器结束");
     }
 }
