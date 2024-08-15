@@ -8,6 +8,8 @@ CREATE TABLE `flow_definition`
     `form_custom` char(1)      DEFAULT 'N' COMMENT '审批表单是否自定义（Y是 N否）',
     `form_path`   varchar(100) DEFAULT NULL COMMENT '审批表单路径',
     `activity_status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '流程激活状态（0挂起 1激活）',
+    `listener_type`   varchar(100) DEFAULT NULL COMMENT '监听器类型',
+    `listener_path`   varchar(400) DEFAULT NULL COMMENT '监听器路径',
     `ext`         varchar(500) DEFAULT NULL COMMENT '业务详情 存业务表对象json字符串',
     `create_time` datetime     DEFAULT NULL COMMENT '创建时间',
     `update_time` datetime     DEFAULT NULL COMMENT '更新时间',

@@ -92,6 +92,16 @@ public class FlowDefinition implements Definition {
     private Integer activityStatus;
 
     /**
+     * 监听器类型
+     */
+    private String listenerType;
+
+    /**
+     * 监听器路径
+     */
+    private String listenerPath;
+
+    /**
      * 扩展字段，预留给业务系统使用
      */
     private String ext;
@@ -235,8 +245,30 @@ public class FlowDefinition implements Definition {
     }
 
     @Override
-    public Definition setActivityStatus(Integer activityStatus) {
+    public FlowDefinition setActivityStatus(Integer activityStatus) {
         this.activityStatus = activityStatus;
+        return this;
+    }
+
+    @Override
+    public String getListenerType() {
+        return listenerType;
+    }
+
+    @Override
+    public FlowDefinition setListenerType(String listenerType) {
+        this.listenerType = listenerType;
+        return this;
+    }
+
+    @Override
+    public String getListenerPath() {
+        return listenerPath;
+    }
+
+    @Override
+    public FlowDefinition setListenerPath(String listenerPath) {
+        this.listenerPath = listenerPath;
         return this;
     }
 
@@ -299,6 +331,8 @@ public class FlowDefinition implements Definition {
                 ", formCustom='" + formCustom + '\'' +
                 ", formPath='" + formPath + '\'' +
                 ", activityStatus=" + activityStatus +
+                ", listenerType='" + listenerType + '\'' +
+                ", listenerPath='" + listenerPath + '\'' +
                 ", ext='" + ext + '\'' +
                 ", xmlString='" + xmlString + '\'' +
                 ", nodeList=" + nodeList +

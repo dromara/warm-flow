@@ -47,3 +47,9 @@ COMMENT ON COLUMN flow_definition.activity_status IS '流程激活状态（0挂�
 
 ALTER TABLE flow_instance ADD activity_status int2 NOT NULL DEFAULT 1;
 COMMENT ON COLUMN flow_instance.activity_status IS '流程激活状态（0挂起 1激活）';
+
+ALTER TABLE flow_definition ADD listener_type varchar(100) NULL;
+COMMENT ON COLUMN flow_definition.listener_type IS '监听器类型';
+
+ALTER TABLE flow_definition ADD listener_path varchar(100) NULL;
+COMMENT ON COLUMN flow_definition.listener_path IS '监听器路径';

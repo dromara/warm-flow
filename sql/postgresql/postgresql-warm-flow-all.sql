@@ -13,6 +13,8 @@ CREATE TABLE flow_definition (
 	form_custom bpchar(1) NULL DEFAULT 'N'::character varying, -- 审批表单是否自定义（Y是 N否）
 	form_path varchar(100) NULL, -- 审批表单路径
     activity_status int2 NOT NULL DEFAULT 1, -- 流程激活状态（0挂起 1激活）
+    listener_type varchar(100) NULL, -- 监听器类型
+    listener_path varchar(400) NULL, -- 监听器路径
     ext varchar(500) NULL, -- 扩展字段，预留给业务系统使用
     create_time timestamp NULL, -- 创建时间
 	update_time timestamp NULL, -- 更新时间
@@ -32,6 +34,8 @@ COMMENT ON COLUMN flow_definition.is_publish IS '是否发布（0未发布 1已�
 COMMENT ON COLUMN flow_definition.form_custom IS '审批表单是否自定义（Y是 N否）';
 COMMENT ON COLUMN flow_definition.form_path IS '审批表单路径';
 COMMENT ON COLUMN flow_definition.activity_status IS '流程激活状态（0挂起 1激活）';
+COMMENT ON COLUMN flow_definition.listener_type IS '监听器类型';
+COMMENT ON COLUMN flow_definition.listener_path IS '监听器路径';
 COMMENT ON COLUMN flow_definition.ext IS '扩展字段，预留给业务系统使用';
 COMMENT ON COLUMN flow_definition.create_time IS '创建时间';
 COMMENT ON COLUMN flow_definition.update_time IS '更新时间';

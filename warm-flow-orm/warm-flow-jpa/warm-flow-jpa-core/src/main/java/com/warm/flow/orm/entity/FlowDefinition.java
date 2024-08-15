@@ -77,6 +77,12 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
                 if (Objects.nonNull(this.activityStatus)) {
                     predicates.add(criteriaBuilder.equal(root.get("activityStatus"),this.activityStatus));
                 }
+                if (StringUtils.isNotEmpty(this.listenerType)) {
+                    predicates.add(criteriaBuilder.equal(root.get("listenerType"), this.listenerType));
+                }
+                if (StringUtils.isNotEmpty(this.listenerPath)) {
+                    predicates.add(criteriaBuilder.equal(root.get("listenerPath"), this.listenerPath));
+                }
                 if (StringUtils.isNotEmpty(this.ext)) {
                     predicates.add(criteriaBuilder.equal(root.get("ext"), this.ext));
                 }
@@ -104,6 +110,12 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
         }
         if (Objects.nonNull(updateEntity.activityStatus)) {
             this.activityStatus = updateEntity.activityStatus;
+        }
+        if (StringUtils.isNotEmpty(updateEntity.listenerType)) {
+            this.listenerType = updateEntity.listenerType;
+        }
+        if (StringUtils.isNotEmpty(updateEntity.listenerPath)) {
+            this.listenerPath = updateEntity.listenerPath;
         }
         if (Objects.nonNull(updateEntity.getCreateTime())) {
             this.setCreateTime(updateEntity.getCreateTime());
@@ -184,6 +196,18 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
      */
     @Column(name = "activity_status")
     private Integer activityStatus;
+
+    /**
+     * 监听器类型
+     */
+    @Column(name = "listener_type")
+    private String listenerType;
+
+    /**
+     * 监听器路径
+     */
+    @Column(name = "listener_path")
+    private String listenerPath;
 
     /**
      * 扩展字段，预留给业务系统使用
@@ -281,6 +305,28 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
     }
 
     @Override
+    public String getListenerType() {
+        return listenerType;
+    }
+
+    @Override
+    public FlowDefinition setListenerType(String listenerType) {
+        this.listenerType = listenerType;
+        return this;
+    }
+
+    @Override
+    public String getListenerPath() {
+        return listenerPath;
+    }
+
+    @Override
+    public FlowDefinition setListenerPath(String listenerPath) {
+        this.listenerPath = listenerPath;
+        return this;
+    }
+
+    @Override
     public String getExt() {
         return ext;
     }
@@ -337,6 +383,8 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
                 ", formCustom='" + formCustom + '\'' +
                 ", formPath='" + formPath + '\'' +
                 ", activityStatus=" + activityStatus +
+                ", listenerType='" + listenerType + '\'' +
+                ", listenerPath='" + listenerPath + '\'' +
                 ", ext='" + ext + '\'' +
                 ", xmlString='" + xmlString + '\'' +
                 ", nodeList=" + nodeList +

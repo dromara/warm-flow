@@ -88,4 +88,12 @@ public interface Definition extends RootEntity {
     public Integer getActivityStatus();
 
     public Definition setActivityStatus(Integer activityStatus);
+
+    String getListenerType();
+
+    Definition setListenerType(String listenerType);
+
+    String getListenerPath();
+
+    Definition setListenerPath(String listenerPath);
 }

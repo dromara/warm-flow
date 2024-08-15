@@ -75,6 +75,8 @@ public class FlowConfigUtil {
         definition.setFormPath(definitionElement.attributeValue("formPath"));
         definition.setExt(definitionElement.attributeValue("ext"));
         definition.setActivityStatus(ActivityStatus.ACTIVITY.getKey());
+        definition.setListenerType(definitionElement.attributeValue("listenerType"));
+        definition.setListenerPath(definitionElement.attributeValue("listenerPath"));
 
         List<Element> nodesElement = definitionElement.elements();
         // 遍历一个流程中的各个节点

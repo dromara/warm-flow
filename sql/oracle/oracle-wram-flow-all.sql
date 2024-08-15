@@ -173,6 +173,8 @@ create table FLOW_DEFINITION
 	FORM_CUSTOM VARCHAR2(1) default 'N',
 	FORM_PATH VARCHAR2(100),
     ACTIVITY_STATUS NUMBER(1) default 1,
+    LISTENER_TYPE VARCHAR2(100),
+    LISTENER_PATH VARCHAR2(500),
     EXT VARCHAR2(500),
     CREATE_TIME DATE,
 	UPDATE_TIME DATE,
@@ -206,6 +208,12 @@ comment on column FLOW_DEFINITION.FORM_PATH is '审批表单路径'
 /
 
 comment on column FLOW_DEFINITION.ACTIVITY_STATUS is '流程激活状态（0挂起 1激活）'
+/
+
+comment on column FLOW_DEFINITION.LISTENER_TYPE is '监听器类型'
+/
+
+comment on column FLOW_DEFINITION.LISTENER_PATH is '监听器路径'
 /
 
 comment on column FLOW_DEFINITION.EXT is '扩展字段，预留给业务系统使用'
