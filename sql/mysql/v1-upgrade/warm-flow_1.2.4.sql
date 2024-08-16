@@ -56,9 +56,3 @@ ALTER TABLE `flow_definition`
 
 ALTER TABLE `flow_instance`
     ADD COLUMN `activity_status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '流程激活状态（0挂起 1激活）' AFTER `flow_status`;
-
-ALTER TABLE `flow_instance`
-    ADD COLUMN `listener_type` varchar(100) DEFAULT NULL COMMENT '监听器类型' AFTER `activity_status`;
-
-ALTER TABLE `flow_instance`
-    ADD COLUMN `listener_path` varchar(400) DEFAULT NULL COMMENT '监听器路径' AFTER `listener_type`;
