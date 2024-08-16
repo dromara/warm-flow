@@ -23,9 +23,8 @@ import com.warm.flow.core.entity.*;
 import com.warm.flow.core.enums.ActivityStatus;
 import com.warm.flow.core.enums.FlowStatus;
 import com.warm.flow.core.enums.NodeType;
-import com.warm.flow.core.listener.GlobalListener;
+import com.warm.flow.core.listener.Listener;
 import com.warm.flow.core.listener.ListenerVariable;
-import com.warm.flow.core.listener.NodeListener;
 import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.InsService;
 import com.warm.flow.core.utils.*;
@@ -69,20 +68,13 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         // 设置流程实例对象
         Instance instance = setStartInstance(nextNodes.get(0), businessId, flowParams);
 
-        // 执行节点开始监听器
-        NodeListenerUtil.executeListener(new ListenerVariable(instance, startNode, flowParams.getVariable())
-                , NodeListener.LISTENER_START);
+        // 执行开始监听器
+        ListenerUtil.executeListener(new ListenerVariable(instance, startNode, flowParams.getVariable())
+                , Listener.LISTENER_START);
 
-        // 执行全局开始监听器
-        GlobalListenerUtil.executeGlobalListener(new ListenerVariable(instance, startNode, flowParams.getVariable())
-                , GlobalListener.LISTENER_START);
 
-        // 判断开始结点和下一结点是否有节点权限监听器,有执行权限监听器node.setPermissionFlag,无走数据库的权限标识符
-        NodeListenerUtil.executeGetNodePermission(new ListenerVariable(instance, startNode, flowParams.getVariable()
-                , null, nextNodes));
-
-        // 判断是否有全局权限监听器,有执行权限监听器node.setPermissionFlag,无走数据库的权限标识符
-        GlobalListenerUtil.executeGetNodePermission(new ListenerVariable(instance, startNode, flowParams.getVariable()
+        // 判断开始结点和下一结点是否有权限监听器,有执行权限监听器node.setPermissionFlag,无走数据库的权限标识符
+        ListenerUtil.executeGetNodePermission(new ListenerVariable(instance, startNode, flowParams.getVariable()
                 , null, nextNodes));
 
         // 设置历史任务
@@ -91,24 +83,18 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         List<Task> addTasks = StreamUtils.toList(nextNodes, node -> FlowFactory.taskService()
                 .addTask(node, instance, definition, flowParams));
 
-        // 开启节点分派监听器
-        NodeListenerUtil.executeListener(new ListenerVariable(instance, startNode, flowParams.getVariable(), null, nextNodes
-                , addTasks), NodeListener.LISTENER_ASSIGNMENT);
+        // 开启分派监听器
+        ListenerUtil.executeListener(new ListenerVariable(instance, startNode, flowParams.getVariable(), null, nextNodes
+                , addTasks), Listener.LISTENER_ASSIGNMENT);
 
-        // 开启全局分派监听器
-        GlobalListenerUtil.executeGlobalListener(new ListenerVariable(instance, startNode, flowParams.getVariable(), null, nextNodes
-                , addTasks), GlobalListener.LISTENER_ASSIGNMENT);
 
         // 开启流程，保存流程信息
         saveFlowInfo(instance, addTasks, hisTasks);
 
-        // 执行节点结束监听器和下一节点的节点开始监听器
-        NodeListenerUtil.endCreateListener(new ListenerVariable(instance, startNode, flowParams.getVariable(), null
+        // 执行结束监听器和下一节点的节点开始监听器
+        ListenerUtil.endCreateListener(new ListenerVariable(instance, startNode, flowParams.getVariable(), null
                 , nextNodes, addTasks));
 
-        // 执行全局结束监听器和下一节点的全局开始监听器
-        GlobalListenerUtil.endCreateGlobalListener(new ListenerVariable(instance, startNode, flowParams.getVariable(), null
-                , nextNodes, addTasks));
         return instance;
     }
 

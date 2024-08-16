@@ -16,7 +16,7 @@
 package com.warm.flow.core.test.GlobalListener;
 
 import com.warm.flow.core.entity.Instance;
-import com.warm.flow.core.listener.GlobalListener;
+import com.warm.flow.core.listener.Listener;
 import com.warm.flow.core.listener.ListenerVariable;
 import com.warm.flow.core.test.Listener.StartListener;
 import org.slf4j.Logger;
@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-public class GlobalFinishListener implements GlobalListener {
+public class GlobalFinishListener implements Listener {
 
 
     private static final Logger log = LoggerFactory.getLogger(StartListener.class);

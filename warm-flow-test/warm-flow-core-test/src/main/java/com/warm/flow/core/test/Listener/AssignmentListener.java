@@ -18,8 +18,8 @@ package com.warm.flow.core.test.Listener;
 import com.warm.flow.core.constant.FlowCons;
 import com.warm.flow.core.entity.Instance;
 import com.warm.flow.core.entity.Task;
+import com.warm.flow.core.listener.Listener;
 import com.warm.flow.core.listener.ListenerVariable;
-import com.warm.flow.core.listener.NodeListener;
 import com.warm.flow.core.utils.CollUtil;
 import com.warm.flow.core.utils.StringUtils;
 import org.slf4j.Logger;
@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * 分派监听器
  */
-public class AssignmentListener implements NodeListener {
+public class AssignmentListener implements Listener {
 
     private static final Logger log = LoggerFactory.getLogger(AssignmentListener.class);
 

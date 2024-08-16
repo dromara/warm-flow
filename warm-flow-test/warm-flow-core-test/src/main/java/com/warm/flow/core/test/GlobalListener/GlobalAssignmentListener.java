@@ -18,7 +18,7 @@ package com.warm.flow.core.test.GlobalListener;
 import com.warm.flow.core.constant.FlowCons;
 import com.warm.flow.core.entity.Instance;
 import com.warm.flow.core.entity.Task;
-import com.warm.flow.core.listener.GlobalListener;
+import com.warm.flow.core.listener.Listener;
 import com.warm.flow.core.listener.ListenerVariable;
 import com.warm.flow.core.test.Listener.AssignmentListener;
 import com.warm.flow.core.utils.CollUtil;
@@ -29,9 +29,9 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 /**
- * 分派监听器
+ * 全局分派监听器
  */
-public class GlobalAssignmentListener implements GlobalListener {
+public class GlobalAssignmentListener implements Listener {
 
     private static final Logger log = LoggerFactory.getLogger(AssignmentListener.class);
 

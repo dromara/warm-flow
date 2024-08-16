@@ -27,66 +27,81 @@ import java.util.Map;
 import java.util.regex.Matcher;
 
 /**
- * 全局监听器工具类
+ * 监听器工具类
+ *
+ * @author warm
  */
-public class GlobalListenerUtil {
-    private GlobalListenerUtil() {
+public class ListenerUtil {
+
+    private ListenerUtil() {
 
     }
 
     /**
-     * 执行节点的全局权限监听器,并赋值权限值集合
+     * 执行权限监听器,并赋值权限值集合
      *
      * @param listenerVariable
      */
     public static void executeGetNodePermission(ListenerVariable listenerVariable) {
         for (Node node : listenerVariable.getNextNodes()) {
-            Definition definition = FlowFactory.defService().getById(node.getDefinitionId());
-            if (StringUtils.isNotEmpty(definition.getListenerType()) && definition.getListenerType().contains(GlobalListener.LISTENER_PERMISSION)) {
-                executeGlobalListener(listenerVariable, GlobalListener.LISTENER_PERMISSION, node);
+            if (StringUtils.isNotEmpty(node.getListenerType()) && node.getListenerType().contains(Listener.LISTENER_PERMISSION)) {
+                //执行权限监听器
+                executeListener(listenerVariable, Listener.LISTENER_PERMISSION, node);
 
+                //拿到监听器内的权限标识 给NowNode.的PermissionFlag 赋值
                 if (CollUtil.isNotEmpty(listenerVariable.getNodePermissionList())) {
                     NodePermission permissionByNode = listenerVariable.getPermissionByNode(node.getNodeCode());
                     if (ObjectUtil.isNotNull(permissionByNode) && StringUtils.isNotEmpty(permissionByNode.getPermissionFlag())) {
-                        node.setDynamicPermissionFlagList(permissionByNode.getPermissionFlagList());
-                    } else if (StringUtils.isNotEmpty(permissionByNode.getPermissionFlag())) {
-                        node.setDynamicPermissionFlagList(CollUtil.strToColl(permissionByNode.getPermissionFlag(), ","));
+                        if (CollUtil.isNotEmpty(permissionByNode.getPermissionFlagList())) {
+                            node.setDynamicPermissionFlagList(permissionByNode.getPermissionFlagList());
+                        } else if (StringUtils.isNotEmpty(permissionByNode.getPermissionFlag())) {
+                            node.setDynamicPermissionFlagList(CollUtil.strToColl(permissionByNode.getPermissionFlag(), ","));
+                        }
                     }
                 }
             }
         }
     }
 
-
     /**
-     * 执行全局结束监听器和下一节点的全局开始监听器
+     * 执行结束监听器和下一节点的开始监听器
      *
      * @param listenerVariable
      */
-    public static void endCreateGlobalListener(ListenerVariable listenerVariable) {
-        // 执行全局任务完成监听器
-        executeGlobalListener(listenerVariable, GlobalListener.LISTENER_END);
-        // 执行全局任务开始监听器
-        listenerVariable.getNextNodes().forEach(node -> executeGlobalListener(listenerVariable, GlobalListener.LISTENER_CREATE, node));
+    public static void endCreateListener(ListenerVariable listenerVariable) {
+        // 执行任务完成监听器
+        executeListener(listenerVariable, Listener.LISTENER_END);
+        // 执行任务开始监听器
+        listenerVariable.getNextNodes().forEach(node -> executeListener(listenerVariable, Listener.LISTENER_CREATE, node));
     }
 
-    public static void executeGlobalListener(ListenerVariable listenerVariable, String lisType) {
-        executeGlobalListener(listenerVariable, lisType, listenerVariable.getNode());
+    public static void executeListener(ListenerVariable listenerVariable, String lisType) {
+        executeListener(listenerVariable, lisType, listenerVariable.getNode());
     }
 
-
-    public static void executeGlobalListener(ListenerVariable listenerVariable, String lisType, Node listenerNode) {
+    public static void executeListener(ListenerVariable listenerVariable, String lisType, Node listenerNode) {
         // 执行监听器
         //listenerPath({"name": "John Doe", "age": 30})@@listenerPath@@listenerPath
+        String listenerType = listenerNode.getListenerType();
+        execute(listenerVariable, lisType, listenerNode, listenerType, false);
         Definition definition = FlowFactory.defService().getById(listenerNode.getDefinitionId());
-        String listenerType = definition.getListenerType();
+        String globalListenerType = definition.getListenerType();
+        execute(listenerVariable, lisType, listenerNode, globalListenerType, true);
+    }
+
+    private static void execute(ListenerVariable listenerVariable, String lisType, Node listenerNode, String listenerType, boolean globalFlag) {
         if (StringUtils.isNotEmpty(listenerType)) {
             String[] listenerTypeArr = listenerType.split(",");
             for (int i = 0; i < listenerTypeArr.length; i++) {
                 String listenerTypeStr = listenerTypeArr[i].trim();
                 if (listenerTypeStr.equals(lisType)) {
                     //"listenerPath1({\"name\": \"John Doe\", \"age\": 30})@@listenerPath2";
-                    String listenerPathStr = definition.getListenerPath();
+                    String listenerPathStr;
+                    if (globalFlag) {
+                        listenerPathStr = FlowFactory.defService().getById(listenerNode.getDefinitionId()).getListenerPath();
+                    } else {
+                        listenerPathStr = listenerNode.getListenerPath();
+                    }
                     if (StringUtils.isNotEmpty(listenerPathStr)) {
                         //"listenerPath1({\"name\": \"John Doe\", \"age\": 30})";
                         //listenerPath2
@@ -97,8 +112,8 @@ public class GlobalListenerUtil {
                         getListenerPath(listenerPath, valueHolder);
                         Class<?> clazz = ClassUtil.getClazz(valueHolder.getPath());
                         // 增加传入类路径校验Listener接口, 防止强制类型转换失败
-                        if (ObjectUtil.isNotNull(clazz) && GlobalListener.class.isAssignableFrom(clazz)) {
-                            GlobalListener listener = (GlobalListener) FrameInvoker.getBean(clazz);
+                        if (ObjectUtil.isNotNull(clazz) && Listener.class.isAssignableFrom(clazz)) {
+                            Listener listener = (Listener) FrameInvoker.getBean(clazz);
                             if (ObjectUtil.isNotNull(listener)) {
                                 Map<String, Object> variable = listenerVariable.getVariable();
                                 variable = MapUtil.isEmpty(variable) ? new HashMap<>() : variable;
