@@ -69,12 +69,12 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         Instance instance = setStartInstance(nextNodes.get(0), businessId, flowParams);
 
         // 执行开始监听器
-        ListenerUtil.executeListener(new ListenerVariable(instance, startNode, flowParams.getVariable())
+        ListenerUtil.executeListener(new ListenerVariable(definition, instance, startNode, flowParams.getVariable())
                 , Listener.LISTENER_START);
 
 
         // 判断开始结点和下一结点是否有权限监听器,有执行权限监听器node.setPermissionFlag,无走数据库的权限标识符
-        ListenerUtil.executeGetNodePermission(new ListenerVariable(instance, startNode, flowParams.getVariable()
+        ListenerUtil.executeGetNodePermission(new ListenerVariable(definition, instance, startNode, flowParams.getVariable()
                 , null, nextNodes));
 
         // 设置历史任务
@@ -84,16 +84,16 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
                 .addTask(node, instance, definition, flowParams));
 
         // 开启分派监听器
-        ListenerUtil.executeListener(new ListenerVariable(instance, startNode, flowParams.getVariable(), null, nextNodes
-                , addTasks), Listener.LISTENER_ASSIGNMENT);
+        ListenerUtil.executeListener(new ListenerVariable(definition, instance, startNode, flowParams.getVariable()
+                , null, nextNodes, addTasks), Listener.LISTENER_ASSIGNMENT);
 
 
         // 开启流程，保存流程信息
         saveFlowInfo(instance, addTasks, hisTasks);
 
         // 执行结束监听器和下一节点的节点开始监听器
-        ListenerUtil.endCreateListener(new ListenerVariable(instance, startNode, flowParams.getVariable(), null
-                , nextNodes, addTasks));
+        ListenerUtil.endCreateListener(new ListenerVariable(definition, instance, startNode, flowParams.getVariable()
+                , null, nextNodes, addTasks));
 
         return instance;
     }

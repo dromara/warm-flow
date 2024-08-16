@@ -15,6 +15,7 @@
  */
 package com.warm.flow.core.listener;
 
+import com.warm.flow.core.entity.Definition;
 import com.warm.flow.core.entity.Instance;
 import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.Task;
@@ -28,6 +29,11 @@ import java.util.Map;
  * @author warm
  */
 public class ListenerVariable {
+
+    /**
+     * 流程定义
+     */
+    private Definition definition;
 
     /**
      * 流程实例
@@ -68,31 +74,36 @@ public class ListenerVariable {
     public ListenerVariable() {
     }
 
-    public ListenerVariable(Instance instance, Map<String, Object> variable) {
+    public ListenerVariable(Definition definition, Instance instance, Map<String, Object> variable) {
+        this.definition = definition;
         this.instance = instance;
         this.variable = variable;
     }
 
-    public ListenerVariable(Instance instance, Node node, Map<String, Object> variable) {
+    public ListenerVariable(Definition definition, Instance instance, Node node, Map<String, Object> variable) {
+        this.definition = definition;
         this.instance = instance;
         this.node = node;
         this.variable = variable;
     }
 
-    public ListenerVariable(Instance instance, Map<String, Object> variable, Task task) {
+    public ListenerVariable(Definition definition, Instance instance, Map<String, Object> variable, Task task) {
+        this.definition = definition;
         this.instance = instance;
         this.variable = variable;
         this.task = task;
     }
 
-    public ListenerVariable(Instance instance, Node node, Map<String, Object> variable, Task task) {
+    public ListenerVariable(Definition definition, Instance instance, Node node, Map<String, Object> variable, Task task) {
+        this.definition = definition;
         this.instance = instance;
         this.node = node;
         this.variable = variable;
         this.task = task;
     }
 
-    public ListenerVariable(Instance instance, Node node, Map<String, Object> variable, Task task, List<Node> nextNodes) {
+    public ListenerVariable(Definition definition, Instance instance, Node node, Map<String, Object> variable, Task task, List<Node> nextNodes) {
+        this.definition = definition;
         this.instance = instance;
         this.node = node;
         this.variable = variable;
@@ -100,14 +111,24 @@ public class ListenerVariable {
         this.nextNodes = nextNodes;
     }
 
-    public ListenerVariable(Instance instance, Node node , Map<String, Object> variable, Task task
+    public ListenerVariable(Definition definition, Instance instance, Node node , Map<String, Object> variable, Task task
             , List<Node> nextNodes, List<Task> nextTasks) {
+        this.definition = definition;
         this.instance = instance;
         this.node = node;
         this.variable = variable;
         this.task = task;
         this.nextNodes = nextNodes;
         this.nextTasks = nextTasks;
+    }
+
+    public Definition getDefinition() {
+        return definition;
+    }
+
+    public ListenerVariable setDefinition(Definition definition) {
+        this.definition = definition;
+        return this;
     }
 
     public Instance getInstance() {

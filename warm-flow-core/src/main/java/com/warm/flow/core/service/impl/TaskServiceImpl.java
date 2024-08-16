@@ -78,7 +78,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
         // 执行开始监听器
         task.setUserList(FlowFactory.userService().listByAssociatedAndTypes(task.getId()));
-        ListenerUtil.executeListener(new ListenerVariable(instance, nowNode, flowParams.getVariable(), task)
+        ListenerUtil.executeListener(new ListenerVariable(definition, instance, nowNode, flowParams.getVariable(), task)
                 , Listener.LISTENER_START);
 
         // 如果是受托人在处理任务，需要处理一条委派记录，并且更新委托人，回到计划审批人,然后直接返回流程实例
@@ -108,14 +108,14 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         }
 
         // 判断下一结点是否有权限监听器,有执行权限监听器nextNode.setPermissionFlag,无走数据库的权限标识符
-        ListenerUtil.executeGetNodePermission(new ListenerVariable(instance, nowNode, flowParams.getVariable(), task
+        ListenerUtil.executeGetNodePermission(new ListenerVariable(definition, instance, nowNode, flowParams.getVariable(), task
                 , nextNodes));
 
         // 构建增待办任务和设置结束任务历史记录
         List<Task> addTasks = buildAddTasks(flowParams, task, instance, nextNodes, nextNode, definition);
 
         // 执行分派监听器
-        ListenerUtil.executeListener(new ListenerVariable(instance, nowNode, flowParams.getVariable(), task, nextNodes
+        ListenerUtil.executeListener(new ListenerVariable(definition, instance, nowNode, flowParams.getVariable(), task, nextNodes
                 , addTasks), Listener.LISTENER_ASSIGNMENT);
 
         // 更新流程信息
@@ -128,7 +128,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         handUndoneTask(instance, flowParams);
 
         // 最后判断是否存在节点监听器，存在执行节点监听器
-        ListenerUtil.endCreateListener(new ListenerVariable(instance, nowNode, flowParams.getVariable(), task
+        ListenerUtil.endCreateListener(new ListenerVariable(definition, instance, nowNode, flowParams.getVariable(), task
                 , nextNodes, addTasks));
 
         return instance;

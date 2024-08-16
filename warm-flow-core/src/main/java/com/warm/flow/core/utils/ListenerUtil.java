@@ -15,12 +15,14 @@
  */
 package com.warm.flow.core.utils;
 
-import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.constant.FlowCons;
 import com.warm.flow.core.entity.Definition;
 import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.invoker.FrameInvoker;
-import com.warm.flow.core.listener.*;
+import com.warm.flow.core.listener.Listener;
+import com.warm.flow.core.listener.ListenerVariable;
+import com.warm.flow.core.listener.NodePermission;
+import com.warm.flow.core.listener.ValueHolder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -83,25 +85,18 @@ public class ListenerUtil {
         // 执行监听器
         //listenerPath({"name": "John Doe", "age": 30})@@listenerPath@@listenerPath
         String listenerType = listenerNode.getListenerType();
-        execute(listenerVariable, lisType, listenerNode, listenerType, false);
-        Definition definition = FlowFactory.defService().getById(listenerNode.getDefinitionId());
-        String globalListenerType = definition.getListenerType();
-        execute(listenerVariable, lisType, listenerNode, globalListenerType, true);
+        execute(listenerVariable, lisType, listenerNode.getListenerPath(), listenerType);
+        Definition definition = listenerVariable.getDefinition();
+        execute(listenerVariable, lisType, definition.getListenerPath(), definition.getListenerType());
     }
 
-    private static void execute(ListenerVariable listenerVariable, String lisType, Node listenerNode, String listenerType, boolean globalFlag) {
-        if (StringUtils.isNotEmpty(listenerType)) {
-            String[] listenerTypeArr = listenerType.split(",");
+    private static void execute(ListenerVariable listenerVariable, String lisType, String listenerPathStr, String lisListType) {
+        if (StringUtils.isNotEmpty(lisListType)) {
+            String[] listenerTypeArr = lisListType.split(",");
             for (int i = 0; i < listenerTypeArr.length; i++) {
                 String listenerTypeStr = listenerTypeArr[i].trim();
                 if (listenerTypeStr.equals(lisType)) {
                     //"listenerPath1({\"name\": \"John Doe\", \"age\": 30})@@listenerPath2";
-                    String listenerPathStr;
-                    if (globalFlag) {
-                        listenerPathStr = FlowFactory.defService().getById(listenerNode.getDefinitionId()).getListenerPath();
-                    } else {
-                        listenerPathStr = listenerNode.getListenerPath();
-                    }
                     if (StringUtils.isNotEmpty(listenerPathStr)) {
                         //"listenerPath1({\"name\": \"John Doe\", \"age\": 30})";
                         //listenerPath2
