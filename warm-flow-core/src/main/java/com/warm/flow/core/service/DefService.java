@@ -108,7 +108,7 @@ public interface DefService extends IWarmService<Definition> {
     boolean copyDef(Long id);
 
     /**
-     * 获取流程图的图片流(渲染颜色)
+     * 根据流程实例ID获取流程图的图片流(渲染颜色)
      *
      * @param instanceId
      * @return
@@ -117,12 +117,12 @@ public interface DefService extends IWarmService<Definition> {
     String flowChart(Long instanceId) throws IOException;
 
     /**
-     * 获取流程图的图片流(不渲染颜色)
-     * @param instanceId
+     * 根据流程定义ID获取流程图的图片流(不渲染颜色)
+     * @param definitionId
      * @return
      * @throws IOException
      */
-    String flowChartNoColor(Long instanceId) throws IOException;
+    String flowChartNoColor(Long definitionId) throws IOException;
 
     /**
      * 激活流程
