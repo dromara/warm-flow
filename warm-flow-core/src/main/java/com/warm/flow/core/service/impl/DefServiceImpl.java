@@ -215,10 +215,9 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         } else {
             instance = null;
         }
-        Definition definition = FlowFactory.defService().getById(definitionId);
         Map<String, Color> colorMap = new HashMap<>();
-        Map<String, Integer> nodeXY = addNodeChart(colorMap, instance, definition, flowChartChain);
-        addSkipChart(colorMap, instance, definition, flowChartChain);
+        Map<String, Integer> nodeXY = addNodeChart(colorMap, instance, definitionId, flowChartChain);
+        addSkipChart(colorMap, instance, definitionId, flowChartChain);
 
         int width = nodeXY.get("maxX") + nodeXY.get("minX");
         int height = nodeXY.get("maxY") + nodeXY.get("minY");
@@ -255,8 +254,8 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
      * @param instance
      * @param flowChartChain
      */
-    private void addSkipChart(Map<String, Color> colorMap, Instance instance, Definition definition, FlowChartChain flowChartChain) {
-        List<Skip> skipList = FlowFactory.skipService().list(FlowFactory.newSkip().setDefinitionId(definition.getId()));
+    private void addSkipChart(Map<String, Color> colorMap, Instance instance, Long definitionId, FlowChartChain flowChartChain) {
+        List<Skip> skipList = FlowFactory.skipService().list(FlowFactory.newSkip().setDefinitionId(definitionId));
         for (Skip skip : skipList) {
             if (StringUtils.isNotEmpty(skip.getCoordinate())) {
                 String[] coordinateSplit = skip.getCoordinate().split("\\|");
@@ -292,10 +291,11 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
      * @param instance
      * @param flowChartChain
      */
-    private Map<String, Integer> addNodeChart(Map<String, Color> colorMap, Instance instance, Definition definition, FlowChartChain flowChartChain) {
-        List<Node> nodeList = FlowFactory.nodeService().list(FlowFactory.newNode().setDefinitionId(definition.getId()));
+    private Map<String, Integer> addNodeChart(Map<String, Color> colorMap, Instance instance, Long definitionId
+            , FlowChartChain flowChartChain) {
+        List<Node> nodeList = FlowFactory.nodeService().list(FlowFactory.newNode().setDefinitionId(definitionId));
         List<Skip> allSkips = FlowFactory.skipService().list(FlowFactory.newSkip()
-                .setDefinitionId(definition.getId()).setSkipType(SkipType.PASS.getKey()));
+                .setDefinitionId(definitionId).setSkipType(SkipType.PASS.getKey()));
         if (ObjectUtil.isNotNull(instance)) {
             // 流程图渲染，过滤掉所有后置节点
             List<Node> needChartNodes = filterNodes(instance, allSkips, nodeList);
