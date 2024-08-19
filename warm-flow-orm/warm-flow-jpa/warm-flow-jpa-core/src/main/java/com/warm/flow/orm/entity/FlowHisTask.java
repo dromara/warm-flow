@@ -270,7 +270,7 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
      * 流程状态（1审批中 2 审批通过 9已退回 10失效）
      */
     @Column(name = "flow_status")
-    private Integer flowStatus;
+    private String flowStatus;
 
     /**
      * 审批意见
@@ -470,12 +470,12 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
     }
 
     @Override
-    public Integer getFlowStatus() {
+    public String getFlowStatus() {
         return flowStatus;
     }
 
     @Override
-    public FlowHisTask setFlowStatus(Integer flowStatus) {
+    public FlowHisTask setFlowStatus(String flowStatus) {
         this.flowStatus = flowStatus;
         return this;
     }

@@ -73,9 +73,9 @@ public interface Instance extends RootEntity {
 
     Instance setVariable(String variable);
 
-    public Integer getFlowStatus();
+    public String getFlowStatus();
 
-    public Instance setFlowStatus(Integer flowStatus);
+    public Instance setFlowStatus(String flowStatus);
 
     public String getCreateBy();
 

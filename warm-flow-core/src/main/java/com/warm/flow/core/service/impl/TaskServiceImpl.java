@@ -393,7 +393,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     @Override
-    public Integer setFlowStatus(Integer nodeType, String skipType) {
+    public String setFlowStatus(Integer nodeType, String skipType) {
         // 根据审批动作确定流程状态
         if (NodeType.isStart(nodeType)) {
             return FlowStatus.TOBESUBMIT.getKey();
@@ -804,7 +804,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
      *
      * @param taskList
      */
-    private void convertHisTask(List<Task> taskList, FlowParams flowParams, Integer flowStatus) {
+    private void convertHisTask(List<Task> taskList, FlowParams flowParams, String flowStatus) {
         List<HisTask> insHisList = new ArrayList<>();
         for (Task task : taskList) {
             List<User> userList = FlowFactory.userService().listByAssociatedAndTypes(task.getId());

@@ -125,6 +125,6 @@ public interface HisTaskService extends IWarmService<HisTask> {
      * @param task
      * @param userList
      */
-    List<HisTask> autoHisTask(FlowParams flowParams, Integer flowStatus, Task task, List<User> userList, Integer cooperateType);
+    List<HisTask> autoHisTask(FlowParams flowParams, String flowStatus, Task task, List<User> userList, Integer cooperateType);
 
 }

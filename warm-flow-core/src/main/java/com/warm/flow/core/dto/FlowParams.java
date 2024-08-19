@@ -65,7 +65,7 @@ public class FlowParams implements Serializable {
     /**
      * 流程状态
      */
-    private Integer flowStatus;
+    private String flowStatus;
 
     /**
      * 流程激活状态（0挂起 1激活）
@@ -177,11 +177,11 @@ public class FlowParams implements Serializable {
         return hisTaskExt;
     }
 
-    public Integer getFlowStatus() {
+    public String getFlowStatus() {
         return flowStatus;
     }
 
-    public FlowParams setFlowStatus(Integer flowStatus) {
+    public FlowParams setFlowStatus(String flowStatus) {
         this.flowStatus = flowStatus;
         return this;
     }

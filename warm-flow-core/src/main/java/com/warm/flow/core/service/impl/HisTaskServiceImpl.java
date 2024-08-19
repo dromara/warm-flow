@@ -104,7 +104,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
             hisTask.setTargetNodeName(nextNode.getNodeName());
             hisTask.setApprover(flowParams.getHandler());
             hisTask.setSkipType(NodeType.isStart(task.getNodeType()) ? SkipType.PASS.getKey() : flowParams.getSkipType());
-            hisTask.setFlowStatus(Objects.nonNull(flowParams.getFlowStatus())
+            hisTask.setFlowStatus(StringUtils.isNotEmpty(flowParams.getFlowStatus())
                     ? flowParams.getFlowStatus() : SkipType.isReject(flowParams.getSkipType())
                     ? FlowStatus.REJECT.getKey() : FlowStatus.PASS.getKey());
             hisTask.setFormCustom(task.getFormCustom());
@@ -203,7 +203,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
     }
 
     @Override
-    public List<HisTask> autoHisTask(FlowParams flowParams, Integer flowStatus, Task task, List<User> userList, Integer cooperateType) {
+    public List<HisTask> autoHisTask(FlowParams flowParams, String flowStatus, Task task, List<User> userList, Integer cooperateType) {
         List<HisTask> hisTasks = new ArrayList<>();
         for (User user : userList) {
             HisTask hisTask = FlowFactory.newHisTask()
@@ -219,7 +219,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
                     .setSkipType(flowParams.getSkipType())
                     .setFormCustom(task.getFormCustom())
                     .setFormPath(task.getFormPath())
-                    .setFlowStatus(Objects.nonNull(flowParams.getFlowStatus())
+                    .setFlowStatus(StringUtils.isNotEmpty(flowParams.getFlowStatus())
                             ? flowParams.getFlowStatus()  : flowStatus);
             FlowFactory.dataFillHandler().idFill(hisTask);
             hisTasks.add(hisTask);

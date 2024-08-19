@@ -186,7 +186,7 @@ public class FlowInstance extends JPARootEntity<FlowInstance> implements Instanc
      * 流程状态（0待提交 1审批中 2 审批通过 3自动通过 8已完成 9已退回 10失效）
      */
     @Column(name = "flow_status")
-    private Integer flowStatus;
+    private String flowStatus;
 
     /**
      * 流程激活状态（0挂起 1激活）
@@ -298,12 +298,12 @@ public class FlowInstance extends JPARootEntity<FlowInstance> implements Instanc
     }
 
     @Override
-    public Integer getFlowStatus() {
+    public String getFlowStatus() {
         return flowStatus;
     }
 
     @Override
-    public FlowInstance setFlowStatus(Integer flowStatus) {
+    public FlowInstance setFlowStatus(String flowStatus) {
         this.flowStatus = flowStatus;
         return this;
     }

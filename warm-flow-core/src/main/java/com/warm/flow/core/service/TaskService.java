@@ -183,7 +183,7 @@ public interface TaskService extends IWarmService<Task> {
      * @param nodeType 节点类型（开始节点、中间节点、结束节点）
      * @param skipType 流程条件
      */
-    Integer setFlowStatus(Integer nodeType, String skipType);
+    String setFlowStatus(Integer nodeType, String skipType);
 
     /**
      * 并行网关，取结束节点类型，否则随便取id最大的
