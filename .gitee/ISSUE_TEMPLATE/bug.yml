@@ -1,6 +1,6 @@
 name: Bug 反馈
 description: 当你使用过程中发现了一个 Bug，导致应用崩溃或抛出异常，或者有一个组件存在问题，或者某些地方看起来不对劲，请在这里反馈。
-title: "[Bug]: "
+title: "【Bug】 "
 labels: ["bug"]
 body:
   - type: textarea
