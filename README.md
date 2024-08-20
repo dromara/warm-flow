@@ -20,7 +20,7 @@ Warm-Flow国产工作流引擎🎉，其特点简洁轻量但又不简单，五�
 使用前请先登记，可加入企业群：https://gitee.com/warm_4/warm-flow/issues/I7Y57D
 ```
 
->   **[github地址](https://github.com/dromara/warm-flow.git)** | **[gitee地址](https://gitee.com/dromara/warm-flow.git)** | **[gitCode地址](https://gitcode.com/minliuhua/warm-flow.git)**
+>   **[github地址](https://github.com/dromara/warm-flow.git)** | **[gitee地址](https://gitee.com/dromara/warm-flow.git)** | **[gitCode地址](https://gitcode.com/dromara/warm-flow)**
 
 ## 演示地址
 
