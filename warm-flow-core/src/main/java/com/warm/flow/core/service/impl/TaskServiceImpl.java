@@ -309,6 +309,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     @Override
+    @Deprecated
     public Node getNextNode(Node NowNode, Task task, FlowParams flowParams) {
         AssertUtil.isNull(task.getDefinitionId(), ExceptionCons.NOT_DEFINITION_ID);
         AssertUtil.isBlank(task.getNodeCode(), ExceptionCons.LOST_NODE_CODE);
@@ -330,6 +331,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     @Override
+    @Deprecated
     public List<Node> getNextByCheckGateWay(FlowParams flowParams, Node nextNode) {
         List<Node> nextNodes = new ArrayList<>();
         if (NodeType.isGateWay(nextNode.getNodeType())) {
@@ -636,6 +638,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
      * @param flowParams
      * @return
      */
+    @Deprecated
     private Node getAnySkipNode(Task task, FlowParams flowParams) {
         List<Node> curNodes = FlowFactory.nodeService()
                 .getByNodeCodes(Collections.singletonList(task.getNodeCode()), task.getDefinitionId());
@@ -656,6 +659,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
      * @param flowParams
      * @return
      */
+    @Deprecated
     private List<Skip> getSkipByCheck(Task task, List<Skip> skips, FlowParams flowParams) {
         if (CollUtil.isEmpty(skips)) {
             return null;

@@ -17,9 +17,7 @@ package com.warm.flow.core.service.impl;
 
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.constant.ExceptionCons;
-import com.warm.flow.core.constant.FlowCons;
 import com.warm.flow.core.dao.FlowNodeDao;
-import com.warm.flow.core.dto.FlowParams;
 import com.warm.flow.core.entity.Definition;
 import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.Skip;
@@ -28,13 +26,13 @@ import com.warm.flow.core.enums.PublishStatus;
 import com.warm.flow.core.enums.SkipType;
 import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.NodeService;
-import com.warm.flow.core.utils.AssertUtil;
-import com.warm.flow.core.utils.CollUtil;
-import com.warm.flow.core.utils.ObjectUtil;
-import com.warm.flow.core.utils.StringUtils;
+import com.warm.flow.core.utils.*;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -68,49 +66,53 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
 
     @Override
     public Node getByNodeCode(String nodeCode, Long definitionId) {
-        List<Node> nodeCodes = getDao().getByNodeCodes(Collections.singletonList(nodeCode), definitionId);
-        return CollUtil.getOne(nodeCodes);
+        return CollUtil.getOne(getByNodeCodes(Collections.singletonList(nodeCode), definitionId));
     }
 
     @Override
-    public List<Node> getNextNodeByNodeCode(Long definitionId, String nowNodeCode, String skipType
-            , Map<String, Object> variable, String nextNodeCode) {
+    public List<Node> getNextNodeList(Long definitionId, String nowNodeCode, String nextNodeCode, String skipType,
+                                      Map<String, Object> variable) {
         AssertUtil.isNull(definitionId, ExceptionCons.NOT_DEFINITION_ID);
         AssertUtil.isBlank(nowNodeCode, ExceptionCons.LOST_NODE_CODE);
-        //不传,默认取通过的条件
-        if (StringUtils.isEmpty(skipType)) {
-            skipType = SkipType.PASS.getKey();
+        // 如果指定了跳转节点，则判断权限，直接获取节点
+        if (StringUtils.isNotEmpty(nextNodeCode)) {
+            return getByNodeCodes(Collections.singletonList(nextNodeCode), definitionId);
         }
-        //查询当前节点
+        // 查询当前节点
         Node nowNode = FlowFactory.nodeService().getByNodeCode(nowNodeCode, definitionId);
         AssertUtil.isNull(nowNode, ExceptionCons.LOST_DEST_NODE);
-        //是否可以跳转任意节点,如是,返回nextNodeCode的节点
-        if (StringUtils.isNotEmpty(nextNodeCode)) {
-            return Collections.singletonList(FlowFactory.nodeService().getByNodeCode(nextNodeCode, definitionId));
-        }
-        //获取跳转关系
+        // 获取跳转关系
         List<Skip> skips = FlowFactory.skipService().list(FlowFactory.newSkip().setDefinitionId(definitionId)
                 .setNowNodeCode(nowNodeCode));
         AssertUtil.isNull(skips, ExceptionCons.NULL_CONDITIONVALUE_NODE);
-
-        return getNextSkips(nowNode, skips, skipType, variable);
-    }
-
-    @Override
-    public int deleteNodeByDefIds(Collection<? extends Serializable> defIds) {
-        return getDao().deleteNodeByDefIds(defIds);
+        // 不传,默认取通过的条件，并且查询到指定的跳转
+        skipType = StringUtils.isEmpty(skipType)? SkipType.PASS.getKey(): skipType;
+        Skip nextSkip = checkSkipType(nowNode, skips, skipType);
+        AssertUtil.isTrue(ObjectUtil.isNull(nextSkip), ExceptionCons.NULL_SKIP_TYPE);
+        // 根据跳转查询出跳转到的那个节点
+        List<Node> nodes = FlowFactory.nodeService()
+                .getByNodeCodes(Collections.singletonList(nextSkip.getNextNodeCode()), definitionId);
+        Node nextNode = CollUtil.getOne(nodes);
+        AssertUtil.isTrue(ObjectUtil.isNull(nextNode), ExceptionCons.NULL_NODE_CODE);
+        // 如果是网关节点，则根据条件判断
+        return getNextByCheckGateway(variable, nextNode);
     }
 
     /**
-     * 获取下一节点的跳转关系
+     * 通过校验跳转类型获取跳转集合
      *
-     * @param node
-     * @param skips
+     * @param nowNode       当前节点信息
+     * @param skips         跳转集合
+     * @param skipType      跳转类型
+     * @return List<Skip>
+     * @author xiarg
+     * @date 2024/8/21 11:32
      */
-    private List<Node> getNextSkips(Node node, List<Skip> skips, String skipType, Map<String, Object> variable) {
-
-        //根据跳转类型获取关系
-        if (!NodeType.isStart(node.getNodeType())) {
+    private Skip checkSkipType(Node nowNode, List<Skip> skips, String skipType) {
+        if (CollUtil.isEmpty(skips)) {
+            return null;
+        }
+        if (!NodeType.isStart(nowNode.getNodeType())) {
             skips = skips.stream().filter(t -> {
                 if (StringUtils.isNotEmpty(t.getSkipType())) {
                     return skipType.equals(t.getSkipType());
@@ -118,13 +120,46 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
                 return true;
             }).collect(Collectors.toList());
         }
-        AssertUtil.isTrue(CollUtil.isEmpty(skips), ExceptionCons.NULL_CONDITIONVALUE_NODE);
-        Skip skip = skips.get(0);
+        AssertUtil.isTrue(CollUtil.isEmpty(skips), ExceptionCons.NULL_SKIP_TYPE);
+        return skips.get(0);
+    }
 
-        Node nextNode = FlowFactory.nodeService().getByNodeCode(skip.getNextNodeCode(), skip.getDefinitionId());
-        // 如果是网关节点，则重新获取后续节点
-        FlowParams flowParams = FlowParams.build().variable(variable);
-        return FlowFactory.taskService().getNextByCheckGateWay(flowParams, nextNode);
+    @Override
+    public List<Node> getNextByCheckGateway(Map<String, Object> variable, Node nextNode) {
+        // 网关节点处理
+        if (NodeType.isGateWay(nextNode.getNodeType())) {
+            List<Skip> skipsGateway = FlowFactory.skipService().list(FlowFactory.newSkip()
+                    .setDefinitionId(nextNode.getDefinitionId()).setNowNodeCode(nextNode.getNodeCode()));
+            if (CollUtil.isEmpty(skipsGateway)) {
+                return null;
+            }
+            // 过滤跳转
+            if (!NodeType.isStart(nextNode.getNodeType())) {
+                skipsGateway = skipsGateway.stream().filter(t -> {
+                    if (NodeType.isGateWaySerial(nextNode.getNodeType())) {
+                        AssertUtil.isTrue(MapUtil.isEmpty(variable), ExceptionCons.MUST_CONDITIONVALUE_NODE);
+                        if (ObjectUtil.isNotNull(t.getSkipCondition())) {
+                            return ExpressionUtil.eval(t.getSkipCondition(), variable);
+                        }
+                    }
+                    // 并行网关返回多个跳转
+                    return true;
+                }).collect(Collectors.toList());
+            }
+            AssertUtil.isTrue(CollUtil.isEmpty(skipsGateway), ExceptionCons.NULL_CONDITIONVALUE_NODE);
+            List<String> nextNodeCodes = StreamUtils.toList(skipsGateway, Skip::getNextNodeCode);
+            List<Node> nextNodes = FlowFactory.nodeService()
+                    .getByNodeCodes(nextNodeCodes, nextNode.getDefinitionId());
+            AssertUtil.isTrue(CollUtil.isEmpty(nextNodes), ExceptionCons.NOT_NODE_DATA);
+            return nextNodes;
+        }
+        // 非网关节点直接返回
+        return CollUtil.toList(nextNode);
+    }
+
+    @Override
+    public int deleteNodeByDefIds(Collection<? extends Serializable> defIds) {
+        return getDao().deleteNodeByDefIds(defIds);
     }
 
 }

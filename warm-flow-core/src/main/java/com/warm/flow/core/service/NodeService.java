@@ -61,12 +61,15 @@ public interface NodeService extends IWarmService<Node> {
      *
      * @param definitionId 流程定义id
      * @param nowNodeCode  当前节点code
-     * @param nextNodeCode 下一节点code,skipAnyNode为Y可跳转任意节点时,需传,返回下一节点
+     * @param nextNodeCode 下一节点code,可跳转任意节点时,需传,返回下一个节点
      * @param skipType     跳转类型（PASS审批通过 REJECT退回）不传默认取审批通过的下一节点
-     * @param variable     流程变量 下一节点是网关需要判断跳转条件,并行网关返回多个节点
-     * @return
+     * @param variable     流程变量 下一个节点是网关需要判断跳转条件,并行网关返回多个节点
+     * @return List<Node>
+     * @author xiarg
+     * @date 2024/8/21 16:48
      */
-    List<Node> getNextNodeByNodeCode(Long definitionId, String nowNodeCode, String skipType, Map<String, Object> variable, String nextNodeCode);
+    List<Node> getNextNodeList(Long definitionId, String nowNodeCode, String nextNodeCode, String skipType,
+                                     Map<String, Object> variable);
 
     /**
      * 批量删除流程节点
@@ -74,5 +77,16 @@ public interface NodeService extends IWarmService<Node> {
      * @param defIds 需要删除的数据主键集合
      * @return 结果
      */
-    public int deleteNodeByDefIds(Collection<? extends Serializable> defIds);
+    int deleteNodeByDefIds(Collection<? extends Serializable> defIds);
+
+    /**
+     * 校验是否网关节点,如果是重新获取新的后面的节点
+     *
+     * @param variable      流程变量
+     * @param nextNode      下一个节点
+     * @return List<Node>
+     * @author xiarg
+     * @date 2024/8/21 16:48
+     */
+    List<Node> getNextByCheckGateway(Map<String, Object> variable, Node nextNode);
 }

@@ -156,6 +156,7 @@ public interface TaskService extends IWarmService<Task> {
      * @param flowParams
      * @return
      */
+    @Deprecated
     Node getNextNode(Node NowNode, Task task, FlowParams flowParams);
 
     /**
@@ -165,6 +166,7 @@ public interface TaskService extends IWarmService<Task> {
      * @param nextNode
      * @return
      */
+    @Deprecated
     List<Node> getNextByCheckGateWay(FlowParams flowParams, Node nextNode);
 
     /**
