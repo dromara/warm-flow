@@ -1,0 +1,11 @@
+name: 功能开发
+description: 本项目新功能开发。
+title: "【功能开发】 "
+labels: ["feature"]
+body:
+  - type: textarea
+    id: feature-detail
+    attributes:
+      label: 功能描述
+    validations:
+      required: false
