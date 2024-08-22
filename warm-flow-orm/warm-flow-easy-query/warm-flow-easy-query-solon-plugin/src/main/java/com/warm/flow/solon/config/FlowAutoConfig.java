@@ -25,10 +25,8 @@ import com.warm.flow.core.config.WarmFlow;
 import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.orm.config.WarmFlowLogicDeleteFakeStrategy;
 import com.warm.flow.orm.config.WarmFlowLogicDeleteStrategy;
-import com.warm.plugin.modes.solon.config.BeanConfig;
 import org.noear.solon.Solon;
 import org.noear.solon.annotation.Bean;
-import org.noear.solon.annotation.Condition;
 import org.noear.solon.annotation.Configuration;
 
 /**
@@ -37,9 +35,7 @@ import org.noear.solon.annotation.Configuration;
  * @date: 2023/6/5 23:01
  */
 @Configuration
-@Condition(onProperty="${warm-flow.enabled:true} = true")
-public class FlowAutoConfig extends BeanConfig {
-
+public class FlowAutoConfig {
 
     @Bean
     public WarmFlow initFlow(@Db EasyEntityQuery entityQuery, WarmFlow flowConfig) {
@@ -67,5 +63,4 @@ public class FlowAutoConfig extends BeanConfig {
 
         return FlowFactory.getFlowConfig();
     }
-
 }

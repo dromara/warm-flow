@@ -15,6 +15,7 @@
  */
 package com.warm.flow.spring.boot.config;
 
+import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.config.WarmFlow;
 import com.warm.flow.orm.utils.CommonUtil;
 import com.warm.plugin.modes.sb.config.BeanConfig;
@@ -48,9 +49,10 @@ public class FlowAutoConfig extends BeanConfig {
     }
 
     @Override
-    public void after(WarmFlow flowConfig) {
+    public WarmFlow after(WarmFlow flowConfig) {
         loadXml(sqlSessionFactory);
         CommonUtil.setDataSourceType(flowConfig, sqlSessionFactory.getConfiguration());
+        return FlowFactory.getFlowConfig();
     }
 
     private void loadXml(SqlSessionFactory sqlSessionFactory) {

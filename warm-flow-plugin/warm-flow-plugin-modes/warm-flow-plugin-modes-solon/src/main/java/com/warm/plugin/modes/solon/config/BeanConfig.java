@@ -25,6 +25,8 @@ import com.warm.flow.orm.dao.*;
 import com.warm.flow.orm.entity.*;
 import org.noear.solon.Solon;
 import org.noear.solon.annotation.Bean;
+import org.noear.solon.annotation.Condition;
+import org.noear.solon.annotation.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +35,8 @@ import org.slf4j.LoggerFactory;
  * @description: 工作流bean注册配置
  * @date: 2023/6/5 23:01
  */
+@Configuration
+@Condition(onProperty="${warm-flow.enabled:true} = true")
 public class BeanConfig {
 
     private static final Logger log = LoggerFactory.getLogger(BeanConfig.class);
@@ -115,7 +119,6 @@ public class BeanConfig {
         FrameInvoker.setBeanFunction(Solon.context()::getBean);
         WarmFlow flowConfig = WarmFlow.init();
         FlowFactory.setFlowConfig(flowConfig);
-        after(flowConfig);
         log.info("【warm-flow】，加载完成");
         return FlowFactory.getFlowConfig();
     }
@@ -128,9 +131,6 @@ public class BeanConfig {
         FlowFactory.setNewSkip(FlowSkip::new);
         FlowFactory.setNewTask(FlowTask::new);
         FlowFactory.setNewUser(FlowUser::new);
-    }
-
-    public void after(WarmFlow flowConfig) {
     }
 
 }

@@ -134,6 +134,7 @@ public class BeanConfig {
         FlowFactory.setNewUser(FlowUser::new);
     }
 
-    public void after(WarmFlow flowConfig) {
+    public WarmFlow after(WarmFlow flowConfig) {
+        return flowConfig;
     }
 }

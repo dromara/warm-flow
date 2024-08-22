@@ -15,8 +15,6 @@
  */
 package com.warm.flow.solon.config;
 
-import com.warm.plugin.modes.solon.config.BeanConfig;
-import org.noear.solon.annotation.Condition;
 import org.noear.solon.annotation.Configuration;
 
 /**
@@ -25,7 +23,6 @@ import org.noear.solon.annotation.Configuration;
  * @date: 2023/6/5 23:01
  */
 @Configuration
-@Condition(onProperty="${warm-flow.enabled:true} = true")
-public class FlowAutoConfig extends BeanConfig {
+public class FlowAutoConfig {
 
 }
