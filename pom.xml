@@ -6,7 +6,7 @@
 
     <groupId>io.github.minliuhua</groupId>
     <artifactId>warm-flow</artifactId>
-    <version>${revision}</version>
+    <version>1.2.4</version>
     <packaging>pom</packaging>
 
     <name>warm-flow</name>
@@ -41,12 +41,11 @@
     <modules>
         <module>warm-flow-core</module>
         <module>warm-flow-orm</module>
-<!--        <module>warm-flow-test</module>-->
         <module>warm-flow-plugin</module>
     </modules>
 
     <properties>
-        <revision>1.2.4</revision>
+        <warm-flow>${project.version}</warm-flow>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -147,121 +146,92 @@
             </dependency>
 
             <dependency>
-                <groupId>org.noear</groupId>
-                <artifactId>solon-test</artifactId>
-                <version>${solon.version}</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-core</artifactId>
-                <version>${revision}</version>
+                <version>1.2.4</version>
             </dependency>
 
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-easy-query-core</artifactId>
-                <version>${revision}</version>
+                <version>1.2.4</version>
             </dependency>
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-easy-query-solon-plugin</artifactId>
-                <version>${revision}</version>
+                <version>1.2.4</version>
             </dependency>
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-easy-query-sb-starter</artifactId>
-                <version>${revision}</version>
+                <version>1.2.4</version>
             </dependency>
 
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-mybatis-core</artifactId>
-                <version>${revision}</version>
+                <version>1.2.4</version>
             </dependency>
 
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-mybatis-sb-starter</artifactId>
-                <version>${revision}</version>
+                <version>1.2.4</version>
             </dependency>
 
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-mybatis-solon-plugin</artifactId>
-                <version>${revision}</version>
+                <version>1.2.4</version>
             </dependency>
 
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-mybatis-plus-core</artifactId>
-                <version>${revision}</version>
+                <version>1.2.4</version>
             </dependency>
 
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-mybatis-plus-sb-starter</artifactId>
-                <version>${revision}</version>
+                <version>1.2.4</version>
             </dependency>
 
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-mybatis-plus-solon-plugin</artifactId>
-                <version>${revision}</version>
+                <version>1.2.4</version>
             </dependency>
 
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-jpa-core</artifactId>
-                <version>${revision}</version>
+                <version>1.2.4</version>
             </dependency>
 
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-jpa-sb-starter</artifactId>
-                <version>${revision}</version>
+                <version>1.2.4</version>
             </dependency>
 
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-jpa-solon-plugin</artifactId>
-                <version>${revision}</version>
+                <version>1.2.4</version>
             </dependency>
 
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-jpa-jakarta-core</artifactId>
-                <version>${revision}</version>
+                <version>1.2.4</version>
             </dependency>
 
 <!--            <dependency>-->
 <!--                <groupId>io.github.minliuhua</groupId>-->
 <!--                <artifactId>warm-flow-jpa-jakarta-sb-starter</artifactId>-->
-<!--                <version>${revision}</version>-->
+<!--                <version>1.2.4</version>-->
 <!--            </dependency>-->
-
-
-            <!--for test-->
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>${junit.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.mysql</groupId>
-                <artifactId>mysql-connector-j</artifactId>
-                <version>${mysql.version}</version>
-                <optional>true</optional>
-            </dependency>
-
-            <dependency>
-                <groupId>com.zaxxer</groupId>
-                <artifactId>HikariCP</artifactId>
-                <version>${HikariCP.version}</version>
-                <optional>true</optional>
-            </dependency>
 
             <dependency>
                 <groupId>org.noear</groupId>
@@ -274,12 +244,6 @@
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j-api.version}</version>
             </dependency>
-
-<!--            <dependency>-->
-<!--                <groupId>com.oracle.database.jdbc</groupId>-->
-<!--                <artifactId>ojdbc6</artifactId>-->
-<!--                <version>${oracle.version}</version>-->
-<!--            </dependency>-->
 
             <!-- mybatis-flex 依赖 -->
             <dependency>
@@ -306,32 +270,32 @@
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-mybatis-flex-core</artifactId>
-                <version>${revision}</version>
+                <version>1.2.4</version>
             </dependency>
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-mybatis-flex-sb-starter</artifactId>
-                <version>${revision}</version>
+                <version>1.2.4</version>
             </dependency>
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-mybatis-flex-solon-plugin</artifactId>
-                <version>${revision}</version>
+                <version>1.2.4</version>
             </dependency>
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-plugin-spel</artifactId>
-                <version>${revision}</version>
+                <version>1.2.4</version>
             </dependency>
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-plugin-modes-sb</artifactId>
-                <version>${revision}</version>
+                <version>1.2.4</version>
             </dependency>
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-plugin-modes-solon</artifactId>
-                <version>${revision}</version>
+                <version>1.2.4</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -355,42 +319,24 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <Implementation-Version>${revision}</Implementation-Version>
+                            <Implementation-Version>${warm-flow}</Implementation-Version>
                         </manifestEntries>
                     </archive>
                 </configuration>
             </plugin>
-            <!-- 统一版本号管理 -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>flatten-maven-plugin</artifactId>
-                <version>${flatten-maven-plugin.version}</version>
-                <configuration>
-                    <updatePomFile>true</updatePomFile>
-                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>flatten</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>flatten</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>flatten.clean</id>
-                        <phase>clean</phase>
-                        <goals>
-                            <goal>clean</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 
-    <!-- source ~/.bash_profile  -->
 <!--    mvn clean deploy -s /Users/minliuhua/Desktop/mdata/ruanjian/apache-maven-3.8.8/conf/settings.xml -P release-->
+    <!-- 跳过测试：mvn package -Dmaven.test.skip=true   -->
+    <!-- 检测依赖最新版本：mvn versions:display-dependency-updates  -->
+    <!-- 统一修改版本号：mvn versions:set -DnewVersion=3.0  -->
+    <!-- mvn -N versions:update-child-modules  -->
+    <!-- mvn versions:set -DnewVersion=2.0 -DprocessAllModules=true -DallowSnapshots=true -->
+
+    <!-- mvn clean source:jar install -->
+    <!-- mvn deploy -Dmaven.test.skip=true -e -P release -->
+    <!-- mvn deploy -e -P release -->
     <profiles>
         <profile>
             <id>release</id>
