@@ -13,7 +13,7 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.warm.flow.core.utils;
+package com.warm.flow.core.keyGen;
 
 /**
  * Twitter_Snowflake<br>
@@ -29,7 +29,7 @@ package com.warm.flow.core.utils;
  *
  * @author warm
  */
-public class SnowFlake {
+public class SnowFlakeId19 implements KenGen{
 
     // ==============================Fields===========================================
     /**
@@ -110,7 +110,7 @@ public class SnowFlake {
      * @param workerId     工作ID (0~31)
      * @param datacenterId 数据中心ID (0~31)
      */
-    public SnowFlake(long workerId, long datacenterId) {
+    public SnowFlakeId19(long workerId, long datacenterId) {
         if (workerId > maxWorkerId || workerId < 0) {
             throw new IllegalArgumentException(String.format("worker Id can't be greater than %d or less than 0", maxWorkerId));
         }
@@ -128,6 +128,7 @@ public class SnowFlake {
      *
      * @return SnowflakeId
      */
+    @Override
     public synchronized long nextId() {
         long timestamp = timeGen();
 

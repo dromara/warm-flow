@@ -16,6 +16,7 @@
 package com.warm.flow.core.config;
 
 import com.warm.flow.core.constant.FlowConfigCons;
+import com.warm.flow.core.constant.FlowCons;
 import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.core.utils.ExpressionUtil;
 import com.warm.flow.core.utils.ObjectUtil;
@@ -37,6 +38,11 @@ public class WarmFlow {
      * 启动banner
      */
     private boolean banner = true;
+
+    /**
+     * id生成器类型, 不填默认19位雪花算法, SnowId14:14位，SnowId15:15位， SnowFlake19：19位
+     */
+    private String keyType = FlowCons.SNOWID19;
 
     /**
      * 是否开启逻辑删除
@@ -75,6 +81,12 @@ public class WarmFlow {
         String banner = FrameInvoker.getCfg(FlowConfigCons.BANNER);
         if (StringUtils.isNotEmpty(banner)) {
             flowConfig.setBanner(ObjectUtil.isStrTrue(banner));
+        }
+
+        // 设置id生成器类型
+        String keyType = FrameInvoker.getCfg(FlowConfigCons.KEYTYPE);
+        if (StringUtils.isNotEmpty(keyType)) {
+            flowConfig.setKeyType(keyType);
         }
 
         // 设置逻辑删除
@@ -138,6 +150,14 @@ public class WarmFlow {
 
     public void setBanner(boolean banner) {
         this.banner = banner;
+    }
+
+    public String getKeyType() {
+        return keyType;
+    }
+
+    public void setKeyType(String keyType) {
+        this.keyType = keyType;
     }
 
     public boolean isLogicDelete() {

@@ -13,17 +13,14 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.warm.flow.core.utils;
+package com.warm.flow.core.keyGen;
 
 /**
- * <p>TODO</p>
+ * warm 生成14位有序id
  *
- * @author cheng.jin.peng
- * @version V1.0.0
- * @date 2023/5/11 11:17
+ * @author warm
  */
-
-public class SnowflakeIdWorker {
+public class SnowFlakeId14 implements KenGen {
     /**
      * 开始时间截 (本次时间戳为：Thu Nov 04 2010 09:42:54 GMT+0800 (中国标准时间)----1288834974657L---1656543015264587776--19 )
      */
@@ -81,7 +78,7 @@ public class SnowflakeIdWorker {
      *
      * @param workerId 工作ID (0~1024)
      */
-    public SnowflakeIdWorker(long workerId) {
+    public SnowFlakeId14(long workerId) {
         if (workerId > maxWorkerId || workerId < 0) {
             throw new IllegalArgumentException(String.format("workerId can't be greater than %d or less than 0", maxWorkerId));
         }
@@ -95,6 +92,7 @@ public class SnowflakeIdWorker {
      *
      * @return SnowflakeId
      */
+    @Override
     public synchronized long nextId() {
         long timestamp = timeGen();
 
@@ -156,14 +154,9 @@ public class SnowflakeIdWorker {
     public static void main(String[] args) {
         System.out.println("开始：" + System.currentTimeMillis());
 
-        SnowflakeIdWorker idWorker = new SnowflakeIdWorker(1);
+        SnowFlakeId14 idWorker = new SnowFlakeId14(1);
 
-        for (int i = 0; i < 50; i++) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+        for (int i = 0; i < 10; i++) {
             long id = idWorker.nextId();
             System.out.println(id + "长度=" + String.valueOf(id).length());
 

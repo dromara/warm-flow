@@ -23,6 +23,8 @@ warm-flow:
   enabled: true
   # 是否显示banner图，默认是
   banner: true
+  # id生成器类型, 不填默认19位雪花算法, SnowId14:14位，SnowId15:15位， SnowFlake19：19位
+  key_type: SnowId15
   # # 填充器 （可通过配置文件注入，也可用@Bean/@Component方式）
 #  data-fill-handler-path: com.warm.flow.core.test.handle.CustomDataFillHandler
   # 全局租户处理器（可通过配置文件注入，也可用@Bean/@Component方式
