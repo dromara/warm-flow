@@ -37,7 +37,7 @@ import org.springframework.context.annotation.Configuration;
 public class FlowAutoConfig extends BeanConfig {
 
     @Override
-    public WarmFlow after(WarmFlow flowConfig) {
+    public void after(WarmFlow flowConfig) {
 
         EasyEntityQuery entityQuery = FrameInvoker.getBean(EasyEntityQuery.class);
         if (entityQuery == null) {
@@ -48,7 +48,5 @@ public class FlowAutoConfig extends BeanConfig {
         }else{
             entityQuery.getRuntimeContext().getQueryConfiguration().applyLogicDeleteStrategy(new WarmFlowLogicDeleteFakeStrategy());
         }
-
-        return super.after(flowConfig);
     }
 }
