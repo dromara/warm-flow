@@ -17,8 +17,10 @@ package com.warm.flow.solon.config;
 
 import com.warm.flow.core.config.WarmFlow;
 import com.warm.flow.orm.utils.CommonUtil;
+import com.warm.plugin.modes.solon.config.BeanConfig;
 import org.apache.ibatis.solon.annotation.Db;
 import org.noear.solon.annotation.Bean;
+import org.noear.solon.annotation.Condition;
 import org.noear.solon.annotation.Configuration;
 
 /**
@@ -27,7 +29,8 @@ import org.noear.solon.annotation.Configuration;
  * @date: 2023/6/5 23:01
  */
 @Configuration
-public class FlowAutoConfig {
+@Condition(onProperty="${warm-flow.enabled:true} = true")
+public class FlowAutoConfig extends BeanConfig {
 
     @Bean
     public WarmFlow initFlow(@Db org.apache.ibatis.session.Configuration db1Cfg, WarmFlow flowConfig) {
