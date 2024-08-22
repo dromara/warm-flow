@@ -18,6 +18,7 @@ package com.warm.flow.solon;
 import com.mybatisflex.core.FlexGlobalConfig;
 import com.warm.flow.orm.mapper.*;
 import com.warm.flow.solon.config.FlowAutoConfig;
+import com.warm.plugin.modes.solon.config.BeanConfig;
 import org.apache.ibatis.solon.MybatisAdapter;
 import org.apache.ibatis.solon.integration.MybatisAdapterManager;
 import org.noear.solon.core.AppContext;
@@ -37,6 +38,7 @@ public class XPluginImpl implements Plugin {
 
     @Override
     public void start(AppContext context) {
+        context.beanMake(BeanConfig.class);
         context.beanMake(FlowAutoConfig.class);
         EventBus.subscribe(FlexGlobalConfig.class, e -> {
             e.getConfiguration().addMapper(FlowDefinitionMapper.class);

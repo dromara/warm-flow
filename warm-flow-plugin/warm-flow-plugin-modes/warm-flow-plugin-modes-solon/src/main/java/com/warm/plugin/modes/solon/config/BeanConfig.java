@@ -41,7 +41,7 @@ public class BeanConfig {
 
     private static final Logger log = LoggerFactory.getLogger(BeanConfig.class);
 
-    @Bean
+    @Bean(injected = true)
     public FlowDefinitionDao definitionDao() {
         return new FlowDefinitionDaoImpl();
     }
