@@ -51,9 +51,10 @@ public interface IWarmService<T> {
     List<T> getByIds(Collection<? extends Serializable> ids);
 
     /**
-     * 分页查询并且排序
+     * 分页查询
      *
-     * @param entity 实体列表
+     * @param entity 查询实体
+     * @param page 分页对象
      * @return 集合
      */
     Page<T> page(T entity, Page<T> page);
@@ -61,15 +62,15 @@ public interface IWarmService<T> {
     /**
      * 查询列表
      *
-     * @param entity 实体列表
+     * @param entity 查询实体
      * @return 集合
      */
     List<T> list(T entity);
 
     /**
-     * 查询列表并排序
+     * 查询列表，可排序
      *
-     * @param entity 实体列表
+     * @param entity 查询实体
      * @param query
      * @return 集合
      */
@@ -78,7 +79,7 @@ public interface IWarmService<T> {
     /**
      * 查询一条记录
      *
-     * @param entity 实体列表
+     * @param entity 查询实体
      * @return 结果
      */
     T getOne(T entity);
@@ -86,11 +87,17 @@ public interface IWarmService<T> {
     /**
      * 获取总数量
      *
-     * @param entity
-     * @return
+     * @param entity 查询实体
+     * @return 结果
      */
     long selectCount(T entity);
 
+    /**
+     * 判断是否存在
+     *
+     * @param entity 查询实体
+     * @return 结果
+     */
     Boolean exists(T entity);
 
     /**
@@ -136,7 +143,7 @@ public interface IWarmService<T> {
     /**
      * 批量新增
      *
-     * @param list
+     * @param list 实体集合
      */
     void saveBatch(List<T> list);
 
@@ -151,7 +158,7 @@ public interface IWarmService<T> {
     /**
      * 批量更新
      *
-     * @param list
+     * @param list 集合数据
      */
     void updateBatch(List<T> list);
 
