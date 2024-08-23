@@ -52,7 +52,7 @@ public class BeanConfig {
     }
 
 
-    @Bean
+    @Bean(injected = true)
     public FlowNodeDao nodeDao() {
         return new FlowNodeDaoImpl();
     }
@@ -62,7 +62,7 @@ public class BeanConfig {
         return new NodeServiceImpl().setDao(nodeDao);
     }
 
-    @Bean
+    @Bean(injected = true)
     public FlowSkipDao skipDao() {
         return new FlowSkipDaoImpl();
     }
@@ -72,7 +72,7 @@ public class BeanConfig {
         return new SkipServiceImpl().setDao(skipDao);
     }
 
-    @Bean
+    @Bean(injected = true)
     public FlowInstanceDao instanceDao() {
         return new FlowInstanceDaoImpl();
     }
@@ -82,7 +82,7 @@ public class BeanConfig {
         return new InsServiceImpl().setDao(instanceDao);
     }
 
-    @Bean
+    @Bean(injected = true)
     public FlowTaskDao taskDao() {
         return new FlowTaskDaoImpl();
     }
@@ -92,7 +92,7 @@ public class BeanConfig {
         return new TaskServiceImpl().setDao(taskDao);
     }
 
-    @Bean
+    @Bean(injected = true)
     public FlowHisTaskDao hisTaskDao() {
         return new FlowHisTaskDaoImpl();
     }
@@ -102,7 +102,7 @@ public class BeanConfig {
         return new HisTaskServiceImpl().setDao(hisTaskDao);
     }
 
-    @Bean
+    @Bean(injected = true)
     public FlowUserDao userDao() {
         return new FlowUserDaoImpl();
     }
