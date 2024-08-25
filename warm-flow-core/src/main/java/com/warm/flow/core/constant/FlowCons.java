@@ -47,4 +47,19 @@ public class FlowCons {
      * 流程监听器参数,全局参数
      */
     public static final String WARM_LISTENER_PARAM = "WarmListenerParam";
+
+    /**
+     * 雪花id 14位
+     */
+    public static final String SNOWID14 = "SnowId14";
+
+    /**
+     * 雪花id 15位
+     */
+    public static final String SNOWID15 = "SnowId15";
+
+    /**
+     * 雪花id 14位
+     */
+    public static final String SNOWID19 = "SnowId19";
 }

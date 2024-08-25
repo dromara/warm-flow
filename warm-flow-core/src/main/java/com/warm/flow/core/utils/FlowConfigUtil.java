@@ -210,7 +210,6 @@ public class FlowConfigUtil {
 
         String flowName = definition.getFlowName();
         AssertUtil.isBlank(definition.getFlowCode(), "【" + flowName + "】流程flowCode为空!");
-        AssertUtil.isBlank(definition.getVersion(), "【" + flowName + "】流程version为空!");
         // 发布
         definition.setIsPublish(0);
         definition.setUpdateTime(new Date());

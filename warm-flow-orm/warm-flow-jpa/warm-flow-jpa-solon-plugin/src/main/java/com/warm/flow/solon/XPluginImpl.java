@@ -17,6 +17,7 @@ package com.warm.flow.solon;
 
 import com.warm.flow.solon.config.FlowAutoConfig;
 import com.warm.flow.solon.jpa.PersistenceContextBeanInjector;
+import com.warm.plugin.modes.solon.config.BeanConfig;
 import org.noear.solon.core.AppContext;
 import org.noear.solon.core.Plugin;
 import org.slf4j.Logger;
@@ -36,6 +37,7 @@ public class XPluginImpl implements Plugin {
     @Override
     public void start(AppContext context) {
         context.beanInjectorAdd(PersistenceContext.class, new PersistenceContextBeanInjector());
+        context.beanMake(BeanConfig.class);
         context.beanMake(FlowAutoConfig.class);
         log.debug("warm插件加载: 成功加载[Warm-Flow工作流]插件");
     }

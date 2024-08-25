@@ -13,28 +13,20 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.warm.flow.solon;
-
-import com.warm.flow.solon.config.FlowAutoConfig;
-import com.warm.plugin.modes.solon.config.BeanConfig;
-import org.noear.solon.core.AppContext;
-import org.noear.solon.core.Plugin;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package com.warm.flow.core.keyGen;
 
 /**
- * Warm-Flow工作流插件
+ * 注解生成接口
  *
  * @author warm
  */
-public class XPluginImpl implements Plugin {
+public interface KenGen {
 
-    private static final Logger log = LoggerFactory.getLogger(XPluginImpl.class);
+    /**
+     * 获得下一个ID (该方法是线程安全的)
+     *
+     * @return SnowflakeId
+     */
+    public long nextId();
 
-    @Override
-    public void start(AppContext context) {
-        context.beanMake(BeanConfig.class);
-        context.beanMake(FlowAutoConfig.class);
-        log.debug("warm插件加载: 成功加载[Warm-Flow工作流]插件");
-    }
 }

@@ -92,6 +92,10 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         allNodes.forEach(node -> node.setDefinitionId(def.getId()));
         allSkips.forEach(skip -> skip.setDefinitionId(def.getId()));
         // 保存节点，流程连线，权利人
+        String version = getNewVersion(def);
+        for (Node node : allNodes) {
+            node.setVersion(version);
+        }
         FlowFactory.nodeService().saveBatch(allNodes);
         FlowFactory.skipService().saveBatch(allSkips);
     }
@@ -121,14 +125,8 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
 
     @Override
     public boolean checkAndSave(Definition definition) {
-        List<String> flowCodeList = Collections.singletonList(definition.getFlowCode());
-        List<Definition> definitions = queryByCodeList(flowCodeList);
-        for (Definition otherDef : definitions) {
-            if (definition.getFlowCode().equals(otherDef.getFlowCode())
-                    && definition.getVersion().equals(otherDef.getVersion())) {
-                throw new FlowException(definition.getFlowCode() + "(" + definition.getVersion() + ")" + ExceptionCons.ALREADY_EXIST);
-            }
-        }
+        String version = getNewVersion(definition);
+        definition.setVersion(version);
         return save(definition);
     }
 
@@ -586,17 +584,55 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
      * @param allSkips
      */
     private void updateFlow(Definition definition, List<Node> allNodes, List<Skip> allSkips) {
-        List<String> flowCodeList = Collections.singletonList(definition.getFlowCode());
-        List<Definition> definitions = getDao().queryByCodeList(flowCodeList);
-        for (Definition otherDef : definitions) {
-            if (definition.getFlowCode().equals(otherDef.getFlowCode())
-                    && definition.getVersion().equals(otherDef.getVersion())) {
-                throw new FlowException(definition.getFlowCode() + "(" + definition.getVersion() + ")" + ExceptionCons.ALREADY_EXIST);
-            }
+        String version = getNewVersion(definition);
+        definition.setVersion(version);
+        for (Node node : allNodes) {
+            node.setVersion(version);
         }
         FlowFactory.defService().save(definition);
         FlowFactory.nodeService().saveBatch(allNodes);
         FlowFactory.skipService().saveBatch(allSkips);
+    }
+
+    private String getNewVersion(Definition definition) {
+        List<String> flowCodeList = Collections.singletonList(definition.getFlowCode());
+        List<Definition> definitions = getDao().queryByCodeList(flowCodeList);
+        int highestVersion = 0;
+        String latestNonPositiveVersion = null;
+        long latestTimestamp = Long.MIN_VALUE;
+
+        for (Definition otherDef : definitions) {
+            if (definition.getVersion() != null && definition.getFlowCode().equals(otherDef.getFlowCode())
+                    && definition.getVersion().equals(otherDef.getVersion())) {
+                throw new FlowException(definition.getFlowCode() + "(" + definition.getVersion() + ")" + ExceptionCons.ALREADY_EXIST);
+            }
+            if (definition.getFlowCode().equals(otherDef.getFlowCode())) {
+                try {
+                    int version = Integer.parseInt(otherDef.getVersion());
+                    if (version > highestVersion) {
+                        highestVersion = version;
+                    }
+                } catch (NumberFormatException e) {
+                    long timestamp = otherDef.getCreateTime().getTime();
+                    if (timestamp > latestTimestamp) {
+                        latestTimestamp = timestamp;
+                        latestNonPositiveVersion = otherDef.getVersion();
+                    }
+                }
+            }
+        }
+        String version = definition.getVersion();
+        if (version == null || version.isEmpty()) {
+            if (highestVersion > 0) {
+                version = String.valueOf(highestVersion + 1);
+            } else if (latestNonPositiveVersion != null) {
+                version = latestNonPositiveVersion + "_1";
+            } else {
+                version = "1";
+            }
+        }
+
+        return version;
     }
 
 }
