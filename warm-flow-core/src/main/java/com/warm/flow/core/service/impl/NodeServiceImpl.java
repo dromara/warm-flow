@@ -70,13 +70,13 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
     }
 
     @Override
-    public List<Node> getNextNodeList(Long definitionId, String nowNodeCode, String nextNodeCode, String skipType,
+    public List<Node> getNextNodeList(Long definitionId, String nowNodeCode, String anyNodeCode, String skipType,
                                       Map<String, Object> variable) {
         AssertUtil.isNull(definitionId, ExceptionCons.NOT_DEFINITION_ID);
         AssertUtil.isBlank(nowNodeCode, ExceptionCons.LOST_NODE_CODE);
         // 如果指定了跳转节点，则判断权限，直接获取节点
-        if (StringUtils.isNotEmpty(nextNodeCode)) {
-            return getByNodeCodes(Collections.singletonList(nextNodeCode), definitionId);
+        if (StringUtils.isNotEmpty(anyNodeCode)) {
+            return getByNodeCodes(Collections.singletonList(anyNodeCode), definitionId);
         }
         // 查询当前节点
         Node nowNode = FlowFactory.nodeService().getByNodeCode(nowNodeCode, definitionId);
