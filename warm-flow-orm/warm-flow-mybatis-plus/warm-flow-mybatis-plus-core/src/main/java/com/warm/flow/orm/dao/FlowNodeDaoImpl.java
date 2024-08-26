@@ -61,7 +61,7 @@ public class FlowNodeDaoImpl extends WarmDaoImpl<FlowNode> implements FlowNodeDa
      */
     @Override
     public int deleteNodeByDefIds(Collection<? extends Serializable> defIds) {
-        return getMapper().deleteBatchIds(defIds);
+        return getMapper().delete(new LambdaQueryWrapper<FlowNode>().in(FlowNode::getDefinitionId, defIds));
     }
 
 }
