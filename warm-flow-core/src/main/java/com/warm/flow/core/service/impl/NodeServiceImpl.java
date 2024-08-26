@@ -65,30 +65,26 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
     }
 
     @Override
-    public Node getByNodeCode(String nodeCode, Long definitionId) {
-        return CollUtil.getOne(getByNodeCodes(Collections.singletonList(nodeCode), definitionId));
-    }
-
-    @Override
     public List<Node> getNextNodeList(Long definitionId, String nowNodeCode, String anyNodeCode, String skipType,
                                       Map<String, Object> variable) {
         AssertUtil.isNull(definitionId, ExceptionCons.NOT_DEFINITION_ID);
         AssertUtil.isBlank(nowNodeCode, ExceptionCons.LOST_NODE_CODE);
-        // 如果指定了跳转节点，则判断权限，直接获取节点
+        // 如果指定了跳转节点，直接获取节点
         if (StringUtils.isNotEmpty(anyNodeCode)) {
-            return getByNodeCodes(Collections.singletonList(anyNodeCode), definitionId);
+            return list(FlowFactory.newNode().setNodeCode(anyNodeCode).setDefinitionId(definitionId));
         }
         // 查询当前节点
-        Node nowNode = FlowFactory.nodeService().getByNodeCode(nowNodeCode, definitionId);
+        Node nowNode = getOne(FlowFactory.newNode().setNodeCode(nowNodeCode).setDefinitionId(definitionId));
         AssertUtil.isNull(nowNode, ExceptionCons.LOST_DEST_NODE);
         // 获取跳转关系
         List<Skip> skips = FlowFactory.skipService().list(FlowFactory.newSkip().setDefinitionId(definitionId)
                 .setNowNodeCode(nowNodeCode));
-        AssertUtil.isNull(skips, ExceptionCons.NULL_CONDITIONVALUE_NODE);
+        AssertUtil.isNull(skips, ExceptionCons.NULL_SKIP_TYPE);
         // 不传,默认取通过的条件，并且查询到指定的跳转
         skipType = StringUtils.isEmpty(skipType)? SkipType.PASS.getKey(): skipType;
-        Skip nextSkip = checkSkipType(nowNode, skips, skipType);
+        Skip nextSkip = getSkipByCheck(nowNode, skips, skipType);
         AssertUtil.isTrue(ObjectUtil.isNull(nextSkip), ExceptionCons.NULL_SKIP_TYPE);
+
         // 根据跳转查询出跳转到的那个节点
         List<Node> nodes = FlowFactory.nodeService()
                 .getByNodeCodes(Collections.singletonList(nextSkip.getNextNodeCode()), definitionId);
@@ -108,7 +104,7 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
      * @author xiarg
      * @date 2024/8/21 11:32
      */
-    private Skip checkSkipType(Node nowNode, List<Skip> skips, String skipType) {
+    private Skip getSkipByCheck(Node nowNode, List<Skip> skips, String skipType) {
         if (CollUtil.isEmpty(skips)) {
             return null;
         }

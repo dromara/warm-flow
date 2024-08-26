@@ -48,14 +48,6 @@ public interface NodeService extends IWarmService<Node> {
     List<Node> getByNodeCodes(List<String> nodeCodes, Long definitionId);
 
     /**
-     * 根据流程编码获取开启的唯一流程的流程节点
-     *
-     * @param nodeCode
-     * @return
-     */
-    Node getByNodeCode(String nodeCode, Long definitionId);
-
-    /**
      * 根据流程定义和当前节点code获取下一节点,如是网关跳过取下一节点,并行网关返回多个节点
      * anyNodeCode不为空，则可跳转anyNodeCode节点
      *

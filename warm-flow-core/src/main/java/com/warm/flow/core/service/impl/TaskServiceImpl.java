@@ -98,7 +98,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         Node nextNode = getNextNode(nowNode, task, flowParams);
 
         // 如果是网关节点，则重新获取后续节点
-        List<Node> nextNodes = getNextByCheckGateWay(flowParams, nextNode);
+        List<Node> nextNodes = FlowFactory.nodeService().getNextByCheckGateway(flowParams.getVariable(), nextNode);
 
         // 不能退回，未完成过任务
         if (SkipType.isReject(flowParams.getSkipType())) {
@@ -316,6 +316,11 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 如果指定了跳转节点，则判断权限，直接获取节点
         if (StringUtils.isNotEmpty(flowParams.getNodeCode())) {
             return getAnySkipNode(task, flowParams);
+        }
+        // 如果指定了跳转节点，直接获取节点
+        if (StringUtils.isNotEmpty(flowParams.getNodeCode())) {
+            return FlowFactory.nodeService().getOne(FlowFactory.newNode()
+                    .setNodeCode(flowParams.getNodeCode()).setDefinitionId(task.getDefinitionId()));
         }
         List<Skip> skips = FlowFactory.skipService().list(FlowFactory.newSkip()
                 .setDefinitionId(task.getDefinitionId()).setNowNodeCode(task.getNodeCode()));
@@ -646,9 +651,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 判断当前节点是否可以任意跳转
         AssertUtil.isTrue(ObjectUtil.isNull(curNode), ExceptionCons.NOT_NODE_DATA);
 
-        List<Node> nextNodes = FlowFactory.nodeService()
-                .getByNodeCodes(Collections.singletonList(flowParams.getNodeCode()), task.getDefinitionId());
-        return CollUtil.getOne(nextNodes);
+        return FlowFactory.nodeService().getOne(FlowFactory.newNode()
+                .setNodeCode(flowParams.getNodeCode()).setDefinitionId(task.getDefinitionId()));
     }
 
     /**
