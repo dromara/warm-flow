@@ -95,7 +95,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         }
 
         // 获取关联的节点，判断当前处理人是否有权限处理
-        Node nextNode = getNextNode(nowNode, task, flowParams);
+        Node nextNode = FlowFactory.nodeService().getNextNode(task.getDefinitionId(), nowNode.getNodeCode()
+                , flowParams.getNodeCode(), flowParams.getSkipType());
 
         // 如果是网关节点，则重新获取后续节点
         List<Node> nextNodes = FlowFactory.nodeService().getNextByCheckGateway(flowParams.getVariable(), nextNode);
@@ -306,33 +307,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             FlowFactory.hisTaskService().saveBatch(hisTasks);
         }
         return true;
-    }
-
-    @Override
-    @Deprecated
-    public Node getNextNode(Node NowNode, Task task, FlowParams flowParams) {
-        AssertUtil.isNull(task.getDefinitionId(), ExceptionCons.NOT_DEFINITION_ID);
-        AssertUtil.isBlank(task.getNodeCode(), ExceptionCons.LOST_NODE_CODE);
-        // 如果指定了跳转节点，则判断权限，直接获取节点
-        if (StringUtils.isNotEmpty(flowParams.getNodeCode())) {
-            return getAnySkipNode(task, flowParams);
-        }
-        // 如果指定了跳转节点，直接获取节点
-        if (StringUtils.isNotEmpty(flowParams.getNodeCode())) {
-            return FlowFactory.nodeService().getOne(FlowFactory.newNode()
-                    .setNodeCode(flowParams.getNodeCode()).setDefinitionId(task.getDefinitionId()));
-        }
-        List<Skip> skips = FlowFactory.skipService().list(FlowFactory.newSkip()
-                .setDefinitionId(task.getDefinitionId()).setNowNodeCode(task.getNodeCode()));
-        List<Skip> nextSkips = getSkipByCheck(task, skips, flowParams);
-        AssertUtil.isTrue(CollUtil.isEmpty(nextSkips), ExceptionCons.NULL_SKIP_TYPE);
-        List<Node> nodes = FlowFactory.nodeService()
-                .getByNodeCodes(Collections.singletonList(nextSkips.get(0).getNextNodeCode()), task.getDefinitionId());
-        AssertUtil.isTrue(CollUtil.isEmpty(nodes), ExceptionCons.NOT_NODE_DATA);
-        AssertUtil.isTrue(nodes.size() > 1, "[" + nextSkips.get(0).getNextNodeCode() + "]" + ExceptionCons.SAME_NODE_CODE);
-        AssertUtil.isTrue(NodeType.isStart(nodes.get(0).getNodeType()), ExceptionCons.FRIST_FORBID_BACK);
-        return nodes.get(0);
-
     }
 
     @Override
@@ -634,49 +608,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             }
         }
         return false;
-    }
-
-    /**
-     * 获取任意跳转指定的节点
-     *
-     * @param task
-     * @param flowParams
-     * @return
-     */
-    @Deprecated
-    private Node getAnySkipNode(Task task, FlowParams flowParams) {
-        List<Node> curNodes = FlowFactory.nodeService()
-                .getByNodeCodes(Collections.singletonList(task.getNodeCode()), task.getDefinitionId());
-        Node curNode = CollUtil.getOne(curNodes);
-        // 判断当前节点是否可以任意跳转
-        AssertUtil.isTrue(ObjectUtil.isNull(curNode), ExceptionCons.NOT_NODE_DATA);
-
-        return FlowFactory.nodeService().getOne(FlowFactory.newNode()
-                .setNodeCode(flowParams.getNodeCode()).setDefinitionId(task.getDefinitionId()));
-    }
-
-    /**
-     * 通过校验跳转类型获取跳转集合
-     *
-     * @param task
-     * @param skips
-     * @param flowParams
-     * @return
-     */
-    @Deprecated
-    private List<Skip> getSkipByCheck(Task task, List<Skip> skips, FlowParams flowParams) {
-        if (CollUtil.isEmpty(skips)) {
-            return null;
-        }
-        if (!NodeType.isStart(task.getNodeType())) {
-            skips = skips.stream().filter(t -> {
-                if (StringUtils.isNotEmpty(t.getSkipType())) {
-                    return (flowParams.getSkipType()).equals(t.getSkipType());
-                }
-                return true;
-            }).collect(Collectors.toList());
-        }
-        return skips;
     }
 
     /**

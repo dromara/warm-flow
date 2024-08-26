@@ -23,7 +23,6 @@ import com.warm.flow.core.entity.Node;
 import com.warm.flow.core.entity.Skip;
 import com.warm.flow.core.enums.NodeType;
 import com.warm.flow.core.enums.PublishStatus;
-import com.warm.flow.core.enums.SkipType;
 import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.NodeService;
 import com.warm.flow.core.utils.*;
@@ -67,31 +66,36 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
     @Override
     public List<Node> getNextNodeList(Long definitionId, String nowNodeCode, String anyNodeCode, String skipType,
                                       Map<String, Object> variable) {
+        // 如果是网关节点，则根据条件判断
+        return getNextByCheckGateway(variable, getNextNode(definitionId, nowNodeCode, anyNodeCode, skipType));
+    }
+
+    @Override
+    public Node getNextNode(Long definitionId, String nowNodeCode, String anyNodeCode, String skipType) {
         AssertUtil.isNull(definitionId, ExceptionCons.NOT_DEFINITION_ID);
         AssertUtil.isBlank(nowNodeCode, ExceptionCons.LOST_NODE_CODE);
+        AssertUtil.isBlank(skipType, ExceptionCons.NULL_CONDITIONVALUE);
+
         // 如果指定了跳转节点，直接获取节点
         if (StringUtils.isNotEmpty(anyNodeCode)) {
-            return list(FlowFactory.newNode().setNodeCode(anyNodeCode).setDefinitionId(definitionId));
+            return getOne(FlowFactory.newNode().setNodeCode(anyNodeCode).setDefinitionId(definitionId));
         }
         // 查询当前节点
         Node nowNode = getOne(FlowFactory.newNode().setNodeCode(nowNodeCode).setDefinitionId(definitionId));
-        AssertUtil.isNull(nowNode, ExceptionCons.LOST_DEST_NODE);
+        AssertUtil.isNull(nowNode, ExceptionCons.LOST_CUR_NODE);
         // 获取跳转关系
         List<Skip> skips = FlowFactory.skipService().list(FlowFactory.newSkip().setDefinitionId(definitionId)
                 .setNowNodeCode(nowNodeCode));
         AssertUtil.isNull(skips, ExceptionCons.NULL_SKIP_TYPE);
-        // 不传,默认取通过的条件，并且查询到指定的跳转
-        skipType = StringUtils.isEmpty(skipType)? SkipType.PASS.getKey(): skipType;
+
         Skip nextSkip = getSkipByCheck(nowNode, skips, skipType);
         AssertUtil.isTrue(ObjectUtil.isNull(nextSkip), ExceptionCons.NULL_SKIP_TYPE);
 
         // 根据跳转查询出跳转到的那个节点
-        List<Node> nodes = FlowFactory.nodeService()
-                .getByNodeCodes(Collections.singletonList(nextSkip.getNextNodeCode()), definitionId);
-        Node nextNode = CollUtil.getOne(nodes);
+        Node nextNode = getOne(FlowFactory.newNode().setNodeCode(nextSkip.getNextNodeCode()).setDefinitionId(definitionId));
         AssertUtil.isTrue(ObjectUtil.isNull(nextNode), ExceptionCons.NULL_NODE_CODE);
-        // 如果是网关节点，则根据条件判断
-        return getNextByCheckGateway(variable, nextNode);
+        AssertUtil.isTrue(NodeType.isStart(nextNode.getNodeType()), ExceptionCons.FRIST_FORBID_BACK);
+        return nextNode;
     }
 
     /**

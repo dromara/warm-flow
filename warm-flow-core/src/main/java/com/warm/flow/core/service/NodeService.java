@@ -54,7 +54,7 @@ public interface NodeService extends IWarmService<Node> {
      * @param definitionId  流程定义id
      * @param nowNodeCode   当前节点code
      * @param anyNodeCode   anyNodeCode不为空，则可跳转anyNodeCode节点（优先级最高）
-     * @param skipType      跳转类型（PASS审批通过 REJECT退回）不传默认取审批通过的下一节点
+     * @param skipType      跳转类型（PASS审批通过 REJECT退回）
      * @param variable      流程变量 下一个节点是网关需要判断跳转条件,并行网关返回多个节点
      * @return List<Node>
      * @author xiarg
@@ -62,6 +62,20 @@ public interface NodeService extends IWarmService<Node> {
      */
     List<Node> getNextNodeList(Long definitionId, String nowNodeCode, String anyNodeCode, String skipType,
                                      Map<String, Object> variable);
+
+    /**
+     * 根据流程定义和当前节点code获取下一节点(不考虑下个节点是网关的情况)
+     * anyNodeCode不为空，则可跳转anyNodeCode节点
+     *
+     * @param definitionId  流程定义id
+     * @param nowNodeCode   当前节点code
+     * @param anyNodeCode   anyNodeCode不为空，则可跳转anyNodeCode节点（优先级最高）
+     * @param skipType      跳转类型（PASS审批通过 REJECT退回）
+     * @return List<Node>
+     * @author xiarg
+     * @date 2024/8/21 16:48
+     */
+    Node getNextNode(Long definitionId, String nowNodeCode, String anyNodeCode, String skipType);
 
     /**
      * 批量删除流程节点
