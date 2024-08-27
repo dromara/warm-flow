@@ -570,6 +570,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             return true;
         }
         List<HisTask> hisTaskList = FlowFactory.hisTaskService().getNoReject(instance.getId());
+        int wayParallelIsFinish = 0;
         if (CollUtil.isNotEmpty(oneLastSkips)) {
             for (Skip oneLastSkip : oneLastSkips) {
                 HisTask oneLastHisTask = FlowFactory.hisTaskService()
@@ -581,7 +582,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 List<Skip> twoLastSkips = skipNextMap.get(oneLastSkip.getNowNodeCode());
                 for (Skip twoLastSkip : twoLastSkips) {
                     if (NodeType.isStart(twoLastSkip.getNowNodeType())) {
-                        return true;
+                        wayParallelIsFinish++;
                     } else if (NodeType.isGateWay(twoLastSkip.getNowNodeType())) {
                         // 如果前前置节点是网关，那网关前任意一个任务完成就算完成
                         List<Skip> threeLastSkips = skipNextMap.get(twoLastSkip.getNowNodeCode());
@@ -591,7 +592,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                             if (ObjectUtil.isNotNull(threeLastHisTask) && (threeLastHisTask.getCreateTime()
                                     .before(oneLastHisTask.getCreateTime()) || threeLastHisTask.getCreateTime()
                                     .equals(oneLastHisTask.getCreateTime()))) {
-                                return true;
+                                wayParallelIsFinish++;
                             }
                         }
                     } else {
@@ -601,13 +602,13 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                         if (ObjectUtil.isNotNull(twoLastHisTask) && (twoLastHisTask.getCreateTime()
                                 .before(oneLastHisTask.getCreateTime()) || twoLastHisTask.getCreateTime()
                                 .equals(oneLastHisTask.getCreateTime()))) {
-                            return true;
+                            wayParallelIsFinish++;
                         }
                     }
                 }
             }
         }
-        return false;
+        return wayParallelIsFinish == oneLastSkips.size();
     }
 
     /**
