@@ -55,7 +55,7 @@ public interface NodeService extends IWarmService<Node> {
      * @param nowNodeCode   当前节点code
      * @param anyNodeCode   anyNodeCode不为空，则可跳转anyNodeCode节点（优先级最高）
      * @param skipType      跳转类型（PASS审批通过 REJECT退回）
-     * @param variable      流程变量 下一个节点是网关需要判断跳转条件,并行网关返回多个节点
+     * @param variable      流程变量,下一个节点是网关需要判断跳转条件,并行网关返回多个节点
      * @return List<Node>
      * @author xiarg
      * @date 2024/8/21 16:48
