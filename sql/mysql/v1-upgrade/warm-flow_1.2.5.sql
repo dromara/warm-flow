@@ -1,7 +1,7 @@
-ALTER TABLE `flow_instance`
+ALTER TABLE `flow_definition`
     ADD COLUMN `listener_type` varchar(100) DEFAULT NULL COMMENT '监听器类型' AFTER `activity_status`;
 
-ALTER TABLE `flow_instance`
+ALTER TABLE `flow_definition`
     ADD COLUMN `listener_path` varchar(400) DEFAULT NULL COMMENT '监听器路径' AFTER `listener_type`;
 
 -- 流程实例和流程历史表修改流程状态字段类型为字符串类型-varchar
