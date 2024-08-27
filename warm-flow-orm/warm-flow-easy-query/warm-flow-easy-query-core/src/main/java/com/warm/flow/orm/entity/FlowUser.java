@@ -67,7 +67,7 @@ public class FlowUser implements User, ProxyEntityAvailable<FlowUser, FlowUserPr
     @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String processedBy;
 
-    /** 关联表id */
+    /** 任务表id */
     @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private Long associated;
 

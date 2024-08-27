@@ -295,7 +295,7 @@ CREATE TABLE flow_user (
 	id int8 NOT NULL, -- 主键id
 	"type" bpchar(1) NOT NULL, -- 人员类型（1待办任务的审批人权限 2待办任务的转办人权限 3流程实例的抄送人权限 4待办任务的委托人权限）
 	processed_by varchar(80) NULL, -- 权限人
-	associated int8 NOT NULL, -- 关联表id
+	associated int8 NOT NULL, -- 任务表id
 	create_time timestamp NULL, -- 创建时间
 	create_by varchar(80) NULL, -- 创建人
 	update_time timestamp NULL, -- 更新时间
@@ -311,7 +311,7 @@ COMMENT ON TABLE flow_user IS '流程用户表';
 COMMENT ON COLUMN flow_user.id IS '主键id';
 COMMENT ON COLUMN flow_user."type" IS '人员类型（1待办任务的审批人权限 2待办任务的转办人权限 3待办任务的委托人权限）';
 COMMENT ON COLUMN flow_user.processed_by IS '权限人';
-COMMENT ON COLUMN flow_user.associated IS '关联表id';
+COMMENT ON COLUMN flow_user.associated IS '任务表id';
 COMMENT ON COLUMN flow_user.create_time IS '创建时间';
 COMMENT ON COLUMN flow_user.create_by IS '创建人';
 COMMENT ON COLUMN flow_user.update_time IS '更新时间';

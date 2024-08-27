@@ -477,7 +477,7 @@ comment on column FLOW_USER.TYPE is '人员类型（1待办任务的审批人权
 comment on column FLOW_USER.PROCESSED_BY is '权限人)'
 /
 
-comment on column FLOW_USER.ASSOCIATED is '关联表id'
+comment on column FLOW_USER.ASSOCIATED is '任务表id'
 /
 
 comment on column FLOW_USER.CREATE_TIME is '创建时间'
