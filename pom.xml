@@ -393,7 +393,7 @@
         </repository>
     </distributionManagement>
 
-    <!-- mvn clean deploy -P release -->
+    <!-- mvn clean deploy -->
     <!-- mvn clean install -Dmaven.test.skip=true   -->
     <!-- 跳过测试：mvn package -Dmaven.test.skip=true   -->
     <!-- 检测依赖最新版本：mvn versions:display-dependency-updates  -->
