@@ -6,7 +6,7 @@
 
     <groupId>io.github.minliuhua</groupId>
     <artifactId>warm-flow</artifactId>
-    <version>1.2.5</version>
+    <version>1.2.6</version>
     <packaging>pom</packaging>
 
     <name>warm-flow</name>
@@ -399,6 +399,7 @@
     <!-- 检测依赖最新版本：mvn versions:display-dependency-updates  -->
     <!-- 统一修改版本号：mvn versions:set -DnewVersion=3.0  -->
     <!-- mvn versions:commit -->
+    <!-- mvn versions:revert -->
     <!-- mvn -N versions:update-child-modules  -->
     <!-- mvn versions:set -DnewVersion=2.0 -DprocessAllModules=true -DallowSnapshots=true -->
 
