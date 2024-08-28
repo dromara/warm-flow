@@ -265,7 +265,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             // 获取任务权限人
             List<String> taskPermissions = FlowFactory.userService().getPermission(modifyHandler.getTaskId()
                     , UserType.APPROVAL.getKey(), UserType.TRANSFER.getKey(), UserType.DEPUTE.getKey());
-            AssertUtil.isTrue(CollUtil.notContainsAny(permissions, taskPermissions), ExceptionCons.NOT_AUTHORITY);
+            AssertUtil.isTrue(CollUtil.isNotEmpty(taskPermissions) && (CollUtil.isEmpty(permissions)
+                    || CollUtil.notContainsAny(permissions, taskPermissions)), ExceptionCons.NOT_AUTHORITY);
         }
         // 留存历史记录
         Task task = FlowFactory.taskService().getById(modifyHandler.getTaskId());
