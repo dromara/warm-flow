@@ -154,6 +154,8 @@ public class FlowConfigUtil {
         definitionElement.addAttribute("version", definition.getVersion());
         definitionElement.addAttribute("formCustom", definition.getFormCustom());
         definitionElement.addAttribute("formPath", definition.getFormPath());
+        definitionElement.addAttribute("listenerType", definition.getListenerType());
+        definitionElement.addAttribute("listenerPath", definition.getListenerPath());
         definitionElement.addAttribute("ext", definition.getExt());
 
         List<Node> nodeList = definition.getNodeList();
