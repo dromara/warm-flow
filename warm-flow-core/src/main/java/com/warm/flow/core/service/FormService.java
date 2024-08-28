@@ -4,6 +4,8 @@ import com.warm.flow.core.entity.Definition;
 import com.warm.flow.core.entity.Form;
 import com.warm.flow.core.orm.service.IWarmService;
 
+import java.util.List;
+
 /**
  *  流程表单Service接口
  *
@@ -56,4 +58,7 @@ public interface FormService extends IWarmService<Form> {
      */
     Form getByCode(String formCode, String formVersion);
 
+    Form getById(Long id);
+
+    List<Form> list(String name);
 }

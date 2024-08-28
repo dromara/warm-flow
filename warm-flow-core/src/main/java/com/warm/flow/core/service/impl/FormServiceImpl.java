@@ -8,6 +8,9 @@ import com.warm.flow.core.orm.service.IWarmService;
 import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.FormService;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * 流程表单Service业务层处理
  *
@@ -42,5 +45,15 @@ public class FormServiceImpl extends WarmServiceImpl<FlowFormDao<Form>, Form> im
     @Override
     public Form getByCode(String formCode, String formVersion) {
         return null;
+    }
+
+    @Override
+    public Form getById(Long id) {
+        return null;
+    }
+
+    @Override
+    public List<Form> list(String name) {
+        return Collections.emptyList();
     }
 }
