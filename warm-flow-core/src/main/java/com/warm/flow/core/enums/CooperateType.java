@@ -20,7 +20,7 @@ import java.util.Objects;
 
 /**
  * 协作类型
- * APPROVAL-审批：无其他协作方式
+ * APPROVAL-无：无其他协作方式
  * TRANSFER-转办：任务转给其他人办理
  * DEPUTE-委派：求助其他人审批，然后参照他的意见决定是否审批通过
  * COUNTERSIGN-会签：和其他人一起审批通过，才算通过
@@ -33,7 +33,7 @@ import java.util.Objects;
  */
 public enum CooperateType {
 
-    APPROVAL(1, "审批"),
+    APPROVAL(1, "无"),
     TRANSFER(2, "转办"),
     DEPUTE(3, "委派"),
     COUNTERSIGN(4, "会签"),

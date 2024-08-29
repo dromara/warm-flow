@@ -193,15 +193,15 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         List<User> users = FlowFactory.userService().getByProcessedBys(taskId, addHandlers, UserType.TRANSFER.getKey());
         AssertUtil.isTrue(CollUtil.isNotEmpty(users), ExceptionCons.IS_ALREADY_TRANSFER);
 
-        ModifyHandler modifyHandler = new ModifyHandler()
-                .setTaskId(taskId)
-                .setAddHandlers(addHandlers)
-                .setReductionHandlers(Collections.singletonList(curUser))
-                .setPermissionFlag(permissionFlag)
-                .setCooperateType(CooperateType.TRANSFER.getKey())
-                .setMessage(message)
-                .setCurUser(curUser)
-                .setIgnore(false);
+        ModifyHandler modifyHandler = ModifyHandler.build()
+                .taskId(taskId)
+                .addHandlers(addHandlers)
+                .reductionHandlers(Collections.singletonList(curUser))
+                .permissionFlag(permissionFlag)
+                .cooperateType(CooperateType.TRANSFER.getKey())
+                .message(message)
+                .curUser(curUser)
+                .ignore(false);
         return updateHandler(modifyHandler);
     }
 
@@ -210,15 +210,15 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         List<User> users = FlowFactory.userService().getByProcessedBys(taskId, addHandlers, UserType.DEPUTE.getKey());
         AssertUtil.isTrue(CollUtil.isNotEmpty(users), ExceptionCons.IS_ALREADY_DEPUTE);
 
-        ModifyHandler modifyHandler = new ModifyHandler()
-                .setTaskId(taskId)
-                .setAddHandlers(addHandlers)
-                .setReductionHandlers(Collections.singletonList(curUser))
-                .setPermissionFlag(permissionFlag)
-                .setCooperateType(CooperateType.DEPUTE.getKey())
-                .setMessage(message)
-                .setCurUser(curUser)
-                .setIgnore(false);
+        ModifyHandler modifyHandler = ModifyHandler.build()
+                .taskId(taskId)
+                .addHandlers(addHandlers)
+                .reductionHandlers(Collections.singletonList(curUser))
+                .permissionFlag(permissionFlag)
+                .cooperateType(CooperateType.DEPUTE.getKey())
+                .message(message)
+                .curUser(curUser)
+                .ignore(false);
         return updateHandler(modifyHandler);
     }
 
@@ -227,14 +227,14 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         List<User> users = FlowFactory.userService().getByProcessedBys(taskId, addHandlers, UserType.APPROVAL.getKey());
         AssertUtil.isTrue(CollUtil.isNotEmpty(users), ExceptionCons.IS_ALREADY_SIGN);
 
-        ModifyHandler modifyHandler = new ModifyHandler()
-                .setTaskId(taskId)
-                .setAddHandlers(addHandlers)
-                .setPermissionFlag(permissionFlag)
-                .setCooperateType(CooperateType.ADD_SIGNATURE.getKey())
-                .setMessage(message)
-                .setCurUser(curUser)
-                .setIgnore(false);
+        ModifyHandler modifyHandler = ModifyHandler.build()
+                .taskId(taskId)
+                .addHandlers(addHandlers)
+                .permissionFlag(permissionFlag)
+                .cooperateType(CooperateType.ADD_SIGNATURE.getKey())
+                .message(message)
+                .curUser(curUser)
+                .ignore(false);
         return updateHandler(modifyHandler);
     }
 
@@ -244,14 +244,14 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 .setType(UserType.APPROVAL.getKey()));
 
         AssertUtil.isTrue(CollUtil.isEmpty(users) || users.size() == 1, ExceptionCons.REDUCTION_SIGN_ONE_ERROR);
-        ModifyHandler modifyHandler = new ModifyHandler()
-                .setTaskId(taskId)
-                .setReductionHandlers(reductionHandlers)
-                .setPermissionFlag(permissionFlag)
-                .setCooperateType(CooperateType.REDUCTION_SIGNATURE.getKey())
-                .setMessage(message)
-                .setCurUser(curUser)
-                .setIgnore(false);
+        ModifyHandler modifyHandler = ModifyHandler.build()
+                .taskId(taskId)
+                .reductionHandlers(reductionHandlers)
+                .permissionFlag(permissionFlag)
+                .cooperateType(CooperateType.REDUCTION_SIGNATURE.getKey())
+                .message(message)
+                .curUser(curUser)
+                .ignore(false);
         return updateHandler(modifyHandler);
     }
 
@@ -654,7 +654,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                     instance.setNodeType(addTask.getNodeType());
                     instance.setNodeCode(addTask.getNodeCode());
                     instance.setNodeName(addTask.getNodeName());
-                    instance.setFlowStatus(FlowStatus.FINISHED.getKey());
+                    instance.setFlowStatus(ObjectUtil.isNotNull(flowParams.getFlowStatus()) ? flowParams.getFlowStatus()
+                            : FlowStatus.FINISHED.getKey());
                     return true;
                 }
                 return false;
