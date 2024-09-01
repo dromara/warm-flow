@@ -5,15 +5,13 @@
 <mapper namespace="com.warm.flow.orm.mapper.FlowFormMapper">
     <resultMap type="com.warm.flow.orm.entity.FlowForm" id="FlowFormResult">
         <result property="id" column="id"/>
-        <result property="flowCode" column="flow_code"/>
-        <result property="flowName" column="flow_name"/>
+        <result property="formCode" column="form_code"/>
+        <result property="formName" column="form_name"/>
         <result property="version" column="version"/>
         <result property="isPublish" column="is_publish"/>
-        <result property="formCustom" column="form_custom"/>
+        <result property="formType" column="form_type"/>
         <result property="formPath" column="form_path"/>
-        <result property="activityStatus" column="activity_status"/>
-        <result property="listenerType" column="listener_type"/>
-        <result property="listenerPath" column="listener_path"/>
+        <result property="formContent" column="form_content"/>
         <result property="ext" column="ext"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
@@ -23,21 +21,19 @@
 
     <sql id="selectVo">
         select t.id,
-               t.flow_code,
-               t.flow_name,
-               t.version,
-               t.is_publish,
-               t.form_custom,
-               t.form_path,
-               t.activity_status,
-               t.listener_type,
-               t.listener_path,
-               t.ext,
-               t.create_time,
-               t.update_time,
-               t.del_flag,
-               t.tenant_id
-        from flow_definition t
+        t.form_code,
+        t.form_name,
+        t.version,
+        t.is_publish,
+        t.form_type,
+        t.form_path,
+        t.form_content,
+        t.ext,
+        t.create_time,
+        t.update_time,
+        t.del_flag,
+        t.tenant_id
+        from flow_form t
     </sql>
 
     <sql id="paging_end">
@@ -53,15 +49,13 @@
     <sql id="select_parameter">
         <where>
             <if test="entity.id != null ">and t.id = #{entity.id}</if>
-            <if test="entity.flowCode != null  and entity.flowCode != ''">and t.flow_code = #{entity.flowCode}</if>
-            <if test="entity.flowName != null  and entity.flowName != ''">and t.flow_name = #{entity.flowName}</if>
+            <if test="entity.formCode != null  and entity.formCode != ''">and t.form_code = #{entity.formCode}</if>
+            <if test="entity.formName != null  and entity.formName != ''">and t.form_name = #{entity.formName}</if>
             <if test="entity.version != null  and entity.version != ''">and t.version = #{entity.version}</if>
             <if test="entity.isPublish != null ">and t.is_publish = #{entity.isPublish}</if>
-            <if test="entity.formCustom != null">and t.form_custom = #{entity.formCustom}</if>
+            <if test="entity.formType != null">and t.form_type = #{entity.formType}</if>
             <if test="entity.formPath != null">and t.form_path = #{entity.formPath}</if>
-            <if test="entity.activityStatus != null">and t.activity_status = #{entity.activityStatus}</if>
-            <if test="entity.listenerType != null and entity.listenerType != ''">and t.listener_type = #{entity.listenerType}</if>
-            <if test="entity.listenerPath != null and entity.listenerPath != ''">and t.listener_path = #{entity.listenerPath}</if>
+            <if test="entity.formContent != null">and t.form_content = #{entity.formContent}</if>
             <if test="entity.ext != null  and entity.ext != ''">and t.ext = #{entity.ext}</if>
             <if test="entity.createTime != null">and t.create_time = #{entity.createTime}</if>
             <if test="entity.updateTime != null">and t.update_time = #{entity.updateTime}</if>
@@ -71,17 +65,15 @@
     </sql>
 
     <sql id="mysql_insert_batch">
-        insert into flow_definition(
+        insert into flow_form(
         id,
-        flow_code,
-        flow_name,
+        form_code,
+        form_name,
         version,
         is_publish,
-        form_custom,
+        form_type,
         form_path,
-        activity_status,
-        listener_type,
-        listener_path,
+        form_content,
         ext,
         create_time,
         update_time,
@@ -92,15 +84,13 @@
         <foreach collection="list" item="item" separator=",">
             (
             #{item.id},
-            #{item.flowCode},
-            #{item.flowName},
+            #{item.formCode},
+            #{item.formName},
             #{item.version},
             #{item.isPublish},
-            #{item.formCustom},
+            #{item.formType},
             #{item.formPath},
-            #{item.activityStatus},
-            #{item.listenerType},
-            #{item.listenerPath},
+            #{item.formContent},
             #{item.ext},
             #{item.createTime},
             #{item.updateTime},
@@ -111,17 +101,15 @@
     </sql>
 
     <sql id="oracle_insert_batch">
-        insert into flow_definition(
+        insert into flow_form(
         id,
-        flow_code,
-        flow_name,
+        form_code,
+        form_name,
         version,
         is_publish,
-        form_custom,
+        form_type,
         form_path,
-        activity_status,
-        listener_type,
-        listener_path,
+        form_content,
         ext,
         create_time,
         update_time,
@@ -131,15 +119,13 @@
         <foreach collection="list" item="item" separator=" union all">
             select
             #{item.id},
-            #{item.flowCode},
-            #{item.flowName},
+            #{item.formCode},
+            #{item.formName},
             #{item.version},
             #{item.isPublish},
-            #{item.formCustom},
+            #{item.formType},
             #{item.formPath},
-            #{item.activityStatus},
-            #{item.listenerType},
-            #{item.listenerPath},
+            #{item.formContent},
             #{item.ext},
             #{item.createTime},
             #{item.updateTime},
@@ -150,7 +136,7 @@
     </sql>
 
     <select id="selectList" parameterType="com.warm.flow.orm.entity.FlowDefinition"
-            resultMap="FlowDefinitionResult">
+            resultMap="FlowFormResult">
         <choose>
             <when test="dataSourceType == 'oracle'.toString()">
                 <if test="page !=null and page.pageNum != null and page.pageSize != null">
@@ -176,18 +162,18 @@
 
     <select id="selectCount" parameterType="com.warm.flow.orm.entity.FlowDefinition"
             resultType="java.lang.Long">
-        select count(*) from flow_definition t
+        select count(*) from flow_form t
         <include refid="select_parameter"/>
     </select>
 
-    <select id="selectById" resultMap="FlowDefinitionResult">
+    <select id="selectById" resultMap="FlowFormResult">
         <include refid="selectVo"/>
         where t.id = #{id}
         <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
         <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
     </select>
 
-    <select id="selectByIds" resultMap="FlowDefinitionResult">
+    <select id="selectByIds" resultMap="FlowFormResult">
         <include refid="selectVo"/>
         where t.id in
         <foreach item="id" collection="ids" open="(" separator="," close=")">
@@ -197,9 +183,9 @@
         <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
     </select>
 
-    <select id="queryByCodeList" resultMap="FlowDefinitionResult">
+    <select id="queryByCodeList" resultMap="FlowFormResult">
         <include refid="selectVo"/>
-        where t.flow_code in
+        where t.form_code in
         <foreach item="item" collection="flowCodeList" open="(" separator="," close=")">
             #{item}
         </foreach>
@@ -207,19 +193,17 @@
         <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
     </select>
 
-    <insert id="insert" parameterType="com.warm.flow.orm.entity.FlowDefinition">
-        insert into flow_definition
+    <insert id="insert" parameterType="com.warm.flow.orm.entity.FlowForm">
+        insert into flow_form
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">id,</if>
-            <if test="flowCode != null and flowCode != ''">flow_code,</if>
-            <if test="flowName != null and flowName != ''">flow_name,</if>
+            <if test="formCode != null and formCode != ''">form_code,</if>
+            <if test="formName != null and formName != ''">flow_name,</if>
             <if test="version != null and version != ''">version,</if>
             <if test="isPublish != null">is_publish,</if>
-            <if test="formCustom != null">form_custom,</if>
+            <if test="formType != null">form_type,</if>
             <if test="formPath != null">form_path,</if>
-            <if test="activityStatus != null">activity_status,</if>
-            <if test="listenerType != null and listenerType != ''">listener_type,</if>
-            <if test="listenerPath != null and listenerPath != ''">listener_path,</if>
+            <if test="formContent != null and formContent != ''">form_content,</if>
             <if test="ext != null and ext != ''">ext,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
@@ -228,13 +212,13 @@
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
-            <if test="flowCode != null and flowCode != ''">#{flowCode},</if>
-            <if test="flowName != null and flowName != ''">#{flowName},</if>
+            <if test="formCode != null and formCode != ''">#{formCode},</if>
+            <if test="formName != null and formName != ''">#{formName},</if>
             <if test="version != null and version != ''">#{version},</if>
             <if test="isPublish != null">#{isPublish},</if>
-            <if test="formCustom != null">#{formCustom},</if>
+            <if test="formType != null">#{formType},</if>
             <if test="formPath != null">#{formPath},</if>
-            <if test="activityStatus != null">#{activityStatus},</if>
+            <if test="formContent != null">#{formContent},</if>
             <if test="listenerType != null and listenerType != ''">#{listenerType},</if>
             <if test="listenerPath != null and listenerPath != ''">#{listenerPath},</if>
             <if test="ext != null and ext != ''">#{ext},</if>
@@ -246,29 +230,27 @@
     </insert>
 
     <update id="updateById" parameterType="com.warm.flow.orm.entity.FlowDefinition">
-        update flow_definition
+        update flow_form
         <trim prefix="SET" suffixOverrides=",">
-            <if test="flowCode != null and flowCode != ''">flow_code = #{flowCode},</if>
-            <if test="flowName != null and flowName != ''">flow_name = #{flowName},</if>
+            <if test="formCode != null and formCode != ''">form_code = #{formCode},</if>
+            <if test="formName != null and formName != ''">flow_name = #{formName},</if>
             <if test="version != null and version != ''">version = #{version},</if>
             <if test="isPublish != null">is_publish = #{isPublish},</if>
-            <if test="formCustom != null">form_custom = #{formCustom},</if>
+            <if test="formType != null">form_custom = #{formType},</if>
             <if test="formPath != null">form_path = #{formPath},</if>
-            <if test="activityStatus != null">activity_status = #{activityStatus},</if>
-            <if test="listenerType != null and listenerType != ''">listener_type = #{listenerType},</if>
-            <if test="listenerPath != null and listenerPath != ''">listener_path = #{listenerPath},</if>
+            <if test="formContent != null">form_content = #{formContent},</if>
             <if test="ext != null and ext != ''">ext = #{ext},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
-            <if test="updateTime != null">update_time = #{updateTime},</if>
         </trim>
+        , update_time=now()
         where id = #{id}
         <if test="delFlag != null  and delFlag != ''">and del_flag = #{delFlag}</if>
         <if test="tenantId != null  and tenantId != ''">and tenant_id = #{tenantId}</if>
     </update>
 
     <update id="closeFlowByCodeList" parameterType="java.util.List">
-        update flow_definition set is_publish = 9
-        where flow_code in
+        update flow_form set is_publish = 9
+        where form_code in
         <foreach item="item" collection="flowCodeList" open="(" separator="," close=")">
             #{item}
         </foreach>
@@ -278,13 +260,13 @@
 
     <delete id="deleteById">
         delete
-        from flow_definition
+        from flow_form
         where id = #{id}
         <if test="entity.tenantId != null  and entity.tenantId != ''">and tenant_id = #{entity.tenantId}</if>
     </delete>
 
     <update id="updateByIdLogic">
-        update flow_definition
+        update flow_form
         set del_flag = #{logicDeleteValue}
         where id = #{id}
         <if test="entity.tenantId != null  and entity.tenantId != ''">and tenant_id = #{entity.tenantId}</if>
@@ -293,7 +275,7 @@
     </update>
 
     <delete id="deleteByIds">
-        delete from flow_definition where id in
+        delete from flow_form where id in
         <foreach item="id" collection="ids" open="(" separator="," close=")">
             #{id}
         </foreach>
@@ -301,7 +283,7 @@
     </delete>
 
     <update id="updateByIdsLogic">
-        update flow_definition
+        update flow_form
         set del_flag = #{logicDeleteValue}
         where id in
         <foreach item="id" collection="ids" open="(" separator="," close=")">
@@ -313,18 +295,16 @@
     </update>
 
     <delete id="delete" parameterType="com.warm.flow.orm.entity.FlowDefinition">
-        delete from flow_definition
+        delete from flow_form
         <where>
             <if test="id != null">and id = #{id}</if>
-            <if test="flowCode != null and flowCode != ''">and flow_code = #{flowCode}</if>
-            <if test="flowName != null and flowName != ''">and flow_name = #{flowName}</if>
+            <if test="formCode != null and formCode != ''">and form_code = #{formCode}</if>
+            <if test="formName != null and formName != ''">and flow_name = #{formName}</if>
             <if test="version != null and version != ''">and version = #{version}</if>
             <if test="isPublish != null">and is_publish = #{isPublish}</if>
-            <if test="formCustom != null">and form_custom = #{formCustom}</if>
+            <if test="formType != null">and form_custom = #{formType}</if>
             <if test="formPath != null">and form_path = #{formPath}</if>
-            <if test="activityStatus != null">and activity_status = #{activityStatus}</if>
-            <if test="listenerType != null and listenerType != ''">and listener_type = #{listenerType}</if>
-            <if test="listenerPath != null and listenerPath != ''">and listener_path = #{listenerPath}</if>
+            <if test="formContent != null">and form_content = #{formContent}</if>
             <if test="ext != null and ext != ''">and ext = #{ext}</if>
             <if test="createTime != null">and create_time = #{createTime}</if>
             <if test="updateTime != null">and update_time = #{updateTime}</if>
@@ -333,23 +313,17 @@
     </delete>
 
     <update id="updateLogic">
-        update flow_definition
+        update flow_form
         set del_flag = #{logicDeleteValue}
         <where>
             <if test="entity.id != null">and id = #{entity.id}</if>
-            <if test="entity.flowCode != null and entity.flowCode != ''">and flow_code = #{entity.flowCode}</if>
-            <if test="entity.flowName != null and entity.flowName != ''">and flow_name = #{entity.flowName}</if>
+            <if test="entity.formCode != null and entity.formCode != ''">and form_code = #{entity.formCode}</if>
+            <if test="entity.formName != null and entity.formName != ''">and flow_name = #{entity.formName}</if>
             <if test="entity.version != null and entity.version != ''">and version = #{entity.version}</if>
             <if test="entity.isPublish != null">and is_publish = #{entity.isPublish}</if>
-            <if test="entity.formCustom != null">and form_custom = #{entity.formCustom}</if>
+            <if test="entity.formType != null">and form_custom = #{entity.formType}</if>
             <if test="entity.formPath != null">and form_path = #{entity.formPath}</if>
-            <if test="entity.activityStatus != null">and activity_status = #{entity.activityStatus}</if>
-            <if test="entity.listenerType != null and entity.listenerType != ''">and listener_type =
-                #{entity.listenerType}
-            </if>
-            <if test="entity.listenerPath != null and entity.listenerPath != ''">and listener_path =
-                #{entity.listenerPath}
-            </if>
+            <if test="entity.formContent != null">and form_content = #{entity.formContent}</if>
             <if test="entity.ext != null and entity.ext != ''">and ext = #{entity.ext}</if>
             <if test="entity.createTime != null">and create_time = #{entity.createTime}</if>
             <if test="entity.updateTime != null">and update_time = #{entity.updateTime}</if>

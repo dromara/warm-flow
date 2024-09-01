@@ -114,6 +114,16 @@ public class BeanConfig {
     }
 
     @Bean
+    public FlowFormDao formDao() {
+        return new FlowFormDaoImpl();
+    }
+
+    @Bean
+    public FormService flowFormService(FlowFormDao formDao) {
+        return new FormServiceImpl().setDao(formDao);
+    }
+
+    @Bean
     public WarmFlow initFlow() {
         setNewEntity();
         FrameInvoker.setCfgFunction((key) -> Objects.requireNonNull(SpringUtil.getBean(Environment.class)).getProperty(key));
@@ -132,6 +142,7 @@ public class BeanConfig {
         FlowFactory.setNewSkip(FlowSkip::new);
         FlowFactory.setNewTask(FlowTask::new);
         FlowFactory.setNewUser(FlowUser::new);
+        FlowFactory.setNewForm(FlowForm::new);
     }
 
     public void after(WarmFlow flowConfig) {
