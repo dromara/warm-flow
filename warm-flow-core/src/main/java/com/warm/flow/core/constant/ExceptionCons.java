@@ -114,5 +114,8 @@ public class ExceptionCons {
     public static final String INSTANCE_ALREADY_ACTIVITY = "当前流程实例已经激活";
 
     public static final String INSTANCE_ALREADY_SUSPENDED = "当前流程实例已经挂起";
+    public static final String FORM_ALREADY_PUBLISH = "当前表单状态已发布";
+    public static final String FORM_ALREADY_UN_PUBLISH = "当前表单状态未发布";
+    public static final String ID_EMPTY = "ID不能为空";
 
 }

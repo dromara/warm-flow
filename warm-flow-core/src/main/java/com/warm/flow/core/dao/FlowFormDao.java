@@ -1,11 +1,9 @@
 package com.warm.flow.core.dao;
 
-import com.warm.flow.core.entity.Definition;
 import com.warm.flow.core.entity.Form;
 
 /**
- *
- *  流程表单Dao接口，不同的orm扩展包实现它
+ * 流程表单Dao接口，不同的orm扩展包实现它
  *
  * @author vanlin
  * @className FlowFormDao

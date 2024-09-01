@@ -1,6 +1,7 @@
 package com.warm.flow.orm.entity;
 
 import com.warm.flow.core.entity.Form;
+
 import java.util.Date;
 
 /**
@@ -16,6 +17,45 @@ public class FlowForm implements Form {
      */
     private Long id;
 
+    /**
+     * 表单编码
+     */
+    private String formCode;
+
+    /**
+     * 表单名称
+     */
+    private String formName;
+
+    /**
+     * 表单版本
+     */
+    private String version;
+
+    /**
+     * 是否发布（0未发布 1已发布 9失效）
+     */
+    private Integer isPublish;
+
+    /**
+     * 表单类型（0内置表单 存 form_content        1外挂表单 存form_path）
+     */
+    private Integer formType;
+
+    /**
+     * 表单路径
+     */
+    private String formPath;
+
+    /**
+     * 表单内容
+     */
+    private String formContent;
+
+    /**
+     * 表单扩展，用户自行使用
+     */
+    private String ext;
     /**
      * 创建时间
      */
@@ -35,22 +75,6 @@ public class FlowForm implements Form {
      * 删除标记
      */
     private String delFlag;
-
-    private String formCode;
-
-    private String formName;
-
-    private String version;
-
-    private Integer isPublish;
-
-    private Integer formType;
-
-    private String formPath;
-
-    private String formContent;
-
-    private String ext;
 
     @Override
     public Long getId() {

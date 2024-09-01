@@ -1,12 +1,12 @@
 package com.warm.flow.core.service.impl;
 
-import com.warm.flow.core.dao.FlowDefinitionDao;
+import com.warm.flow.core.constant.ExceptionCons;
 import com.warm.flow.core.dao.FlowFormDao;
-import com.warm.flow.core.entity.Definition;
 import com.warm.flow.core.entity.Form;
-import com.warm.flow.core.orm.service.IWarmService;
+import com.warm.flow.core.enums.PublishStatus;
 import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.FormService;
+import com.warm.flow.core.utils.AssertUtil;
 
 import java.util.Collections;
 import java.util.List;
@@ -21,20 +21,25 @@ import java.util.List;
  */
 public class FormServiceImpl extends WarmServiceImpl<FlowFormDao<Form>, Form> implements FormService {
 
-    @Override
-    protected FormService setDao(FlowFormDao<Form> warmDao) {
+    public FormService setDao(FlowFormDao<Form> warmDao) {
         this.warmDao = warmDao;
         return this;
     }
 
     @Override
     public boolean publish(Long id) {
-        return false;
+        Form form = getById(id);
+        AssertUtil.isTrue(form.getIsPublish().equals(PublishStatus.PUBLISHED.getKey()), ExceptionCons.FORM_ALREADY_PUBLISH);
+        form.setIsPublish(PublishStatus.PUBLISHED.getKey());
+        return updateById(form);
     }
 
     @Override
     public boolean unPublish(Long id) {
-        return false;
+        Form form = getById(id);
+        AssertUtil.isTrue(form.getIsPublish().equals(PublishStatus.UNPUBLISHED.getKey()), ExceptionCons.FORM_ALREADY_UN_PUBLISH);
+        form.setIsPublish(PublishStatus.UNPUBLISHED.getKey());
+        return updateById(form);
     }
 
     @Override
@@ -49,7 +54,8 @@ public class FormServiceImpl extends WarmServiceImpl<FlowFormDao<Form>, Form> im
 
     @Override
     public Form getById(Long id) {
-        return null;
+        AssertUtil.isNull(id, ExceptionCons.ID_EMPTY);
+        return super.getById(id);
     }
 
     @Override

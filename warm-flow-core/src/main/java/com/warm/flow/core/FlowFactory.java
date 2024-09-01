@@ -46,7 +46,8 @@ public class FlowFactory {
     private static NodeService nodeService = null;
     private static SkipService skipService = null;
     private static TaskService taskService = null;
-    private static UserService UserService = null;
+    private static UserService userService = null;
+    private static FormService formService = null;
 
 
     private static Supplier<Definition> defSupplier;
@@ -56,6 +57,7 @@ public class FlowFactory {
     private static Supplier<Skip> skipSupplier;
     private static Supplier<Task> taskSupplier;
     private static Supplier<User> userSupplier;
+    private static Supplier<Form> formSupplier;
 
     private static WarmFlow flowConfig;
 
@@ -108,10 +110,17 @@ public class FlowFactory {
     }
 
     public static UserService userService() {
-        if (ObjectUtil.isNotNull(UserService)) {
-            return UserService;
+        if (ObjectUtil.isNotNull(userService)) {
+            return userService;
         }
-        return UserService = FrameInvoker.getBean(UserService.class);
+        return userService = FrameInvoker.getBean(UserService.class);
+    }
+
+    public static FormService getFormService() {
+        if (ObjectUtil.isNotNull(userService)) {
+            return formService;
+        }
+        return formService = FrameInvoker.getBean(FormService.class);
     }
 
     public static void setNewDef(Supplier<Definition> supplier) {
@@ -168,6 +177,14 @@ public class FlowFactory {
 
     public static User newUser() {
         return userSupplier.get();
+    }
+
+    public static void setNewForm(Supplier<Form> supplier) {
+        FlowFactory.formSupplier = supplier;
+    }
+
+    public static Form newForm() {
+        return formSupplier.get();
     }
 
     public static WarmFlow getFlowConfig() {
