@@ -59,7 +59,9 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         Node startNode = nodes.stream().filter(t -> NodeType.isStart(t.getNodeType())).findFirst().orElse(null);
         AssertUtil.isNull(startNode, ExceptionCons.LOST_START_NODE);
         // 获取下一个节点，如果是网关节点，则重新获取后续节点
-        List<Node> nextNodes = FlowFactory.taskService().getNextByCheckGateWay(flowParams, getFirstBetween(startNode));
+        List<Node> nextNodes = FlowFactory.nodeService().getNextByCheckGateway(flowParams.getVariable()
+                , getFirstBetween(startNode));
+
         // 判断流程定义是否激活状态
         Definition definition = FlowFactory.defService().getById(nextNodes.get(0).getDefinitionId());
         AssertUtil.isTrue(definition.getActivityStatus().equals(ActivityStatus.SUSPENDED.getKey())

@@ -47,7 +47,7 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser> implements FlowUserDa
 
     @Override
     public int deleteByTaskIds(List<Long> taskIdList) {
-        return getMapper().deleteBatchIds(taskIdList);
+        return getMapper().delete(new LambdaQueryWrapper<FlowUser>().in(FlowUser::getAssociated, taskIdList));
     }
 
     @Override

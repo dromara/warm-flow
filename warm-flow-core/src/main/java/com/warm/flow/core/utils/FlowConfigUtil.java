@@ -154,6 +154,8 @@ public class FlowConfigUtil {
         definitionElement.addAttribute("version", definition.getVersion());
         definitionElement.addAttribute("formCustom", definition.getFormCustom());
         definitionElement.addAttribute("formPath", definition.getFormPath());
+        definitionElement.addAttribute("listenerType", definition.getListenerType());
+        definitionElement.addAttribute("listenerPath", definition.getListenerPath());
         definitionElement.addAttribute("ext", definition.getExt());
 
         List<Node> nodeList = definition.getNodeList();
@@ -210,7 +212,6 @@ public class FlowConfigUtil {
 
         String flowName = definition.getFlowName();
         AssertUtil.isBlank(definition.getFlowCode(), "【" + flowName + "】流程flowCode为空!");
-        AssertUtil.isBlank(definition.getVersion(), "【" + flowName + "】流程version为空!");
         // 发布
         definition.setIsPublish(0);
         definition.setUpdateTime(new Date());

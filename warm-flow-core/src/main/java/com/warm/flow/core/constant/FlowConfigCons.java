@@ -33,6 +33,11 @@ public class FlowConfigCons {
     public static final String LOGICDELETE = "warm-flow.logic_delete";
 
     /**
+     * 是否开启逻辑删除
+     */
+    public static final String KEYTYPE = "warm-flow.key_type";
+
+    /**
      * 逻辑删除字段值
      */
     public static final String LOGICDELETEVALUE = "warm-flow.logic_delete_value";

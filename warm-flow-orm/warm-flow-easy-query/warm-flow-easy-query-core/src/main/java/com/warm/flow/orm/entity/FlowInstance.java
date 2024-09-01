@@ -88,7 +88,7 @@ public class FlowInstance implements Instance, ProxyEntityAvailable<FlowInstance
 
     /** 流程状态（0待提交 1审批中 2 审批通过 3自动通过 8已完成 9已退回 10失效） */
     @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
-    private Integer flowStatus;
+    private String flowStatus;
 
     /** 流程激活状态（0挂起 1激活）*/
     @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)

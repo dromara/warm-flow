@@ -92,6 +92,10 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         allNodes.forEach(node -> node.setDefinitionId(def.getId()));
         allSkips.forEach(skip -> skip.setDefinitionId(def.getId()));
         // 保存节点，流程连线，权利人
+        String version = getNewVersion(def);
+        for (Node node : allNodes) {
+            node.setVersion(version);
+        }
         FlowFactory.nodeService().saveBatch(allNodes);
         FlowFactory.skipService().saveBatch(allSkips);
     }
@@ -121,14 +125,8 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
 
     @Override
     public boolean checkAndSave(Definition definition) {
-        List<String> flowCodeList = Collections.singletonList(definition.getFlowCode());
-        List<Definition> definitions = queryByCodeList(flowCodeList);
-        for (Definition otherDef : definitions) {
-            if (definition.getFlowCode().equals(otherDef.getFlowCode())
-                    && definition.getVersion().equals(otherDef.getVersion())) {
-                throw new FlowException(definition.getFlowCode() + "(" + definition.getVersion() + ")" + ExceptionCons.ALREADY_EXIST);
-            }
-        }
+        String version = getNewVersion(definition);
+        definition.setVersion(version);
         return save(definition);
     }
 
@@ -197,6 +195,22 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     }
 
     @Override
+    public boolean active(Long id) {
+        Definition definition = getById(id);
+        AssertUtil.isTrue(definition.getActivityStatus().equals(ActivityStatus.ACTIVITY.getKey()), ExceptionCons.DEFINITION_ALREADY_ACTIVITY);
+        definition.setActivityStatus(ActivityStatus.ACTIVITY.getKey());
+        return updateById(definition);
+    }
+
+    @Override
+    public boolean unActive(Long id) {
+        Definition definition = getById(id);
+        AssertUtil.isTrue(definition.getActivityStatus().equals(ActivityStatus.SUSPENDED.getKey()), ExceptionCons.DEFINITION_ALREADY_SUSPENDED);
+        definition.setActivityStatus(ActivityStatus.SUSPENDED.getKey());
+        return updateById(definition);
+    }
+
+    @Override
     public String flowChart(Long instanceId) throws IOException {
         Long definitionId = FlowFactory.insService().getById(instanceId).getDefinitionId();
         return basicFlowChart(instanceId, definitionId);
@@ -215,10 +229,9 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         } else {
             instance = null;
         }
-        Definition definition = FlowFactory.defService().getById(definitionId);
         Map<String, Color> colorMap = new HashMap<>();
-        Map<String, Integer> nodeXY = addNodeChart(colorMap, instance, definition, flowChartChain);
-        addSkipChart(colorMap, instance, definition, flowChartChain);
+        Map<String, Integer> nodeXY = addNodeChart(colorMap, instance, definitionId, flowChartChain);
+        addSkipChart(colorMap, instance, definitionId, flowChartChain);
 
         int width = nodeXY.get("maxX") + nodeXY.get("minX");
         int height = nodeXY.get("maxY") + nodeXY.get("minY");
@@ -255,8 +268,8 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
      * @param instance
      * @param flowChartChain
      */
-    private void addSkipChart(Map<String, Color> colorMap, Instance instance, Definition definition, FlowChartChain flowChartChain) {
-        List<Skip> skipList = FlowFactory.skipService().list(FlowFactory.newSkip().setDefinitionId(definition.getId()));
+    private void addSkipChart(Map<String, Color> colorMap, Instance instance, Long definitionId, FlowChartChain flowChartChain) {
+        List<Skip> skipList = FlowFactory.skipService().list(FlowFactory.newSkip().setDefinitionId(definitionId));
         for (Skip skip : skipList) {
             if (StringUtils.isNotEmpty(skip.getCoordinate())) {
                 String[] coordinateSplit = skip.getCoordinate().split("\\|");
@@ -292,10 +305,11 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
      * @param instance
      * @param flowChartChain
      */
-    private Map<String, Integer> addNodeChart(Map<String, Color> colorMap, Instance instance, Definition definition, FlowChartChain flowChartChain) {
-        List<Node> nodeList = FlowFactory.nodeService().list(FlowFactory.newNode().setDefinitionId(definition.getId()));
+    private Map<String, Integer> addNodeChart(Map<String, Color> colorMap, Instance instance, Long definitionId
+            , FlowChartChain flowChartChain) {
+        List<Node> nodeList = FlowFactory.nodeService().list(FlowFactory.newNode().setDefinitionId(definitionId));
         List<Skip> allSkips = FlowFactory.skipService().list(FlowFactory.newSkip()
-                .setDefinitionId(definition.getId()).setSkipType(SkipType.PASS.getKey()));
+                .setDefinitionId(definitionId).setSkipType(SkipType.PASS.getKey()));
         if (ObjectUtil.isNotNull(instance)) {
             // 流程图渲染，过滤掉所有后置节点
             List<Node> needChartNodes = filterNodes(instance, allSkips, nodeList);
@@ -570,33 +584,55 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
      * @param allSkips
      */
     private void updateFlow(Definition definition, List<Node> allNodes, List<Skip> allSkips) {
-        List<String> flowCodeList = Collections.singletonList(definition.getFlowCode());
-        List<Definition> definitions = getDao().queryByCodeList(flowCodeList);
-        for (Definition otherDef : definitions) {
-            if (definition.getFlowCode().equals(otherDef.getFlowCode())
-                    && definition.getVersion().equals(otherDef.getVersion())) {
-                throw new FlowException(definition.getFlowCode() + "(" + definition.getVersion() + ")" + ExceptionCons.ALREADY_EXIST);
-            }
+        String version = getNewVersion(definition);
+        definition.setVersion(version);
+        for (Node node : allNodes) {
+            node.setVersion(version);
         }
         FlowFactory.defService().save(definition);
         FlowFactory.nodeService().saveBatch(allNodes);
         FlowFactory.skipService().saveBatch(allSkips);
     }
 
+    private String getNewVersion(Definition definition) {
+        List<String> flowCodeList = Collections.singletonList(definition.getFlowCode());
+        List<Definition> definitions = getDao().queryByCodeList(flowCodeList);
+        int highestVersion = 0;
+        String latestNonPositiveVersion = null;
+        long latestTimestamp = Long.MIN_VALUE;
 
-    @Override
-    public boolean active(Long id) {
-        Definition definition = getById(id);
-        AssertUtil.isTrue(definition.getActivityStatus().equals(ActivityStatus.ACTIVITY.getKey()), ExceptionCons.DEFINITION_ALREADY_ACTIVITY);
-        definition.setActivityStatus(ActivityStatus.ACTIVITY.getKey());
-        return updateById(definition);
+        for (Definition otherDef : definitions) {
+            if (definition.getVersion() != null && definition.getFlowCode().equals(otherDef.getFlowCode())
+                    && definition.getVersion().equals(otherDef.getVersion())) {
+                throw new FlowException(definition.getFlowCode() + "(" + definition.getVersion() + ")" + ExceptionCons.ALREADY_EXIST);
+            }
+            if (definition.getFlowCode().equals(otherDef.getFlowCode())) {
+                try {
+                    int version = Integer.parseInt(otherDef.getVersion());
+                    if (version > highestVersion) {
+                        highestVersion = version;
+                    }
+                } catch (NumberFormatException e) {
+                    long timestamp = otherDef.getCreateTime().getTime();
+                    if (timestamp > latestTimestamp) {
+                        latestTimestamp = timestamp;
+                        latestNonPositiveVersion = otherDef.getVersion();
+                    }
+                }
+            }
+        }
+        String version = definition.getVersion();
+        if (version == null || version.isEmpty()) {
+            if (highestVersion > 0) {
+                version = String.valueOf(highestVersion + 1);
+            } else if (latestNonPositiveVersion != null) {
+                version = latestNonPositiveVersion + "_1";
+            } else {
+                version = "1";
+            }
+        }
+
+        return version;
     }
 
-    @Override
-    public boolean unActive(Long id) {
-        Definition definition = getById(id);
-        AssertUtil.isTrue(definition.getActivityStatus().equals(ActivityStatus.SUSPENDED.getKey()), ExceptionCons.DEFINITION_ALREADY_SUSPENDED);
-        definition.setActivityStatus(ActivityStatus.SUSPENDED.getKey());
-        return updateById(definition);
-    }
 }

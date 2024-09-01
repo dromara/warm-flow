@@ -15,6 +15,7 @@
  */
 package com.warm.flow.core.dto;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -22,7 +23,8 @@ import java.util.List;
  *
  * @author warm
  */
-public class ModifyHandler {
+public class ModifyHandler implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     /**
      * 修改的任务id
@@ -66,6 +68,46 @@ public class ModifyHandler {
 
     public static ModifyHandler build() {
         return new ModifyHandler();
+    }
+
+    public ModifyHandler taskId(Long taskId) {
+        this.taskId = taskId;
+        return this;
+    }
+
+    public ModifyHandler curUser(String curUser) {
+        this.curUser = curUser;
+        return this;
+    }
+
+    public ModifyHandler permissionFlag(List<String> permissionFlag) {
+        this.permissionFlag = permissionFlag;
+        return this;
+    }
+
+    public ModifyHandler addHandlers(List<String> addHandlers) {
+        this.addHandlers = addHandlers;
+        return this;
+    }
+
+    public ModifyHandler reductionHandlers(List<String> reductionHandlers) {
+        this.reductionHandlers = reductionHandlers;
+        return this;
+    }
+
+    public ModifyHandler message(String message) {
+        this.message = message;
+        return this;
+    }
+
+    public ModifyHandler ignore(boolean ignore) {
+        this.ignore = ignore;
+        return this;
+    }
+
+    public ModifyHandler cooperateType(Integer cooperateType) {
+        this.cooperateType = cooperateType;
+        return this;
     }
 
     public Long getTaskId() {

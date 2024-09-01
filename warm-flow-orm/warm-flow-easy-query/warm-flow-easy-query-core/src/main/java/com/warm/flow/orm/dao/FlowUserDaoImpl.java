@@ -43,7 +43,7 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser, FlowUserProxy> implem
         return entityQuery().queryable(entityClass())
             .useLogicDelete(logicDelete)
             .where(proxy -> {
-                proxy.associated().in(EasyCollectionUtil.isNotEmpty(associateds), associateds); // 关联表id
+                proxy.associated().in(EasyCollectionUtil.isNotEmpty(associateds), associateds); // 任务表id
                 proxy.type().in(EasyArrayUtil.isNotEmpty(types), types); // 人员类型
                 proxy.tenantId().eq(StringUtils.isNotEmpty(entity.getTenantId()), entity.getTenantId()); // 租户ID
             })
@@ -58,7 +58,7 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser, FlowUserProxy> implem
         return  entityQuery().queryable(entityClass())
             .useLogicDelete(logicDelete)
             .where(proxy -> {
-                proxy.associated().eq(Objects.nonNull(associated), associated); // 关联表id
+                proxy.associated().eq(Objects.nonNull(associated), associated); // 任务表id
                 proxy.processedBy().in(EasyCollectionUtil.isNotEmpty(processedBys), processedBys); // 权限人
                 proxy.type().in(EasyArrayUtil.isNotEmpty(types),types); // 人员类型
                 proxy.tenantId().eq(StringUtils.isNotEmpty(entity.getTenantId()), entity.getTenantId()); // 租户ID
@@ -95,7 +95,7 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser, FlowUserProxy> implem
         proxy.id().eq(Objects.nonNull(entity.getId()), entity.getId()); // 主键
         proxy.type().eq(StringUtils.isNotEmpty(entity.getType()), entity.getType()); // 人员类型
         proxy.processedBy().eq(StringUtils.isNotEmpty(entity.getProcessedBy()), entity.getProcessedBy()); // 权限人
-        proxy.associated().eq(Objects.nonNull(entity.getAssociated()), entity.getAssociated()); // 关联表id
+        proxy.associated().eq(Objects.nonNull(entity.getAssociated()), entity.getAssociated()); // 任务表id
         proxy.createBy().eq(StringUtils.isNotEmpty(entity.getCreateBy()), entity.getCreateBy()); // 创建人
         proxy.createTime().eq(Objects.nonNull(entity.getCreateTime()), entity.getCreateTime()); // 创建时间
         proxy.updateTime().eq(Objects.nonNull(entity.getUpdateTime()), entity.getUpdateTime()); // 更新时间

@@ -63,7 +63,7 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask> implements Flow
 
     @Override
     public int deleteByInsIds(List<Long> instanceIds) {
-        return getMapper().deleteBatchIds(instanceIds);
+        return getMapper().delete(new LambdaQueryWrapper<FlowHisTask>().in(FlowHisTask::getInstanceId, instanceIds));
     }
 
     @Override

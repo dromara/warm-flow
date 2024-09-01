@@ -37,26 +37,26 @@ public interface TaskService extends IWarmService<Task> {
      * 根据任务id，流程跳转
      *
      * @param taskId:流程任务id[必传]
-     * @param flowParams:包含流程相关参数的对象 - skipType:跳转类型(PASS审批通过 REJECT退回) [必传]
-     *                               - nodeCode:节点编码 [如果指定跳转节点,必传]
-     *                               - permissionFlag:办理人权限标识[按需传输]
-     *                               - message:审批意见  [按需传输]
-     *                               - handler:办理人唯一标识[建议传]
-     *                               - variable:流程变量[按需传输,跳转条件放入流程变量<互斥网关必传>]
-     *                               - flowStatus:流程状态，自定义流程状态[按需传输]
+     * @param flowParams:包含流程相关参数的对象 - skipType: 跳转类型(PASS审批通过 REJECT退回) [必传]
+     *                               - nodeCode: 节点编码 [如果指定节点,可任意跳转到对应节点,按需传输]
+     *                               - permissionFlag: 办理人权限标识，比如用户，角色，部门等[只有未设置办理人时可不传]
+     *                               - message: 审批意见  [按需传输]
+     *                               - handler: 办理人唯一标识[建议传]
+     *                               - variable: 流程变量[按需传输,跳转条件放入流程变量<互斥网关必传>]
+     *                               - flowStatus: 流程状态，自定义流程状态[按需传输]
      */
     Instance skip(Long taskId, FlowParams flowParams);
 
     /**
      * 流程跳转
      *
-     * @param flowParams:包含流程相关参数的对象 - skipType:跳转类型(PASS审批通过 REJECT退回) [必传]
-     *                               - nodeCode:节点编码 [如果指定跳转节点,必传]
-     *                               - permissionFlag:办理人权限标识[按需传输]
-     *                               - message:审批意见  [按需传输]
-     *                               - handler:办理人唯一标识[建议传]
-     *                               - variable:流程变量[按需传输,跳转条件放入流程变量<互斥网关必传>]
-     *                               - flowStatus:流程状态，自定义流程状态[按需传输]
+     * @param flowParams:包含流程相关参数的对象 - skipType: 跳转类型(PASS审批通过 REJECT退回) [必传]
+     *                               - nodeCode: 节点编码 [如果指定节点,可任意跳转到对应节点,按需传输]
+     *                               - permissionFlag: 办理人权限标识，比如用户，角色，部门等[只有未设置办理人时可不传]
+     *                               - message: 审批意见  [按需传输]
+     *                               - handler: 办理人唯一标识[建议传]
+     *                               - variable: 流程变量[按需传输,跳转条件放入流程变量<互斥网关必传>]
+     *                               - flowStatus: 流程状态，自定义流程状态[按需传输]
      * @param task:流程任务[必传]
      */
     Instance skip(FlowParams flowParams, Task task);
@@ -65,9 +65,9 @@ public interface TaskService extends IWarmService<Task> {
      * 终止流程，提前结束流程，将所有待办任务转历史
      *
      * @param taskId:流程任务id[必传]
-     * @param flowParams:包含流程相关参数的对象 - message:审批意见  [按需传输]
-     *                               - handler:办理人唯一标识[建议传]
-     *                               - flowStatus:流程状态，自定义流程状态[按需传输]
+     * @param flowParams:包含流程相关参数的对象 - message: 审批意见  [按需传输]
+     *                               - handler: 办理人唯一标识[建议传]
+     *                               - flowStatus: 流程状态，自定义流程状态[按需传输]
      */
     Instance termination(Long taskId, FlowParams flowParams);
 
@@ -76,9 +76,9 @@ public interface TaskService extends IWarmService<Task> {
      *
      * @param instance:流程实例
      * @param task:流程任务
-     * @param flowParams:包含流程相关参数的对象 - message:审批意见  [按需传输]
-     *                               - handler:办理人唯一标识[建议传]
-     *                               - flowStatus:流程状态，自定义流程状态[按需传输]
+     * @param flowParams:包含流程相关参数的对象 - message: 审批意见  [按需传输]
+     *                               - handler: 办理人唯一标识[建议传]
+     *                               - flowStatus: 流程状态，自定义流程状态[按需传输]
      */
     Instance termination(Instance instance, Task task, FlowParams flowParams);
 
@@ -148,23 +148,13 @@ public interface TaskService extends IWarmService<Task> {
     boolean updateHandler(ModifyHandler modifyHandler);
 
     /**
-     * 根据流程id+当前流程节点编码获取与之直接关联(其为源节点)的节点。 definitionId:流程id nodeCode:当前流程状态
-     * skipType:跳转条件,没有填写的话不做校验
-     *
-     * @param NowNode
-     * @param task
-     * @param flowParams
-     * @return
-     */
-    Node getNextNode(Node NowNode, Task task, FlowParams flowParams);
-
-    /**
      * 校验是否网关节点,如果是重新获取新的后面的节点
      *
      * @param flowParams
      * @param nextNode
      * @return
      */
+    @Deprecated
     List<Node> getNextByCheckGateWay(FlowParams flowParams, Node nextNode);
 
     /**
@@ -183,7 +173,7 @@ public interface TaskService extends IWarmService<Task> {
      * @param nodeType 节点类型（开始节点、中间节点、结束节点）
      * @param skipType 流程条件
      */
-    Integer setFlowStatus(Integer nodeType, String skipType);
+    String setFlowStatus(Integer nodeType, String skipType);
 
     /**
      * 并行网关，取结束节点类型，否则随便取id最大的

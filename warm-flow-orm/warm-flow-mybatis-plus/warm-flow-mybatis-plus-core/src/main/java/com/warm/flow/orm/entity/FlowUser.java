@@ -69,7 +69,7 @@ public class FlowUser implements User {
     private String processedBy;
 
     /**
-     * 关联表id
+     * 任务表id
      */
     private Long associated;
 

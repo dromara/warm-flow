@@ -17,10 +17,9 @@ Warm-Flow国产工作流引擎🎉，其特点简洁轻量但又不简单，五�
 
 ```shell
 希望一键三连，你的⭐️ Star ⭐️是我持续开发的动力，项目也活的更长
-使用前请先登记，可加入企业群：https://gitee.com/warm_4/warm-flow/issues/I7Y57D
 ```
 
->   **[github地址](https://github.com/dromara/warm-flow.git)** | **[gitee地址](https://gitee.com/dromara/warm-flow.git)** | **[gitCode地址](https://gitcode.com/minliuhua/warm-flow.git)**
+>   **[github地址](https://github.com/dromara/warm-flow.git)** | **[gitee地址](https://gitee.com/dromara/warm-flow.git)** | **[gitCode地址](https://gitcode.com/dromara/warm-flow)**
 
 ## 演示地址
 
@@ -30,6 +29,19 @@ Warm-Flow国产工作流引擎🎉，其特点简洁轻量但又不简单，五�
 
 ## 使用文档与联系方式
 http://warm-flow.cn
+
+## 组件所需脚本
+
+- 首次导入，先创建数据库，找到对应数据库的全量脚本[warm-flow-all.sql](https://gitee.com/dromara/warm-flow/tree/master/sql/mysql)，执行
+- 如果版本更新，找到对应数据库的更新版本，比如xx-upgrade，[warm-flow_x.x.x.sql](https://gitee.com/dromara/warm-flow/tree/master/sql/mysql/v1-upgrade)，执行
+
+## 官网流程定义xml案例
+
+[官网九套流程定义xml](https://gitee.com/dromara/warm-flow-test/tree/master/warm-flow-core-test/src/main/resources)
+
+## 测试代码
+
+> 测试代码[warm-flow-test](https://gitee.com/dromara/warm-flow-test)项目中，warm-flow-xxx-test模块的测类
 
 
 ### 支持数据库类型

@@ -6,7 +6,7 @@
 
     <groupId>io.github.minliuhua</groupId>
     <artifactId>warm-flow</artifactId>
-    <version>${revision}</version>
+    <version>1.2.6</version>
     <packaging>pom</packaging>
 
     <name>warm-flow</name>
@@ -41,12 +41,11 @@
     <modules>
         <module>warm-flow-core</module>
         <module>warm-flow-orm</module>
-<!--        <module>warm-flow-test</module>-->
         <module>warm-flow-plugin</module>
     </modules>
 
     <properties>
-        <revision>1.2.5-SNAPSHOT</revision>
+        <warm-flow>${project.version}</warm-flow>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

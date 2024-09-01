@@ -65,7 +65,12 @@ public class FlowParams implements Serializable {
     /**
      * 流程状态
      */
-    private Integer flowStatus;
+    private String flowStatus;
+
+    /**
+     * 历史任务表状态
+     */
+    private String hisStatus;
 
     /**
      * 流程激活状态（0挂起 1激活）
@@ -106,8 +111,8 @@ public class FlowParams implements Serializable {
         return this;
     }
 
-    public FlowParams variable(Map<String, Object> variable) {
-        this.variable = variable;
+    public FlowParams permissionFlag(List<String> permissionFlag) {
+        this.permissionFlag = permissionFlag;
         return this;
     }
 
@@ -118,6 +123,31 @@ public class FlowParams implements Serializable {
 
     public FlowParams message(String message) {
         this.message = message;
+        return this;
+    }
+
+    public FlowParams variable(Map<String, Object> variable) {
+        this.variable = variable;
+        return this;
+    }
+
+    public FlowParams flowStatus(String flowStatus) {
+        this.flowStatus = flowStatus;
+        return this;
+    }
+
+    public FlowParams hisStatus(String hisStatus) {
+        this.hisStatus = hisStatus;
+        return this;
+    }
+
+    public FlowParams activityStatus(Integer activityStatus) {
+        this.activityStatus = activityStatus;
+        return this;
+    }
+
+    public FlowParams cooperateType(Integer cooperateType) {
+        this.cooperateType = cooperateType;
         return this;
     }
 
@@ -137,11 +167,6 @@ public class FlowParams implements Serializable {
 
     public String getNodeCode() {
         return nodeCode;
-    }
-
-    public FlowParams permissionFlag(List<String> permissionFlag) {
-        this.permissionFlag = permissionFlag;
-        return this;
     }
 
     public String getFlowCode() {
@@ -177,12 +202,21 @@ public class FlowParams implements Serializable {
         return hisTaskExt;
     }
 
-    public Integer getFlowStatus() {
+    public String getFlowStatus() {
         return flowStatus;
     }
 
-    public FlowParams setFlowStatus(Integer flowStatus) {
+    public FlowParams setFlowStatus(String flowStatus) {
         this.flowStatus = flowStatus;
+        return this;
+    }
+
+    public String getHisStatus() {
+        return hisStatus;
+    }
+
+    public FlowParams setHisStatus(String hisStatus) {
+        this.hisStatus = hisStatus;
         return this;
     }
 
@@ -204,14 +238,44 @@ public class FlowParams implements Serializable {
         return this;
     }
 
-    @Deprecated
-    public String getCreateBy() {
-        return handler;
-    }
-
-    @Deprecated
-    public FlowParams setCreateBy(String createBy) {
-        this.handler = createBy;
+    public FlowParams setFlowCode(String flowCode) {
+        this.flowCode = flowCode;
         return this;
     }
+
+    public FlowParams setHandler(String handler) {
+        this.handler = handler;
+        return this;
+    }
+
+    public FlowParams setNodeCode(String nodeCode) {
+        this.nodeCode = nodeCode;
+        return this;
+    }
+
+    public FlowParams setPermissionFlag(List<String> permissionFlag) {
+        this.permissionFlag = permissionFlag;
+        return this;
+    }
+
+    public FlowParams setMessage(String message) {
+        this.message = message;
+        return this;
+    }
+
+    public FlowParams setVariable(Map<String, Object> variable) {
+        this.variable = variable;
+        return this;
+    }
+
+    public FlowParams setExt(String ext) {
+        this.ext = ext;
+        return this;
+    }
+
+    public FlowParams setHisTaskExt(String hisTaskExt) {
+        this.hisTaskExt = hisTaskExt;
+        return this;
+    }
+
 }

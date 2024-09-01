@@ -63,7 +63,7 @@ CREATE TABLE flow_his_task (
 	cooperate_type int2 NOT NULL DEFAULT 0, -- 协作方式(1审批 2转办 3委派 4会签 5票签 6加签 7减签)
 	collaborator varchar(40) NULL, -- 协作人(只有转办、会签、票签、委派)
 	skip_type varchar(10) NULL, -- 流转类型（PASS通过 REJECT退回 NONE无动作）
-	flow_status int2 NOT NULL, -- 流程状态（0待提交 1审批中 2 审批通过 8已完成 9已退回 10失效）
+	flow_status varchar(20) NOT NULL, -- 流程状态（0待提交 1审批中 2 审批通过 8已完成 9已退回 10失效）
     form_custom bpchar(1) NULL DEFAULT 'N'::character varying, -- 审批表单是否自定义（Y是 N否）
     form_path varchar(100) NULL, -- 审批表单路径
     ext varchar(500) NULL, -- 扩展字段，预留给业务系统使用
@@ -116,7 +116,7 @@ CREATE TABLE flow_instance (
 	node_code varchar(40) NOT NULL, -- 流程节点编码
 	node_name varchar(100) NULL, -- 流程节点名称
 	variable text NULL, -- 任务变量
-	flow_status int2 NOT NULL, -- 流程状态（0待提交 1审批中 2 审批通过 8已完成 9已退回 10失效）
+	flow_status varchar(20) NOT NULL, -- 流程状态（0待提交 1审批中 2 审批通过 8已完成 9已退回 10失效）
     activity_status int2 NOT NULL DEFAULT 1, -- 流程激活状态（0挂起 1激活）
 	create_by varchar(64) NULL DEFAULT ''::character varying, -- 创建者
 	create_time timestamp NULL, -- 创建时间
@@ -295,7 +295,7 @@ CREATE TABLE flow_user (
 	id int8 NOT NULL, -- 主键id
 	"type" bpchar(1) NOT NULL, -- 人员类型（1待办任务的审批人权限 2待办任务的转办人权限 3流程实例的抄送人权限 4待办任务的委托人权限）
 	processed_by varchar(80) NULL, -- 权限人
-	associated int8 NOT NULL, -- 关联表id
+	associated int8 NOT NULL, -- 任务表id
 	create_time timestamp NULL, -- 创建时间
 	create_by varchar(80) NULL, -- 创建人
 	update_time timestamp NULL, -- 更新时间
@@ -311,7 +311,7 @@ COMMENT ON TABLE flow_user IS '流程用户表';
 COMMENT ON COLUMN flow_user.id IS '主键id';
 COMMENT ON COLUMN flow_user."type" IS '人员类型（1待办任务的审批人权限 2待办任务的转办人权限 3待办任务的委托人权限）';
 COMMENT ON COLUMN flow_user.processed_by IS '权限人';
-COMMENT ON COLUMN flow_user.associated IS '关联表id';
+COMMENT ON COLUMN flow_user.associated IS '任务表id';
 COMMENT ON COLUMN flow_user.create_time IS '创建时间';
 COMMENT ON COLUMN flow_user.create_by IS '创建人';
 COMMENT ON COLUMN flow_user.update_time IS '更新时间';

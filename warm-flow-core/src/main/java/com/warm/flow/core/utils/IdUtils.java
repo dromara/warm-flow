@@ -15,6 +15,13 @@
  */
 package com.warm.flow.core.utils;
 
+import com.warm.flow.core.FlowFactory;
+import com.warm.flow.core.constant.FlowCons;
+import com.warm.flow.core.keyGen.KenGen;
+import com.warm.flow.core.keyGen.SnowFlakeId14;
+import com.warm.flow.core.keyGen.SnowFlakeId15;
+import com.warm.flow.core.keyGen.SnowFlakeId19;
+
 /**
  * @author warm
  * @description: 唯一id
@@ -22,39 +29,32 @@ package com.warm.flow.core.utils;
  */
 public class IdUtils {
 
-    private volatile static SnowFlake instance;
+    private volatile static KenGen instance;
 
     public static String nextIdStr() {
         return nextId().toString();
     }
 
     public static String nextIdStr(long workerId, long datacenterId) {
-        if (instance == null) {
-            synchronized (SnowFlake.class) {
-                if (instance == null) {
-                    instance = new SnowFlake(workerId, datacenterId);
-                }
-            }
-        }
         return nextId(workerId, datacenterId).toString();
     }
 
     public static Long nextId() {
-        if (instance == null) {
-            synchronized (SnowFlake.class) {
-                if (instance == null) {
-                    instance = new SnowFlake(1, 1);
-                }
-            }
-        }
-        return instance.nextId();
+        return nextId(1, 1);
     }
 
     public static Long nextId(long workerId, long datacenterId) {
         if (instance == null) {
-            synchronized (SnowFlake.class) {
+            synchronized (KenGen.class) {
                 if (instance == null) {
-                    instance = new SnowFlake(workerId, datacenterId);
+                    String keyType = FlowFactory.getFlowConfig().getKeyType();
+                    if (FlowCons.SNOWID14.equals(keyType)) {
+                        instance = new SnowFlakeId14(workerId);
+                    } else if (FlowCons.SNOWID15.equals(keyType)) {
+                        instance = new SnowFlakeId15(workerId);
+                    } else {
+                        instance = new SnowFlakeId19(workerId, datacenterId);
+                    }
                 }
             }
         }

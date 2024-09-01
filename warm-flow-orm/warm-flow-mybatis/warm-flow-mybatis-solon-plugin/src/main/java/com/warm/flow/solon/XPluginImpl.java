@@ -16,6 +16,7 @@
 package com.warm.flow.solon;
 
 import com.warm.flow.solon.config.FlowAutoConfig;
+import com.warm.plugin.modes.solon.config.BeanConfig;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.Configuration;
@@ -39,6 +40,7 @@ public class XPluginImpl implements Plugin {
 
     @Override
     public void start(AppContext context) {
+        context.beanMake(BeanConfig.class);
         context.beanMake(FlowAutoConfig.class);
         EventBus.subscribe(Configuration.class, e -> {
             List<String> mapperList = Arrays.asList("warm/flow/FlowDefinitionMapper.xml", "warm/flow/FlowHisTaskMapper.xml"

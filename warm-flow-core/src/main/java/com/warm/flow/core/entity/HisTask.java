@@ -106,9 +106,9 @@ public interface HisTask extends RootEntity {
 
     public HisTask setSkipType(String skipType);
 
-    public Integer getFlowStatus();
+    public String getFlowStatus();
 
-    public HisTask setFlowStatus(Integer flowStatus);
+    public HisTask setFlowStatus(String flowStatus);
 
     public String getMessage();
 

@@ -1,0 +1,11 @@
+name: 任务发放
+description: 发放本项目任务，领取请留言。
+title: "【任务发放】 "
+labels: ["feature"]
+body:
+  - type: textarea
+    id: task-detail
+    attributes:
+      label: 任务描述
+    validations:
+      required: false

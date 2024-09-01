@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.github.minliuhua</groupId>
         <artifactId>warm-flow-mybatis</artifactId>
-        <version>${revision}</version>
+        <version>1.2.6</version>
     </parent>
 
     <artifactId>warm-flow-mybatis-core</artifactId>

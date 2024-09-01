@@ -23,29 +23,29 @@ import com.warm.flow.core.utils.ObjectUtil;
  * @date: 2023/3/31 12:16
  */
 public enum FlowStatus {
-    TOBESUBMIT(0, "待提交"),
+    TOBESUBMIT("0", "待提交"),
 
-    APPROVAL(1, "审批中"),
+    APPROVAL("1", "审批中"),
 
-    PASS(2, "审批通过"),
+    PASS("2", "审批通过"),
 
-    AUTO_PASS(3, "自动完成"),
+    AUTO_PASS("3", "自动完成"),
 
-    FINISHED(8, "已完成"),
+    FINISHED("8", "已完成"),
 
-    REJECT(9, "已退回"),
+    REJECT("9", "已退回"),
 
-    INVALID(10, "失效");
+    INVALID("10", "失效");
 
-    private Integer key;
+    private String key;
     private String value;
 
-    FlowStatus(Integer key, String value) {
+    FlowStatus(String key, String value) {
         this.key = key;
         this.value = value;
     }
 
-    public static Integer getKeyByValue(String value) {
+    public static String getKeyByValue(String value) {
         for (FlowStatus item : FlowStatus.values()) {
             if (item.getValue().equals(value)) {
                 return item.getKey();
@@ -54,7 +54,7 @@ public enum FlowStatus {
         return null;
     }
 
-    public static String getValueByKey(Integer key) {
+    public static String getValueByKey(String key) {
         for (FlowStatus item : FlowStatus.values()) {
             if (item.getKey().equals(key)) {
                 return item.getValue();
@@ -78,11 +78,11 @@ public enum FlowStatus {
      * @param Key
      * @return
      */
-    public static Boolean isFinished(Integer Key) {
+    public static Boolean isFinished(String Key) {
         return ObjectUtil.isNotNull(Key) && (FlowStatus.FINISHED.getKey().equals(Key));
     }
 
-    public Integer getKey() {
+    public String getKey() {
         return key;
     }
 

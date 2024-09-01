@@ -123,7 +123,7 @@ public class FlowHisTask implements HisTask, ProxyEntityAvailable<FlowHisTask, F
     private String skipType;
 
     /** 流程状态（1审批中 2 审批通过 9已退回 10失效） */
-    private Integer flowStatus;
+    private String flowStatus;
 
     /** 审批意见 */
     private String message;
