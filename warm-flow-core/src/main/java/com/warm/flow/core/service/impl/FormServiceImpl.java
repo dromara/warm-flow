@@ -1,5 +1,6 @@
 package com.warm.flow.core.service.impl;
 
+import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.constant.ExceptionCons;
 import com.warm.flow.core.dao.FlowFormDao;
 import com.warm.flow.core.entity.Form;
@@ -7,8 +8,10 @@ import com.warm.flow.core.enums.PublishStatus;
 import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.FormService;
 import com.warm.flow.core.utils.AssertUtil;
+import com.warm.flow.core.utils.ClassUtil;
+import com.warm.flow.core.utils.CollUtil;
+import com.warm.flow.core.utils.ObjectUtil;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -44,12 +47,22 @@ public class FormServiceImpl extends WarmServiceImpl<FlowFormDao<Form>, Form> im
 
     @Override
     public boolean copyForm(Long id) {
-        return false;
+        Form form = ClassUtil.clone(getById(id));
+        AssertUtil.isTrue(ObjectUtil.isNull(form), ExceptionCons.NOT_FOUNT_DEF);
+        FlowFactory.dataFillHandler().idFill(form.setId(null));
+        form.setVersion(form.getVersion() + "_copy")
+                .setIsPublish(PublishStatus.UNPUBLISHED.getKey())
+                .setCreateTime(null)
+                .setUpdateTime(null);
+        return save(form);
     }
 
     @Override
     public Form getByCode(String formCode, String formVersion) {
-        return null;
+        List<Form> list = FlowFactory.formService().list(FlowFactory.newForm().setFormCode(formCode).setVersion(formVersion));
+        AssertUtil.isTrue(CollUtil.isEmpty(list), ExceptionCons.NOT_FOUNT_TASK);
+        AssertUtil.isTrue(list.size() > 1, ExceptionCons.FORM_NOT_ONE);
+        return list.get(0);
     }
 
     @Override
@@ -60,6 +73,8 @@ public class FormServiceImpl extends WarmServiceImpl<FlowFormDao<Form>, Form> im
 
     @Override
     public List<Form> list(String name) {
-        return Collections.emptyList();
+        List<Form> list = FlowFactory.formService().list(FlowFactory.newForm().setFormName(name));
+        AssertUtil.isTrue(CollUtil.isEmpty(list), ExceptionCons.NOT_FOUNT_TASK);
+        return list;
     }
 }
