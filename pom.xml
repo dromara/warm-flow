@@ -146,121 +146,92 @@
             </dependency>
 
             <dependency>
-                <groupId>org.noear</groupId>
-                <artifactId>solon-test</artifactId>
-                <version>${solon.version}</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-core</artifactId>
-                <version>${revision}</version>
+                <version>${warm-flow}</version>
             </dependency>
 
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-easy-query-core</artifactId>
-                <version>${revision}</version>
+                <version>${warm-flow}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-easy-query-solon-plugin</artifactId>
-                <version>${revision}</version>
+                <version>${warm-flow}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-easy-query-sb-starter</artifactId>
-                <version>${revision}</version>
+                <version>${warm-flow}</version>
             </dependency>
 
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-mybatis-core</artifactId>
-                <version>${revision}</version>
+                <version>${warm-flow}</version>
             </dependency>
 
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-mybatis-sb-starter</artifactId>
-                <version>${revision}</version>
+                <version>${warm-flow}</version>
             </dependency>
 
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-mybatis-solon-plugin</artifactId>
-                <version>${revision}</version>
+                <version>${warm-flow}</version>
             </dependency>
 
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-mybatis-plus-core</artifactId>
-                <version>${revision}</version>
+                <version>${warm-flow}</version>
             </dependency>
 
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-mybatis-plus-sb-starter</artifactId>
-                <version>${revision}</version>
+                <version>${warm-flow}</version>
             </dependency>
 
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-mybatis-plus-solon-plugin</artifactId>
-                <version>${revision}</version>
+                <version>${warm-flow}</version>
             </dependency>
 
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-jpa-core</artifactId>
-                <version>${revision}</version>
+                <version>${warm-flow}</version>
             </dependency>
 
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-jpa-sb-starter</artifactId>
-                <version>${revision}</version>
+                <version>${warm-flow}</version>
             </dependency>
 
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-jpa-solon-plugin</artifactId>
-                <version>${revision}</version>
+                <version>${warm-flow}</version>
             </dependency>
 
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-jpa-jakarta-core</artifactId>
-                <version>${revision}</version>
+                <version>${warm-flow}</version>
             </dependency>
 
 <!--            <dependency>-->
 <!--                <groupId>io.github.minliuhua</groupId>-->
 <!--                <artifactId>warm-flow-jpa-jakarta-sb-starter</artifactId>-->
-<!--                <version>${revision}</version>-->
+<!--                <version>${warm-flow}</version>-->
 <!--            </dependency>-->
-
-
-            <!--for test-->
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>${junit.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.mysql</groupId>
-                <artifactId>mysql-connector-j</artifactId>
-                <version>${mysql.version}</version>
-                <optional>true</optional>
-            </dependency>
-
-            <dependency>
-                <groupId>com.zaxxer</groupId>
-                <artifactId>HikariCP</artifactId>
-                <version>${HikariCP.version}</version>
-                <optional>true</optional>
-            </dependency>
 
             <dependency>
                 <groupId>org.noear</groupId>
@@ -273,12 +244,6 @@
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j-api.version}</version>
             </dependency>
-
-<!--            <dependency>-->
-<!--                <groupId>com.oracle.database.jdbc</groupId>-->
-<!--                <artifactId>ojdbc6</artifactId>-->
-<!--                <version>${oracle.version}</version>-->
-<!--            </dependency>-->
 
             <!-- mybatis-flex 依赖 -->
             <dependency>
@@ -305,32 +270,32 @@
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-mybatis-flex-core</artifactId>
-                <version>${revision}</version>
+                <version>${warm-flow}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-mybatis-flex-sb-starter</artifactId>
-                <version>${revision}</version>
+                <version>${warm-flow}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-mybatis-flex-solon-plugin</artifactId>
-                <version>${revision}</version>
+                <version>${warm-flow}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-plugin-spel</artifactId>
-                <version>${revision}</version>
+                <version>${warm-flow}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-plugin-modes-sb</artifactId>
-                <version>${revision}</version>
+                <version>${warm-flow}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-plugin-modes-solon</artifactId>
-                <version>${revision}</version>
+                <version>${warm-flow}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -354,33 +319,60 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <Implementation-Version>${revision}</Implementation-Version>
+                            <Implementation-Version>${warm-flow}</Implementation-Version>
                         </manifestEntries>
                     </archive>
                 </configuration>
             </plugin>
-            <!-- 统一版本号管理 -->
+            <!-- Source -->
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>flatten-maven-plugin</artifactId>
-                <version>${flatten-maven-plugin.version}</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Javadoc -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.4</version>
                 <configuration>
-                    <updatePomFile>true</updatePomFile>
-                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                    <windowtitle>Warm-Flow</windowtitle>
+                    <doctitle>Warm-Flow</doctitle>
+                    <show>private</show>
+                    <detectLinks>false</detectLinks>
+                    <detectOfflineLinks>true</detectOfflineLinks>
+                    <linksource>true</linksource>
+                    <additionalparam>-Xdoclint:none</additionalparam>
+                    <detectJavaApiLink>true</detectJavaApiLink>
+                    <source>8</source>
                 </configuration>
                 <executions>
                     <execution>
-                        <id>flatten</id>
-                        <phase>process-resources</phase>
+                        <id>attach-javadocs</id>
                         <goals>
-                            <goal>flatten</goal>
+                            <goal>jar</goal>
                         </goals>
                     </execution>
+                </executions>
+            </plugin>
+            <!-- 以下是GPG -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
                     <execution>
-                        <id>flatten.clean</id>
-                        <phase>clean</phase>
+                        <id>sign-artifacts</id>
                         <goals>
-                            <goal>clean</goal>
+                            <goal>sign</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -388,94 +380,30 @@
         </plugins>
     </build>
 
-    <!-- source ~/.bash_profile  -->
-<!--    mvn clean deploy -s /Users/minliuhua/Desktop/mdata/ruanjian/apache-maven-3.8.8/conf/settings.xml -P release-->
-    <profiles>
-        <profile>
-            <id>release</id>
-            <distributionManagement>
-                <repository>
-                    <id>ossrh</id>
-                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-                </repository>
-                <snapshotRepository>
-                    <id>ossrh</id>
-                    <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-                </snapshotRepository>
-            </distributionManagement>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.7</version>
-                        <extensions>true</extensions>
-                        <configuration>
-                            <serverId>ossrh</serverId>
-                            <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                            <stagingProgressTimeoutMinutes>10</stagingProgressTimeoutMinutes>
-                        </configuration>
-                    </plugin>
-                    <!-- Source -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
-                        <version>3.2.1</version>
-                        <executions>
-                            <execution>
-                                <id>ossrh</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>jar-no-fork</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>2.9.1</version>
-                        <configuration>
-                            <show>private</show>
-                            <nohelp>true</nohelp>
-                            <charset>UTF-8</charset>
-                            <encoding>UTF-8</encoding>
-                            <docencoding>UTF-8</docencoding>
-                            <additionalparam>-Xdoclint:none</additionalparam>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <!-- Gpg Signature -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.5</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-deploy-plugin</artifactId>
-                        <version>2.8.2</version>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <name>snapshots</name>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <name>releases</name>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 
+    <!-- mvn clean deploy -->
+    <!-- mvn clean install -Dmaven.test.skip=true   -->
+    <!-- 跳过测试：mvn package -Dmaven.test.skip=true   -->
+    <!-- 检测依赖最新版本：mvn versions:display-dependency-updates  -->
+    <!-- 统一修改版本号：mvn versions:set -DnewVersion=3.0  -->
+    <!-- mvn versions:commit -->
+    <!-- mvn versions:revert -->
+    <!-- mvn -N versions:update-child-modules  -->
+    <!-- mvn versions:set -DnewVersion=2.0 -DprocessAllModules=true -DallowSnapshots=true -->
+
+    <!-- mvn clean source:jar install -->
+    <!-- mvn deploy -Dmaven.test.skip=true -e -P release -->
+    <!-- mvn deploy -e -P release -->
 </project>
