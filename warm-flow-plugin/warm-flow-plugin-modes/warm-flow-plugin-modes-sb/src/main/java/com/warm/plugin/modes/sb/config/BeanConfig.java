@@ -104,7 +104,7 @@ public class BeanConfig {
     }
 
     @Bean
-    public FlowUserDao userDao() {
+    public FlowUserDao flowUserDao() {
         return new FlowUserDaoImpl();
     }
 

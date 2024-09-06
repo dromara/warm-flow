@@ -103,7 +103,7 @@ public class BeanConfig {
     }
 
     @Bean(injected = true)
-    public FlowUserDao userDao() {
+    public FlowUserDao flowUserDao() {
         return new FlowUserDaoImpl();
     }
 
