@@ -139,6 +139,7 @@
     import serial from "./js/serial.js";
     import end from "./js/end.js";
     import skip from "./js/skip.js";
+    import {logicFlowJsonToFlowXml} from "./js/tool.js";
 
 
     window.onload = function () {
@@ -216,13 +217,25 @@
             },
         ])
 
+        // 控制面板-清空画布
+        lf.extension.control.addItem({
+            iconClass: 'lf-control-clear',
+            title: 'clear',
+            text: '清空',
+            onClick: (lf, ev) => {
+                lf.clearData()
+            }
+        })
+
         // 控制面板
         lf.extension.control.addItem({
-            //iconClass: 'lf-control-save',
+            iconClass: 'lf-control-save',
             title: '',
             text: '保存',
             onClick: (lf, ev) => {
                 console.log('getGraphData', lf.getGraphData())
+                let xmlString = logicFlowJsonToFlowXml(lf.getGraphData());
+                console.log("this.xmlString:", xmlString)
             }
         })
 
