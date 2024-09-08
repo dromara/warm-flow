@@ -183,5 +183,35 @@ public interface TaskService extends IWarmService<Task> {
      */
     Task getNextTask(List<Task> tasks);
 
-
+    /**
+     * 撤销
+     * 1、只能撤销自己处理过，下一个新任务还未被办理的节点
+     * 2、撤销之后返回到当前节点未处理状态
+     * 3、处理人取历史任务表中得处理人
+     * 4、结束节点不能撤销
+     * 5、记录留痕
+     * 流程实例状态，我根据他传的值改实例状态，历史任务表状态是这次操作记录的时候，我保存数据用这个历史任务状态。
+     *
+     * @param flowParams        流程状态，历史任务状态
+     * @param modifyHandler     当前处理人，当前处理人的权限
+     * @return Task
+     * @author xiarg
+     * @date 2024/5/10 13:59
+     */
+    Task revoke(FlowParams flowParams, ModifyHandler modifyHandler);
+    /**
+     * 取回
+     *
+     * @param flowParams        flowStatus-流程状态（必输），
+     *                          hisStatus-历史任务状态（必输），
+     *                          variable-流程不变量，
+     *                          hisTaskExt业务详情扩展字段
+     * @param modifyHandler     curUser-当前处理人（必输），
+     *                          permissionFlag-当前处理人的权限（必输），
+     *                          taskId-任务id（必输）
+     * @return Task
+     * @author Instance
+     * @date 2024/5/10 13:59
+     */
+    Instance retrieve(FlowParams flowParams, ModifyHandler modifyHandler);
 }

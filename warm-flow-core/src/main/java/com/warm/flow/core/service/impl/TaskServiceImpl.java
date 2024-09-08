@@ -89,7 +89,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 判断当前处理人是否有权限处理
         checkAuth(nowNode, task, flowParams.getPermissionFlag());
 
-        //或签、会签、票签逻辑处理
+        // 或签、会签、票签逻辑处理
         if (cooperate(nowNode, task, flowParams)) {
             return instance;
         }
@@ -801,5 +801,43 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     private boolean judgeActivityStatus(Definition definition, Instance instance) {
         return Objects.equals(definition.getActivityStatus(), ActivityStatus.ACTIVITY.getKey())
                 && Objects.equals(instance.getActivityStatus(), ActivityStatus.ACTIVITY.getKey());
+    }
+
+    @Override
+    public Task revoke(FlowParams flowParams, ModifyHandler modifyHandler) {
+        return null;
+    }
+
+    @Override
+    public Instance retrieve(FlowParams flowParams, ModifyHandler modifyHandler) {
+        AssertUtil.isTrue(StringUtils.isNotEmpty(flowParams.getMessage())
+                && flowParams.getMessage().length() > 500, ExceptionCons.MSG_OVER_LENGTH);
+        // 1、流程发起人发起,验证权限是不是当前任务的发起人
+        Task task = FlowFactory.taskService().getById(modifyHandler.getTaskId());
+        AssertUtil.isTrue(ObjectUtil.isNull(task), ExceptionCons.NOT_FOUNT_TASK);
+        AssertUtil.isTrue(StringUtils.isEmpty(modifyHandler.getCurUser()), ExceptionCons.CUR_USER_NOT_EMPTY);
+        Instance instance = FlowFactory.insService().getById(task.getInstanceId());
+        AssertUtil.isTrue(ObjectUtil.isNull(instance), ExceptionCons.NOT_FOUNT_INSTANCE);
+        AssertUtil.isFalse(instance.getCreateBy().equals(modifyHandler.getCurUser()), ExceptionCons.NOT_TASK_PROMOTER_NOT_RETRIEVE);
+        // 2、设置流程参数
+        flowParams.setHandler(modifyHandler.getCurUser());
+        flowParams.setSkipType(SkipType.PASS.getKey());
+        flowParams.setMessage(modifyHandler.getMessage());
+        // 给当前处理人增加当前节点的处理权限
+        flowParams.setPermissionFlag(
+                CollUtil.listAddToNew(modifyHandler.getPermissionFlag(),
+                        FlowFactory.userService().getPermission(task.getId()),
+                        true)
+                );
+        // 设置跳转开始节点，实现跳转时跳转到开始节点
+        flowParams.setNodeCode(
+                FlowFactory.nodeService().getOne(
+                        FlowFactory.newNode()
+                                .setNodeType(NodeType.START.getKey())
+                                .setDefinitionId(instance.getDefinitionId())
+                ).getNodeCode()
+        );
+        // 3、取回之后到流程发起节点
+        return skip(flowParams, task);
     }
 }

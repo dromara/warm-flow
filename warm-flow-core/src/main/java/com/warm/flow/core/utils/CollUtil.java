@@ -20,8 +20,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
+ * 集合工具类
+ *
  * @author warm
- * @description: 集合工具类
  * @date: 2023/5/18 9:39
  */
 public class CollUtil {
@@ -38,7 +39,7 @@ public class CollUtil {
     /**
      * 获取集合的第一个
      *
-     * @param list
+     * @param list  集合参数
      */
     public static <T> T getOne(List<T> list) {
         return CollUtil.isEmpty(list) ? null : list.get(0);
@@ -66,7 +67,7 @@ public class CollUtil {
     }
 
     /**
-     * 判断给定的collection列表中是否包含数组array 判断给定的数组array中是否包含给定的元素value
+     * 判断集合中是否包含数组中的任何一个元素
      *
      * @param collection 给定的集合
      * @param array      给定的数组
@@ -75,18 +76,17 @@ public class CollUtil {
     public static boolean containsAny(Collection<String> collection, String... array) {
         if (isEmpty(collection) || ArrayUtil.isEmpty(array)) {
             return false;
-        } else {
-            for (String str : array) {
-                if (collection.contains(str)) {
-                    return true;
-                }
-            }
-            return false;
         }
+        for (String str : array) {
+            if (collection.contains(str)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
-     * 判断给定的collection1列表中是否包含collection2 判断给定的collection2中是否包含给定的元素value
+     * 判断集合1中是否包含集合2中的任何一个元素
      *
      * @param collection1 给定的集合1
      * @param collection2 给定的集合2
@@ -95,18 +95,17 @@ public class CollUtil {
     public static boolean containsAny(Collection<String> collection1, Collection<String> collection2) {
         if (isEmpty(collection1) || isEmpty(collection2)) {
             return false;
-        } else {
-            for (String str : collection2) {
-                if (collection1.contains(str)) {
-                    return true;
-                }
-            }
-            return false;
         }
+        for (String str : collection2) {
+            if (collection1.contains(str)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
-     * 判断给定的collection1列表中是否包含collection2 判断给定的collection2中是否完全不包含给定的元素value
+     * 判断集合1中是否不包含集合2中的任何一个元素
      *
      * @param collection1 给定的集合1
      * @param collection2 给定的集合2
@@ -121,7 +120,7 @@ public class CollUtil {
      *
      * @param str 字符串
      * @param sep 分隔符
-     * @return
+     * @return List<String>
      */
     public static List<String> strToColl(String str, String sep) {
         return StringUtils.isEmpty(str) ? null : Arrays.asList(str.split(sep));
@@ -130,25 +129,34 @@ public class CollUtil {
     /**
      * 集合add新的对象，返回新的集合
      *
-     * @param list 集合
-     * @param t    对象
-     * @return
+     * @param list              集合
+     * @param t                 对象
+     * @param removeRepeat      是否去重
+     * @return List<T>
      */
-    public static <T> List<T> listAddToNew(List<T> list, T t) {
-        return listAddToNew(list, Collections.singletonList(t));
+    public static <T> List<T> listAddToNew(List<T> list, T t, Boolean removeRepeat) {
+        return listAddToNew(list, Collections.singletonList(t), removeRepeat);
     }
 
     /**
      * 集合add新的对象，返回新的集合
      *
-     * @param list  集合
-     * @param listA 对象
-     * @return
+     * @param list              集合
+     * @param listA             集合
+     * @param removeRepeat      是否去重
+     * @return List<T>
      */
-    public static <T> List<T> listAddToNew(List<T> list, List<T> listA) {
-        List<T> newList = new ArrayList<>();
-        newList.addAll(listA);
-        newList.addAll(list);
+    public static <T> List<T> listAddToNew(List<T> list, List<T> listA, Boolean removeRepeat) {
+        List<T> newList = new ArrayList<>(list);
+        if (removeRepeat) {
+            for (T t : listA) {
+                if (!newList.contains(t)) {
+                    newList.add(t);
+                }
+            }
+        }else {
+            newList.addAll(listA);
+        }
         return newList;
     }
 
