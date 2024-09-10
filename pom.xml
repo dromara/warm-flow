@@ -42,6 +42,7 @@
         <module>warm-flow-core</module>
         <module>warm-flow-orm</module>
         <module>warm-flow-plugin</module>
+        <module>warm-flow-ui</module>
     </modules>
 
     <properties>
@@ -143,6 +144,12 @@
                 <groupId>org.noear</groupId>
                 <artifactId>solon.logging.logback</artifactId>
                 <version>${solon.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.minliuhua</groupId>
+                <artifactId>warm-flow-ui</artifactId>
+                <version>${warm-flow}</version>
             </dependency>
 
             <dependency>
