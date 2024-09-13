@@ -48,7 +48,7 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser> implements FlowUserDa
     public int deleteByTaskIds(List<Long> taskIdList) {
         FlowUser entity = TenantDeleteUtil.getEntity(newEntity());
         if (StringUtils.isNotEmpty(entity.getDelFlag())) {
-            getMapper().updateByTaskIdsLogic(taskIdList, entity, FlowFactory.getFlowConfig().getLogicDeleteValue(),
+            return getMapper().updateByTaskIdsLogic(taskIdList, entity, FlowFactory.getFlowConfig().getLogicDeleteValue(),
                     entity.getDelFlag());
         }
         return getMapper().deleteByTaskIds(taskIdList, entity);
