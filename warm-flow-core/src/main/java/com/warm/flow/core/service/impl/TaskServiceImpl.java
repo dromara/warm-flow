@@ -411,7 +411,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
         // 记录受托人处理任务记录
         HisTask hisTask = FlowFactory.hisTaskService().setDeputeHisTask(task, flowParams, entrustedUser);
-        FlowFactory.hisTaskService().saveBatch(CollUtil.toList(hisTask));
+        FlowFactory.hisTaskService().save(hisTask);
         FlowFactory.userService().removeById(entrustedUser.getId());
 
         // 查询委托人，如果在flow_user不存在，则给委托人新增待办记录
@@ -424,8 +424,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             FlowFactory.userService().save(newUser);
         }
 
-        // 删除受托人
-        FlowFactory.userService().removeById(entrustedUser.getId());
         return true;
     }
 
