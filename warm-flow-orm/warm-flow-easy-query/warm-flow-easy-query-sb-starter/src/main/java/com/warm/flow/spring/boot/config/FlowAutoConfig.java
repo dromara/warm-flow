@@ -33,7 +33,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ConditionalOnProperty(value = "warm-flow.enabled", havingValue = "true", matchIfMissing = true)
-@EnableConfigurationProperties(WarmFlowProperties.class)
 public class FlowAutoConfig extends BeanConfig {
 
     @Override

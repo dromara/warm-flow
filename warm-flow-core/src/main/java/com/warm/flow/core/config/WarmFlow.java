@@ -22,12 +22,14 @@ import com.warm.flow.core.utils.ExpressionUtil;
 import com.warm.flow.core.utils.ObjectUtil;
 import com.warm.flow.core.utils.StringUtils;
 
+import java.io.Serializable;
+
 /**
  * WarmFlow属性配置文件
  *
  * @author warm
  */
-public class WarmFlow {
+public class WarmFlow implements Serializable {
 
     /**
      * 开关

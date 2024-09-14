@@ -26,6 +26,8 @@ import com.warm.flow.orm.entity.*;
 import com.warm.plugin.modes.sb.utils.SpringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
@@ -39,6 +41,7 @@ import java.util.Objects;
  */
 @SuppressWarnings("rawtypes unchecked")
 @Import(SpringUtil.class)
+@ConditionalOnProperty(value = "warm-flow.enabled", havingValue = "true", matchIfMissing = true)
 public class BeanConfig {
 
     private static final Logger log = LoggerFactory.getLogger(BeanConfig.class);
@@ -114,6 +117,7 @@ public class BeanConfig {
     }
 
     @Bean
+    @ConfigurationProperties(prefix = "warm-flow")
     public WarmFlow initFlow() {
         setNewEntity();
         FrameInvoker.setCfgFunction((key) -> Objects.requireNonNull(SpringUtil.getBean(Environment.class)).getProperty(key));

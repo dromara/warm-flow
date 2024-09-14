@@ -26,12 +26,6 @@
     <dependency>
       <groupId>com.easy-query</groupId>
       <artifactId>sql-springboot-starter</artifactId>
-      <version>${easy-query.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-configuration-processor</artifactId>
     </dependency>
 
     <dependency>

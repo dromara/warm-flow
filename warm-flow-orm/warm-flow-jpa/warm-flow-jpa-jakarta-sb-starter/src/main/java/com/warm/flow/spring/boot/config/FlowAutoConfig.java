@@ -16,15 +16,16 @@
 package com.warm.flow.spring.boot.config;
 
 import com.warm.flow.orm.utils.FlowJpaConfigCons;
+import com.warm.plugin.modes.sb.config.BeanConfig;
 import com.warm.plugin.modes.sb.utils.SpringUtil;
 import jakarta.persistence.spi.PersistenceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
@@ -36,7 +37,7 @@ import javax.sql.DataSource;
  * @date: 2023/6/5 23:01
  */
 @Configuration
-@Import(SpringUtil.class)
+@ConditionalOnProperty(value = "warm-flow.enabled", havingValue = "true", matchIfMissing = true)
 public class FlowAutoConfig  extends BeanConfig {
 
     private static final Logger log = LoggerFactory.getLogger(FlowAutoConfig.class);
