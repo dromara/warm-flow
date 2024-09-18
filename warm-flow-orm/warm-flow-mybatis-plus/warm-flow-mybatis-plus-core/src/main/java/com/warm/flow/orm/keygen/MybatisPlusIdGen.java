@@ -13,20 +13,26 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.warm.flow.core.keyGen;
+package com.warm.flow.orm.keygen;
+
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.warm.flow.core.keygen.KenGen;
 
 /**
- * 注解生成接口
+ * MybatisPlusIdGen
  *
  * @author warm
  */
-public interface KenGen {
+public class MybatisPlusIdGen implements KenGen {
+
 
     /**
-     * 获得下一个ID (该方法是线程安全的)
-     *
-     * @return SnowflakeId
+     * 获取唯一ID
+     * @return id
      */
-    public long nextId();
+    @Override
+    public synchronized long nextId() {
+        return IdWorker.getId();
+    }
 
 }

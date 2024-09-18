@@ -147,6 +147,12 @@
             </dependency>
 
             <dependency>
+                <groupId>com.easy-query</groupId>
+                <artifactId>sql-springboot-starter</artifactId>
+                <version>${easy-query.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-ui</artifactId>
                 <version>${warm-flow}</version>

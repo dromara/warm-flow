@@ -70,8 +70,8 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         List<Node> allNodes = combine.getAllNodes();
         // 所有的流程连线
         List<Skip> allSkips = combine.getAllSkips();
-        // 根据不同策略进行新增或者更新
-        updateFlow(definition, allNodes, allSkips);
+        // 根据不同策略进行新增
+        insertFlow(definition, allNodes, allSkips);
         return definition;
     }
 
@@ -583,7 +583,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
      * @param allNodes
      * @param allSkips
      */
-    private void updateFlow(Definition definition, List<Node> allNodes, List<Skip> allSkips) {
+    private void insertFlow(Definition definition, List<Node> allNodes, List<Skip> allSkips) {
         String version = getNewVersion(definition);
         definition.setVersion(version);
         for (Node node : allNodes) {

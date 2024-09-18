@@ -42,7 +42,7 @@ public class WarmFlow implements Serializable {
     private boolean banner = true;
 
     /**
-     * id生成器类型, 不填默认19位雪花算法, SnowId14:14位，SnowId15:15位， SnowFlake19：19位
+     * id生成器类型, 不填默认为orm扩展自带生成器或者warm-flow内置的19位雪花算法, SnowId14:14位，SnowId15:15位， SnowFlake19：19位
      */
     private String keyType = FlowCons.SNOWID19;
 

@@ -15,6 +15,9 @@
  */
 package com.warm.flow.spring.boot.config;
 
+import com.warm.flow.core.config.WarmFlow;
+import com.warm.flow.core.utils.IdUtils;
+import com.warm.flow.orm.keygen.MybatisPlusIdGen;
 import com.warm.plugin.modes.sb.config.BeanConfig;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -30,4 +33,9 @@ import org.springframework.context.annotation.Configuration;
 @MapperScan("com.warm.flow.orm.mapper")
 public class FlowAutoConfig extends BeanConfig {
 
+    @Override
+    public void after(WarmFlow flowConfig) {
+        // 设置Mybatis-Plus默认主键生成器
+        IdUtils.setInstance(new MybatisPlusIdGen());
+    }
 }

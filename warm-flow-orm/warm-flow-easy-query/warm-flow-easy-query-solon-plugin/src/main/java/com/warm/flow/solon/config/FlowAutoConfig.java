@@ -25,6 +25,7 @@ import com.warm.flow.core.config.WarmFlow;
 import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.orm.config.WarmFlowLogicDeleteFakeStrategy;
 import com.warm.flow.orm.config.WarmFlowLogicDeleteStrategy;
+import com.warm.plugin.modes.solon.config.BeanConfig;
 import org.noear.solon.Solon;
 import org.noear.solon.annotation.Bean;
 import org.noear.solon.annotation.Configuration;
@@ -35,10 +36,10 @@ import org.noear.solon.annotation.Configuration;
  * @date: 2023/6/5 23:01
  */
 @Configuration
-public class FlowAutoConfig {
+public class FlowAutoConfig extends BeanConfig {
 
     @Bean
-    public WarmFlow initFlow(@Db EasyEntityQuery entityQuery, WarmFlow flowConfig) {
+    public WarmFlow after(@Db EasyEntityQuery entityQuery, WarmFlow flowConfig) {
         FrameInvoker.setBeanFunction((clazz)->{
             if (clazz.isAssignableFrom(EasyEntityQuery.class)) {
                 return entityQuery;

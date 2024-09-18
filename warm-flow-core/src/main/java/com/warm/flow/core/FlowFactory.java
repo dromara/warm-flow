@@ -18,7 +18,6 @@ package com.warm.flow.core;
 import com.warm.flow.core.config.WarmFlow;
 import com.warm.flow.core.entity.*;
 import com.warm.flow.core.handler.DataFillHandler;
-import com.warm.flow.core.handler.DefaultDataFillHandler;
 import com.warm.flow.core.handler.TenantHandler;
 import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.core.service.*;
@@ -202,7 +201,7 @@ public class FlowFactory {
         } catch (Exception ignored) {
         }
         if (ObjectUtil.isNull(o)) {
-            return FlowFactory.dataFillHandler = new DefaultDataFillHandler();
+            return FlowFactory.dataFillHandler = new DataFillHandler() {};
         }
         return FlowFactory.dataFillHandler = o;
     }

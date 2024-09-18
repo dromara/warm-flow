@@ -15,6 +15,11 @@
  */
 package com.warm.flow.solon.config;
 
+import com.warm.flow.core.FlowFactory;
+import com.warm.flow.core.config.WarmFlow;
+import com.warm.flow.core.utils.IdUtils;
+import com.warm.flow.orm.keygen.MybatisPlusIdGen;
+import org.noear.solon.annotation.Bean;
 import org.noear.solon.annotation.Configuration;
 
 /**
@@ -24,5 +29,10 @@ import org.noear.solon.annotation.Configuration;
  */
 @Configuration
 public class FlowAutoConfig {
-
+    @Bean
+    public WarmFlow after() {
+        // 设置Mybatis-Plus默认主键生成器
+        IdUtils.setInstance(new MybatisPlusIdGen());
+        return FlowFactory.getFlowConfig();
+    }
 }

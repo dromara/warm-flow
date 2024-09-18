@@ -23,7 +23,6 @@ import com.warm.flow.orm.config.WarmFlowLogicDeleteStrategy;
 import com.warm.plugin.modes.sb.config.BeanConfig;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 /**

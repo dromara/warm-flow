@@ -13,7 +13,7 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.warm.flow.core.keyGen;
+package com.warm.flow.core.keygen;
 
 /**
  * warm 生成15位有序id
@@ -88,11 +88,4 @@ public class SnowFlakeId15 implements KenGen {
         return System.currentTimeMillis();
     }
 
-    public static void main(String[] args) {
-        SnowFlakeId15 idGenerator = new SnowFlakeId15(1L);
-
-        for (int i = 0; i < 10; i++) {
-            System.out.println(idGenerator.nextId());
-        }
-    }
 }

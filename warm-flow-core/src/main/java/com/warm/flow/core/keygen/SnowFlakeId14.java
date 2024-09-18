@@ -13,7 +13,7 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.warm.flow.core.keyGen;
+package com.warm.flow.core.keygen;
 
 /**
  * warm 生成14位有序id
@@ -148,20 +148,4 @@ public class SnowFlakeId14 implements KenGen {
         return System.currentTimeMillis();
     }
 
-    /**
-     * 测试
-     */
-    public static void main(String[] args) {
-        System.out.println("开始：" + System.currentTimeMillis());
-
-        SnowFlakeId14 idWorker = new SnowFlakeId14(1);
-
-        for (int i = 0; i < 10; i++) {
-            long id = idWorker.nextId();
-            System.out.println(id + "长度=" + String.valueOf(id).length());
-
-        }
-
-        System.out.println("结束：" + System.currentTimeMillis());
-    }
 }

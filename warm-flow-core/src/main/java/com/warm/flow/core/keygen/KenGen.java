@@ -13,25 +13,20 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.warm.flow.solon.config;
-
-import com.warm.flow.core.config.WarmFlow;
-import com.warm.flow.core.utils.IdUtils;
-import com.warm.flow.orm.keygen.MybatisFlexIdGen;
-import org.noear.solon.annotation.Bean;
-import org.noear.solon.annotation.Configuration;
+package com.warm.flow.core.keygen;
 
 /**
+ * 注解生成接口
+ *
  * @author warm
- * @description: 工作流bean注册配置
- * @date: 2023/6/5 23:01
  */
-@Configuration
-public class FlowAutoConfig {
+public interface KenGen {
 
-    @Bean
-    public void after(WarmFlow flowConfig) {
-        // 设置Mybatis-Plus默认主键生成器
-        IdUtils.setInstance(new MybatisFlexIdGen());
-    }
+    /**
+     * 获得下一个ID (该方法是线程安全的)
+     *
+     * @return SnowflakeId
+     */
+    public long nextId();
+
 }
