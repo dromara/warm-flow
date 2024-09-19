@@ -63,6 +63,7 @@
         <junit.version>4.13.2</junit.version>
         <solon.version>2.8.4</solon.version>
         <snack3.version>3.2.88</snack3.version>
+        <jackson.version>2.13.5</jackson.version>
         <slf4j-api.version>1.7.36</slf4j-api.version>
         <oracle.version>11.2.0.4</oracle.version>
         <easy-query.version>2.0.63</easy-query.version>
@@ -253,6 +254,12 @@
             </dependency>
 
             <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j-api.version}</version>
@@ -308,6 +315,16 @@
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-plugin-modes-solon</artifactId>
+                <version>${warm-flow}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.minliuhua</groupId>
+                <artifactId>warm-flow-plugin-snack</artifactId>
+                <version>${warm-flow}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.minliuhua</groupId>
+                <artifactId>warm-flow-plugin-jackson</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
         </dependencies>

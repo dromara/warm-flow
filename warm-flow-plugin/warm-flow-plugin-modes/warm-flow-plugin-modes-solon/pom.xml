@@ -47,7 +47,10 @@
             <artifactId>warm-flow-jpa-core</artifactId>
             <optional>true</optional>
         </dependency>
-
+        <dependency>
+            <groupId>io.github.minliuhua</groupId>
+            <artifactId>warm-flow-plugin-snack</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

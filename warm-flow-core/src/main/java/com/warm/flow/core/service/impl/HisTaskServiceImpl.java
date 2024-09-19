@@ -87,31 +87,28 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
     public List<HisTask> setSkipInsHis(Task task, List<Node> nextNodes, FlowParams flowParams) {
         List<HisTask> hisTasks = new ArrayList<>();
         for (Node nextNode : nextNodes) {
-            HisTask hisTask = FlowFactory.newHisTask();
-            hisTask.setInstanceId(task.getInstanceId());
-            hisTask.setTaskId(task.getId());
-            if (ObjectUtil.isNotNull(flowParams.getCooperateType())) {
-                hisTask.setCooperateType(flowParams.getCooperateType());
-            } else {
-                hisTask.setCooperateType(CooperateType.APPROVAL.getKey());
-            }
-            hisTask.setNodeCode(task.getNodeCode());
-            hisTask.setNodeName(task.getNodeName());
-            hisTask.setNodeType(task.getNodeType());
-            hisTask.setDefinitionId(task.getDefinitionId());
-            hisTask.setCreateTime(task.getCreateTime());
-            hisTask.setTargetNodeCode(nextNode.getNodeCode());
-            hisTask.setTargetNodeName(nextNode.getNodeName());
-            hisTask.setApprover(flowParams.getHandler());
-            hisTask.setSkipType(NodeType.isStart(task.getNodeType()) ? SkipType.PASS.getKey() : flowParams.getSkipType());
-            hisTask.setFlowStatus(StringUtils.isNotEmpty(flowParams.getHisStatus())
+            HisTask hisTask = FlowFactory.newHisTask()
+                    .setInstanceId(task.getInstanceId())
+                    .setTaskId(task.getId())
+                    .setCooperateType(ObjectUtil.isNotNull(flowParams.getCooperateType())
+                        ? flowParams.getCooperateType(): CooperateType.APPROVAL.getKey())
+                    .setNodeCode(task.getNodeCode())
+                    .setNodeName(task.getNodeName())
+                    .setNodeType(task.getNodeType())
+                    .setDefinitionId(task.getDefinitionId())
+                    .setCreateTime(task.getCreateTime())
+                    .setTargetNodeCode(nextNode.getNodeCode())
+                    .setTargetNodeName(nextNode.getNodeName())
+                    .setApprover(flowParams.getHandler())
+                    .setSkipType(NodeType.isStart(task.getNodeType()) ? SkipType.PASS.getKey() : flowParams.getSkipType())
+                    .setFlowStatus(StringUtils.isNotEmpty(flowParams.getHisStatus())
                     ? flowParams.getHisStatus() : SkipType.isReject(flowParams.getSkipType())
-                    ? FlowStatus.REJECT.getKey() : FlowStatus.PASS.getKey());
-            hisTask.setFormCustom(task.getFormCustom());
-            hisTask.setFormPath(task.getFormPath());
-            hisTask.setMessage(flowParams.getMessage());
+                    ? FlowStatus.REJECT.getKey() : FlowStatus.PASS.getKey())
+                    .setFormCustom(task.getFormCustom())
+                    .setFormPath(task.getFormPath())
+                    .setMessage(flowParams.getMessage())
             //业务详情添加至历史记录
-            hisTask.setExt(flowParams.getHisTaskExt());
+                    .setExt(flowParams.getHisTaskExt());
             FlowFactory.dataFillHandler().idFill(hisTask);
             hisTasks.add(hisTask);
         }
@@ -123,29 +120,26 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
             , List<String> collaborators) {
         List<HisTask> hisTasks = new ArrayList<>();
         for (String collaborator : collaborators) {
-            HisTask hisTask = FlowFactory.newHisTask();
-            hisTask.setInstanceId(task.getInstanceId());
-            hisTask.setTaskId(task.getId());
-            if (ObjectUtil.isNotNull(flowParams.getCooperateType())) {
-                hisTask.setCooperateType(flowParams.getCooperateType());
-            } else {
-                hisTask.setCooperateType(CooperateType.APPROVAL.getKey());
-            }
-            hisTask.setCollaborator(collaborator);
-            hisTask.setNodeCode(task.getNodeCode());
-            hisTask.setNodeName(task.getNodeName());
-            hisTask.setNodeType(task.getNodeType());
-            hisTask.setDefinitionId(task.getDefinitionId());
-            hisTask.setTargetNodeCode(node.getNodeCode());
-            hisTask.setTargetNodeName(node.getNodeName());
-            hisTask.setApprover(flowParams.getHandler());
-            hisTask.setSkipType(flowParams.getSkipType());
-            hisTask.setFlowStatus(Objects.nonNull(flowParams.getHisStatus())
-                    ? flowParams.getHisStatus() : FlowStatus.APPROVAL.getKey());
-            hisTask.setFormCustom(task.getFormCustom());
-            hisTask.setFormPath(task.getFormPath());
-            hisTask.setMessage(flowParams.getMessage());
-            hisTask.setCreateTime(task.getCreateTime());
+            HisTask hisTask = FlowFactory.newHisTask()
+                    .setInstanceId(task.getInstanceId())
+                    .setTaskId(task.getId())
+                    .setCooperateType(ObjectUtil.isNotNull(flowParams.getCooperateType())
+                     ? flowParams.getCooperateType(): CooperateType.APPROVAL.getKey())
+                    .setCollaborator(collaborator)
+                    .setNodeCode(task.getNodeCode())
+                    .setNodeName(task.getNodeName())
+                    .setNodeType(task.getNodeType())
+                    .setDefinitionId(task.getDefinitionId())
+                    .setTargetNodeCode(node.getNodeCode())
+                    .setTargetNodeName(node.getNodeName())
+                    .setApprover(flowParams.getHandler())
+                    .setSkipType(flowParams.getSkipType())
+                    .setFlowStatus(Objects.nonNull(flowParams.getHisStatus())
+                     ? flowParams.getHisStatus() : FlowStatus.APPROVAL.getKey())
+                    .setFormCustom(task.getFormCustom())
+                    .setFormPath(task.getFormPath())
+                    .setMessage(flowParams.getMessage())
+                    .setCreateTime(task.getCreateTime());
             FlowFactory.dataFillHandler().idFill(hisTask);
             hisTasks.add(hisTask);
         }

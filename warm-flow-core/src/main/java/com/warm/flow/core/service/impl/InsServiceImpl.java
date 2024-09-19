@@ -28,11 +28,9 @@ import com.warm.flow.core.listener.ListenerVariable;
 import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.InsService;
 import com.warm.flow.core.utils.*;
-import org.noear.snack.ONode;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 流程实例Service业务层处理
@@ -182,23 +180,20 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         Instance instance = FlowFactory.newIns();
         Date now = new Date();
         FlowFactory.dataFillHandler().idFill(instance);
-        instance.setDefinitionId(firstBetweenNode.getDefinitionId());
-        instance.setBusinessId(businessId);
-        instance.setNodeType(firstBetweenNode.getNodeType());
-        instance.setNodeCode(firstBetweenNode.getNodeCode());
-        instance.setNodeName(firstBetweenNode.getNodeName());
-        instance.setFlowStatus(ObjectUtil.isNotNull(flowParams.getFlowStatus())
-                ? flowParams.getFlowStatus() : FlowStatus.TOBESUBMIT.getKey());
-        instance.setActivityStatus(ActivityStatus.ACTIVITY.getKey());
-        Map<String, Object> variable = flowParams.getVariable();
-        if (MapUtil.isNotEmpty(variable)) {
-            instance.setVariable(ONode.serialize(variable));
-        }
         // 关联业务id,起始后面可以不用到业务id,传业务id目前来看只是为了批量创建流程的时候能创建出有区别化的流程,也是为了后期需要用到businessId。
-        instance.setCreateTime(now);
-        instance.setUpdateTime(now);
-        instance.setCreateBy(flowParams.getHandler());
-        instance.setExt(flowParams.getExt());
+        instance.setDefinitionId(firstBetweenNode.getDefinitionId())
+                .setBusinessId(businessId)
+                .setNodeType(firstBetweenNode.getNodeType())
+                .setNodeCode(firstBetweenNode.getNodeCode())
+                .setNodeName(firstBetweenNode.getNodeName())
+                .setFlowStatus(ObjectUtil.isNotNull(flowParams.getFlowStatus())? flowParams.getFlowStatus()
+                        : FlowStatus.TOBESUBMIT.getKey())
+                .setActivityStatus(ActivityStatus.ACTIVITY.getKey())
+                .setVariable(FlowFactory.jsonConvert.mapToStr(flowParams.getVariable()))
+                .setCreateTime(now)
+                .setUpdateTime(now)
+                .setCreateBy(flowParams.getHandler())
+                .setExt(flowParams.getExt());
         return instance;
     }
 

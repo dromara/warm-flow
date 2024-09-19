@@ -5,18 +5,16 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.github.minliuhua</groupId>
-        <artifactId>warm-flow</artifactId>
+        <artifactId>warm-flow-plugin</artifactId>
         <version>1.2.7</version>
     </parent>
 
-    <artifactId>warm-flow-plugin</artifactId>
+    <artifactId>warm-flow-plugin-json</artifactId>
     <packaging>pom</packaging>
 
     <modules>
-        <module>warm-flow-plugin-expression</module>
-        <module>warm-flow-plugin-json</module>
-        <module>warm-flow-plugin-modes</module>
+        <module>warm-flow-plugin-snack</module>
+        <module>warm-flow-plugin-jackson</module>
     </modules>
-
 
 </project>

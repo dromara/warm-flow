@@ -15,14 +15,22 @@
  */
 package com.warm.flow.core.config;
 
+import com.warm.flow.core.FlowFactory;
+import com.warm.flow.core.constant.ExceptionCons;
 import com.warm.flow.core.constant.FlowConfigCons;
 import com.warm.flow.core.constant.FlowCons;
+import com.warm.flow.core.expression.ExpressionStrategy;
 import com.warm.flow.core.invoker.FrameInvoker;
+import com.warm.flow.core.json.JsonConvert;
 import com.warm.flow.core.utils.ExpressionUtil;
 import com.warm.flow.core.utils.ObjectUtil;
 import com.warm.flow.core.utils.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.util.Iterator;
+import java.util.ServiceLoader;
 
 /**
  * WarmFlow属性配置文件
@@ -30,6 +38,8 @@ import java.io.Serializable;
  * @author warm
  */
 public class WarmFlow implements Serializable {
+
+    private static final Logger log = LoggerFactory.getLogger(WarmFlow.class);
 
     /**
      * 开关
@@ -104,9 +114,37 @@ public class WarmFlow implements Serializable {
         flowConfig.setDataSourceType(FrameInvoker.getCfg(FlowConfigCons.DATA_SOURCE_TYPE));
         printBanner(flowConfig);
 
-        // 通过SPI机制加载条件表达式策略实现类
-        ExpressionUtil.load();
+        // 通过SPI机制
+        spiLoad();
         return flowConfig;
+    }
+    public static void spiLoad() {
+        // 通过SPI机制加载条件表达式策略实现类
+        ServiceLoader<ExpressionStrategy> expressionServiceLoader = ServiceLoader.load(ExpressionStrategy.class);
+        Iterator<ExpressionStrategy> expressionIterator = expressionServiceLoader.iterator();
+        try {
+            while (expressionIterator.hasNext()) {
+                ExpressionStrategy expressionStrategy = expressionIterator.next();
+                ExpressionUtil.setExpression(expressionStrategy);
+            }
+        } catch (Throwable t) {
+            log.error(ExceptionCons.LOAD_EXPRESSION_STRATEGY_ERROR, t);
+        }
+
+        // 通过SPI机制加载json转换策略实现类
+        ServiceLoader<JsonConvert> JsonConvertServiceLoader = ServiceLoader.load(JsonConvert.class);
+        Iterator<JsonConvert> jsonConvertIterator = JsonConvertServiceLoader.iterator();
+        try {
+            if (jsonConvertIterator.hasNext()) {
+                JsonConvert jsonConvert = jsonConvertIterator.next();
+                FlowFactory.jsonConvert(jsonConvert);
+            } else {
+                log.error(ExceptionCons.LOAD_JSON_CONVERT_ERROR);
+            }
+        } catch (Throwable t) {
+            log.error(ExceptionCons.LOAD_JSON_CONVERT_ERROR, t);
+        }
+
     }
 
     private static void setLogicDelete(WarmFlow flowConfig) {

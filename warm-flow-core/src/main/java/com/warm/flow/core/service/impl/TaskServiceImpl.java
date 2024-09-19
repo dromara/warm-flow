@@ -27,7 +27,6 @@ import com.warm.flow.core.listener.ListenerVariable;
 import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.TaskService;
 import com.warm.flow.core.utils.*;
-import org.noear.snack.ONode;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -162,10 +161,10 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         FlowFactory.hisTaskService().saveBatch(insHisList);
 
         // 流程实例完成
-        instance.setNodeType(endNode.getNodeType());
-        instance.setNodeCode(endNode.getNodeCode());
-        instance.setNodeName(endNode.getNodeName());
-        instance.setFlowStatus(ObjectUtil.isNotNull(flowParams.getFlowStatus()) ? flowParams.getFlowStatus()
+        instance.setNodeType(endNode.getNodeType())
+                .setNodeCode(endNode.getNodeCode())
+                .setNodeName(endNode.getNodeName())
+                .setFlowStatus(ObjectUtil.isNotNull(flowParams.getFlowStatus()) ? flowParams.getFlowStatus()
                 : FlowStatus.AUTO_PASS.getKey());
 
         FlowFactory.insService().updateById(instance);
@@ -338,8 +337,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             AssertUtil.isEmpty(skipsGateway, ExceptionCons.NULL_CONDITIONVALUE_NODE);
 
             List<String> nextNodeCodes = StreamUtils.toList(skipsGateway, Skip::getNextNodeCode);
-            nextNodes = FlowFactory.nodeService()
-                    .getByNodeCodes(nextNodeCodes, nextNode.getDefinitionId());
+            nextNodes = FlowFactory.nodeService().getByNodeCodes(nextNodeCodes, nextNode.getDefinitionId());
             AssertUtil.isEmpty(nextNodes, ExceptionCons.NOT_NODE_DATA);
         } else {
             nextNodes.add(nextNode);
@@ -352,23 +350,20 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         Task addTask = FlowFactory.newTask();
         Date date = new Date();
         FlowFactory.dataFillHandler().idFill(addTask);
-        addTask.setDefinitionId(instance.getDefinitionId());
-        addTask.setInstanceId(instance.getId());
-        addTask.setNodeCode(node.getNodeCode());
-        addTask.setNodeName(node.getNodeName());
-        addTask.setNodeType(node.getNodeType());
-        addTask.setCreateTime(date);
-        addTask.setPermissionList(CollUtil.isNotEmpty(node.getDynamicPermissionFlagList()) ?
-                node.getDynamicPermissionFlagList() :
-                StringUtils.str2List(node.getPermissionFlag(), ","));
+        addTask.setDefinitionId(instance.getDefinitionId())
+                .setInstanceId(instance.getId())
+                .setNodeCode(node.getNodeCode())
+                .setNodeName(node.getNodeName())
+                .setNodeType(node.getNodeType())
+                .setCreateTime(date)
+                .setPermissionList(CollUtil.isNotEmpty(node.getDynamicPermissionFlagList())
+                        ? node.getDynamicPermissionFlagList(): StringUtils.str2List(node.getPermissionFlag(), ","));
 
         if (StringUtils.isNotEmpty(node.getFormCustom()) && StringUtils.isNotEmpty(node.getFormPath())) {
             // 节点有自定义表单则使用
-            addTask.setFormCustom(node.getFormCustom());
-            addTask.setFormPath(node.getFormPath());
+            addTask.setFormCustom(node.getFormCustom()).setFormPath(node.getFormPath());
         } else {
-            addTask.setFormCustom(definition.getFormCustom());
-            addTask.setFormPath(definition.getFormPath());
+            addTask.setFormCustom(definition.getFormCustom()).setFormPath(definition.getFormPath());
         }
 
         return addTask;
@@ -637,23 +632,18 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         Map<String, Object> variable = flowParams.getVariable();
         if (MapUtil.isNotEmpty(variable)) {
             String variableStr = instance.getVariable();
-            Map<String, Object> deserialize;
-            if (StringUtils.isEmpty(variableStr)) {
-                deserialize = new HashMap<>();
-            } else {
-                deserialize = ONode.deserialize(variableStr);
-            }
+            Map<String, Object> deserialize = FlowFactory.jsonConvert.strToMap(variableStr);
             deserialize.putAll(variable);
-            instance.setVariable(ONode.serialize(deserialize));
+            instance.setVariable(FlowFactory.jsonConvert.mapToStr(deserialize));
         }
         if (CollUtil.isNotEmpty(addTasks)) {
             addTasks.removeIf(addTask -> {
                 if (NodeType.isEnd(addTask.getNodeType())) {
-                    instance.setNodeType(addTask.getNodeType());
-                    instance.setNodeCode(addTask.getNodeCode());
-                    instance.setNodeName(addTask.getNodeName());
-                    instance.setFlowStatus(ObjectUtil.isNotNull(flowParams.getFlowStatus()) ? flowParams.getFlowStatus()
-                            : FlowStatus.FINISHED.getKey());
+                        instance.setNodeType(addTask.getNodeType())
+                                .setNodeCode(addTask.getNodeCode())
+                                .setNodeName(addTask.getNodeName())
+                                .setFlowStatus(ObjectUtil.isNotNull(flowParams.getFlowStatus())
+                                        ? flowParams.getFlowStatus() : FlowStatus.FINISHED.getKey());
                     return true;
                 }
                 return false;
@@ -661,11 +651,11 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         }
         if (CollUtil.isNotEmpty(addTasks) && !NodeType.isEnd(instance.getNodeType())) {
             Task nextTask = getNextTask(addTasks);
-            instance.setNodeType(nextTask.getNodeType());
-            instance.setNodeCode(nextTask.getNodeCode());
-            instance.setNodeName(nextTask.getNodeName());
-            instance.setFlowStatus(ObjectUtil.isNotNull(flowParams.getFlowStatus()) ? flowParams.getFlowStatus()
-                    : setFlowStatus(nextTask.getNodeType(), flowParams.getSkipType()));
+                instance.setNodeType(nextTask.getNodeType())
+                        .setNodeCode(nextTask.getNodeCode())
+                        .setNodeName(nextTask.getNodeName())
+                        .setFlowStatus(ObjectUtil.isNotNull(flowParams.getFlowStatus()) ? flowParams.getFlowStatus()
+                                : setFlowStatus(nextTask.getNodeType(), flowParams.getSkipType()));
         }
     }
 

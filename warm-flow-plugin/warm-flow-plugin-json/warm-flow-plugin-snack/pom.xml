@@ -5,18 +5,22 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.github.minliuhua</groupId>
-        <artifactId>warm-flow</artifactId>
+        <artifactId>warm-flow-plugin-json</artifactId>
         <version>1.2.7</version>
     </parent>
 
-    <artifactId>warm-flow-plugin</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>warm-flow-plugin-snack</artifactId>
 
-    <modules>
-        <module>warm-flow-plugin-expression</module>
-        <module>warm-flow-plugin-json</module>
-        <module>warm-flow-plugin-modes</module>
-    </modules>
+    <dependencies>
+        <dependency>
+            <groupId>io.github.minliuhua</groupId>
+            <artifactId>warm-flow-core</artifactId>
+        </dependency>
 
+        <dependency>
+            <groupId>org.noear</groupId>
+            <artifactId>snack3</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>

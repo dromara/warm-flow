@@ -22,9 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.ServiceLoader;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -74,16 +72,4 @@ public class ExpressionUtil {
         return flag.get();
     }
 
-    public static void load() {
-        ServiceLoader<ExpressionStrategy> loadedAPIs = ServiceLoader.load(ExpressionStrategy.class);
-        Iterator<ExpressionStrategy> apiIterator = loadedAPIs.iterator();
-        try {
-            while (apiIterator.hasNext()) {
-                ExpressionStrategy expressionStrategy = apiIterator.next();
-                setExpression(expressionStrategy);
-            }
-        } catch (Throwable t) {
-            log.error(ExceptionCons.LOAD_EXPRESSION_STRATEGY_ERROR, t);
-        }
-    }
 }
