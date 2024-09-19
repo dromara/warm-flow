@@ -55,7 +55,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 && flowParams.getMessage().length() > 500, ExceptionCons.MSG_OVER_LENGTH);
         // 获取待办任务
         Task task = getById(taskId);
-        AssertUtil.isTrue(ObjectUtil.isNull(task), ExceptionCons.NOT_FOUNT_TASK);
+        AssertUtil.isNull(task, ExceptionCons.NOT_FOUNT_TASK);
         return skip(flowParams, task);
     }
 
@@ -64,13 +64,13 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // TODO min 后续考虑并发问题，待办任务和实例表不同步，可给待办任务id加锁，抽取所接口，方便后续兼容分布式锁
         // 流程开启前正确性校验
         Instance instance = FlowFactory.insService().getById(task.getInstanceId());
-        AssertUtil.isTrue(ObjectUtil.isNull(instance), ExceptionCons.NOT_FOUNT_INSTANCE);
+        AssertUtil.isNull(instance, ExceptionCons.NOT_FOUNT_INSTANCE);
         Definition definition = FlowFactory.defService().getById(instance.getDefinitionId());
         AssertUtil.isFalse(judgeActivityStatus(definition, instance), ExceptionCons.NOT_ACTIVITY);
         AssertUtil.isTrue(NodeType.isEnd(instance.getNodeType()), ExceptionCons.FLOW_FINISH);
         Node nowNode = CollUtil.getOne(FlowFactory.nodeService()
                 .getByNodeCodes(Collections.singletonList(task.getNodeCode()), task.getDefinitionId()));
-        AssertUtil.isTrue(ObjectUtil.isNull(nowNode), ExceptionCons.LOST_CUR_NODE);
+        AssertUtil.isNull(nowNode, ExceptionCons.LOST_CUR_NODE);
         // 非第一个记得跳转类型必传
         if (!NodeType.isStart(task.getNodeType())) {
             AssertUtil.isFalse(StringUtils.isNotEmpty(flowParams.getSkipType()), ExceptionCons.NULL_CONDITIONVALUE);
@@ -105,7 +105,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         if (SkipType.isReject(flowParams.getSkipType())) {
             List<HisTask> rejectHisTasks = FlowFactory.hisTaskService()
                     .getByInsAndNodeCodes(task.getInstanceId(), StreamUtils.toList(nextNodes, Node::getNodeCode));
-            AssertUtil.isTrue(CollUtil.isEmpty(rejectHisTasks), ExceptionCons.BACK_TASK_NOT_EXECUTED);
+            AssertUtil.isEmpty(rejectHisTasks, ExceptionCons.BACK_TASK_NOT_EXECUTED);
         }
 
         // 判断下一结点是否有权限监听器,有执行权限监听器nextNode.setPermissionFlag,无走数据库的权限标识符
@@ -139,10 +139,10 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     public Instance termination(Long taskId, FlowParams flowParams) {
         // 获取待办任务
         Task task = getById(taskId);
-        AssertUtil.isTrue(ObjectUtil.isNull(task), ExceptionCons.NOT_FOUNT_TASK);
+        AssertUtil.isNull(task, ExceptionCons.NOT_FOUNT_TASK);
         // 获取当前流程
         Instance instance = FlowFactory.insService().getById(task.getInstanceId());
-        AssertUtil.isTrue(ObjectUtil.isNull(instance), ExceptionCons.NOT_FOUNT_INSTANCE);
+        AssertUtil.isNull(instance, ExceptionCons.NOT_FOUNT_INSTANCE);
         Definition definition = FlowFactory.defService().getById(instance.getDefinitionId());
         AssertUtil.isFalse(judgeActivityStatus(definition, instance), ExceptionCons.NOT_ACTIVITY);
         return termination(instance, task, flowParams);
@@ -191,7 +191,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     @Override
     public boolean transfer(Long taskId, String curUser, List<String> permissionFlag, List<String> addHandlers, String message) {
         List<User> users = FlowFactory.userService().getByProcessedBys(taskId, addHandlers, UserType.TRANSFER.getKey());
-        AssertUtil.isTrue(CollUtil.isNotEmpty(users), ExceptionCons.IS_ALREADY_TRANSFER);
+        AssertUtil.isNotEmpty(users, ExceptionCons.IS_ALREADY_TRANSFER);
 
         ModifyHandler modifyHandler = ModifyHandler.build()
                 .taskId(taskId)
@@ -208,7 +208,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     @Override
     public boolean depute(Long taskId, String curUser, List<String> permissionFlag, List<String> addHandlers, String message) {
         List<User> users = FlowFactory.userService().getByProcessedBys(taskId, addHandlers, UserType.DEPUTE.getKey());
-        AssertUtil.isTrue(CollUtil.isNotEmpty(users), ExceptionCons.IS_ALREADY_DEPUTE);
+        AssertUtil.isNotEmpty(users, ExceptionCons.IS_ALREADY_DEPUTE);
 
         ModifyHandler modifyHandler = ModifyHandler.build()
                 .taskId(taskId)
@@ -225,7 +225,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     @Override
     public boolean addSignature(Long taskId, String curUser, List<String> permissionFlag, List<String> addHandlers, String message) {
         List<User> users = FlowFactory.userService().getByProcessedBys(taskId, addHandlers, UserType.APPROVAL.getKey());
-        AssertUtil.isTrue(CollUtil.isNotEmpty(users), ExceptionCons.IS_ALREADY_SIGN);
+        AssertUtil.isNotEmpty(users, ExceptionCons.IS_ALREADY_SIGN);
 
         ModifyHandler modifyHandler = ModifyHandler.build()
                 .taskId(taskId)
@@ -324,7 +324,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             if (!NodeType.isStart(nextNode.getNodeType())) {
                 skipsGateway = skipsGateway.stream().filter(t -> {
                     if (NodeType.isGateWaySerial(nextNode.getNodeType())) {
-                        AssertUtil.isTrue(MapUtil.isEmpty(flowParams.getVariable()), ExceptionCons.MUST_CONDITIONVALUE_NODE);
+                        AssertUtil.isEmpty(flowParams.getVariable(), ExceptionCons.MUST_CONDITIONVALUE_NODE);
                         if (ObjectUtil.isNotNull(t.getSkipCondition())) {
                             return ExpressionUtil.eval(t.getSkipCondition(), flowParams.getVariable());
                         }
@@ -335,12 +335,12 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
                 }).collect(Collectors.toList());
             }
-            AssertUtil.isTrue(CollUtil.isEmpty(skipsGateway), ExceptionCons.NULL_CONDITIONVALUE_NODE);
+            AssertUtil.isEmpty(skipsGateway, ExceptionCons.NULL_CONDITIONVALUE_NODE);
 
             List<String> nextNodeCodes = StreamUtils.toList(skipsGateway, Skip::getNextNodeCode);
             nextNodes = FlowFactory.nodeService()
                     .getByNodeCodes(nextNodeCodes, nextNode.getDefinitionId());
-            AssertUtil.isTrue(CollUtil.isEmpty(nextNodes), ExceptionCons.NOT_NODE_DATA);
+            AssertUtil.isEmpty(nextNodes, ExceptionCons.NOT_NODE_DATA);
         } else {
             nextNodes.add(nextNode);
         }
@@ -447,9 +447,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 , UserType.APPROVAL.getKey(), UserType.TRANSFER.getKey());
 
         // 判断办理人是否有办理权限
-        AssertUtil.isTrue(StringUtils.isEmpty(flowParams.getHandler()), ExceptionCons.SIGN_NULL_HANDLER);
+        AssertUtil.isEmpty(flowParams.getHandler(), ExceptionCons.SIGN_NULL_HANDLER);
         User todoUser = CollUtil.getOne(StreamUtils.filter(todoList, u -> Objects.equals(u.getProcessedBy(), flowParams.getHandler())));
-        AssertUtil.isTrue(Objects.isNull(todoUser), ExceptionCons.NOT_AUTHORITY);
+        AssertUtil.isNull(todoUser, ExceptionCons.NOT_AUTHORITY);
 
         // 当只剩一位待办用户时，由当前用户决定走向
         if (todoList.size() == 1) {

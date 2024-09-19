@@ -51,10 +51,10 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
     @Override
     public Instance start(String businessId, FlowParams flowParams) {
         AssertUtil.isNull(flowParams.getFlowCode(), ExceptionCons.NULL_FLOW_CODE);
-        AssertUtil.isBlank(businessId, ExceptionCons.NULL_BUSINESS_ID);
+        AssertUtil.isEmpty(businessId, ExceptionCons.NULL_BUSINESS_ID);
         // 获取已发布的流程节点
         List<Node> nodes = FlowFactory.nodeService().getByFlowCode(flowParams.getFlowCode());
-        AssertUtil.isTrue(CollUtil.isEmpty(nodes), String.format(ExceptionCons.NOT_PUBLISH_NODE, flowParams.getFlowCode()));
+        AssertUtil.isEmpty(nodes, String.format(ExceptionCons.NOT_PUBLISH_NODE, flowParams.getFlowCode()));
         // 获取开始节点
         Node startNode = nodes.stream().filter(t -> NodeType.isStart(t.getNodeType())).findFirst().orElse(null);
         AssertUtil.isNull(startNode, ExceptionCons.LOST_START_NODE);
@@ -106,7 +106,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
                 && flowParams.getMessage().length() > 500, ExceptionCons.MSG_OVER_LENGTH);
         // 获取待办任务
         List<Task> taskList = FlowFactory.taskService().list(FlowFactory.newTask().setInstanceId(instanceId));
-        AssertUtil.isTrue(CollUtil.isEmpty(taskList), ExceptionCons.NOT_FOUNT_TASK);
+        AssertUtil.isEmpty(taskList, ExceptionCons.NOT_FOUNT_TASK);
         AssertUtil.isTrue(taskList.size() > 1, ExceptionCons.TASK_NOT_ONE);
         Task task = taskList.get(0);
         return FlowFactory.taskService().skip(flowParams, task);
@@ -116,12 +116,12 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
     public Instance termination(Long instanceId, FlowParams flowParams) {
         // 获取当前流程
         Instance instance = getById(instanceId);
-        AssertUtil.isTrue(ObjectUtil.isNull(instance), ExceptionCons.NOT_FOUNT_INSTANCE);
+        AssertUtil.isNull(instance, ExceptionCons.NOT_FOUNT_INSTANCE);
         AssertUtil.isTrue(NodeType.isEnd(instance.getNodeType()), ExceptionCons.FLOW_FINISH);
 
         // 获取待办任务
         List<Task> taskList = FlowFactory.taskService().list(FlowFactory.newTask().setInstanceId(instanceId));
-        AssertUtil.isTrue(CollUtil.isEmpty(taskList), ExceptionCons.NOT_FOUNT_TASK);
+        AssertUtil.isEmpty(taskList, ExceptionCons.NOT_FOUNT_TASK);
 
         // 获取待办任务
         Task task = taskList.get(0);
@@ -217,7 +217,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
     }
 
     private boolean toRemoveTask(List<Long> instanceIds) {
-        AssertUtil.isTrue(CollUtil.isEmpty(instanceIds), ExceptionCons.NULL_INSTANCE_ID);
+        AssertUtil.isEmpty(instanceIds, ExceptionCons.NULL_INSTANCE_ID);
         boolean success = FlowFactory.taskService().deleteByInsIds(instanceIds);
         if (success) {
             FlowFactory.hisTaskService().deleteByInsIds(instanceIds);

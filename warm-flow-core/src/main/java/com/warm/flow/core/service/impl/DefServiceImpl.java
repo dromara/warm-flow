@@ -158,7 +158,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     @Override
     public boolean unPublish(Long id) {
         List<Task> tasks = FlowFactory.taskService().list(FlowFactory.newTask().setDefinitionId(id));
-        AssertUtil.isTrue(CollUtil.isNotEmpty(tasks), ExceptionCons.NOT_PUBLISH_TASK);
+        AssertUtil.isNotEmpty(tasks, ExceptionCons.NOT_PUBLISH_TASK);
         Definition definition = FlowFactory.newDef().setId(id);
         definition.setIsPublish(PublishStatus.UNPUBLISHED.getKey());
         return updateById(definition);
@@ -167,7 +167,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     @Override
     public boolean copyDef(Long id) {
         Definition definition = ClassUtil.clone(getById(id));
-        AssertUtil.isTrue(ObjectUtil.isNull(definition), ExceptionCons.NOT_FOUNT_DEF);
+        AssertUtil.isNull(definition, ExceptionCons.NOT_FOUNT_DEF);
 
         List<Node> nodeList = FlowFactory.nodeService().list(FlowFactory.newNode().setDefinitionId(id))
                 .stream().map(ClassUtil::clone).collect(Collectors.toList());
