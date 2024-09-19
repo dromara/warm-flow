@@ -182,7 +182,8 @@
       @pagination="getList"
     />
 
-    <Dialog ref="dialog" @refresh="getList"></Dialog>
+    <Dialog ref="dialog" @refresh="getList" :propsGetList="getList" ></Dialog>
+
     <el-dialog title="流程图" v-model="flowChart" width="1100">
       <img :src="imgUrl" width="1000" height="500" style="margin:0 auto"/>
     </el-dialog>	
@@ -190,7 +191,7 @@
 </template>
 
 <script setup name="Leave">
-import { listLeave, delLeave, submit, termination } from "@/api/system/leave";
+import { listLeave, delLeave, termination } from "@/api/system/leave";
 import Dialog from "@/views/system/leave/dialog";
 import {flowImage} from "@/api/flow/definition";
 
@@ -292,12 +293,12 @@ function showSubmitForm(row) {
 };
 
 /** 提交审批按钮操作 */
-function handleSubmit(){
-  submit(form.value.id, flowStatus.value).then(() => {
-    getList();
-    proxy.$modal.msgSuccess("提交审批成功");
-  })
-}
+// function handleSubmit(){
+//   submit(form.value.id, flowStatus.value).then(() => {
+//     getList();
+//     proxy.$modal.msgSuccess("提交审批成功");
+//   })
+// }
 
 function toFlowImage(instanceId) {
   flowImage(instanceId).then(response => {

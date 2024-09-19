@@ -162,7 +162,7 @@ function handleSelectionChange(selection) {
 /** 审批记录按钮操作 */
 function showDoneList(instanceId, formPath, testLeaveVo) {
   const params = { disabled: false, pageNum: queryParams.value.pageNum, formPath, testLeaveVo };
-  router.push({ path: `/done/doneList/index/${instanceId}`, query: params });
+  router.push({ path: `/done/done-list/index/${instanceId}`, query: params });
 }
 function toFlowImage(instanceId) {
   flowImage(instanceId).then(response => {
@@ -191,7 +191,7 @@ function handle(row) {
   // 如果存在formPath，则动态加载组件
   if (formPath) {
     // 实际情况是，不同条件对应不同的页面，所以用动态导入组件
-    import(`../../../../views/${formPath}`).then((module) => {
+    import(/* @vite-ignore */`../../../../views/${formPath}`).then((module) => {
       approve.value = module.default;
     });
   } else {

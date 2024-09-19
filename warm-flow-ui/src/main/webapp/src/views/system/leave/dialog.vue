@@ -30,8 +30,8 @@
               <el-date-picker
                 clearable size="small"
                 v-model="form.startTime"
-                type="datetime"
-                value-format="YYYY-MM-DD HH:mm:ss"
+                type="date"
+                value-format="YYYY-MM-DD"
                 placeholder="选择开始时间"
                 @change="calculateLeaveDays"
                 :disabled="disabled">
@@ -43,8 +43,8 @@
               <el-date-picker
                 clearable size="small"
                 v-model="form.endTime"
-                type="datetime"
-                value-format="YYYY-MM-DD HH:mm:ss"
+                type="date"
+                value-format="YYYY-MM-DD"
                 placeholder="选择结束时间"
                 @change="calculateLeaveDays"
                 :disabled="disabled">
@@ -106,7 +106,7 @@
 </template>
 
 <script setup name="Dialog">
-import { getLeave, addLeave, updateLeave } from "@/api/system/leave";
+import { getLeave, addLeave, updateLeave, submit } from "@/api/system/leave";
 import {listUser} from "@/api/system/user";
 
 const { proxy } = getCurrentInstance();
@@ -150,8 +150,24 @@ const data = reactive({
   }
 });
 
+const props = defineProps({
+  propsGetList: {
+    type: Function,
+    required: true,
+  },
+});
+
 const emit = defineEmits(["refresh"]);
 const { form, rules } = toRefs(data);
+
+/** 提交审批按钮操作 */
+function handleSubmit() {
+  submit(form.value.id, flowStatus.value).then(() => {
+    props.propsGetList();
+    proxy.$modal.msgSuccess("提交审批成功");
+    open.value = false;
+  });
+}
 
 function getUser(){
   listUser().then(response => {
@@ -170,19 +186,20 @@ function getUser(){
 }
 
 /** 打开OA 请假申请弹框 */
-async function show(id, _disabled, title) {
+async function show(id, _disabled, _title) {
   reset();
   disabled.value = _disabled
   if (id) {
     await getLeave(id).then(response => {
       form.value = response.data;
+      flowStatus.value = response.data.flowStatus;
     });
   }
   open.value = true
   if (disabled.value) {
     title.value = "详情"
   } else if (id) {
-    title.value = title || "修改"
+    title.value = _title || "修改"
   } else {
     title.value = "新增"
   }

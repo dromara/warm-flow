@@ -211,7 +211,7 @@ function handle(row) {
   }
   if (row.formCustom == 'N') {
     // 实际情况是，不同条件对应不同的页面，所以用动态导入组件
-    import(`../../../../views/${row.formPath}`).then((module) => {
+    import(/* @vite-ignore */`../../../../views/${row.formPath}`).then((module) => {
       approve.value = module.default;
     });
   }

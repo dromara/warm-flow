@@ -175,8 +175,8 @@ const emit = defineEmits(["refresh"]);
 
 function getInfo() {
   reset();
-  if (testLeaveVo.value && Object.keys(testLeaveVo.value).length) {
-    form.value = { ...form.value, ...testLeaveVo.value };
+  if (props.testLeaveVo && Object.keys(props.testLeaveVo).length) {
+    form.value = { ...form.value, ...props.testLeaveVo };
     showApprovalFields.value = false; // 隐藏审批意见和按钮
   } else {
     getLeave(props.modelValue).then(response => {

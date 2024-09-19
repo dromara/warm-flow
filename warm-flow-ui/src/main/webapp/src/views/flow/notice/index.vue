@@ -27,8 +27,8 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="small" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="small" @click="resetQuery">重置</el-button>
+        <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+        <el-button icon="Refresh" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
     <el-table v-loading="loading" :data="instanceList" @selection-change="handleSelectionChange">
@@ -43,8 +43,8 @@
       <el-table-column label="任务名称" align="center" prop="nodeName" :show-overflow-tooltip="true"/>
       <el-table-column label="抄送人" align="center" prop="approver" :show-overflow-tooltip="true"/>
       <el-table-column label="流程状态" align="center" prop="flowStatus" :show-overflow-tooltip="true">
-        <template #default="scope">
-          <dict-tag :options="dict.type.flow_status" :value="scope.row.flowStatus"/>
+        <template  #default="scope">
+          <dict-tag :options="flow_status" :value="scope.row.flowStatus"/>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" align="center" prop="createTime" width="160" :show-overflow-tooltip="true">
@@ -72,8 +72,8 @@
     />
 
     <component v-bind:is="approve" v-model="businessId" :taskId="taskId" @refresh="getList"></component>
-    <el-dialog title="流程图" :visible.sync="flowChart" width="80%">
-      <img :src="imgUrl" width="100%" style="margin:0 auto"/>
+    <el-dialog title="流程图" v-model="flowChart" width="80%">
+      <img :src="imgUrl" width="1000" style="margin:0 auto"/>
     </el-dialog>
 
     <!-- 权限标识：选择用户 -->
@@ -160,7 +160,7 @@ function handle(row) {
   businessId.value = row.businessId
   if (row.formCustom === 'N' && row.formPath) {
     // 实际情况是，不同条件对应不同的页面，所以用动态导入组件
-    import(`../../../../views/${row.formPath}`).then((module) => {
+    import(/* @vite-ignore */`../../../../views/${row.formPath}`).then((module) => {
       approve.value = module.default;
     });
   }
@@ -168,6 +168,7 @@ function handle(row) {
 function toFlowImage(instanceId) {
   flowImage(instanceId).then(response => {
     flowChart.value = true
+    console.log(response.data)
     imgUrl.value = "data:image/gif;base64," + response.data;
   });
 }

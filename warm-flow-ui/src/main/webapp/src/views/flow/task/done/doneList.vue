@@ -60,7 +60,7 @@ const testLeaveVo = ref(null);
 function getList() {
   instanceId.value = proxy.$route.params.instanceId;
   formPath.value = proxy.$route.query.formPath;
-  testLeaveVoformPath.value = proxy.$route.query.testLeaveVo; // 接收传递过来的testLeaveVo
+  testLeaveVo.value = proxy.$route.query.testLeaveVo; // 接收传递过来的testLeaveVo
   fetchTaskList();
 }
 
@@ -91,7 +91,7 @@ function handle(row) {
   // 如果存在formPath，则动态加载组件
   if (formPath) {
     // 实际情况是，不同条件对应不同的页面，所以用动态导入组件
-    import(`../../../../views/${formPath}`).then((module) => {
+    import(/* @vite-ignore */`../../../../views/${formPath}`).then((module) => {
       approve.value = module.default;
     });
   } else {
