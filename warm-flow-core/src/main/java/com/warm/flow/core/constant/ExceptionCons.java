@@ -50,7 +50,9 @@ public class ExceptionCons {
 
     public static final String NULL_CONDITIONVALUE = "跳转条件不能为空!";
 
-    public static final String NULL_EXPRESSION_STRATEGY = "条件表达式不能为空!";
+    public static final String NULL_EXPRESSION_STRATEGY = "条件表达式策略不能为空!";
+
+    public static final String NULL_VARIABLE_STRATEGY = "变量替换策略不能为空!";
 
     public static final String FRIST_FORBID_BACK = "禁止退回到第一个节点";
 

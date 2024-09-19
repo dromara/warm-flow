@@ -18,23 +18,22 @@ package com.warm.flow.core.utils;
 import com.warm.flow.core.constant.ExceptionCons;
 import com.warm.flow.core.exception.FlowException;
 import com.warm.flow.core.expression.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * 条件表达式map
+ * 条件表达式工具类
  *
  * @author warm
  */
 public class ExpressionUtil {
 
-    private static final Logger log = LoggerFactory.getLogger(ExpressionUtil.class);
-
     private static final Map<String, ExpressionStrategy> map = new HashMap<>();
+
+    private ExpressionUtil() {
+    }
 
     static {
         setExpression(new ExpressionStrategyEq());

@@ -17,9 +17,7 @@ package com.warm.flow.core.expression;
 
 import com.warm.flow.core.constant.ExceptionCons;
 import com.warm.flow.core.constant.FlowCons;
-import com.warm.flow.core.exception.FlowException;
-import com.warm.flow.core.utils.MapUtil;
-import com.warm.flow.core.utils.ObjectUtil;
+import com.warm.flow.core.utils.AssertUtil;
 
 import java.util.Map;
 
@@ -30,11 +28,6 @@ import java.util.Map;
  */
 public abstract class ExpressionStrategyAbstract implements ExpressionStrategy {
 
-    /**
-     * @param expression flag@@eq@@4
-     * @param variable
-     * @return
-     */
     @Override
     public boolean eval(String expression, Map<String, Object> variable) {
         String[] split = expression.split(FlowCons.splitAt);
@@ -44,10 +37,9 @@ public abstract class ExpressionStrategyAbstract implements ExpressionStrategy {
     }
 
     public void preEval(String[] split, Map<String, Object> variable) {
+        AssertUtil.isEmpty(variable, ExceptionCons.NULL_CONDITIONVALUE);
         Object o = variable.get(split[0].trim());
-        if (MapUtil.isEmpty(variable) && ObjectUtil.isNull(o)) {
-            throw new FlowException(ExceptionCons.NULL_CONDITIONVALUE);
-        }
+        AssertUtil.isNull(o, ExceptionCons.NULL_CONDITIONVALUE);
     }
 
     public abstract boolean afterEval(String[] split, String value);

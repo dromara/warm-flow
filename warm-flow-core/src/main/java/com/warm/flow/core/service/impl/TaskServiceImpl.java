@@ -114,6 +114,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 构建增待办任务和设置结束任务历史记录
         List<Task> addTasks = buildAddTasks(flowParams, task, instance, nextNodes, nextNode, definition);
 
+        // 办理人变量替换
+        VariableUtil.eval(addTasks, flowParams.getVariable());
+
         // 执行分派监听器
         ListenerUtil.executeListener(new ListenerVariable(definition, instance, nowNode, flowParams.getVariable(), task, nextNodes
                 , addTasks), Listener.LISTENER_ASSIGNMENT);
