@@ -37,6 +37,7 @@ public class JsonConvertJackson implements JsonConvert {
 
     private static final Logger log = LoggerFactory.getLogger(JsonConvertJackson.class);
 
+    private static final ObjectMapper objectMapper = new ObjectMapper();
     /**
      * 将字符串转为map
      * @param jsonStr json字符串
@@ -45,7 +46,6 @@ public class JsonConvertJackson implements JsonConvert {
     @Override
     public Map<String, Object> strToMap(String jsonStr) {
         if (StringUtils.isNotEmpty(jsonStr)) {
-            ObjectMapper objectMapper = new ObjectMapper();
             try {
                 return objectMapper.readValue(jsonStr, TypeFactory.defaultInstance().constructMapType(Map.class, String.class, Object.class));
             } catch (IOException e) {
@@ -64,8 +64,6 @@ public class JsonConvertJackson implements JsonConvert {
     @Override
     public String mapToStr(Map<String, Object> variable) {
         if (MapUtil.isNotEmpty(variable)) {
-            // 创建 ObjectMapper 实例
-            ObjectMapper objectMapper = new ObjectMapper();
             try {
                 return objectMapper.writeValueAsString(variable);
             } catch (Exception e) {
