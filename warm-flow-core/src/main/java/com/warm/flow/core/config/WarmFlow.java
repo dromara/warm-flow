@@ -21,10 +21,8 @@ import com.warm.flow.core.constant.FlowCons;
 import com.warm.flow.core.expression.ExpressionStrategy;
 import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.core.json.JsonConvert;
-import com.warm.flow.core.utils.ExpressionUtil;
-import com.warm.flow.core.utils.ObjectUtil;
-import com.warm.flow.core.utils.ServiceLoaderUtil;
-import com.warm.flow.core.utils.StringUtils;
+import com.warm.flow.core.utils.*;
+import com.warm.flow.core.variable.VariableStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -119,6 +117,9 @@ public class WarmFlow implements Serializable {
     public static void spiLoad() {
         // 通过SPI机制加载条件表达式策略实现类
         ServiceLoaderUtil.loadList(ExpressionStrategy.class).forEach(ExpressionUtil::setExpression);
+
+        // 通过SPI机制加载办理人变量表达式策略实现类
+        ServiceLoaderUtil.loadList(VariableStrategy.class).forEach(VariableUtil::setExpression);
 
         // 通过SPI机制加载json转换策略实现类
         FlowFactory.jsonConvert(ServiceLoaderUtil.loadFirst(JsonConvert.class));

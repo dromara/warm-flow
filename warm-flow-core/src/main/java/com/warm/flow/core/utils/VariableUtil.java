@@ -16,14 +16,13 @@
 package com.warm.flow.core.utils;
 
 import com.warm.flow.core.constant.ExceptionCons;
-import com.warm.flow.core.entity.Task;
 import com.warm.flow.core.exception.FlowException;
 import com.warm.flow.core.variable.DefaultVariableStrategy;
 import com.warm.flow.core.variable.VariableStrategy;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * 变量替换工具类
@@ -39,41 +38,36 @@ public class VariableUtil {
     }
 
     static {
-        setVariable(new DefaultVariableStrategy());
+        setExpression(new DefaultVariableStrategy());
     }
 
-    public static void setVariable(VariableStrategy variableStrategy) {
+    public static void setExpression(VariableStrategy variableStrategy) {
         map.put(variableStrategy.getType(), variableStrategy);
     }
 
     /**
-     * @param addTasks 变量表达式，比如“@@default@@|${flag}” ，或者自定义策略
+     * @param expression 变量表达式，比如“@@default@@|${flag}” ，或者自定义策略
      * @param variable
      * @return
      */
-    public static void eval(List<Task> addTasks, Map<String, Object> variable) {
-        if (CollUtil.isEmpty(addTasks) || MapUtil.isEmpty(variable)) {
-            return;
-        }
-        for (Task task : addTasks) {
-            List<String> permissionList = task.getPermissionList();
-            // 如果设置了发起人审批，则需要动态替换权限标识
-            for (int i = 0; i < permissionList.size(); i++) {
-                String permission = permissionList.get(i);
-                if (StringUtils.isNotEmpty(permission)) {
-                    for (Map.Entry<String, VariableStrategy> entry : map.entrySet()) {
-                        String k = entry.getKey();
-                        VariableStrategy v = entry.getValue();
-                        if (permission.contains(k + "|")) {
-                            if (v == null) {
-                                throw new FlowException(ExceptionCons.NULL_EXPRESSION_STRATEGY);
-                            }
-                            permissionList.set(i, v.eval(permission.replace(k + "|", ""), variable));
-                        }
+    public static String eval(String expression, Map<String, Object> variable) {
+        if (StringUtils.isNotEmpty(expression)) {
+            AtomicReference<String> result = new AtomicReference<>();
+            map.forEach((k, v) -> {
+                if (expression.startsWith(k + "|")) {
+                    if (v == null) {
+                        throw new FlowException(ExceptionCons.NULL_EXPRESSION_STRATEGY);
                     }
+                    result.set(v.eval(expression.replace(k + "|", ""), variable));
                 }
+            });
+
+            if (StringUtils.isNotEmpty(result.get())) {
+                return result.get();
             }
         }
 
+        return expression;
     }
+
 }

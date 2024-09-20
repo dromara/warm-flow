@@ -16,6 +16,8 @@
         <module>warm-flow-plugin-expression</module>
         <module>warm-flow-plugin-json</module>
         <module>warm-flow-plugin-modes</module>
+        <module>warm-flow-plugin-spel</module>
+        <module>warm-flow-plugin-variable</module>
     </modules>
 
 

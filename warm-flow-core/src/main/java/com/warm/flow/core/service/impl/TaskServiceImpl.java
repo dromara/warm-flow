@@ -115,8 +115,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         List<Task> addTasks = buildAddTasks(flowParams, task, instance, nextNodes, nextNode, definition);
 
         // 办理人变量替换
-        VariableUtil.eval(addTasks, flowParams.getVariable());
-
+        if (CollUtil.isNotEmpty(addTasks)) {
+            addTasks.forEach(addTask -> addTask.getPermissionList().replaceAll(s -> VariableUtil.eval(s, flowParams.getVariable())));
+        }
         // 执行分派监听器
         ListenerUtil.executeListener(new ListenerVariable(definition, instance, nowNode, flowParams.getVariable(), task, nextNodes
                 , addTasks), Listener.LISTENER_ASSIGNMENT);

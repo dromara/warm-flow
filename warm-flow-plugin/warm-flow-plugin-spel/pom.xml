@@ -9,7 +9,7 @@
         <version>1.2.7</version>
     </parent>
 
-    <artifactId>warm-flow-plugin-expression</artifactId>
+    <artifactId>warm-flow-plugin-spel</artifactId>
 
     <dependencies>
         <dependency>
@@ -33,11 +33,6 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
             <optional>true</optional>
-        </dependency>
-
-        <dependency>
-            <groupId>io.github.minliuhua</groupId>
-            <artifactId>warm-flow-plugin-spel</artifactId>
         </dependency>
     </dependencies>
 

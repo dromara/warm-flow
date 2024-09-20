@@ -9,7 +9,7 @@
         <version>1.2.7</version>
     </parent>
 
-    <artifactId>warm-flow-plugin-expression</artifactId>
+    <artifactId>warm-flow-plugin-variable</artifactId>
 
     <dependencies>
         <dependency>

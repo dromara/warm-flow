@@ -13,10 +13,11 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.warm.plugin.expression;
+package com.warm.plugin.variable;
 
 import com.warm.flow.core.constant.FlowCons;
-import com.warm.flow.core.expression.ExpressionStrategy;
+import com.warm.flow.core.utils.ObjectUtil;
+import com.warm.flow.core.variable.VariableStrategy;
 import com.warm.plugin.spel.SpelHelper;
 
 import java.util.Map;
@@ -26,7 +27,7 @@ import java.util.Map;
  *
  * @author warm
  */
-public class ExpressionStrategySpel implements ExpressionStrategy {
+public class VariableStrategySpel implements VariableStrategy {
 
     @Override
     public String getType() {
@@ -39,7 +40,8 @@ public class ExpressionStrategySpel implements ExpressionStrategy {
      * @return
      */
     @Override
-    public boolean eval(String expression, Map<String, Object> variable) {
-        return Boolean.TRUE.equals(SpelHelper.parseExpression(expression));
+    public String eval(String expression, Map<String, Object> variable) {
+        Object o = SpelHelper.parseExpression(expression);
+        return ObjectUtil.isNull(o) ? null : o.toString();
     }
 }
