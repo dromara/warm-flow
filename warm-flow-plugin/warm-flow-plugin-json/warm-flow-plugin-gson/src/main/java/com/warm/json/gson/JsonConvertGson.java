@@ -13,14 +13,15 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.warm.json.fastjson;
+package com.warm.json.gson;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.TypeReference;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.warm.flow.core.json.JsonConvert;
 import com.warm.flow.core.utils.MapUtil;
 import com.warm.flow.core.utils.StringUtils;
 
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,7 +30,9 @@ import java.util.Map;
  *
  * @author warm
  */
-public class JsonConvertFastJson implements JsonConvert {
+public class JsonConvertGson implements JsonConvert {
+
+    private static final Gson gson = new Gson();
 
     /**
      * 将字符串转为map
@@ -39,7 +42,8 @@ public class JsonConvertFastJson implements JsonConvert {
     @Override
     public Map<String, Object> strToMap(String jsonStr) {
         if (StringUtils.isNotEmpty(jsonStr)) {
-            return JSON.parseObject(jsonStr, new TypeReference<Map<String, Object>>(){});
+            Type type = new TypeToken<Map<String, Object>>(){}.getType();
+            return gson.fromJson(jsonStr, type);
         }
         return new HashMap<>();
     }
@@ -52,7 +56,7 @@ public class JsonConvertFastJson implements JsonConvert {
     @Override
     public String mapToStr(Map<String, Object> variable) {
         if (MapUtil.isNotEmpty(variable)) {
-            return JSON.toJSONString(variable);
+            return gson.toJson(variable);
         }
         return null;
     }

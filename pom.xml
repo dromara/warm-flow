@@ -65,6 +65,7 @@
         <snack3.version>3.2.88</snack3.version>
         <jackson.version>2.13.5</jackson.version>
         <fastjson.version>2.0.43</fastjson.version>
+        <gson.version>2.9.0</gson.version>
         <slf4j-api.version>1.7.36</slf4j-api.version>
         <oracle.version>11.2.0.4</oracle.version>
         <easy-query.version>2.0.63</easy-query.version>
@@ -264,6 +265,12 @@
                 <groupId>com.alibaba.fastjson2</groupId>
                 <artifactId>fastjson2</artifactId>
                 <version>${fastjson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>${gson.version}</version>
             </dependency>
 
             <dependency>
