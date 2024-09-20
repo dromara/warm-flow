@@ -57,7 +57,7 @@
         <el-tooltip
           effect="dark"
           :content="userNameList"
-          :visible="!disabled"
+          :disabled="!disabled"
         >
           <el-form-item label="权限标识">
             <el-select v-model="form.permissionFlag" multiple collapse-tags :disabled="disabled" :clearable="!disabled" filterable v-if="form.collaborativeWay === '1'">
