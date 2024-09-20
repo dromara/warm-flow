@@ -15,6 +15,7 @@
     <modules>
         <module>warm-flow-plugin-snack</module>
         <module>warm-flow-plugin-jackson</module>
+        <module>warm-flow-plugin-fastjson</module>
     </modules>
 
 </project>

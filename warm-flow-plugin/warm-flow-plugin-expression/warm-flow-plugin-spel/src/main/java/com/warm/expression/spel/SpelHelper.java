@@ -13,8 +13,14 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.warm.plugin.modes.sb.utils;
+package com.warm.expression.spel;
 
+import com.warm.flow.core.exception.FlowException;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.ListableBeanFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.expression.BeanFactoryResolver;
 import org.springframework.expression.BeanResolver;
 import org.springframework.expression.ExpressionParser;
@@ -22,33 +28,54 @@ import org.springframework.expression.ParserContext;
 import org.springframework.expression.common.TemplateParserContext;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
-import org.springframework.stereotype.Component;
 
 /**
  * 条件表达式spel
  *
  * @author warm
  */
-@Component
-public class SpelHelper {
+@Configuration
+public class SpelHelper implements ApplicationContextAware {
 
     private static final ExpressionParser parser = new SpelExpressionParser();
     private final static ParserContext parserContext = new TemplateParserContext();
 
+    private static ApplicationContext applicationContext;
 
     /**
      * bean解析器 用于处理 spel 表达式中对 bean 的调用
      */
-    private final static BeanResolver beanResolver = new BeanFactoryResolver(SpringUtil.getBeanFactory());
+    private static BeanResolver beanResolver = null;
 
+   public static BeanResolver beanResolver() {
+       if (beanResolver == null) {
+           beanResolver = new BeanFactoryResolver(getBeanFactory());
+        }
+       return beanResolver;
+   }
     /**
      * @param expression
      * @return
      */
     public static Object parseExpression(String expression) {
         StandardEvaluationContext context = new StandardEvaluationContext();
-        context.setBeanResolver(beanResolver);
+        context.setBeanResolver(beanResolver());
         return parser.parseExpression(expression, parserContext).getValue(context, Object.class);
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        if (SpelHelper.applicationContext == null) {
+            SpelHelper.applicationContext = applicationContext;
+        }
+    }
+
+    public static ListableBeanFactory getBeanFactory() {
+        if (null == applicationContext) {
+            throw new FlowException("No ConfigurableListableBeanFactory or ApplicationContext injected, maybe not in the Spring environment?");
+        } else {
+            return applicationContext;
+        }
     }
 
 
