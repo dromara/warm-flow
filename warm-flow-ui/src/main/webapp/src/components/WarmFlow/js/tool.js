@@ -271,11 +271,14 @@ export const logicFlowJsonToFlowXml = (data) => {
       nodeCode: node.id,
       nodeName: (node.text instanceof String || node.text === undefined) ? node.text : node.text.value,
       permissionFlag: node.properties.permissionFlag,
+      nodeRatio: node.properties.nodeRatio,
       skipAnyNode: node.properties.skipAnyNode,
       listenerType: node.properties.listenerType,
       listenerPath: node.properties.listenerPath,
       coordinate: node.x + ',' + node.y + textXy,
       skip: getSkip(node.id),
+      formCustom: node.properties.formCustom,
+      formPath: node.properties.formPath
     }
   }
   /**

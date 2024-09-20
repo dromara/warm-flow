@@ -150,6 +150,20 @@ watch(() => form.value.nodeName, (n) => {
   })
 });
 
+watch(() => form.value.collaborativeWay, (n) => {
+  // 监听节点属性变化并更新
+  props.lf.setProperties(objId.value, {
+    nodeRatio: n === "1" ? "0.000" : n === "3" ? "100.000" : ""
+  })
+});
+
+watch(() => form.value.nodeRatio, (n) => {
+  // 监听节点属性变化并更新
+  props.lf.setProperties(objId.value, {
+    nodeRatio: n
+  })
+});
+
 watch(() => form.value.permissionFlag, (n) => {
   // 监听节点属性变化并更新
   props.lf.setProperties(objId.value, {
