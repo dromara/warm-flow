@@ -24,7 +24,17 @@ import java.util.Map;
  */
 public interface VariableStrategy {
 
+    /**
+     * 获取变量替换类型
+     * @return 变量替换类型
+     */
     String getType();
 
+    /**
+     * 执行表达式
+     * @param expression 表达式
+     * @param variable 流程变量
+     * @return 执行结果
+     */
     String eval(String expression, Map<String, Object> variable);
 }

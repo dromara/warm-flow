@@ -15,9 +15,7 @@
  */
 package com.warm.flow.core.variable;
 
-import com.warm.flow.core.constant.ExceptionCons;
 import com.warm.flow.core.constant.FlowCons;
-import com.warm.flow.core.exception.FlowException;
 import com.warm.flow.core.utils.MapUtil;
 import com.warm.flow.core.utils.ObjectUtil;
 import com.warm.flow.core.utils.StringUtils;
@@ -36,11 +34,6 @@ public class DefaultVariableStrategy implements VariableStrategy {
         return FlowCons.splitAt + "default" + FlowCons.splitAt;
     }
 
-    /**
-     * @param expression flag@@eq@@4
-     * @param variable   Map<String,Object>
-     * @return String
-     */
     @Override
     public String eval(String expression, Map<String, Object> variable) {
         if (StringUtils.isEmpty(expression) || MapUtil.isEmpty(variable)) {
@@ -57,13 +50,4 @@ public class DefaultVariableStrategy implements VariableStrategy {
         }
         return null;
     }
-
-    public void preEval(String[] split, Map<String, Object> variable) {
-        Object o = variable.get(split[0].trim());
-        if (MapUtil.isEmpty(variable) && ObjectUtil.isNull(o)) {
-            throw new FlowException(ExceptionCons.NULL_CONDITIONVALUE);
-        }
-    }
-
-
 }

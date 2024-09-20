@@ -33,7 +33,7 @@ public interface ExpressionStrategy {
     /**
      * 执行表达式
      * @param expression 表达式
-     * @param variable 变量
+     * @param variable 流程变量
      * @return 执行结果
      */
     boolean eval(String expression, Map<String, Object> variable);
