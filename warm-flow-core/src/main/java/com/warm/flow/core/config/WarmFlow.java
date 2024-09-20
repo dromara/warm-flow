@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * WarmFlow属性配置文件
@@ -119,8 +118,7 @@ public class WarmFlow implements Serializable {
     }
     public static void spiLoad() {
         // 通过SPI机制加载条件表达式策略实现类
-        List<ExpressionStrategy> expressionStrategyList = ServiceLoaderUtil.loadList(ExpressionStrategy.class);
-        expressionStrategyList.forEach(ExpressionUtil::setExpression);
+        ServiceLoaderUtil.loadList(ExpressionStrategy.class).forEach(ExpressionUtil::setExpression);
 
         // 通过SPI机制加载json转换策略实现类
         FlowFactory.jsonConvert(ServiceLoaderUtil.loadFirst(JsonConvert.class));

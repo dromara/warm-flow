@@ -318,7 +318,7 @@
             </dependency>
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
-                <artifactId>warm-flow-plugin-spel</artifactId>
+                <artifactId>warm-flow-plugin-expression</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
             <dependency>

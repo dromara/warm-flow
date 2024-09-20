@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.warm.expression.spel.SpelHelper
+  com.warm.plugin.expression.SpelHelper
