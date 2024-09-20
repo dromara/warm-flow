@@ -103,7 +103,7 @@ public class ExceptionCons {
 
     public static final String LOAD_EXPRESSION_STRATEGY_ERROR = "SPI加载条件表达式失败!";
 
-    public static final String LOAD_JSON_CONVERT_ERROR = "SPI加载json库失败!";
+    public static final String LOAD_JSON_CONVERT_ERROR = "SPI加载json库失败,";
 
     public static final String JPA_PERSISTENCE_PROVIDER_NOT_FOUND = "jpa_persistence_provider配置不能为空";
 

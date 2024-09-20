@@ -13,7 +13,7 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.warm.json.gson;
+package com.warm.plugin.json;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
