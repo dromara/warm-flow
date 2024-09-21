@@ -22,7 +22,7 @@ import com.warm.plugin.spel.SpelHelper;
 import java.util.Map;
 
 /**
- * 条件表达式spel
+ * spel条件表达式 @@spel@@|#{@user.eval()}
  *
  * @author warm
  */
@@ -33,11 +33,6 @@ public class ExpressionStrategySpel implements ExpressionStrategy {
         return FlowCons.splitAt + "spel" + FlowCons.splitAt;
     }
 
-    /**
-     * @param expression @@spel@@|flag@@eq@@4
-     * @param variable
-     * @return
-     */
     @Override
     public boolean eval(String expression, Map<String, Object> variable) {
         return Boolean.TRUE.equals(SpelHelper.parseExpression(expression));
