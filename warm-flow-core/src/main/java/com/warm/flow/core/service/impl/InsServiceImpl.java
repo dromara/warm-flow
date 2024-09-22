@@ -70,7 +70,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
 
         // 执行开始监听器
         ListenerUtil.executeListener(new ListenerVariable(definition, instance, startNode, flowParams.getVariable())
-                , Listener.LISTENER_START);
+                .setFlowParams(flowParams), Listener.LISTENER_START);
 
 
         // 判断开始结点和下一结点是否有权限监听器,有执行权限监听器node.setPermissionFlag,无走数据库的权限标识符
