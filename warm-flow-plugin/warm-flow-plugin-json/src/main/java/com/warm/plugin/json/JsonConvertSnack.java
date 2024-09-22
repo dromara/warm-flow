@@ -30,6 +30,7 @@ import java.util.Map;
  */
 public class JsonConvertSnack implements JsonConvert {
 
+    private static final ONode oNode = new ONode();
 
     /**
      * 将字符串转为map
