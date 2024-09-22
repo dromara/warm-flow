@@ -119,4 +119,9 @@ public class ExceptionCons {
 
     public static final String CUR_USER_NOT_EMPTY = "当前处理人不能为空";
 
+    public static final String NOT_HIS_TASK_HANDLER = "当前处理人不是此节点的处理人，不能撤回";
+
+    public static final String NEXT_NODE_HANDLED = "下个节点已经处理完毕，不能撤回";
+
+    public static final String NODE_IS_END = "结束节点不能撤销";
 }
