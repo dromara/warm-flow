@@ -323,6 +323,16 @@
             </dependency>
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
+                <artifactId>warm-flow-plugin-expression</artifactId>
+                <version>${warm-flow}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.minliuhua</groupId>
+                <artifactId>warm-flow-plugin-variable</artifactId>
+                <version>${warm-flow}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-plugin-modes-sb</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
@@ -333,17 +343,7 @@
             </dependency>
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
-                <artifactId>warm-flow-plugin-snack</artifactId>
-                <version>${warm-flow}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.minliuhua</groupId>
-                <artifactId>warm-flow-plugin-jackson</artifactId>
-                <version>${warm-flow}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.minliuhua</groupId>
-                <artifactId>warm-flow-plugin-fastjson</artifactId>
+                <artifactId>warm-flow-plugin-json</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
         </dependencies>

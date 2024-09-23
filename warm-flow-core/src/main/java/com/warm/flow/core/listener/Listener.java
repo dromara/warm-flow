@@ -47,5 +47,5 @@ public interface Listener extends Serializable {
      */
     String LISTENER_PERMISSION = "permission";
 
-    void notify(ListenerVariable variable);
+    void notify(ListenerVariable listenerVariable);
 }

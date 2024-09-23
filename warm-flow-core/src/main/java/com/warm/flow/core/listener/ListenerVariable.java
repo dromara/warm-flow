@@ -15,6 +15,7 @@
  */
 package com.warm.flow.core.listener;
 
+import com.warm.flow.core.dto.FlowParams;
 import com.warm.flow.core.entity.Definition;
 import com.warm.flow.core.entity.Instance;
 import com.warm.flow.core.entity.Node;
@@ -64,6 +65,11 @@ public class ListenerVariable {
      * 流程变量
      */
     private Map<String, Object> variable;
+
+    /**
+     * 工作流内置参数
+     */
+    private FlowParams flowParams;
 
     /**
      * 权限监听器使用
@@ -200,13 +206,28 @@ public class ListenerVariable {
                 .orElse(null);
     }
 
+    public FlowParams getFlowParams() {
+        return flowParams;
+    }
+
+    public ListenerVariable setFlowParams(FlowParams flowParams) {
+        this.flowParams = flowParams;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "ListenerVariable{" +
-                "instance=" + instance +
+                "definition=" + definition +
+                ", instance=" + instance +
                 ", node=" + node +
+                ", task=" + task +
+                ", nextNodes=" + nextNodes +
+                ", nextTasks=" + nextTasks +
                 ", variable=" + variable +
+                ", flowParams=" + flowParams +
                 ", nodePermissionList=" + nodePermissionList +
                 '}';
     }
+
 }

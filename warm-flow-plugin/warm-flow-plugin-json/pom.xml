@@ -10,13 +10,35 @@
     </parent>
 
     <artifactId>warm-flow-plugin-json</artifactId>
-    <packaging>pom</packaging>
+    <dependencies>
+        <dependency>
+            <groupId>io.github.minliuhua</groupId>
+            <artifactId>warm-flow-core</artifactId>
+        </dependency>
 
-    <modules>
-        <module>warm-flow-plugin-snack</module>
-        <module>warm-flow-plugin-jackson</module>
-        <module>warm-flow-plugin-fastjson</module>
-        <module>warm-flow-plugin-gson</module>
-    </modules>
+        <dependency>
+            <groupId>com.alibaba.fastjson2</groupId>
+            <artifactId>fastjson2</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>org.noear</groupId>
+            <artifactId>snack3</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
 
 </project>

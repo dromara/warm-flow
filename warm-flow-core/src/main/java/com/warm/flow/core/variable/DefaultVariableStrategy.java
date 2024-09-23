@@ -16,7 +16,6 @@
 package com.warm.flow.core.variable;
 
 import com.warm.flow.core.constant.FlowCons;
-import com.warm.flow.core.utils.MapUtil;
 import com.warm.flow.core.utils.ObjectUtil;
 import com.warm.flow.core.utils.StringUtils;
 
@@ -36,9 +35,6 @@ public class DefaultVariableStrategy implements VariableStrategy {
 
     @Override
     public String eval(String expression, Map<String, Object> variable) {
-        if (StringUtils.isEmpty(expression) || MapUtil.isEmpty(variable)) {
-            return null;
-        }
         String result = expression.replace("${", "").replace("}", "");
         Object o = variable.get(result);
         if (ObjectUtil.isNotNull(o)) {

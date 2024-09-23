@@ -73,7 +73,7 @@ public class ListenerUtil {
     public static void endCreateListener(ListenerVariable listenerVariable) {
         // 执行任务完成监听器
         executeListener(listenerVariable, Listener.LISTENER_END);
-        // 执行任务开始监听器
+        // 执行任务创建监听器
         listenerVariable.getNextNodes().forEach(node -> executeListener(listenerVariable, Listener.LISTENER_CREATE, node));
     }
 

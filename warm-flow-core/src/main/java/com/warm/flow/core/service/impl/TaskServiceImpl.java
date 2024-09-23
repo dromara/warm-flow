@@ -49,7 +49,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     @Override
     public Instance skip(Long taskId, FlowParams flowParams) {
-
         AssertUtil.isTrue(StringUtils.isNotEmpty(flowParams.getMessage())
                 && flowParams.getMessage().length() > 500, ExceptionCons.MSG_OVER_LENGTH);
         // 获取待办任务
@@ -78,7 +77,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 执行开始监听器
         task.setUserList(FlowFactory.userService().listByAssociatedAndTypes(task.getId()));
         ListenerUtil.executeListener(new ListenerVariable(definition, instance, nowNode, flowParams.getVariable(), task)
-                , Listener.LISTENER_START);
+                .setFlowParams(flowParams), Listener.LISTENER_START);
 
         // 如果是受托人在处理任务，需要处理一条委派记录，并且更新委托人，回到计划审批人,然后直接返回流程实例
         if (handleDepute(task, flowParams)) {
@@ -115,8 +114,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         List<Task> addTasks = buildAddTasks(flowParams, task, instance, nextNodes, nextNode, definition);
 
         // 办理人变量替换
-        VariableUtil.eval(addTasks, flowParams.getVariable());
-
+        if (CollUtil.isNotEmpty(addTasks)) {
+            addTasks.forEach(addTask -> addTask.getPermissionList().replaceAll(s -> VariableUtil.eval(s, flowParams.getVariable())));
+        }
         // 执行分派监听器
         ListenerUtil.executeListener(new ListenerVariable(definition, instance, nowNode, flowParams.getVariable(), task, nextNodes
                 , addTasks), Listener.LISTENER_ASSIGNMENT);
@@ -154,6 +154,16 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     public Instance termination(Instance instance, Task task, FlowParams flowParams) {
         Definition definition = FlowFactory.defService().getById(instance.getDefinitionId());
         AssertUtil.isFalse(judgeActivityStatus(definition, instance), ExceptionCons.NOT_ACTIVITY);
+
+        Node nowNode = FlowFactory.nodeService().getOne(FlowFactory.newNode()
+                .setDefinitionId(instance.getDefinitionId()).setNodeCode(task.getNodeCode()));
+        ListenerUtil.executeListener(new ListenerVariable(definition, instance, nowNode, flowParams.getVariable(), task)
+                .setFlowParams(flowParams), Listener.LISTENER_START);
+
+        // 判断当前处理人是否有权限处理
+        task.setUserList(FlowFactory.userService().listByAssociatedAndTypes(task.getId()));
+        checkAuth(nowNode, task, flowParams.getPermissionFlag());
+
         // 所有待办转历史
         Node endNode = FlowFactory.nodeService().getOne(FlowFactory.newNode()
                 .setDefinitionId(instance.getDefinitionId()).setNodeType(NodeType.END.getKey()));
@@ -176,6 +186,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         FlowFactory.userService().deleteByTaskIds(Collections.singletonList(task.getId()));
         // 处理未完成的任务，当流程完成，还存在待办任务未完成，转历史任务，状态完成。
         handUndoneTask(instance, flowParams);
+        // 最后判断是否存在节点监听器，存在执行节点监听器
+        ListenerUtil.executeListener(new ListenerVariable(definition, instance, nowNode, flowParams.getVariable()
+                , task), Listener.LISTENER_END);
         return instance;
     }
 

@@ -1,8 +1,8 @@
 {
   "name": "ruoyi",
-  "version": "3.8.7",
-  "description": "若依管理系统",
-  "author": "若依",
+  "version": "1.2.7",
+  "description": "Warm-Flow设计器",
+  "author": "warm",
   "license": "MIT",
   "type": "module",
   "scripts": {

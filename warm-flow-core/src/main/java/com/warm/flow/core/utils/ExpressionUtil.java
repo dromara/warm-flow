@@ -61,7 +61,7 @@ public class ExpressionUtil {
         }
         AtomicBoolean flag = new AtomicBoolean(false);
         map.forEach((k, v) -> {
-            if (expression.contains(k + "|")) {
+            if (expression.startsWith(k + "|")) {
                 if (v == null) {
                     throw new FlowException(ExceptionCons.NULL_EXPRESSION_STRATEGY);
                 }
