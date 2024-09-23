@@ -51,7 +51,6 @@ public class BeanConfig {
         return new DefServiceImpl().setDao(definitionDao);
     }
 
-
     @Bean(injected = true)
     public FlowNodeDao nodeDao() {
         return new FlowNodeDaoImpl();
@@ -113,6 +112,16 @@ public class BeanConfig {
     }
 
     @Bean
+    public FlowFormDao flowFormDao() {
+        return new FlowFormDaoImpl();
+    }
+
+    @Bean(injected = true)
+    public FormService flowFormService(FlowFormDao formDao) {
+        return new FormServiceImpl().setDao(formDao);
+    }
+
+    @Bean
     public WarmFlow initFlow() {
         setNewEntity();
         FrameInvoker.setCfgFunction((key) -> Solon.cfg().get(key));
@@ -131,6 +140,7 @@ public class BeanConfig {
         FlowFactory.setNewSkip(FlowSkip::new);
         FlowFactory.setNewTask(FlowTask::new);
         FlowFactory.setNewUser(FlowUser::new);
+        FlowFactory.setNewForm(FlowForm::new);
     }
 
 }
