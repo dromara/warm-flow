@@ -14,7 +14,7 @@
       <slot name="form-item-task-collaborativeWay" :model="form" field="collaborativeWay">
         <el-form-item label="协作方式">
           <el-radio-group v-model="form.collaborativeWay" @change="collaborativeWayChange">
-            <el-radio label="1">
+            <el-radio label="1" v-if="form.collaborativeWay ==='1'">
               <span class="flex-hc">
                 或签
                 <el-tooltip class="box-item" effect="dark" content="只需一个人审批">
@@ -24,7 +24,7 @@
                 </el-tooltip>
               </span>
             </el-radio>
-            <el-radio label="2">
+            <el-radio label="2" v-if="form.collaborativeWay ==='2'">
               <span class="flex-hc">
                 票签
                 <el-tooltip class="box-item" effect="dark" content="部分办理人审批，只支持选择用户">
@@ -34,7 +34,7 @@
                 </el-tooltip>
               </span>
             </el-radio>
-            <el-radio label="3">
+            <el-radio label="3" v-if="form.collaborativeWay ==='3'">
               <span class="flex-hc">
                 会签
                 <el-tooltip class="box-item" effect="dark" content="所有办理都需要审批，只支持选择用户">
@@ -59,8 +59,8 @@
           :content="userNameList"
           :disabled="!disabled"
         >
-          <el-form-item label="权限标识">
-            <el-select v-model="form.permissionFlag" multiple collapse-tags :disabled="disabled" :clearable="!disabled" filterable v-if="form.collaborativeWay === '1'">
+          <el-form-item label="办理人选择">
+            <el-select v-model="form.permissionFlag" allow-create multiple collapse-tags :disabled="disabled" :clearable="!disabled" filterable v-if="form.collaborativeWay === '1'">
               <el-option-group
                 v-for="groupOption in groupOptions"
                 :key="groupOption.label"

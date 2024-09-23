@@ -66,6 +66,7 @@ const props = defineProps({
 const drawer = ref(false);
 const form = ref({});
 const objId = ref(undefined);
+const nodeCode = ref(null);
 const title = computed(() => {
   if (props.node && props.node.type === 'skip') {
     return '设置边属性'
@@ -94,18 +95,29 @@ watch(() => props.node, n => {
       let skipCondition = n.properties.skipCondition
       let conditionSpl = skipCondition ? skipCondition.split('@@|') : []
       let conditionSplTwo = conditionSpl && conditionSpl.length > 0 ? conditionSpl[1]: []
+      let condition, conditionType, conditionValue = '';
+      if (conditionSpl && conditionSpl.length > 0 && conditionSpl[0] === '@@spel') {
+        conditionType = 'spel'
+        conditionValue = conditionSplTwo
+      } else if (conditionSpl && conditionSpl.length > 0 && conditionSpl[0] !== '@@spel') {
+        condition = conditionSplTwo && conditionSplTwo.length > 0 ? conditionSplTwo.split("@@")[0] : ''
+        conditionType = conditionSplTwo && conditionSplTwo.length > 0 ? conditionSplTwo.split("@@")[1] : ''
+        conditionValue = conditionSplTwo && conditionSplTwo.length > 0 ? conditionSplTwo.split("@@")[2] : ''
+      }
       form.value = {
         nodeType: n.type,
         skipType: n.properties.skipType,
         skipName: n.properties.skipName,
         skipCondition: skipCondition,
-        condition: conditionSplTwo && conditionSplTwo.length > 0 ? conditionSplTwo.split("@@")[0] : '',
-        conditionType: conditionSplTwo && conditionSplTwo.length > 0 ? conditionSplTwo.split("@@")[1] : '',
-        conditionValue: conditionSplTwo && conditionSplTwo.length > 0 ? conditionSplTwo.split("@@")[2] : '',
+        condition: condition,
+        conditionType: conditionType,
+        conditionValue: conditionValue
       }
     } else {
       let nodeRatio = n.properties.nodeRatio || "";
-      n.properties.collaborativeWay = nodeRatio === "0.000" ? "1" : nodeRatio === "100.000" ? "3" : nodeRatio ? "2" : "1";
+      if (!n.properties.collaborativeWay) {
+        n.properties.collaborativeWay = nodeRatio === "0.000" ? "1" : nodeRatio === "100.000" ? "3" : nodeRatio ? "2" : "1";
+      }
       n.properties.formCustom = JSON.stringify(n.properties) === "{}" ? "N" : (n.properties.formCustom || "");
       form.value = {
         nodeType: n.type,
@@ -117,20 +129,8 @@ watch(() => props.node, n => {
   }
 });
 
-watch(() => form.value.nodeCode, (n, o) => {
-  // 监听节点编码变量并更新
-  if (n && o) {
-    if (['skip'].includes(props.node.type)) {
-      if (!props.lf.getEdgeModelById(n)) {
-        props.lf.changeEdgeId(o, n)
-      }
-    } else {
-      if (!props.lf.getNodeModelById(n)) {
-        props.lf.changeNodeId(o, n)
-      }
-    }
-    objId.value = n
-  }
+watch(() => form.value.nodeCode, (n) => {
+  nodeCode.value = n;
 });
 
 watch(() => form.value.skipType, (n) => {
@@ -235,6 +235,18 @@ function show () {
 }
 
 function handleClose () {
+  // 监听节点编码变量并更新
+  if (nodeCode.value && objId.value) {
+    if (['skip'].includes(props.node?.type)) {
+      if (!props.lf.getEdgeModelById(nodeCode.value)) {
+        props.lf.changeEdgeId(objId.value, nodeCode.value)
+      }
+    } else {
+      if (!props.lf.getNodeModelById(nodeCode.value)) {
+        props.lf.changeNodeId(objId.value, nodeCode.value)
+      }
+    }
+  }
   drawer.value = false
 }
 
