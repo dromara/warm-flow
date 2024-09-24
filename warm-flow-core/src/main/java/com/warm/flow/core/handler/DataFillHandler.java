@@ -15,6 +15,13 @@
  */
 package com.warm.flow.core.handler;
 
+import com.warm.flow.core.entity.RootEntity;
+import com.warm.flow.core.utils.IdUtils;
+import com.warm.flow.core.utils.ObjectUtil;
+
+import java.util.Date;
+import java.util.Objects;
+
 /**
  * @author warm
  * @description: 数据填充handler，以下三个接口按照实际情况实现
@@ -27,19 +34,38 @@ public interface DataFillHandler {
      *
      * @param object
      */
-    void idFill(Object object);
+    default void idFill(Object object) {
+        RootEntity entity = (RootEntity) object;
+        if (ObjectUtil.isNotNull(entity)) {
+            if (Objects.isNull(entity.getId())) {
+                entity.setId(IdUtils.nextId());
+            }
+        }
+    }
 
     /**
      * 新增填充
      *
      * @param object
      */
-    void insertFill(Object object);
+    default void insertFill(Object object) {
+        RootEntity entity = (RootEntity) object;
+        if (ObjectUtil.isNotNull(entity)) {
+            Date date = ObjectUtil.isNotNull(entity.getCreateTime()) ? entity.getCreateTime() : new Date();
+            entity.setCreateTime(date);
+            entity.setUpdateTime(date);
+        }
+    }
 
     /**
      * 设置更新常用参数
      *
      * @param object
      */
-    void updateFill(Object object);
+    default void updateFill(Object object) {
+        RootEntity entity = (RootEntity) object;
+        if (ObjectUtil.isNotNull(entity)) {
+            entity.setUpdateTime(ObjectUtil.isNotNull(entity.getUpdateTime()) ? entity.getCreateTime() : new Date());
+        }
+    }
 }

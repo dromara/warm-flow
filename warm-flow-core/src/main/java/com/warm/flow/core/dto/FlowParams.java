@@ -63,7 +63,7 @@ public class FlowParams implements Serializable {
     private Map<String, Object> variable;
 
     /**
-     * 流程状态
+     * 流程实例状态
      */
     private String flowStatus;
 

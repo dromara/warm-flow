@@ -31,8 +31,6 @@ public class SpringUtil implements ApplicationContextAware {
 
     private static ApplicationContext applicationContext;
 
-    private static ConfigurableListableBeanFactory beanFactory;
-
     /**
      * 获取applicationContext，应用上下文
      *
@@ -49,23 +47,11 @@ public class SpringUtil implements ApplicationContextAware {
         }
     }
 
-    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-        SpringUtil.beanFactory = beanFactory;
-    }
     /**
      * 通过class获取Bean
      */
     public static <M> M getBean(Class<M> clazz) {
         return getApplicationContext().getBean(clazz);
-    }
-
-    public static ListableBeanFactory getBeanFactory() {
-        ListableBeanFactory factory = null == beanFactory ? applicationContext : beanFactory;
-        if (null == factory) {
-            throw new FlowException("No ConfigurableListableBeanFactory or ApplicationContext injected, maybe not in the Spring environment?");
-        } else {
-            return factory;
-        }
     }
 }
 

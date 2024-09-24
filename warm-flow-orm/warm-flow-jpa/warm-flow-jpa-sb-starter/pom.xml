@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.github.minliuhua</groupId>
         <artifactId>warm-flow-jpa</artifactId>
-        <version>1.2.7</version>
+        <version>1.2.8</version>
     </parent>
 
     <artifactId>warm-flow-jpa-sb-starter</artifactId>

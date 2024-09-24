@@ -73,8 +73,8 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
     @Override
     public Node getNextNode(Long definitionId, String nowNodeCode, String anyNodeCode, String skipType) {
         AssertUtil.isNull(definitionId, ExceptionCons.NOT_DEFINITION_ID);
-        AssertUtil.isBlank(nowNodeCode, ExceptionCons.LOST_NODE_CODE);
-        AssertUtil.isBlank(skipType, ExceptionCons.NULL_CONDITIONVALUE);
+        AssertUtil.isEmpty(nowNodeCode, ExceptionCons.LOST_NODE_CODE);
+        AssertUtil.isEmpty(skipType, ExceptionCons.NULL_CONDITIONVALUE);
 
         // 如果指定了跳转节点，直接获取节点
         if (StringUtils.isNotEmpty(anyNodeCode)) {
@@ -89,11 +89,11 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
         AssertUtil.isNull(skips, ExceptionCons.NULL_SKIP_TYPE);
 
         Skip nextSkip = getSkipByCheck(nowNode, skips, skipType);
-        AssertUtil.isTrue(ObjectUtil.isNull(nextSkip), ExceptionCons.NULL_SKIP_TYPE);
+        AssertUtil.isNull(nextSkip, ExceptionCons.NULL_SKIP_TYPE);
 
         // 根据跳转查询出跳转到的那个节点
         Node nextNode = getOne(FlowFactory.newNode().setNodeCode(nextSkip.getNextNodeCode()).setDefinitionId(definitionId));
-        AssertUtil.isTrue(ObjectUtil.isNull(nextNode), ExceptionCons.NULL_NODE_CODE);
+        AssertUtil.isNull(nextNode, ExceptionCons.NULL_NODE_CODE);
         AssertUtil.isTrue(NodeType.isStart(nextNode.getNodeType()), ExceptionCons.FRIST_FORBID_BACK);
         return nextNode;
     }
@@ -120,7 +120,7 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
                 return true;
             }).collect(Collectors.toList());
         }
-        AssertUtil.isTrue(CollUtil.isEmpty(skips), ExceptionCons.NULL_SKIP_TYPE);
+        AssertUtil.isEmpty(skips, ExceptionCons.NULL_SKIP_TYPE);
         return skips.get(0);
     }
 
@@ -137,7 +137,7 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
             if (!NodeType.isStart(nextNode.getNodeType())) {
                 skipsGateway = skipsGateway.stream().filter(t -> {
                     if (NodeType.isGateWaySerial(nextNode.getNodeType())) {
-                        AssertUtil.isTrue(MapUtil.isEmpty(variable), ExceptionCons.MUST_CONDITIONVALUE_NODE);
+                        AssertUtil.isEmpty(variable, ExceptionCons.MUST_CONDITIONVALUE_NODE);
                         if (ObjectUtil.isNotNull(t.getSkipCondition())) {
                             return ExpressionUtil.eval(t.getSkipCondition(), variable);
                         }
@@ -146,11 +146,11 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
                     return true;
                 }).collect(Collectors.toList());
             }
-            AssertUtil.isTrue(CollUtil.isEmpty(skipsGateway), ExceptionCons.NULL_CONDITIONVALUE_NODE);
+            AssertUtil.isEmpty(skipsGateway, ExceptionCons.NULL_CONDITIONVALUE_NODE);
             List<String> nextNodeCodes = StreamUtils.toList(skipsGateway, Skip::getNextNodeCode);
             List<Node> nextNodes = FlowFactory.nodeService()
                     .getByNodeCodes(nextNodeCodes, nextNode.getDefinitionId());
-            AssertUtil.isTrue(CollUtil.isEmpty(nextNodes), ExceptionCons.NOT_NODE_DATA);
+            AssertUtil.isEmpty(nextNodes, ExceptionCons.NOT_NODE_DATA);
             return nextNodes;
         }
         // 非网关节点直接返回

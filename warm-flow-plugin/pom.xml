@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.github.minliuhua</groupId>
         <artifactId>warm-flow</artifactId>
-        <version>1.2.7</version>
+        <version>1.2.8</version>
     </parent>
 
     <artifactId>warm-flow-plugin</artifactId>
@@ -14,7 +14,10 @@
 
     <modules>
         <module>warm-flow-plugin-expression</module>
+        <module>warm-flow-plugin-json</module>
         <module>warm-flow-plugin-modes</module>
+        <module>warm-flow-plugin-spel</module>
+        <module>warm-flow-plugin-variable</module>
     </modules>
 
 

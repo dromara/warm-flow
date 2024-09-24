@@ -15,19 +15,27 @@
  */
 package com.warm.flow.core.config;
 
+import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.constant.FlowConfigCons;
 import com.warm.flow.core.constant.FlowCons;
+import com.warm.flow.core.expression.ExpressionStrategy;
 import com.warm.flow.core.invoker.FrameInvoker;
-import com.warm.flow.core.utils.ExpressionUtil;
-import com.warm.flow.core.utils.ObjectUtil;
-import com.warm.flow.core.utils.StringUtils;
+import com.warm.flow.core.json.JsonConvert;
+import com.warm.flow.core.utils.*;
+import com.warm.flow.core.variable.VariableStrategy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.Serializable;
 
 /**
  * WarmFlow属性配置文件
  *
  * @author warm
  */
-public class WarmFlow {
+public class WarmFlow implements Serializable {
+
+    private static final Logger log = LoggerFactory.getLogger(WarmFlow.class);
 
     /**
      * 开关
@@ -40,7 +48,7 @@ public class WarmFlow {
     private boolean banner = true;
 
     /**
-     * id生成器类型, 不填默认19位雪花算法, SnowId14:14位，SnowId15:15位， SnowFlake19：19位
+     * id生成器类型, 不填默认为orm扩展自带生成器或者warm-flow内置的19位雪花算法, SnowId14:14位，SnowId15:15位， SnowFlake19：19位
      */
     private String keyType = FlowCons.SNOWID19;
 
@@ -102,9 +110,19 @@ public class WarmFlow {
         flowConfig.setDataSourceType(FrameInvoker.getCfg(FlowConfigCons.DATA_SOURCE_TYPE));
         printBanner(flowConfig);
 
-        // 通过SPI机制加载条件表达式策略实现类
-        ExpressionUtil.load();
+        // 通过SPI机制
+        spiLoad();
         return flowConfig;
+    }
+    public static void spiLoad() {
+        // 通过SPI机制加载条件表达式策略实现类
+        ServiceLoaderUtil.loadList(ExpressionStrategy.class).forEach(ExpressionUtil::setExpression);
+
+        // 通过SPI机制加载办理人变量表达式策略实现类
+        ServiceLoaderUtil.loadList(VariableStrategy.class).forEach(VariableUtil::setExpression);
+
+        // 通过SPI机制加载json转换策略实现类
+        FlowFactory.jsonConvert(ServiceLoaderUtil.loadFirst(JsonConvert.class));
     }
 
     private static void setLogicDelete(WarmFlow flowConfig) {

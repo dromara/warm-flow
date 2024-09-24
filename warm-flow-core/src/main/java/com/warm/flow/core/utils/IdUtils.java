@@ -17,10 +17,10 @@ package com.warm.flow.core.utils;
 
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.constant.FlowCons;
-import com.warm.flow.core.keyGen.KenGen;
-import com.warm.flow.core.keyGen.SnowFlakeId14;
-import com.warm.flow.core.keyGen.SnowFlakeId15;
-import com.warm.flow.core.keyGen.SnowFlakeId19;
+import com.warm.flow.core.keygen.KenGen;
+import com.warm.flow.core.keygen.SnowFlakeId14;
+import com.warm.flow.core.keygen.SnowFlakeId15;
+import com.warm.flow.core.keygen.SnowFlakeId19;
 
 /**
  * @author warm
@@ -59,6 +59,14 @@ public class IdUtils {
             }
         }
         return instance.nextId();
+    }
+
+    public static KenGen getInstance() {
+        return instance;
+    }
+
+    public static void setInstance(KenGen instance) {
+        IdUtils.instance = instance;
     }
 
 }

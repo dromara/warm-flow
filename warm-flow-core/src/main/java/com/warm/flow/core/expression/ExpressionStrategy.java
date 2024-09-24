@@ -17,9 +17,24 @@ package com.warm.flow.core.expression;
 
 import java.util.Map;
 
+/**
+ * 条件表达式
+ *
+ * @author warm
+ */
 public interface ExpressionStrategy {
 
+    /**
+     * 获取表达式类型
+     * @return 表达式类型
+     */
     String getType();
 
+    /**
+     * 执行表达式
+     * @param expression 表达式
+     * @param variable 流程变量
+     * @return 执行结果
+     */
     boolean eval(String expression, Map<String, Object> variable);
 }

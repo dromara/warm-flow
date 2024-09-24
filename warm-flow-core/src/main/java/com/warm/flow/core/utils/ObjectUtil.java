@@ -15,6 +15,8 @@
  */
 package com.warm.flow.core.utils;
 
+import java.util.function.Supplier;
+
 /**
  * @author warm
  * @description: Object 工具类
@@ -55,5 +57,22 @@ public class ObjectUtil {
      */
     public static boolean isStrTrue(String str) {
         return StringUtils.isNotEmpty(str) && "true".equals(str);
+    }
+
+    /**
+     * 如果被检查对象为 {@code null}， 返回默认值（由 defaultValueSupplier 提供）；否则直接返回
+     *
+     * @param source               被检查对象
+     * @param defaultValueSupplier 默认值提供者
+     * @param <T>                  对象类型
+     * @return 被检查对象为{@code null}返回默认值，否则返回自定义handle处理后的返回值
+     * @throws NullPointerException {@code defaultValueSupplier == null} 时，抛出
+     * @since 5.7.20
+     */
+    public static <T> T defaultIfNull(T source, Supplier<? extends T> defaultValueSupplier) {
+        if (isNull(source)) {
+            return defaultValueSupplier.get();
+        }
+        return source;
     }
 }

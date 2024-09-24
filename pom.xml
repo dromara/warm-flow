@@ -6,7 +6,7 @@
 
     <groupId>io.github.minliuhua</groupId>
     <artifactId>warm-flow</artifactId>
-    <version>1.2.7</version>
+    <version>1.2.8</version>
     <packaging>pom</packaging>
 
     <name>warm-flow</name>
@@ -42,6 +42,7 @@
         <module>warm-flow-core</module>
         <module>warm-flow-orm</module>
         <module>warm-flow-plugin</module>
+        <module>warm-flow-ui</module>
     </modules>
 
     <properties>
@@ -62,6 +63,9 @@
         <junit.version>4.13.2</junit.version>
         <solon.version>2.8.4</solon.version>
         <snack3.version>3.2.88</snack3.version>
+        <jackson.version>2.13.5</jackson.version>
+        <fastjson.version>2.0.43</fastjson.version>
+        <gson.version>2.9.0</gson.version>
         <slf4j-api.version>1.7.36</slf4j-api.version>
         <oracle.version>11.2.0.4</oracle.version>
         <easy-query.version>2.0.63</easy-query.version>
@@ -143,6 +147,18 @@
                 <groupId>org.noear</groupId>
                 <artifactId>solon.logging.logback</artifactId>
                 <version>${solon.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.easy-query</groupId>
+                <artifactId>sql-springboot-starter</artifactId>
+                <version>${easy-query.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.minliuhua</groupId>
+                <artifactId>warm-flow-ui</artifactId>
+                <version>${warm-flow}</version>
             </dependency>
 
             <dependency>
@@ -240,6 +256,24 @@
             </dependency>
 
             <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba.fastjson2</groupId>
+                <artifactId>fastjson2</artifactId>
+                <version>${fastjson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>${gson.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j-api.version}</version>
@@ -289,12 +323,27 @@
             </dependency>
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
+                <artifactId>warm-flow-plugin-expression</artifactId>
+                <version>${warm-flow}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.minliuhua</groupId>
+                <artifactId>warm-flow-plugin-variable</artifactId>
+                <version>${warm-flow}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-plugin-modes-sb</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-plugin-modes-solon</artifactId>
+                <version>${warm-flow}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.minliuhua</groupId>
+                <artifactId>warm-flow-plugin-json</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
         </dependencies>

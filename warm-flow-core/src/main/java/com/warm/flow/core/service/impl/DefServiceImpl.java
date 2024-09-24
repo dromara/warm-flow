@@ -70,8 +70,8 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         List<Node> allNodes = combine.getAllNodes();
         // 所有的流程连线
         List<Skip> allSkips = combine.getAllSkips();
-        // 根据不同策略进行新增或者更新
-        updateFlow(definition, allNodes, allSkips);
+        // 根据不同策略进行新增
+        insertFlow(definition, allNodes, allSkips);
         return definition;
     }
 
@@ -158,7 +158,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     @Override
     public boolean unPublish(Long id) {
         List<Task> tasks = FlowFactory.taskService().list(FlowFactory.newTask().setDefinitionId(id));
-        AssertUtil.isTrue(CollUtil.isNotEmpty(tasks), ExceptionCons.NOT_PUBLISH_TASK);
+        AssertUtil.isNotEmpty(tasks, ExceptionCons.NOT_PUBLISH_TASK);
         Definition definition = FlowFactory.newDef().setId(id);
         definition.setIsPublish(PublishStatus.UNPUBLISHED.getKey());
         return updateById(definition);
@@ -167,7 +167,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     @Override
     public boolean copyDef(Long id) {
         Definition definition = ClassUtil.clone(getById(id));
-        AssertUtil.isTrue(ObjectUtil.isNull(definition), ExceptionCons.NOT_FOUNT_DEF);
+        AssertUtil.isNull(definition, ExceptionCons.NOT_FOUNT_DEF);
 
         List<Node> nodeList = FlowFactory.nodeService().list(FlowFactory.newNode().setDefinitionId(id))
                 .stream().map(ClassUtil::clone).collect(Collectors.toList());
@@ -505,8 +505,9 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                         // 前前置节点完成时间是否早于前置节点，如果是串行网关，那前前置节点必须只有一个完成，如果是并行网关都要完成
                         if (task != null) {
                             c = color;
-                        } else if (curHisTask != null && ObjectUtil.isNotNull(oneLastHisTask) && oneLastHisTask.getCreateTime()
-                                .before(curHisTask.getCreateTime())) {
+                        } else if (curHisTask != null && ObjectUtil.isNotNull(oneLastHisTask) && (oneLastHisTask.getCreateTime()
+                                .before(curHisTask.getCreateTime()) || oneLastHisTask.getCreateTime()
+                                .equals(curHisTask.getCreateTime()))) {
                             c = Color.GREEN;
                         } else {
                             c = Color.BLACK;
@@ -583,7 +584,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
      * @param allNodes
      * @param allSkips
      */
-    private void updateFlow(Definition definition, List<Node> allNodes, List<Skip> allSkips) {
+    private void insertFlow(Definition definition, List<Node> allNodes, List<Skip> allSkips) {
         String version = getNewVersion(definition);
         definition.setVersion(version);
         for (Node node : allNodes) {

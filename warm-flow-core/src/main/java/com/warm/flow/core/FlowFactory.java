@@ -18,13 +18,13 @@ package com.warm.flow.core;
 import com.warm.flow.core.config.WarmFlow;
 import com.warm.flow.core.entity.*;
 import com.warm.flow.core.handler.DataFillHandler;
-import com.warm.flow.core.handler.DefaultDataFillHandler;
 import com.warm.flow.core.handler.TenantHandler;
 import com.warm.flow.core.invoker.FrameInvoker;
+import com.warm.flow.core.json.JsonConvert;
 import com.warm.flow.core.service.*;
 import com.warm.flow.core.utils.ClassUtil;
 import com.warm.flow.core.utils.ObjectUtil;
-import org.noear.snack.core.utils.StringUtil;
+import com.warm.flow.core.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,6 +64,8 @@ public class FlowFactory {
     private static boolean tenantHandlerFlag;
 
     private static TenantHandler tenantHandler;
+
+    public static JsonConvert jsonConvert;
 
     public static DefService defService() {
         if (ObjectUtil.isNotNull(defService)) {
@@ -192,7 +194,7 @@ public class FlowFactory {
         DataFillHandler o = null;
         try {
             String dataFillHandlerPath = flowConfig.getDataFillHandlerPath();
-            if (!StringUtil.isEmpty(dataFillHandlerPath)) {
+            if (!StringUtils.isEmpty(dataFillHandlerPath)) {
                 Class<?> clazz = ClassUtil.getClazz(dataFillHandlerPath);
                 if (clazz != null) {
                     return FlowFactory.dataFillHandler = o = (DataFillHandler) clazz.newInstance();
@@ -202,7 +204,7 @@ public class FlowFactory {
         } catch (Exception ignored) {
         }
         if (ObjectUtil.isNull(o)) {
-            return FlowFactory.dataFillHandler = new DefaultDataFillHandler();
+            return FlowFactory.dataFillHandler = new DataFillHandler() {};
         }
         return FlowFactory.dataFillHandler = o;
     }
@@ -217,7 +219,7 @@ public class FlowFactory {
         TenantHandler o = null;
         try {
             String tenantHandlerPath = flowConfig.getTenantHandlerPath();
-            if (!StringUtil.isEmpty(tenantHandlerPath)) {
+            if (!StringUtils.isEmpty(tenantHandlerPath)) {
                 Class<?> clazz = ClassUtil.getClazz(tenantHandlerPath);
                 if (clazz != null) {
                     return FlowFactory.tenantHandler = o = (TenantHandler) clazz.newInstance();
@@ -228,6 +230,13 @@ public class FlowFactory {
         }
         tenantHandlerFlag = true;
         return FlowFactory.tenantHandler = o;
+    }
+
+    /**
+     * 获取租户数据
+     */
+    public static void jsonConvert(JsonConvert jsonConvert) {
+        FlowFactory.jsonConvert = jsonConvert;
     }
 
     /**

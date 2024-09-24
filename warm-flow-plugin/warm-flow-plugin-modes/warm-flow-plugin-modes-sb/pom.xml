@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.github.minliuhua</groupId>
         <artifactId>warm-flow-plugin-modes</artifactId>
-        <version>1.2.7</version>
+        <version>1.2.8</version>
     </parent>
 
     <artifactId>warm-flow-plugin-modes-sb</artifactId>
@@ -18,33 +18,68 @@
         </dependency>
 
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-        </dependency>
-        <dependency>
             <groupId>io.github.minliuhua</groupId>
             <artifactId>warm-flow-mybatis-core</artifactId>
             <optional>true</optional>
         </dependency>
+
         <dependency>
             <groupId>io.github.minliuhua</groupId>
             <artifactId>warm-flow-mybatis-plus-core</artifactId>
             <optional>true</optional>
         </dependency>
+
         <dependency>
             <groupId>io.github.minliuhua</groupId>
             <artifactId>warm-flow-mybatis-flex-core</artifactId>
             <optional>true</optional>
         </dependency>
+
         <dependency>
             <groupId>io.github.minliuhua</groupId>
             <artifactId>warm-flow-easy-query-core</artifactId>
             <optional>true</optional>
         </dependency>
+
         <dependency>
             <groupId>io.github.minliuhua</groupId>
             <artifactId>warm-flow-jpa-core</artifactId>
             <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.minliuhua</groupId>
+            <artifactId>warm-flow-plugin-json</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.minliuhua</groupId>
+            <artifactId>warm-flow-plugin-expression</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.minliuhua</groupId>
+            <artifactId>warm-flow-plugin-variable</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
         </dependency>
     </dependencies>
 

@@ -28,11 +28,9 @@ import com.warm.flow.core.listener.ListenerVariable;
 import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.InsService;
 import com.warm.flow.core.utils.*;
-import org.noear.snack.ONode;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 流程实例Service业务层处理
@@ -51,10 +49,10 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
     @Override
     public Instance start(String businessId, FlowParams flowParams) {
         AssertUtil.isNull(flowParams.getFlowCode(), ExceptionCons.NULL_FLOW_CODE);
-        AssertUtil.isBlank(businessId, ExceptionCons.NULL_BUSINESS_ID);
+        AssertUtil.isEmpty(businessId, ExceptionCons.NULL_BUSINESS_ID);
         // 获取已发布的流程节点
         List<Node> nodes = FlowFactory.nodeService().getByFlowCode(flowParams.getFlowCode());
-        AssertUtil.isTrue(CollUtil.isEmpty(nodes), String.format(ExceptionCons.NOT_PUBLISH_NODE, flowParams.getFlowCode()));
+        AssertUtil.isEmpty(nodes, String.format(ExceptionCons.NOT_PUBLISH_NODE, flowParams.getFlowCode()));
         // 获取开始节点
         Node startNode = nodes.stream().filter(t -> NodeType.isStart(t.getNodeType())).findFirst().orElse(null);
         AssertUtil.isNull(startNode, ExceptionCons.LOST_START_NODE);
@@ -72,7 +70,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
 
         // 执行开始监听器
         ListenerUtil.executeListener(new ListenerVariable(definition, instance, startNode, flowParams.getVariable())
-                , Listener.LISTENER_START);
+                .setFlowParams(flowParams), Listener.LISTENER_START);
 
 
         // 判断开始结点和下一结点是否有权限监听器,有执行权限监听器node.setPermissionFlag,无走数据库的权限标识符
@@ -85,7 +83,12 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         List<Task> addTasks = StreamUtils.toList(nextNodes, node -> FlowFactory.taskService()
                 .addTask(node, instance, definition, flowParams));
 
-        // 开启分派监听器
+        // 办理人变量替换
+        if (CollUtil.isNotEmpty(addTasks)) {
+            addTasks.forEach(addTask -> addTask.getPermissionList().replaceAll(s -> VariableUtil.eval(s, flowParams.getVariable())));
+        }
+
+        // 执行分派监听器
         ListenerUtil.executeListener(new ListenerVariable(definition, instance, startNode, flowParams.getVariable()
                 , null, nextNodes, addTasks), Listener.LISTENER_ASSIGNMENT);
 
@@ -106,7 +109,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
                 && flowParams.getMessage().length() > 500, ExceptionCons.MSG_OVER_LENGTH);
         // 获取待办任务
         List<Task> taskList = FlowFactory.taskService().list(FlowFactory.newTask().setInstanceId(instanceId));
-        AssertUtil.isTrue(CollUtil.isEmpty(taskList), ExceptionCons.NOT_FOUNT_TASK);
+        AssertUtil.isEmpty(taskList, ExceptionCons.NOT_FOUNT_TASK);
         AssertUtil.isTrue(taskList.size() > 1, ExceptionCons.TASK_NOT_ONE);
         Task task = taskList.get(0);
         return FlowFactory.taskService().skip(flowParams, task);
@@ -116,12 +119,12 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
     public Instance termination(Long instanceId, FlowParams flowParams) {
         // 获取当前流程
         Instance instance = getById(instanceId);
-        AssertUtil.isTrue(ObjectUtil.isNull(instance), ExceptionCons.NOT_FOUNT_INSTANCE);
+        AssertUtil.isNull(instance, ExceptionCons.NOT_FOUNT_INSTANCE);
         AssertUtil.isTrue(NodeType.isEnd(instance.getNodeType()), ExceptionCons.FLOW_FINISH);
 
         // 获取待办任务
         List<Task> taskList = FlowFactory.taskService().list(FlowFactory.newTask().setInstanceId(instanceId));
-        AssertUtil.isTrue(CollUtil.isEmpty(taskList), ExceptionCons.NOT_FOUNT_TASK);
+        AssertUtil.isEmpty(taskList, ExceptionCons.NOT_FOUNT_TASK);
 
         // 获取待办任务
         Task task = taskList.get(0);
@@ -182,23 +185,20 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         Instance instance = FlowFactory.newIns();
         Date now = new Date();
         FlowFactory.dataFillHandler().idFill(instance);
-        instance.setDefinitionId(firstBetweenNode.getDefinitionId());
-        instance.setBusinessId(businessId);
-        instance.setNodeType(firstBetweenNode.getNodeType());
-        instance.setNodeCode(firstBetweenNode.getNodeCode());
-        instance.setNodeName(firstBetweenNode.getNodeName());
-        instance.setFlowStatus(ObjectUtil.isNotNull(flowParams.getFlowStatus())
-                ? flowParams.getFlowStatus() : FlowStatus.TOBESUBMIT.getKey());
-        instance.setActivityStatus(ActivityStatus.ACTIVITY.getKey());
-        Map<String, Object> variable = flowParams.getVariable();
-        if (MapUtil.isNotEmpty(variable)) {
-            instance.setVariable(ONode.serialize(variable));
-        }
         // 关联业务id,起始后面可以不用到业务id,传业务id目前来看只是为了批量创建流程的时候能创建出有区别化的流程,也是为了后期需要用到businessId。
-        instance.setCreateTime(now);
-        instance.setUpdateTime(now);
-        instance.setCreateBy(flowParams.getHandler());
-        instance.setExt(flowParams.getExt());
+        instance.setDefinitionId(firstBetweenNode.getDefinitionId())
+                .setBusinessId(businessId)
+                .setNodeType(firstBetweenNode.getNodeType())
+                .setNodeCode(firstBetweenNode.getNodeCode())
+                .setNodeName(firstBetweenNode.getNodeName())
+                .setFlowStatus(ObjectUtil.isNotNull(flowParams.getFlowStatus())? flowParams.getFlowStatus()
+                        : FlowStatus.TOBESUBMIT.getKey())
+                .setActivityStatus(ActivityStatus.ACTIVITY.getKey())
+                .setVariable(FlowFactory.jsonConvert.mapToStr(flowParams.getVariable()))
+                .setCreateTime(now)
+                .setUpdateTime(now)
+                .setCreateBy(flowParams.getHandler())
+                .setExt(flowParams.getExt());
         return instance;
     }
 
@@ -217,7 +217,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
     }
 
     private boolean toRemoveTask(List<Long> instanceIds) {
-        AssertUtil.isTrue(CollUtil.isEmpty(instanceIds), ExceptionCons.NULL_INSTANCE_ID);
+        AssertUtil.isEmpty(instanceIds, ExceptionCons.NULL_INSTANCE_ID);
         boolean success = FlowFactory.taskService().deleteByInsIds(instanceIds);
         if (success) {
             FlowFactory.hisTaskService().deleteByInsIds(instanceIds);

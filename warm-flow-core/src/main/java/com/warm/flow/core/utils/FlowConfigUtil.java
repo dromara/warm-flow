@@ -64,7 +64,7 @@ public class FlowConfigUtil {
         AssertUtil.isNull(is, "文件不存在！");
         // 获取流程节点
         Element definitionElement = new SAXReader().read(is).getRootElement();
-        AssertUtil.isTrue(ObjectUtil.isNull(definitionElement), "流程为空！");
+        AssertUtil.isNull(definitionElement, "流程为空！");
 
         // 读取流程定义
         Definition definition = FlowFactory.newDef();
@@ -211,7 +211,7 @@ public class FlowConfigUtil {
         List<Skip> allSkips = combine.getAllSkips();
 
         String flowName = definition.getFlowName();
-        AssertUtil.isBlank(definition.getFlowCode(), "【" + flowName + "】流程flowCode为空!");
+        AssertUtil.isEmpty(definition.getFlowCode(), "【" + flowName + "】流程flowCode为空!");
         // 发布
         definition.setIsPublish(0);
         definition.setUpdateTime(new Date());
@@ -229,7 +229,7 @@ public class FlowConfigUtil {
                 AssertUtil.isTrue(startNum > 1, "[" + flowName + "]" + ExceptionCons.MUL_START_NODE);
             }
             // 保证不存在重复的nodeCode
-            AssertUtil.isTrue(nodeCodeSet.contains(node.getNodeCode()),
+            AssertUtil.contains(nodeCodeSet, node.getNodeCode(),
                     "【" + flowName + "】" + ExceptionCons.SAME_NODE_CODE);
             nodeCodeSet.add(node.getNodeCode());
             allNodes.add(node);
@@ -296,9 +296,9 @@ public class FlowConfigUtil {
         String nodeCode = node.getNodeCode();
         List<Skip> skipList = node.getSkipList();
         if (!NodeType.isEnd(node.getNodeType())) {
-            AssertUtil.isTrue(CollUtil.isEmpty(skipList), "开始和中间节点必须有跳转规则");
+            AssertUtil.isEmpty(skipList, "开始和中间节点必须有跳转规则");
         }
-        AssertUtil.isBlank(nodeCode, "[" + nodeName + "]" + ExceptionCons.LOST_NODE_CODE);
+        AssertUtil.isEmpty(nodeCode, "[" + nodeName + "]" + ExceptionCons.LOST_NODE_CODE);
 
         node.setVersion(version);
         node.setDefinitionId(definitionId);
@@ -315,7 +315,7 @@ public class FlowConfigUtil {
                 skipNum++;
                 AssertUtil.isTrue(skipNum > 1, "[" + node.getNodeName() + "]" + ExceptionCons.MUL_START_SKIP);
             }
-            AssertUtil.isBlank(skip.getNextNodeCode(), "【" + nodeName + "】" + ExceptionCons.LOST_DEST_NODE);
+            AssertUtil.isEmpty(skip.getNextNodeCode(), "【" + nodeName + "】" + ExceptionCons.LOST_DEST_NODE);
             FlowFactory.dataFillHandler().idFill(skip);
             // 流程id
             skip.setDefinitionId(definitionId);
@@ -323,15 +323,15 @@ public class FlowConfigUtil {
             skip.setNodeId(node.getId());
             if (NodeType.isGateWaySerial(node.getNodeType())) {
                 String target = skip.getSkipCondition() + ":" + skip.getNextNodeCode();
-                AssertUtil.isTrue(gateWaySet.contains(target), "[" + nodeName + "]" + ExceptionCons.SAME_CONDITION_NODE);
+                AssertUtil.contains(gateWaySet, target, "[" + nodeName + "]" + ExceptionCons.SAME_CONDITION_NODE);
                 gateWaySet.add(target);
             } else if (NodeType.isGateWayParallel(node.getNodeType())) {
                 String target = skip.getNextNodeCode();
-                AssertUtil.isTrue(gateWaySet.contains(target), "[" + nodeName + "]" + ExceptionCons.SAME_DEST_NODE);
+                AssertUtil.contains(gateWaySet, target, "[" + nodeName + "]" + ExceptionCons.SAME_DEST_NODE);
                 gateWaySet.add(target);
             } else {
                 String value = skip.getSkipType() + ":" + skip.getNextNodeCode();
-                AssertUtil.isTrue(betweenSet.contains(value), "[" + nodeName + "]" + ExceptionCons.SAME_CONDITION_VALUE);
+                AssertUtil.contains(betweenSet, value, "[" + nodeName + "]" + ExceptionCons.SAME_CONDITION_VALUE);
                 betweenSet.add(value);
             }
         }
