@@ -23,7 +23,7 @@ import com.warm.plugin.spel.SpelHelper;
 import java.util.Map;
 
 /**
- * 条件表达式spel
+ * 条件表达式spel: @@spel@@|#{@user.evalVar()}
  *
  * @author warm
  */
@@ -34,14 +34,9 @@ public class VariableStrategySpel implements VariableStrategy {
         return FlowCons.splitAt + "spel" + FlowCons.splitAt;
     }
 
-    /**
-     * @param expression @@spel@@|flag@@eq@@4
-     * @param variable
-     * @return
-     */
     @Override
     public String eval(String expression, Map<String, Object> variable) {
-        Object o = SpelHelper.parseExpression(expression);
+        Object o = SpelHelper.parseExpression(expression, variable);
         return ObjectUtil.isNull(o) ? null : o.toString();
     }
 }

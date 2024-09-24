@@ -29,6 +29,8 @@ import org.springframework.expression.common.TemplateParserContext;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
+import java.util.Map;
+
 /**
  * 条件表达式spel
  *
@@ -57,9 +59,10 @@ public class SpelHelper implements ApplicationContextAware {
      * @param expression
      * @return
      */
-    public static Object parseExpression(String expression) {
+    public static Object parseExpression(String expression, Map<String, Object> variable) {
         StandardEvaluationContext context = new StandardEvaluationContext();
         context.setBeanResolver(beanResolver());
+        context.setVariables(variable);
         return parser.parseExpression(expression, parserContext).getValue(context, Object.class);
     }
 

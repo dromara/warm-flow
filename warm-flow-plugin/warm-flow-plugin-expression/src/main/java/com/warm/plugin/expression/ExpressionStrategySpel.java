@@ -35,6 +35,6 @@ public class ExpressionStrategySpel implements ExpressionStrategy {
 
     @Override
     public boolean eval(String expression, Map<String, Object> variable) {
-        return Boolean.TRUE.equals(SpelHelper.parseExpression(expression));
+        return Boolean.TRUE.equals(SpelHelper.parseExpression(expression, variable));
     }
 }
