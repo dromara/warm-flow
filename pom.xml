@@ -6,7 +6,7 @@
 
     <groupId>io.github.minliuhua</groupId>
     <artifactId>warm-flow</artifactId>
-    <version>1.2.7</version>
+    <version>1.2.8</version>
     <packaging>pom</packaging>
 
     <name>warm-flow</name>
