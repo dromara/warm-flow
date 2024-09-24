@@ -30,6 +30,9 @@ import java.util.Map;
  */
 public class JsonConvertSnack implements JsonConvert {
 
+    /**
+     * 不可删除，为了在spi加载时候，发下不存在snack3依赖包，触发异常不加载此实现类
+     */
     private static final ONode oNode = new ONode();
 
     /**
