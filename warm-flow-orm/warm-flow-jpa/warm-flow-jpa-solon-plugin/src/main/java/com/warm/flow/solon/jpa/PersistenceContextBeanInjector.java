@@ -1,8 +1,8 @@
 package com.warm.flow.solon.jpa;
 
 
+import com.warm.flow.core.utils.StringUtils;
 import org.hibernate.cfg.AvailableSettings;
-import org.noear.snack.core.utils.StringUtil;
 import org.noear.solon.Solon;
 import org.noear.solon.core.BeanInjector;
 import org.noear.solon.core.BeanWrap;
@@ -38,7 +38,7 @@ public class PersistenceContextBeanInjector implements BeanInjector<PersistenceC
 
     private void inject0(PersistenceContext anno, VarHolder varH, BeanWrap dsBw) {
         String unitName = anno.unitName();
-        if (StringUtil.isEmpty(unitName)) {
+        if (StringUtils.isEmpty(unitName)) {
             unitName = "default";
         }
 
