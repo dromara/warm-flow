@@ -898,11 +898,11 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 );
         // 设置跳转开始节点，实现跳转时跳转到开始节点
         flowParams.setNodeCode(
-                FlowFactory.nodeService().getOne(
-                        FlowFactory.newNode()
-                                .setNodeType(NodeType.START.getKey())
+                FlowFactory.skipService().getOne(
+                        FlowFactory.newSkip()
                                 .setDefinitionId(instance.getDefinitionId())
-                ).getNodeCode()
+                                .setNowNodeType(NodeType.START.getKey())
+                ).getNextNodeCode()
         );
         // 3、取回之后到流程发起节点
         return skip(flowParams, task);
