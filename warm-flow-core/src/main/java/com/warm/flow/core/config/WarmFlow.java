@@ -17,7 +17,6 @@ package com.warm.flow.core.config;
 
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.constant.FlowConfigCons;
-import com.warm.flow.core.constant.FlowCons;
 import com.warm.flow.core.expression.ExpressionStrategy;
 import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.core.json.JsonConvert;
@@ -50,7 +49,7 @@ public class WarmFlow implements Serializable {
     /**
      * id生成器类型, 不填默认为orm扩展自带生成器或者warm-flow内置的19位雪花算法, SnowId14:14位，SnowId15:15位， SnowFlake19：19位
      */
-    private String keyType = FlowCons.SNOWID19;
+    private String keyType;
 
     /**
      * 是否开启逻辑删除

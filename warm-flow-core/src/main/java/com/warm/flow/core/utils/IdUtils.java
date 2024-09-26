@@ -29,7 +29,7 @@ import com.warm.flow.core.keygen.SnowFlakeId19;
  */
 public class IdUtils {
 
-    private volatile static KenGen instance;
+    private static KenGen instance;
 
     public static String nextIdStr() {
         return nextId().toString();
@@ -44,21 +44,25 @@ public class IdUtils {
     }
 
     public static Long nextId(long workerId, long datacenterId) {
+        String keyType = FlowFactory.getFlowConfig().getKeyType();
         if (instance == null) {
-            synchronized (KenGen.class) {
-                if (instance == null) {
-                    String keyType = FlowFactory.getFlowConfig().getKeyType();
-                    if (FlowCons.SNOWID14.equals(keyType)) {
-                        instance = new SnowFlakeId14(workerId);
-                    } else if (FlowCons.SNOWID15.equals(keyType)) {
-                        instance = new SnowFlakeId15(workerId);
-                    } else {
-                        instance = new SnowFlakeId19(workerId, datacenterId);
-                    }
-                }
-            }
+            getSnowIns(workerId, datacenterId, keyType);
         }
+        if (instance != null && StringUtils.isNotEmpty(keyType)) {
+            getSnowIns(workerId, datacenterId, keyType);
+        }
+
         return instance.nextId();
+    }
+
+    private static void getSnowIns(long workerId, long datacenterId, String keyType) {
+        if (FlowCons.SNOWID14.equals(keyType)) {
+            instance = new SnowFlakeId14(workerId);
+        } else if (FlowCons.SNOWID15.equals(keyType)) {
+            instance = new SnowFlakeId15(workerId);
+        } else {
+            instance = new SnowFlakeId19(workerId, datacenterId);
+        }
     }
 
     public static KenGen getInstance() {
