@@ -40,12 +40,12 @@ public interface Listener extends Serializable {
     /**
      * 分派监听器，动态修改代办任务信息
      */
-    @Deprecated
     String LISTENER_ASSIGNMENT = "assignment";
 
     /**
      * 权限监听器，办理任务动态设置权限(1.2.4版本后建议使用分派监听器修改办理人)
      */
+    @Deprecated
     String LISTENER_PERMISSION = "permission";
 
     void notify(ListenerVariable listenerVariable);
