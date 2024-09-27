@@ -31,7 +31,6 @@ import com.warm.flow.core.utils.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * 待办任务Service业务层处理
@@ -323,42 +322,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             FlowFactory.hisTaskService().saveBatch(hisTasks);
         }
         return true;
-    }
-
-    @Override
-    @Deprecated
-    public List<Node> getNextByCheckGateWay(FlowParams flowParams, Node nextNode) {
-        List<Node> nextNodes = new ArrayList<>();
-        if (NodeType.isGateWay(nextNode.getNodeType())) {
-            List<Skip> skipsGateway = FlowFactory.skipService().list(FlowFactory.newSkip()
-                    .setDefinitionId(nextNode.getDefinitionId()).setNowNodeCode(nextNode.getNodeCode()));
-            if (CollUtil.isEmpty(skipsGateway)) {
-                return null;
-            }
-
-            if (!NodeType.isStart(nextNode.getNodeType())) {
-                skipsGateway = skipsGateway.stream().filter(t -> {
-                    if (NodeType.isGateWaySerial(nextNode.getNodeType())) {
-                        AssertUtil.isEmpty(flowParams.getVariable(), ExceptionCons.MUST_CONDITIONVALUE_NODE);
-                        if (ObjectUtil.isNotNull(t.getSkipCondition())) {
-                            return ExpressionUtil.eval(t.getSkipCondition(), flowParams.getVariable());
-                        }
-                        return true;
-                    }
-                    // 并行网关可以返回多个跳转
-                    return true;
-
-                }).collect(Collectors.toList());
-            }
-            AssertUtil.isEmpty(skipsGateway, ExceptionCons.NULL_CONDITIONVALUE_NODE);
-
-            List<String> nextNodeCodes = StreamUtils.toList(skipsGateway, Skip::getNextNodeCode);
-            nextNodes = FlowFactory.nodeService().getByNodeCodes(nextNodeCodes, nextNode.getDefinitionId());
-            AssertUtil.isEmpty(nextNodes, ExceptionCons.NOT_NODE_DATA);
-        } else {
-            nextNodes.add(nextNode);
-        }
-        return nextNodes;
     }
 
     @Override

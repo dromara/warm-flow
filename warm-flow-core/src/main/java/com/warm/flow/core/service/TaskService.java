@@ -148,16 +148,6 @@ public interface TaskService extends IWarmService<Task> {
     boolean updateHandler(ModifyHandler modifyHandler);
 
     /**
-     * 校验是否网关节点,如果是重新获取新的后面的节点
-     *
-     * @param flowParams
-     * @param nextNode
-     * @return
-     */
-    @Deprecated
-    List<Node> getNextByCheckGateWay(FlowParams flowParams, Node nextNode);
-
-    /**
      * 设置流程待办任务对象
      *
      * @param node

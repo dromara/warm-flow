@@ -40,6 +40,7 @@ public interface Listener extends Serializable {
     /**
      * 分派监听器，动态修改代办任务信息
      */
+    @Deprecated
     String LISTENER_ASSIGNMENT = "assignment";
 
     /**
