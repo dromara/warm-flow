@@ -36,6 +36,6 @@ public class FlowAutoConfig extends BeanConfig {
     @Override
     public void after(WarmFlow flowConfig) {
         // 设置Mybatis-Plus默认主键生成器
-        IdUtils.setInstance(new MybatisFlexIdGen());
+        IdUtils.setInstanceExt(new MybatisFlexIdGen());
     }
 }

@@ -32,7 +32,7 @@ public class FlowAutoConfig {
     @Bean
     public WarmFlow after() {
         // 设置Mybatis-Plus默认主键生成器
-        IdUtils.setInstance(new MybatisPlusIdGen());
+        IdUtils.setInstanceExt(new MybatisPlusIdGen());
         return FlowFactory.getFlowConfig();
     }
 }
