@@ -9,6 +9,7 @@
 </p>
 
 
+
 ## 介绍
 
 Warm-Flow国产工作流引擎🎉，其特点简洁轻量但又不简单，五脏俱全，组件独立，可扩展，可满足中小项目的组件。
@@ -39,6 +40,7 @@ Warm-Flow国产工作流引擎🎉，其特点简洁轻量但又不简单，五�
 演示地址：http://www.hhzai.top
 
 ## 使用文档与联系方式
+
 http://warm-flow.cn
 
 ## 组件所需脚本
@@ -54,8 +56,7 @@ http://warm-flow.cn
 
 > 测试代码[warm-flow-test](https://gitee.com/dromara/warm-flow-test)项目中，warm-flow-xxx-test模块的测类
 
-
-### 支持数据库类型
+## 支持数据库类型
 
 * [x] mysql
 * [x] oracle
@@ -67,8 +68,7 @@ http://warm-flow.cn
 * [ ] sqlserver
 * [ ] ......
 
-
-### orm扩展包
+## orm扩展包
 
 * [x] mybatis
 * [x] mybatis-plus
@@ -87,9 +87,22 @@ http://warm-flow.cn
 
 ![输入图片说明](https://foruda.gitee.com/images/1697770422557390406/7efa04d6_2218307.png "屏幕截图")
 
-
-### 特别感谢JetBrains对开源项目支持
+## 特别感谢JetBrains对开源项目支持
 
 <a href="https://jb.gg/OpenSourceSupport">
   <img src="https://user-images.githubusercontent.com/8643542/160519107-199319dc-e1cf-4079-94b7-01b6b8d23aa6.png" align="left" height="100" width="100"  alt="JetBrains">
 </a>
+
+
+
+
+
+
+
+## 推荐
+
+大家在使用本项目时，推荐结合贺波老师的书
+[《深入Flowable流程引擎：核心原理与高阶实战》](https://item.jd.com/14804836.html)学习。这本书得到了Flowable创始人Tijs Rademakers亲笔作序推荐，对系统学习和深入掌握Flowable的用法非常有帮助。
+
+<img src="https://gitee.com/cai_xiao_feng/lowflow-design/raw/main/public%2Fflowable.jpg" width="500px"/>
+
