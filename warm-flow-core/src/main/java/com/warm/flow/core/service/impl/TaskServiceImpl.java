@@ -364,14 +364,13 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     @Override
     public Task addTask(Node node, Instance instance, Definition definition, FlowParams flowParams) {
         Task addTask = FlowFactory.newTask();
-        Date date = new Date();
         FlowFactory.dataFillHandler().idFill(addTask);
+        FlowFactory.dataFillHandler().insertFill(addTask);
         addTask.setDefinitionId(instance.getDefinitionId())
                 .setInstanceId(instance.getId())
                 .setNodeCode(node.getNodeCode())
                 .setNodeName(node.getNodeName())
                 .setNodeType(node.getNodeType())
-                .setCreateTime(date)
                 .setPermissionList(CollUtil.isNotEmpty(node.getDynamicPermissionFlagList())
                         ? node.getDynamicPermissionFlagList(): StringUtils.str2List(node.getPermissionFlag(), ","));
 
@@ -808,98 +807,46 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     @Override
-    public Task revoke(FlowParams flowParams, ModifyHandler modifyHandler) {
-        return revoke(flowParams, modifyHandler, true);
-    }
-
-    @Override
-    public Task revoke(FlowParams flowParams, ModifyHandler modifyHandler, boolean checkNextHandled) {
-        AssertUtil.isTrue(StringUtils.isNotEmpty(flowParams.getMessage())
-                && flowParams.getMessage().length() > 500, ExceptionCons.MSG_OVER_LENGTH);
-        // 1、只能撤销自己处理过，下一个新任务还未被办理的节点
-        // 1.1、判断当前处理人是否有当前任务的处理历史，当前处理人是不是当前节点的实际处理人，不是不能撤销
+    public Task approverRevoke(FlowParams flowParams, Long taskId) {
         List<HisTask> hisTaskList = FlowFactory.hisTaskService().list(
                 FlowFactory.newHisTask()
-                        .setTaskId(modifyHandler.getTaskId())
                         .setNodeCode(flowParams.getNodeCode())
-                        .setApprover(modifyHandler.getCurUser())
+                        .setApprover(flowParams.getHandler())
         );
-        AssertUtil.isTrue(CollUtil.isNotEmpty(hisTaskList), ExceptionCons.NOT_HIS_TASK_HANDLER);
-        HisTask hisTask = hisTaskList.stream().max(Comparator.comparing(HisTask::getCreateTime)).orElse(FlowFactory.newHisTask());
-        // 1.2、判断下个节点是否已经处理完毕，如果是处理完毕，不能撤销
-        if (checkNextHandled) {
-            List<HisTask> nextNodeHisList = FlowFactory.hisTaskService().list(
-                    FlowFactory.newHisTask()
-                            .setInstanceId(hisTask.getInstanceId())
-                            .setNodeCode(hisTask.getTargetNodeCode())
-            );
-            AssertUtil.isTrue(
-                    CollUtil.isNotEmpty(nextNodeHisList) &&
-                        nextNodeHisList.stream().anyMatch(his-> his.getCreateTime().after(hisTask.getCreateTime())),
-                    ExceptionCons.NEXT_NODE_HANDLED);
-        }
-        // 1.3、判断当前节点是否为结束节点，结束节点是不能撤销
+        AssertUtil.isEmpty(hisTaskList, ExceptionCons.NOT_HIS_TASK_HANDLER);
+        // 查询节点信息
+        Node node = FlowFactory.nodeService().getOne(
+                FlowFactory.newNode()
+                        .setDefinitionId(hisTaskList.get(0).getDefinitionId())
+                        .setNodeCode(flowParams.getNodeCode()));
+        AssertUtil.isNull(node, ExceptionCons.NOT_NODE_DATA);
+        // 取回到的节点是否为结束节点，结束节点是不能取回
         AssertUtil.isTrue(NodeType.isEnd(
                 FlowFactory.nodeService().getOne(
                         FlowFactory.newNode()
-                                .setDefinitionId(hisTask.getDefinitionId())
+                                .setDefinitionId(hisTaskList.get(0).getDefinitionId())
                                 .setNodeCode(flowParams.getNodeCode())
                 ).getNodeType()
         ), ExceptionCons.NODE_IS_END);
-        // 2、撤销之后返回到当前节点未处理状态
-        // 2.1、流程状态审批中
-        FlowFactory.insService().updateById(
-                FlowFactory.newIns().setId(hisTask.getInstanceId()).setFlowStatus(FlowStatus.APPROVAL.getKey())
-        );
-        // 2.2、查询出下个节点的待办任务
-        Task nextNodeTask = FlowFactory.taskService().getOne(FlowFactory.newTask().setInstanceId(hisTask.getInstanceId()));
-        // 2.3、代办任务改成当前节点的任务
-        FlowFactory.taskService().deleteByInsIds(CollUtil.toList(hisTask.getInstanceId()));
-        Task curTask = FlowFactory.newTask();
-        FlowFactory.dataFillHandler().insertFill(curTask);
-        FlowFactory.dataFillHandler().insertFill(curTask);
-        FlowFactory.taskService().save(
-            curTask.setDefinitionId(hisTask.getDefinitionId())
-                    .setInstanceId(hisTask.getInstanceId())
-                    .setNodeCode(hisTask.getNodeCode())
-                    .setNodeName(hisTask.getNodeName())
-                    .setNodeType(hisTask.getNodeType())
-                    .setFormCustom(hisTask.getFormCustom())
-                    .setFormPath(hisTask.getFormPath())
-        );
-        // 3、处理人取历史任务表中得处理人
-        FlowFactory.userService().setSkipUser(CollUtil.toList(curTask), nextNodeTask.getId());
-        // 4、记录留痕
-        flowParams.setHandler(modifyHandler.getCurUser());
-        flowParams.setSkipType(SkipType.PASS.getKey());
-        FlowFactory.hisTaskService().setSkipInsHis(
-                nextNodeTask,
-                CollUtil.toList(FlowFactory.newNode().setNodeCode(hisTask.getNodeCode()).setNodeName(hisTask.getNodeName())),
-                flowParams);
-        return curTask;
+        // 查询任务和流程实例
+        Task task = getById(taskId);
+        AssertUtil.isTrue(ObjectUtil.isNull(task), ExceptionCons.NOT_FOUNT_TASK);
+        AssertUtil.isEmpty(flowParams.getHandler(), ExceptionCons.CUR_USER_NOT_EMPTY);
+        Instance instance = FlowFactory.insService().getById(task.getInstanceId());
+        AssertUtil.isNull(instance, ExceptionCons.NOT_FOUNT_INSTANCE);
+        // 取回
+        return commonRetrieve(flowParams, instance);
     }
 
     @Override
-    public Instance retrieve(FlowParams flowParams, ModifyHandler modifyHandler) {
-        AssertUtil.isTrue(StringUtils.isNotEmpty(flowParams.getMessage())
-                && flowParams.getMessage().length() > 500, ExceptionCons.MSG_OVER_LENGTH);
-        // 1、流程发起人发起,验证权限是不是当前任务的发起人
-        Task task = FlowFactory.taskService().getById(modifyHandler.getTaskId());
+    public Task initiatorRetrieve(FlowParams flowParams, Long taskId) {
+        // 流程发起人发起,验证权限是不是当前任务的发起人
+        Task task = getById(taskId);
         AssertUtil.isTrue(ObjectUtil.isNull(task), ExceptionCons.NOT_FOUNT_TASK);
-        AssertUtil.isTrue(StringUtils.isEmpty(modifyHandler.getCurUser()), ExceptionCons.CUR_USER_NOT_EMPTY);
+        AssertUtil.isEmpty(flowParams.getHandler(), ExceptionCons.CUR_USER_NOT_EMPTY);
         Instance instance = FlowFactory.insService().getById(task.getInstanceId());
-        AssertUtil.isTrue(ObjectUtil.isNull(instance), ExceptionCons.NOT_FOUNT_INSTANCE);
-        AssertUtil.isFalse(instance.getCreateBy().equals(modifyHandler.getCurUser()), ExceptionCons.NOT_TASK_PROMOTER_NOT_RETRIEVE);
-        // 2、设置流程参数
-        flowParams.setHandler(modifyHandler.getCurUser());
-        flowParams.setSkipType(SkipType.PASS.getKey());
-        flowParams.setMessage(modifyHandler.getMessage());
-        // 给当前处理人增加当前节点的处理权限
-        flowParams.setPermissionFlag(
-                CollUtil.listAddToNew(modifyHandler.getPermissionFlag(),
-                        FlowFactory.userService().getPermission(task.getId()),
-                        true)
-                );
+        AssertUtil.isNull(instance, ExceptionCons.NOT_FOUNT_INSTANCE);
+        AssertUtil.isFalse(instance.getCreateBy().equals(flowParams.getHandler()), ExceptionCons.NOT_TASK_PROMOTER_NOT_RETRIEVE);
         // 设置跳转开始节点，实现跳转时跳转到开始节点
         flowParams.setNodeCode(
                 FlowFactory.skipService().getOne(
@@ -908,7 +855,36 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                                 .setNowNodeType(NodeType.START.getKey())
                 ).getNextNodeCode()
         );
-        // 3、取回之后到流程发起节点
-        return skip(flowParams, task);
+        // 取回
+        return commonRetrieve(flowParams, instance);
+    }
+
+    @Override
+    public Task commonRetrieve(FlowParams flowParams, Instance instance) {
+        boolean flowOver = false;
+        AssertUtil.isTrue(flowOver, ExceptionCons.FLOW_IS_OVER);
+        AssertUtil.isTrue(StringUtils.isNotEmpty(flowParams.getMessage())
+                && flowParams.getMessage().length() > 500, ExceptionCons.MSG_OVER_LENGTH);
+        // 查询任务,如果前一个节点是并行网关，可能任务表有多个任务,增加查询和判断
+        List<Task> curTaskList = list(FlowFactory.newTask().setInstanceId(instance.getId()));
+        AssertUtil.isEmpty(curTaskList, ExceptionCons.NOT_FOUND_FLOW_TASK);
+        Definition definition = FlowFactory.defService().getOne(FlowFactory.newDef().setId(instance.getDefinitionId()));
+        Node nextNode = FlowFactory.nodeService().getById(flowParams.getNodeCode());
+        // 给取回到的那个节点赋权限-给当前处理人权限
+        nextNode.setDynamicPermissionFlagList(flowParams.getPermissionFlag());
+        Task nextTask = addTask(nextNode, instance, definition, flowParams);
+        // 流程参数
+        flowParams.setSkipType(SkipType.REJECT.getKey());
+        // 删除待办任务，保存历史，删除所有代办任务的权限人
+        convertHisTask(curTaskList, flowParams, FlowStatus.INVALID.getKey());
+        // 结束节点相关信息和更新流程实例
+        setEndInfo(instance, CollUtil.toList(nextTask), flowParams);
+        FlowFactory.insService().updateById(instance);
+        // 处理人保存
+        List<User> users = FlowFactory.userService().taskAddUsers(CollUtil.toList(nextTask));
+        FlowFactory.userService().saveBatch(users);
+        // 保存待办任务
+        save(nextTask);
+        return nextTask;
     }
 }

@@ -127,7 +127,9 @@ public class ExceptionCons {
 
     public static final String NOT_HIS_TASK_HANDLER = "当前处理人不是此节点的处理人，不能撤回";
 
-    public static final String NEXT_NODE_HANDLED = "下个节点已经处理完毕，不能撤回";
-
     public static final String NODE_IS_END = "结束节点不能撤销";
+
+    public static final String FLOW_IS_OVER = "流程已结束，不能取回";
+
+    public static final String NOT_FOUND_FLOW_TASK = "未获取到流程任务";
 }
