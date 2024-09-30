@@ -71,6 +71,10 @@ public class FlowDefinition implements Definition,ProxyEntityAvailable<FlowDefin
     @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String flowName;
 
+    /** 流程类别 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
+    private String category;
+
     /** 流程版本 */
     @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String version;
@@ -122,6 +126,7 @@ public class FlowDefinition implements Definition,ProxyEntityAvailable<FlowDefin
             ", updateTime=" + updateTime +
             ", flowCode='" + flowCode + '\'' +
             ", flowName='" + flowName + '\'' +
+            ", category='" + category + '\'' +
             ", version='" + version + '\'' +
             ", isPublish=" + isPublish +
             ", formCustom='" + formCustom + '\'' +
