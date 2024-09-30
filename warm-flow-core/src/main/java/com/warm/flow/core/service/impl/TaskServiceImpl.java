@@ -832,22 +832,44 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         List<Task> curTaskList = list(FlowFactory.newTask().setInstanceId(instance.getId()));
         AssertUtil.isEmpty(curTaskList, ExceptionCons.NOT_FOUND_FLOW_TASK);
         Definition definition = FlowFactory.defService().getOne(FlowFactory.newDef().setId(instance.getDefinitionId()));
-        Node nextNode = FlowFactory.nodeService().getById(flowParams.getNodeCode());
+        Node nextNode = FlowFactory.nodeService().getOne(
+                FlowFactory.newNode().setNodeCode(flowParams.getNodeCode()).setDefinitionId(definition.getId()));
+        AssertUtil.isNull(nextNode, ExceptionCons.NULL_NODE_CODE);
         // 给取回到的那个节点赋权限-给当前处理人权限
         nextNode.setDynamicPermissionFlagList(flowParams.getPermissionFlag());
         Task nextTask = addTask(nextNode, instance, definition, flowParams);
         // 流程参数
         flowParams.setSkipType(SkipType.REJECT.getKey());
         // 删除待办任务，保存历史，删除所有代办任务的权限人
-        convertHisTask(curTaskList, flowParams, FlowStatus.INVALID.getKey());
+        convertHisTask(curTaskList, nextTask, flowParams, FlowStatus.INVALID.getKey());
         // 结束节点相关信息和更新流程实例
         setEndInfo(instance, CollUtil.toList(nextTask), flowParams);
         FlowFactory.insService().updateById(instance);
-        // 处理人保存
+        // 删除所有待办任务的权限人,处理人保存
+        FlowFactory.userService().deleteByTaskIds(StreamUtils.toList(curTaskList, Task::getId));
         List<User> users = FlowFactory.userService().taskAddUsers(CollUtil.toList(nextTask));
         FlowFactory.userService().saveBatch(users);
         // 保存待办任务
         save(nextTask);
         return nextTask;
+    }
+    /**
+     * 待办任务转历史任务。
+     *
+     * @param taskList          待办任务
+     * @param nextTask          跳转到的任务
+     * @param flowParams        流程参数
+     * @param flowStatus        流程状态
+     * @author xiarg
+     * @date 2024/9/30 11:59
+     */
+    private void convertHisTask(List<Task> taskList, Task nextTask, FlowParams flowParams, String flowStatus) {
+        removeByIds(StreamUtils.toList(taskList, Task::getId));
+        FlowFactory.hisTaskService().saveBatch(
+                StreamUtils.toList(
+                        taskList,
+                        task -> FlowFactory.hisTaskService().autoHisTask(
+                                flowParams, flowStatus, task, nextTask, CooperateType.APPROVAL.getKey()))
+        );
     }
 }

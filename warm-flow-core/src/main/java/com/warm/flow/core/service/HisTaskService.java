@@ -127,4 +127,18 @@ public interface HisTaskService extends IWarmService<HisTask> {
      */
     List<HisTask> autoHisTask(FlowParams flowParams, String flowStatus, Task task, List<User> userList, Integer cooperateType);
 
+    /**
+     * 自动完成历史任务
+     *
+     * @param flowParams        流程参数
+     * @param flowStatus        流程状态
+     * @param task              当前任务
+     * @param nextTask          跳转的任务
+     * @param cooperateType     协作类型
+     * @return HisTask          历史任务
+     * @author xiarg
+     * @date 2024/9/30 11:59
+     */
+    HisTask autoHisTask(FlowParams flowParams, String flowStatus, Task task, Task nextTask, Integer cooperateType);
+
 }
