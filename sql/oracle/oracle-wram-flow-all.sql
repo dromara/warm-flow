@@ -1,3 +1,167 @@
+create table FLOW_DEFINITION
+(
+    ID NUMBER(20) not null
+		constraint FLOW_DEFINITION_PK
+			primary key,
+    FLOW_CODE VARCHAR2(40) not null,
+    FLOW_NAME VARCHAR2(100) not null,
+    CATEGORY VARCHAR2(100) not null,
+    VERSION VARCHAR2(20) not null,
+    IS_PUBLISH NUMBER(1) default 0 not null,
+    FORM_CUSTOM VARCHAR2(1) default 'N',
+    FORM_PATH VARCHAR2(100),
+    ACTIVITY_STATUS NUMBER(1) default 1,
+    LISTENER_TYPE VARCHAR2(100),
+    LISTENER_PATH VARCHAR2(500),
+    EXT VARCHAR2(500),
+    CREATE_TIME DATE,
+    UPDATE_TIME DATE,
+    DEL_FLAG VARCHAR2(1)  default '0',
+    TENANT_ID VARCHAR2(40)
+)
+/
+
+comment on table FLOW_DEFINITION is '流程定义表'
+/
+
+comment on column FLOW_DEFINITION.ID is '主键id'
+/
+
+comment on column FLOW_DEFINITION.FLOW_CODE is '流程编码'
+/
+
+comment on column FLOW_DEFINITION.FLOW_NAME is '流程名称'
+/
+
+comment on column FLOW_DEFINITION.CATEGORY is '流程类别'
+/
+
+comment on column FLOW_DEFINITION.VERSION is '流程版本'
+/
+
+comment on column FLOW_DEFINITION.IS_PUBLISH is '是否发布 (0未发布 1已发布 9失效)'
+/
+
+comment on column FLOW_DEFINITION.FORM_CUSTOM is '审批表单是否自定义 (Y是 N否)'
+/
+
+comment on column FLOW_DEFINITION.FORM_PATH is '审批表单路径'
+/
+
+comment on column FLOW_DEFINITION.ACTIVITY_STATUS is '流程激活状态（0挂起 1激活）'
+/
+
+comment on column FLOW_DEFINITION.LISTENER_TYPE is '监听器类型'
+/
+
+comment on column FLOW_DEFINITION.LISTENER_PATH is '监听器路径'
+/
+
+comment on column FLOW_DEFINITION.EXT is '扩展字段，预留给业务系统使用'
+/
+
+comment on column FLOW_DEFINITION.CREATE_TIME is '创建时间'
+/
+
+comment on column FLOW_DEFINITION.UPDATE_TIME is '更新时间'
+/
+
+comment on column FLOW_DEFINITION.DEL_FLAG is '删除标志'
+/
+
+comment on column FLOW_DEFINITION.TENANT_ID is '租户id'
+/
+
+create table FLOW_NODE
+(
+    ID NUMBER(20) not null
+		constraint FLOW_NODE_PK
+			primary key,
+    NODE_TYPE NUMBER(1) not null,
+    DEFINITION_ID NUMBER(20) not null,
+    NODE_CODE VARCHAR2(100) not null,
+    NODE_NAME VARCHAR2(100),
+    NODE_RATIO NUMBER(6,3),
+    COORDINATE VARCHAR2(100),
+    SKIP_ANY_NODE VARCHAR2(100) default 'N',
+    LISTENER_TYPE VARCHAR2(100),
+    LISTENER_PATH VARCHAR2(500),
+    HANDLER_TYPE VARCHAR2(100),
+    HANDLER_PATH VARCHAR2(400),
+    FORM_CUSTOM VARCHAR2(1) default 'N',
+    FORM_PATH VARCHAR2(100),
+    VERSION VARCHAR2(20),
+    CREATE_TIME DATE,
+    UPDATE_TIME DATE,
+    DEL_FLAG VARCHAR2(1)  default '0',
+    TENANT_ID VARCHAR2(40),
+    PERMISSION_FLAG VARCHAR2(200)
+)
+/
+
+comment on table FLOW_NODE is '流程结点表'
+/
+
+comment on column FLOW_NODE.ID is '主键id'
+/
+
+comment on column FLOW_NODE.NODE_TYPE is '节点类型（0开始节点 1中间节点 2结束结点 3互斥网关 4并行网关）'
+/
+
+comment on column FLOW_NODE.DEFINITION_ID is '对应flow_definition表的id'
+/
+
+comment on column FLOW_NODE.NODE_CODE is '流程节点编码'
+/
+
+comment on column FLOW_NODE.NODE_NAME is '流程节点名称'
+/
+
+comment on column FLOW_NODE.NODE_RATIO is '流程签署比例值'
+/
+
+comment on column FLOW_NODE.COORDINATE is '坐标'
+/
+
+comment on column FLOW_NODE.SKIP_ANY_NODE is '是否可以退回任意节点 (Y是 N否)'
+/
+
+comment on column FLOW_NODE.LISTENER_TYPE is '监听器类型'
+/
+
+comment on column FLOW_NODE.LISTENER_PATH is '监听器路径'
+/
+
+comment on column FLOW_NODE.HANDLER_TYPE is '处理器类型'
+/
+
+comment on column FLOW_NODE.HANDLER_PATH is '处理器路径'
+/
+
+comment on column FLOW_NODE.FORM_CUSTOM is '审批表单是否自定义 (Y是 N否)'
+/
+
+comment on column FLOW_NODE.FORM_PATH is '审批表单路径'
+/
+
+comment on column FLOW_NODE.VERSION is '版本'
+/
+
+comment on column FLOW_NODE.CREATE_TIME is '创建时间'
+/
+
+comment on column FLOW_NODE.UPDATE_TIME is '更新时间'
+/
+
+comment on column FLOW_NODE.DEL_FLAG is '删除标志'
+/
+
+comment on column FLOW_NODE.TENANT_ID is '租户id'
+/
+
+comment on column FLOW_NODE.PERMISSION_FLAG is '权限标识（权限类型:权限标识，可以多个，用逗号隔开)'
+/
+
 create table FLOW_SKIP
 (
 	ID NUMBER(20) not null
@@ -62,173 +226,6 @@ comment on column FLOW_SKIP.DEL_FLAG is '删除标志'
 /
 
 comment on column FLOW_SKIP.TENANT_ID is '租户id'
-/
-
-create table FLOW_HIS_TASK
-(
-	ID NUMBER(20) not null,
-	DEFINITION_ID NUMBER(20) not null,
-	INSTANCE_ID NUMBER(20) not null,
-	TASK_ID NUMBER(20) not null,
-	NODE_CODE VARCHAR2(100),
-	NODE_NAME VARCHAR2(100),
-	NODE_TYPE NUMBER(1),
-	TARGET_NODE_CODE VARCHAR2(100),
-	TARGET_NODE_NAME VARCHAR2(100),
-    APPROVER VARCHAR2(40),
-    COOPERATE_TYPE NUMBER(1) default 0,
-    COLLABORATOR VARCHAR2(40),
-    SKIP_TYPE VARCHAR2(10),
-	FLOW_STATUS VARCHAR2(20),
-    FORM_CUSTOM VARCHAR2(1) default 'N',
-    FORM_PATH VARCHAR2(100),
-	MESSAGE VARCHAR2(500),
-    EXT VARCHAR2(500),
-	CREATE_TIME DATE,
-	UPDATE_TIME DATE,
-	DEL_FLAG VARCHAR2(1)  default '0',
-	TENANT_ID VARCHAR2(40)
-
-)
-/
-
-comment on table FLOW_HIS_TASK is '历史任务记录表'
-/
-
-comment on column FLOW_HIS_TASK.ID is '主键id'
-/
-
-comment on column FLOW_HIS_TASK.DEFINITION_ID is '对应flow_definition表的id'
-/
-
-comment on column FLOW_HIS_TASK.INSTANCE_ID is '对应flow_instance表的id'
-/
-
-comment on column FLOW_HIS_TASK.TASK_ID is '对应flow_task表的id'
-/
-
-comment on column FLOW_HIS_TASK.NODE_CODE is '开始节点编码'
-/
-
-comment on column FLOW_HIS_TASK.NODE_NAME is '开始节点名称'
-/
-
-comment on column FLOW_HIS_TASK.NODE_TYPE is '开始节点类型 (0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关)'
-/
-
-comment on column FLOW_HIS_TASK.TARGET_NODE_CODE is '目标节点编码'
-/
-
-comment on column FLOW_HIS_TASK.TARGET_NODE_NAME is '目标节点名称'
-/
-
-comment on column FLOW_HIS_TASK.SKIP_TYPE is '流转类型（PASS通过 REJECT退回 NONE无动作）'
-/
-
-comment on column FLOW_HIS_TASK.FLOW_STATUS is '流程状态（1审批中 2 审批通过 9已退回 10失效）'
-/
-
-comment on column FLOW_HIS_TASK.FORM_CUSTOM is '审批表单是否自定义 (Y是 N否)'
-/
-
-comment on column FLOW_HIS_TASK.FORM_PATH is '审批表单路径'
-/
-
-comment on column FLOW_HIS_TASK.MESSAGE is '审批意见'
-/
-
-comment on column FLOW_HIS_TASK.EXT is '扩展字段，预留给业务系统使用'
-/
-
-comment on column FLOW_HIS_TASK.CREATE_TIME is '开始时间'
-/
-
-comment on column FLOW_HIS_TASK.UPDATE_TIME is '结束时间'
-/
-
-comment on column FLOW_HIS_TASK.DEL_FLAG is '删除标志'
-/
-
-comment on column FLOW_HIS_TASK.TENANT_ID is '租户id'
-/
-
-comment on column FLOW_HIS_TASK.APPROVER is '审批者'
-/
-
-comment on column FLOW_HIS_TASK.COOPERATE_TYPE is '协作方式(1审批 2转办 3委派 4会签 5票签 6加签 7减签)'
-/
-
-comment on column FLOW_HIS_TASK.COLLABORATOR is '协作人'
-/
-
-create table FLOW_DEFINITION
-(
-	ID NUMBER(20) not null
-		constraint FLOW_DEFINITION_PK
-			primary key,
-	FLOW_CODE VARCHAR2(40) not null,
-	FLOW_NAME VARCHAR2(100) not null,
-	VERSION VARCHAR2(20) not null,
-	IS_PUBLISH NUMBER(1) default 0 not null,
-	FORM_CUSTOM VARCHAR2(1) default 'N',
-	FORM_PATH VARCHAR2(100),
-    ACTIVITY_STATUS NUMBER(1) default 1,
-    LISTENER_TYPE VARCHAR2(100),
-    LISTENER_PATH VARCHAR2(500),
-    EXT VARCHAR2(500),
-    CREATE_TIME DATE,
-	UPDATE_TIME DATE,
-	DEL_FLAG VARCHAR2(1)  default '0',
-	TENANT_ID VARCHAR2(40)
-)
-/
-
-comment on table FLOW_DEFINITION is '流程定义表'
-/
-
-comment on column FLOW_DEFINITION.ID is '主键id'
-/
-
-comment on column FLOW_DEFINITION.FLOW_CODE is '流程编码'
-/
-
-comment on column FLOW_DEFINITION.FLOW_NAME is '流程名称'
-/
-
-comment on column FLOW_DEFINITION.VERSION is '流程版本'
-/
-
-comment on column FLOW_DEFINITION.IS_PUBLISH is '是否发布 (0未发布 1已发布 9失效)'
-/
-
-comment on column FLOW_DEFINITION.FORM_CUSTOM is '审批表单是否自定义 (Y是 N否)'
-/
-
-comment on column FLOW_DEFINITION.FORM_PATH is '审批表单路径'
-/
-
-comment on column FLOW_DEFINITION.ACTIVITY_STATUS is '流程激活状态（0挂起 1激活）'
-/
-
-comment on column FLOW_DEFINITION.LISTENER_TYPE is '监听器类型'
-/
-
-comment on column FLOW_DEFINITION.LISTENER_PATH is '监听器路径'
-/
-
-comment on column FLOW_DEFINITION.EXT is '扩展字段，预留给业务系统使用'
-/
-
-comment on column FLOW_DEFINITION.CREATE_TIME is '创建时间'
-/
-
-comment on column FLOW_DEFINITION.UPDATE_TIME is '更新时间'
-/
-
-comment on column FLOW_DEFINITION.DEL_FLAG is '删除标志'
-/
-
-comment on column FLOW_DEFINITION.TENANT_ID is '租户id'
 /
 
 create table FLOW_INSTANCE
@@ -301,95 +298,6 @@ comment on column FLOW_INSTANCE.DEL_FLAG is '删除标志'
 comment on column FLOW_INSTANCE.TENANT_ID is '租户id'
 /
 
-create table FLOW_NODE
-(
-	ID NUMBER(20) not null
-		constraint FLOW_NODE_PK
-			primary key,
-	NODE_TYPE NUMBER(1) not null,
-	DEFINITION_ID NUMBER(20) not null,
-	NODE_CODE VARCHAR2(100) not null,
-	NODE_NAME VARCHAR2(100),
-	NODE_RATIO NUMBER(6,3),
-	COORDINATE VARCHAR2(100),
-	SKIP_ANY_NODE VARCHAR2(100) default 'N',
-	LISTENER_TYPE VARCHAR2(100),
-	LISTENER_PATH VARCHAR2(500),
-	HANDLER_TYPE VARCHAR2(100),
-	HANDLER_PATH VARCHAR2(400),
-    FORM_CUSTOM VARCHAR2(1) default 'N',
-    FORM_PATH VARCHAR2(100),
-	VERSION VARCHAR2(20),
-	CREATE_TIME DATE,
-	UPDATE_TIME DATE,
-	DEL_FLAG VARCHAR2(1)  default '0',
-	TENANT_ID VARCHAR2(40),
-	PERMISSION_FLAG VARCHAR2(200)
-)
-/
-
-comment on table FLOW_NODE is '流程结点表'
-/
-
-comment on column FLOW_NODE.ID is '主键id'
-/
-
-comment on column FLOW_NODE.NODE_TYPE is '节点类型（0开始节点 1中间节点 2结束结点 3互斥网关 4并行网关）'
-/
-
-comment on column FLOW_NODE.DEFINITION_ID is '对应flow_definition表的id'
-/
-
-comment on column FLOW_NODE.NODE_CODE is '流程节点编码'
-/
-
-comment on column FLOW_NODE.NODE_NAME is '流程节点名称'
-/
-
-comment on column FLOW_NODE.NODE_RATIO is '流程签署比例值'
-/
-
-comment on column FLOW_NODE.COORDINATE is '坐标'
-/
-
-comment on column FLOW_NODE.SKIP_ANY_NODE is '是否可以退回任意节点 (Y是 N否)'
-/
-
-comment on column FLOW_NODE.LISTENER_TYPE is '监听器类型'
-/
-
-comment on column FLOW_NODE.LISTENER_PATH is '监听器路径'
-/
-
-comment on column FLOW_NODE.HANDLER_TYPE is '处理器类型'
-/
-
-comment on column FLOW_NODE.HANDLER_PATH is '处理器路径'
-/
-
-comment on column FLOW_NODE.FORM_CUSTOM is '审批表单是否自定义 (Y是 N否)'
-/
-
-comment on column FLOW_NODE.FORM_PATH is '审批表单路径'
-/
-
-comment on column FLOW_NODE.VERSION is '版本'
-/
-
-comment on column FLOW_NODE.CREATE_TIME is '创建时间'
-/
-
-comment on column FLOW_NODE.UPDATE_TIME is '更新时间'
-/
-
-comment on column FLOW_NODE.DEL_FLAG is '删除标志'
-/
-
-comment on column FLOW_NODE.TENANT_ID is '租户id'
-/
-
-comment on column FLOW_NODE.PERMISSION_FLAG is '权限标识（权限类型:权限标识，可以多个，用逗号隔开)'
-/
 
 create table FLOW_TASK
 (
@@ -447,6 +355,103 @@ comment on column FLOW_TASK.DEL_FLAG is '删除标志'
 /
 
 comment on column FLOW_TASK.TENANT_ID is '租户id'
+/
+
+create table FLOW_HIS_TASK
+(
+    ID NUMBER(20) not null,
+    DEFINITION_ID NUMBER(20) not null,
+    INSTANCE_ID NUMBER(20) not null,
+    TASK_ID NUMBER(20) not null,
+    NODE_CODE VARCHAR2(100),
+    NODE_NAME VARCHAR2(100),
+    NODE_TYPE NUMBER(1),
+    TARGET_NODE_CODE VARCHAR2(100),
+    TARGET_NODE_NAME VARCHAR2(100),
+    APPROVER VARCHAR2(40),
+    COOPERATE_TYPE NUMBER(1) default 0,
+    COLLABORATOR VARCHAR2(40),
+    SKIP_TYPE VARCHAR2(10),
+    FLOW_STATUS VARCHAR2(20),
+    FORM_CUSTOM VARCHAR2(1) default 'N',
+    FORM_PATH VARCHAR2(100),
+    MESSAGE VARCHAR2(500),
+    EXT VARCHAR2(500),
+    CREATE_TIME DATE,
+    UPDATE_TIME DATE,
+    DEL_FLAG VARCHAR2(1)  default '0',
+    TENANT_ID VARCHAR2(40)
+
+)
+/
+
+comment on table FLOW_HIS_TASK is '历史任务记录表'
+/
+
+comment on column FLOW_HIS_TASK.ID is '主键id'
+/
+
+comment on column FLOW_HIS_TASK.DEFINITION_ID is '对应flow_definition表的id'
+/
+
+comment on column FLOW_HIS_TASK.INSTANCE_ID is '对应flow_instance表的id'
+/
+
+comment on column FLOW_HIS_TASK.TASK_ID is '对应flow_task表的id'
+/
+
+comment on column FLOW_HIS_TASK.NODE_CODE is '开始节点编码'
+/
+
+comment on column FLOW_HIS_TASK.NODE_NAME is '开始节点名称'
+/
+
+comment on column FLOW_HIS_TASK.NODE_TYPE is '开始节点类型 (0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关)'
+/
+
+comment on column FLOW_HIS_TASK.TARGET_NODE_CODE is '目标节点编码'
+/
+
+comment on column FLOW_HIS_TASK.TARGET_NODE_NAME is '目标节点名称'
+/
+
+comment on column FLOW_HIS_TASK.SKIP_TYPE is '流转类型（PASS通过 REJECT退回 NONE无动作）'
+/
+
+comment on column FLOW_HIS_TASK.FLOW_STATUS is '流程状态（1审批中 2 审批通过 9已退回 10失效）'
+/
+
+comment on column FLOW_HIS_TASK.FORM_CUSTOM is '审批表单是否自定义 (Y是 N否)'
+/
+
+comment on column FLOW_HIS_TASK.FORM_PATH is '审批表单路径'
+/
+
+comment on column FLOW_HIS_TASK.MESSAGE is '审批意见'
+/
+
+comment on column FLOW_HIS_TASK.EXT is '扩展字段，预留给业务系统使用'
+/
+
+comment on column FLOW_HIS_TASK.CREATE_TIME is '开始时间'
+/
+
+comment on column FLOW_HIS_TASK.UPDATE_TIME is '结束时间'
+/
+
+comment on column FLOW_HIS_TASK.DEL_FLAG is '删除标志'
+/
+
+comment on column FLOW_HIS_TASK.TENANT_ID is '租户id'
+/
+
+comment on column FLOW_HIS_TASK.APPROVER is '审批者'
+/
+
+comment on column FLOW_HIS_TASK.COOPERATE_TYPE is '协作方式(1审批 2转办 3委派 4会签 5票签 6加签 7减签)'
+/
+
+comment on column FLOW_HIS_TASK.COLLABORATOR is '协作人'
 /
 
 create table FLOW_USER

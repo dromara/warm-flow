@@ -53,6 +53,10 @@ public interface Definition extends RootEntity {
 
     public Definition setFlowName(String flowName);
 
+    public String getCategory();
+
+    public Definition setCategory(String category);
+
     public String getVersion();
 
     public Definition setVersion(String version);

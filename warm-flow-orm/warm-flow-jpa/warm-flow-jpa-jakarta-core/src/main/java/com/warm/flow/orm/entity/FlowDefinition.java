@@ -62,6 +62,9 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
                 if (StringUtils.isNotEmpty(this.flowName)) {
                     predicates.add(criteriaBuilder.equal(root.get("flowName"), this.flowName));
                 }
+                if (StringUtils.isNotEmpty(this.category)) {
+                    predicates.add(criteriaBuilder.equal(root.get("category"), this.category));
+                }
                 if (StringUtils.isNotEmpty(this.version)) {
                     predicates.add(criteriaBuilder.equal(root.get("version"), this.version));
                 }
@@ -95,6 +98,9 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
         }
         if (StringUtils.isNotEmpty(updateEntity.flowName)) {
             this.flowName = updateEntity.flowName;
+        }
+        if (StringUtils.isNotEmpty(updateEntity.category)) {
+            this.category = updateEntity.category;
         }
         if (StringUtils.isNotEmpty(updateEntity.version)) {
             this.version = updateEntity.version;
@@ -164,6 +170,12 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
      */
     @Column(name = "flow_name")
     private String flowName;
+
+    /**
+     * 流程类别
+     */
+    @Column(name = "category")
+    private String category;
 
     /**
      * 流程版本
@@ -243,6 +255,17 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
     @Override
     public FlowDefinition setFlowName(String flowName) {
         this.flowName = flowName;
+        return this;
+    }
+
+    @Override
+    public String getCategory() {
+        return category;
+    }
+
+    @Override
+    public FlowDefinition setCategory(String category) {
+        this.category = category;
         return this;
     }
 
@@ -377,6 +400,7 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
                 ", updateTime=" + super.getUpdateTime() +
                 ", flowCode='" + flowCode + '\'' +
                 ", flowName='" + flowName + '\'' +
+                ", category='" + category + '\'' +
                 ", version='" + version + '\'' +
                 ", isPublish=" + isPublish +
                 ", formCustom='" + formCustom + '\'' +

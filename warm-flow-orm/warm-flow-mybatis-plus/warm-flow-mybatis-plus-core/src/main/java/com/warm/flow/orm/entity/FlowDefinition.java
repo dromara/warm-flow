@@ -73,6 +73,11 @@ public class FlowDefinition implements Definition {
     private String flowName;
 
     /**
+     * 流程类别
+     */
+    private String category;
+
+    /**
      * 流程版本
      */
     private String version;
@@ -198,6 +203,17 @@ public class FlowDefinition implements Definition {
     @Override
     public FlowDefinition setFlowName(String flowName) {
         this.flowName = flowName;
+        return this;
+    }
+
+    @Override
+    public String getCategory() {
+        return category;
+    }
+
+    @Override
+    public FlowDefinition setCategory(String category) {
+        this.category = category;
         return this;
     }
 
@@ -330,6 +346,7 @@ public class FlowDefinition implements Definition {
                 ", updateTime=" + updateTime +
                 ", flowCode='" + flowCode + '\'' +
                 ", flowName='" + flowName + '\'' +
+                ", category='" + category + '\'' +
                 ", version='" + version + '\'' +
                 ", isPublish=" + isPublish +
                 ", formCustom='" + formCustom + '\'' +
