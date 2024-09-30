@@ -87,7 +87,7 @@
             <if test="entity.taskId != null ">and t.task_id = #{entity.taskId}</if>
             <if test="entity.cooperateType != null ">and t.cooperate_type = #{entity.cooperateType}</if>
             <if test="entity.skipType != null  and entity.skipType != ''">and t.skip_type = #{entity.skipType}</if>
-            <if test="entity.flowStatus != null">and t.flow_status = #{fentity.flowStatus}</if>
+            <if test="entity.flowStatus != null">and t.flow_status = #{entity.flowStatus}</if>
             <if test="entity.formCustom != null  and entity.formCustom != ''">and t.form_custom = #{entity.formCustom}</if>
             <if test="entity.formPath != null  and entity.formPath != ''">and t.form_path = #{entity.formPath}</if>
             <if test="entity.message != null  and entity.message != ''">and t.message = #{entity.message}</if>
