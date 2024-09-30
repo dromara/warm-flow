@@ -29,8 +29,10 @@ import com.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import com.warm.flow.core.service.InsService;
 import com.warm.flow.core.utils.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 流程实例Service业务层处理
@@ -217,6 +219,14 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
 
     private boolean toRemoveTask(List<Long> instanceIds) {
         AssertUtil.isEmpty(instanceIds, ExceptionCons.NULL_INSTANCE_ID);
+        List<Long> taskIds = new ArrayList<>();
+        instanceIds.forEach(instanceId -> taskIds.addAll(
+                FlowFactory.taskService()
+                        .list(FlowFactory.newTask().setInstanceId(instanceId))
+                        .stream()
+                        .map(Task::getId)
+                        .collect(Collectors.toList())));
+        FlowFactory.userService().deleteByTaskIds(taskIds);
         boolean success = FlowFactory.taskService().deleteByInsIds(instanceIds);
         if (success) {
             FlowFactory.hisTaskService().deleteByInsIds(instanceIds);
