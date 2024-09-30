@@ -75,7 +75,7 @@ public class ExceptionCons {
 
     public static final String NOT_FOUNT_TASK = "待办任务获取失败!";
 
-    public static final String TASK_NOT_ONE = "不能同时跳转多个待办任务!";
+    public static final String TASK_NOT_ONE = "此接口不能同时跳转多个待办任务，请更换!";
 
     public static final String NOT_DEFINITION_ID = "流程定义id不能为空!";
 

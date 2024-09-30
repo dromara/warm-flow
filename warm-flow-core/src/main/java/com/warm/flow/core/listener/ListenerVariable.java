@@ -75,6 +75,7 @@ public class ListenerVariable {
      * 权限监听器使用
      * 权限标识 例如：[role:admin,user:2]
      */
+    @Deprecated
     private List<NodePermission> nodePermissionList;
 
     public ListenerVariable() {

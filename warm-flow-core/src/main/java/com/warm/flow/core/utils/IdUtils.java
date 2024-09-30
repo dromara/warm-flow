@@ -30,13 +30,10 @@ import com.warm.flow.core.keygen.SnowFlakeId19;
 public class IdUtils {
 
     private volatile static KenGen instance;
+    private static KenGen instanceExt;
 
     public static String nextIdStr() {
         return nextId().toString();
-    }
-
-    public static String nextIdStr(long workerId, long datacenterId) {
-        return nextId(workerId, datacenterId).toString();
     }
 
     public static Long nextId() {
@@ -45,14 +42,18 @@ public class IdUtils {
 
     public static Long nextId(long workerId, long datacenterId) {
         if (instance == null) {
-            synchronized (KenGen.class) {
+            synchronized (IdUtils.class) {
                 if (instance == null) {
                     String keyType = FlowFactory.getFlowConfig().getKeyType();
                     if (FlowCons.SNOWID14.equals(keyType)) {
                         instance = new SnowFlakeId14(workerId);
                     } else if (FlowCons.SNOWID15.equals(keyType)) {
                         instance = new SnowFlakeId15(workerId);
-                    } else {
+                    }
+                    if (instanceExt != null) {
+                        instance = instanceExt;
+                    }
+                    if (instance == null) {
                         instance = new SnowFlakeId19(workerId, datacenterId);
                     }
                 }
@@ -61,12 +62,8 @@ public class IdUtils {
         return instance.nextId();
     }
 
-    public static KenGen getInstance() {
-        return instance;
-    }
-
-    public static void setInstance(KenGen instance) {
-        IdUtils.instance = instance;
+    public static void setInstanceExt(KenGen instanceExt) {
+        IdUtils.instanceExt = instanceExt;
     }
 
 }
