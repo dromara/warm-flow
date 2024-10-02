@@ -14,7 +14,7 @@ export default defineConfig(({ mode, command }) => {
     plugins: createVitePlugins(env, command === 'build'),
    // 设置打包后的路径
     build: {
-      outDir: '../resources/static/warm-flow'
+      outDir: '../warm-flow-ui/src/main/resources/static'
     },
     resolve: {
       // https://cn.vitejs.dev/config/#resolve-alias
@@ -29,7 +29,7 @@ export default defineConfig(({ mode, command }) => {
     },
     // vite 相关配置
     server: {
-      port: 80,
+      port: 81,
       host: true,
       open: true,
       proxy: {
