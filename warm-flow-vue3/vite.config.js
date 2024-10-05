@@ -14,7 +14,14 @@ export default defineConfig(({ mode, command }) => {
     plugins: createVitePlugins(env, command === 'build'),
    // 设置打包后的路径
     build: {
-      outDir: '../warm-flow-ui/src/main/resources/static'
+      outDir: '../warm-flow-ui/src/main/resources/static/',
+      rollupOptions: {
+        output: {
+          chunkFileNames: 'js/[name]-[hash].js',
+          entryFileNames: 'js/[name]-[hash].js',
+          assetFileNames: '[ext]/[name]-[hash].[ext]'
+        }
+      }
     },
     resolve: {
       // https://cn.vitejs.dev/config/#resolve-alias
