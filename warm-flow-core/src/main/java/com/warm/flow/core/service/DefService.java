@@ -34,7 +34,7 @@ public interface DefService extends IWarmService<Definition> {
     /**
      * 导入流程定义xml的is，返回流程定义对象
      *
-     * @param is
+     * @param is 流程定义xml的is
      * @throws Exception
      */
     Definition importXml(InputStream is) throws Exception;
@@ -42,10 +42,18 @@ public interface DefService extends IWarmService<Definition> {
     /**
      * 传入流程定义id、流程定义xml字符串，保存流程定义数据
      *
-     * @param def
+     * @param def 流程定义对象
      * @throws Exception
      */
     void saveXml(Definition def) throws Exception;
+
+    /**
+     * 传入流程定义id、流程定义xml字符串，保存流程定义数据
+     * @param id 流程定义id
+     * @param xmlString 流程定义xml字符串
+     * @throws Exception
+     */
+    void saveXml(Long id, String xmlString) throws Exception;
 
     /**
      * 导出流程定义xml的Document对象

@@ -77,25 +77,26 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
 
     @Override
     public void saveXml(Definition def) throws Exception {
-        if (ObjectUtil.isNull(def)) {
+        saveXml(def.getId(), def.getXmlString());
+    }
+
+    @Override
+    public void saveXml(Long id, String xmlString) throws Exception {
+        if (ObjectUtil.isNull(id) || StringUtils.isEmpty(xmlString)) {
             return;
         }
-        FlowCombine combine = FlowConfigUtil.readConfig(new ByteArrayInputStream(def.getXmlString()
-                .getBytes(StandardCharsets.UTF_8)));
+        FlowCombine combine = FlowConfigUtil.readConfig(new ByteArrayInputStream
+                (xmlString.getBytes(StandardCharsets.UTF_8)));
         // 所有的流程节点
         List<Node> allNodes = combine.getAllNodes();
         // 所有的流程连线
         List<Skip> allSkips = combine.getAllSkips();
 
-        FlowFactory.nodeService().remove(FlowFactory.newNode().setDefinitionId(def.getId()));
-        FlowFactory.skipService().remove(FlowFactory.newSkip().setDefinitionId(def.getId()));
-        allNodes.forEach(node -> node.setDefinitionId(def.getId()));
-        allSkips.forEach(skip -> skip.setDefinitionId(def.getId()));
+        FlowFactory.nodeService().remove(FlowFactory.newNode().setDefinitionId(id));
+        FlowFactory.skipService().remove(FlowFactory.newSkip().setDefinitionId(id));
+        allNodes.forEach(node -> node.setDefinitionId(id));
+        allSkips.forEach(skip -> skip.setDefinitionId(id));
         // 保存节点，流程连线，权利人
-        String version = getNewVersion(def);
-        for (Node node : allNodes) {
-            node.setVersion(version);
-        }
         FlowFactory.nodeService().saveBatch(allNodes);
         FlowFactory.skipService().saveBatch(allSkips);
     }
