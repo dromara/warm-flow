@@ -42,7 +42,6 @@
         <module>warm-flow-core</module>
         <module>warm-flow-orm</module>
         <module>warm-flow-plugin</module>
-        <module>warm-flow-ui</module>
     </modules>
 
     <properties>
@@ -153,12 +152,6 @@
                 <groupId>com.easy-query</groupId>
                 <artifactId>sql-springboot-starter</artifactId>
                 <version>${easy-query.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>io.github.minliuhua</groupId>
-                <artifactId>warm-flow-ui</artifactId>
-                <version>${warm-flow}</version>
             </dependency>
 
             <dependency>
@@ -344,6 +337,16 @@
             <dependency>
                 <groupId>io.github.minliuhua</groupId>
                 <artifactId>warm-flow-plugin-json</artifactId>
+                <version>${warm-flow}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.minliuhua</groupId>
+                <artifactId>warm-flow-plugin-vue3-ui</artifactId>
+                <version>${warm-flow}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.minliuhua</groupId>
+                <artifactId>warm-flow-plugin-ui-sb-web</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
         </dependencies>

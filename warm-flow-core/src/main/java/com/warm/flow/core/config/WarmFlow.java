@@ -22,8 +22,6 @@ import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.core.json.JsonConvert;
 import com.warm.flow.core.utils.*;
 import com.warm.flow.core.variable.VariableStrategy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 
@@ -33,8 +31,6 @@ import java.io.Serializable;
  * @author warm
  */
 public class WarmFlow implements Serializable {
-
-    private static final Logger log = LoggerFactory.getLogger(WarmFlow.class);
 
     /**
      * 开关
@@ -81,6 +77,11 @@ public class WarmFlow implements Serializable {
      * 兜底为mysql数据库
      */
     private String dataSourceType;
+
+    /**
+     * ui开关
+     */
+    private boolean ui = true;
 
     public static WarmFlow init() {
         WarmFlow flowConfig = new WarmFlow();
@@ -223,5 +224,13 @@ public class WarmFlow implements Serializable {
 
     public void setDataSourceType(String dataSourceType) {
         this.dataSourceType = dataSourceType;
+    }
+
+    public boolean isUi() {
+        return ui;
+    }
+
+    public void setUi(boolean ui) {
+        this.ui = ui;
     }
 }

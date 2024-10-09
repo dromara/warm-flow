@@ -5,20 +5,18 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.github.minliuhua</groupId>
-        <artifactId>warm-flow</artifactId>
+        <artifactId>warm-flow-plugin-ui</artifactId>
         <version>1.2.10</version>
     </parent>
 
-    <artifactId>warm-flow-plugin</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>warm-flow-plugin-vue3-ui</artifactId>
 
-    <modules>
-        <module>warm-flow-plugin-expression</module>
-        <module>warm-flow-plugin-json</module>
-        <module>warm-flow-plugin-modes</module>
-        <module>warm-flow-plugin-spel</module>
-        <module>warm-flow-plugin-ui</module>
-    </modules>
-
-
+    <build>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+                <targetPath>META-INF/resources/</targetPath>
+            </resource>
+        </resources>
+    </build>
 </project>

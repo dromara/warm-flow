@@ -14,7 +14,7 @@ export default defineConfig(({ mode, command }) => {
     plugins: createVitePlugins(env, command === 'build'),
    // 设置打包后的路径
     build: {
-      outDir: '../warm-flow-ui/src/main/resources/',
+      outDir: '../warm-flow-plugin/warm-flow-plugin-ui/warm-flow-plugin-vue3-ui/src/main/resources/',
       rollupOptions: {
         // input: {
         //   //直接修改入口文件名字
