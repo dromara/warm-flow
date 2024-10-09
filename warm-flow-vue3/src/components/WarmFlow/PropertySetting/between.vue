@@ -149,9 +149,8 @@
 </template>
 
 <script setup name="Between">
-import {listRole} from "@/api/system/role";
-import {listUser, idReverseDisplayName} from "@/api/system/user";
-import {listDept} from "@/api/system/dept";
+import {idReverseDisplayName} from "@/api/system/user";
+import {selectGroup} from "@/api/flow/definition.js";
 import selectUser from "@/views/components/selectUser";
 const { proxy } = getCurrentInstance();
 
@@ -204,74 +203,31 @@ function getPermissionFlag() {
   if (form.value.listenerType) {
     form.value.listenerType = form.value.listenerType.split(",")
   }
-  listRole().then(response => {
-    let groupOptionCreateBy = {
-      label: '创建人',
-      options: [{
-        value: 'warmFlowInitiator',
-        label: '流程发起人'
-      }]
-    }
-    groupOptions.value.push(groupOptionCreateBy);
-    let groupOption = {
-      label: '角色',
-      options: response.rows.map(item =>{
-            return {
-              value: 'role:' + item.roleId,
-              label: item.roleName
-            }
-          }
-      )
-    }
-    groupOptions.value.push(groupOption);
-    listUser().then(response => {
-      let groupOption = {
-        label: '用户',
-        options: response.rows.map(item =>{
-              return {
-                value: item.userId,
-                label: item.nickName
-              }
-            }
-        )
-      }
-      groupOptions.value.push(groupOption);
-      listDept().then(response => {
-        let groupOption = {
-          label: '部门',
-          options: response.data.map(item =>{
-                return {
-                  value: 'dept:' + item.deptId,
-                  label: item.deptName
-                }
-              }
-          )
-        }
-        groupOptions.value.push(groupOption);
-        if (props.disabled && form.value.collaborativeWay === "1") {
-          let userNameList = [];
-          groupOptions.value.forEach(e => {
-            e.options.forEach(o => {
-              if (form.value.permissionFlag.includes(o.value)) userNameList.push(o.label);
-            });
-          });
-          userNameList.value = userNameList.join(",");
-        }
+  selectGroup().then(res => {
+    console.log("groupOptions", res);
+    groupOptions.value = res.data;
+    if (props.disabled && form.value.collaborativeWay === "1") {
+      let userNameList = [];
+      groupOptions.value.forEach(e => {
+        e.options.forEach(o => {
+          if (form.value.permissionFlag.includes(o.value)) userNameList.push(o.label);
+        });
       });
-    });
+      userNameList.value = userNameList.join(",");
+    }
   });
 }
 
 function collaborativeWayChange(val) {
   form.value.permissionFlag = [];
   form.value.nodeRatio = val === "1" ? "0.000" : val === "3" ? "100.000" : "";
-};
+}
 
 // 打开用户选择弹窗
 function initUser() {
   userVisible.value = true;
   proxy.$refs.userSelect.blur();
-};
+}
 
 // 获取选中用户数据
 function handleUserSelect(checkedItemList) {

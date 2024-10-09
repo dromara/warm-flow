@@ -15,37 +15,66 @@
  */
 package com.warm.flow.ui.controller;
 
+import com.warm.flow.core.dto.ApiResult;
+import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.core.service.DefService;
-import com.warm.flow.core.dto.WarmFlowResult;
+import com.warm.flow.ui.dto.DefDto;
+import com.warm.flow.ui.entity.SelectGroup;
+import com.warm.flow.ui.service.SelectGroupHandler;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * 流程定义Controller
+ * 设计器Controller
  *
  * @author warm
  */
 @RestController
-@RequestMapping("/warm_flow/definition")
+@RequestMapping("/flow/definition")
 public class DefController {
     @Resource
     private DefService defService;
 
 
-    @GetMapping("/saveXml")
+    /**
+     * 保存流程xml字符串
+     * @param defDto 流程定义dto
+     * @return ApiResult<Void>
+     * @throws Exception 异常
+     */
+    @PostMapping("/save-xml")
     @Transactional(rollbackFor = Exception.class)
-    public WarmFlowResult<Void> saveXml(Long id, String xmlString) throws Exception {
-        defService.saveXml(id, xmlString);
-        return WarmFlowResult.ok();
+    public ApiResult<Void> saveXml(@RequestBody DefDto defDto) throws Exception {
+        defService.saveXml(defDto.getId(), defDto.getXmlString());
+        return ApiResult.ok();
     }
 
-    @GetMapping("/xmlString/{id}")
-    public WarmFlowResult<String> xmlString(@PathVariable("id") Long id) {
-        return WarmFlowResult.ok(defService.xmlString(id));
+    /**
+     * 获取流程xml字符串
+     * @param id 流程定义id
+     * @return ApiResult<String>
+     */
+    @GetMapping("/xml-string/{id}")
+    public ApiResult<String> xmlString(@PathVariable("id") Long id) {
+        return ApiResult.ok(defService.xmlString(id));
+    }
+
+    /**
+     * 获取设计器办理人组选择框数据
+     * @return List<SelectGroup>
+     */
+    @GetMapping("/select-group")
+    public ApiResult<List<SelectGroup>> selectGroup() {
+        // 需要业务系统实现该接口
+        SelectGroupHandler selectGroupHandler = FrameInvoker.getBean(SelectGroupHandler.class);
+        if (selectGroupHandler == null) {
+            return ApiResult.ok(new ArrayList<>());
+        }
+        List<SelectGroup> options = selectGroupHandler.getHandlerSelectGroup();
+        return ApiResult.ok(options);
     }
 }
