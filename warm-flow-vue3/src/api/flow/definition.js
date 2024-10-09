@@ -37,7 +37,7 @@ export function exportDefinition(id) {
 // 获取流程定义xml字符串
 export function getXmlString(id) {
   return request({
-    url: '/flow/definition/xmlString/' + id,
+    url: '/warmjars/flow/definition/xmlString/' + id,
     method: 'get'
   })
 }

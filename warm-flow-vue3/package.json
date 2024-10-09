@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://gitee.com/y_project/RuoYi-Vue.git"
+    "url": "https://gitee.com/dromara/warm-flow.git"
   },
   "dependencies": {
     "@logicflow/core": "^1.2.15",
