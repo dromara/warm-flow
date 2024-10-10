@@ -59,6 +59,7 @@ const form = ref(props.modelValue);
 const emit = defineEmits(["change"]);
 
 watch(() => form, n => {
+  n = n.value;
   let skipCondition = n.skipCondition;
   skipCondition = "@@" + n.conditionType + "@@|";
   if (n.conditionType !== 'spel') {
