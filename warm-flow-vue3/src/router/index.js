@@ -26,10 +26,10 @@ import { createWebHistory, createRouter } from 'vue-router'
 export const constantRoutes = [
   {
     path: '/warmjars',
-    redirect: '/warmjars/warm-flow/index/1839683148936663047?disabled=false&pageNum=1'
+    redirect: '/warmjars/warm-flow/1839683148936663047?disabled=false&pageNum=1'
   },
   {
-    path: '/warmjars/warm-flow/index/:id(\\d+)',
+    path: '/warmjars/warm-flow/:id(\\d+)',
     name: 'Design',
     component: () => import('@/views/flow-design/index'),
     hidden: true

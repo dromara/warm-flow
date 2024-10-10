@@ -38,15 +38,6 @@
                   @keyup.enter="handleQuery"
                 />
             </el-form-item>
-            <el-form-item label="手机号码" prop="phonenumber">
-                <el-input
-                  v-model="queryParams.phonenumber"
-                  placeholder="请输入手机号码"
-                  clearable
-                  style="width: 240px"
-                  @keyup.enter="handleQuery"
-                />
-            </el-form-item>
             <el-form-item label="创建时间" style="width: 308px;">
                 <el-date-picker
                   v-model="dateRange"
@@ -85,12 +76,6 @@
             <el-table-column label="用户名称" align="center" key="userName" prop="userName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
             <el-table-column label="用户昵称" align="center" key="nickName" prop="nickName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
             <el-table-column label="部门" align="center" key="deptName" prop="dept.deptName" v-if="columns[3].visible" :show-overflow-tooltip="true" />
-            <el-table-column label="手机号码" align="center" key="phonenumber" prop="phonenumber" v-if="columns[4].visible" width="120" />
-            <el-table-column label="状态" align="center" key="status" v-if="columns[5].visible">
-              <template #default="scope">
-                <el-tag :type="scope.row.status === '0' ? '' : 'warning'">{{ scope.row.status === '0' ? '正常' : '停用' }}</el-tag>
-              </template>
-            </el-table-column>
             <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[6].visible" width="160">
               <template #default="scope">
                 <span>{{ parseTime(scope.row.createTime) }}</span>
@@ -132,7 +117,6 @@ const props = defineProps({
   }
 });
 const userList = ref([]);
-const open = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
 const total = ref(0);
@@ -140,18 +124,13 @@ const title = ref("");
 const dateRange = ref([]);
 const deptName = ref("");
 const deptOptions = ref(undefined);
-const initPassword = ref(undefined);
-const postOptions = ref([]);
-const roleOptions = ref([]);
 // 列显隐信息
 const columns = ref([
  { key: 0, label: `用户编号`, visible: true },
  { key: 1, label: `用户名称`, visible: true },
  { key: 2, label: `用户昵称`, visible: true },
  { key: 3, label: `部门`, visible: true },
- { key: 4, label: `手机号码`, visible: true },
- { key: 5, label: `状态`, visible: true },
- { key: 6, label: `创建时间`, visible: true }
+ { key: 4, label: `创建时间`, visible: true }
 ]);
 const checkedItemList = ref([]); // 已选的itemList
 const data = reactive({
@@ -160,7 +139,6 @@ const data = reactive({
    pageNum: 1,
    pageSize: 10,
    userName: undefined,
-   phonenumber: undefined,
    status: "0",
    deptId: undefined
  },

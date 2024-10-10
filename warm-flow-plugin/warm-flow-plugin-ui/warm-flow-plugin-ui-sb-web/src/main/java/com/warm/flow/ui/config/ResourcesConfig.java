@@ -40,7 +40,7 @@ public class ResourcesConfig implements WebMvcConfigurer
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         // 将所有未匹配的请求重定向到index.html
-        registry.addViewController("/warmjars/warm-flow/index/**")
+        registry.addViewController("/warmjars/warm-flow/**")
                 .setViewName("forward:/index.html");
     }
 }
