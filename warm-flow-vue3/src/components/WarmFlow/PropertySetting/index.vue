@@ -107,7 +107,7 @@ watch(() => props.node, n => {
       form.value = {
         nodeType: n.type,
         skipType: n.properties.skipType,
-        skipName: n.properties.skipName,
+        skipName: n.text instanceof Object ? n.text.value : n.text,
         skipCondition: skipCondition,
         condition: condition,
         conditionType: conditionType,
@@ -122,8 +122,8 @@ watch(() => props.node, n => {
       form.value = {
         nodeType: n.type,
         nodeCode: n.id,
-        nodeName: n.text instanceof Object ? n.text.value : n.text,
-        ...n.properties
+        ...n.properties,
+        nodeName: n.text instanceof Object ? n.text.value : n.text
       }
     }
   }

@@ -250,7 +250,7 @@ export const logicFlowJsonToFlowXml = (data) => {
       return {
         skipType: edge.properties.skipType,
         skipCondition: edge.properties.skipCondition,
-        skipName: edge.properties.skipName,
+        skipName: edge?.text?.value || edge.properties.skipName,
         textContent: edge.targetNodeId, // 目地节点id
         coordinate: coordinate,
       }
