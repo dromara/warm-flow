@@ -25,11 +25,11 @@ import { createWebHistory, createRouter } from 'vue-router'
 // 公共路由
 export const constantRoutes = [
   {
-    path: '/warmjars',
-    redirect: '/warmjars/warm-flow/1839683148936663047?disabled=false&pageNum=1'
+    path: '/warm-flow-ui',
+    redirect: '/warm-flow-ui/warm-flow/1839683148936663047?disabled=false&pageNum=1'
   },
   {
-    path: '/warmjars/warm-flow/:id(\\d+)',
+    path: '/warm-flow-ui/warm-flow/:id(\\d+)',
     name: 'Design',
     component: () => import('@/views/flow-design/index'),
     hidden: true

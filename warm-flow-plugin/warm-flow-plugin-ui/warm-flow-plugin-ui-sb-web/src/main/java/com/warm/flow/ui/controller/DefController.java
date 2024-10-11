@@ -34,7 +34,7 @@ import java.util.List;
  * @author warm
  */
 @RestController
-@RequestMapping("/warmjars/flow/definition")
+@RequestMapping("/warm-flow-ui")
 public class DefController {
     @Resource
     private DefService defService;

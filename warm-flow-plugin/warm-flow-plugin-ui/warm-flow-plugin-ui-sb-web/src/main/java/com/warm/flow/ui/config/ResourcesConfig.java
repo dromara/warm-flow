@@ -32,15 +32,15 @@ public class ResourcesConfig implements WebMvcConfigurer
     public void addResourceHandlers(ResourceHandlerRegistry registry)
     {
         /** warm-flow配置 */
-        registry.addResourceHandler("/warmjars/**")
-                .addResourceLocations("classpath:/META-INF/resources/warm-flow-ui/");
+        registry.addResourceHandler("/warm-flow-ui/warmjars/**")
+                .addResourceLocations("classpath:/META-INF/resources/warm-flow/warmjars/");
 
     }
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         // 将所有未匹配的请求重定向到index.html
-        registry.addViewController("/warmjars/warm-flow/**")
-                .setViewName("forward:/warm-flow-ui/index.html");
+        registry.addViewController("/warm-flow-ui/warm-flow/**")
+                .setViewName("forward:/warm-flow/index.html");
     }
 }
