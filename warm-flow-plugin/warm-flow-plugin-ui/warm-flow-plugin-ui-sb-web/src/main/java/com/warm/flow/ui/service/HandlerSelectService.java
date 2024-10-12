@@ -15,20 +15,22 @@
  */
 package com.warm.flow.ui.service;
 
-import com.warm.flow.ui.vo.SelectGroup;
+import com.warm.flow.ui.dto.HandlerQuery;
+import com.warm.flow.ui.vo.HandlerSelectVo;
 
 import java.util.List;
 
 /**
- * 获取设计器办理人组选择框数据
+ * 流程设计器-获取办理人权限设置列表接口
  *
  * @author warm
  */
-public interface SelectGroupHandler {
+public interface HandlerSelectService {
+
     /**
-     * 获取办理人组选择框
-     *
-     * @return 办理人组选择框
+     * 获取办理人权限设置列表
+     * @param query 查询参数
+     * @return 办理人权限设置列表
      */
-    List<SelectGroup> getHandlerSelectGroup();
+    List<HandlerSelectVo> getHandlerSelect(HandlerQuery query);
 }

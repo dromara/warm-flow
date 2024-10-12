@@ -16,14 +16,16 @@
 package com.warm.flow.ui.dto;
 
 /**
- * 流程设计器数据传输对象
+ * 流程设计器-流程定义数据传输对象
  *
  * @author warm
  */
 public class DefDto {
 
+    /** 流程定义id */
     private Long id;
 
+    /** 流程定义xml字符串 */
     private String xmlString;
 
     public Long getId() {

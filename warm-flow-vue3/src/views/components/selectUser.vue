@@ -98,9 +98,7 @@
 <script setup name="User">
 import * as api from "@/api/system/user";
 
-const router = useRouter();
 const { proxy } = getCurrentInstance();
-const { sys_normal_disable, sys_user_sex } = proxy.useDict("sys_normal_disable", "sys_user_sex");
 
 const props = defineProps({
   userVisible: {

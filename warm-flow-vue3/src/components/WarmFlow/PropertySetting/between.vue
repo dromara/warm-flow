@@ -150,7 +150,7 @@
 
 <script setup name="Between">
 import {idReverseDisplayName} from "@/api/system/user";
-import {selectGroup} from "@/api/flow/definition.js";
+import {handlerResult, selectGroup} from "@/api/flow/definition.js";
 import selectUser from "@/views/components/selectUser";
 const { proxy } = getCurrentInstance();
 
@@ -203,6 +203,9 @@ function getPermissionFlag() {
   if (form.value.listenerType) {
     form.value.listenerType = form.value.listenerType.split(",")
   }
+  handlerResult().then(res => {
+
+  });
   selectGroup().then(res => {
     console.log("groupOptions", res);
     groupOptions.value = res.data;

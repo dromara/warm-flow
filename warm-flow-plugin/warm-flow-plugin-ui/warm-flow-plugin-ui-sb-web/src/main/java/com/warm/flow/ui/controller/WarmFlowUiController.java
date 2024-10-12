@@ -19,13 +19,16 @@ import com.warm.flow.core.dto.ApiResult;
 import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.core.service.DefService;
 import com.warm.flow.ui.dto.DefDto;
-import com.warm.flow.ui.entity.SelectGroup;
+import com.warm.flow.ui.dto.HandlerQuery;
+import com.warm.flow.ui.service.HandlerSelectService;
 import com.warm.flow.ui.service.SelectGroupHandler;
+import com.warm.flow.ui.vo.HandlerSelectVo;
+import com.warm.flow.ui.vo.SelectGroup;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -35,7 +38,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/warm-flow-ui")
-public class DefController {
+public class WarmFlowUiController {
     @Resource
     private DefService defService;
 
@@ -72,9 +75,24 @@ public class DefController {
         // 需要业务系统实现该接口
         SelectGroupHandler selectGroupHandler = FrameInvoker.getBean(SelectGroupHandler.class);
         if (selectGroupHandler == null) {
-            return ApiResult.ok(new ArrayList<>());
+            return ApiResult.ok(Collections.emptyList());
         }
         List<SelectGroup> options = selectGroupHandler.getHandlerSelectGroup();
         return ApiResult.ok(options);
+    }
+
+    /**
+     * 办理人权限设置列表结果
+     * @return List<SelectGroup>
+     */
+    @GetMapping("/handler-result")
+    public ApiResult<List<HandlerSelectVo>> handlerResult(HandlerQuery query) {
+        // 需要业务系统实现该接口
+        HandlerSelectService handlerSelectService = FrameInvoker.getBean(HandlerSelectService.class);
+        if (handlerSelectService == null) {
+            return ApiResult.ok(Collections.emptyList());
+        }
+        List<HandlerSelectVo> handlerSelectVos = handlerSelectService.getHandlerSelect(query);
+        return ApiResult.ok(handlerSelectVos);
     }
 }

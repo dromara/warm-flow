@@ -13,7 +13,7 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.warm.flow.ui.entity;
+package com.warm.flow.ui.vo;
 
 import java.util.List;
 

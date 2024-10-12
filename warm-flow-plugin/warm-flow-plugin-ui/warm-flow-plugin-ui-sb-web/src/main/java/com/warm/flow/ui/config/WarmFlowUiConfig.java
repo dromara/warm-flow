@@ -15,7 +15,7 @@
  */
 package com.warm.flow.ui.config;
 
-import com.warm.flow.ui.controller.DefController;
+import com.warm.flow.ui.controller.WarmFlowUiController;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -27,7 +27,7 @@ import org.springframework.context.annotation.Import;
  */
 @Configuration
 @ConditionalOnProperty(value = "warm-flow.ui", havingValue = "true", matchIfMissing = true)
-@Import({ResourcesConfig.class, DefController.class})
+@Import({ResourcesConfig.class, WarmFlowUiController.class})
 public class WarmFlowUiConfig {
 
 }
