@@ -16,26 +16,26 @@
 package com.warm.flow.ui.vo;
 
 /**
- * 流程设计器-办理人权限设置列表查询参数
+ * 流程设计器-办理人权限设置列表
  * 办理人权限列表选择框，可能存在多个，比如：部门、角色、用户的情况
  *
  * @author warm
  */
 public class HandlerAuth {
 
-    /** 权限主键，用户/角色/部门等 */
+    /** 权限主键，用户/角色/部门等主键 */
     private Long id;
 
     /** 实际入库权限主键，比如怕角色和用户id重复，可拼接为role:id */
     private String storageId;
 
-    /** 权限编码，如：zhang、roleAdmin、deptAdmin等 */
+    /** 权限编码，如：zhang、roleAdmin、deptAdmin等编码 */
     private String handlerCode;
 
-    /** 权限名称，如：管理员、角色管理员、部门管理员等 */
+    /** 权限名称，如：管理员、角色管理员、部门管理员等名称 */
     private String handlerName;
 
-    /** 权限分组，如：角色、部门等名称 */
+    /** 权限分组名称，如：角色、部门等名称 */
     private String groupName;
 
     /** 创建时间 */

@@ -30,7 +30,7 @@ public class HandlerSelectVo {
     /** 办理人权限设置列表 */
     private FlowPage<HandlerAuth> handlerAuths;
 
-    /** 办理权限类型，比如user，role，dept */
+    /** 办理权限类型，比如用户/角色/部门等 */
     private String handlerType;
 
     /** 左侧是否有树状选择 */

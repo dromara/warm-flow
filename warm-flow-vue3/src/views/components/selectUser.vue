@@ -29,6 +29,15 @@
       <!--用户数据-->
       <el-col :span="20" :xs="24">
           <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+            <el-form-item label="权限编码" prop="handlerCode">
+              <el-input
+                  v-model="queryParams.handlerCode"
+                  placeholder="请输入权限编码"
+                  clearable
+                  style="width: 240px"
+                  @keyup.enter="handleQuery"
+              />
+            </el-form-item>
             <el-form-item label="权限名称" prop="handlerName">
                 <el-input
                   v-model="queryParams.handlerName"

@@ -18,7 +18,6 @@ package com.warm.flow.ui.vo;
 import com.warm.flow.ui.dto.Tree;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,7 +37,7 @@ public class TreeSelection implements Serializable
     private String label;
 
     /** 子节点 */
-    private List<TreeSelection> children = new ArrayList<>();
+    private List<TreeSelection> children;
 
     public TreeSelection(Tree tree)
     {

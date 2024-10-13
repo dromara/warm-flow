@@ -26,19 +26,16 @@ import java.util.Map;
  */
 public class HandlerQuery {
 
-    /** 权限主键，用户/角色/部门等 */
-    private String id;
-
-    /** 权限编码，如：zhang、roleAdmin、deptAdmin等 */
+    /** 权限编码，如：zhang、roleAdmin、deptAdmin等编码 */
     private String handlerCode;
 
-    /** 权限名称，如：管理员、角色管理员、部门管理员等 */
+    /** 权限名称，如：管理员、角色管理员、部门管理员等名称 */
     private String handlerName;
 
-    /** 办理权限类型，比如user，role，dept */
+    /** 办理权限类型，比如用户/角色/部门等 */
     private String handlerType;
 
-    /** 权限分组，如：角色、部门等主键 */
+    /** 权限分组主键，如：角色、部门等主键 */
     private String groupId;
 
     /** 当前页码 */
@@ -47,16 +44,8 @@ public class HandlerQuery {
     /** 每页显示条数 */
     private Integer pageSize;
 
-    /** 请求参数 */
+    /** 请求参数，如开始时间、结束时间 */
     private Map<String, Object> params = new HashMap<>();
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getHandlerCode() {
         return handlerCode;
