@@ -237,7 +237,7 @@ function handleUserSelect(checkedItemList) {
 }
 
 getPermissionFlag();
-if (props.disabled) getIdReverseDisplayName();
+// if (props.disabled) getIdReverseDisplayName();
 </script>
 
 <style scoped>
