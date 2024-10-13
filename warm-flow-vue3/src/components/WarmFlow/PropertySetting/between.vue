@@ -203,9 +203,6 @@ function getPermissionFlag() {
   if (form.value.listenerType) {
     form.value.listenerType = form.value.listenerType.split(",")
   }
-  handlerResult().then(res => {
-
-  });
   selectGroup().then(res => {
     console.log("groupOptions", res);
     groupOptions.value = res.data;

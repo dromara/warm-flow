@@ -5,7 +5,7 @@
       <el-col :span="4" :xs="24">
           <div class="head-container">
             <el-input
-                v-model="deptName"
+                v-model="groupName"
                 placeholder="请输入部门名称"
                 clearable
                 prefix-icon="Search"
@@ -14,11 +14,11 @@
           </div>
           <div class="head-container">
             <el-tree
-                :data="deptOptions"
+                :data="groupOptions"
                 :props="{ label: 'label', children: 'children' }"
                 :expand-on-click-node="false"
                 :filter-node-method="filterNode"
-                ref="deptTreeRef"
+                ref="groupTreeRef"
                 node-key="id"
                 highlight-current
                 default-expand-all
@@ -29,10 +29,10 @@
       <!--用户数据-->
       <el-col :span="20" :xs="24">
           <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-            <el-form-item label="用户名称" prop="userName">
+            <el-form-item label="权限名称" prop="handlerName">
                 <el-input
-                  v-model="queryParams.userName"
-                  placeholder="请输入用户名称"
+                  v-model="queryParams.handlerName"
+                  placeholder="请输入权限名称"
                   clearable
                   style="width: 240px"
                   @keyup.enter="handleQuery"
@@ -56,7 +56,7 @@
           </el-form>
 
           <el-row :gutter="10" class="mb8">
-            <el-tag type="primary" style="margin-right: 10px" v-for="tag in checkedItemList" :key="tag.userId" closable @close="handleClose(tag.userId)">{{tag.userId}}</el-tag>
+            <el-tag type="primary" style="margin-right: 10px" v-for="tag in checkedItemList" :key="tag.storageId" closable @close="handleClose(tag.storageId)">{{tag.storageId}}</el-tag>
           </el-row>
 
           <el-table v-loading="loading" :data="userList" @row-click="handleCheck">
@@ -72,11 +72,12 @@
                 <el-checkbox v-model="scope.row.isChecked" @change.capture="handleCheck(row)"></el-checkbox>
               </template>
             </el-table-column>
-            <el-table-column label="用户编号" align="center" key="userId" prop="userId" v-if="columns[0].visible" />
-            <el-table-column label="用户名称" align="center" key="userName" prop="userName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
-            <el-table-column label="用户昵称" align="center" key="nickName" prop="nickName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
-            <el-table-column label="部门" align="center" key="deptName" prop="dept.deptName" v-if="columns[3].visible" :show-overflow-tooltip="true" />
-            <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[6].visible" width="160">
+            <el-table-column label="主键" align="center" key="id" prop="id" v-if="columns[0].visible" />
+            <el-table-column label="实际入库主键" align="center" key="storageId" prop="storageId" v-if="columns[1].visible" />
+            <el-table-column label="权限编码" align="center" key="handlerCode" prop="handlerCode" v-if="columns[2].visible" :show-overflow-tooltip="true" />
+            <el-table-column label="权限名称" align="center" key="handlerName" prop="handlerName" v-if="columns[3].visible" :show-overflow-tooltip="true" />
+            <el-table-column label="权限分组" align="center" key="groupName" prop="groupName" v-if="columns[4].visible" :show-overflow-tooltip="true" />
+            <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[5].visible" width="160">
               <template #default="scope">
                 <span>{{ parseTime(scope.row.createTime) }}</span>
               </template>
@@ -107,12 +108,6 @@ const props = defineProps({
   selectUser: {
     type: Array
   },
-  postParams: {
-    type: Object
-  },
-  type: {
-    type: String
-  }
 });
 const userList = ref([]);
 const loading = ref(true);
@@ -120,15 +115,16 @@ const showSearch = ref(true);
 const total = ref(0);
 const title = ref("");
 const dateRange = ref([]);
-const deptName = ref("");
-const deptOptions = ref(undefined);
+const groupName = ref("");
+const groupOptions = ref(undefined);
 // 列显隐信息
 const columns = ref([
- { key: 0, label: `用户编号`, visible: true },
- { key: 1, label: `用户名称`, visible: true },
- { key: 2, label: `用户昵称`, visible: true },
- { key: 3, label: `部门`, visible: true },
- { key: 4, label: `创建时间`, visible: true }
+ { key: 0, label: `主键`, visible: true },
+ { key: 1, label: `实际入库注解`, visible: true },
+ { key: 2, label: `权限编码`, visible: true },
+ { key: 3, label: `权限名称`, visible: true },
+ { key: 4, label: `权限分组`, visible: true },
+ { key: 5, label: `创建时间`, visible: true }
 ]);
 const checkedItemList = ref([]); // 已选的itemList
 const data = reactive({
@@ -138,7 +134,7 @@ const data = reactive({
    pageSize: 10,
    userName: undefined,
    status: "0",
-   deptId: undefined
+   groupId: undefined
  },
   checkAllInfo: {
     isIndeterminate: false,
@@ -155,67 +151,61 @@ const filterNode = (value, data) => {
  return data.label.indexOf(value) !== -1;
 };
 /** 根据名称筛选部门树 */
-watch(deptName, val => {
- proxy.$refs["deptTreeRef"].filter(val);
+watch(groupName, val => {
+ proxy.$refs["groupTreeRef"].filter(val);
 });
 watch(() => props.selectUser, (val, oldVal) => {
   if (oldVal) {
     proxy.$nextTick(() => {
       checkedItemList.value = checkedItemList.value.filter(e => {
-        let index = val ? val.findIndex(v => v === e.userId) : -1;
+        let index = val ? val.findIndex(v => v === e.storageId) : -1;
         userList.value.forEach(u => {
-          if (u.userId === e.userId) u.isChecked = index !== -1;
+          if (u.storageId === e.storageId) u.isChecked = index !== -1;
         });
         return index !== -1;
       });
     });
   } else checkedItemList.value = [];
 },{ deep: true, immediate: true });
-/** 查询部门下拉树结构 */
-function getDeptTree() {
- api.deptTreeSelect().then(response => {
-   deptOptions.value = response.data;
- });
-};
+
 /** 查询用户列表 */
 function getList() {
   loading.value = true;
   let params = proxy.addDateRange(queryParams.value, dateRange.value);
-  let url = "listUser";
-  if (props.type) {
-    let postParams = JSON.parse(JSON.stringify(props.postParams));
-    url = postParams.url;
-    delete postParams.url;
-    params = { ...postParams, deptId: queryParams.value.deptId };
-  }
-  api[url](params).then(res => {
+  api.handlerResult(params).then(res => {
     loading.value = false;
-    total.value = res.total;
-    res.rows.forEach(item => {
-      item.isChecked = checkedItemList.value.findIndex(e => e.userId === item.userId) !== -1;
+    let handlerAuths = res.data[0].handlerAuths;
+    total.value = handlerAuths.total;
+    handlerAuths.rows.forEach(item => {
+      item.isChecked = checkedItemList.value.findIndex(e => e.storageId === item.storageId) !== -1;
     })
-    userList.value = res.rows;
+    groupOptions.value = res.data[0].treeSelections;
+    userList.value = handlerAuths.rows;
     isCheckedAll();
   });
+
 };
 /** 节点单击事件 */
 function handleNodeClick(data) {
- queryParams.value.deptId = data.id;
+ queryParams.value.groupId = data.id;
  handleQuery();
-};
+}
+
 /** 搜索按钮操作 */
 function handleQuery() {
  queryParams.value.pageNum = 1;
  getList();
-};
+}
+
 /** 重置按钮操作 */
 function resetQuery() {
  dateRange.value = [];
  proxy.resetForm("queryRef");
- queryParams.value.deptId = undefined;
- proxy.$refs.deptTreeRef.setCurrentKey(null);
+ queryParams.value.groupId = undefined;
+ proxy.$refs.groupTreeRef.setCurrentKey(null);
  handleQuery();
-};
+}
+
 // 是否全选中
 function isCheckedAll() {
   const len = userList.value.length;
@@ -225,7 +215,8 @@ function isCheckedAll() {
   });
   checkAllInfo.value.isChecked = len === count && len > 0;
   checkAllInfo.value.isIndeterminate = count > 0 && count < len;
-};
+}
+
 // 全选
 function handleCheckAll() {
   const checkedArr = checkedItemList.value;
@@ -233,66 +224,58 @@ function handleCheckAll() {
   if (checkAllInfo.value.isChecked) {
     userList.value = userList.value.map(item => {
       item.isChecked = true;
-      if (checkedItemList.value.findIndex(e => e.userId === item.userId) === -1) {
-        checkedArr.push({ userId: item.userId });
+      if (checkedItemList.value.findIndex(e => e.storageId === item.storageId) === -1) {
+        checkedArr.push({ storageId: item.storageId });
       }
       return item;
     });
   } else {
     userList.value = userList.value.map(item => {
       item.isChecked = false;
-      let index = checkedArr.findIndex(e => e.userId === item.userId);
+      let index = checkedArr.findIndex(e => e.storageId === item.storageId);
       if (index !== -1) checkedArr.splice(index, 1);
       return item;
     });
   }
   checkedItemList.value = checkedArr;
-};
-// 单选
+}
+
 function handleCheck(row) {
-  // 转办|委派仅支持单选
-  if (['转办', '委派'].includes(props.type)) {
-    userList.value.forEach(e => {
-      if (e.userId === row.userId) e.isChecked = true;
-      else e.isChecked = false;
-    });
-    checkedItemList.value = [{ userId: row.userId }];
-  } else {
-    userList.value.forEach(e => {
-      if (e.userId === row.userId) e.isChecked = !e.isChecked;
-    });
-    const checkedArr = [...checkedItemList.value];
-    if (row.isChecked) {
-      checkedArr.push({ userId: row.userId });
-    } else {
-      const index = checkedArr.findIndex(n => n.userId === row.userId);
-      if (index !== -1) checkedArr.splice(index, 1);
-    }
-    checkedItemList.value = checkedArr;
-    isCheckedAll();
-  }
-};
-// 删除标签
-function handleClose(userId) {
   userList.value.forEach(e => {
-    if (e.userId === userId) e.isChecked = !e.isChecked;
+    if (e.storageId === row.storageId) e.isChecked = !e.isChecked;
   });
-  const checkedArr = checkedItemList.value
-  const index = checkedArr.findIndex(n => n.userId === userId);
-  if (index !== -1) checkedArr.splice(index, 1);
+  const checkedArr = [...checkedItemList.value];
+  if (row.isChecked) {
+    checkedArr.push({ storageId: row.storageId });
+  } else {
+    const index = checkedArr.findIndex(n => n.storageId === row.storageId);
+    if (index !== -1) checkedArr.splice(index, 1);
+  }
   checkedItemList.value = checkedArr;
   isCheckedAll();
 };
+// 删除标签
+function handleClose(storageId) {
+  userList.value.forEach(e => {
+    if (e.storageId === storageId) e.isChecked = !e.isChecked;
+  });
+  const checkedArr = checkedItemList.value
+  const index = checkedArr.findIndex(n => n.storageId === storageId);
+  if (index !== -1) checkedArr.splice(index, 1);
+  checkedItemList.value = checkedArr;
+  isCheckedAll();
+}
+
 // 取消按钮
 function cancel() {
   emit("update:userVisible", false);
-};
+}
+
 // 提交按钮
 function submitForm() {
   emit("handleUserSelect", checkedItemList.value);
   cancel();
-};
+}
 
-getDeptTree();
 getList();
 </script>

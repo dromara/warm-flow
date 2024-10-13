@@ -9,6 +9,15 @@ export function listUser(query) {
   })
 }
 
+// 办理人权限设置列表结果
+export function handlerResult(query) {
+  return request({
+    url: '/warm-flow-ui/handler-result',
+    method: 'get',
+    params: query
+  })
+}
+
 // 根据用户id查用户名
 export function idReverseDisplayName(ids) {
   return request({

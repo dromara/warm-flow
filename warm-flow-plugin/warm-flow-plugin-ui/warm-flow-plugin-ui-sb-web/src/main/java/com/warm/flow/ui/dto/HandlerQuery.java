@@ -15,6 +15,9 @@
  */
 package com.warm.flow.ui.dto;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 流程设计器-办理人权限设置列表查询参数
  * 办理人权限列表选择框，可能存在多个，比如：部门、角色、用户的情况
@@ -38,17 +41,14 @@ public class HandlerQuery {
     /** 权限分组，如：角色、部门等主键 */
     private String groupId;
 
-    /** 创建时间-开始时间 */
-    private String StartTime;
-
-    /** 创建时间-结束时间 */
-    private String EndTime;
-
     /** 当前页码 */
     private Integer pageNum;
 
     /** 每页显示条数 */
     private Integer pageSize;
+
+    /** 请求参数 */
+    private Map<String, Object> params = new HashMap<>();
 
     public String getId() {
         return id;
@@ -90,22 +90,6 @@ public class HandlerQuery {
         this.groupId = groupId;
     }
 
-    public String getStartTime() {
-        return StartTime;
-    }
-
-    public void setStartTime(String startTime) {
-        StartTime = startTime;
-    }
-
-    public String getEndTime() {
-        return EndTime;
-    }
-
-    public void setEndTime(String endTime) {
-        EndTime = endTime;
-    }
-
     public Integer getPageNum() {
         return pageNum;
     }
@@ -120,5 +104,19 @@ public class HandlerQuery {
 
     public void setPageSize(Integer pageSize) {
         this.pageSize = pageSize;
+    }
+
+    public Map<String, Object> getParams()
+    {
+        if (params == null)
+        {
+            params = new HashMap<>();
+        }
+        return params;
+    }
+
+    public void setParams(Map<String, Object> params)
+    {
+        this.params = params;
     }
 }

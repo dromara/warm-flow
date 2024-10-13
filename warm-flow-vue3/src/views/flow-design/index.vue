@@ -22,7 +22,7 @@ import End from "@/components/WarmFlow/js/end";
 import Skip from "@/components/WarmFlow/js/skip";
 import PropertySetting from '@/components/WarmFlow/PropertySetting/index.vue'
 import {saveXml, getXmlString} from "@/api/flow/definition";
-import {logicFlowJsonToFlowXml, skipText, xml2LogicFlowJson} from "@/components/WarmFlow/js/tool";
+import {logicFlowJsonToFlowXml, xml2LogicFlowJson} from "@/components/WarmFlow/js/tool";
 
 const { proxy } = getCurrentInstance();
 
