@@ -70,23 +70,15 @@
 
           <el-table v-loading="loading" :data="userList" @row-click="handleCheck">
             <el-table-column width="50" align="center">
-              <template #header v-if="!['转办', '委派'].includes(type)">
-                  <el-checkbox
-                      :indeterminate="checkAllInfo.isIndeterminate"
-                      v-model="checkAllInfo.isChecked"
-                      @change="handleCheckAll"
-                  ></el-checkbox>
-              </template>
               <template #default="scope">
                 <el-checkbox v-model="scope.row.isChecked" @change.capture="handleCheck(row)"></el-checkbox>
               </template>
             </el-table-column>
-            <el-table-column label="主键" align="center" key="id" prop="id" v-if="columns[0].visible" />
-            <el-table-column label="实际入库主键" align="center" key="storageId" prop="storageId" v-if="columns[1].visible" />
-            <el-table-column label="权限编码" align="center" key="handlerCode" prop="handlerCode" v-if="columns[2].visible" :show-overflow-tooltip="true" />
-            <el-table-column label="权限名称" align="center" key="handlerName" prop="handlerName" v-if="columns[3].visible" :show-overflow-tooltip="true" />
-            <el-table-column label="权限分组" align="center" key="groupName" prop="groupName" v-if="columns[4].visible" :show-overflow-tooltip="true" />
-            <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[5].visible" width="160">
+            <el-table-column label="入库主键" align="center" key="storageId" prop="storageId" v-if="columns[0].visible" />
+            <el-table-column label="权限编码" align="center" key="handlerCode" prop="handlerCode" v-if="columns[1].visible" :show-overflow-tooltip="true" />
+            <el-table-column label="权限名称" align="center" key="handlerName" prop="handlerName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
+            <el-table-column label="权限分组" align="center" key="groupName" prop="groupName" v-if="columns[3].visible" :show-overflow-tooltip="true" />
+            <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[4].visible" width="160">
               <template #default="scope">
                 <span>{{ parseTime(scope.row.createTime) }}</span>
               </template>
@@ -128,12 +120,11 @@ const groupName = ref("");
 const groupOptions = ref(undefined);
 // 列显隐信息
 const columns = ref([
- { key: 0, label: `主键`, visible: true },
- { key: 1, label: `实际入库注解`, visible: true },
- { key: 2, label: `权限编码`, visible: true },
- { key: 3, label: `权限名称`, visible: true },
- { key: 4, label: `权限分组`, visible: true },
- { key: 5, label: `创建时间`, visible: true }
+ { key: 0, label: `入库主键`, visible: true },
+ { key: 1, label: `权限编码`, visible: true },
+ { key: 2, label: `权限名称`, visible: true },
+ { key: 3, label: `权限分组`, visible: true },
+ { key: 4, label: `创建时间`, visible: true }
 ]);
 const checkedItemList = ref([]); // 已选的itemList
 const data = reactive({

@@ -13,7 +13,7 @@
       </slot>
       <slot name="form-item-task-collaborativeWay" :model="form" field="collaborativeWay">
         <el-form-item label="协作方式">
-          <el-radio-group v-model="form.collaborativeWay" @change="collaborativeWayChange">
+          <el-radio-group v-model="form.collaborativeWay">
             <el-radio label="1" v-if="form.collaborativeWay ==='1'">
               <span class="flex-hc">
                 或签
@@ -54,29 +54,19 @@
         </el-form-item>
       </slot>
       <slot name="form-item-task-permissionFlag" :model="form" field="permissionFlag">
+        <el-form-item label="办理人输入">
+          <el-input type="textarea" v-model="form.permissionFlag" rows="3"></el-input>
+        </el-form-item>
+      </slot>
+      <slot name="form-item-task-permissionFlags" :model="form" field="permissionFlags">
         <el-tooltip
           effect="dark"
           :content="userNameList"
           :disabled="!disabled"
         >
           <el-form-item label="办理人选择">
-            <el-select v-model="form.permissionFlag" allow-create multiple collapse-tags :disabled="disabled" :clearable="!disabled" filterable v-if="form.collaborativeWay === '1'">
-              <el-option-group
-                v-for="groupOption in groupOptions"
-                :key="groupOption.label"
-                :label="groupOption.label"
-                :disabled="disabled">
-                <el-option
-                  v-for="item in groupOption.options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-option-group>
-            </el-select>
             <el-select
-              v-else
-              v-model="form.permissionFlag"
+              v-model="permissionFlags"
               multiple
               collapse-tags
               ref="userSelect"
@@ -87,7 +77,7 @@
               :popper-append-to-body="false"
             >
               <el-option
-                v-for="item in form.permissionFlag"
+                v-for="item in permissionFlags"
                 :key="item"
                 :label="item"
                 :value="item">
@@ -150,7 +140,6 @@
 
 <script setup name="Between">
 import {idReverseDisplayName} from "@/api/system/user";
-import {handlerResult, selectGroup} from "@/api/flow/definition.js";
 import selectUser from "@/views/components/selectUser";
 const { proxy } = getCurrentInstance();
 
@@ -169,7 +158,7 @@ const props = defineProps({
 
 const form = ref(props.modelValue);
 const userNameList = ref("");
-const groupOptions = ref([]);
+const permissionFlags = ref([]);
 const rules = reactive({
   nodeRatio: [
     { required: false, message: "请输入", trigger: "change" },
@@ -185,42 +174,14 @@ watch(() => form, n => {
   }
 },{ deep: true });
 
-
-// 根据id查用户名
-function getIdReverseDisplayName() {
-  if (form.value.collaborativeWay !== "1") {
-    idReverseDisplayName(form.value.permissionFlag.join(",")).then(res => {
-      userNameList.value = res.data ? res.data.map(e => e.nickName).join(",") : "";
-    });
-  }
-};
-
 /** 选择角色权限范围触发 */
 function getPermissionFlag() {
   if (form.value.permissionFlag) {
-    form.value.permissionFlag = form.value.permissionFlag.split(",")
+    permissionFlags.value = form.value.permissionFlag.split(",")
   }
   if (form.value.listenerType) {
     form.value.listenerType = form.value.listenerType.split(",")
   }
-  selectGroup().then(res => {
-    console.log("groupOptions", res);
-    groupOptions.value = res.data;
-    if (props.disabled && form.value.collaborativeWay === "1") {
-      let userNameList = [];
-      groupOptions.value.forEach(e => {
-        e.options.forEach(o => {
-          if (form.value.permissionFlag.includes(o.value)) userNameList.push(o.label);
-        });
-      });
-      userNameList.value = userNameList.join(",");
-    }
-  });
-}
-
-function collaborativeWayChange(val) {
-  form.value.permissionFlag = [];
-  form.value.nodeRatio = val === "1" ? "0.000" : val === "3" ? "100.000" : "";
 }
 
 // 打开用户选择弹窗
@@ -231,13 +192,12 @@ function initUser() {
 
 // 获取选中用户数据
 function handleUserSelect(checkedItemList) {
-  form.value.permissionFlag = checkedItemList.map(e => {
+  permissionFlags.value = checkedItemList.map(e => {
     return e.userId;
   });
 }
 
 getPermissionFlag();
-// if (props.disabled) getIdReverseDisplayName();
 </script>
 
 <style scoped>

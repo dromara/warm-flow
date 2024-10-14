@@ -23,10 +23,7 @@ package com.warm.flow.ui.vo;
  */
 public class HandlerAuth {
 
-    /** 权限主键，用户/角色/部门等主键 */
-    private Long id;
-
-    /** 实际入库权限主键，比如怕角色和用户id重复，可拼接为role:id */
+    /** 入库权限主键，比如怕角色和用户id重复，可拼接为role:id */
     private String storageId;
 
     /** 权限编码，如：zhang、roleAdmin、deptAdmin等编码 */
@@ -40,15 +37,6 @@ public class HandlerAuth {
 
     /** 创建时间 */
     private String createTime;
-
-    public Long getId() {
-        return id;
-    }
-
-    public HandlerAuth setId(Long id) {
-        this.id = id;
-        return this;
-    }
 
     public String getStorageId() {
         return storageId;
