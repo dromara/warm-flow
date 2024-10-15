@@ -249,7 +249,7 @@ function initEvent() {
 }
 /** 关闭按钮 */
 function close() {
-  window.parent.postMessage({ method: "close" }, import.meta.env.VITE_APP_PARENT_URL);
+  window.parent.postMessage({ method: "close" }, '*');
 }
 
 init();
