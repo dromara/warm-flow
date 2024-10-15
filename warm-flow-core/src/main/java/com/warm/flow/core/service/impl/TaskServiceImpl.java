@@ -327,14 +327,13 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     @Override
     public Task addTask(Node node, Instance instance, Definition definition, FlowParams flowParams) {
         Task addTask = FlowFactory.newTask();
-        Date date = new Date();
         FlowFactory.dataFillHandler().idFill(addTask);
         addTask.setDefinitionId(instance.getDefinitionId())
                 .setInstanceId(instance.getId())
                 .setNodeCode(node.getNodeCode())
                 .setNodeName(node.getNodeName())
                 .setNodeType(node.getNodeType())
-                .setCreateTime(date)
+                .setCreateTime(new Date())
                 .setPermissionList(CollUtil.isNotEmpty(node.getDynamicPermissionFlagList())
                         ? node.getDynamicPermissionFlagList(): StringUtils.str2List(node.getPermissionFlag(), ","));
 
@@ -562,9 +561,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                         for (Skip threeLastSkip : threeLastSkips) {
                             HisTask threeLastHisTask = FlowFactory.hisTaskService()
                                     .getNoReject(threeLastSkip.getNowNodeCode(), null, hisTaskList);
-                            if (ObjectUtil.isNotNull(threeLastHisTask) && (threeLastHisTask.getCreateTime()
-                                    .before(oneLastHisTask.getCreateTime()) || threeLastHisTask.getCreateTime()
-                                    .equals(oneLastHisTask.getCreateTime()))) {
+                            if (ObjectUtil.isNotNull(threeLastHisTask) && (threeLastHisTask.getUpdateTime()
+                                    .before(oneLastHisTask.getUpdateTime()) || threeLastHisTask.getUpdateTime()
+                                    .equals(oneLastHisTask.getUpdateTime()))) {
                                 wayParallelIsFinish++;
                             }
                         }
@@ -572,9 +571,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                         HisTask twoLastHisTask = FlowFactory.hisTaskService()
                                 .getNoReject(twoLastSkip.getNowNodeCode(), null, hisTaskList);
                         // 前前置节点完成时间是否早于前置节点，如果是串行网关，那前前置节点必须只有一个完成，如果是并行网关都要完成
-                        if (ObjectUtil.isNotNull(twoLastHisTask) && (twoLastHisTask.getCreateTime()
-                                .before(oneLastHisTask.getCreateTime()) || twoLastHisTask.getCreateTime()
-                                .equals(oneLastHisTask.getCreateTime()))) {
+                        if (ObjectUtil.isNotNull(twoLastHisTask) && (twoLastHisTask.getUpdateTime()
+                                .before(oneLastHisTask.getUpdateTime()) || twoLastHisTask.getUpdateTime()
+                                .equals(oneLastHisTask.getUpdateTime()))) {
                             wayParallelIsFinish++;
                         }
                     }

@@ -433,10 +433,10 @@ comment on column FLOW_HIS_TASK.MESSAGE is '审批意见'
 comment on column FLOW_HIS_TASK.EXT is '扩展字段，预留给业务系统使用'
 /
 
-comment on column FLOW_HIS_TASK.CREATE_TIME is '开始时间'
+comment on column FLOW_HIS_TASK.CREATE_TIME is '任务开始时间'
 /
 
-comment on column FLOW_HIS_TASK.UPDATE_TIME is '结束时间'
+comment on column FLOW_HIS_TASK.UPDATE_TIME is '审批完成时间'
 /
 
 comment on column FLOW_HIS_TASK.DEL_FLAG is '删除标志'

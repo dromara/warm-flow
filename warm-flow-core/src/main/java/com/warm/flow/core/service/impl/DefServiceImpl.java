@@ -474,9 +474,9 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                                             colorPut(colorMap, "node:" + oneLastSkip.getNowNodeCode(), c);
                                         }
                                     }
-                                } else if (curHisTask != null && ObjectUtil.isNotNull(twoLastHisTask) && (twoLastHisTask.getCreateTime()
-                                        .before(curHisTask.getCreateTime()) || twoLastHisTask.getCreateTime()
-                                        .equals(curHisTask.getCreateTime()))) {
+                                } else if (curHisTask != null && ObjectUtil.isNotNull(twoLastHisTask) && (twoLastHisTask.getUpdateTime()
+                                        .before(curHisTask.getUpdateTime()) || twoLastHisTask.getUpdateTime()
+                                        .equals(curHisTask.getUpdateTime()))) {
                                     c = Color.GREEN;
                                     colorPut(colorMap, "node:" + oneLastSkip.getNowNodeCode(), c);
                                 } else {
@@ -506,9 +506,9 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                         // 前前置节点完成时间是否早于前置节点，如果是串行网关，那前前置节点必须只有一个完成，如果是并行网关都要完成
                         if (task != null) {
                             c = color;
-                        } else if (curHisTask != null && ObjectUtil.isNotNull(oneLastHisTask) && (oneLastHisTask.getCreateTime()
-                                .before(curHisTask.getCreateTime()) || oneLastHisTask.getCreateTime()
-                                .equals(curHisTask.getCreateTime()))) {
+                        } else if (curHisTask != null && ObjectUtil.isNotNull(oneLastHisTask) && (oneLastHisTask.getUpdateTime()
+                                .before(curHisTask.getUpdateTime()) || oneLastHisTask.getUpdateTime()
+                                .equals(curHisTask.getUpdateTime()))) {
                             c = Color.GREEN;
                         } else {
                             c = Color.BLACK;
