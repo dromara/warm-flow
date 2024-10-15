@@ -98,7 +98,8 @@
 </template>
 
 <script setup name="User">
-import * as api from "@/api/system/user";
+
+import {handlerResult} from "@/api/flow/definition.js";
 
 const { proxy } = getCurrentInstance();
 
@@ -172,7 +173,7 @@ watch(() => props.selectUser, (val, oldVal) => {
 function getList() {
   loading.value = true;
   let params = proxy.addDateRange(queryParams.value, dateRange.value);
-  api.handlerResult(params).then(res => {
+  handlerResult(params).then(res => {
     loading.value = false;
     let handlerAuths = res.data[0].handlerAuths;
     total.value = handlerAuths.total;

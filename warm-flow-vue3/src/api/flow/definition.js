@@ -18,14 +18,6 @@ export function getXmlString(id) {
   })
 }
 
-// 获取设计器办理人组选择框数据
-export function selectGroup() {
-  return request({
-    url: '/warm-flow-ui/select-group',
-    method: 'get'
-  })
-}
-
 // 办理人权限设置列表结果
 export function handlerResult(query) {
   return request({
@@ -34,3 +26,4 @@ export function handlerResult(query) {
     params: query
   })
 }
+

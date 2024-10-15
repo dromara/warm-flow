@@ -20,13 +20,11 @@ import 'virtual:svg-icons-register'
 import SvgIcon from '@/components/SvgIcon'
 import elementIcons from '@/components/SvgIcon/svgicon'
 
-import { useDict } from '@/utils/dict'
 import { parseTime, addDateRange } from '@/utils/ruoyi'
 
 const app = createApp(App)
 
 // 全局方法挂载
-app.config.globalProperties.useDict = useDict
 app.config.globalProperties.parseTime = parseTime
 app.config.globalProperties.addDateRange = addDateRange
 app.use(router)

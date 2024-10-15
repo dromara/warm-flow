@@ -49,17 +49,6 @@ const localCache = {
     }
     return localStorage.getItem(key)
   },
-  setJSON (key, jsonValue) {
-    if (jsonValue != null) {
-      this.set(key, JSON.stringify(jsonValue))
-    }
-  },
-  getJSON (key) {
-    const value = this.get(key)
-    if (value != null) {
-      return JSON.parse(value)
-    }
-  },
   remove (key) {
     localStorage.removeItem(key);
   }
