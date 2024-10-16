@@ -65,13 +65,13 @@
           </el-form>
 
           <el-row :gutter="10" class="mb8">
-            <el-tag type="primary" style="margin-right: 10px" v-for="tag in checkedItemList" :key="tag.storageId" closable @close="handleClose(tag.storageId)">{{tag.storageId}}</el-tag>
+            <el-tag style="margin-right: 10px" v-for="tag in checkedItemList" :key="tag.storageId" closable @close="handleClose(tag.storageId)">{{tag.storageId}}</el-tag>
           </el-row>
 
           <el-table v-loading="loading" :data="userList" @row-click="handleCheck">
             <el-table-column width="50" align="center">
               <template #default="scope">
-                <el-checkbox v-model="scope.row.isChecked" @change.native="handleCheck(scope.row)"></el-checkbox>
+                <el-checkbox v-model="scope.row.isChecked" @change="handleCheck(scope.row)"></el-checkbox>
               </template>
             </el-table-column>
             <el-table-column label="入库主键" align="center" key="storageId" prop="storageId" v-if="columns[0].visible" />
@@ -84,9 +84,9 @@
               </template>
             </el-table-column>
           </el-table>
-          <pagination
+          <el-pagination
             v-show="total > 0"
-            style="margin-bottom: 35px;"
+            style="margin-top: 10px; float: right;"
             :total="total"
             v-model:page="queryParams.pageNum"
             v-model:limit="queryParams.pageSize"
@@ -107,7 +107,8 @@ const props = defineProps({
     type: Boolean
   },
   selectUser: {
-    type: Array
+    type: Array,
+    default: () => []
   },
 });
 const userList = ref([]);
@@ -246,7 +247,7 @@ function handleCheck(row) {
   });
   const checkedArr = [...checkedItemList.value];
   if (row.isChecked) {
-    checkedArr.push({ storageId: row.storageId });
+    if (checkedArr.findIndex(e => e.storageId === row.storageId) === -1) checkedArr.push({ storageId: row.storageId });
   } else {
     const index = checkedArr.findIndex(n => n.storageId === row.storageId);
     if (index !== -1) checkedArr.splice(index, 1);

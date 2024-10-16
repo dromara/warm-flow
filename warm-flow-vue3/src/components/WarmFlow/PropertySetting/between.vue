@@ -54,7 +54,7 @@
         </el-form-item>
       </slot>
       <slot name="form-item-task-permissionFlag" :model="form" field="permissionFlag">
-        <el-form-item label="办理人输入">
+        <el-form-item label="办理人输入" class="permissionItem">
           <div v-for="(tag, index) in form.permissionFlag" :key="index" class="inputGroup">
             <el-input v-model="form.permissionFlag[index]"></el-input>
             <Close class="Icon" v-if="form.permissionFlag.length !== 1" @click="delPermission(index)" />
@@ -188,39 +188,44 @@ getPermissionFlag();
   color: #828f9e;
   font-size: 12px;
 }
-.inputGroup {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-  .el-input {
-    width: 120px;
+::v-deep.permissionItem {
+  .el-form-item__content {
+    display: block;
   }
-  .Icon {
-    width: 14px;
-    height: 14px;
-    margin-left: 5px;
-    cursor: pointer;
-    color: #fff;
-    background: #94979d;
-    border-radius: 50%;
-    padding: 2px;
-    &:hover {
-      background: #f0f2f5;
-      color: #94979d;
+  .inputGroup {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    .el-input {
+      width: 120px;
     }
-  }
-  .btn {
-    height: 18px;
-    margin-left: 5px;
-    color: #fff;
-    background: #94979d;
-    border-radius: 5px;
-    padding: 6px;
-    font-size: 10px;
-    border: 0;
-    &:hover {
-      background: #f0f2f5;
-      color: #94979d;
+    .Icon {
+      width: 14px;
+      height: 14px;
+      margin-left: 5px;
+      cursor: pointer;
+      color: #fff;
+      background: #94979d;
+      border-radius: 50%;
+      padding: 2px;
+      &:hover {
+        background: #f0f2f5;
+        color: #94979d;
+      }
+    }
+    .btn {
+      height: 18px;
+      margin-left: 5px;
+      color: #fff;
+      background: #94979d;
+      border-radius: 5px;
+      padding: 6px;
+      font-size: 10px;
+      border: 0;
+      &:hover {
+        background: #f0f2f5;
+        color: #94979d;
+      }
     }
   }
 }
