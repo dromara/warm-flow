@@ -32,14 +32,6 @@ const sessionCache = {
   }
 }
 const localCache = {
-  set (key, value) {
-    if (!localStorage) {
-      return
-    }
-    if (key != null && value != null) {
-      localStorage.setItem(key, value)
-    }
-  },
   get (key) {
     if (!localStorage) {
       return null

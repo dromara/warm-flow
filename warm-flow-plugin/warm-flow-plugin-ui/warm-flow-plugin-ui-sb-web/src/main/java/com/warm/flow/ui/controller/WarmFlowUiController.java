@@ -16,14 +16,16 @@
 package com.warm.flow.ui.controller;
 
 import com.warm.flow.core.dto.ApiResult;
+import com.warm.flow.core.exception.FlowException;
 import com.warm.flow.core.invoker.FrameInvoker;
 import com.warm.flow.core.service.DefService;
+import com.warm.flow.core.utils.ExceptionUtil;
 import com.warm.flow.ui.dto.DefDto;
 import com.warm.flow.ui.dto.HandlerQuery;
 import com.warm.flow.ui.service.HandlerSelectService;
-import com.warm.flow.ui.service.SelectGroupHandler;
 import com.warm.flow.ui.vo.HandlerSelectVo;
-import com.warm.flow.ui.vo.SelectGroup;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,9 +41,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/warm-flow-ui")
 public class WarmFlowUiController {
+
+    private static final Logger log = LoggerFactory.getLogger(WarmFlowUiController.class);
+
     @Resource
     private DefService defService;
-
 
     /**
      * 保存流程xml字符串
@@ -63,22 +67,12 @@ public class WarmFlowUiController {
      */
     @GetMapping("/xml-string/{id}")
     public ApiResult<String> xmlString(@PathVariable("id") Long id) {
-        return ApiResult.ok(defService.xmlString(id));
-    }
-
-    /**
-     * 获取设计器办理人组选择框数据
-     * @return List<SelectGroup>
-     */
-    @GetMapping("/select-group")
-    public ApiResult<List<SelectGroup>> selectGroup() {
-        // 需要业务系统实现该接口
-        SelectGroupHandler selectGroupHandler = FrameInvoker.getBean(SelectGroupHandler.class);
-        if (selectGroupHandler == null) {
-            return ApiResult.ok(Collections.emptyList());
+        try {
+            return ApiResult.ok(defService.xmlString(id));
+        } catch (Exception e) {
+            log.error("获取流程xml字符串", e);
+            throw new FlowException(ExceptionUtil.handleMsg("获取流程xml字符串失败", e));
         }
-        List<SelectGroup> options = selectGroupHandler.getHandlerSelectGroup();
-        return ApiResult.ok(options);
     }
 
     /**
@@ -87,12 +81,18 @@ public class WarmFlowUiController {
      */
     @GetMapping("/handler-result")
     public ApiResult<List<HandlerSelectVo>> handlerResult(HandlerQuery query) {
-        // 需要业务系统实现该接口
-        HandlerSelectService handlerSelectService = FrameInvoker.getBean(HandlerSelectService.class);
-        if (handlerSelectService == null) {
-            return ApiResult.ok(Collections.emptyList());
+        try {
+            // 需要业务系统实现该接口
+            HandlerSelectService handlerSelectService = FrameInvoker.getBean(HandlerSelectService.class);
+            if (handlerSelectService == null) {
+                return ApiResult.ok(Collections.emptyList());
+            }
+            List<HandlerSelectVo> handlerSelectVos = handlerSelectService.getHandlerSelect(query);
+            return ApiResult.ok(handlerSelectVos);
+        } catch (Exception e) {
+            log.error("办理人权限设置列表结果异常", e);
+            throw new FlowException(ExceptionUtil.handleMsg("办理人权限设置列表结果失败", e));
         }
-        List<HandlerSelectVo> handlerSelectVos = handlerSelectService.getHandlerSelect(query);
-        return ApiResult.ok(handlerSelectVos);
+
     }
 }

@@ -1,10 +1,8 @@
 import axios from 'axios'
-import { ElNotification , ElMessageBox, ElMessage } from 'element-plus'
+import { ElNotification , ElMessage } from 'element-plus'
 import { getToken } from '@/utils/auth'
-import errorCode from '@/utils/errorCode'
 import { tansParams } from '@/utils/ruoyi'
 import cache from '@/plugins/cache'
-import useUserStore from '@/store/modules/user'
 
 // 是否显示重新登录
 export let isRelogin = { show: false };
@@ -74,20 +72,14 @@ service.interceptors.response.use(res => {
     // 未设置状态码则默认成功状态
     const code = res.data.code || 200;
     // 获取错误信息
-    const msg = errorCode[code] || res.data.msg || errorCode['default']
+    const msg = res.data.msg
     // 二进制数据则直接返回
     if (res.request.responseType ===  'blob' || res.request.responseType ===  'arraybuffer') {
       return res.data
     }
-    if ([500, 401].includes(code)) {
-      ElMessage({ message: msg, type: 'error' })
-      return Promise.reject(new Error(msg))
-    } else if (code === 601) {
-      ElMessage({ message: msg, type: 'warning' })
-      return Promise.reject(new Error(msg))
-    } else if (code !== 200) {
+     if (code !== 200) {
       ElNotification.error({ title: msg })
-      return Promise.reject('error')
+      return Promise.reject(new Error(msg))
     } else {
       return  Promise.resolve(res.data)
     }
