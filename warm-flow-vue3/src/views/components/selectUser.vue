@@ -71,7 +71,7 @@
           <el-table v-loading="loading" :data="userList" @row-click="handleCheck">
             <el-table-column width="50" align="center">
               <template #default="scope">
-                <el-checkbox v-model="scope.row.isChecked" @change.capture="handleCheck(row)"></el-checkbox>
+                <el-checkbox v-model="scope.row.isChecked" @change.native="handleCheck(scope.row)"></el-checkbox>
               </template>
             </el-table-column>
             <el-table-column label="入库主键" align="center" key="storageId" prop="storageId" v-if="columns[0].visible" />
@@ -98,8 +98,7 @@
 </template>
 
 <script setup name="User">
-
-import {handlerResult} from "@/api/flow/definition.js";
+import { handlerResult } from "@/api/flow/definition.js";
 
 const { proxy } = getCurrentInstance();
 
@@ -166,7 +165,7 @@ watch(() => props.selectUser, (val, oldVal) => {
         return index !== -1;
       });
     });
-  } else checkedItemList.value = [];
+  } else checkedItemList.value = val ? val.map(e => { return { storageId: e } }).filter(n => n.storageId) : [];
 },{ deep: true, immediate: true });
 
 /** 查询用户列表 */

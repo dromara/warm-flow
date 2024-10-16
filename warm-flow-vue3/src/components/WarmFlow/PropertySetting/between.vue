@@ -55,36 +55,13 @@
       </slot>
       <slot name="form-item-task-permissionFlag" :model="form" field="permissionFlag">
         <el-form-item label="办理人输入">
-          <el-input type="textarea" v-model="form.permissionFlag" rows="3"></el-input>
+          <div v-for="(tag, index) in form.permissionFlag" :key="index" class="inputGroup">
+            <el-input v-model="form.permissionFlag[index]"></el-input>
+            <Close class="Icon" v-if="form.permissionFlag.length !== 1" @click="delPermission(index)" />
+            <Plus class="Icon" v-if="index === form.permissionFlag.length - 1" @click="addPermission" />
+            <el-button class="btn" v-if="index === form.permissionFlag.length - 1" @click="initUser">选择</el-button>
+          </div>
         </el-form-item>
-      </slot>
-      <slot name="form-item-task-permissionFlags" :model="form" field="permissionFlags">
-        <el-tooltip
-          effect="dark"
-          :content="userNameList"
-          :disabled="!disabled"
-        >
-          <el-form-item label="办理人选择">
-            <el-select
-              v-model="permissionFlags"
-              multiple
-              collapse-tags
-              ref="userSelect"
-              :disabled="disabled"
-              :clearable="!disabled"
-              @focus="initUser"
-              popper-class="dialogSelect"
-              :popper-append-to-body="false"
-            >
-              <el-option
-                v-for="item in permissionFlags"
-                :key="item"
-                :label="item"
-                :value="item">
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-tooltip>
       </slot>
       <slot name="form-item-task-skipAnyNode" :model="form" field="skipAnyNode">
         <el-form-item label="是否可以跳转任意节点">
@@ -156,8 +133,6 @@ const props = defineProps({
 });
 
 const form = ref(props.modelValue);
-const userNameList = ref("");
-const permissionFlags = ref([]);
 const rules = reactive({
   nodeRatio: [
     { required: false, message: "请输入", trigger: "change" },
@@ -173,11 +148,18 @@ watch(() => form, n => {
   }
 },{ deep: true });
 
+// 删除办理人
+function delPermission(index) {
+  form.value.permissionFlag.splice(index, 1);
+}
+// 添加办理人
+function addPermission() {
+  form.value.permissionFlag.push("");
+}
+
 /** 选择角色权限范围触发 */
 function getPermissionFlag() {
-  if (form.value.permissionFlag) {
-    permissionFlags.value = form.value.permissionFlag.split(",")
-  }
+  form.value.permissionFlag = form.value.permissionFlag ? form.value.permissionFlag.split(",") : [""];
   if (form.value.listenerType) {
     form.value.listenerType = form.value.listenerType.split(",")
   }
@@ -186,25 +168,60 @@ function getPermissionFlag() {
 // 打开用户选择弹窗
 function initUser() {
   userVisible.value = true;
-  proxy.$refs.userSelect.blur();
 }
 
 // 获取选中用户数据
 function handleUserSelect(checkedItemList) {
-  permissionFlags.value = checkedItemList.map(e => {
-    return e.userId;
-  });
+  form.value.permissionFlag = checkedItemList.map(e => {
+    return e.storageId;
+  }).filter(n => n);
 }
 
 getPermissionFlag();
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .dialogSelect {
   display: none;
 }
 .placeholder {
   color: #828f9e;
   font-size: 12px;
+}
+.inputGroup {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  .el-input {
+    width: 120px;
+  }
+  .Icon {
+    width: 14px;
+    height: 14px;
+    margin-left: 5px;
+    cursor: pointer;
+    color: #fff;
+    background: #94979d;
+    border-radius: 50%;
+    padding: 2px;
+    &:hover {
+      background: #f0f2f5;
+      color: #94979d;
+    }
+  }
+  .btn {
+    height: 18px;
+    margin-left: 5px;
+    color: #fff;
+    background: #94979d;
+    border-radius: 5px;
+    padding: 6px;
+    font-size: 10px;
+    border: 0;
+    &:hover {
+      background: #f0f2f5;
+      color: #94979d;
+    }
+  }
 }
 </style>

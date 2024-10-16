@@ -167,9 +167,9 @@ watch(() => form.value.nodeRatio, (n) => {
 watch(() => form.value.permissionFlag, (n) => {
   // 监听节点属性变化并更新
   props.lf.setProperties(objId.value, {
-    permissionFlag: Array.isArray(n) ? n.join(',') : n
+    permissionFlag: Array.isArray(n) ? n.filter(e => e).join(',') : n
   })
-});
+}, { deep: true });
 
 watch(() => form.value.skipAnyNode, (n) => {
   // 监听跳转属性变化并更新
