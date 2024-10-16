@@ -28,9 +28,15 @@ import java.util.List;
 public interface HandlerSelectService {
 
     /**
-     * 获取办理人权限设置列表
+     * 获取办理人权限设置列表tabs页签
+     * @return tabs页签
+     */
+    List<String> getHandlerType();
+
+    /**
+     * 获取办理人权限设置列表结果
      * @param query 查询参数
-     * @return 办理人权限设置列表
+     * @return 结果
      */
     List<HandlerSelectVo> getHandlerSelect(HandlerQuery query);
 }

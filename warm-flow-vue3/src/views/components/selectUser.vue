@@ -105,7 +105,7 @@
 </template>
 
 <script setup name="User">
-import { handlerResult } from "@/api/flow/definition.js";
+import {handlerResult, handlerType} from "@/api/flow/definition.js";
 
 const { proxy } = getCurrentInstance();
 
@@ -181,6 +181,10 @@ function getList() {
   loading.value = true;
   let params = proxy.addDateRange(queryParams.value, dateRange.value);
   params.handlerType = tabsValue.value;
+  handlerType(params).then(res => {
+
+  });
+
   handlerResult(params).then(res => {
     loading.value = false;
     let handlerAuths = res.data[0].handlerAuths;

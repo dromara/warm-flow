@@ -18,6 +18,14 @@ export function getXmlString(id) {
   })
 }
 
+// 办理人权限设置列表tabs页签
+export function handlerType() {
+  return request({
+    url: '/warm-flow-ui/handler-type',
+    method: 'get',
+  })
+}
+
 // 办理人权限设置列表结果
 export function handlerResult(query) {
   return request({

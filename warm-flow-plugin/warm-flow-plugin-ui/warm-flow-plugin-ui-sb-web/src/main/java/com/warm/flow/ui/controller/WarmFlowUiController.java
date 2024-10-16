@@ -76,6 +76,26 @@ public class WarmFlowUiController {
     }
 
     /**
+     * 办理人权限设置列表tabs页签
+     * @return List<SelectGroup>
+     */
+    @GetMapping("/handler-type")
+    public ApiResult<List<String>> handlerType() {
+        try {
+            // 需要业务系统实现该接口
+            HandlerSelectService handlerSelectService = FrameInvoker.getBean(HandlerSelectService.class);
+            if (handlerSelectService == null) {
+                return ApiResult.ok(Collections.emptyList());
+            }
+            List<String> handlerType = handlerSelectService.getHandlerType();
+            return ApiResult.ok(handlerType);
+        } catch (Exception e) {
+            log.error("办理人权限设置列表tabs页签异常", e);
+            throw new FlowException(ExceptionUtil.handleMsg("办理人权限设置列表tabs页签失败", e));
+        }
+    }
+
+    /**
      * 办理人权限设置列表结果
      * @return List<SelectGroup>
      */
@@ -93,6 +113,5 @@ public class WarmFlowUiController {
             log.error("办理人权限设置列表结果异常", e);
             throw new FlowException(ExceptionUtil.handleMsg("办理人权限设置列表结果失败", e));
         }
-
     }
 }
