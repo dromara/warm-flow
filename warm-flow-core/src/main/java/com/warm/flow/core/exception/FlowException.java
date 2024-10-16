@@ -48,6 +48,11 @@ public final class FlowException extends RuntimeException {
         this.message = message;
     }
 
+    public FlowException(String message, Throwable cause) {
+        super(message, cause);
+        this.message = message;
+    }
+
     public FlowException(String message, Integer code) {
         this.message = message;
         this.code = code;
