@@ -68,7 +68,13 @@
             <el-tag style="margin-right: 10px" v-for="tag in checkedItemList" :key="tag.storageId" closable @close="handleClose(tag.storageId)">{{tag.storageId}}</el-tag>
           </el-row>
 
-          <el-table v-loading="loading" :data="userList" @row-click="handleCheck">
+          <el-tabs type="border-card" class="Tabs" v-model="tabsValue" @tab-change="tabChange">
+            <el-tab-pane label="用户" name="用户"></el-tab-pane>
+            <el-tab-pane label="角色" name="角色"></el-tab-pane>
+            <el-tab-pane label="部门" name="部门"></el-tab-pane>
+          </el-tabs>
+
+          <el-table v-loading="loading" :data="tableList" @row-click="handleCheck">
             <el-table-column width="50" align="center">
               <template #default="scope">
                 <el-checkbox v-model="scope.row.isChecked" @change="handleCheck(scope.row)"></el-checkbox>
@@ -87,10 +93,11 @@
           <el-pagination
             v-show="total > 0"
             style="margin-top: 10px; float: right;"
+            v-model:current-page="queryParams.pageNum"
+            v-model:page-size="queryParams.pageSize"
             :total="total"
-            v-model:page="queryParams.pageNum"
-            v-model:limit="queryParams.pageSize"
-            @pagination="getList"
+            @size-change="getList"
+            @current-change="getList"
           />
       </el-col>
     </el-row>
@@ -111,11 +118,11 @@ const props = defineProps({
     default: () => []
   },
 });
-const userList = ref([]);
+const tabsValue = ref("用户");
+const tableList = ref([]);
 const loading = ref(true);
 const showSearch = ref(true);
 const total = ref(0);
-const title = ref("");
 const dateRange = ref([]);
 const groupName = ref("");
 const groupOptions = ref(undefined);
@@ -129,21 +136,20 @@ const columns = ref([
 ]);
 const checkedItemList = ref([]); // 已选的itemList
 const data = reactive({
- form: {},
- queryParams: {
-   pageNum: 1,
-   pageSize: 10,
-   userName: undefined,
-   status: "0",
-   groupId: undefined
- },
+  queryParams: {
+    pageNum: 1,
+    pageSize: 10,
+    userName: undefined,
+    status: "0",
+    groupId: undefined
+  },
   checkAllInfo: {
     isIndeterminate: false,
     isChecked: false,
   }
 });
 
-const { queryParams, form, checkAllInfo } = toRefs(data);
+const { queryParams, checkAllInfo } = toRefs(data);
 const emit = defineEmits(["update:userVisible", "handleUserSelect"]);
 
 /** 通过条件过滤节点  */
@@ -151,16 +157,17 @@ const filterNode = (value, data) => {
  if (!value) return true;
  return data.label.indexOf(value) !== -1;
 };
+
 /** 根据名称筛选部门树 */
 watch(groupName, val => {
- proxy.$refs["groupTreeRef"].filter(val);
+  proxy.$refs["groupTreeRef"].filter(val);
 });
 watch(() => props.selectUser, (val, oldVal) => {
   if (oldVal) {
     proxy.$nextTick(() => {
       checkedItemList.value = checkedItemList.value.filter(e => {
         let index = val ? val.findIndex(v => v === e.storageId) : -1;
-        userList.value.forEach(u => {
+        tableList.value.forEach(u => {
           if (u.storageId === e.storageId) u.isChecked = index !== -1;
         });
         return index !== -1;
@@ -173,15 +180,16 @@ watch(() => props.selectUser, (val, oldVal) => {
 function getList() {
   loading.value = true;
   let params = proxy.addDateRange(queryParams.value, dateRange.value);
+  params.handlerType = tabsValue.value;
   handlerResult(params).then(res => {
     loading.value = false;
     let handlerAuths = res.data[0].handlerAuths;
-    total.value = handlerAuths.total;
     handlerAuths.rows.forEach(item => {
       item.isChecked = checkedItemList.value.findIndex(e => e.storageId === item.storageId) !== -1;
-    })
+    });
+    tableList.value = handlerAuths.rows;
+    total.value = handlerAuths.total;
     groupOptions.value = res.data[0].treeSelections;
-    userList.value = handlerAuths.rows;
     isCheckedAll();
   });
 
@@ -192,6 +200,12 @@ function handleNodeClick(data) {
  handleQuery();
 }
 
+/** tab切换 */
+function tabChange() {
+  queryParams.value.groupId = undefined;
+  handleQuery();
+}
+
 /** 搜索按钮操作 */
 function handleQuery() {
  queryParams.value.pageNum = 1;
@@ -200,18 +214,18 @@ function handleQuery() {
 
 /** 重置按钮操作 */
 function resetQuery() {
- dateRange.value = [];
- proxy.resetForm("queryRef");
- queryParams.value.groupId = undefined;
- proxy.$refs.groupTreeRef.setCurrentKey(null);
- handleQuery();
+  dateRange.value = [];
+  proxy.$refs.queryRef.resetFields();
+  queryParams.value.groupId = undefined;
+  proxy.$refs.groupTreeRef.setCurrentKey(null);
+  handleQuery();
 }
 
 // 是否全选中
 function isCheckedAll() {
-  const len = userList.value.length;
+  const len = tableList.value.length;
   let count = 0;
-  userList.value.map(item => {
+  tableList.value.map(item => {
     if (item.isChecked) count += 1;
   });
   checkAllInfo.value.isChecked = len === count && len > 0;
@@ -223,7 +237,7 @@ function handleCheckAll() {
   const checkedArr = checkedItemList.value;
   checkAllInfo.value.isIndeterminate = false;
   if (checkAllInfo.value.isChecked) {
-    userList.value = userList.value.map(item => {
+    tableList.value = tableList.value.map(item => {
       item.isChecked = true;
       if (checkedItemList.value.findIndex(e => e.storageId === item.storageId) === -1) {
         checkedArr.push({ storageId: item.storageId });
@@ -231,7 +245,7 @@ function handleCheckAll() {
       return item;
     });
   } else {
-    userList.value = userList.value.map(item => {
+    tableList.value = tableList.value.map(item => {
       item.isChecked = false;
       let index = checkedArr.findIndex(e => e.storageId === item.storageId);
       if (index !== -1) checkedArr.splice(index, 1);
@@ -242,7 +256,7 @@ function handleCheckAll() {
 }
 
 function handleCheck(row) {
-  userList.value.forEach(e => {
+  tableList.value.forEach(e => {
     if (e.storageId === row.storageId) e.isChecked = !e.isChecked;
   });
   const checkedArr = [...checkedItemList.value];
@@ -257,7 +271,7 @@ function handleCheck(row) {
 };
 // 删除标签
 function handleClose(storageId) {
-  userList.value.forEach(e => {
+  tableList.value.forEach(e => {
     if (e.storageId === storageId) e.isChecked = !e.isChecked;
   });
   const checkedArr = checkedItemList.value
@@ -280,3 +294,18 @@ function submitForm() {
 
 getList();
 </script>
+
+<style scoped lang="scss">
+::v-deep.Tabs {
+  margin-top: 20px;
+  border: 0;
+  .el-tabs__content {
+    display: none;
+  }
+  .el-tabs__item.is-active {
+    margin-left: 0;
+    border-top: 1px solid var(--el-border-color);
+    margin-top: 0;
+  }
+}
+</style>
