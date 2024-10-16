@@ -27,23 +27,6 @@ const sessionCache = {
       return JSON.parse(value)
     }
   },
-  remove (key) {
-    sessionStorage.removeItem(key);
-  }
-}
-const localCache = {
-  get (key) {
-    if (!localStorage) {
-      return null
-    }
-    if (key == null) {
-      return null
-    }
-    return localStorage.getItem(key)
-  },
-  remove (key) {
-    localStorage.removeItem(key);
-  }
 }
 
 export default {
@@ -51,8 +34,4 @@ export default {
    * 会话级缓存
    */
   session: sessionCache,
-  /**
-   * 本地缓存
-   */
-  local: localCache
 }
