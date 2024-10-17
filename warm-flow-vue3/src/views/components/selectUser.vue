@@ -69,9 +69,7 @@
           </el-row>
 
           <el-tabs type="border-card" class="Tabs" v-model="tabsValue" @tab-change="tabChange">
-            <el-tab-pane label="用户" name="用户"></el-tab-pane>
-            <el-tab-pane label="角色" name="角色"></el-tab-pane>
-            <el-tab-pane label="部门" name="部门"></el-tab-pane>
+            <el-tab-pane v-for="item in tabsList" :label="item" :name="item"></el-tab-pane>
           </el-tabs>
 
           <el-table v-loading="loading" :data="tableList" @row-click="handleCheck">
@@ -105,7 +103,7 @@
 </template>
 
 <script setup name="User">
-import {handlerResult, handlerType} from "@/api/flow/definition.js";
+import { handlerResult, handlerType } from "@/api/flow/definition.js";
 
 const { proxy } = getCurrentInstance();
 
@@ -126,6 +124,7 @@ const total = ref(0);
 const dateRange = ref([]);
 const groupName = ref("");
 const groupOptions = ref(undefined);
+const tabsList = ref([]);
 // 列显隐信息
 const columns = ref([
  { key: 0, label: `入库主键`, visible: true },
@@ -176,14 +175,18 @@ watch(() => props.selectUser, (val, oldVal) => {
   } else checkedItemList.value = val ? val.map(e => { return { storageId: e } }).filter(n => n.storageId) : [];
 },{ deep: true, immediate: true });
 
+/** 获取tabs列表 */
+function getTabsType() {
+  handlerType().then(res => {
+    tabsList.value = res.data;
+  });
+}
+
 /** 查询用户列表 */
 function getList() {
   loading.value = true;
   let params = proxy.addDateRange(queryParams.value, dateRange.value);
   params.handlerType = tabsValue.value;
-  handlerType(params).then(res => {
-
-  });
 
   handlerResult(params).then(res => {
     loading.value = false;
@@ -297,6 +300,7 @@ function submitForm() {
 }
 
 getList();
+getTabsType();
 </script>
 
 <style scoped lang="scss">
