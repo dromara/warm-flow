@@ -15,10 +15,10 @@
  */
 package com.warm.flow.ui.controller;
 
+import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.dto.ApiResult;
 import com.warm.flow.core.exception.FlowException;
 import com.warm.flow.core.invoker.FrameInvoker;
-import com.warm.flow.core.service.DefService;
 import com.warm.flow.core.utils.ExceptionUtil;
 import com.warm.flow.ui.dto.DefDto;
 import com.warm.flow.ui.dto.HandlerQuery;
@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.List;
 
@@ -44,9 +43,6 @@ public class WarmFlowUiController {
 
     private static final Logger log = LoggerFactory.getLogger(WarmFlowUiController.class);
 
-    @Resource
-    private DefService defService;
-
     /**
      * 保存流程xml字符串
      * @param defDto 流程定义dto
@@ -56,7 +52,7 @@ public class WarmFlowUiController {
     @PostMapping("/save-xml")
     @Transactional(rollbackFor = Exception.class)
     public ApiResult<Void> saveXml(@RequestBody DefDto defDto) throws Exception {
-        defService.saveXml(defDto.getId(), defDto.getXmlString());
+        FlowFactory.defService().saveXml(defDto.getId(), defDto.getXmlString());
         return ApiResult.ok();
     }
 
@@ -68,7 +64,7 @@ public class WarmFlowUiController {
     @GetMapping("/xml-string/{id}")
     public ApiResult<String> xmlString(@PathVariable("id") Long id) {
         try {
-            return ApiResult.ok(defService.xmlString(id));
+            return ApiResult.ok(FlowFactory.defService().xmlString(id));
         } catch (Exception e) {
             log.error("获取流程xml字符串", e);
             throw new FlowException(ExceptionUtil.handleMsg("获取流程xml字符串失败", e));
