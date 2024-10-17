@@ -100,15 +100,15 @@ public class WarmFlowUiController {
      * @return List<SelectGroup>
      */
     @GetMapping("/handler-result")
-    public ApiResult<List<HandlerSelectVo>> handlerResult(HandlerQuery query) {
+    public ApiResult<HandlerSelectVo> handlerResult(HandlerQuery query) {
         try {
             // 需要业务系统实现该接口
             HandlerSelectService handlerSelectService = FrameInvoker.getBean(HandlerSelectService.class);
             if (handlerSelectService == null) {
-                return ApiResult.ok(Collections.emptyList());
+                return ApiResult.ok(new HandlerSelectVo());
             }
-            List<HandlerSelectVo> handlerSelectVos = handlerSelectService.getHandlerSelect(query);
-            return ApiResult.ok(handlerSelectVos);
+           HandlerSelectVo handlerSelectVo = handlerSelectService.getHandlerSelect(query);
+            return ApiResult.ok(handlerSelectVo);
         } catch (Exception e) {
             log.error("办理人权限设置列表结果异常", e);
             throw new FlowException(ExceptionUtil.handleMsg("办理人权限设置列表结果失败", e));

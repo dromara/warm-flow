@@ -121,7 +121,7 @@ const tableList = ref([]);
 const loading = ref(true);
 const showSearch = ref(true);
 const total = ref(0);
-const dateRange = ref([]);
+let dateRange = ref([]);
 const groupName = ref("");
 const groupOptions = ref(undefined);
 const tabsList = ref([]);
@@ -185,18 +185,19 @@ function getTabsType() {
 /** 查询用户列表 */
 function getList() {
   loading.value = true;
-  let params = proxy.addDateRange(queryParams.value, dateRange.value);
-  params.handlerType = tabsValue.value;
-
-  handlerResult(params).then(res => {
+  queryParams.value.handlerType = tabsValue.value;
+  dateRange.value = Array.isArray(dateRange.value) ? dateRange.value : [];
+  queryParams.value.beginTime = dateRange.value[0]
+  queryParams.value.endTime = dateRange.value[1]
+  handlerResult(queryParams.value).then(res => {
     loading.value = false;
-    let handlerAuths = res.data[0].handlerAuths;
+    let handlerAuths = res.data.handlerAuths;
     handlerAuths.rows.forEach(item => {
       item.isChecked = checkedItemList.value.findIndex(e => e.storageId === item.storageId) !== -1;
     });
     tableList.value = handlerAuths.rows;
     total.value = handlerAuths.total;
-    groupOptions.value = res.data[0].treeSelections;
+    groupOptions.value = res.data.treeSelections;
     isCheckedAll();
   });
 

@@ -15,9 +15,6 @@
  */
 package com.warm.flow.ui.dto;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * 流程设计器-办理人权限设置列表查询参数
  * 办理人权限列表选择框，可能存在多个，比如：部门、角色、用户的情况
@@ -26,26 +23,45 @@ import java.util.Map;
  */
 public class HandlerQuery {
 
-    /** 权限编码，如：zhang、roleAdmin、deptAdmin等编码 */
+    /**
+     * 权限编码，如：zhang、roleAdmin、deptAdmin等编码
+     */
     private String handlerCode;
 
-    /** 权限名称，如：管理员、角色管理员、部门管理员等名称 */
+    /**
+     * 权限名称，如：管理员、角色管理员、部门管理员等名称
+     */
     private String handlerName;
 
-    /** 办理权限类型，比如用户/角色/部门等 */
+    /**
+     * 办理权限类型，比如用户/角色/部门等
+     */
     private String handlerType;
 
-    /** 权限分组主键，如：角色、部门等主键 */
+    /**
+     * 权限分组主键，如：角色、部门等主键
+     */
     private String groupId;
 
-    /** 当前页码 */
+    /**
+     * 当前页码
+     */
     private Integer pageNum;
 
-    /** 每页显示条数 */
+    /**
+     * 每页显示条数
+     */
     private Integer pageSize;
 
-    /** 请求参数，如开始时间、结束时间 */
-    private Map<String, Object> params = new HashMap<>();
+    /**
+     * 开始时间
+     */
+    private String beginTime;
+
+    /**
+     * 结束时间
+     */
+    private String endTime;
 
     public String getHandlerCode() {
         return handlerCode;
@@ -95,17 +111,19 @@ public class HandlerQuery {
         this.pageSize = pageSize;
     }
 
-    public Map<String, Object> getParams()
-    {
-        if (params == null)
-        {
-            params = new HashMap<>();
-        }
-        return params;
+    public String getBeginTime() {
+        return beginTime;
     }
 
-    public void setParams(Map<String, Object> params)
-    {
-        this.params = params;
+    public void setBeginTime(String beginTime) {
+        this.beginTime = beginTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
     }
 }

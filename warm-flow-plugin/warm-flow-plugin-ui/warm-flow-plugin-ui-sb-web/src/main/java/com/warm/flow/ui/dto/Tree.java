@@ -40,42 +40,39 @@ public class Tree implements Serializable {
     /** 子 */
     private List<Tree> children = new ArrayList<>();
 
-    public String getId()
-    {
+    public String getId() {
         return id;
     }
 
-    public void setId(String id)
-    {
+    public Tree setId(String id) {
         this.id = id;
+        return this;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public Tree setName(String name) {
         this.name = name;
+        return this;
     }
 
-    public String getParentId()
-    {
+    public String getParentId() {
         return parentId;
     }
 
-    public void setParentId(String parentId)
-    {
+    public Tree setParentId(String parentId) {
         this.parentId = parentId;
+        return this;
     }
 
-    public List<Tree> getChildren()
-    {
+    public List<Tree> getChildren() {
         return children;
     }
 
-    public void setChildren(List<Tree> children)
-    {
+    public Tree setChildren(List<Tree> children) {
         this.children = children;
+        return this;
     }
-
 }

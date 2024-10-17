@@ -20,13 +20,12 @@ import 'virtual:svg-icons-register'
 import SvgIcon from '@/components/SvgIcon'
 import elementIcons from '@/components/SvgIcon/svgicon'
 
-import { parseTime, addDateRange } from '@/utils/ruoyi'
+import { parseTime } from '@/utils/ruoyi'
 
 const app = createApp(App)
 
 // 全局方法挂载
 app.config.globalProperties.parseTime = parseTime
-app.config.globalProperties.addDateRange = addDateRange
 app.use(router)
 app.use(store)
 app.use(plugins)

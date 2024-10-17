@@ -58,43 +58,39 @@ public class FlowPage<T> implements Serializable
         this.total = total;
     }
 
-    public long getTotal()
-    {
+    public long getTotal() {
         return total;
     }
 
-    public void setTotal(long total)
-    {
+    public FlowPage<T> setTotal(long total) {
         this.total = total;
+        return this;
     }
 
-    public List<?> getRows()
-    {
+    public List<T> getRows() {
         return rows;
     }
 
-    public void setRows(List<T> rows)
-    {
+    public FlowPage<T> setRows(List<T> rows) {
         this.rows = rows;
+        return this;
     }
 
-    public int getCode()
-    {
+    public int getCode() {
         return code;
     }
 
-    public void setCode(int code)
-    {
+    public FlowPage<T> setCode(int code) {
         this.code = code;
+        return this;
     }
 
-    public String getMsg()
-    {
+    public String getMsg() {
         return msg;
     }
 
-    public void setMsg(String msg)
-    {
+    public FlowPage<T> setMsg(String msg) {
         this.msg = msg;
+        return this;
     }
 }

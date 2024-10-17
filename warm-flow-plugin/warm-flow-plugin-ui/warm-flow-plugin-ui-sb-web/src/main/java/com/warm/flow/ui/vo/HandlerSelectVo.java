@@ -30,9 +30,6 @@ public class HandlerSelectVo {
     /** 办理人权限设置列表 */
     private FlowPage<HandlerAuth> handlerAuths;
 
-    /** 左侧是否有树状选择 */
-    private boolean haveTree;
-
     /** 左侧树状选择 */
     private List<TreeSelection> treeSelections;
 
@@ -40,23 +37,17 @@ public class HandlerSelectVo {
         return handlerAuths;
     }
 
-    public void setHandlerAuths(FlowPage<HandlerAuth> handlerAuths) {
+    public HandlerSelectVo setHandlerAuths(FlowPage<HandlerAuth> handlerAuths) {
         this.handlerAuths = handlerAuths;
-    }
-
-    public boolean isHaveTree() {
-        return haveTree;
-    }
-
-    public void setHaveTree(boolean haveTree) {
-        this.haveTree = haveTree;
+        return this;
     }
 
     public List<TreeSelection> getTreeSelections() {
         return treeSelections;
     }
 
-    public void setTreeSelections(List<TreeSelection> treeSelections) {
+    public HandlerSelectVo setTreeSelections(List<TreeSelection> treeSelections) {
         this.treeSelections = treeSelections;
+        return this;
     }
 }
