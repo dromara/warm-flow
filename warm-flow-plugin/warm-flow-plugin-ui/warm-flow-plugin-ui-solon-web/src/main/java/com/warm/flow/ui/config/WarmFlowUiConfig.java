@@ -13,25 +13,18 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.warm.flow.solon;
+package com.warm.flow.ui.config;
 
-import com.warm.flow.solon.config.FlowAutoConfig;
-import com.warm.plugin.modes.solon.config.BeanConfig;
-import org.noear.solon.core.AppContext;
-import org.noear.solon.core.Plugin;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.noear.solon.annotation.Condition;
+import org.noear.solon.annotation.Configuration;
 
 /**
- * Warm-Flow工作流插件
+ * 工作流设计器配置类
  *
- * @author warm
+ * @author ruoyi
  */
-public class XPluginImpl implements Plugin {
+@Configuration
+@Condition(onProperty="${warm-flow.ui:true} = true")
+public class WarmFlowUiConfig {
 
-    @Override
-    public void start(AppContext context) {
-        context.beanMake(BeanConfig.class);
-        context.beanMake(FlowAutoConfig.class);
-    }
 }

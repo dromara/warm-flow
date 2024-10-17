@@ -13,17 +13,16 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.warm.flow.solon;
+package com.warm.flow.ui;
 
-import com.warm.flow.solon.config.FlowAutoConfig;
-import com.warm.flow.solon.jpa.PersistenceContextBeanInjector;
-import com.warm.plugin.modes.solon.config.BeanConfig;
+import com.warm.flow.core.config.WarmFlow;
+import com.warm.flow.ui.config.WarmFlowUiConfig;
+import com.warm.flow.ui.controller.WarmFlowUiController;
+import org.noear.solon.Solon;
 import org.noear.solon.core.AppContext;
 import org.noear.solon.core.Plugin;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.persistence.PersistenceContext;
+import org.noear.solon.web.staticfiles.StaticMappings;
+import org.noear.solon.web.staticfiles.repository.ClassPathStaticRepository;
 
 /**
  * Warm-Flow工作流插件
@@ -32,10 +31,15 @@ import javax.persistence.PersistenceContext;
  */
 public class XPluginImpl implements Plugin {
 
+
     @Override
     public void start(AppContext context) {
-        context.beanInjectorAdd(PersistenceContext.class, new PersistenceContextBeanInjector());
-        context.beanMake(BeanConfig.class);
-        context.beanMake(FlowAutoConfig.class);
+        context.beanMake(WarmFlowUiConfig.class);
+        WarmFlow warmFlow = Solon.context().getBean(WarmFlow.class);
+        if (warmFlow.isUi()) {
+            String uiPath = "/";
+            StaticMappings.add("/", new ClassPathStaticRepository("META-INF/resources"));
+            Solon.app().add(uiPath, WarmFlowUiController.class);
+        }
     }
 }

@@ -62,4 +62,9 @@ public class FlowConfigCons {
      * 兜底为mysql数据库
      */
     public static final String DATA_SOURCE_TYPE = "warm-flow.data_source_type";
+
+    /**
+     * 是否支持ui
+     */
+    public static final String ui = "warm-flow.ui";
 }

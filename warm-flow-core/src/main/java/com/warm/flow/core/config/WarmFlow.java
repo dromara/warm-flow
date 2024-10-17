@@ -91,6 +91,12 @@ public class WarmFlow implements Serializable {
             flowConfig.setBanner(ObjectUtil.isStrTrue(banner));
         }
 
+        // 设置ui开关
+        String ui = FrameInvoker.getCfg(FlowConfigCons.ui);
+        if (StringUtils.isNotEmpty(ui)) {
+            flowConfig.setUi(ObjectUtil.isStrTrue(ui));
+        }
+
         // 设置id生成器类型
         String keyType = FrameInvoker.getCfg(FlowConfigCons.KEYTYPE);
         if (StringUtils.isNotEmpty(keyType)) {
