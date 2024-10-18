@@ -15,9 +15,18 @@
  */
 package com.warm.flow.ui.service;
 
+import com.warm.flow.core.dto.FlowPage;
+import com.warm.flow.core.utils.HttpStatus;
+import com.warm.flow.core.utils.StreamUtils;
+import com.warm.flow.ui.dto.HandlerFunDto;
 import com.warm.flow.ui.dto.HandlerQuery;
+import com.warm.flow.ui.dto.Tree;
+import com.warm.flow.ui.dto.TreeFunDto;
+import com.warm.flow.ui.utils.TreeUtil;
+import com.warm.flow.ui.vo.HandlerAuth;
 import com.warm.flow.ui.vo.HandlerSelectVo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,4 +48,39 @@ public interface HandlerSelectService {
      * @return 结果
      */
     HandlerSelectVo getHandlerSelect(HandlerQuery query);
+
+    default  <T> HandlerSelectVo getHandlerSelectVo(HandlerFunDto<T> handlerFunDto) {
+        List<HandlerAuth> handlerAuths = new ArrayList<>();
+        // 遍历角色数据，封装为组件可识别的数据
+        for (T obj : handlerFunDto.getList()) {
+            handlerAuths.add(new HandlerAuth()
+                    .setStorageId(handlerFunDto.getStorageId() == null ? null : handlerFunDto.getStorageId().apply(obj))
+                    .setHandlerCode(handlerFunDto.getHandlerCode() == null ? null :handlerFunDto.getHandlerCode().apply(obj))
+                    .setHandlerName(handlerFunDto.getHandlerName() == null ? null :handlerFunDto.getHandlerName().apply(obj))
+                    .setCreateTime(handlerFunDto.getCreateTime() == null ? null :handlerFunDto.getCreateTime().apply(obj))
+                    .setGroupName(handlerFunDto.getGroupName() == null ? null :handlerFunDto.getGroupName().apply(obj)));
+        }
+        return getResult(handlerAuths, handlerFunDto.getTotal());
+    }
+
+    default <T, R> HandlerSelectVo getHandlerSelectVo(HandlerFunDto<T> handlerFunDto, TreeFunDto<R> treeFunDto) {
+        HandlerSelectVo handlerSelectVo = getHandlerSelectVo(handlerFunDto);
+
+        List<Tree> treeList = StreamUtils.toList(treeFunDto.getList(), org ->
+                new Tree().setId(treeFunDto.getId() == null ? null :treeFunDto.getId().apply(org))
+                        .setName(treeFunDto.getName() == null ? null :treeFunDto.getName().apply(org))
+                        .setParentId(treeFunDto.getParentId() == null ? null :treeFunDto.getParentId().apply(org)));
+
+        // 通过递归，构建树状结构
+        return handlerSelectVo.setTreeSelections(TreeUtil.buildTree(treeList));
+    }
+
+
+    default HandlerSelectVo getResult(List<HandlerAuth> handlerAuths, long total) {
+        return new HandlerSelectVo().setHandlerAuths(new FlowPage<HandlerAuth>()
+                .setCode(HttpStatus.SUCCESS)
+                .setMsg("查询成功")
+                .setRows(handlerAuths)
+                .setTotal(total));
+    }
 }

@@ -39,7 +39,7 @@ public class HandlerQuery {
     private String handlerType;
 
     /**
-     * 权限分组主键，如：角色、部门等主键
+     * 页面左侧树权限分组主键，如：角色、部门等主键
      */
     private String groupId;
 
