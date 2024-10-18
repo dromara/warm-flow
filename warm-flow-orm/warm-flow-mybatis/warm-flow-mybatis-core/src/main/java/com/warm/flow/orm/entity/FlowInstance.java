@@ -15,9 +15,11 @@
  */
 package com.warm.flow.orm.entity;
 
+import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.entity.Instance;
 
 import java.util.Date;
+import java.util.Map;
 
 /**
  * 流程实例对象 flow_instance
@@ -247,6 +249,11 @@ public class FlowInstance implements Instance {
     public FlowInstance setVariable(String variable) {
         this.variable = variable;
         return this;
+    }
+
+    @Override
+    public Map<String, Object> getVariableMap() {
+        return FlowFactory.jsonConvert.strToMap(variable);
     }
 
     @Override
