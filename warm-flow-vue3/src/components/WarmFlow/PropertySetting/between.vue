@@ -57,9 +57,9 @@
         <el-form-item label="办理人输入" class="permissionItem">
           <div v-for="(tag, index) in form.permissionFlag" :key="index" class="inputGroup">
             <el-input v-model="form.permissionFlag[index]"></el-input>
-            <Close class="Icon" v-if="form.permissionFlag.length !== 1" @click="delPermission(index)" />
-            <Plus class="Icon" v-if="index === form.permissionFlag.length - 1" @click="addPermission" />
-            <el-button class="btn" v-if="index === form.permissionFlag.length - 1" @click="initUser">选择</el-button>
+            <Close class="Icon" v-if="form.permissionFlag.length !== 1 && !disabled" @click="delPermission(index)" />
+            <Plus class="Icon" v-if="(index === form.permissionFlag.length - 1) && !disabled" @click="addPermission" />
+            <el-button class="btn" v-if="(index === form.permissionFlag.length - 1) && !disabled" @click="initUser">选择</el-button>
           </div>
         </el-form-item>
       </slot>
