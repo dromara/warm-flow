@@ -35,6 +35,9 @@ public class ResourcesConfig implements WebMvcConfigurer
         registry.addResourceHandler("/warm-flow-ui/warmjars/**")
                 .addResourceLocations("classpath:/META-INF/resources/warm-flow/warmjars/");
 
+        registry.addResourceHandler("/warm-flow/**")
+                .addResourceLocations("classpath:/META-INF/resources/warm-flow/");
+
     }
 
     @Override
