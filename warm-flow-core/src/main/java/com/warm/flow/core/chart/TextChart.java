@@ -28,6 +28,9 @@ public class TextChart implements FlowChart {
 
     private String title;
 
+    public TextChart() {
+    }
+
     public TextChart(int xText, int yText, String title) {
         this.xText = xText;
         this.yText = yText;

@@ -33,11 +33,50 @@ public class OvalChart implements FlowChart {
 
     private TextChart textChart;
 
+    public OvalChart() {
+    }
+
     public OvalChart(int xStartOval, int yStartOval, Color c, TextChart textChart) {
         this.xStartOval = xStartOval;
         this.yStartOval = yStartOval;
         this.c = c;
         this.textChart = textChart;
+    }
+
+    public int getxStartOval() {
+        return xStartOval;
+    }
+
+    public OvalChart setxStartOval(int xStartOval) {
+        this.xStartOval = xStartOval;
+        return this;
+    }
+
+    public int getyStartOval() {
+        return yStartOval;
+    }
+
+    public OvalChart setyStartOval(int yStartOval) {
+        this.yStartOval = yStartOval;
+        return this;
+    }
+
+    public Color getC() {
+        return c;
+    }
+
+    public OvalChart setC(Color c) {
+        this.c = c;
+        return this;
+    }
+
+    public TextChart getTextChart() {
+        return textChart;
+    }
+
+    public OvalChart setTextChart(TextChart textChart) {
+        this.textChart = textChart;
+        return this;
     }
 
     @Override

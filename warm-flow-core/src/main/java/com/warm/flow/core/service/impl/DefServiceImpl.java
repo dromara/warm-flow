@@ -218,21 +218,35 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     }
 
     @Override
+    public List<FlowChart> flowChartData(Long instanceId) {
+        Long definitionId = FlowFactory.insService().getById(instanceId).getDefinitionId();
+        FlowChartChain flowChartChain = new FlowChartChain();
+        basicFlowChart(instanceId, definitionId, flowChartChain);
+        return flowChartChain.getFlowChartList();
+    }
+
+    @Override
     public String flowChartNoColor(Long definitionId) throws IOException {
         return basicFlowChart(null, definitionId);
     }
 
+    @Override
+    public List<FlowChart> flowChartNoColorData(Long definitionId) {
+        FlowChartChain flowChartChain = new FlowChartChain();
+        basicFlowChart(null, definitionId, flowChartChain);
+        return flowChartChain.getFlowChartList();
+    }
+
+    /**
+     * DefService 根据流程实例ID获取流程图的图片流(渲染颜色)
+     * @param instanceId 实例id
+     * @param definitionId  流程定义id
+     * @return   流程图base64字符串
+     * @throws IOException 异常
+     */
     public String basicFlowChart(Long instanceId, Long definitionId) throws IOException {
         FlowChartChain flowChartChain = new FlowChartChain();
-        Instance instance;
-        if (ObjectUtil.isNotNull(instanceId)) {
-            instance = FlowFactory.insService().getById(instanceId);
-        } else {
-            instance = null;
-        }
-        Map<String, Color> colorMap = new HashMap<>();
-        Map<String, Integer> nodeXY = addNodeChart(colorMap, instance, definitionId, flowChartChain);
-        addSkipChart(colorMap, instance, definitionId, flowChartChain);
+        Map<String, Integer> nodeXY = basicFlowChart(instanceId, definitionId, flowChartChain);
 
         int width = nodeXY.get("maxX") + nodeXY.get("minX");
         int height = nodeXY.get("maxY") + nodeXY.get("minY");
@@ -262,6 +276,27 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
 
     }
 
+
+    /**
+     * 获取流程图基本元数据
+     * @param instanceId 实例id
+     * @param definitionId  流程定义id
+     * @param flowChartChain 存储流程图基本元数据
+     * @return Map<String, Integer> 节点坐标信息
+     */
+    public Map<String, Integer> basicFlowChart(Long instanceId, Long definitionId, FlowChartChain flowChartChain) {
+        Instance instance;
+        if (ObjectUtil.isNotNull(instanceId)) {
+            instance = FlowFactory.insService().getById(instanceId);
+        } else {
+            instance = null;
+        }
+        Map<String, Color> colorMap = new HashMap<>();
+        Map<String, Integer> nodeXY = addNodeChart(colorMap, instance, definitionId, flowChartChain);
+        addSkipChart(colorMap, instance, definitionId, flowChartChain);
+
+        return nodeXY;
+    }
     /**
      * 添加跳转流程图
      *
@@ -419,7 +454,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
      */
     public void setColorMap(Map<String, Color> colorMap, Instance instance, List<Skip> allSkips
             , List<Node> nodeList) {
-        final Color color = new Color(255, 145, 158);
+        final Color color = Color.PINK;
         Map<String, List<Skip>> skipLastMap = StreamUtils.groupByKey(allSkips, Skip::getNextNodeCode);
         Map<String, List<Skip>> skipNextMap = StreamUtils.groupByKey(allSkips, Skip::getNowNodeCode);
         List<HisTask> hisTaskList = FlowFactory.hisTaskService().getNoReject(instance.getId());

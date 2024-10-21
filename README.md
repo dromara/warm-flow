@@ -97,7 +97,23 @@ http://warm-flow.cn
 
 ## 特别感谢JetBrains对开源项目支持
 
+
 <a href="https://jb.gg/OpenSourceSupport">
   <img src="https://user-images.githubusercontent.com/8643542/160519107-199319dc-e1cf-4079-94b7-01b6b8d23aa6.png" align="left" height="100" width="100"  alt="JetBrains">
 </a>
+<br>
+<br>
+<br>
 
+
+## git提交规范
+
+    [init] 初始化  
+    [feat] 增加新功能  
+    [fix] 修复问题/BUG  
+    [perf] 优化/性能提升  
+    [refactor] 重构  
+    [revert] 撤销修改  
+    [style] 代码风格相关无影响运行结果的  
+    [update] 其他修改  
+    

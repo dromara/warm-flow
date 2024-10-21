@@ -27,15 +27,40 @@ public class ParallelChart implements FlowChart {
 
     private Color c;
 
-    public ParallelChart(int xParallel, int yParallel) {
-        this.xParallel = xParallel;
-        this.yParallel = yParallel;
+    public ParallelChart() {
     }
 
     public ParallelChart(int xParallel, int yParallel, Color c) {
         this.xParallel = xParallel;
         this.yParallel = yParallel;
         this.c = c;
+    }
+
+    public int getxParallel() {
+        return xParallel;
+    }
+
+    public ParallelChart setxParallel(int xParallel) {
+        this.xParallel = xParallel;
+        return this;
+    }
+
+    public int getyParallel() {
+        return yParallel;
+    }
+
+    public ParallelChart setyParallel(int yParallel) {
+        this.yParallel = yParallel;
+        return this;
+    }
+
+    public Color getC() {
+        return c;
+    }
+
+    public ParallelChart setC(Color c) {
+        this.c = c;
+        return this;
     }
 
     @Override

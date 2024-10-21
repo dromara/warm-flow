@@ -15,6 +15,7 @@
  */
 package com.warm.flow.core.service;
 
+import com.warm.flow.core.chart.FlowChart;
 import com.warm.flow.core.entity.Definition;
 import com.warm.flow.core.orm.service.IWarmService;
 import org.dom4j.Document;
@@ -116,7 +117,7 @@ public interface DefService extends IWarmService<Definition> {
     boolean copyDef(Long id);
 
     /**
-     * 根据流程实例ID获取流程图的图片流(渲染颜色)
+     * 根据流程实例ID,获取流程图的图片流(渲染颜色)
      *
      * @param instanceId
      * @return
@@ -125,12 +126,29 @@ public interface DefService extends IWarmService<Definition> {
     String flowChart(Long instanceId) throws IOException;
 
     /**
-     * 根据流程定义ID获取流程图的图片流(不渲染颜色)
+     * 根据流程实例ID,获取流程图元数据
+     *
+     * @param instanceId
+     * @return
+     * @throws IOException
+     */
+    List<FlowChart> flowChartData(Long instanceId) throws IOException;
+
+    /**
+     * 根据流程定义ID,获取流程图的图片流(不渲染颜色)
      * @param definitionId
      * @return
      * @throws IOException
      */
     String flowChartNoColor(Long definitionId) throws IOException;
+
+    /**
+     * 根据流程定义ID,获取流程图元数据
+     * @param definitionId
+     * @return
+     * @throws IOException
+     */
+    List<FlowChart> flowChartNoColorData(Long definitionId) throws IOException;
 
     /**
      * 激活流程

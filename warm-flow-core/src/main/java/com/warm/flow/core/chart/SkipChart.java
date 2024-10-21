@@ -32,11 +32,7 @@ public class SkipChart implements FlowChart {
 
     private TextChart textChart;
 
-
-    public SkipChart(int[] xPoints, int[] yPoints, TextChart textChart) {
-        this.xPoints = xPoints;
-        this.yPoints = yPoints;
-        this.textChart = textChart;
+    public SkipChart() {
     }
 
     public SkipChart(int[] xPoints, int[] yPoints, Color c, TextChart textChart) {
@@ -44,6 +40,42 @@ public class SkipChart implements FlowChart {
         this.yPoints = yPoints;
         this.c = c;
         this.textChart = textChart;
+    }
+
+    public int[] getxPoints() {
+        return xPoints;
+    }
+
+    public SkipChart setxPoints(int[] xPoints) {
+        this.xPoints = xPoints;
+        return this;
+    }
+
+    public int[] getyPoints() {
+        return yPoints;
+    }
+
+    public SkipChart setyPoints(int[] yPoints) {
+        this.yPoints = yPoints;
+        return this;
+    }
+
+    public Color getC() {
+        return c;
+    }
+
+    public SkipChart setC(Color c) {
+        this.c = c;
+        return this;
+    }
+
+    public TextChart getTextChart() {
+        return textChart;
+    }
+
+    public SkipChart setTextChart(TextChart textChart) {
+        this.textChart = textChart;
+        return this;
     }
 
     @Override
