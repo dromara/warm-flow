@@ -161,7 +161,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
         // 判断当前处理人是否有权限处理
         task.setUserList(FlowFactory.userService().listByAssociatedAndTypes(task.getId()));
-        checkAuth(nowNode, task, flowParams.getPermissionFlag());
+        if (CollUtil.isNotEmpty(flowParams.getPermissionFlag())) {
+            checkAuth(nowNode, task, flowParams.getPermissionFlag());
+        }
 
         // 所有待办转历史
         Node endNode = FlowFactory.nodeService().getOne(FlowFactory.newNode()
