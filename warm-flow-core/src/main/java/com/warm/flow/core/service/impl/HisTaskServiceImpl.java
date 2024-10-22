@@ -234,25 +234,28 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
     }
 
     @Override
-    public HisTask autoHisTask(FlowParams flowParams, String flowStatus, Task task, Task nextTask, Integer cooperateType) {
+    public HisTask setSkipHisTask(Task task, Node nextNode, FlowParams flowParams) {
+        String flowStatus = getFlowStatus(flowParams);
         HisTask hisTask = FlowFactory.newHisTask()
                 .setTaskId(task.getId())
                 .setInstanceId(task.getInstanceId())
-                .setCooperateType(cooperateType)
+                .setCooperateType(ObjectUtil.isNotNull(flowParams.getCooperateType())
+                        ? flowParams.getCooperateType() : CooperateType.APPROVAL.getKey())
                 .setNodeCode(task.getNodeCode())
                 .setNodeName(task.getNodeName())
                 .setNodeType(task.getNodeType())
-                .setTargetNodeCode(nextTask.getNodeCode())
-                .setTargetNodeName(nextTask.getNodeName())
                 .setDefinitionId(task.getDefinitionId())
+                .setTargetNodeCode(nextNode.getNodeCode())
+                .setTargetNodeName(nextNode.getNodeName())
                 .setApprover(flowParams.getHandler())
                 .setSkipType(flowParams.getSkipType())
-                .setFlowStatus(StringUtils.isNotEmpty(flowParams.getHisStatus())
-                        ? flowParams.getHisStatus() : flowStatus)
+                .setFlowStatus(StringUtils.isNotEmpty(flowStatus)
+                        ? flowStatus : FlowStatus.APPROVAL.getKey())
                 .setFormCustom(task.getFormCustom())
                 .setFormPath(task.getFormPath())
-                .setExt(flowParams.getExt())
                 .setMessage(flowParams.getMessage())
+                //业务详情添加至历史记录
+                .setExt(flowParams.getExt())
                 .setCreateTime(task.getCreateTime());
         FlowFactory.dataFillHandler().idFill(hisTask);
         return hisTask;

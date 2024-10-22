@@ -174,7 +174,7 @@ public interface TaskService extends IWarmService<Task> {
     Task getNextTask(List<Task> tasks);
 
     /**
-     * （审批人）取回
+     * 撤销
      *
      * @param flowParams        flowStatus-流程状态（必输）
      *                          hisStatus-历史任务状态（自定义了流程状态就必输）
@@ -182,14 +182,14 @@ public interface TaskService extends IWarmService<Task> {
      *                          hisTaskExt-业务详情扩展字段
      *                          message-审批意见
      *                          handler-当前处理人（必输）
-     *                          nodeCode-取回到的节点（必输）
+     *                          nodeCode-撤销到的节点（必输）
      *                          permissionFlag-当前处理人的权限（必输）
      * @param taskId            任务id（必输）
      * @return Task             取回到的节点任务
      * @author xiarg
      * @date 2024/9/22 13:59
      */
-    Task approverRevoke(FlowParams flowParams, Long taskId);
+    Task revoke(FlowParams flowParams, Long taskId);
 
     /**
      * （发起人）取回

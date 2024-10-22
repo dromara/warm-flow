@@ -52,8 +52,6 @@ public class ExceptionCons {
 
     public static final String NULL_EXPRESSION_STRATEGY = "条件表达式策略不能为空!";
 
-    public static final String NULL_VARIABLE_STRATEGY = "变量替换策略不能为空!";
-
     public static final String FRIST_FORBID_BACK = "禁止退回到第一个节点";
 
     public static final String NULL_ROLE_NODE = "无法跳转到该节点,请检查当前用户是否有权限!";
@@ -101,10 +99,6 @@ public class ExceptionCons {
 
     public static final String IS_ALREADY_DEPUTE = "已经是受托人，不可委托";
 
-    public static final String LOAD_EXPRESSION_STRATEGY_ERROR = "SPI加载条件表达式失败!";
-
-    public static final String LOAD_JSON_CONVERT_ERROR = "SPI加载json库失败,";
-
     public static final String JPA_PERSISTENCE_PROVIDER_NOT_FOUND = "jpa_persistence_provider配置不能为空";
 
     public static final String BACK_TASK_NOT_EXECUTED = "未完成过任务, 不能退回";
@@ -121,15 +115,13 @@ public class ExceptionCons {
 
     public static final String INSTANCE_ALREADY_SUSPENDED = "当前流程实例已经挂起";
 
-    public static final String NOT_TASK_PROMOTER_NOT_RETRIEVE = "不是当前任务的发起人，无法取回";
+    public static final String NOT_DEF_PROMOTER_NOT_RETRIEVE = "不是当前流程的发起人，无法取回";
 
     public static final String CUR_USER_NOT_EMPTY = "当前处理人不能为空";
 
     public static final String NOT_HIS_TASK_HANDLER = "当前处理人不是此节点的处理人，不能撤回";
 
-    public static final String NODE_IS_END = "结束节点不能撤销";
-
-    public static final String FLOW_IS_OVER = "流程已结束，不能取回";
+    public static final String NODE_IS_END = "目标节点是结束节点，不可跳转";
 
     public static final String NOT_FOUND_FLOW_TASK = "未获取到流程任务";
 }
