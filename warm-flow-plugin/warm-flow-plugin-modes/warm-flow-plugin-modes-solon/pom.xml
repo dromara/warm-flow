@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.github.minliuhua</groupId>
         <artifactId>warm-flow-plugin-modes</artifactId>
-        <version>1.3.0-m2</version>
+        <version>1.3.0</version>
     </parent>
 
     <artifactId>warm-flow-plugin-modes-solon</artifactId>
