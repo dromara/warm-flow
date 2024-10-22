@@ -327,6 +327,76 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     @Override
+    public Task revoke(FlowParams flowParams, Long taskId) {
+        // TODO 并行节点时候撤销如何处理
+        // 查询任务和流程实例
+        Task task = getById(taskId);
+        AssertUtil.isTrue(ObjectUtil.isNull(task), ExceptionCons.NOT_FOUNT_TASK);
+        AssertUtil.isEmpty(flowParams.getHandler(), ExceptionCons.CUR_USER_NOT_EMPTY);
+
+        Instance instance = FlowFactory.insService().getById(task.getInstanceId());
+        AssertUtil.isNull(instance, ExceptionCons.NOT_FOUNT_INSTANCE);
+        // 取回
+        return commonRetrieve(flowParams, instance);
+    }
+
+    @Override
+    public Task initiatorRetrieve(FlowParams flowParams, Long instanceId) {
+        // 流程发起人取回,验证权限是不是当前任务的发起人
+        Instance instance = FlowFactory.insService().getById(instanceId);
+        AssertUtil.isNull(instance, ExceptionCons.NOT_FOUNT_INSTANCE);
+        AssertUtil.isFalse(instance.getCreateBy().equals(flowParams.getHandler()), ExceptionCons.NOT_DEF_PROMOTER_NOT_RETRIEVE);
+        // 如果没传nodeCode，则默认跳转开始节点
+        if (StringUtils.isEmpty(flowParams.getNodeCode())) {
+            flowParams.setNodeCode(FlowFactory.skipService().getOne(FlowFactory.newSkip()
+                    .setDefinitionId(instance.getDefinitionId())
+                    .setNowNodeType(NodeType.START.getKey())).getNextNodeCode());
+        }
+        // 取回
+        return commonRetrieve(flowParams, instance);
+    }
+
+    @Override
+    public Task commonRetrieve(FlowParams flowParams, Instance instance) {
+        // TODO warm 监听器
+        AssertUtil.isTrue(FlowStatus.isFinished(instance.getFlowStatus()), ExceptionCons.FLOW_FINISH);
+        AssertUtil.isTrue(StringUtils.isNotEmpty(flowParams.getMessage())
+                && flowParams.getMessage().length() > 500, ExceptionCons.MSG_OVER_LENGTH);
+        // 查询目标节点信息
+        Node nextNode = FlowFactory.nodeService().getOne(FlowFactory.newNode()
+                .setNodeCode(flowParams.getNodeCode()).setDefinitionId(instance.getDefinitionId()));
+
+        AssertUtil.isNull(nextNode, ExceptionCons.NOT_NODE_DATA);
+        // 撤回到的节点是否为结束节点，结束节点是不能撤回
+        AssertUtil.isTrue(NodeType.isEnd(nextNode.getNodeType()), ExceptionCons.NODE_IS_END);
+
+        // 查询任务,如果前一个节点是并行网关，可能任务表有多个任务,增加查询和判断
+        List<Task> curTaskList = list(FlowFactory.newTask().setInstanceId(instance.getId()));
+        AssertUtil.isEmpty(curTaskList, ExceptionCons.NOT_FOUND_FLOW_TASK);
+        Definition definition = FlowFactory.defService().getOne(FlowFactory.newDef().setId(instance.getDefinitionId()));
+
+        AssertUtil.isNull(nextNode, ExceptionCons.NULL_NODE_CODE);
+        // 给取回到的那个节点赋权限-给当前处理人权限
+        Task nextTask = addTask(nextNode, instance, definition, flowParams);
+        // TODO warm 并行节点会有什么影响
+        // 流程参数
+        flowParams.setSkipType(SkipType.REJECT.getKey());
+        // 删除待办任务，保存历史，删除所有代办任务的权限人
+        if (StringUtils.isNotEmpty(flowParams.getFlowStatus())) {
+            flowParams.setFlowStatus(FlowStatus.INVALID.getKey());
+        }
+        removeByIds(StreamUtils.toList(curTaskList, Task::getId));
+        // 删除所有待办任务的权限人,处理人保存
+        FlowFactory.userService().deleteByTaskIds(StreamUtils.toList(curTaskList, Task::getId));
+        FlowFactory.hisTaskService().saveBatch(StreamUtils.toList(curTaskList,
+                task -> FlowFactory.hisTaskService().setSkipHisTask(task, nextNode, flowParams)));
+
+        // 设置任务完成后的实例相关信息
+        setInsFinishInfo(instance, CollUtil.toList(nextTask), flowParams);
+        return nextTask;
+    }
+
+    @Override
     public Task addTask(Node node, Instance instance, Definition definition, FlowParams flowParams) {
         Task addTask = FlowFactory.newTask();
         FlowFactory.dataFillHandler().idFill(addTask);
@@ -771,82 +841,4 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 && Objects.equals(instance.getActivityStatus(), ActivityStatus.ACTIVITY.getKey());
     }
 
-
-    @Override
-    public Task revoke(FlowParams flowParams, Long taskId) {
-        List<HisTask> hisTaskList = FlowFactory.hisTaskService().list(FlowFactory.newHisTask()
-                .setNodeCode(flowParams.getNodeCode())
-                .setApprover(flowParams.getHandler()));
-        AssertUtil.isEmpty(hisTaskList, ExceptionCons.NOT_HIS_TASK_HANDLER);
-
-        // 查询节点信息
-        Node node = FlowFactory.nodeService().getOne(FlowFactory.newNode()
-                .setDefinitionId(hisTaskList.get(0).getDefinitionId())
-                .setNodeCode(flowParams.getNodeCode()));
-
-        AssertUtil.isNull(node, ExceptionCons.NOT_NODE_DATA);
-        // 取回到的节点是否为结束节点，结束节点是不能取回
-        AssertUtil.isTrue(NodeType.isEnd(FlowFactory.nodeService().getOne(FlowFactory.newNode()
-                        .setDefinitionId(hisTaskList.get(0).getDefinitionId())
-                        .setNodeCode(flowParams.getNodeCode())).getNodeType()), ExceptionCons.NODE_IS_END);
-        // 查询任务和流程实例
-        Task task = getById(taskId);
-        AssertUtil.isTrue(ObjectUtil.isNull(task), ExceptionCons.NOT_FOUNT_TASK);
-        AssertUtil.isEmpty(flowParams.getHandler(), ExceptionCons.CUR_USER_NOT_EMPTY);
-        Instance instance = FlowFactory.insService().getById(task.getInstanceId());
-        AssertUtil.isNull(instance, ExceptionCons.NOT_FOUNT_INSTANCE);
-        // 取回
-        return commonRetrieve(flowParams, instance);
-    }
-
-    @Override
-    public Task initiatorRetrieve(FlowParams flowParams, Long taskId) {
-        // 流程发起人取回,验证权限是不是当前任务的发起人
-        Task task = getById(taskId);
-        AssertUtil.isTrue(ObjectUtil.isNull(task), ExceptionCons.NOT_FOUNT_TASK);
-        AssertUtil.isEmpty(flowParams.getHandler(), ExceptionCons.CUR_USER_NOT_EMPTY);
-        Instance instance = FlowFactory.insService().getById(task.getInstanceId());
-        AssertUtil.isNull(instance, ExceptionCons.NOT_FOUNT_INSTANCE);
-        AssertUtil.isFalse(instance.getCreateBy().equals(flowParams.getHandler()), ExceptionCons.NOT_DEF_PROMOTER_NOT_RETRIEVE);
-        // 设置跳转开始节点，实现跳转时跳转到开始节点
-        flowParams.setNodeCode(FlowFactory.skipService().getOne(FlowFactory.newSkip()
-                .setDefinitionId(instance.getDefinitionId())
-                .setNowNodeType(NodeType.START.getKey())).getNextNodeCode());
-        // 取回
-        return commonRetrieve(flowParams, instance);
-    }
-
-    @Override
-    public Task commonRetrieve(FlowParams flowParams, Instance instance) {
-        // TODO warm 监听器
-        AssertUtil.isTrue(FlowStatus.isFinished(instance.getFlowStatus()), ExceptionCons.FLOW_FINISH);
-        AssertUtil.isTrue(StringUtils.isNotEmpty(flowParams.getMessage())
-                && flowParams.getMessage().length() > 500, ExceptionCons.MSG_OVER_LENGTH);
-        // 查询任务,如果前一个节点是并行网关，可能任务表有多个任务,增加查询和判断
-        List<Task> curTaskList = list(FlowFactory.newTask().setInstanceId(instance.getId()));
-        AssertUtil.isEmpty(curTaskList, ExceptionCons.NOT_FOUND_FLOW_TASK);
-        Definition definition = FlowFactory.defService().getOne(FlowFactory.newDef().setId(instance.getDefinitionId()));
-        Node nextNode = FlowFactory.nodeService().getOne(FlowFactory.newNode()
-                .setNodeCode(flowParams.getNodeCode()).setDefinitionId(definition.getId()));
-        AssertUtil.isNull(nextNode, ExceptionCons.NULL_NODE_CODE);
-        // 给取回到的那个节点赋权限-给当前处理人权限
-        nextNode.setDynamicPermissionFlagList(flowParams.getPermissionFlag());
-        Task nextTask = addTask(nextNode, instance, definition, flowParams);
-        // TODO warm 并行节点会有什么影响
-        // 流程参数
-        flowParams.setSkipType(SkipType.REJECT.getKey());
-        // 删除待办任务，保存历史，删除所有代办任务的权限人
-        if (StringUtils.isNotEmpty(flowParams.getFlowStatus())) {
-            flowParams.setFlowStatus(FlowStatus.INVALID.getKey());
-        }
-        removeByIds(StreamUtils.toList(curTaskList, Task::getId));
-        // 删除所有待办任务的权限人,处理人保存
-        FlowFactory.userService().deleteByTaskIds(StreamUtils.toList(curTaskList, Task::getId));
-        FlowFactory.hisTaskService().saveBatch(StreamUtils.toList(curTaskList,
-                task -> FlowFactory.hisTaskService().setSkipHisTask(task, nextNode, flowParams)));
-
-        // 设置任务完成后的实例相关信息
-        setInsFinishInfo(instance, CollUtil.toList(nextTask), flowParams);
-        return nextTask;
-    }
 }
