@@ -29,12 +29,9 @@ import org.slf4j.LoggerFactory;
  */
 public class XPluginImpl implements Plugin {
 
-    private static final Logger log = LoggerFactory.getLogger(XPluginImpl.class);
-
     @Override
     public void start(AppContext context) {
         context.beanMake(BeanConfig.class);
         context.beanMake(FlowAutoConfig.class);
-        log.debug("warm插件加载: 成功加载[Warm-Flow工作流]插件");
     }
 }

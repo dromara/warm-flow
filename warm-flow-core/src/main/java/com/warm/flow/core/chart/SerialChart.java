@@ -27,15 +27,40 @@ public class SerialChart implements FlowChart {
 
     private Color c;
 
-    public SerialChart(int xSerial, int ySerial) {
-        this.xSerial = xSerial;
-        this.ySerial = ySerial;
+    public SerialChart() {
     }
 
     public SerialChart(int xSerial, int ySerial, Color c) {
         this.xSerial = xSerial;
         this.ySerial = ySerial;
         this.c = c;
+    }
+
+    public int getxSerial() {
+        return xSerial;
+    }
+
+    public SerialChart setxSerial(int xSerial) {
+        this.xSerial = xSerial;
+        return this;
+    }
+
+    public int getySerial() {
+        return ySerial;
+    }
+
+    public SerialChart setySerial(int ySerial) {
+        this.ySerial = ySerial;
+        return this;
+    }
+
+    public Color getC() {
+        return c;
+    }
+
+    public SerialChart setC(Color c) {
+        this.c = c;
+        return this;
     }
 
     @Override

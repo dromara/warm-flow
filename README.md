@@ -12,20 +12,21 @@
 
 ## 介绍
 
-Warm-Flow国产工作流引擎🎉，其特点简洁轻量但又不简单，五脏俱全，组件独立，可扩展，可满足中小项目的组件。
+Warm-Flow国产工作流引擎🎉，其特点简洁轻量，五脏俱全，可扩展，是一个可通过jar引入设计器的工作流。
 
 1. 简洁易用：只有7张表，代码量少，可快速上手和集成
 2. 审批功能：支持通过、退回、任意跳转、转办、终止、会签、票签、委派和加减签、互斥和并行网关
-3. 监听器与流程变量：支持五种监听器，可应对不同场景，灵活可扩展，参数传递，动态权限
+3. 监听器与流程变量：支持四种监听器，可应对不同场景，灵活可扩展，参数传递，动态权限
 4. 流程图：流程引擎自带流程图，可在不集成流程设计器情况下使用
-5. 条件表达式：内置常见的条件表达式，并且支持自定义扩展
-6. orm框架扩展：目前支持MyBatis、Mybatis-Plus、Mybatis-Flex和Jpa，后续会由社区提供其他支持，扩展方便
-7. 数据库支持：目前支持MySQL 、Oracle 和PostgreSQL，后续会继续支持其他数据库或者国产数据库
-8. 多租户与软删除：流程引擎自身维护多租户和软删除实现，也可使用对应orm框架的实现方式
-9. 支持角色、部门和用户等权限配置
-10. 同时支持spring和solon
-11. 兼容java8和java17,理论11也可以
-12. 官方提供基于ruoyi-vue封装实战项目，很实用
+5. 流程设计器：可通过jar包形式快速集成到项目，减少繁琐代码搬运和适配
+6. 条件表达式：内置常见的和spel条件表达式，并且支持自定义扩展
+7. 办理人变量表达式：内置${handler}和spel格式的表达式，可满足不同场景，灵活可扩展
+8. orm框架扩展：目前支持MyBatis、Mybatis-Plus、Mybatis-Flex和Jpa，后续会由社区提供其他支持，扩展方便
+9. 数据库支持：目前支持MySQL 、Oracle 和PostgreSQL，后续会继续支持其他数据库或者国产数据库
+10. 多租户与软删除：流程引擎自身维护多租户和软删除实现，也可使用对应orm框架的实现方式
+11. 同时支持spring和solon
+12. 兼容java8和java17,理论11也可以
+13. 官方提供基于ruoyi-vue封装实战项目，很实用
 
 ```shell
 希望一键三连，你的⭐️ Star ⭐️是我持续开发的动力，项目也活的更长
@@ -48,9 +49,9 @@ http://warm-flow.cn
 - 首次导入，先创建数据库，找到对应数据库的全量脚本[warm-flow-all.sql](https://gitee.com/dromara/warm-flow/tree/master/sql/mysql)，执行
 - 如果版本更新，找到对应数据库的更新版本，比如xx-upgrade，[warm-flow_x.x.x.sql](https://gitee.com/dromara/warm-flow/tree/master/sql/mysql/v1-upgrade)，执行
 
-## 官网流程定义xml案例
+## 官网流程定义案例xml
 
-[官网九套流程定义xml](https://gitee.com/dromara/warm-flow-test/tree/master/warm-flow-core-test/src/main/resources)
+[官网流程定义案例xml](https://gitee.com/dromara/warm-flow-test/tree/master/warm-flow-core-test/src/main/resources)
 
 ## 测试代码
 
@@ -96,7 +97,23 @@ http://warm-flow.cn
 
 ## 特别感谢JetBrains对开源项目支持
 
+
 <a href="https://jb.gg/OpenSourceSupport">
   <img src="https://user-images.githubusercontent.com/8643542/160519107-199319dc-e1cf-4079-94b7-01b6b8d23aa6.png" align="left" height="100" width="100"  alt="JetBrains">
 </a>
+<br>
+<br>
+<br>
 
+
+## git提交规范
+
+    [init] 初始化  
+    [feat] 增加新功能  
+    [fix] 修复问题/BUG  
+    [perf] 优化/性能提升  
+    [refactor] 重构  
+    [revert] 撤销修改  
+    [style] 代码风格相关无影响运行结果的  
+    [update] 其他修改  
+    

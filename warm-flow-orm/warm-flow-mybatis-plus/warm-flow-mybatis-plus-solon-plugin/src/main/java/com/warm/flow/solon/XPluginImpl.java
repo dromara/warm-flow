@@ -36,8 +36,6 @@ import java.util.List;
  */
 public class XPluginImpl implements Plugin {
 
-    private static final Logger log = LoggerFactory.getLogger(XPluginImpl.class);
-
     @Override
     public void start(AppContext context) {
         context.beanMake(BeanConfig.class);
@@ -57,6 +55,5 @@ public class XPluginImpl implements Plugin {
                 throw new RuntimeException(ex);
             }
         });
-        log.debug("warm插件加载: 成功加载[Warm-Flow工作流]插件");
     }
 }

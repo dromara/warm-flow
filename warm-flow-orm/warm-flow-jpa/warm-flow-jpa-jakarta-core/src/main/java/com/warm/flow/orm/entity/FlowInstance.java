@@ -15,6 +15,7 @@
  */
 package com.warm.flow.orm.entity;
 
+import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.entity.Instance;
 import com.warm.flow.core.utils.StringUtils;
 import com.warm.flow.orm.utils.JPAPredicateFunction;
@@ -30,6 +31,7 @@ import jakarta.persistence.criteria.Root;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -295,6 +297,11 @@ public class FlowInstance extends JPARootEntity<FlowInstance> implements Instanc
     public FlowInstance setVariable(String variable) {
         this.variable = variable;
         return this;
+    }
+
+    @Override
+    public Map<String, Object> getVariableMap() {
+        return FlowFactory.jsonConvert.strToMap(variable);
     }
 
     @Override

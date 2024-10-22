@@ -120,8 +120,8 @@ CREATE TABLE `flow_his_task`
     `form_path`        varchar(100) DEFAULT NULL COMMENT '审批表单路径',
     `message`          varchar(500)                 DEFAULT NULL COMMENT '审批意见',
     `ext`              varchar(500)                 DEFAULT NULL COMMENT '业务详情 存业务表对象json字符串',
-    `create_time`      datetime                     DEFAULT NULL COMMENT '开始时间',
-    `update_time`      datetime                     DEFAULT NULL COMMENT '完成时间',
+    `create_time`      datetime                     DEFAULT NULL COMMENT '任务开始时间',
+    `update_time`      datetime                     DEFAULT NULL COMMENT '审批完成时间',
     `del_flag`         char(1)                      DEFAULT '0' COMMENT '删除标志',
     `tenant_id`        varchar(40)                  DEFAULT NULL COMMENT '租户id',
     PRIMARY KEY (`id`) USING BTREE

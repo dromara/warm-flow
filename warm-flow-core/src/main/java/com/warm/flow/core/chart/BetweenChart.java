@@ -30,6 +30,9 @@ public class BetweenChart implements FlowChart {
     private Color c;
     private TextChart textChart;
 
+    public BetweenChart() {
+    }
+
     public BetweenChart(int xRect, int yRect, Color c, TextChart textChart) {
         this.xRect = xRect;
         this.yRect = yRect;
@@ -37,6 +40,41 @@ public class BetweenChart implements FlowChart {
         this.textChart = textChart;
     }
 
+    public int getxRect() {
+        return xRect;
+    }
+
+    public BetweenChart setxRect(int xRect) {
+        this.xRect = xRect;
+        return this;
+    }
+
+    public int getyRect() {
+        return yRect;
+    }
+
+    public BetweenChart setyRect(int yRect) {
+        this.yRect = yRect;
+        return this;
+    }
+
+    public Color getC() {
+        return c;
+    }
+
+    public BetweenChart setC(Color c) {
+        this.c = c;
+        return this;
+    }
+
+    public TextChart getTextChart() {
+        return textChart;
+    }
+
+    public BetweenChart setTextChart(TextChart textChart) {
+        this.textChart = textChart;
+        return this;
+    }
 
     @Override
     public void draw(Graphics2D graphics) {

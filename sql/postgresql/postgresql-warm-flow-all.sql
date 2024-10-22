@@ -229,8 +229,8 @@ COMMENT ON COLUMN flow_his_task.form_custom IS '审批表单是否自定义（Y�
 COMMENT ON COLUMN flow_his_task.form_path IS '审批表单路径';
 COMMENT ON COLUMN flow_his_task.message IS '审批意见';
 COMMENT ON COLUMN flow_his_task.ext IS '扩展字段，预留给业务系统使用';
-COMMENT ON COLUMN flow_his_task.create_time IS '开始时间';
-COMMENT ON COLUMN flow_his_task.update_time IS '结束时间';
+COMMENT ON COLUMN flow_his_task.create_time IS '任务开始时间';
+COMMENT ON COLUMN flow_his_task.update_time IS '审批完成时间';
 COMMENT ON COLUMN flow_his_task.del_flag IS '删除标志';
 COMMENT ON COLUMN flow_his_task.tenant_id IS '租户id';
 

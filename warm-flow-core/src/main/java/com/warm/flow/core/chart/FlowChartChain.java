@@ -38,4 +38,8 @@ public class FlowChartChain {
             flowChart.draw(graphics);
         }
     }
+
+    public List<FlowChart> getFlowChartList() {
+        return flowChartList;
+    }
 }

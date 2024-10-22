@@ -77,25 +77,26 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
 
     @Override
     public void saveXml(Definition def) throws Exception {
-        if (ObjectUtil.isNull(def)) {
+        saveXml(def.getId(), def.getXmlString());
+    }
+
+    @Override
+    public void saveXml(Long id, String xmlString) throws Exception {
+        if (ObjectUtil.isNull(id) || StringUtils.isEmpty(xmlString)) {
             return;
         }
-        FlowCombine combine = FlowConfigUtil.readConfig(new ByteArrayInputStream(def.getXmlString()
-                .getBytes(StandardCharsets.UTF_8)));
+        FlowCombine combine = FlowConfigUtil.readConfig(new ByteArrayInputStream
+                (xmlString.getBytes(StandardCharsets.UTF_8)));
         // 所有的流程节点
         List<Node> allNodes = combine.getAllNodes();
         // 所有的流程连线
         List<Skip> allSkips = combine.getAllSkips();
 
-        FlowFactory.nodeService().remove(FlowFactory.newNode().setDefinitionId(def.getId()));
-        FlowFactory.skipService().remove(FlowFactory.newSkip().setDefinitionId(def.getId()));
-        allNodes.forEach(node -> node.setDefinitionId(def.getId()));
-        allSkips.forEach(skip -> skip.setDefinitionId(def.getId()));
+        FlowFactory.nodeService().remove(FlowFactory.newNode().setDefinitionId(id));
+        FlowFactory.skipService().remove(FlowFactory.newSkip().setDefinitionId(id));
+        allNodes.forEach(node -> node.setDefinitionId(id));
+        allSkips.forEach(skip -> skip.setDefinitionId(id));
         // 保存节点，流程连线，权利人
-        String version = getNewVersion(def);
-        for (Node node : allNodes) {
-            node.setVersion(version);
-        }
         FlowFactory.nodeService().saveBatch(allNodes);
         FlowFactory.skipService().saveBatch(allSkips);
     }
@@ -217,21 +218,35 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     }
 
     @Override
+    public List<FlowChart> flowChartData(Long instanceId) {
+        Long definitionId = FlowFactory.insService().getById(instanceId).getDefinitionId();
+        FlowChartChain flowChartChain = new FlowChartChain();
+        basicFlowChart(instanceId, definitionId, flowChartChain);
+        return flowChartChain.getFlowChartList();
+    }
+
+    @Override
     public String flowChartNoColor(Long definitionId) throws IOException {
         return basicFlowChart(null, definitionId);
     }
 
+    @Override
+    public List<FlowChart> flowChartNoColorData(Long definitionId) {
+        FlowChartChain flowChartChain = new FlowChartChain();
+        basicFlowChart(null, definitionId, flowChartChain);
+        return flowChartChain.getFlowChartList();
+    }
+
+    /**
+     * DefService 根据流程实例ID获取流程图的图片流(渲染颜色)
+     * @param instanceId 实例id
+     * @param definitionId  流程定义id
+     * @return   流程图base64字符串
+     * @throws IOException 异常
+     */
     public String basicFlowChart(Long instanceId, Long definitionId) throws IOException {
         FlowChartChain flowChartChain = new FlowChartChain();
-        Instance instance;
-        if (ObjectUtil.isNotNull(instanceId)) {
-            instance = FlowFactory.insService().getById(instanceId);
-        } else {
-            instance = null;
-        }
-        Map<String, Color> colorMap = new HashMap<>();
-        Map<String, Integer> nodeXY = addNodeChart(colorMap, instance, definitionId, flowChartChain);
-        addSkipChart(colorMap, instance, definitionId, flowChartChain);
+        Map<String, Integer> nodeXY = basicFlowChart(instanceId, definitionId, flowChartChain);
 
         int width = nodeXY.get("maxX") + nodeXY.get("minX");
         int height = nodeXY.get("maxY") + nodeXY.get("minY");
@@ -261,6 +276,27 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
 
     }
 
+
+    /**
+     * 获取流程图基本元数据
+     * @param instanceId 实例id
+     * @param definitionId  流程定义id
+     * @param flowChartChain 存储流程图基本元数据
+     * @return Map<String, Integer> 节点坐标信息
+     */
+    public Map<String, Integer> basicFlowChart(Long instanceId, Long definitionId, FlowChartChain flowChartChain) {
+        Instance instance;
+        if (ObjectUtil.isNotNull(instanceId)) {
+            instance = FlowFactory.insService().getById(instanceId);
+        } else {
+            instance = null;
+        }
+        Map<String, Color> colorMap = new HashMap<>();
+        Map<String, Integer> nodeXY = addNodeChart(colorMap, instance, definitionId, flowChartChain);
+        addSkipChart(colorMap, instance, definitionId, flowChartChain);
+
+        return nodeXY;
+    }
     /**
      * 添加跳转流程图
      *
@@ -418,7 +454,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
      */
     public void setColorMap(Map<String, Color> colorMap, Instance instance, List<Skip> allSkips
             , List<Node> nodeList) {
-        final Color color = new Color(255, 145, 158);
+        final Color color = Color.PINK;
         Map<String, List<Skip>> skipLastMap = StreamUtils.groupByKey(allSkips, Skip::getNextNodeCode);
         Map<String, List<Skip>> skipNextMap = StreamUtils.groupByKey(allSkips, Skip::getNowNodeCode);
         List<HisTask> hisTaskList = FlowFactory.hisTaskService().getNoReject(instance.getId());
@@ -473,9 +509,9 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                                             colorPut(colorMap, "node:" + oneLastSkip.getNowNodeCode(), c);
                                         }
                                     }
-                                } else if (curHisTask != null && ObjectUtil.isNotNull(twoLastHisTask) && (twoLastHisTask.getCreateTime()
-                                        .before(curHisTask.getCreateTime()) || twoLastHisTask.getCreateTime()
-                                        .equals(curHisTask.getCreateTime()))) {
+                                } else if (curHisTask != null && ObjectUtil.isNotNull(twoLastHisTask) && (twoLastHisTask.getUpdateTime()
+                                        .before(curHisTask.getUpdateTime()) || twoLastHisTask.getUpdateTime()
+                                        .equals(curHisTask.getUpdateTime()))) {
                                     c = Color.GREEN;
                                     colorPut(colorMap, "node:" + oneLastSkip.getNowNodeCode(), c);
                                 } else {
@@ -505,9 +541,9 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                         // 前前置节点完成时间是否早于前置节点，如果是串行网关，那前前置节点必须只有一个完成，如果是并行网关都要完成
                         if (task != null) {
                             c = color;
-                        } else if (curHisTask != null && ObjectUtil.isNotNull(oneLastHisTask) && (oneLastHisTask.getCreateTime()
-                                .before(curHisTask.getCreateTime()) || oneLastHisTask.getCreateTime()
-                                .equals(curHisTask.getCreateTime()))) {
+                        } else if (curHisTask != null && ObjectUtil.isNotNull(oneLastHisTask) && (oneLastHisTask.getUpdateTime()
+                                .before(curHisTask.getUpdateTime()) || oneLastHisTask.getUpdateTime()
+                                .equals(curHisTask.getUpdateTime()))) {
                             c = Color.GREEN;
                         } else {
                             c = Color.BLACK;

@@ -46,10 +46,10 @@ public class FlowHisTask implements HisTask, ProxyEntityAvailable<FlowHisTask, F
     @Column(value = "id", primaryKey = true)
     private Long id;
 
-    /** 创建时间 */
+    /** 任务开始时间 */
     private Date createTime;
 
-    /** 更新时间 */
+    /** 审批完成时间 */
     private Date updateTime;
 
     /** 租户ID */

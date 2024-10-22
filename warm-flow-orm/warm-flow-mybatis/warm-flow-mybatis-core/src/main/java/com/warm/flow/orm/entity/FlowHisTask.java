@@ -34,12 +34,12 @@ public class FlowHisTask implements HisTask {
     private Long id;
 
     /**
-     * 创建时间
+     * 任务开始时间
      */
     private Date createTime;
 
     /**
-     * 更新时间
+     * 审批完成时间
      */
     private Date updateTime;
 

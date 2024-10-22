@@ -16,6 +16,7 @@
 package com.warm.flow.core.entity;
 
 import java.util.Date;
+import java.util.Map;
 
 /**
  * 流程实例对象 flow_instance
@@ -72,6 +73,8 @@ public interface Instance extends RootEntity {
     String getVariable();
 
     Instance setVariable(String variable);
+
+    Map<String, Object> getVariableMap();
 
     public String getFlowStatus();
 

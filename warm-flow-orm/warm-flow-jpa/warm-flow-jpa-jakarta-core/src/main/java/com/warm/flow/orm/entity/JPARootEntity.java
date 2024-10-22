@@ -87,13 +87,13 @@ public abstract class JPARootEntity<T extends RootEntity> implements RootEntity 
     private Long id;
 
     /**
-     * 创建时间
+     * 任务开始时间
      */
     @Column(name = "create_time")
     private Date createTime;
 
     /**
-     * 更新时间
+     * 审批完成时间
      */
     @Column(name = "update_time")
     private Date updateTime;

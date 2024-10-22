@@ -18,6 +18,7 @@ package com.warm.flow.orm.entity;
 import com.easy.query.core.annotation.*;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
+import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.entity.Instance;
 import com.warm.flow.orm.entity.proxy.FlowInstanceProxy;
 import lombok.Getter;
@@ -25,6 +26,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.util.Date;
+import java.util.Map;
 
 /**
  * 流程实例对象 flow_instance
@@ -110,6 +112,10 @@ public class FlowInstance implements Instance, ProxyEntityAvailable<FlowInstance
     @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String ext;
 
+    @Override
+    public Map<String, Object> getVariableMap() {
+        return FlowFactory.jsonConvert.strToMap(variable);
+    }
 
     @Override
     public String toString() {
