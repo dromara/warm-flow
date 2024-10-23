@@ -9,8 +9,8 @@ import locale from 'element-plus/es/locale/lang/zh-cn'
 import '@/assets/styles/index.scss' // global css
 
 import App from './App'
+import  Design from './views/flow-design/index'
 import store from './store'
-import router from './router'
 
 // 注册指令
 import plugins from './plugins' // plugins
@@ -22,11 +22,10 @@ import elementIcons from '@/components/SvgIcon/svgicon'
 
 import { parseTime } from '@/utils/ruoyi'
 
-const app = createApp(App)
+const app = createApp(Design)
 
 // 全局方法挂载
 app.config.globalProperties.parseTime = parseTime
-app.use(router)
 app.use(store)
 app.use(plugins)
 app.use(elementIcons)
