@@ -31,6 +31,8 @@ import com.warm.flow.core.service.DefService;
 import com.warm.flow.core.utils.Base64;
 import com.warm.flow.core.utils.*;
 import org.dom4j.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -51,6 +53,8 @@ import java.util.stream.Collectors;
  * @date 2023-03-29
  */
 public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition>, Definition> implements DefService {
+
+    private static final Logger log = LoggerFactory.getLogger(DefServiceImpl.class);
 
     @Override
     public DefService setDao(FlowDefinitionDao<Definition> warmDao) {
@@ -245,34 +249,40 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
      * @throws IOException 异常
      */
     public String basicFlowChart(Long instanceId, Long definitionId) throws IOException {
-        FlowChartChain flowChartChain = new FlowChartChain();
-        Map<String, Integer> nodeXY = basicFlowChart(instanceId, definitionId, flowChartChain);
 
-        int width = nodeXY.get("maxX") + nodeXY.get("minX");
-        int height = nodeXY.get("maxY") + nodeXY.get("minY");
-        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-        // 获取图形上下文,graphics想象成一个画笔
-        Graphics2D graphics = image.createGraphics();
-        graphics.setStroke(new BasicStroke(2f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND));
-        Font font = new Font("宋体", Font.PLAIN, 13);
-        graphics.setFont(font);
-        // 消除线条锯齿
-        graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
-        // 对指定的矩形区域填充颜色: GREEN:绿色；  红色：RED;   灰色：GRAY
-        graphics.setColor(Color.WHITE);
-        graphics.fillRect(0, 0, width, height);
+        try {
+            FlowChartChain flowChartChain = new FlowChartChain();
+            Map<String, Integer> nodeXY = basicFlowChart(instanceId, definitionId, flowChartChain);
 
-        flowChartChain.draw(graphics);
+            int width = nodeXY.get("maxX") + nodeXY.get("minX");
+            int height = nodeXY.get("maxY") + nodeXY.get("minY");
+            BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+            // 获取图形上下文,graphics想象成一个画笔
+            Graphics2D graphics = image.createGraphics();
+            graphics.setStroke(new BasicStroke(2f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND));
+            Font font = new Font("宋体", Font.PLAIN, 13);
+            graphics.setFont(font);
+            // 消除线条锯齿
+            graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+            // 对指定的矩形区域填充颜色: GREEN:绿色；  红色：RED;   灰色：GRAY
+            graphics.setColor(Color.WHITE);
+            graphics.fillRect(0, 0, width, height);
 
-        graphics.setPaintMode();
-        graphics.dispose();// 释放此图形的上下文并释放它所使用的所有系统资源
+            flowChartChain.draw(graphics);
 
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
+            graphics.setPaintMode();
+            graphics.dispose();// 释放此图形的上下文并释放它所使用的所有系统资源
 
-        ImageIO.write(image, "jpg", os);
-        return Base64.encode(os.toByteArray());
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+
+            ImageIO.write(image, "jpg", os);
+            return Base64.encode(os.toByteArray());
+        } catch (IOException e) {
+            log.error("获取流程图异常", e);
+            throw new FlowException("获取流程图异常");
+        }
 
     }
 
@@ -353,8 +363,8 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         }
 
         Map<String, Integer> maxR = new HashMap<>();
-        maxR.put("minX", 999999999);
-        maxR.put("minY", 999999999);
+        maxR.put("minX", 5000);
+        maxR.put("minY", 5000);
         maxR.put("maxX", 0);
         maxR.put("maxY", 0);
 
