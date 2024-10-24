@@ -8,7 +8,6 @@
   "scripts": {
     "dev": "vite",
     "build:prod": "vite build",
-    "build:stage": "vite build --mode staging",
     "preview": "vite preview"
   },
   "repository": {

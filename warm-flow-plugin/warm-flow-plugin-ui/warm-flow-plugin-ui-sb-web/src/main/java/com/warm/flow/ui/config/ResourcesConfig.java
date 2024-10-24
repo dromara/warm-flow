@@ -17,7 +17,6 @@ package com.warm.flow.ui.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -32,18 +31,8 @@ public class ResourcesConfig implements WebMvcConfigurer
     public void addResourceHandlers(ResourceHandlerRegistry registry)
     {
         /** warm-flow配置 */
-//        registry.addResourceHandler("/warm-flow-ui/warmjars/**")
-//                .addResourceLocations("classpath:/META-INF/resources/warm-flow/warmjars/");
-
         registry.addResourceHandler("/warm-flow-ui/**")
                 .addResourceLocations("classpath:/META-INF/resources/warm-flow-ui/");
 
-    }
-
-    @Override
-    public void addViewControllers(ViewControllerRegistry registry) {
-        // 将所有未匹配的请求转发到index.html
-        registry.addViewController("/warm-flow-ui/")
-                .setViewName("forward:/warm-flow-ui/index.html");
     }
 }

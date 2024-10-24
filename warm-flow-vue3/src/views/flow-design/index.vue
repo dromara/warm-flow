@@ -42,23 +42,10 @@ const skipConditionShow = ref(true);
 
 function init() {
 
-  document.addEventListener('DOMContentLoaded', () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const id = urlParams.get('id');
-    const disabled = urlParams.get('disabled');
-    const pageNum = urlParams.get('pageNum');
-
-    console.log('id1:', id);
-    console.log('disabled1:', disabled);
-    console.log('pageNum1:', pageNum);
-    definitionId.value = id;
-    if (disabled === 'true') {
-      disabled.value = true
-    }
-
-  });
-
-
+  definitionId.value = proxy.$appParams.id;
+  if (proxy.$appParams.disabled === 'true') {
+    disabled.value = true
+  }
 }
 
 onMounted(() => {

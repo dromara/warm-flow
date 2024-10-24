@@ -24,6 +24,15 @@ import { parseTime } from '@/utils/ruoyi'
 
 const app = createApp(Design)
 
+const urlParams = new URLSearchParams(window.location.search);
+const params = {};
+for (const [key, value] of urlParams.entries()) {
+  params[key] = value;
+}
+
+// 将参数传递给Vue实例
+app.config.globalProperties.$appParams = params;
+
 // 全局方法挂载
 app.config.globalProperties.parseTime = parseTime
 app.use(store)
