@@ -9,7 +9,6 @@ import locale from 'element-plus/es/locale/lang/zh-cn'
 import '@/assets/styles/index.scss' // global css
 
 import App from './App'
-import  Design from './views/flow-design/index'
 import store from './store'
 
 // 注册指令
@@ -22,7 +21,7 @@ import elementIcons from '@/components/SvgIcon/svgicon'
 
 import { parseTime } from '@/utils/ruoyi'
 
-const app = createApp(Design)
+const app = createApp(App)
 
 const urlParams = new URLSearchParams(window.location.search);
 const params = {};
