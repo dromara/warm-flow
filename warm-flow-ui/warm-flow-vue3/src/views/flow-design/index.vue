@@ -23,8 +23,6 @@ import Skip from "@/components/WarmFlow/js/skip";
 import PropertySetting from '@/components/WarmFlow/PropertySetting/index.vue'
 import {saveXml, getXmlString} from "@/api/flow/definition";
 import {logicFlowJsonToFlowXml, xml2LogicFlowJson} from "@/components/WarmFlow/js/tool";
-import {createApp} from "vue";
-import App from "@/App.vue";
 
 const { proxy } = getCurrentInstance();
 
@@ -50,7 +48,13 @@ function init() {
 
 onMounted(() => {
   use();
-  lf.value = new LogicFlow({container: proxy.$refs.container, grid: true,});
+  lf.value = new LogicFlow({
+    container: proxy.$refs.container,
+    grid: true,
+    keyboard: {
+      enabled: true,
+    },
+  });
   register();
   initDndPanel();
   initControl();
@@ -209,6 +213,7 @@ function register() {
   lf.value.register(End);
   lf.value.register(Skip);
 }
+
 /**
  * 添加扩展
  */
@@ -220,14 +225,14 @@ function use() {
 }
 function initEvent() {
   const { eventCenter } = lf.value.graphModel
-  eventCenter.on('node:click', (args) => {
+  eventCenter.on('node:dbclick', (args) => {
     nodeClick.value = args.data
     proxy.$nextTick(() => {
       propertySettingRef.value.show()
     })
   })
 
-  eventCenter.on('edge:click', (args) => {
+  eventCenter.on('edge:dbclick  ', (args) => {
     nodeClick.value = args.data
     const nodeModel = lf.value.getNodeModelById(nodeClick.value.sourceNodeId);
     skipConditionShow.value = nodeModel['type'] === 'serial'
