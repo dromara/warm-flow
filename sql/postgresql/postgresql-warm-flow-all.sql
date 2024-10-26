@@ -2,7 +2,7 @@ CREATE TABLE flow_definition (
 	id int8 NOT NULL, -- 主键id
 	flow_code varchar(40) NOT NULL, -- 流程编码
 	flow_name varchar(100) NOT NULL, -- 流程名称
-    category varchar(100) NOT NULL, -- 流程类别
+    category varchar(100) NULL, -- 流程类别
 	"version" varchar(20) NOT NULL, -- 流程版本
 	is_publish int2 NOT NULL DEFAULT 0, -- 是否发布（0未发布 1已发布 9失效）
 	form_custom bpchar(1) NULL DEFAULT 'N'::character varying, -- 审批表单是否自定义（Y是 N否）
