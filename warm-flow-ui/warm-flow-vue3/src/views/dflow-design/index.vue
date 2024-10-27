@@ -1,6 +1,5 @@
 <template>
-        <el-button  @click="readonly = !readonly"> 切换模式</el-button>
-        <FlowIndex :flowData="flowData" :readonly="readonly" ></FlowIndex> 
+        <FlowIndex :flowData="flowData" :readonly="readonly" ></FlowIndex>
 
 </template>
 
@@ -11,7 +10,7 @@
     const readonly = ref(false)
 const flowData = ref(
     [
-                    { 
+                    {
                     nodeId: uuid(),
                     nodeType: "start",
                     type: 'start',
@@ -43,7 +42,7 @@ const flowData = ref(
                                     properties:{},
                                     value: '',
                                 },
-                            
+
                             ],
                             [
                                 {
@@ -53,12 +52,11 @@ const flowData = ref(
                                     type: 'between',
                                     properties:{},
                                     value: '',
-                                     properties:{},
                                 },
-                            
+
                             ]
                         ]
-                    
+
                     },
                     {
                         nodeId: uuid(),
@@ -75,7 +73,7 @@ const flowData = ref(
                                   value: '',
                                   properties:{},
                                 },
-                              
+
                               ],
                               [
                                 {
@@ -88,12 +86,12 @@ const flowData = ref(
                                   default: true,
                                   properties:{},
                                 },
-                             
+
                               ]
                         ]
-                    
+
                 },
-                
+
                     {
                         nodeId: uuid(),
                         type: 'end',
