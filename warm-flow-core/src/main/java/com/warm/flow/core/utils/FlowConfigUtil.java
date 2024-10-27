@@ -71,6 +71,7 @@ public class FlowConfigUtil {
         definition.setFlowCode(definitionElement.attributeValue("flowCode"));
         definition.setFlowName(definitionElement.attributeValue("flowName"));
         definition.setVersion(definitionElement.attributeValue("version"));
+        definition.setCategory(definitionElement.attributeValue("category"));
         definition.setFormCustom(definitionElement.attributeValue("formCustom"));
         definition.setFormPath(definitionElement.attributeValue("formPath"));
         definition.setExt(definitionElement.attributeValue("ext"));
@@ -152,6 +153,7 @@ public class FlowConfigUtil {
         definitionElement.addAttribute("flowCode", definition.getFlowCode());
         definitionElement.addAttribute("flowName", definition.getFlowName());
         definitionElement.addAttribute("version", definition.getVersion());
+        definitionElement.addAttribute("category", definition.getCategory());
         definitionElement.addAttribute("formCustom", definition.getFormCustom());
         definitionElement.addAttribute("formPath", definition.getFormPath());
         definitionElement.addAttribute("listenerType", definition.getListenerType());
