@@ -53,6 +53,7 @@
         <java17.version>17</java17.version>
         <java17.path>D:\software\java\openjdk-17.0.1\bin</java17.path>
         <spring.boot.version>2.7.18</spring.boot.version>
+        <springboot3.version>3.0.1</springboot3.version>
         <dom4j.version>2.1.3</dom4j.version>
         <mybatis.version>3.5.15</mybatis.version>
         <mybatis-spring-boot>2.3.0</mybatis-spring-boot>

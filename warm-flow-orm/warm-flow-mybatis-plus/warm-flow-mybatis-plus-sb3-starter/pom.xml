@@ -13,18 +13,21 @@
     <description>warm-flow orm为mybatis-plus的springboot3 starter</description>
 
     <properties>
-        <springboot3.version>3.0.1</springboot3.version>
         <mybatis-plus.version>3.5.8</mybatis-plus.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>io.github.minliuhua</groupId>
-            <artifactId>warm-flow-mybatis-plus-core</artifactId>
+            <artifactId>warm-flow-mybatis-plus-sb-starter</artifactId>
             <exclusions>
                 <exclusion>
                     <artifactId>mybatis-plus-extension</artifactId>
                     <groupId>com.baomidou</groupId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.baomidou</groupId>
+                    <artifactId>mybatis-plus-boot-starter</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -41,30 +44,6 @@
             <version>${mybatis-plus.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>io.github.minliuhua</groupId>
-            <artifactId>warm-flow-plugin-modes-sb</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-tx</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-configuration-processor</artifactId>
-        </dependency>
     </dependencies>
 
     <dependencyManagement>
@@ -76,7 +55,6 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-
         </dependencies>
     </dependencyManagement>
 
