@@ -16,11 +16,12 @@
             <groupId>io.github.minliuhua</groupId>
             <artifactId>warm-flow-core</artifactId>
         </dependency>
-
         <dependency>
             <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus</artifactId>
+            <artifactId>mybatis-plus-extension</artifactId>
         </dependency>
+
+
     </dependencies>
 
 

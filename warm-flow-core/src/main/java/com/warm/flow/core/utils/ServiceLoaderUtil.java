@@ -15,10 +15,6 @@
  */
 package com.warm.flow.core.utils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import sun.misc.ClassLoaderUtil;
-
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.*;
@@ -29,8 +25,6 @@ import java.util.*;
  * @author warm
  */
 public class ServiceLoaderUtil {
-
-    private static final Logger log = LoggerFactory.getLogger(ServiceLoaderUtil.class);
 
     /**
      * 。加载第一个可用服务，如果用户定义了多个接口实现类，只获取第一个不报错的服务
@@ -111,7 +105,7 @@ public class ServiceLoaderUtil {
     public static ClassLoader getClassLoader() {
         ClassLoader classLoader = getContextClassLoader();
         if (classLoader == null) {
-            classLoader = ClassLoaderUtil.class.getClassLoader();
+            classLoader = ServiceLoaderUtil.class.getClassLoader();
             if (null == classLoader) {
                 classLoader = getSystemClassLoader();
             }
