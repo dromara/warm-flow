@@ -5,7 +5,7 @@ create table FLOW_DEFINITION
 			primary key,
     FLOW_CODE VARCHAR2(40) not null,
     FLOW_NAME VARCHAR2(100) not null,
-    CATEGORY VARCHAR2(100) not null,
+    CATEGORY VARCHAR2(100),
     VERSION VARCHAR2(20) not null,
     IS_PUBLISH NUMBER(1) default 0 not null,
     FORM_CUSTOM VARCHAR2(1) default 'N',

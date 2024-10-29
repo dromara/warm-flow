@@ -168,18 +168,19 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 所有待办转历史
         Node endNode = FlowFactory.nodeService().getOne(FlowFactory.newNode()
                 .setDefinitionId(instance.getDefinitionId()).setNodeType(NodeType.END.getKey()));
-        // 待办任务转历史
-        flowParams.setSkipType(SkipType.PASS.getKey());
-        List<HisTask> insHisList = FlowFactory.hisTaskService().setSkipInsHis(task, Collections.singletonList(endNode)
-                , flowParams);
-        FlowFactory.hisTaskService().saveBatch(insHisList);
 
         // 流程实例完成
         instance.setNodeType(endNode.getNodeType())
                 .setNodeCode(endNode.getNodeCode())
                 .setNodeName(endNode.getNodeName())
                 .setFlowStatus(ObjectUtil.isNotNull(flowParams.getFlowStatus()) ? flowParams.getFlowStatus()
-                : FlowStatus.AUTO_PASS.getKey());
+                        : FlowStatus.TERMINATE.getKey());
+
+        // 待办任务转历史
+        flowParams.setSkipType(SkipType.PASS.getKey()).setFlowStatus(instance.getFlowStatus());
+        List<HisTask> insHisList = FlowFactory.hisTaskService().setSkipInsHis(task, Collections.singletonList(endNode)
+                , flowParams);
+        FlowFactory.hisTaskService().saveBatch(insHisList);
 
         FlowFactory.insService().updateById(instance);
 

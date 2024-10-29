@@ -31,6 +31,14 @@ public enum FlowStatus {
 
     AUTO_PASS("3", "自动完成"),
 
+    TERMINATE("4", "终止"),
+
+    NULLIFY("5", "作废"),
+
+    CANCEL("6", "撤销"),
+
+    RETRIEVE("7", "取回"),
+
     FINISHED("8", "已完成"),
 
     REJECT("9", "已退回"),

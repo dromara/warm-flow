@@ -234,7 +234,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
     }
 
     private static String getFlowStatus(FlowParams flowParams) {
-        return StringUtils.isNotEmpty(flowParams.getFlowStatus())
-                ? flowParams.getFlowStatus() : flowParams.getHisStatus();
+        return StringUtils.isNotEmpty(flowParams.getHisStatus())
+                ? flowParams.getHisStatus() : flowParams.getFlowStatus();
     }
 }

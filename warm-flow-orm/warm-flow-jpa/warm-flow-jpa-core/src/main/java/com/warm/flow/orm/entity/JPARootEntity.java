@@ -80,8 +80,6 @@ public abstract class JPARootEntity<T extends RootEntity> implements RootEntity 
         return this.commonPredicate;
     }
 
-    ;
-
     /**
      * 主键
      */
