@@ -260,7 +260,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
             // 获取图形上下文,graphics想象成一个画笔
             Graphics2D graphics = image.createGraphics();
             graphics.setStroke(new BasicStroke(2f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND));
-            Font font = new Font("宋体", Font.PLAIN, 13);
+            Font font = new Font("宋体", Font.BOLD, 12);
             graphics.setFont(font);
             // 消除线条锯齿
             graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
@@ -277,7 +277,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
 
             ByteArrayOutputStream os = new ByteArrayOutputStream();
 
-            ImageIO.write(image, "jpg", os);
+            ImageIO.write(image, "png", os);
             return Base64.encode(os.toByteArray());
         } catch (IOException e) {
             log.error("获取流程图异常", e);
