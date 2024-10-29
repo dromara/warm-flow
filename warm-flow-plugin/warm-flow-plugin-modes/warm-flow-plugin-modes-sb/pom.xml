@@ -49,6 +49,12 @@
 
         <dependency>
             <groupId>io.github.minliuhua</groupId>
+            <artifactId>warm-flow-jpa-jakarta-core</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.minliuhua</groupId>
             <artifactId>warm-flow-plugin-json</artifactId>
         </dependency>
 
