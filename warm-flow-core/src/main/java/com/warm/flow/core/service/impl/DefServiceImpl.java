@@ -783,9 +783,21 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
 
     private String getFlowCombine(Long defId) {
         FlowCombine flowCombine = new FlowCombine();
-        flowCombine.setDefinition(getDao().selectById(defId));
-        flowCombine.setAllNodes(FlowFactory.nodeService().list(FlowFactory.newNode().setDefinitionId(defId)));
-        flowCombine.setAllSkips(FlowFactory.skipService().list(FlowFactory.newSkip().setDefinitionId(defId)));
+        Definition definition = getDao().selectById(defId);
+        definition.setId(null);
+        flowCombine.setDefinition(definition);
+        List<Node> nodeList = FlowFactory.nodeService().list(FlowFactory.newNode().setDefinitionId(defId));
+        nodeList.forEach(node -> {
+            node.setId(null);
+            node.setDefinitionId(null);
+        });
+        flowCombine.setAllNodes(nodeList);
+        List<Skip> skipList = FlowFactory.skipService().list(FlowFactory.newSkip().setDefinitionId(defId));
+        skipList.forEach(skip -> {
+            skip.setId(null);
+            skip.setDefinitionId(null);
+        });
+        flowCombine.setAllSkips(skipList);
         return JSON.toJSONString(flowCombine);
     }
 }
