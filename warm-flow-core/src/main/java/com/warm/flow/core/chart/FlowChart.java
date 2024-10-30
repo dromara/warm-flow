@@ -24,6 +24,8 @@ import java.awt.*;
  */
 public interface FlowChart {
 
+    public FlowChart setN(int n);
+
     /**
      * 绘制流程图
      *

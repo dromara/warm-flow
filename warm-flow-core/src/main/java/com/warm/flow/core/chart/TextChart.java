@@ -23,7 +23,10 @@ import java.awt.*;
  * 流程图文字
  */
 public class TextChart implements FlowChart {
+    private int n;
+
     private int xText;
+
     private int yText;
 
     private String title;
@@ -35,6 +38,15 @@ public class TextChart implements FlowChart {
         this.xText = xText;
         this.yText = yText;
         this.title = title;
+    }
+
+    public int getN() {
+        return n;
+    }
+
+    public TextChart setN(int n) {
+        this.n = n;
+        return this;
     }
 
     public int getxText() {
@@ -67,6 +79,6 @@ public class TextChart implements FlowChart {
     @Override
     public void draw(Graphics2D graphics) {
         graphics.setColor(Color.BLACK);
-        graphics.drawString(StringUtils.isEmpty(title) ? "" : title, xText, yText);
+        graphics.drawString(StringUtils.isEmpty(title) ? "" : title, xText * n, yText * n);
     }
 }

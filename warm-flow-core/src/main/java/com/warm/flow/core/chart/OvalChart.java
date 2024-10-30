@@ -25,6 +25,8 @@ import java.awt.*;
  * 流程图开始或者结束节点
  */
 public class OvalChart implements FlowChart {
+    private int n;
+
     private int xStartOval;
 
     private int yStartOval;
@@ -41,6 +43,15 @@ public class OvalChart implements FlowChart {
         this.yStartOval = yStartOval;
         this.c = c;
         this.textChart = textChart;
+    }
+
+    public int getN() {
+        return n;
+    }
+
+    public OvalChart setN(int n) {
+        this.n = n;
+        return this;
     }
 
     public int getxStartOval() {
@@ -82,12 +93,12 @@ public class OvalChart implements FlowChart {
     @Override
     public void draw(Graphics2D graphics) {
         graphics.setColor(c);
-        graphics.drawOval(xStartOval - 20, yStartOval - 20, 40, 40);
+        graphics.drawOval((xStartOval - 20) * n, (yStartOval - 20) * n, 40 * n, 40 * n);
         if (ObjectUtil.isNotNull(textChart) && StringUtils.isNotEmpty(textChart.getTitle())) {
             textChart.setxText(textChart.getxText() - DrawUtils.stringWidth(graphics, textChart.getTitle()) / 2);
             textChart.setyText(textChart.getyText() + 5);
             // 填充文字说明
-            textChart.draw(graphics);
+            textChart.setN(n).draw(graphics);
         }
     }
 }

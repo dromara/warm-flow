@@ -33,15 +33,15 @@ import java.util.List;
 public interface DefService extends IWarmService<Definition> {
 
     /**
-     * 导入流程定义xml的is，返回流程定义对象
+     * 新增流程定义、流程节点和流程跳转数据
      *
-     * @param is 流程定义xml的is
+     * @param is 流程定义xml的输入流
      * @throws Exception
      */
     Definition importXml(InputStream is) throws Exception;
 
     /**
-     * 传入流程定义id、流程定义xml字符串，保存流程定义数据
+     * 保存流程节点和流程跳转数据
      *
      * @param def 流程定义对象
      * @throws Exception
@@ -49,7 +49,7 @@ public interface DefService extends IWarmService<Definition> {
     void saveXml(Definition def) throws Exception;
 
     /**
-     * 传入流程定义id、流程定义xml字符串，保存流程定义数据
+     * 保存流程节点和流程跳转数据
      * @param id 流程定义id
      * @param xmlString 流程定义xml字符串
      * @throws Exception
@@ -57,7 +57,7 @@ public interface DefService extends IWarmService<Definition> {
     void saveXml(Long id, String xmlString) throws Exception;
 
     /**
-     * 导出流程定义xml的Document对象
+     * 导出流程定义(流程定义、流程节点和流程跳转数据)xml的Document对象
      *
      * @param id 流程定义id
      * @return
@@ -65,7 +65,7 @@ public interface DefService extends IWarmService<Definition> {
     Document exportXml(Long id);
 
     /**
-     * 获取流程定义xml的字符串
+     * 获取流程定义xml(流程定义、流程节点和流程跳转数据)的字符串
      *
      * @param id
      * @return
@@ -77,10 +77,10 @@ public interface DefService extends IWarmService<Definition> {
     void closeFlowByCodeList(List<String> flowCodeList);
 
     /**
+     * 新增流程定义表数据，新增后需要通过saveXml接口保存流程节点和流程跳转数据
      * 校验后新增
-     *
-     * @param definition
-     * @return
+     * @param definition 流程定义对象
+     * @return boolean
      */
     boolean checkAndSave(Definition definition);
 

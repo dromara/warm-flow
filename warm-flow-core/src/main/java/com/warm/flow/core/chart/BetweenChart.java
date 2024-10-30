@@ -25,9 +25,14 @@ import java.awt.*;
  * 流程图中间节点
  */
 public class BetweenChart implements FlowChart {
+    private int n;
+
     private int xRect;
+
     private int yRect;
+
     private Color c;
+
     private TextChart textChart;
 
     public BetweenChart() {
@@ -38,6 +43,15 @@ public class BetweenChart implements FlowChart {
         this.yRect = yRect;
         this.c = c;
         this.textChart = textChart;
+    }
+
+    public int getN() {
+        return n;
+    }
+
+    public BetweenChart setN(int n) {
+        this.n = n;
+        return this;
     }
 
     public int getxRect() {
@@ -79,11 +93,11 @@ public class BetweenChart implements FlowChart {
     @Override
     public void draw(Graphics2D graphics) {
         graphics.setColor(c);
-        graphics.drawRoundRect(xRect - 50, yRect - 40, 100, 80, 20, 20);
+        graphics.drawRoundRect((xRect - 50) * n, (yRect - 40)  * n, 100 * n, 80 * n, 20 * n, 20 * n);
         if (ObjectUtil.isNotNull(textChart) && StringUtils.isNotEmpty(textChart.getTitle())) {
             textChart.setxText(textChart.getxText() - DrawUtils.stringWidth(graphics, textChart.getTitle()) / 2);
             // 填充文字说明
-            textChart.draw(graphics);
+            textChart.setN(n).draw(graphics);
         }
     }
 }

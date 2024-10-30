@@ -33,9 +33,9 @@ public class FlowChartChain {
         return this;
     }
 
-    public void draw(Graphics2D graphics) {
+    public void draw(Graphics2D graphics, int n) {
         for (FlowChart flowChart : flowChartList) {
-            flowChart.draw(graphics);
+            flowChart.setN(n).draw(graphics);
         }
     }
 

@@ -20,12 +20,16 @@ import com.warm.flow.core.utils.ObjectUtil;
 import com.warm.flow.core.utils.StringUtils;
 
 import java.awt.*;
+import java.util.Arrays;
 
 /**
  * 流程图开始或者结束节点
  */
 public class SkipChart implements FlowChart {
+    private int n;
+
     private int[] xPoints;
+
     private int[] yPoints;
 
     private Color c;
@@ -40,6 +44,15 @@ public class SkipChart implements FlowChart {
         this.yPoints = yPoints;
         this.c = c;
         this.textChart = textChart;
+    }
+
+    public int getN() {
+        return n;
+    }
+
+    public SkipChart setN(int n) {
+        this.n = n;
+        return this;
     }
 
     public int[] getxPoints() {
@@ -82,6 +95,9 @@ public class SkipChart implements FlowChart {
     public void draw(Graphics2D graphics) {
         graphics.setColor(c);
         // 画跳转线
+        xPoints = Arrays.stream(xPoints).map(x -> x * n).toArray();
+        yPoints = Arrays.stream(yPoints).map(y -> y * n).toArray();
+
         graphics.drawPolyline(xPoints, yPoints, xPoints.length);
         // 画箭头， 判断箭头朝向
         int[] xArrow;
@@ -90,23 +106,25 @@ public class SkipChart implements FlowChart {
         int xEndTwo = xPoints[xPoints.length - 2];
         int yEndOne = yPoints[yPoints.length - 1];
         int yEndTwo = yPoints[yPoints.length - 2];
+        int xArrowLength = 5 * n;
+        int yArrowLength = 10 * n;
         if (xEndOne == xEndTwo) {
-            xArrow = new int[]{xEndOne - 5, xEndOne, xEndOne + 5};
+            xArrow = new int[]{xEndOne - xArrowLength, xEndOne, xEndOne + xArrowLength};
             // 1、 如果最后两个左边x相同，最后一个 < 倒数第二个，朝下
             if (yEndOne > yEndTwo) {
-                yArrow = new int[]{yEndOne - 10, yEndOne, yEndOne - 10};
+                yArrow = new int[]{yEndOne - yArrowLength, yEndOne, yEndOne - yArrowLength};
             } else {
                 // 2、 如果最后两个左边x相同，最后一个 > 倒数第二个，朝上
-                yArrow = new int[]{yEndOne + 10, yEndOne, yEndOne + 10};
+                yArrow = new int[]{yEndOne + yArrowLength, yEndOne, yEndOne + yArrowLength};
             }
         } else {
-            yArrow = new int[]{yEndOne - 5, yEndOne, yEndOne + 5};
+            yArrow = new int[]{yEndOne - xArrowLength, yEndOne, yEndOne + xArrowLength};
             // 3、 如果最后两个左边y相同，最后一个 < 倒数第二个，朝左
             if (xEndOne < xEndTwo) {
-                xArrow = new int[]{xEndOne + 10, xEndOne, xEndOne + 10};
+                xArrow = new int[]{xEndOne + yArrowLength, xEndOne, xEndOne + yArrowLength};
             } else {
                 // 4、 如果最后两个左边y相同，最后一个 > 倒数第二个，朝右
-                xArrow = new int[]{xEndOne - 10, xEndOne, xEndOne - 10};
+                xArrow = new int[]{xEndOne - yArrowLength, xEndOne, xEndOne - yArrowLength};
             }
         }
         graphics.fillPolygon(xArrow, yArrow, 3);
@@ -114,7 +132,7 @@ public class SkipChart implements FlowChart {
             textChart.setxText(textChart.getxText() - DrawUtils.stringWidth(graphics, textChart.getTitle()) / 2);
             textChart.setyText(textChart.getyText() - 10);
             // 填充文字说明
-            textChart.draw(graphics);
+            textChart.setN(n).draw(graphics);
         }
     }
 }

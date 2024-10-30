@@ -74,7 +74,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
 
         // 判断开始结点和下一结点是否有权限监听器,有执行权限监听器node.setPermissionFlag,无走数据库的权限标识符
         ListenerUtil.executeGetNodePermission(new ListenerVariable(definition, instance, startNode, flowParams.getVariable()
-                , null, nextNodes));
+                , null, nextNodes).setFlowParams(flowParams));
 
         // 设置历史任务
         List<HisTask> hisTasks = setHisTask(nextNodes, flowParams, startNode, instance.getId());
@@ -89,7 +89,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
 
         // 执行分派监听器
         ListenerUtil.executeListener(new ListenerVariable(definition, instance, startNode, flowParams.getVariable()
-                , null, nextNodes, addTasks), Listener.LISTENER_ASSIGNMENT);
+                , null, nextNodes, addTasks).setFlowParams(flowParams), Listener.LISTENER_ASSIGNMENT);
 
 
         // 开启流程，保存流程信息
@@ -97,7 +97,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
 
         // 执行结束监听器和下一节点的节点开始监听器
         ListenerUtil.endCreateListener(new ListenerVariable(definition, instance, startNode, flowParams.getVariable()
-                , null, nextNodes, addTasks));
+                , null, nextNodes, addTasks).setFlowParams(flowParams));
 
         return instance;
     }
@@ -116,18 +116,11 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
 
     @Override
     public Instance termination(Long instanceId, FlowParams flowParams) {
-        // 获取当前流程
-        Instance instance = getById(instanceId);
-        AssertUtil.isNull(instance, ExceptionCons.NOT_FOUNT_INSTANCE);
-        AssertUtil.isTrue(NodeType.isEnd(instance.getNodeType()), ExceptionCons.FLOW_FINISH);
-
         // 获取待办任务
         List<Task> taskList = FlowFactory.taskService().list(FlowFactory.newTask().setInstanceId(instanceId));
         AssertUtil.isEmpty(taskList, ExceptionCons.NOT_FOUNT_TASK);
-
-        // 获取待办任务
         Task task = taskList.get(0);
-        return FlowFactory.taskService().termination(instance, task, flowParams);
+        return FlowFactory.taskService().termination(task, flowParams);
     }
 
     @Override

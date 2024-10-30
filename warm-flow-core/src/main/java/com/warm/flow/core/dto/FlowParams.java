@@ -92,6 +92,21 @@ public class FlowParams implements Serializable {
      */
     private String hisTaskExt;
 
+    /**
+     * 增加办理人：加签，转办，委托
+     */
+    private List<String> addHandlers;
+
+    /**
+     * 减少办理人：减签，委托
+     */
+    private List<String> reductionHandlers;
+
+    /**
+     * 转办忽略权限校验（true：忽略，false：不忽略）
+     */
+    private boolean ignore;
+
     public static FlowParams build() {
         return new FlowParams();
     }
@@ -206,76 +221,42 @@ public class FlowParams implements Serializable {
         return flowStatus;
     }
 
-    public FlowParams setFlowStatus(String flowStatus) {
-        this.flowStatus = flowStatus;
-        return this;
-    }
-
     public String getHisStatus() {
         return hisStatus;
-    }
-
-    public FlowParams setHisStatus(String hisStatus) {
-        this.hisStatus = hisStatus;
-        return this;
     }
 
     public Integer getActivityStatus() {
         return activityStatus;
     }
 
-    public FlowParams setActivityStatus(Integer activityStatus) {
-        this.activityStatus = activityStatus;
-        return this;
-    }
-
     public Integer getCooperateType() {
         return cooperateType;
     }
 
-    public FlowParams setCooperateType(Integer cooperateType) {
-        this.cooperateType = cooperateType;
+    public List<String> getAddHandlers() {
+        return addHandlers;
+    }
+
+    public FlowParams addHandlers(List<String> addHandlers) {
+        this.addHandlers = addHandlers;
         return this;
     }
 
-    public FlowParams setFlowCode(String flowCode) {
-        this.flowCode = flowCode;
+    public List<String> getReductionHandlers() {
+        return reductionHandlers;
+    }
+
+    public FlowParams reductionHandlers(List<String> reductionHandlers) {
+        this.reductionHandlers = reductionHandlers;
         return this;
     }
 
-    public FlowParams setHandler(String handler) {
-        this.handler = handler;
-        return this;
+    public boolean isIgnore() {
+        return ignore;
     }
 
-    public FlowParams setNodeCode(String nodeCode) {
-        this.nodeCode = nodeCode;
+    public FlowParams ignore(boolean ignore) {
+        this.ignore = ignore;
         return this;
     }
-
-    public FlowParams setPermissionFlag(List<String> permissionFlag) {
-        this.permissionFlag = permissionFlag;
-        return this;
-    }
-
-    public FlowParams setMessage(String message) {
-        this.message = message;
-        return this;
-    }
-
-    public FlowParams setVariable(Map<String, Object> variable) {
-        this.variable = variable;
-        return this;
-    }
-
-    public FlowParams setExt(String ext) {
-        this.ext = ext;
-        return this;
-    }
-
-    public FlowParams setHisTaskExt(String hisTaskExt) {
-        this.hisTaskExt = hisTaskExt;
-        return this;
-    }
-
 }

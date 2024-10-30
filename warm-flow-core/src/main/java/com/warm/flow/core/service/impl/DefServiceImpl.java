@@ -37,10 +37,7 @@ import org.slf4j.LoggerFactory;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.*;
@@ -246,37 +243,38 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
      * @param instanceId 实例id
      * @param definitionId  流程定义id
      * @return   流程图base64字符串
-     * @throws IOException 异常
      */
-    public String basicFlowChart(Long instanceId, Long definitionId) throws IOException {
+    public String basicFlowChart(Long instanceId, Long definitionId) {
 
         try {
             FlowChartChain flowChartChain = new FlowChartChain();
             Map<String, Integer> nodeXY = basicFlowChart(instanceId, definitionId, flowChartChain);
 
-            int width = nodeXY.get("maxX") + nodeXY.get("minX");
-            int height = nodeXY.get("maxY") + nodeXY.get("minY");
+            // 清晰度
+            int n = 2;
+            int width = (nodeXY.get("maxX") + nodeXY.get("minX")) * n;
+            int height = (nodeXY.get("maxY") + nodeXY.get("minY")) * n;
             BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+
             // 获取图形上下文,graphics想象成一个画笔
             Graphics2D graphics = image.createGraphics();
-            graphics.setStroke(new BasicStroke(2f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND));
-            Font font = new Font("宋体", Font.BOLD, 12);
+            graphics.setStroke(new BasicStroke((2 * n) + 1, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND));
+            Font font = new Font("宋体", Font.BOLD, 12 * n);
             graphics.setFont(font);
             // 消除线条锯齿
             graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
             graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+            graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+
             // 对指定的矩形区域填充颜色: GREEN:绿色；  红色：RED;   灰色：GRAY
             graphics.setColor(Color.WHITE);
             graphics.fillRect(0, 0, width, height);
 
-            flowChartChain.draw(graphics);
-
+            flowChartChain.draw(graphics, n);
             graphics.setPaintMode();
             graphics.dispose();// 释放此图形的上下文并释放它所使用的所有系统资源
 
             ByteArrayOutputStream os = new ByteArrayOutputStream();
-
             ImageIO.write(image, "png", os);
             return Base64.encode(os.toByteArray());
         } catch (IOException e) {

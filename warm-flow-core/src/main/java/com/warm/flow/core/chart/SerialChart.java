@@ -21,6 +21,8 @@ import java.awt.*;
  * 流程图互斥网关
  */
 public class SerialChart implements FlowChart {
+    private int n;
+
     private int xSerial;
 
     private int ySerial;
@@ -34,6 +36,15 @@ public class SerialChart implements FlowChart {
         this.xSerial = xSerial;
         this.ySerial = ySerial;
         this.c = c;
+    }
+
+    public int getN() {
+        return n;
+    }
+
+    public SerialChart setN(int n) {
+        this.n = n;
+        return this;
     }
 
     public int getxSerial() {
@@ -66,16 +77,16 @@ public class SerialChart implements FlowChart {
     @Override
     public void draw(Graphics2D graphics) {
         graphics.setColor(c);
-        int[] xSerials = {xSerial - 20, xSerial, xSerial + 20, xSerial};
-        int[] ySerials = {ySerial, ySerial - 20, ySerial, ySerial + 20};
+        int[] xSerials = {(xSerial - 20) * n, xSerial * n, (xSerial + 20) * n, xSerial * n};
+        int[] ySerials = {ySerial * n, (ySerial - 20) * n, ySerial * n, (ySerial + 20) * n};
         graphics.drawPolygon(xSerials, ySerials, 4);
 
-        int[] xPoints1 = {xSerial - 6, xSerial + 6};
-        int[] yPoints1 = {ySerial - 6, ySerial + 6};
+        int[] xPoints1 = {(xSerial - 6) * n, (xSerial + 6) * n};
+        int[] yPoints1 = {(ySerial - 6) * n, (ySerial + 6) * n};
         graphics.drawPolyline(xPoints1, yPoints1, xPoints1.length);
 
-        int[] xPoints2 = {xSerial - 6, xSerial + 6};
-        int[] yPoints2 = {ySerial + 6, ySerial - 6};
+        int[] xPoints2 = {(xSerial - 6) * n, (xSerial + 6) * n};
+        int[] yPoints2 = {(ySerial + 6) * n, (ySerial - 6) * n};
         graphics.drawPolyline(xPoints2, yPoints2, xPoints2.length);
     }
 }
