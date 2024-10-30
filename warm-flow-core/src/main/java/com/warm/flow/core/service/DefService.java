@@ -161,4 +161,44 @@ public interface DefService extends IWarmService<Definition> {
      * @param id 流程定义id: [必传]
      */
     boolean unActive(Long id);
+
+    /**
+     * 传入流程定义id、流程定义json字符串，保存流程定义数据
+     *
+     * @param defId 流程定义id
+     * @param jsonString 流程定义json字符串
+     * @author xiarg
+     * @since 2024/10/29 16:30
+     */
+    void saveJson(Long defId, String jsonString) throws Exception;
+
+    /**
+     * 获取流程定义json的字符串
+     *
+     * @param defId 流程定义id
+     * @return 流程定义的json字符串
+     * @author xiarg
+     * @since 2024/10/29 16:31
+     */
+    String jsonString(Long defId);
+
+    /**
+     * 入流程定义json的is，返回流程定义对象
+     *
+     * @param inputStream 流程定义json的inputStream
+     * @return 流程定义
+     * @author xiarg
+     * @since 2024/10/30 16:05
+     */
+    Definition importJson(InputStream inputStream) throws Exception;
+
+    /**
+     * 导出流程定义json的输出流
+     *
+     * @param defId 流程定义id
+     * @return json数据流
+     * @author xiarg
+     * @since 2024/10/30 16:05
+     */
+    InputStream exportJson(Long defId);
 }

@@ -226,14 +226,7 @@ public class FlowConfigUtil {
         // 便利一个流程中的各个节点
         for (Node node : nodeList) {
             initNodeAndCondition(node, definition.getId(), definition.getVersion());
-            if (NodeType.isStart(node.getNodeType())) {
-                startNum++;
-                AssertUtil.isTrue(startNum > 1, "[" + flowName + "]" + ExceptionCons.MUL_START_NODE);
-            }
-            // 保证不存在重复的nodeCode
-            AssertUtil.contains(nodeCodeSet, node.getNodeCode(),
-                    "【" + flowName + "】" + ExceptionCons.SAME_NODE_CODE);
-            nodeCodeSet.add(node.getNodeCode());
+            startNum = checkStartAndSame(node, startNum, flowName, nodeCodeSet);
             allNodes.add(node);
             allSkips.addAll(node.getSkipList());
         }
@@ -247,12 +240,24 @@ public class FlowConfigUtil {
         return combine;
     }
 
+    public static int checkStartAndSame(Node node, int startNum, String flowName, Set<String> nodeCodeSet) {
+        if (NodeType.isStart(node.getNodeType())) {
+            startNum++;
+            AssertUtil.isTrue(startNum > 1, "[" + flowName + "]" + ExceptionCons.MUL_START_NODE);
+        }
+        // 保证不存在重复的nodeCode
+        AssertUtil.contains(nodeCodeSet, node.getNodeCode(),
+                "【" + flowName + "】" + ExceptionCons.SAME_NODE_CODE);
+        nodeCodeSet.add(node.getNodeCode());
+        return startNum;
+    }
+
     /**
      * 校验跳转节点的合法性
      *
      * @param allSkips
      */
-    private static void checkSkipNode(List<Skip> allSkips) {
+    public static void checkSkipNode(List<Skip> allSkips) {
         Map<String, List<Skip>> allSkipMap = StreamUtils.groupByKey(allSkips, Skip::getNowNodeCode);
         // 不可同时通过或者退回到多个中间节点，必须先流转到网关节点
         allSkipMap.forEach((key, values) -> {
@@ -277,7 +282,7 @@ public class FlowConfigUtil {
      * @param allSkips
      * @param nodeCodeSet
      */
-    private static void validaIsExistDestNode(List<Skip> allSkips, Set<String> nodeCodeSet) {
+    public static void validaIsExistDestNode(List<Skip> allSkips, Set<String> nodeCodeSet) {
         for (int i = 0; i < allSkips.size(); i++) {
             String nextNodeCode = allSkips.get(i).getNextNodeCode();
             AssertUtil.isTrue(!nodeCodeSet.contains(nextNodeCode), "【" + nextNodeCode + "】" + ExceptionCons.NULL_NODE_CODE);
@@ -293,7 +298,7 @@ public class FlowConfigUtil {
      * @param version
      * @return
      */
-    private static void initNodeAndCondition(Node node, Long definitionId, String version) {
+    public static void initNodeAndCondition(Node node, Long definitionId, String version) {
         String nodeName = node.getNodeName();
         String nodeCode = node.getNodeCode();
         List<Skip> skipList = node.getSkipList();
@@ -312,29 +317,31 @@ public class FlowConfigUtil {
         Set<String> gateWaySet = new HashSet<>();
         int skipNum = 0;
         // 遍历节点下的跳转条件
-        for (Skip skip : skipList) {
-            if (NodeType.isStart(node.getNodeType())) {
-                skipNum++;
-                AssertUtil.isTrue(skipNum > 1, "[" + node.getNodeName() + "]" + ExceptionCons.MUL_START_SKIP);
-            }
-            AssertUtil.isEmpty(skip.getNextNodeCode(), "【" + nodeName + "】" + ExceptionCons.LOST_DEST_NODE);
-            FlowFactory.dataFillHandler().idFill(skip);
-            // 流程id
-            skip.setDefinitionId(definitionId);
-            // 节点id
-            skip.setNodeId(node.getId());
-            if (NodeType.isGateWaySerial(node.getNodeType())) {
-                String target = skip.getSkipCondition() + ":" + skip.getNextNodeCode();
-                AssertUtil.contains(gateWaySet, target, "[" + nodeName + "]" + ExceptionCons.SAME_CONDITION_NODE);
-                gateWaySet.add(target);
-            } else if (NodeType.isGateWayParallel(node.getNodeType())) {
-                String target = skip.getNextNodeCode();
-                AssertUtil.contains(gateWaySet, target, "[" + nodeName + "]" + ExceptionCons.SAME_DEST_NODE);
-                gateWaySet.add(target);
-            } else {
-                String value = skip.getSkipType() + ":" + skip.getNextNodeCode();
-                AssertUtil.contains(betweenSet, value, "[" + nodeName + "]" + ExceptionCons.SAME_CONDITION_VALUE);
-                betweenSet.add(value);
+        if (CollUtil.isNotEmpty(skipList)) {
+            for (Skip skip : skipList) {
+                if (NodeType.isStart(node.getNodeType())) {
+                    skipNum++;
+                    AssertUtil.isTrue(skipNum > 1, "[" + node.getNodeName() + "]" + ExceptionCons.MUL_START_SKIP);
+                }
+                AssertUtil.isEmpty(skip.getNextNodeCode(), "【" + nodeName + "】" + ExceptionCons.LOST_DEST_NODE);
+                FlowFactory.dataFillHandler().idFill(skip);
+                // 流程id
+                skip.setDefinitionId(definitionId);
+                // 节点id
+                skip.setNodeId(node.getId());
+                if (NodeType.isGateWaySerial(node.getNodeType())) {
+                    String target = skip.getSkipCondition() + ":" + skip.getNextNodeCode();
+                    AssertUtil.contains(gateWaySet, target, "[" + nodeName + "]" + ExceptionCons.SAME_CONDITION_NODE);
+                    gateWaySet.add(target);
+                } else if (NodeType.isGateWayParallel(node.getNodeType())) {
+                    String target = skip.getNextNodeCode();
+                    AssertUtil.contains(gateWaySet, target, "[" + nodeName + "]" + ExceptionCons.SAME_DEST_NODE);
+                    gateWaySet.add(target);
+                } else {
+                    String value = skip.getSkipType() + ":" + skip.getNextNodeCode();
+                    AssertUtil.contains(betweenSet, value, "[" + nodeName + "]" + ExceptionCons.SAME_CONDITION_VALUE);
+                    betweenSet.add(value);
+                }
             }
         }
     }

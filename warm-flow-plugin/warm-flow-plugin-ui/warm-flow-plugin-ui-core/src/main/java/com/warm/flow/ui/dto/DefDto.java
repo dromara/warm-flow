@@ -28,6 +28,9 @@ public class DefDto {
     /** 流程定义xml字符串 */
     private String xmlString;
 
+    /** 流程定义json字符串 */
+    private String jsonString;
+
     public Long getId() {
         return id;
     }
@@ -42,5 +45,13 @@ public class DefDto {
 
     public void setXmlString(String xmlString) {
         this.xmlString = xmlString;
+    }
+
+    public String getJsonString() {
+        return jsonString;
+    }
+
+    public void setJsonString(String jsonString) {
+        this.jsonString = jsonString;
     }
 }

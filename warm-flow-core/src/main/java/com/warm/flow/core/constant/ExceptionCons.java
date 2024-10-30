@@ -121,4 +121,6 @@ public class ExceptionCons {
 
     public static final String INSTANCE_ALREADY_SUSPENDED = "当前流程实例已经挂起";
 
+    public static final String FLOW_HAVE_USELESS_SKIP = "存在无用的跳转";
+
 }

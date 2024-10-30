@@ -15,6 +15,8 @@
  */
 package com.warm.flow.core.service.impl;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONWriter;
 import com.warm.flow.core.FlowFactory;
 import com.warm.flow.core.chart.*;
 import com.warm.flow.core.constant.ExceptionCons;
@@ -37,10 +39,7 @@ import org.slf4j.LoggerFactory;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.*;
@@ -92,17 +91,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         FlowCombine combine = FlowConfigUtil.readConfig(new ByteArrayInputStream
                 (xmlString.getBytes(StandardCharsets.UTF_8)));
         // 所有的流程节点
-        List<Node> allNodes = combine.getAllNodes();
-        // 所有的流程连线
-        List<Skip> allSkips = combine.getAllSkips();
-
-        FlowFactory.nodeService().remove(FlowFactory.newNode().setDefinitionId(id));
-        FlowFactory.skipService().remove(FlowFactory.newSkip().setDefinitionId(id));
-        allNodes.forEach(node -> node.setDefinitionId(id));
-        allSkips.forEach(skip -> skip.setDefinitionId(id));
-        // 保存节点，流程连线，权利人
-        FlowFactory.nodeService().saveBatch(allNodes);
-        FlowFactory.skipService().saveBatch(allSkips);
+        saveNodeAndSkip(id, combine);
     }
 
     @Override
@@ -682,4 +671,121 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         return version;
     }
 
+    @Override
+    public void saveJson(Long defId, String jsonString) throws Exception {
+        if (ObjectUtil.isNull(defId) || StringUtils.isEmpty(jsonString)) {
+            return;
+        }
+        FlowCombine combine = JSON.parseObject(jsonString, FlowCombine.class);
+        // 校验流程定义合法性
+        checkFlowLegal(combine);
+        // 保存流程节点和跳转
+        saveNodeAndSkip(defId, combine);
+    }
+
+    private void checkFlowLegal(FlowCombine combine) {
+        Definition definition = combine.getDefinition();
+        String flowName = definition.getFlowName();
+        AssertUtil.isEmpty(definition.getFlowCode(), "【" + flowName + "】流程flowCode为空!");
+        // 节点校验
+        List<Node> allNodes = combine.getAllNodes();
+        List<Skip> allSkips = combine.getAllSkips();
+        Map<String, List<Skip>> skipMap = StreamUtils.groupByKey(allSkips, Skip::getNowNodeCode);
+        allNodes.forEach(node -> {
+            node.setSkipList(skipMap.get(node.getNodeCode()));
+            skipMap.remove(node.getNodeCode());
+        });
+        AssertUtil.isNotEmpty(skipMap, "[" + flowName + "]" + ExceptionCons.FLOW_HAVE_USELESS_SKIP);
+        // 每一个流程的开始节点个数
+        Set<String> nodeCodeSet = new HashSet<>();
+        // 便利一个流程中的各个节点
+        int startNum = 0;
+        for (Node node : allNodes) {
+            FlowConfigUtil.initNodeAndCondition(node, definition.getId(), definition.getVersion());
+            startNum = FlowConfigUtil.checkStartAndSame(node, startNum, flowName, nodeCodeSet);
+        }
+        AssertUtil.isTrue(startNum == 0, "[" + flowName + "]" + ExceptionCons.LOST_START_NODE);
+        // 校验跳转节点的合法性
+        FlowConfigUtil.checkSkipNode(allSkips);
+        // 校验所有目标节点是否都存在
+        FlowConfigUtil.validaIsExistDestNode(allSkips, nodeCodeSet);
+    }
+
+    private void saveNodeAndSkip(Long defId, FlowCombine combine) {
+        // 所有的流程节点
+        List<Node> allNodes = combine.getAllNodes();
+        // 所有的流程连线
+        List<Skip> allSkips = combine.getAllSkips();
+        // 删除所有节点和连线
+        FlowFactory.nodeService().remove(FlowFactory.newNode().setDefinitionId(defId));
+        FlowFactory.skipService().remove(FlowFactory.newSkip().setDefinitionId(defId));
+        allNodes.forEach(node -> node.setDefinitionId(defId));
+        allSkips.forEach(skip -> skip.setDefinitionId(defId));
+        // 保存节点，流程连线，权利人
+        FlowFactory.nodeService().saveBatch(allNodes);
+        FlowFactory.skipService().saveBatch(allSkips);
+    }
+
+    @Override
+    public String jsonString(Long defId) {
+        return getFlowCombine(defId);
+    }
+
+    @Override
+    public Definition importJson(InputStream inputStream) throws Exception {
+        if (ObjectUtil.isNull(inputStream)) {
+            return null;
+        }
+        FlowCombine flowCombine = JSON.parseObject(readJsonStream(inputStream), FlowCombine.class);
+        // 流程定义
+        Definition definition = flowCombine.getDefinition();
+        FlowFactory.dataFillHandler().idFill(definition);
+        // 所有的流程节点
+        List<Node> allNodes = flowCombine.getAllNodes();
+        allNodes.forEach(node -> node.setDefinitionId(definition.getId()));
+        // 所有的流程连线
+        List<Skip> allSkips = flowCombine.getAllSkips();
+        allSkips.forEach(skip -> skip.setDefinitionId(definition.getId()));
+        // 根据不同策略进行新增
+        insertFlow(definition, allNodes, allSkips);
+        return definition;
+    }
+
+    private String readJsonStream(InputStream inputStream) throws IOException {
+        StringBuilder builder = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                builder.append(line).append('\n');
+            }
+        } catch (IOException e) {
+            throw new FlowException("读取导入的JSON输入流异常：" + e.getMessage(), e);
+        }
+        if (builder.length() > 0 && builder.charAt(builder.length() - 1) == '\n') {
+            // 判断去掉最后一个换行符
+            builder.setLength(builder.length() - 1);
+        }
+        return builder.toString();
+    }
+
+    @Override
+    public InputStream exportJson(Long defId) {
+        String flowCombine = getFlowCombine(defId);
+        try {
+            // 格式化 JSON 字符串
+            String formattedJson = JSON.toJSONString(JSON.parse(flowCombine), JSONWriter.Feature.PrettyFormat,
+                    JSONWriter.Feature.WriteMapNullValue);
+            return new ByteArrayInputStream(formattedJson.getBytes(StandardCharsets.UTF_8));
+        } catch (Exception e) {
+            throw new RuntimeException("生成 JSON 输入流时发生异常: " + e.getMessage(), e);
+        }
+    }
+
+    private String getFlowCombine(Long defId) {
+        FlowCombine flowCombine = new FlowCombine();
+        flowCombine.setDefinition(getDao().selectById(defId));
+        flowCombine.setAllNodes(FlowFactory.nodeService().list(FlowFactory.newNode().setDefinitionId(defId)));
+        flowCombine.setAllSkips(FlowFactory.skipService().list(FlowFactory.newSkip().setDefinitionId(defId)));
+        return JSON.toJSONString(flowCombine);
+    }
 }
