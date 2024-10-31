@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.warm.flow.orm.mapper.FlowInstanceMapper">
+<mapper namespace="org.dromara.warm.flow.orm.mapper.FlowInstanceMapper">
 
-    <resultMap type="com.warm.flow.orm.entity.FlowInstance" id="FlowInstanceResult">
+    <resultMap type="org.dromara.warm.flow.orm.entity.FlowInstance" id="FlowInstanceResult">
         <result property="id" column="id"/>
         <result property="businessId" column="business_id"/>
         <result property="definitionId" column="definition_id"/>
@@ -74,12 +74,12 @@
         </where>
     </sql>
 
-    <select id="selectCount" parameterType="com.warm.flow.orm.entity.FlowInstance" resultType="java.lang.Long">
+    <select id="selectCount" parameterType="org.dromara.warm.flow.orm.entity.FlowInstance" resultType="java.lang.Long">
         select count(*) from flow_instance t
         <include refid="select_parameter"/>
     </select>
 
-    <select id="selectList" parameterType="com.warm.flow.orm.entity.FlowInstance"
+    <select id="selectList" parameterType="org.dromara.warm.flow.orm.entity.FlowInstance"
             resultMap="FlowInstanceResult">
         <choose>
             <when test="dataSourceType == 'oracle'.toString()">
@@ -200,7 +200,7 @@
         <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
     </select>
 
-    <insert id="insert" parameterType="com.warm.flow.orm.entity.FlowInstance">
+    <insert id="insert" parameterType="org.dromara.warm.flow.orm.entity.FlowInstance">
         insert into flow_instance
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">id,</if>
@@ -238,7 +238,7 @@
         </trim>
     </insert>
 
-    <update id="updateById" parameterType="com.warm.flow.orm.entity.FlowInstance">
+    <update id="updateById" parameterType="org.dromara.warm.flow.orm.entity.FlowInstance">
         update flow_instance
         <trim prefix="SET" suffixOverrides=",">
             <if test="businessId != null and businessId != ''">business_id = #{businessId},</if>
@@ -295,7 +295,7 @@
         </if>
     </update>
 
-    <delete id="delete" parameterType="com.warm.flow.orm.entity.FlowInstance">
+    <delete id="delete" parameterType="org.dromara.warm.flow.orm.entity.FlowInstance">
         delete from flow_instance
         <where>
             <if test="id != null">and id = #{id}</if>
@@ -340,7 +340,7 @@
         </where>
     </update>
 
-    <insert id="saveBatch" parameterType="com.warm.flow.orm.entity.FlowInstance">
+    <insert id="saveBatch" parameterType="org.dromara.warm.flow.orm.entity.FlowInstance">
         <choose>
             <when test="dataSourceType == 'oracle'.toString()">
                 <include refid="oracle_insert_batch"/>

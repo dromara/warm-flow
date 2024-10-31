@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.warm.flow.orm.mapper.FlowSkipMapper">
+<mapper namespace="org.dromara.warm.flow.orm.mapper.FlowSkipMapper">
 
-    <resultMap type="com.warm.flow.orm.entity.FlowSkip" id="FlowSkipResult">
+    <resultMap type="org.dromara.warm.flow.orm.entity.FlowSkip" id="FlowSkipResult">
         <result property="id" column="id"/>
         <result property="definitionId" column="definition_id"/>
         <result property="nowNodeCode" column="now_node_code"/>
@@ -73,12 +73,12 @@
         </where>
     </sql>
 
-    <select id="selectCount" parameterType="com.warm.flow.orm.entity.FlowSkip" resultType="java.lang.Long">
+    <select id="selectCount" parameterType="org.dromara.warm.flow.orm.entity.FlowSkip" resultType="java.lang.Long">
         select count(*) from flow_skip t
         <include refid="select_parameter"/>
     </select>
 
-    <select id="selectList" parameterType="com.warm.flow.orm.entity.FlowSkip" resultMap="FlowSkipResult">
+    <select id="selectList" parameterType="org.dromara.warm.flow.orm.entity.FlowSkip" resultMap="FlowSkipResult">
         <choose>
             <when test="dataSourceType == 'oracle'.toString()">
                 <if test="page !=null and page.pageNum != null and page.pageSize != null">
@@ -194,7 +194,7 @@
         <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
     </select>
 
-    <insert id="insert" parameterType="com.warm.flow.orm.entity.FlowSkip">
+    <insert id="insert" parameterType="org.dromara.warm.flow.orm.entity.FlowSkip">
         insert into flow_skip
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">id,</if>
@@ -230,7 +230,7 @@
         </trim>
     </insert>
 
-    <update id="updateById" parameterType="com.warm.flow.orm.entity.FlowSkip">
+    <update id="updateById" parameterType="org.dromara.warm.flow.orm.entity.FlowSkip">
         update flow_skip
         <trim prefix="SET" suffixOverrides=",">
             <if test="definitionId != null">definition_id = #{definitionId},</if>
@@ -287,7 +287,7 @@
     </update>
 
 
-    <delete id="delete" parameterType="com.warm.flow.orm.entity.FlowSkip">
+    <delete id="delete" parameterType="org.dromara.warm.flow.orm.entity.FlowSkip">
         delete from flow_skip
         <where>
             <if test="id != null">and id = #{id}</if>
@@ -356,7 +356,7 @@
         </if>
     </update>
 
-    <insert id="saveBatch" parameterType="com.warm.flow.orm.entity.FlowSkip">
+    <insert id="saveBatch" parameterType="org.dromara.warm.flow.orm.entity.FlowSkip">
         <choose>
             <when test="dataSourceType == 'oracle'.toString()">
                 <include refid="oracle_insert_batch"/>
