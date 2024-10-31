@@ -1,8 +1,6 @@
 name: Publish package to the Maven Central Repository
 on:
   push:
-    branches:
-      - dev
     tags: [ "*" ]
 jobs:
   publish:
