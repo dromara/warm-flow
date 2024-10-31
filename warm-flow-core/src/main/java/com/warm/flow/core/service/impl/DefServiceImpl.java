@@ -168,7 +168,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
 
     @Override
     public boolean copyDef(Long id) {
-        Definition definition = ClassUtil.clone(getById(id));
+        Definition definition = getById(id).copy();
         AssertUtil.isNull(definition, ExceptionCons.NOT_FOUNT_DEF);
 
         List<Node> nodeList = FlowFactory.nodeService().list(FlowFactory.newNode().setDefinitionId(id))

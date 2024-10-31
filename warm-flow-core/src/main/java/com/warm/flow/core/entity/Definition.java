@@ -15,6 +15,8 @@
  */
 package com.warm.flow.core.entity;
 
+import com.warm.flow.core.FlowFactory;
+
 import java.util.Date;
 import java.util.List;
 
@@ -100,4 +102,26 @@ public interface Definition extends RootEntity {
     String getListenerPath();
 
     Definition setListenerPath(String listenerPath);
+
+    default Definition copy() {
+        Definition definition = FlowFactory.newDef();
+        definition.setId(this.getId());
+        definition.setCreateTime(this.getCreateTime());
+        definition.setUpdateTime(this.getUpdateTime());
+        definition.setTenantId(this.getTenantId());
+        definition.setDelFlag(this.getDelFlag());
+        definition.setFlowCode(this.getFlowCode());
+        definition.setFlowName(this.getFlowName());
+        definition.setCategory(this.getCategory());
+        definition.setVersion(this.getVersion());
+        definition.setIsPublish(this.getIsPublish());
+        definition.setFormCustom(this.getFormCustom());
+        definition.setFormPath(this.getFormPath());
+        definition.setActivityStatus(this.getActivityStatus());
+        definition.setListenerType(this.getListenerType());
+        definition.setListenerPath(this.getListenerPath());
+        definition.setExt(this.getExt());
+
+        return definition;
+    }
 }
