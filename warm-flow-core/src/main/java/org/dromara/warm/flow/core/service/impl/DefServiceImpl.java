@@ -15,8 +15,8 @@
  */
 package org.dromara.warm.flow.core.service.impl;
 
+import org.dom4j.Document;
 import org.dromara.warm.flow.core.FlowFactory;
-import org.dromara.warm.flow.core.chart.*;
 import org.dromara.warm.flow.core.chart.*;
 import org.dromara.warm.flow.core.constant.ExceptionCons;
 import org.dromara.warm.flow.core.dao.FlowDefinitionDao;
@@ -29,16 +29,18 @@ import org.dromara.warm.flow.core.enums.SkipType;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import org.dromara.warm.flow.core.service.DefService;
-import org.dromara.warm.flow.core.utils.*;
-import org.dom4j.Document;
 import org.dromara.warm.flow.core.utils.Base64;
+import org.dromara.warm.flow.core.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.*;
@@ -173,9 +175,9 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         AssertUtil.isNull(definition, ExceptionCons.NOT_FOUNT_DEF);
 
         List<Node> nodeList = FlowFactory.nodeService().list(FlowFactory.newNode().setDefinitionId(id))
-                .stream().map(ClassUtil::clone).collect(Collectors.toList());
+                .stream().map(Node::copy).collect(Collectors.toList());
         List<Skip> skipList = FlowFactory.skipService().list(FlowFactory.newSkip().setDefinitionId(id))
-                .stream().map(ClassUtil::clone).collect(Collectors.toList());
+                .stream().map(Skip::copy).collect(Collectors.toList());
         FlowFactory.dataFillHandler().idFill(definition.setId(null));
         definition.setVersion(definition.getVersion() + "_copy")
                 .setIsPublish(PublishStatus.UNPUBLISHED.getKey())

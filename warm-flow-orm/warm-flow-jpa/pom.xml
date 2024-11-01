@@ -15,9 +15,9 @@
     <modules>
         <module>warm-flow-jpa-core</module>
         <module>warm-flow-jpa-sb-starter</module>
-        <module>warm-flow-jpa-jakarta-core</module>
+<!--        <module>warm-flow-jpa-jakarta-core</module>-->
 		<module>warm-flow-jpa-solon-plugin</module>
-        <module>warm-flow-jpa-sb3-starter</module>
+<!--        <module>warm-flow-jpa-sb3-starter</module>-->
     </modules>
 
 </project>

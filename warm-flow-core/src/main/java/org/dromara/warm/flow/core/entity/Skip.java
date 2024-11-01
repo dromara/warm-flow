@@ -15,6 +15,8 @@
  */
 package org.dromara.warm.flow.core.entity;
 
+import org.dromara.warm.flow.core.FlowFactory;
+
 import java.util.Date;
 
 /**
@@ -84,5 +86,22 @@ public interface Skip extends RootEntity {
     public String getCoordinate();
 
     public Skip setCoordinate(String coordinate);
+    default Skip copy() {
+        return FlowFactory.newSkip()
+                .setId(getId())
+                .setCreateTime(getCreateTime())
+                .setUpdateTime(getUpdateTime())
+                .setTenantId(getTenantId())
+                .setDelFlag(getDelFlag())
+                .setDefinitionId(getDefinitionId())
+                .setNowNodeCode(getNowNodeCode())
+                .setNowNodeType(getNowNodeType())
+                .setNextNodeCode(getNextNodeCode())
+                .setNextNodeType(getNextNodeType())
+                .setSkipName(getSkipName())
+                .setSkipType(getSkipType())
+                .setSkipCondition(getSkipCondition())
+                .setCoordinate(getCoordinate());
+    }
 
 }

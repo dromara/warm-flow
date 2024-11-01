@@ -15,6 +15,8 @@
  */
 package org.dromara.warm.flow.core.entity;
 
+import org.dromara.warm.flow.core.FlowFactory;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -114,4 +116,28 @@ public interface Node extends RootEntity {
     public List<Skip> getSkipList();
 
     public Node setSkipList(List<Skip> skipList);
+
+    default Node copy() {
+        return FlowFactory.newNode()
+                .setId(this.getId())
+                .setCreateTime(this.getCreateTime())
+                .setUpdateTime(this.getUpdateTime())
+                .setTenantId(this.getTenantId())
+                .setDelFlag(this.getDelFlag())
+                .setNodeType(this.getNodeType())
+                .setDefinitionId(this.getDefinitionId())
+                .setNodeCode(this.getNodeCode())
+                .setNodeName(this.getNodeName())
+                .setNodeRatio(this.getNodeRatio())
+                .setPermissionFlag(this.getPermissionFlag())
+                .setCoordinate(this.getCoordinate())
+                .setVersion(this.getVersion())
+                .setSkipAnyNode(this.getSkipAnyNode())
+                .setListenerType(this.getListenerType())
+                .setListenerPath(this.getListenerPath())
+                .setHandlerType(this.getHandlerType())
+                .setHandlerPath(this.getHandlerPath())
+                .setFormCustom(this.getFormCustom())
+                .setFormPath(this.getFormPath());
+    }
 }

@@ -47,11 +47,11 @@
             <optional>true</optional>
         </dependency>
 
-        <dependency>
-            <groupId>org.dromara</groupId>
-            <artifactId>warm-flow-jpa-jakarta-core</artifactId>
-            <optional>true</optional>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.dromara</groupId>-->
+<!--            <artifactId>warm-flow-jpa-jakarta-core</artifactId>-->
+<!--            <optional>true</optional>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>org.dromara</groupId>

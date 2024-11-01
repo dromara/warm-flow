@@ -104,24 +104,23 @@ public interface Definition extends RootEntity {
     Definition setListenerPath(String listenerPath);
 
     default Definition copy() {
-        Definition definition = FlowFactory.newDef();
-        definition.setId(this.getId());
-        definition.setCreateTime(this.getCreateTime());
-        definition.setUpdateTime(this.getUpdateTime());
-        definition.setTenantId(this.getTenantId());
-        definition.setDelFlag(this.getDelFlag());
-        definition.setFlowCode(this.getFlowCode());
-        definition.setFlowName(this.getFlowName());
-        definition.setCategory(this.getCategory());
-        definition.setVersion(this.getVersion());
-        definition.setIsPublish(this.getIsPublish());
-        definition.setFormCustom(this.getFormCustom());
-        definition.setFormPath(this.getFormPath());
-        definition.setActivityStatus(this.getActivityStatus());
-        definition.setListenerType(this.getListenerType());
-        definition.setListenerPath(this.getListenerPath());
-        definition.setExt(this.getExt());
+        return FlowFactory.newDef()
+                .setId(this.getId())
+                .setCreateTime(this.getCreateTime())
+                .setUpdateTime(this.getUpdateTime())
+                .setTenantId(this.getTenantId())
+                .setDelFlag(this.getDelFlag())
+                .setFlowCode(this.getFlowCode())
+                .setFlowName(this.getFlowName())
+                .setCategory(this.getCategory())
+                .setVersion(this.getVersion())
+                .setIsPublish(this.getIsPublish())
+                .setFormCustom(this.getFormCustom())
+                .setFormPath(this.getFormPath())
+                .setActivityStatus(this.getActivityStatus())
+                .setListenerType(this.getListenerType())
+                .setListenerPath(this.getListenerPath())
+                .setExt(this.getExt());
 
-        return definition;
     }
 }

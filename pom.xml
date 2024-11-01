@@ -223,17 +223,17 @@
                 <version>${warm-flow}</version>
             </dependency>
 
-            <dependency>
-                <groupId>org.dromara</groupId>
-                <artifactId>warm-flow-jpa-jakarta-core</artifactId>
-                <version>${warm-flow}</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.dromara</groupId>-->
+<!--                <artifactId>warm-flow-jpa-jakarta-core</artifactId>-->
+<!--                <version>${warm-flow}</version>-->
+<!--            </dependency>-->
 
-            <dependency>
-                <groupId>org.dromara</groupId>
-                <artifactId>warm-flow-jpa-sb3-starter</artifactId>
-                <version>${warm-flow}</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.dromara</groupId>-->
+<!--                <artifactId>warm-flow-jpa-sb3-starter</artifactId>-->
+<!--                <version>${warm-flow}</version>-->
+<!--            </dependency>-->
 
             <dependency>
                 <groupId>org.noear</groupId>
