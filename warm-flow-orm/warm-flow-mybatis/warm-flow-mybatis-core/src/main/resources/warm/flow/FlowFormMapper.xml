@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.dromara.warm.flow.orm.mapper.FlowFormMapper">
+    <resultMap type="org.dromara.warm.flow.orm.entity.FlowForm" id="FlowFormResult">
+        <result property="id" column="id"/>
+        <result property="formCode" column="form_code"/>
+        <result property="formName" column="form_name"/>
+        <result property="version" column="version"/>
+        <result property="isPublish" column="is_publish"/>
+        <result property="formType" column="form_type"/>
+        <result property="formPath" column="form_path"/>
+        <result property="formContent" column="form_content"/>
+        <result property="ext" column="ext"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="tenantId" column="tenant_id"/>
+    </resultMap>
+
+    <sql id="selectVo">
+        select t.id,
+        t.form_code,
+        t.form_name,
+        t.version,
+        t.is_publish,
+        t.form_type,
+        t.form_path,
+        t.form_content,
+        t.ext,
+        t.create_time,
+        t.update_time,
+        t.del_flag,
+        t.tenant_id
+        from flow_form t
+    </sql>
+
+    <sql id="paging_end">
+        <if test="page !=null and page.pageNum != null and page.pageSize != null">LIMIT
+            #{page.pageNum} offset #{page.pageSize}
+        </if>
+    </sql>
+
+    <sql id="order_by">
+        <if test="order != null and order != ''">order by ${order}</if>
+    </sql>
+
+    <sql id="select_parameter">
+        <where>
+            <if test="entity.id != null ">and t.id = #{entity.id}</if>
+            <if test="entity.formCode != null  and entity.formCode != ''">and t.form_code = #{entity.formCode}</if>
+            <if test="entity.formName != null  and entity.formName != ''">and t.form_name = #{entity.formName}</if>
+            <if test="entity.version != null  and entity.version != ''">and t.version = #{entity.version}</if>
+            <if test="entity.isPublish != null ">and t.is_publish = #{entity.isPublish}</if>
+            <if test="entity.formType != null">and t.form_type = #{entity.formType}</if>
+            <if test="entity.formPath != null">and t.form_path = #{entity.formPath}</if>
+            <if test="entity.formContent != null">and t.form_content = #{entity.formContent}</if>
+            <if test="entity.ext != null  and entity.ext != ''">and t.ext = #{entity.ext}</if>
+            <if test="entity.createTime != null">and t.create_time = #{entity.createTime}</if>
+            <if test="entity.updateTime != null">and t.update_time = #{entity.updateTime}</if>
+            <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
+            <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+        </where>
+    </sql>
+
+    <sql id="mysql_insert_batch">
+        insert into flow_form(
+        id,
+        form_code,
+        form_name,
+        version,
+        is_publish,
+        form_type,
+        form_path,
+        form_content,
+        ext,
+        create_time,
+        update_time,
+        del_flag,
+        tenant_id
+        )
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.id},
+            #{item.formCode},
+            #{item.formName},
+            #{item.version},
+            #{item.isPublish},
+            #{item.formType},
+            #{item.formPath},
+            #{item.formContent},
+            #{item.ext},
+            #{item.createTime},
+            #{item.updateTime},
+            #{item.delFlag},
+            #{item.tenantId}
+            )
+        </foreach>
+    </sql>
+
+    <sql id="oracle_insert_batch">
+        insert into flow_form(
+        id,
+        form_code,
+        form_name,
+        version,
+        is_publish,
+        form_type,
+        form_path,
+        form_content,
+        ext,
+        create_time,
+        update_time,
+        del_flag,
+        tenant_id
+        )
+        <foreach collection="list" item="item" separator=" union all">
+            select
+            #{item.id},
+            #{item.formCode},
+            #{item.formName},
+            #{item.version},
+            #{item.isPublish},
+            #{item.formType},
+            #{item.formPath},
+            #{item.formContent},
+            #{item.ext},
+            #{item.createTime},
+            #{item.updateTime},
+            #{item.delFlag},
+            #{item.tenantId}
+            from dual
+        </foreach>
+    </sql>
+
+    <select id="selectList" parameterType="org.dromara.warm.flow.orm.entity.FlowDefinition"
+            resultMap="FlowFormResult">
+        <choose>
+            <when test="dataSourceType == 'oracle'.toString()">
+                <if test="page !=null and page.pageNum != null and page.pageSize != null">
+                    SELECT * FROM ( SELECT TMP.*, ROWNUM ROW_ID FROM (
+                </if>
+                <include refid="includeAll"/>
+                <if test="page !=null and page.pageNum != null and page.pageSize != null">
+                    ) TMP WHERE ROWNUM &lt;= #{page.pageSize}) WHERE ROW_ID &gt; #{page.pageNum}
+                </if>
+            </when>
+            <otherwise>
+                <include refid="includeAll"/>
+                <include refid="paging_end"/>
+            </otherwise>
+        </choose>
+    </select>
+
+    <sql id="includeAll">
+        <include refid="selectVo"/>
+        <include refid="select_parameter"/>
+        <include refid="order_by"/>
+    </sql>
+
+    <select id="selectCount" parameterType="org.dromara.warm.flow.orm.entity.FlowDefinition"
+            resultType="java.lang.Long">
+        select count(*) from flow_form t
+        <include refid="select_parameter"/>
+    </select>
+
+    <select id="selectById" resultMap="FlowFormResult">
+        <include refid="selectVo"/>
+        where t.id = #{id}
+        <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+    </select>
+
+    <select id="selectByIds" resultMap="FlowFormResult">
+        <include refid="selectVo"/>
+        where t.id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+    </select>
+
+    <select id="queryByCodeList" resultMap="FlowFormResult">
+        <include refid="selectVo"/>
+        where t.form_code in
+        <foreach item="item" collection="flowCodeList" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+    </select>
+
+    <insert id="insert" parameterType="org.dromara.warm.flow.orm.entity.FlowForm">
+        insert into flow_form
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="formCode != null and formCode != ''">form_code,</if>
+            <if test="formName != null and formName != ''">flow_name,</if>
+            <if test="version != null and version != ''">version,</if>
+            <if test="isPublish != null">is_publish,</if>
+            <if test="formType != null">form_type,</if>
+            <if test="formPath != null">form_path,</if>
+            <if test="formContent != null and formContent != ''">form_content,</if>
+            <if test="ext != null and ext != ''">ext,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null and delFlag != ''">del_flag,</if>
+            <if test="tenantId != null and tenantId != ''">tenant_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="formCode != null and formCode != ''">#{formCode},</if>
+            <if test="formName != null and formName != ''">#{formName},</if>
+            <if test="version != null and version != ''">#{version},</if>
+            <if test="isPublish != null">#{isPublish},</if>
+            <if test="formType != null">#{formType},</if>
+            <if test="formPath != null">#{formPath},</if>
+            <if test="formContent != null">#{formContent},</if>
+            <if test="listenerType != null and listenerType != ''">#{listenerType},</if>
+            <if test="listenerPath != null and listenerPath != ''">#{listenerPath},</if>
+            <if test="ext != null and ext != ''">#{ext},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null and delFlag != ''">#{delFlag},</if>
+            <if test="tenantId != null and tenantId != ''">#{tenantId},</if>
+        </trim>
+    </insert>
+
+    <update id="updateById" parameterType="org.dromara.warm.flow.orm.entity.FlowDefinition">
+        update flow_form
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="formCode != null and formCode != ''">form_code = #{formCode},</if>
+            <if test="formName != null and formName != ''">flow_name = #{formName},</if>
+            <if test="version != null and version != ''">version = #{version},</if>
+            <if test="isPublish != null">is_publish = #{isPublish},</if>
+            <if test="formType != null">form_custom = #{formType},</if>
+            <if test="formPath != null">form_path = #{formPath},</if>
+            <if test="formContent != null">form_content = #{formContent},</if>
+            <if test="ext != null and ext != ''">ext = #{ext},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        , update_time=now()
+        where id = #{id}
+        <if test="delFlag != null  and delFlag != ''">and del_flag = #{delFlag}</if>
+        <if test="tenantId != null  and tenantId != ''">and tenant_id = #{tenantId}</if>
+    </update>
+
+    <update id="closeFlowByCodeList" parameterType="java.util.List">
+        update flow_form set is_publish = 9
+        where form_code in
+        <foreach item="item" collection="flowCodeList" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <if test="entity.delFlag != null  and entity.delFlag != ''">and del_flag = #{entity.delFlag}</if>
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and tenant_id = #{entity.tenantId}</if>
+    </update>
+
+    <delete id="deleteById">
+        delete
+        from flow_form
+        where id = #{id}
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and tenant_id = #{entity.tenantId}</if>
+    </delete>
+
+    <update id="updateByIdLogic">
+        update flow_form
+        set del_flag = #{logicDeleteValue}
+        where id = #{id}
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and tenant_id = #{entity.tenantId}</if>
+        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and del_flag = #{logicNotDeleteValue}
+        </if>
+    </update>
+
+    <delete id="deleteByIds">
+        delete from flow_form where id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and tenant_id = #{entity.tenantId}</if>
+    </delete>
+
+    <update id="updateByIdsLogic">
+        update flow_form
+        set del_flag = #{logicDeleteValue}
+        where id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and tenant_id = #{entity.tenantId}</if>
+        <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and del_flag = #{logicNotDeleteValue}
+        </if>
+    </update>
+
+    <delete id="delete" parameterType="org.dromara.warm.flow.orm.entity.FlowDefinition">
+        delete from flow_form
+        <where>
+            <if test="id != null">and id = #{id}</if>
+            <if test="formCode != null and formCode != ''">and form_code = #{formCode}</if>
+            <if test="formName != null and formName != ''">and flow_name = #{formName}</if>
+            <if test="version != null and version != ''">and version = #{version}</if>
+            <if test="isPublish != null">and is_publish = #{isPublish}</if>
+            <if test="formType != null">and form_custom = #{formType}</if>
+            <if test="formPath != null">and form_path = #{formPath}</if>
+            <if test="formContent != null">and form_content = #{formContent}</if>
+            <if test="ext != null and ext != ''">and ext = #{ext}</if>
+            <if test="createTime != null">and create_time = #{createTime}</if>
+            <if test="updateTime != null">and update_time = #{updateTime}</if>
+            <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
+        </where>
+    </delete>
+
+    <update id="updateLogic">
+        update flow_form
+        set del_flag = #{logicDeleteValue}
+        <where>
+            <if test="entity.id != null">and id = #{entity.id}</if>
+            <if test="entity.formCode != null and entity.formCode != ''">and form_code = #{entity.formCode}</if>
+            <if test="entity.formName != null and entity.formName != ''">and flow_name = #{entity.formName}</if>
+            <if test="entity.version != null and entity.version != ''">and version = #{entity.version}</if>
+            <if test="entity.isPublish != null">and is_publish = #{entity.isPublish}</if>
+            <if test="entity.formType != null">and form_custom = #{entity.formType}</if>
+            <if test="entity.formPath != null">and form_path = #{entity.formPath}</if>
+            <if test="entity.formContent != null">and form_content = #{entity.formContent}</if>
+            <if test="entity.ext != null and entity.ext != ''">and ext = #{entity.ext}</if>
+            <if test="entity.createTime != null">and create_time = #{entity.createTime}</if>
+            <if test="entity.updateTime != null">and update_time = #{entity.updateTime}</if>
+            <if test="entity.tenantId != null and entity.tenantId != ''">and tenant_id = #{entity.tenantId}</if>
+            <if test="logicNotDeleteValue != null and logicNotDeleteValue != ''">and del_flag =
+                #{logicNotDeleteValue}
+            </if>
+        </where>
+    </update>
+
+    <insert id="saveBatch" parameterType="org.dromara.warm.flow.orm.entity.FlowDefinition">
+        <choose>
+            <when test="dataSourceType == 'oracle'.toString()">
+                <include refid="oracle_insert_batch"/>
+            </when>
+            <otherwise>
+                <include refid="mysql_insert_batch"/>
+            </otherwise>
+        </choose>
+    </insert>
+</mapper>

@@ -117,6 +117,16 @@ public class BeanConfig {
     }
 
     @Bean
+    public FlowFormDao formDao() {
+        return new FlowFormDaoImpl();
+    }
+
+    @Bean
+    public FormService flowFormService(FlowFormDao formDao) {
+        return new FormServiceImpl().setDao(formDao);
+    }
+
+    @Bean
     @ConfigurationProperties(prefix = "warm-flow")
     public WarmFlow initFlow() {
         setNewEntity();
@@ -128,6 +138,7 @@ public class BeanConfig {
         log.info("【warm-flow】，加载完成");
         return FlowFactory.getFlowConfig();
     }
+
     public void setNewEntity() {
         FlowFactory.setNewDef(FlowDefinition::new);
         FlowFactory.setNewIns(FlowInstance::new);
@@ -136,6 +147,7 @@ public class BeanConfig {
         FlowFactory.setNewSkip(FlowSkip::new);
         FlowFactory.setNewTask(FlowTask::new);
         FlowFactory.setNewUser(FlowUser::new);
+        FlowFactory.setNewForm(FlowForm::new);
     }
 
     public void after(WarmFlow flowConfig) {

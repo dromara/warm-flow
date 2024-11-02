@@ -15,6 +15,7 @@
  */
 package org.dromara.warm.flow.core.service;
 
+import org.dromara.warm.flow.core.dto.FlowForm;
 import org.dromara.warm.flow.core.dto.FlowParams;
 import org.dromara.warm.flow.core.dto.ModifyHandler;
 import org.dromara.warm.flow.core.entity.Definition;
@@ -24,6 +25,7 @@ import org.dromara.warm.flow.core.entity.Task;
 import org.dromara.warm.flow.core.orm.service.IWarmService;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 待办任务Service接口
@@ -242,6 +244,28 @@ public interface TaskService extends IWarmService<Task> {
      * @return
      */
     Task getNextTask(List<Task> tasks);
+
+
+
+
+    /**
+     * 获取表单及数据(使用表单场景)
+     *
+     * @param taskId
+     * @param flowParams
+     * @return
+     */
+    FlowForm load(Long taskId, FlowParams flowParams);
+
+    /**
+     * 表单完成任务(使用表单场景)
+     *
+     * @param taskId
+     * @param flowParams
+     * @param formData
+     * @return
+     */
+    Instance handle(Long taskId, FlowParams flowParams, Map<String, Object> formData);
 
 
 }

@@ -51,7 +51,7 @@ public class FlowAutoConfig extends BeanConfig {
 
     private void loadXml(SqlSessionFactory sqlSessionFactory) {
         List<String> mapperList = Arrays.asList("warm/flow/FlowDefinitionMapper.xml", "warm/flow/FlowHisTaskMapper.xml"
-                , "warm/flow/FlowInstanceMapper.xml", "warm/flow/FlowNodeMapper.xml"
+                , "warm/flow/FlowInstanceMapper.xml", "warm/flow/FlowNodeMapper.xml", "warm/flow/FlowFormMapper.xml"
                 , "warm/flow/FlowSkipMapper.xml", "warm/flow/FlowTaskMapper.xml", "warm/flow/FlowUserMapper.xml");
         org.apache.ibatis.session.Configuration configuration = sqlSessionFactory.getConfiguration();
         configuration.setJdbcTypeForNull(JdbcType.NULL);

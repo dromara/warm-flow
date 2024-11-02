@@ -78,6 +78,16 @@ public class ListenerVariable {
     @Deprecated
     private List<NodePermission> nodePermissionList;
 
+    /**
+     * 监听器返回值
+     */
+    private Object result;
+
+    /**
+     * 监听器扩展参数
+     */
+    private Map<String, Object> params;
+
     public ListenerVariable() {
     }
 
@@ -216,6 +226,25 @@ public class ListenerVariable {
         return this;
     }
 
+
+    public Object getResult() {
+        return result;
+    }
+
+    public ListenerVariable setResult(Object result) {
+        this.result = result;
+        return this;
+    }
+
+    public Map<String, Object> getParams() {
+        return params;
+    }
+
+    public ListenerVariable setParams(Map<String, Object> params) {
+        this.params = params;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "ListenerVariable{" +
@@ -228,7 +257,8 @@ public class ListenerVariable {
                 ", variable=" + variable +
                 ", flowParams=" + flowParams +
                 ", nodePermissionList=" + nodePermissionList +
+                ", result=" + result +
+                ", params=" + params +
                 '}';
     }
-
 }

@@ -62,4 +62,13 @@ public class FlowCons {
      * 雪花id 14位
      */
     public static final String SNOWID19 = "SnowId19";
+
+
+    /**
+     * 表单自定义状态
+     *
+     */
+    public static final String FORM_CUSTOM_Y = "Y";
+    public static final String FORM_CUSTOM_N = "N";
+    public static final String FORM_CUSTOM_P = "P";
 }
