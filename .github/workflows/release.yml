@@ -1,26 +1,26 @@
-#name: Release
-#
-## Run workflow on commits to the `master` branch
-#on:
-#  push:
-#    tags: [ "*" ]
-#
-#jobs:
-#  release:
-#    runs-on: ubuntu-18.04
-#    steps:
-#      - name: Check out Git repository
-#        uses: actions/checkout@v2
-#
-#      - name: Install Java and Maven
-#        uses: actions/setup-java@v1
-#        with:
-#          java-version: 8
-#
-#      - name: Release Maven package
-#        uses: samuelmeuli/action-maven-publish@v1
-#        with:
-#          gpg_private_key: ${{ secrets.GPG_SECRET }}
-#          gpg_passphrase: ${{ secrets.GPG_PASSWORD }}
-#          nexus_username: ${{ secrets.OSSRH_USER  }}
-#          nexus_password: ${{ secrets.OSSRH_PASSWORD  }}
+name: Release
+
+# Run workflow on commits to the `master` branch
+on:
+  push:
+    tags: [ "*" ]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+
+      - name: Install Java and Maven
+        uses: actions/setup-java@v1
+        with:
+          java-version: 8
+
+      - name: Release Maven package
+        uses: samuelmeuli/action-maven-publish@v1
+        with:
+          gpg_private_key: ${{ secrets.GPG_SECRET }}
+          gpg_passphrase: ${{ secrets.GPG_PASSWORD }}
+          nexus_username: ${{ secrets.OSSRH_USER  }}
+          nexus_password: ${{ secrets.OSSRH_PASSWORD  }}
