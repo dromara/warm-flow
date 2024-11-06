@@ -28,6 +28,11 @@
       </el-col>
       <!--用户数据-->
       <el-col :span="20" :xs="24">
+        <el-tabs type="border-card" class="Tabs" v-model="tabsValue" @tab-change="tabChange">
+          <el-tab-pane v-for="item in tabsList" :label="item" :name="item"></el-tab-pane>
+        </el-tabs>
+
+        <div class="Tabs-content">
           <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
             <el-form-item label="权限编码" prop="handlerCode">
               <el-input
@@ -64,13 +69,9 @@
             </el-form-item>
           </el-form>
 
-          <el-row :gutter="10" class="mb8">
+          <el-row :gutter="10" style="margin: 0 0 8px 0;">
             <el-tag style="margin-right: 10px" v-for="tag in checkedItemList" :key="tag.storageId" closable @close="handleClose(tag.storageId)">{{tag.storageId}}</el-tag>
           </el-row>
-
-          <el-tabs type="border-card" class="Tabs" v-model="tabsValue" @tab-change="tabChange">
-            <el-tab-pane v-for="item in tabsList" :label="item" :name="item"></el-tab-pane>
-          </el-tabs>
 
           <el-table v-loading="loading" :data="tableList" @row-click="handleCheck">
             <el-table-column width="50" align="center">
@@ -90,13 +91,13 @@
           </el-table>
           <el-pagination
             v-show="total > 0"
-            style="margin-top: 10px; float: right;"
             v-model:current-page="queryParams.pageNum"
             v-model:page-size="queryParams.pageSize"
             :total="total"
             @size-change="getList"
             @current-change="getList"
           />
+        </div>
       </el-col>
     </el-row>
   </div>
@@ -198,6 +199,9 @@ function getList() {
     tableList.value = handlerAuths.rows;
     total.value = handlerAuths.total;
     groupOptions.value = res.data.treeSelections;
+    proxy.$nextTick(() => {
+      if (groupName.value) proxy.$refs["groupTreeRef"].filter(groupName.value);
+    });
     isCheckedAll();
   });
 
@@ -211,7 +215,7 @@ function handleNodeClick(data) {
 /** tab切换 */
 function tabChange() {
   queryParams.value.groupId = undefined;
-  handleQuery();
+  resetQuery();
 }
 
 /** 搜索按钮操作 */
@@ -305,16 +309,29 @@ getTabsType();
 </script>
 
 <style scoped lang="scss">
-::v-deep.Tabs {
-  margin-top: 20px;
-  border: 0;
-  .el-tabs__content {
-    display: none;
+::v-deep.app-container {
+  .Tabs {
+    border: 0;
+    .el-tabs__content {
+      display: none;
+    }
+    .el-tabs__item.is-active {
+      margin-left: 0;
+      border-top: 1px solid var(--el-border-color);
+      margin-top: 0;
+    }
   }
-  .el-tabs__item.is-active {
-    margin-left: 0;
-    border-top: 1px solid var(--el-border-color);
-    margin-top: 0;
+  .Tabs-content {
+    border: 1px solid #e4e7ed;
+    border-top: 0;
+    padding: 15px;
+  }
+  .el-pagination {
+    margin-top: 10px;
+    justify-content: flex-end;
+    .el-pagination__rightwrapper {
+      flex: none;
+    }
   }
 }
 </style>
