@@ -1,6 +1,9 @@
 <template>
   <div class="app-container">
-    <el-row :gutter="20">
+    <el-tabs type="border-card" class="Tabs" v-model="tabsValue" @tab-change="tabChange">
+      <el-tab-pane v-for="item in tabsList" :label="item" :name="item"></el-tab-pane>
+    </el-tabs>
+    <el-row :gutter="20" class="content">
       <!--部门数据-->
       <el-col :span="4" :xs="24">
           <div class="head-container">
@@ -28,76 +31,70 @@
       </el-col>
       <!--用户数据-->
       <el-col :span="20" :xs="24">
-        <el-tabs type="border-card" class="Tabs" v-model="tabsValue" @tab-change="tabChange">
-          <el-tab-pane v-for="item in tabsList" :label="item" :name="item"></el-tab-pane>
-        </el-tabs>
-
-        <div class="Tabs-content">
-          <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-            <el-form-item label="权限编码" prop="handlerCode">
+        <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+          <el-form-item label="权限编码" prop="handlerCode">
+            <el-input
+                v-model="queryParams.handlerCode"
+                placeholder="请输入权限编码"
+                clearable
+                style="width: 240px"
+                @keyup.enter="handleQuery"
+            />
+          </el-form-item>
+          <el-form-item label="权限名称" prop="handlerName">
               <el-input
-                  v-model="queryParams.handlerCode"
-                  placeholder="请输入权限编码"
-                  clearable
-                  style="width: 240px"
-                  @keyup.enter="handleQuery"
+                v-model="queryParams.handlerName"
+                placeholder="请输入权限名称"
+                clearable
+                style="width: 240px"
+                @keyup.enter="handleQuery"
               />
-            </el-form-item>
-            <el-form-item label="权限名称" prop="handlerName">
-                <el-input
-                  v-model="queryParams.handlerName"
-                  placeholder="请输入权限名称"
-                  clearable
-                  style="width: 240px"
-                  @keyup.enter="handleQuery"
-                />
-            </el-form-item>
-            <el-form-item label="创建时间" style="width: 308px;">
-                <el-date-picker
-                  v-model="dateRange"
-                  value-format="YYYY-MM-DD"
-                  type="daterange"
-                  range-separator="-"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
-                ></el-date-picker>
-            </el-form-item>
-            <el-form-item>
-                <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-                <el-button icon="Refresh" @click="resetQuery">重置</el-button>
-                <el-button type="primary" :disabled="checkedItemList.length === 0" @click="submitForm">确 定</el-button>
-            </el-form-item>
-          </el-form>
+          </el-form-item>
+          <el-form-item label="创建时间" style="width: 308px;">
+              <el-date-picker
+                v-model="dateRange"
+                value-format="YYYY-MM-DD"
+                type="daterange"
+                range-separator="-"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+              ></el-date-picker>
+          </el-form-item>
+          <el-form-item>
+              <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+              <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+              <el-button type="primary" :disabled="checkedItemList.length === 0" @click="submitForm">确 定</el-button>
+          </el-form-item>
+        </el-form>
 
-          <el-row :gutter="10" style="margin: 0 0 8px 0;">
-            <el-tag style="margin-right: 10px" v-for="tag in checkedItemList" :key="tag.storageId" closable @close="handleClose(tag.storageId)">{{tag.storageId}}</el-tag>
-          </el-row>
+        <el-row :gutter="10" style="margin: 0 0 8px 0;">
+          <el-tag style="margin-right: 10px" v-for="tag in checkedItemList" :key="tag.storageId" closable @close="handleClose(tag.storageId)">{{tag.storageId}}</el-tag>
+        </el-row>
 
-          <el-table v-loading="loading" :data="tableList" @row-click="handleCheck">
-            <el-table-column width="50" align="center">
-              <template #default="scope">
-                <el-checkbox v-model="scope.row.isChecked" @change="handleCheck(scope.row)"></el-checkbox>
-              </template>
-            </el-table-column>
-            <el-table-column label="入库主键" align="center" key="storageId" prop="storageId" v-if="columns[0].visible" />
-            <el-table-column label="权限编码" align="center" key="handlerCode" prop="handlerCode" v-if="columns[1].visible" :show-overflow-tooltip="true" />
-            <el-table-column label="权限名称" align="center" key="handlerName" prop="handlerName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
-            <el-table-column label="权限分组" align="center" key="groupName" prop="groupName" v-if="columns[3].visible" :show-overflow-tooltip="true" />
-            <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[4].visible" width="160">
-              <template #default="scope">
-                <span>{{ parseTime(scope.row.createTime) }}</span>
-              </template>
-            </el-table-column>
-          </el-table>
-          <el-pagination
-            v-show="total > 0"
-            v-model:current-page="queryParams.pageNum"
-            v-model:page-size="queryParams.pageSize"
-            :total="total"
-            @size-change="getList"
-            @current-change="getList"
-          />
-        </div>
+        <el-table v-loading="loading" :data="tableList" @row-click="handleCheck">
+          <el-table-column width="50" align="center">
+            <template #default="scope">
+              <el-checkbox v-model="scope.row.isChecked" @change="handleCheck(scope.row)"></el-checkbox>
+            </template>
+          </el-table-column>
+          <el-table-column label="入库主键" align="center" key="storageId" prop="storageId" v-if="columns[0].visible" />
+          <el-table-column label="权限编码" align="center" key="handlerCode" prop="handlerCode" v-if="columns[1].visible" :show-overflow-tooltip="true" />
+          <el-table-column label="权限名称" align="center" key="handlerName" prop="handlerName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
+          <el-table-column label="权限分组" align="center" key="groupName" prop="groupName" v-if="columns[3].visible" :show-overflow-tooltip="true" />
+          <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[4].visible" width="160">
+            <template #default="scope">
+              <span>{{ parseTime(scope.row.createTime) }}</span>
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-pagination
+          v-show="total > 0"
+          v-model:current-page="queryParams.pageNum"
+          v-model:page-size="queryParams.pageSize"
+          :total="total"
+          @size-change="getList"
+          @current-change="getList"
+        />
       </el-col>
     </el-row>
   </div>
@@ -227,6 +224,7 @@ function handleQuery() {
 /** 重置按钮操作 */
 function resetQuery() {
   dateRange.value = [];
+  groupName.value = "";
   proxy.$refs.queryRef.resetFields();
   queryParams.value.groupId = undefined;
   proxy.$refs.groupTreeRef.setCurrentKey(null);
@@ -310,6 +308,7 @@ getTabsType();
 
 <style scoped lang="scss">
 ::v-deep.app-container {
+  padding: 0;
   .Tabs {
     border: 0;
     .el-tabs__content {
@@ -321,10 +320,11 @@ getTabsType();
       margin-top: 0;
     }
   }
-  .Tabs-content {
+  .content {
     border: 1px solid #e4e7ed;
     border-top: 0;
     padding: 15px;
+    margin: 0 !important;
   }
   .el-pagination {
     margin-top: 10px;
