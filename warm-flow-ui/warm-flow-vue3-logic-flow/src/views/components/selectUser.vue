@@ -4,8 +4,8 @@
       <el-tab-pane v-for="item in tabsList" :label="item" :name="item"></el-tab-pane>
     </el-tabs>
     <el-row :gutter="20" class="content">
-      <!--部门数据-->
-      <el-col :span="4" :xs="24">
+      <!--左侧树状选择数据-->
+      <el-col :span="4" :xs="24" v-show="groupOptions">
           <div class="head-container">
             <el-input
                 v-model="groupName"
@@ -29,8 +29,8 @@
             />
           </div>
       </el-col>
-      <!--用户数据-->
-      <el-col :span="20" :xs="24">
+      <!--列表数据-->
+      <el-col :span="groupOptions ? 20: 24" :xs="24">
         <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
           <el-form-item label="权限编码" prop="handlerCode">
             <el-input
