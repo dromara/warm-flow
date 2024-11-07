@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.warm.flow.spring.boot.config.FlowAutoConfig
+  org.dromara.warm.flow.spring.boot.config.FlowAutoConfig

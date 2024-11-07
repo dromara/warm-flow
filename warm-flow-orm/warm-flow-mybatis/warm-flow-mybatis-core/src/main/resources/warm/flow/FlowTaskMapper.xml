@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.warm.flow.orm.mapper.FlowTaskMapper">
+<mapper namespace="org.dromara.warm.flow.orm.mapper.FlowTaskMapper">
 
-    <resultMap type="com.warm.flow.orm.entity.FlowTask" id="FlowTaskResult">
+    <resultMap type="org.dromara.warm.flow.orm.entity.FlowTask" id="FlowTaskResult">
         <result property="id" column="id"/>
         <result property="nodeCode" column="node_code"/>
         <result property="nodeName" column="node_name"/>
@@ -132,12 +132,12 @@
         </foreach>
     </sql>
 
-    <select id="selectCount" parameterType="com.warm.flow.orm.entity.FlowTask" resultType="java.lang.Long">
+    <select id="selectCount" parameterType="org.dromara.warm.flow.orm.entity.FlowTask" resultType="java.lang.Long">
         select count(*) from flow_task t
         <include refid="select_parameter"/>
     </select>
 
-    <select id="selectList" parameterType="com.warm.flow.orm.entity.FlowTask" resultMap="FlowTaskResult">
+    <select id="selectList" parameterType="org.dromara.warm.flow.orm.entity.FlowTask" resultMap="FlowTaskResult">
         <choose>
             <when test="dataSourceType == 'oracle'.toString()">
                 <if test="page !=null and page.pageNum != null and page.pageSize != null">
@@ -178,7 +178,7 @@
         <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
     </select>
 
-    <insert id="insert" parameterType="com.warm.flow.orm.entity.FlowTask">
+    <insert id="insert" parameterType="org.dromara.warm.flow.orm.entity.FlowTask">
         insert into flow_task
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">id,</if>
@@ -210,7 +210,7 @@
         </trim>
     </insert>
 
-    <update id="updateById" parameterType="com.warm.flow.orm.entity.FlowTask">
+    <update id="updateById" parameterType="org.dromara.warm.flow.orm.entity.FlowTask">
         update flow_task
         <trim prefix="SET" suffixOverrides=",">
             <if test="nodeCode != null and nodeCode != ''">node_code = #{nodeCode},</if>
@@ -284,7 +284,7 @@
         </if>
     </update>
 
-    <delete id="delete" parameterType="com.warm.flow.orm.entity.FlowTask">
+    <delete id="delete" parameterType="org.dromara.warm.flow.orm.entity.FlowTask">
         delete from flow_task
         <where>
             <if test="id != null">and id = #{id}</if>
@@ -322,7 +322,7 @@
         </where>
     </update>
 
-    <insert id="saveBatch" parameterType="com.warm.flow.orm.entity.FlowTask">
+    <insert id="saveBatch" parameterType="org.dromara.warm.flow.orm.entity.FlowTask">
         <choose>
             <when test="dataSourceType == 'oracle'.toString()">
                 <include refid="oracle_insert_batch"/>

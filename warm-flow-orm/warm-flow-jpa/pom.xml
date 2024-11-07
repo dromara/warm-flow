@@ -4,9 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>io.github.minliuhua</groupId>
+        <groupId>org.dromara</groupId>
         <artifactId>warm-flow-orm</artifactId>
-        <version>1.3.1</version>
+        <version>1.3.2-m1</version>
     </parent>
 
     <artifactId>warm-flow-jpa</artifactId>
@@ -15,9 +15,9 @@
     <modules>
         <module>warm-flow-jpa-core</module>
         <module>warm-flow-jpa-sb-starter</module>
-        <module>warm-flow-jpa-jakarta-core</module>
+<!--        <module>warm-flow-jpa-jakarta-core</module>-->
 		<module>warm-flow-jpa-solon-plugin</module>
-        <module>warm-flow-jpa-sb3-starter</module>
+<!--        <module>warm-flow-jpa-sb3-starter</module>-->
     </modules>
 
 </project>

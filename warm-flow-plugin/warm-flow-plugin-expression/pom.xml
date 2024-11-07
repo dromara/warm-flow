@@ -4,16 +4,16 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>io.github.minliuhua</groupId>
+        <groupId>org.dromara</groupId>
         <artifactId>warm-flow-plugin</artifactId>
-        <version>1.3.1</version>
+        <version>1.3.2-m1</version>
     </parent>
 
     <artifactId>warm-flow-plugin-expression</artifactId>
 
     <dependencies>
         <dependency>
-            <groupId>io.github.minliuhua</groupId>
+            <groupId>org.dromara</groupId>
             <artifactId>warm-flow-core</artifactId>
         </dependency>
 
@@ -36,7 +36,7 @@
         </dependency>
 
         <dependency>
-            <groupId>io.github.minliuhua</groupId>
+            <groupId>org.dromara</groupId>
             <artifactId>warm-flow-plugin-spel</artifactId>
         </dependency>
     </dependencies>
