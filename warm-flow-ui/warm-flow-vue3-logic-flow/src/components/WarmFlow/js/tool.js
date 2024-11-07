@@ -27,6 +27,7 @@ const NODE_ATTR_KEYS = ['nodeType', 'nodeCode', 'nodeName', 'coordinate', 'nodeR
 // 变迁节点属性
 const SKIP_ATTR_KEYS = ['skipName', 'skipType', 'coordinate', 'skipCondition']
 
+const NODE_TYPE_MAP = {0: 'start', 1: 'between', 2: 'end', 3: 'serial', 4: 'parallel'}
 /**
  * 将warm-flow的定义文件转成LogicFlow支持的数据格式
  * @param {*} xml
@@ -138,6 +139,112 @@ export const xml2LogicFlowJson = (xml) => {
     }
   }
 
+  return graphData
+}
+
+/**
+ * 将warm-flow的定义json数据转成LogicFlow支持的数据格式
+ * @param {*} json
+ * @returns LogicFlow的数据
+ */
+export const json2LogicFlowJson = (json) => {
+  const graphData = {
+    nodes: [],
+    edges: []
+  }
+  if (!json.length) {
+    return graphData
+  }
+  const flowCombine = JSON.parse(json)
+  // 解析definition属性
+  const definition = flowCombine.definition
+  graphData.flowCode = definition.flowCode
+  graphData.flowName = definition.flowName
+  graphData.version = definition.version
+  graphData.fromCustom = definition.fromCustom
+  graphData.fromPath = definition.fromPath
+  // 解析节点
+  const allSkips = flowCombine.allSkips
+  const allNodes = flowCombine.allNodes
+  let node = null
+  let lfNode = {}
+  let coordinate = null
+  // 解析节点
+  if (allNodes.length) {
+    for (var i = 0, len = allNodes.length; i < len; i++) {
+      node = allNodes[i]
+      lfNode = {
+        text:{},
+        properties: {}
+      }
+      // 处理节点
+      lfNode.type = NODE_TYPE_MAP[node.nodeType]
+      lfNode.id = node.nodeCode
+      coordinate = node.coordinate
+      if (coordinate) {
+        const attr = coordinate.split('|')
+        const nodeXy = attr[0].split(',')
+        lfNode.x = parseInt(nodeXy[0])
+        lfNode.y = parseInt(nodeXy[1])
+        if (attr.length === 2) {
+          const textXy = attr[1].split(',')
+          lfNode.text.x = parseInt(textXy[0])
+          lfNode.text.y = parseInt(textXy[1])
+        }
+      }
+      lfNode.text.value = node.nodeName
+      lfNode.properties.nodeRatio = node.nodeRatio.toString()
+      lfNode.properties.permissionFlag = node.permissionFlag
+      lfNode.properties.skipAnyNode = node.skipAnyNode
+      lfNode.properties.listenerType = node.listenerType
+      lfNode.properties.listenerPath = node.listenerPath
+      lfNode.properties.formCustom = node.formCustom
+      lfNode.properties.formPath = node.formPath
+      graphData.nodes.push(lfNode)
+    }
+    // 处理边
+    let skipEle = null
+    let edge = {}
+    for (var j = 0, lenn = allSkips.length; j < lenn; j++) {
+      skipEle = allSkips[j]
+      edge = {
+        text: {},
+        properties: {},
+      }
+      edge.id = skipEle.id
+      edge.type = 'skip'
+      edge.sourceNodeId = skipEle.nowNodeCode
+      edge.targetNodeId = skipEle.nextNodeCode
+      edge.text = { value: skipEle.skipName }
+      edge.properties.skipCondition = skipEle.skipCondition
+      edge.properties.skipName = skipEle.skipName
+      edge.properties.skipType = skipEle.skipType
+      const expr = skipEle.expr
+      if (expr) {
+        edge.properties.expr = skipEle.expr
+      }
+      const coordinate = skipEle.coordinate
+      if (coordinate) {
+        const coordinateXy = coordinate.split('|')
+        edge.pointsList = []
+        coordinateXy[0].split(';').forEach((item) => {
+          const pointArr = item.split(',')
+          edge.pointsList.push({
+            x: parseInt(pointArr[0]),
+            y: parseInt(pointArr[1])
+          })
+        })
+        edge.startPoint = edge.pointsList[0]
+        edge.endPoint = edge.pointsList[edge.pointsList.length - 1]
+        if (coordinateXy.length > 1) {
+          let textXy = coordinateXy[1].split(",");
+          edge.text.x = parseInt(textXy[0])
+          edge.text.y = parseInt(textXy[1])
+        }
+      }
+      graphData.edges.push(edge)
+    }
+  }
   return graphData
 }
 
@@ -259,6 +366,7 @@ export const logicFlowJsonToFlowXml = (data) => {
       })
     }
   }
+  // 开始执行
   const startNode = getStartNode()
   if (!startNode) {
     // 开始节点不存在，xml不合法
@@ -306,4 +414,101 @@ export const logicFlowJsonToFlowXml = (data) => {
   })
   xml += '</definition>'
   return xml
+}
+/**
+ * 将LogicFlow的数据转成warm-flow的json定义文件
+ * @param {*} data(...definitionInfo,nodes,edges)
+ * @returns
+ */
+export const logicFlowJsonToFlowJson = (data) => {
+  // 先构建成流程对象
+  const flowCombine = {
+    definition : {},
+    allNodes : [],
+    allSkips : []
+  }
+  /**
+   * 根据节点的类型值，获取key
+   * @param {*} mapValue 节点类型映射
+   * @returns
+   */
+  const getNodeTypeValue = (mapValue) => {
+    for (const key in NODE_TYPE_MAP) {
+      if (NODE_TYPE_MAP[key] === mapValue) {
+        return key
+      }
+    }
+  }
+  /**
+   * 根据节点的编码，获取节点的类型
+   * @param {*} nodeCode 当前节点名称
+   * @returns
+   */
+  const getNodeType = (nodeCode) => {
+    for (const node of flowCombine.allNodes) {
+      if (nodeCode === node.nodeCode) {
+        return node.nodeType
+      }
+    }
+  }
+  /**
+   * 拼接skip坐标
+   * @param {*} edge logicFlow的edge
+   * @returns
+   */
+  const getCoordinate = (edge) => {
+    let coordinate = ''
+    for (let i = 0; i < edge.pointsList.length; i++) {
+      coordinate = coordinate + parseInt(edge.pointsList[i].x) + ',' + parseInt(edge.pointsList[i].y)
+      if (i !== edge.pointsList.length - 1) {
+        coordinate = coordinate + ';'
+      }
+    }
+    if (edge.text) {
+      coordinate = coordinate + '|' + parseInt(edge.text.x) + ',' + parseInt(edge.text.y)
+    }
+    return coordinate
+  }
+  // 流程定义
+  flowCombine.definition.flowCode = data.flowCode
+  flowCombine.definition.flowName = data.flowName
+  flowCombine.definition.version = data.version
+  flowCombine.definition.fromCustom = data.fromCustom
+  flowCombine.definition.fromPath = data.fromPath
+  // 流程节点
+  data.nodes.forEach(anyNode => {
+    let node = {}
+    node.nodeType = getNodeTypeValue(anyNode.type)
+    node.nodeCode = anyNode.id
+    node.nodeName = anyNode.text.value
+    node.permissionFlag = anyNode.properties.permissionFlag
+    node.nodeRatio = anyNode.properties.nodeRatio
+    node.skipAnyNode = anyNode.properties.skipAnyNode
+    node.listenerType = anyNode.properties.listenerType
+    node.listenerPath = anyNode.properties.listenerPath
+    node.formCustom = anyNode.properties.formCustom
+    node.formPath = anyNode.properties.formPath
+    node.coordinate = anyNode.x + ',' + anyNode.y
+    if (anyNode.text.x && anyNode.text.y) {
+      node.coordinate = node.coordinate + '|' + anyNode.text.x + ',' + anyNode.text.y
+    }
+    node.handlerType = anyNode.properties.handlerType
+    node.handlerPath = anyNode.properties.handlerPath
+    node.version = flowCombine.definition.version
+    flowCombine.allNodes.push(node)
+  })
+  // 流程跳转
+  data.edges.forEach(anyEdge => {
+    let skip = {}
+    skip.skipType = anyEdge.properties.skipType
+    skip.skipCondition = anyEdge.properties.skipCondition
+    skip.skipName = anyEdge?.text?.value || anyEdge.properties.skipName
+    skip.nowNodeCode = anyEdge.sourceNodeId
+    skip.nowNodeType = getNodeType(skip.nowNodeCode)
+    skip.nextNodeCode = anyEdge.targetNodeId
+    skip.nextNodeType = getNodeType(skip.nextNodeCode)
+    skip.coordinate = getCoordinate(anyEdge)
+    flowCombine.allSkips.push(skip)
+  })
+  return JSON.stringify(flowCombine)
 }

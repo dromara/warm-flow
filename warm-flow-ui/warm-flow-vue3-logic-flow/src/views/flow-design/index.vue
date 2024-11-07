@@ -21,8 +21,13 @@ import Parallel from "@/components/WarmFlow/js/parallel";
 import End from "@/components/WarmFlow/js/end";
 import Skip from "@/components/WarmFlow/js/skip";
 import PropertySetting from '@/components/WarmFlow/PropertySetting/index.vue'
-import {saveXml, getXmlString} from "@/api/flow/definition";
-import {logicFlowJsonToFlowXml, xml2LogicFlowJson} from "@/components/WarmFlow/js/tool";
+import {saveXml, getXmlString, getJsonString, saveJson} from "@/api/flow/definition";
+import {
+  json2LogicFlowJson,
+  logicFlowJsonToFlowJson,
+  logicFlowJsonToFlowXml,
+  xml2LogicFlowJson
+} from "@/components/WarmFlow/js/tool";
 
 const { proxy } = getCurrentInstance();
 
@@ -34,6 +39,7 @@ const processForm = ref({});
 const propertySettingRef = ref({});
 const value = ref({});
 const xmlString = ref('');
+const jsonString = ref('');
 const skipConditionShow = ref(true);
 
 
@@ -69,6 +75,15 @@ onMounted(() => {
       }
     });
   }
+  /*if (definitionId.value) {
+    getJsonString(definitionId.value).then(res => {
+      jsonString.value = res.data;
+      if (jsonString.value) {
+        value.value = json2LogicFlowJson(jsonString.value);
+        lf.value.render(value.value);
+      }
+    });
+  }*/
 })
 
 /**
@@ -164,6 +179,21 @@ function initControl() {
             close();
           }
         });
+        /*let graphData = lf.getGraphData()
+        value.value['nodes'] = graphData['nodes']
+        value.value['edges'] = graphData['edges']
+        let jsonString = logicFlowJsonToFlowJson(value.value);
+        let data = {
+          jsonString: jsonString,
+          id: definitionId.value
+        }
+        console.log(JSON.stringify(jsonString))
+        saveJson(data).then(response => {
+          proxy.$modal.msgSuccess("保存成功");
+          if (response.code === 200) {
+            close();
+          }
+        });*/
       }
     });
   }
