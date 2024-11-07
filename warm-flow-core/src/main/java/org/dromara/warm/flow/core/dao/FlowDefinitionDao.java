@@ -23,7 +23,7 @@ import java.util.List;
  * 流程定义Dao接口，不同的orm扩展包实现它
  *
  * @author warm
- * @date 2023-03-29
+ * @since 2023-03-29
  */
 public interface FlowDefinitionDao<T extends Definition> extends WarmDao<T> {
 

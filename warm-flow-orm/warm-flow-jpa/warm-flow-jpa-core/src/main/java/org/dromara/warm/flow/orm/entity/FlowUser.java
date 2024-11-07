@@ -36,7 +36,7 @@ import java.util.Objects;
  * 流程用户对象 flow_user
  *
  * @author xiarg
- * @date 2024/5/10 10:58
+ * @since 2024/5/10 10:58
  */
 @Entity
 @Table(name = "flow_user")

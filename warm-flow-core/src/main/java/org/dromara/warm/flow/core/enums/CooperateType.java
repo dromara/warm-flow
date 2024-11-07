@@ -29,7 +29,7 @@ import java.util.Objects;
  * REDUCTION_SIGNATURE-减签：办理中途，希望某些人不参与办理
  *
  * @author xiarg
- * @date 2024/5/10 16:04
+ * @since 2024/5/10 16:04
  */
 public enum CooperateType {
 

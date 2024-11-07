@@ -28,7 +28,7 @@ import java.util.List;
  * 流程节点对象 flow_node
  *
  * @author warm
- * @date 2023-03-29
+ * @since 2023-03-29
  */
 @TableName("flow_node")
 public class FlowNode implements Node {

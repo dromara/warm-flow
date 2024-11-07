@@ -24,7 +24,7 @@ import org.dromara.warm.flow.orm.mapper.FlowInstanceMapper;
  * 流程实例Mapper接口
  *
  * @author warm
- * @date 2023-03-29
+ * @since 2023-03-29
  */
 public class FlowInstanceDaoImpl extends WarmDaoImpl<FlowInstance> implements FlowInstanceDao<FlowInstance> {
 

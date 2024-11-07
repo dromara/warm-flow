@@ -26,7 +26,7 @@ import org.dromara.warm.flow.core.utils.ObjectUtil;
  * mybatis-flex 租户和逻辑删除工具类
  *
  * @author xiarg
- * @date 2024/5/10 11:16
+ * @since 2024/5/10 11:16
  */
 public class TenantDeleteUtil {
 
@@ -38,7 +38,7 @@ public class TenantDeleteUtil {
      * @param entity 实体类
      * @return QueryWrapper
      * @author xiarg
-     * @date 2024/5/10 11:16
+     * @since 2024/5/10 11:16
      */
     public static <T extends RootEntity> QueryWrapper getDefaultWrapper(T entity) {
         QueryWrapper queryWrapper = QueryWrapper.create(entity);
@@ -52,7 +52,7 @@ public class TenantDeleteUtil {
      * @param entity 实体类
      * @return QueryWrapper
      * @author xiarg
-     * @date 2024/5/10 11:16
+     * @since 2024/5/10 11:16
      */
     public static <T extends RootEntity> QueryWrapper getDelWrapper(T entity) {
         QueryWrapper queryWrapper = QueryWrapper.create(entity);
@@ -66,7 +66,7 @@ public class TenantDeleteUtil {
      * @param entity 实体类
      * @return QueryWrapper
      * @author xiarg
-     * @date 2024/5/10 11:16
+     * @since 2024/5/10 11:16
      */
     public static <T extends RootEntity> QueryWrapper getIdWrapper(T entity) {
         QueryWrapper queryWrapper = QueryWrapper.create();
@@ -81,7 +81,7 @@ public class TenantDeleteUtil {
      * @param queryWrapper mybatis-flex 查询处理器
      * @param flowConfig 流程配置
      * @author xiarg
-     * @date 2024/5/10 11:16
+     * @since 2024/5/10 11:16
      */
     private static void handleQueryWrapper(QueryWrapper queryWrapper, WarmFlow flowConfig) {
         if (ObjectUtil.isNotNull(FlowFactory.tenantHandler())) {
@@ -97,7 +97,7 @@ public class TenantDeleteUtil {
      *
      * @param entity 实体类
      * @author xiarg
-     * @date 2024/5/10 11:16
+     * @since 2024/5/10 11:16
      */
     public static <T extends RootEntity> void fillEntity(T entity) {
         WarmFlow flowConfig = FlowFactory.getFlowConfig();
@@ -115,7 +115,7 @@ public class TenantDeleteUtil {
      * @param entity 实体类
      * @return T
      * @author xiarg
-     * @date 2024/5/10 11:16
+     * @since 2024/5/10 11:16
      */
     public static <T extends RootEntity> T delFillEntity(T entity) {
         WarmFlow flowConfig = FlowFactory.getFlowConfig();

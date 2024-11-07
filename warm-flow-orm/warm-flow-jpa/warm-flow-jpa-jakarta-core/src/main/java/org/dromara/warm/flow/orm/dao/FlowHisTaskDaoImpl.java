@@ -32,7 +32,7 @@ import java.util.Objects;
  * 历史任务记录Mapper接口
  *
  * @author vanlin
- * @date 2024-05-12
+ * @since 2024-05-12
  */
 public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask> implements FlowHisTaskDao<FlowHisTask> {
 

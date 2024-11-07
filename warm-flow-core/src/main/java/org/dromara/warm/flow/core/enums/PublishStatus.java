@@ -16,9 +16,10 @@
 package org.dromara.warm.flow.core.enums;
 
 /**
+ * 节点类型
+ *
  * @author warm
- * @description: 节点类型
- * @date: 2023/3/31 12:16
+ * @since 2023/3/31 12:16
  */
 public enum PublishStatus {
     EXPIRED(9, "已失效"),

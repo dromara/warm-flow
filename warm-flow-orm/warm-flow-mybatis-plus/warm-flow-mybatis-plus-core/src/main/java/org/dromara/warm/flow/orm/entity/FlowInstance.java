@@ -26,7 +26,7 @@ import java.util.Map;
  * 流程实例对象 flow_instance
  *
  * @author warm
- * @date 2023-03-29
+ * @since 2023-03-29
  */
 @TableName("flow_instance")
 public class FlowInstance implements Instance {

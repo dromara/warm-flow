@@ -35,9 +35,9 @@ import org.springframework.core.env.Environment;
 import java.util.Objects;
 
 /**
+ * 工作流bean注册配置
  * @author warm
- * @description: 工作流bean注册配置
- * @date: 2023/6/5 23:01
+ * @since 2023/6/5 23:01
  */
 @SuppressWarnings("rawtypes unchecked")
 @Import(SpringUtil.class)

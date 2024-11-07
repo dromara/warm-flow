@@ -31,7 +31,7 @@ import java.util.Objects;
  * 节点跳转关联Mapper接口
  *
  * @author vanlin
- * @date 2024-05-12
+ * @since 2024-05-12
  */
 public class FlowSkipDaoImpl extends WarmDaoImpl<FlowSkip> implements FlowSkipDao<FlowSkip> {
 

@@ -23,14 +23,18 @@ import org.dromara.warm.flow.core.keygen.SnowFlakeId15;
 import org.dromara.warm.flow.core.keygen.SnowFlakeId19;
 
 /**
+ * 唯一id
+ *
  * @author warm
- * @description: 唯一id
- * @date: 2023/5/17 23:08
+ * @since 2023/5/17 23:08
  */
 public class IdUtils {
 
+    /** 内置id算法 */
     private volatile static KenGen instance;
-    private static KenGen instanceExt;
+
+    /** orm框架配置了原生id算法 */
+    private static KenGen instanceNative;
 
     public static String nextIdStr() {
         return nextId().toString();
@@ -50,11 +54,13 @@ public class IdUtils {
                     } else if (FlowCons.SNOWID15.equals(keyType)) {
                         instance = new SnowFlakeId15(workerId);
                     }
-                    if (instanceExt != null) {
-                        instance = instanceExt;
-                    }
                     if (instance == null) {
-                        instance = new SnowFlakeId19(workerId, datacenterId);
+                        // 如果orm框架配置了原生id算法，则使用原生id算法，否则默认使用19位内置雪花算法
+                        if (instanceNative != null) {
+                            instance = instanceNative;
+                        } else {
+                            instance = new SnowFlakeId19(workerId, datacenterId);
+                        }
                     }
                 }
             }
@@ -62,8 +68,8 @@ public class IdUtils {
         return instance.nextId();
     }
 
-    public static void setInstanceExt(KenGen instanceExt) {
-        IdUtils.instanceExt = instanceExt;
+    public static void setInstanceNative(KenGen instanceNative) {
+        IdUtils.instanceNative = instanceNative;
     }
 
 }

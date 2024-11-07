@@ -19,9 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 分页
+ *
  * @author warm
- * @description: 分页
- * @date: 2023/5/17 1:28
+ * @since 2023/5/17 1:28
  */
 public class Page<T> implements OrderBy {
 

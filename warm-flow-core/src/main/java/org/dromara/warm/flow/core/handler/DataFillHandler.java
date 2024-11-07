@@ -23,9 +23,10 @@ import java.util.Date;
 import java.util.Objects;
 
 /**
+ * 数据填充handler，以下三个接口按照实际情况实现
+ *
  * @author warm
- * @description: 数据填充handler，以下三个接口按照实际情况实现
- * @date: 2023/4/1 15:37
+ * @since 2023/4/1 15:37
  */
 public interface DataFillHandler {
 

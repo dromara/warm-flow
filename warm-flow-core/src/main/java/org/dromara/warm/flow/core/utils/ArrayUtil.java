@@ -16,9 +16,9 @@
 package org.dromara.warm.flow.core.utils;
 
 /**
+ * 数组工具类
  * @author warm
- * @description: 数组工具类
- * @date: 2023/5/18 9:45
+ * @since 2023/5/18 9:45
  */
 public class ArrayUtil {
     /**

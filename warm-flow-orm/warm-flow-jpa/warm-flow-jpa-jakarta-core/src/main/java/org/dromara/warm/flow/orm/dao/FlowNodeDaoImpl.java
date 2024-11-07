@@ -35,7 +35,7 @@ import java.util.Objects;
  * 流程节点Mapper接口
  *
  * @author vanlin
- * @date 2024-05-12
+ * @since 2024-05-12
  */
 public class FlowNodeDaoImpl extends WarmDaoImpl<FlowNode> implements FlowNodeDao<FlowNode> {
 

@@ -18,9 +18,10 @@ package org.dromara.warm.flow.core.utils;
 import java.util.Map;
 
 /**
+ * map工具类
+ *
  * @author warm
- * @description: map工具类
- * @date: 2023/5/18 9:46
+ * @since 2023/5/18 9:46
  */
 public class MapUtil {
 

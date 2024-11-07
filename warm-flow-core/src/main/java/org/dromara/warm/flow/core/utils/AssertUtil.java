@@ -21,9 +21,10 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
+ * Assert类
+ *
  * @author warm
- * @description: Assert类
- * @date: 2023/3/30 14:05
+ * @since 2023/3/30 14:05
  */
 public class AssertUtil {
     private AssertUtil() {

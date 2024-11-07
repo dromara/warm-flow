@@ -43,7 +43,7 @@ import java.util.Objects;
  * BaseMapper接口
  *
  * @author vanlin
- * @date 2024-05-12
+ * @since 2024-05-12
  */
 public abstract class WarmDaoImpl<T extends JPARootEntity<T>> implements WarmDao<T> {
 

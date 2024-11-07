@@ -21,7 +21,7 @@ import java.util.Date;
  * 流程用户 flow_user
  *
  * @author xiarg
- * @date 2024/5/10 10:41
+ * @since 2024/5/10 10:41
  */
 public interface User extends RootEntity {
 

@@ -26,9 +26,10 @@ import java.util.List;
 
 
 /**
+ * 流程初始化数据集合
+ *
  * @author warm
- * @description: 流程初始化数据集合
- * @date: 2023/3/30 14:27
+ * @since 2023/3/30 14:27
  */
 public class FlowCombine {
     /**

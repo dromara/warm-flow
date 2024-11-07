@@ -18,9 +18,10 @@ package org.dromara.warm.flow.core.enums;
 import org.dromara.warm.flow.core.utils.StringUtils;
 
 /**
+ * 审批动作
+ *
  * @author warm
- * @description: 审批动作
- * @date: 2023/3/31 12:16
+ * @since 2023/3/31 12:16
  */
 public enum SkipType {
     PASS("PASS", "审批通过"),

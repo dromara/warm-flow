@@ -32,7 +32,7 @@ public class ResourcesConfig implements WebMvcConfigurer
     {
         /** warm-flow配置 */
         registry.addResourceHandler("/warm-flow-ui/**")
-                .addResourceLocations("classpath:/META-INF/resources/warm-flow-ui/");
+                .addResourceLocations("classpath:/META-INF/resources/warm-flow-ui/", "classpath:/warm-flow-ui/");
 
     }
 }

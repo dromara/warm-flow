@@ -18,9 +18,10 @@ package org.dromara.warm.flow.core.enums;
 import org.dromara.warm.flow.core.utils.ObjectUtil;
 
 /**
+ * 流程状态
+ *
  * @author warm
- * @description: 流程状态
- * @date: 2023/3/31 12:16
+ * @since 2023/3/31 12:16
  */
 public enum FlowStatus {
     TOBESUBMIT("0", "待提交"),

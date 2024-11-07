@@ -19,7 +19,7 @@ package org.dromara.warm.flow.core.enums;
  * 流程用户类型
  *
  * @author xiarg
- * @date 2024/5/10 16:04
+ * @since 2024/5/10 16:04
  */
 public enum UserType {
 

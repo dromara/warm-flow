@@ -30,7 +30,7 @@ import java.util.Date;
  * 流程用户对象 flow_user
  *
  * @author xiarg
- * @date 2024/5/10 10:58
+ * @since 2024/5/10 10:58
  */
 @Getter
 @Setter

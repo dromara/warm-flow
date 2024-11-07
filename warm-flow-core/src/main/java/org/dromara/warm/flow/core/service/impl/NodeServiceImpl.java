@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
  * 流程节点Service业务层处理
  *
  * @author warm
- * @date 2023-03-29
+ * @since 2023-03-29
  */
 public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> implements NodeService {
 
@@ -106,7 +106,7 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
      * @param skipType      跳转类型
      * @return List<Skip>
      * @author xiarg
-     * @date 2024/8/21 11:32
+     * @since 2024/8/21 11:32
      */
     private Skip getSkipByCheck(Node nowNode, List<Skip> skips, String skipType) {
         if (CollUtil.isEmpty(skips)) {

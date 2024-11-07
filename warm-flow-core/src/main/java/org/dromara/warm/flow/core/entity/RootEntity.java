@@ -19,9 +19,10 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
+ * 流程基础entity
+ *
  * @author warm
- * @description: 流程基础entity
- * @date: 2023/5/17 17:23
+ * @since 2023/5/17 17:23
  */
 public interface RootEntity extends Serializable {
 

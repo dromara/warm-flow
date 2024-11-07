@@ -27,7 +27,7 @@ import java.util.Collection;
  * 节点跳转关联Service业务层处理
  *
  * @author warm
- * @date 2023-03-29
+ * @since 2023-03-29
  */
 public class SkipServiceImpl extends WarmServiceImpl<FlowSkipDao<Skip>, Skip> implements SkipService {
 

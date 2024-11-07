@@ -25,7 +25,7 @@ import java.util.List;
  * 流程用户Service接口
  *
  * @author xiarg
- * @date 2024/5/10 13:55
+ * @since 2024/5/10 13:55
  */
 public interface UserService extends IWarmService<User> {
 
@@ -35,7 +35,7 @@ public interface UserService extends IWarmService<User> {
      * @param addTasks 待办任务
      * @return List<User>
      * @author xiarg
-     * @date 2024/5/10 13:59
+     * @since 2024/5/10 13:59
      */
     List<User> taskAddUsers(List<Task> addTasks);
 
@@ -46,7 +46,7 @@ public interface UserService extends IWarmService<User> {
      * @param taskId   任务id
      * @return List<User>
      * @author xiarg
-     * @date 2024/5/10 13:59
+     * @since 2024/5/10 13:59
      */
     List<User> setSkipUser(List<Task> addTasks, Long taskId);
 
@@ -56,7 +56,7 @@ public interface UserService extends IWarmService<User> {
      * @param task 待办任务任务信息
      * @return List<User>
      * @author xiarg
-     * @date 2024/5/10 15:45
+     * @since 2024/5/10 15:45
      */
     List<User> taskAddUser(Task task);
 
@@ -65,7 +65,7 @@ public interface UserService extends IWarmService<User> {
      *
      * @param ids 待办任务id集合
      * @author xiarg
-     * @date 2024/5/10 13:59
+     * @since 2024/5/10 13:59
      */
     void deleteByTaskIds(List<Long> ids);
 
@@ -75,7 +75,7 @@ public interface UserService extends IWarmService<User> {
      * @param associated 待办任务id集合
      * @param type       用户表类型
      * @author xiarg
-     * @date 2024/5/120 13:59
+     * @since 2024/5/120 13:59
      */
     List<String> getPermission(Long associated, String... type);
 
@@ -127,7 +127,7 @@ public interface UserService extends IWarmService<User> {
      * @param handler     存储委派时的办理人
      * @return 结果
      * @author xiarg
-     * @date 2024/5/10 11:19
+     * @since 2024/5/10 11:19
      */
     boolean updatePermission(Long associated, List<String> permissions, String type, boolean clear, String handler);
 

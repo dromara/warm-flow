@@ -20,9 +20,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * 工作流内置参数
+ *
  * @author warm
- * @description: 工作流内置参数
- * @date: 2023/3/31 17:18
+ * @since 2023/3/31 17:18
  */
 public class FlowParams implements Serializable {
     private static final long serialVersionUID = 1L;

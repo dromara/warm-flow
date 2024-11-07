@@ -38,7 +38,7 @@ import java.util.Objects;
  * 流程实例对象 flow_instance
  *
  * @author vanlin
- * @date 2024-05-08
+ * @since 2024-05-08
  */
 @Entity
 @Table(name = "flow_instance")

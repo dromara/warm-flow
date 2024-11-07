@@ -23,7 +23,7 @@ import java.util.List;
  * 流程用户Mapper接口
  *
  * @author xiarg
- * @date 2024/5/10 11:15
+ * @since 2024/5/10 11:15
  */
 public interface FlowUserDao<T extends User> extends WarmDao<T> {
 
@@ -33,7 +33,7 @@ public interface FlowUserDao<T extends User> extends WarmDao<T> {
      * @param taskIdList 待办任务主键集合
      * @return 结果
      * @author xiarg
-     * @date 2024/5/10 11:19
+     * @since 2024/5/10 11:19
      */
     int deleteByTaskIds(List<Long> taskIdList);
 

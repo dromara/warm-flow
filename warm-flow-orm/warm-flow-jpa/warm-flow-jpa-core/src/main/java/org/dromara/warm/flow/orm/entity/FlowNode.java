@@ -39,7 +39,7 @@ import java.util.Objects;
  * 流程节点对象 flow_node
  *
  * @author vanlin
- * @date 2024-05-08
+ * @since 2024-05-08
  */
 @Entity
 @Table(name = "flow_node")

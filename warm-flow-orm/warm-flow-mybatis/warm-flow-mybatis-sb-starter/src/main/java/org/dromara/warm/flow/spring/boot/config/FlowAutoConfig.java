@@ -29,9 +29,10 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
+ * 工作流bean注册配置
+ *
  * @author warm
- * @description: 工作流bean注册配置
- * @date: 2023/6/5 23:01
+ * @since 2023/6/5 23:01
  */
 @Configuration
 @MapperScan("org.dromara.warm.flow.orm.mapper")

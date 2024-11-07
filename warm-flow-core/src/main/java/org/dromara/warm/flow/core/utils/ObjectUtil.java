@@ -18,9 +18,10 @@ package org.dromara.warm.flow.core.utils;
 import java.util.function.Supplier;
 
 /**
+ * Object 工具类
+ *
  * @author warm
- * @description: Object 工具类
- * @date: 2023/5/18 9:42
+ * @since 2023/5/18 9:42
  */
 public class ObjectUtil {
 

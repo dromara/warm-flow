@@ -26,9 +26,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 
 /**
+ * 工作流bean注册配置
+ *
  * @author warm
- * @description: 工作流bean注册配置
- * @date: 2023/6/5 23:01
+ * @since 2023/6/5 23:01
  */
 @Configuration
 @ConditionalOnProperty(value = "warm-flow.enabled", havingValue = "true", matchIfMissing = true)

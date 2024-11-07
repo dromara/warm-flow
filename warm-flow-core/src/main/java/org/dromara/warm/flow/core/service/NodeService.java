@@ -27,7 +27,7 @@ import java.util.Map;
  * 流程节点Service接口
  *
  * @author warm
- * @date 2023-03-29
+ * @since 2023-03-29
  */
 public interface NodeService extends IWarmService<Node> {
 
@@ -58,7 +58,7 @@ public interface NodeService extends IWarmService<Node> {
      * @param variable      流程变量,下一个节点是网关需要判断跳转条件,并行网关返回多个节点
      * @return List<Node>
      * @author xiarg
-     * @date 2024/8/21 16:48
+     * @since 2024/8/21 16:48
      */
     List<Node> getNextNodeList(Long definitionId, String nowNodeCode, String anyNodeCode, String skipType,
                                      Map<String, Object> variable);
@@ -73,7 +73,7 @@ public interface NodeService extends IWarmService<Node> {
      * @param skipType      跳转类型（PASS审批通过 REJECT退回）
      * @return List<Node>
      * @author xiarg
-     * @date 2024/8/21 16:48
+     * @since 2024/8/21 16:48
      */
     Node getNextNode(Long definitionId, String nowNodeCode, String anyNodeCode, String skipType);
 
@@ -92,7 +92,7 @@ public interface NodeService extends IWarmService<Node> {
      * @param nextNode      下一个节点
      * @return List<Node>
      * @author xiarg
-     * @date 2024/8/21 16:48
+     * @since 2024/8/21 16:48
      */
     List<Node> getNextByCheckGateway(Map<String, Object> variable, Node nextNode);
 }

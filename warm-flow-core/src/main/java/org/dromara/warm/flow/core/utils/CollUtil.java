@@ -20,9 +20,10 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
+ * 集合工具类
+ * 
  * @author warm
- * @description: 集合工具类
- * @date: 2023/5/18 9:39
+ * @since 2023/5/18 9:39
  */
 public class CollUtil {
     /**
@@ -158,7 +159,7 @@ public class CollUtil {
      * @param paramArr 对象数组
      * @param <T>      泛型
      * @author xiar
-     * @date 2024/5/10 15:45
+     * @since 2024/5/10 15:45
      */
     public static <T> List<T> toList(T... paramArr) {
         if (ArrayUtil.isEmpty(paramArr)) {
@@ -178,7 +179,7 @@ public class CollUtil {
      * @param <T>   List中的泛型
      * @return List<T>
      * @author xiarg
-     * @date 2024/5/10 15:45
+     * @since 2024/5/10 15:45
      */
     public static <T> List<T> listAddListsToNew(List<T> list, List<List<T>> lists) {
         List<T> newList = new ArrayList<>();
@@ -202,7 +203,7 @@ public class CollUtil {
      * @param sep  分隔符
      * @return String
      * @author xiar
-     * @date 2024/5/10 15:45
+     * @since 2024/5/10 15:45
      */
     public static String strListToStr(List<String> list, String sep) {
         StringBuilder sb = new StringBuilder();

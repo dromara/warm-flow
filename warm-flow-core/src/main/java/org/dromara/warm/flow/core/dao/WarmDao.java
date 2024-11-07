@@ -26,7 +26,7 @@ import java.util.List;
  * BaseMapper接口
  *
  * @author warm
- * @date 2023-03-17
+ * @since 2023-03-17
  */
 public interface WarmDao<T> {
 

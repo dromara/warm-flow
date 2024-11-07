@@ -23,16 +23,17 @@ import org.noear.solon.annotation.Bean;
 import org.noear.solon.annotation.Configuration;
 
 /**
+ * 工作流bean注册配置
+ *
  * @author warm
- * @description: 工作流bean注册配置
- * @date: 2023/6/5 23:01
+ * @since 2023/6/5 23:01
  */
 @Configuration
 public class FlowAutoConfig {
     @Bean
     public WarmFlow after() {
         // 设置Mybatis-Plus默认主键生成器
-        IdUtils.setInstanceExt(new MybatisPlusIdGen());
+        IdUtils.setInstanceNative(new MybatisPlusIdGen());
         return FlowFactory.getFlowConfig();
     }
 }

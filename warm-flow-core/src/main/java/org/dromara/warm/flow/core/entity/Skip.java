@@ -23,7 +23,7 @@ import java.util.Date;
  * 节点跳转关联对象 flow_skip
  *
  * @author warm
- * @date 2023-03-29
+ * @since 2023-03-29
  */
 public interface Skip extends RootEntity {
 

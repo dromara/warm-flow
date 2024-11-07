@@ -28,7 +28,7 @@ import java.util.List;
  * 流程定义Mapper接口
  *
  * @author vanlin
- * @date 2024-05-12
+ * @since 2024-05-12
  */
 public class FlowDefinitionDaoImpl extends WarmDaoImpl<FlowDefinition> implements FlowDefinitionDao<FlowDefinition> {
 

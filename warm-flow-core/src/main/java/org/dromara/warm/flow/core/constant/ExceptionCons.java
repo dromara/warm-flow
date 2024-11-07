@@ -16,9 +16,10 @@
 package org.dromara.warm.flow.core.constant;
 
 /**
+ * 工作流中用到的一些常量
+ *
  * @author warm
- * @description: 工作流中用到的一些常量
- * @date: 2023/3/30 14:05
+ * @since 2023/3/30 14:05
  */
 public class ExceptionCons {
 

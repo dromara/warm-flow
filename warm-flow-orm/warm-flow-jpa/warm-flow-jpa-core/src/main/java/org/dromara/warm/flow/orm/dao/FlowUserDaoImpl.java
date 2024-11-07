@@ -33,7 +33,7 @@ import java.util.Objects;
  * 流程用户Mapper接口
  *
  * @author vanlin
- * @date 2024-05-13
+ * @since 2024-05-13
  */
 public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser> implements FlowUserDao<FlowUser> {
 

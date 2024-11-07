@@ -26,7 +26,7 @@ import java.util.List;
  * 流程用户Mapper接口
  *
  * @author xiarg
- * @date 2024/5/10 11:16
+ * @since 2024/5/10 11:16
  */
 public interface FlowUserMapper extends WarmMapper<FlowUser> {
 
@@ -36,7 +36,7 @@ public interface FlowUserMapper extends WarmMapper<FlowUser> {
      * @param taskIds 待办任务id集合
      * @return int
      * @author xiarg
-     * @date 2024/5/11 11:24
+     * @since 2024/5/11 11:24
      */
     int deleteByTaskIds(@Param("taskIds") Collection<? extends Serializable> taskIds,
                         @Param("entity") FlowUser entity);
@@ -47,7 +47,7 @@ public interface FlowUserMapper extends WarmMapper<FlowUser> {
      * @param taskIds 待办任务id集合
      * @return int
      * @author xiarg
-     * @date 2024/5/11 11:24
+     * @since 2024/5/11 11:24
      */
     int updateByTaskIdsLogic(@Param("taskIds") Collection<? extends Serializable> taskIds,
                              @Param("entity") FlowUser entity,

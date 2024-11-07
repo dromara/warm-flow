@@ -36,7 +36,7 @@ import java.util.Objects;
  * 节点跳转关联对象 flow_skip
  *
  * @author vanlin
- * @date 2024-05-08
+ * @since 2024-05-08
  */
 @Entity
 @Table(name = "flow_skip")

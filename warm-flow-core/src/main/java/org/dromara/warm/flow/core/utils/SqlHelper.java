@@ -16,9 +16,9 @@
 package org.dromara.warm.flow.core.utils;
 
 /**
+ * SQL 辅助类
  * @author warm
- * @description: SQL 辅助类
- * @date: 2023/5/3 15:22
+ * @since 2023/5/3 15:22
  */
 public final class SqlHelper {
 
