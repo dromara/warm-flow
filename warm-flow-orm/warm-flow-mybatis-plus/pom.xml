@@ -4,9 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>io.github.minliuhua</groupId>
+        <groupId>org.dromara</groupId>
         <artifactId>warm-flow-orm</artifactId>
-        <version>1.3.0</version>
+        <version>1.3.2-m1</version>
     </parent>
 
     <artifactId>warm-flow-mybatis-plus</artifactId>
@@ -15,7 +15,28 @@
     <modules>
         <module>warm-flow-mybatis-plus-core</module>
         <module>warm-flow-mybatis-plus-sb-starter</module>
+        <module>warm-flow-mybatis-plus-sb3-starter</module>
         <module>warm-flow-mybatis-plus-solon-plugin</module>
     </modules>
+
+    <properties>
+        <mybatis-plus.version>3.5.1</mybatis-plus.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-extension</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 </project>

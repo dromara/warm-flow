@@ -1,0 +1,15 @@
+:root {
+    --global-flow-background-color:  var(--el-border-color-lighter); 
+    --global-flow-width: 200px;
+    --global-flow-panel-height: 40px;
+    --global-flow-line-height: 60px;
+    --global-flow-panel-color:  var(--el-text-color-primary);
+    --global-flow-line-color:  var(--el-text-color-primary);
+    --golbal-flow-node-padding: 40px;
+    --global-flow-panel-head-background-color:  #00DAFF;
+    --global-flow-panel-background-color:#cee9fc;
+    --global-flow-panel-body-background-color: var(--el-fill-color-blank);
+  
+    --el-border-radius-base: 0px;
+  }
+  

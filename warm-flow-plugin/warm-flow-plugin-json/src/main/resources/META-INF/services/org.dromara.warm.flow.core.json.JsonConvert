@@ -1,0 +1,4 @@
+org.dromara.warm.plugin.json.JsonConvertSnack
+org.dromara.warm.plugin.json.JsonConvertJackson
+org.dromara.warm.plugin.json.JsonConvertFastJson
+org.dromara.warm.plugin.json.JsonConvertGson

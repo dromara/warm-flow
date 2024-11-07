@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.warm.flow.orm.mapper.FlowNodeMapper">
+<mapper namespace="org.dromara.warm.flow.orm.mapper.FlowNodeMapper">
 
-    <resultMap type="com.warm.flow.orm.entity.FlowNode" id="FlowNodeResult">
+    <resultMap type="org.dromara.warm.flow.orm.entity.FlowNode" id="FlowNodeResult">
         <result property="id" column="id"/>
         <result property="nodeType" column="node_type"/>
         <result property="definitionId" column="definition_id"/>
@@ -196,12 +196,12 @@
         </foreach>
     </sql>
 
-    <select id="selectCount" parameterType="com.warm.flow.orm.entity.FlowNode" resultType="java.lang.Long">
+    <select id="selectCount" parameterType="org.dromara.warm.flow.orm.entity.FlowNode" resultType="java.lang.Long">
         select count(*) from flow_node t
         <include refid="select_parameter"/>
     </select>
 
-    <select id="selectList" parameterType="com.warm.flow.orm.entity.FlowNode" resultMap="FlowNodeResult">
+    <select id="selectList" parameterType="org.dromara.warm.flow.orm.entity.FlowNode" resultMap="FlowNodeResult">
         <choose>
             <when test="dataSourceType == 'oracle'.toString()">
                 <if test="page !=null and page.pageNum != null and page.pageSize != null">
@@ -255,7 +255,7 @@
         <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
     </select>
 
-    <insert id="insert" parameterType="com.warm.flow.orm.entity.FlowNode">
+    <insert id="insert" parameterType="org.dromara.warm.flow.orm.entity.FlowNode">
         insert into flow_node
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">id,</if>
@@ -305,7 +305,7 @@
         </trim>
     </insert>
 
-    <update id="updateById" parameterType="com.warm.flow.orm.entity.FlowNode">
+    <update id="updateById" parameterType="org.dromara.warm.flow.orm.entity.FlowNode">
         update flow_node
         <trim prefix="SET" suffixOverrides=",">
             <if test="nodeType != null">node_type = #{nodeType},</if>
@@ -367,7 +367,7 @@
         </if>
     </update>
 
-    <delete id="delete" parameterType="com.warm.flow.orm.entity.FlowNode">
+    <delete id="delete" parameterType="org.dromara.warm.flow.orm.entity.FlowNode">
         delete from flow_node
         <where>
             <if test="id != null">and id = #{id}</if>
@@ -454,7 +454,7 @@
         </if>
     </update>
 
-    <insert id="saveBatch" parameterType="com.warm.flow.orm.entity.FlowNode">
+    <insert id="saveBatch" parameterType="org.dromara.warm.flow.orm.entity.FlowNode">
         <choose>
             <when test="dataSourceType == 'oracle'.toString()">
                 <include refid="oracle_insert_batch"/>
