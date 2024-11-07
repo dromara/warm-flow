@@ -79,7 +79,7 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
         }
         pageFlex = getMapper().paginate(pageFlex, queryWrapper);
         if (ObjectUtil.isNotNull(pageFlex)) {
-            return new Page<>(pageFlex.getRecords(), pageFlex.getTotalPage());
+            return new Page<>(pageFlex.getRecords(), pageFlex.getTotalRow());
         }
         return Page.empty();
     }
