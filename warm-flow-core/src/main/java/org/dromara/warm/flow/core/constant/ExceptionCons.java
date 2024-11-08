@@ -122,4 +122,12 @@ public class ExceptionCons {
 
     public static final String INSTANCE_ALREADY_SUSPENDED = "当前流程实例已经挂起";
 
+    public static final String NOT_DEF_PROMOTER_NOT_RETRIEVE = "不是当前流程的发起人，无法取回";
+
+    public static final String CUR_USER_NOT_EMPTY = "当前处理人不能为空";
+
+    public static final String NODE_IS_END = "目标节点是结束节点，不可跳转";
+
+    public static final String NOT_FOUND_FLOW_TASK = "未获取到流程任务";
+
 }

@@ -29,8 +29,10 @@ import org.dromara.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import org.dromara.warm.flow.core.service.InsService;
 import org.dromara.warm.flow.core.utils.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 流程实例Service业务层处理
@@ -132,10 +134,10 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
     /**
      * 设置历史任务
      *
-     * @param nextNodes
-     * @param flowParams
-     * @param startNode
-     * @param instanceId
+     * @param nextNodes 下一节点集合
+     * @param flowParams 流程参数
+     * @param startNode 开始节点
+     * @param instanceId 流程实例id
      */
     private List<HisTask> setHisTask(List<Node> nextNodes, FlowParams flowParams, Node startNode, Long instanceId) {
         Task startTask = FlowFactory.newTask()
@@ -152,9 +154,9 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
     /**
      * 开启流程，保存流程信息
      *
-     * @param instance
-     * @param addTasks
-     * @param hisTasks
+     * @param instance 流程实例
+     * @param addTasks 新增任务
+     * @param hisTasks 历史任务
      */
     private void saveFlowInfo(Instance instance, List<Task> addTasks, List<HisTask> hisTasks) {
         // 待办任务设置处理人
@@ -168,9 +170,9 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
     /**
      * 设置流程实例对象
      *
-     * @param firstBetweenNode
-     * @param businessId
-     * @return
+     * @param firstBetweenNode 第一个中间节点
+     * @param businessId 业务id
+     * @return Instance
      */
     private Instance setStartInstance(Node firstBetweenNode, String businessId
             , FlowParams flowParams) {
@@ -197,8 +199,8 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
     /**
      * 有且只能有一个开始节点
      *
-     * @param startNode
-     * @return
+     * @param startNode 开始节点
+     * @return Node
      */
     private Node getFirstBetween(Node startNode) {
         List<Skip> skips = FlowFactory.skipService().list(FlowFactory.newSkip()
@@ -210,6 +212,17 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
 
     private boolean toRemoveTask(List<Long> instanceIds) {
         AssertUtil.isEmpty(instanceIds, ExceptionCons.NULL_INSTANCE_ID);
+
+        List<Long> taskIds = new ArrayList<>();
+        instanceIds.forEach(instanceId -> taskIds.addAll(
+                FlowFactory.taskService()
+                        .list(FlowFactory.newTask().setInstanceId(instanceId))
+                        .stream()
+                        .map(Task::getId)
+                        .collect(Collectors.toList())));
+
+        FlowFactory.userService().deleteByTaskIds(taskIds);
+
         boolean success = FlowFactory.taskService().deleteByInsIds(instanceIds);
         if (success) {
             FlowFactory.hisTaskService().deleteByInsIds(instanceIds);

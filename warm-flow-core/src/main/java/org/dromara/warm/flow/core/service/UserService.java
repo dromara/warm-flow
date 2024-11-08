@@ -84,7 +84,7 @@ public interface UserService extends IWarmService<User> {
      *
      * @param associated 待办任务id
      * @param types      用户表类型
-     * @return
+     * @return List<User>
      */
     List<User> listByAssociatedAndTypes(Long associated, String... types);
 
@@ -93,7 +93,7 @@ public interface UserService extends IWarmService<User> {
      *
      * @param associateds (待办任务，实例，历史表，节点等)id集合
      * @param types       用户表类型
-     * @return
+     * @return List<User>
      */
     List<User> getByAssociateds(List<Long> associateds, String... types);
 
@@ -103,7 +103,7 @@ public interface UserService extends IWarmService<User> {
      * @param associated  待办任务id
      * @param processedBy 办理人
      * @param types       用户表类型
-     * @return
+     * @return List<User>
      */
     List<User> listByProcessedBys(Long associated, String processedBy, String... types);
 
@@ -113,7 +113,7 @@ public interface UserService extends IWarmService<User> {
      * @param associated   待办任务id
      * @param processedBys 办理人id集合
      * @param types        用户表类型
-     * @return
+     * @return List<User>
      */
     List<User> getByProcessedBys(Long associated, List<String> processedBys, String... types);
 

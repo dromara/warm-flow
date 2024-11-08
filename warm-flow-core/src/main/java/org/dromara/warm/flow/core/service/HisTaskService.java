@@ -36,42 +36,42 @@ public interface HisTaskService extends IWarmService<HisTask> {
     /**
      * 根据任务id和协作类型查询
      *
-     * @param taskId
-     * @param cooperateTypes
-     * @return
+     * @param taskId 任务id
+     * @param cooperateTypes 协作类型集合
+     * @return List<HisTask>
      */
     List<HisTask> listByTaskIdAndCooperateTypes(Long taskId, Integer... cooperateTypes);
 
     /**
      * 根据instanceId获取未退回的历史记录
      *
-     * @param instanceId
+     * @param instanceId 流程实例id
      */
     List<HisTask> getNoReject(Long instanceId);
 
     /**
      * 根据nodeCode和targetNodeCode获取未退回的历史记录
-     * @param nodeCode
-     * @param targetNodeCode
-     * @param hisTasks
-     * @return
+     * @param nodeCode 节点编码
+     * @param targetNodeCode 目标节点编码
+     * @param hisTasks 历史任务集合
+     * @return HisTask
      */
     HisTask getNoReject(String nodeCode, String targetNodeCode, List<HisTask> hisTasks);
 
     /**
      * 根据instanceId和流程编码获取未退回的历史记录
      *
-     * @param instanceId
-     * @param nodeCodes
-     * @return
+     * @param instanceId 流程实例id
+     * @param nodeCodes 流程编码集合
+     * @return  List<HisTask>
      */
     List<HisTask> getByInsAndNodeCodes(Long instanceId, List<String> nodeCodes);
 
     /**
      * 根据instanceIds删除
      *
-     * @param instanceIds
-     * @return
+     * @param instanceIds 流程实例id集合
+     * @return boolean
      */
     boolean deleteByInsIds(List<Long> instanceIds);
 
@@ -91,7 +91,7 @@ public interface HisTaskService extends IWarmService<HisTask> {
      * @param node          当然任务节点
      * @param flowParams    参数
      * @param collaborators 协作人
-     * @return
+     * @return List<HisTask> 历史任务集合
      */
     List<HisTask> setCooperateHis(Task task, Node node, FlowParams flowParams
             , List<String> collaborators);
@@ -99,32 +99,43 @@ public interface HisTaskService extends IWarmService<HisTask> {
     /**
      * 委派历史任务
      *
-     * @param task
-     * @param flowParams
-     * @param entrustedUser
-     * @return
+     * @param task          当前任务
+     * @param flowParams    参数
+     * @param entrustedUser 委托人
+     * @return HisTask 历史任务
      */
     HisTask setDeputeHisTask(Task task, FlowParams flowParams, User entrustedUser);
 
     /**
      * 设置会签票签历史任务
      *
-     * @param task
-     * @param flowParams
-     * @param nodeRatio
-     * @param isPass
-     * @return
+     * @param task       当前任务
+     * @param flowParams 参数
+     * @param nodeRatio  节点比率
+     * @param isPass     是否通过
+     * @return HisTask 历史任务
      */
     HisTask setSignHisTask(Task task, FlowParams flowParams, BigDecimal nodeRatio, boolean isPass);
 
     /**
      * 自动完成历史任务
      *
-     * @param flowParams
-     * @param flowStatus
-     * @param task
-     * @param userList
+     * @param flowParams 流程参数
+     * @param flowStatus 流程状态
+     * @param task 当前任务
+     * @param userList 用户列表
      */
     List<HisTask> autoHisTask(FlowParams flowParams, String flowStatus, Task task, List<User> userList, Integer cooperateType);
 
+    /**
+     * 设置流程历史任务信息
+     *
+     * @param task              当前任务
+     * @param nextNode          跳转的节点
+     * @param flowParams        流程参数
+     * @return HisTask          历史任务
+     * @author xiarg
+     * @since 2024/9/30 11:59
+     */
+    HisTask setSkipHisTask(Task task, Node nextNode, FlowParams flowParams);
 }
