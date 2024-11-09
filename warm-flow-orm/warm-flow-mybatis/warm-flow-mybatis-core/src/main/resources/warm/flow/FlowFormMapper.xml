@@ -198,7 +198,7 @@
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">id,</if>
             <if test="formCode != null and formCode != ''">form_code,</if>
-            <if test="formName != null and formName != ''">flow_name,</if>
+            <if test="formName != null and formName != ''">form_name,</if>
             <if test="version != null and version != ''">version,</if>
             <if test="isPublish != null">is_publish,</if>
             <if test="formType != null">form_type,</if>
@@ -219,8 +219,6 @@
             <if test="formType != null">#{formType},</if>
             <if test="formPath != null">#{formPath},</if>
             <if test="formContent != null">#{formContent},</if>
-            <if test="listenerType != null and listenerType != ''">#{listenerType},</if>
-            <if test="listenerPath != null and listenerPath != ''">#{listenerPath},</if>
             <if test="ext != null and ext != ''">#{ext},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
@@ -233,10 +231,10 @@
         update flow_form
         <trim prefix="SET" suffixOverrides=",">
             <if test="formCode != null and formCode != ''">form_code = #{formCode},</if>
-            <if test="formName != null and formName != ''">flow_name = #{formName},</if>
+            <if test="formName != null and formName != ''">form_name = #{formName},</if>
             <if test="version != null and version != ''">version = #{version},</if>
             <if test="isPublish != null">is_publish = #{isPublish},</if>
-            <if test="formType != null">form_custom = #{formType},</if>
+            <if test="formType != null">form_type = #{formType},</if>
             <if test="formPath != null">form_path = #{formPath},</if>
             <if test="formContent != null">form_content = #{formContent},</if>
             <if test="ext != null and ext != ''">ext = #{ext},</if>
@@ -299,7 +297,7 @@
         <where>
             <if test="id != null">and id = #{id}</if>
             <if test="formCode != null and formCode != ''">and form_code = #{formCode}</if>
-            <if test="formName != null and formName != ''">and flow_name = #{formName}</if>
+            <if test="formName != null and formName != ''">and form_name = #{formName}</if>
             <if test="version != null and version != ''">and version = #{version}</if>
             <if test="isPublish != null">and is_publish = #{isPublish}</if>
             <if test="formType != null">and form_custom = #{formType}</if>
@@ -318,7 +316,7 @@
         <where>
             <if test="entity.id != null">and id = #{entity.id}</if>
             <if test="entity.formCode != null and entity.formCode != ''">and form_code = #{entity.formCode}</if>
-            <if test="entity.formName != null and entity.formName != ''">and flow_name = #{entity.formName}</if>
+            <if test="entity.formName != null and entity.formName != ''">and form_name = #{entity.formName}</if>
             <if test="entity.version != null and entity.version != ''">and version = #{entity.version}</if>
             <if test="entity.isPublish != null">and is_publish = #{entity.isPublish}</if>
             <if test="entity.formType != null">and form_custom = #{entity.formType}</if>

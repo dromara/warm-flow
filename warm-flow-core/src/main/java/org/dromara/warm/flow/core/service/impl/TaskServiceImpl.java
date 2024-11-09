@@ -481,7 +481,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
         // 办理人和转办人列表
         List<User> todoList = FlowFactory.userService().listByAssociatedAndTypes(task.getId()
-                , UserType.APPROVAL.getKey(), UserType.TRANSFER.getKey());
+                , UserType.APPROVAL.getKey(), UserType.TRANSFER.getKey(), UserType.DEPUTE.getKey());
 
         // 判断办理人是否有办理权限
         AssertUtil.isEmpty(flowParams.getHandler(), ExceptionCons.SIGN_NULL_HANDLER);
