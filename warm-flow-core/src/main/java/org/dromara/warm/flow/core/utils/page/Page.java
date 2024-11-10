@@ -29,12 +29,12 @@ public class Page<T> implements OrderBy {
     /**
      * 当前记录起始索引
      */
-    private int pageNum;
+    private int pageNum = 1;
 
     /**
      * 每页显示记录数
      */
-    private int pageSize;
+    private int pageSize = 10;
 
     /**
      * 数据
