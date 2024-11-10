@@ -26,6 +26,7 @@ import org.dromara.warm.flow.core.listener.ValueHolder;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 
 /**
@@ -90,7 +91,17 @@ public class ListenerUtil {
         execute(listenerVariable, lisType, definition.getListenerPath(), definition.getListenerType());
     }
 
-    private static void execute(ListenerVariable listenerVariable, String lisType, String listenerPathStr, String lisListType) {
+    public static void execute(ListenerVariable listenerVariable, String lisType, String listenerPathStr, String lisListType) {
+        ValueHolder listenerValueHolder = getListener(lisType, listenerPathStr, lisListType);
+        if (Objects.nonNull(listenerValueHolder) && Objects.nonNull(listenerValueHolder.getListener())) {
+            Map<String, Object> variable = listenerVariable.getVariable();
+            variable = MapUtil.isEmpty(variable) ? new HashMap<>() : variable;
+            variable.put(FlowCons.WARM_LISTENER_PARAM, listenerValueHolder.getParams());
+            listenerValueHolder.getListener().notify(listenerVariable.setVariable(variable));
+        }
+    }
+
+    public static ValueHolder getListener(String lisType, String listenerPathStr, String lisListType) {
         if (StringUtils.isNotEmpty(lisListType)) {
             String[] listenerTypeArr = lisListType.split(",");
             for (int i = 0; i < listenerTypeArr.length; i++) {
@@ -110,10 +121,8 @@ public class ListenerUtil {
                         if (ObjectUtil.isNotNull(clazz) && Listener.class.isAssignableFrom(clazz)) {
                             Listener listener = (Listener) FrameInvoker.getBean(clazz);
                             if (ObjectUtil.isNotNull(listener)) {
-                                Map<String, Object> variable = listenerVariable.getVariable();
-                                variable = MapUtil.isEmpty(variable) ? new HashMap<>() : variable;
-                                variable.put(FlowCons.WARM_LISTENER_PARAM, valueHolder.getParams());
-                                listener.notify(listenerVariable.setVariable(variable));
+                                valueHolder.setListener(listener);
+                                return valueHolder;
                             }
 
                         }
@@ -121,6 +130,7 @@ public class ListenerUtil {
                 }
             }
         }
+        return null;
     }
 
     /**

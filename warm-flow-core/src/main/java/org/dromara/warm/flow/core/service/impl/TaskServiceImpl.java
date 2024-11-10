@@ -17,7 +17,9 @@ package org.dromara.warm.flow.core.service.impl;
 
 import org.dromara.warm.flow.core.FlowFactory;
 import org.dromara.warm.flow.core.constant.ExceptionCons;
+import org.dromara.warm.flow.core.constant.FlowCons;
 import org.dromara.warm.flow.core.dao.FlowTaskDao;
+import org.dromara.warm.flow.core.dto.FlowForm;
 import org.dromara.warm.flow.core.dto.FlowParams;
 import org.dromara.warm.flow.core.dto.ModifyHandler;
 import org.dromara.warm.flow.core.entity.*;
@@ -891,5 +893,56 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     private boolean judgeActivityStatus(Definition definition, Instance instance) {
         return Objects.equals(definition.getActivityStatus(), ActivityStatus.ACTIVITY.getKey())
                 && Objects.equals(instance.getActivityStatus(), ActivityStatus.ACTIVITY.getKey());
+    }
+
+
+    @Override
+    public FlowForm load(Long taskId, FlowParams flowParams) {
+        Task task = getById(taskId);
+        AssertUtil.isNull(task, ExceptionCons.NOT_FOUNT_TASK);
+
+        Instance instance = FlowFactory.insService().getById(task.getInstanceId());
+        AssertUtil.isNull(instance, ExceptionCons.NOT_FOUNT_INSTANCE);
+
+        Definition definition = FlowFactory.defService().getById(instance.getDefinitionId());
+        AssertUtil.isFalse(judgeActivityStatus(definition, instance), ExceptionCons.NOT_ACTIVITY);
+        AssertUtil.isTrue(NodeType.isEnd(instance.getNodeType()), ExceptionCons.FLOW_FINISH);
+
+        Node nowNode = CollUtil.getOne(FlowFactory.nodeService()
+                .getByNodeCodes(Collections.singletonList(task.getNodeCode()), task.getDefinitionId()));
+        AssertUtil.isNull(nowNode, ExceptionCons.LOST_CUR_NODE);
+
+        // 执行开始监听器
+        task.setUserList(FlowFactory.userService().listByAssociatedAndTypes(task.getId()));
+        ListenerUtil.executeListener(new ListenerVariable(definition, instance, nowNode, flowParams.getVariable(), task)
+                .setFlowParams(flowParams), Listener.LISTENER_START);
+
+        checkAuth(nowNode, task, flowParams);
+
+        ListenerVariable listenerVariable = new ListenerVariable(definition, instance, nowNode, flowParams.getVariable(), task);
+
+        FlowForm flowForm = new FlowForm();
+        if (FlowCons.FORM_CUSTOM_Y.equals(nowNode.getFormCustom())) {
+            ListenerUtil.execute(listenerVariable, Listener.LISTENER_FORM_LOAD, nowNode.getListenerPath(), nowNode.getListenerType());
+            Form form = FlowFactory.formService().getById(Long.valueOf(nowNode.getFormPath()));
+            flowForm.setForm(form);
+            flowForm.setData(listenerVariable.getResult());
+        } else if(FlowCons.FORM_CUSTOM_P.equals(nowNode.getFormCustom())
+                && FlowCons.FORM_CUSTOM_Y.equals(definition.getFormCustom())) {
+            ListenerUtil.execute(listenerVariable, Listener.LISTENER_FORM_LOAD, definition.getListenerPath(), definition.getListenerType());
+            Form form = FlowFactory.formService().getById(Long.valueOf(definition.getFormPath()));
+            flowForm.setForm(form);
+            flowForm.setData(listenerVariable.getResult());
+        } else {
+            // 当前流程不支持内置表单,不作处理
+        }
+
+        return flowForm;
+    }
+
+    @Override
+    public Instance handle(Long taskId, FlowParams flowParams, Map<String, Object> formData) {
+
+        return null;
     }
 }

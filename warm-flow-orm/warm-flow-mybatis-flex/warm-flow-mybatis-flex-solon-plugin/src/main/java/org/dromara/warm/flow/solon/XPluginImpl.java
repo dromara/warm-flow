@@ -38,6 +38,7 @@ public class XPluginImpl implements Plugin {
         context.beanMake(FlowAutoConfig.class);
         EventBus.subscribe(FlexGlobalConfig.class, e -> {
             e.getConfiguration().addMapper(FlowDefinitionMapper.class);
+            e.getConfiguration().addMapper(FlowFormMapper.class);
             e.getConfiguration().addMapper(FlowHisTaskMapper.class);
             e.getConfiguration().addMapper(FlowInstanceMapper.class);
             e.getConfiguration().addMapper(FlowNodeMapper.class);
@@ -48,6 +49,7 @@ public class XPluginImpl implements Plugin {
         context.lifecycle(() -> {
             final MybatisAdapter mybatisAdapter = MybatisAdapterManager.getAll().values().iterator().next();
             context.beanInject(mybatisAdapter.getMapper(FlowDefinitionMapper.class));
+            context.beanInject(mybatisAdapter.getMapper(FlowFormMapper.class));
             context.beanInject(mybatisAdapter.getMapper(FlowHisTaskMapper.class));
             context.beanInject(mybatisAdapter.getMapper(FlowInstanceMapper.class));
             context.beanInject(mybatisAdapter.getMapper(FlowNodeMapper.class));
