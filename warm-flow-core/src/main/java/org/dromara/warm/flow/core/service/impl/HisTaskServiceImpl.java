@@ -72,6 +72,11 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
         return CollUtil.getOne(hisTaskList);
     }
 
+    public List<HisTask> beenProcessed(Long instanceId, String handler) {
+        List<HisTask> list = list(FlowFactory.newHisTask().setInstanceId(instanceId).setApprover(handler));
+        return null;
+    }
+
     @Override
     public List<HisTask> getByInsAndNodeCodes(Long instanceId, List<String> nodeCodes) {
         return getDao().getByInsAndNodeCodes(instanceId, nodeCodes);
@@ -231,6 +236,34 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
         }
 
         return hisTasks;
+    }
+
+    @Override
+    public HisTask setSkipHisTask(Task task, Node nextNode, FlowParams flowParams) {
+        String flowStatus = getFlowStatus(flowParams);
+        HisTask hisTask = FlowFactory.newHisTask()
+                .setTaskId(task.getId())
+                .setInstanceId(task.getInstanceId())
+                .setCooperateType(ObjectUtil.isNotNull(flowParams.getCooperateType())
+                        ? flowParams.getCooperateType() : CooperateType.APPROVAL.getKey())
+                .setNodeCode(task.getNodeCode())
+                .setNodeName(task.getNodeName())
+                .setNodeType(task.getNodeType())
+                .setDefinitionId(task.getDefinitionId())
+                .setTargetNodeCode(nextNode.getNodeCode())
+                .setTargetNodeName(nextNode.getNodeName())
+                .setApprover(flowParams.getHandler())
+                .setSkipType(flowParams.getSkipType())
+                .setFlowStatus(StringUtils.isNotEmpty(flowStatus)
+                        ? flowStatus : FlowStatus.APPROVAL.getKey())
+                .setFormCustom(task.getFormCustom())
+                .setFormPath(task.getFormPath())
+                .setMessage(flowParams.getMessage())
+                //业务详情添加至历史记录
+                .setExt(flowParams.getExt())
+                .setCreateTime(task.getCreateTime());
+        FlowFactory.dataFillHandler().idFill(hisTask);
+        return hisTask;
     }
 
     private static String getFlowStatus(FlowParams flowParams) {

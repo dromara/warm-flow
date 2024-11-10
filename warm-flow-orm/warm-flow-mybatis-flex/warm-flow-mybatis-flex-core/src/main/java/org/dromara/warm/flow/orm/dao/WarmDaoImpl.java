@@ -69,10 +69,7 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
     @Override
     public Page<T> selectPage(T entity, Page<T> page) {
         com.mybatisflex.core.paginate.Page<T> pageFlex =
-                new com.mybatisflex.core.paginate.Page<>(
-                        (page.getPageNum()/page.getPageSize())+1,
-                        page.getPageSize()
-                );
+                new com.mybatisflex.core.paginate.Page<>(page.getPageNum(), page.getPageSize());
         QueryWrapper queryWrapper = TenantDeleteUtil.getDefaultWrapper(entity);
         if(StringUtils.isNotEmpty(page.getOrderBy())){
             queryWrapper.orderBy(page.getOrderBy(), "asc".equals(page.getIsAsc()));

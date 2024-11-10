@@ -65,7 +65,7 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
     public Page<T> selectPage(T entity, Page<T> page) {
         TenantDeleteUtil.getEntity(entity);
         String dataSourceType = FlowFactory.dataSourceType();
-        page.ifNecessaryChangePage(dataSourceType);
+        ifNecessaryChangePage(page, dataSourceType);
         long total = getMapper().selectCount(entity);
         if (total > 0) {
             List<T> list = getMapper().selectList(entity, page, page.getOrderBy() + " " + page.getIsAsc(), dataSourceType);
@@ -142,6 +142,13 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
     public void updateBatch(List<T> list) {
         for (T record : list) {
             updateById(record);
+        }
+    }
+
+    private void ifNecessaryChangePage(Page<T> page, String dataSourceType) {
+        page.setPageNum((page.getPageNum() - 1) * page.getPageSize());
+        if ("oracle".equals(dataSourceType)) {
+            page.setPageSize(page.getPageSize() + page.getPageNum());
         }
     }
 }

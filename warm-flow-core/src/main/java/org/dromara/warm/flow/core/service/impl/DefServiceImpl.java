@@ -205,7 +205,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     }
 
     @Override
-    public String flowChart(Long instanceId) throws IOException {
+    public String flowChart(Long instanceId) {
         Long definitionId = FlowFactory.insService().getById(instanceId).getDefinitionId();
         return basicFlowChart(instanceId, definitionId);
     }
@@ -219,7 +219,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     }
 
     @Override
-    public String flowChartNoColor(Long definitionId) throws IOException {
+    public String flowChartNoColor(Long definitionId) {
         return basicFlowChart(null, definitionId);
     }
 
@@ -300,9 +300,9 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     /**
      * 添加跳转流程图
      *
-     * @param colorMap
-     * @param instance
-     * @param flowChartChain
+     * @param colorMap 颜色映射
+     * @param instance 流程实例
+     * @param flowChartChain 流程图链
      */
     private void addSkipChart(Map<String, Color> colorMap, Instance instance, Long definitionId, FlowChartChain flowChartChain) {
         List<Skip> skipList = FlowFactory.skipService().list(FlowFactory.newSkip().setDefinitionId(definitionId));
@@ -338,8 +338,8 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     /**
      * 添加节点流程图
      *
-     * @param instance
-     * @param flowChartChain
+     * @param instance 流程实例
+     * @param flowChartChain 流程图链
      */
     private Map<String, Integer> addNodeChart(Map<String, Color> colorMap, Instance instance, Long definitionId
             , FlowChartChain flowChartChain) {
@@ -408,10 +408,10 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     /**
      * 流程图渲染，过滤掉当前任务后的节点
      *
-     * @param instance
-     * @param allSkips
-     * @param nodeList
-     * @return
+     * @param instance 流程实例
+     * @param allSkips 所有跳转
+     * @param nodeList 节点集合
+     * @return 过滤后的节点列表
      */
     private List<Node> filterNodes(Instance instance, List<Skip> allSkips, List<Node> nodeList) {
         List<String> allNextNode = new ArrayList<>();
@@ -430,12 +430,12 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     /**
      * 获取待办任务节点后的所有节点
      *
-     * @param nextkips
-     * @param allNextNode
+     * @param nextSkips 当前节点对应的所有跳转
+     * @param allNextNode 所有下个任务节点
      */
-    private void getAllNextNode(List<Skip> nextkips, List<String> allNextNode, Map<String, List<Skip>> skipMap) {
-        if (CollUtil.isNotEmpty(nextkips)) {
-            for (Skip nextSkip : nextkips) {
+    private void getAllNextNode(List<Skip> nextSkips, List<String> allNextNode, Map<String, List<Skip>> skipMap) {
+        if (CollUtil.isNotEmpty(nextSkips)) {
+            for (Skip nextSkip : nextSkips) {
                 allNextNode.add(nextSkip.getNextNodeCode());
                 List<Skip> nextNextSkips = skipMap.get(nextSkip.getNextNodeCode());
                 getAllNextNode(nextNextSkips, allNextNode, skipMap);
@@ -446,11 +446,10 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     /**
      * 设置节点和跳转对应的颜色
      *
-     * @param colorMap
-     * @param instance
-     * @param allSkips
-     * @param nodeList
-     * @return
+     * @param colorMap 颜色map
+     * @param instance 流程实例
+     * @param allSkips 所有跳转
+     * @param nodeList 节点集合
      */
     public void setColorMap(Map<String, Color> colorMap, Instance instance, List<Skip> allSkips
             , List<Node> nodeList) {
@@ -563,9 +562,9 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     /**
      * 设置下个节点的颜色
      *
-     * @param colorMap
-     * @param oneNextSkips
-     * @param c
+     * @param colorMap 颜色map
+     * @param oneNextSkips 下一个跳转
+     * @param c 颜色
      */
     private void setNextColorMap(Map<String, Color> colorMap, List<Skip> oneNextSkips, Color c) {
         if (CollUtil.isNotEmpty(oneNextSkips)) {
@@ -581,9 +580,9 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     /**
      * 优先绿色
      *
-     * @param colorMap
-     * @param key
-     * @param c
+     * @param colorMap 颜色map
+     * @param key key
+     * @param c color
      */
     private void colorPut(Map<String, Color> colorMap, String key, Color c) {
         Color color = colorMap.get(key);
@@ -616,9 +615,9 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     /**
      * 每次只做新增操作,保证新增的flowCode+version是唯一的
      *
-     * @param definition
-     * @param allNodes
-     * @param allSkips
+     * @param definition 流程定义
+     * @param allNodes 所有节点
+     * @param allSkips 所有跳转
      */
     private void insertFlow(Definition definition, List<Node> allNodes, List<Skip> allSkips) {
         String version = getNewVersion(definition);

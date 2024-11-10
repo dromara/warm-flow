@@ -34,16 +34,16 @@ public interface NodeService extends IWarmService<Node> {
     /**
      * 根据流程编码获取流程节点集合
      *
-     * @param flowCode
-     * @return
+     * @param flowCode 流程编码
+     * @return List<Node>
      */
     List<Node> getByFlowCode(String flowCode);
 
     /**
      * 根据流程编码获取开启的唯一流程的流程节点集合
      *
-     * @param nodeCodes
-     * @return
+     * @param nodeCodes 流程节点code集合
+     * @return List<Node>
      */
     List<Node> getByNodeCodes(List<String> nodeCodes, Long definitionId);
 

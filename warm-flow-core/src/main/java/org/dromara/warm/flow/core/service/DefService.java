@@ -33,10 +33,9 @@ import java.util.List;
 public interface DefService extends IWarmService<Definition> {
 
     /**
-     * 新增流程定义、流程节点和流程跳转数据
+     * 导入流程定义、流程节点和流程跳转数据
      *
      * @param is 流程定义xml的输入流
-     * @throws Exception
      */
     Definition importXml(InputStream is) throws Exception;
 
@@ -44,7 +43,6 @@ public interface DefService extends IWarmService<Definition> {
      * 保存流程节点和流程跳转数据
      *
      * @param def 流程定义对象
-     * @throws Exception
      */
     void saveXml(Definition def) throws Exception;
 
@@ -52,7 +50,6 @@ public interface DefService extends IWarmService<Definition> {
      * 保存流程节点和流程跳转数据
      * @param id 流程定义id
      * @param xmlString 流程定义xml字符串
-     * @throws Exception
      */
     void saveXml(Long id, String xmlString) throws Exception;
 
@@ -60,15 +57,15 @@ public interface DefService extends IWarmService<Definition> {
      * 导出流程定义(流程定义、流程节点和流程跳转数据)xml的Document对象
      *
      * @param id 流程定义id
-     * @return
+     * @return Document
      */
     Document exportXml(Long id);
 
     /**
      * 获取流程定义xml(流程定义、流程节点和流程跳转数据)的字符串
      *
-     * @param id
-     * @return
+     * @param id 流程定义id
+     * @return xmlString
      */
     String xmlString(Long id);
 
@@ -87,78 +84,74 @@ public interface DefService extends IWarmService<Definition> {
     /**
      * 删除流程定义相关数据
      *
-     * @param ids
-     * @return
+     * @param ids 流程定义id列表
+     * @return boolean
      */
     boolean removeDef(List<Long> ids);
 
     /**
      * 发布流程定义
      *
-     * @param id
-     * @return
+     * @param id 流程定义id
+     * @return boolean
      */
     boolean publish(Long id);
 
     /**
      * 取消发布流程定义
      *
-     * @param id
-     * @return
+     * @param id 流程定义id
+     * @return boolean
      */
     boolean unPublish(Long id);
 
     /**
      * 复制流程定义
      *
-     * @param id
-     * @return
+     * @param id 流程定义id
+     * @return boolean
      */
     boolean copyDef(Long id);
 
     /**
      * 根据流程实例ID,获取流程图的图片流(渲染颜色)
      *
-     * @param instanceId
-     * @return
-     * @throws IOException
+     * @param instanceId 流程实例id
+     * @return base64编码的图片流字符串
      */
     String flowChart(Long instanceId) throws IOException;
 
     /**
      * 根据流程实例ID,获取流程图元数据
      *
-     * @param instanceId
-     * @return
-     * @throws IOException
+     * @param instanceId 流程实例id
+     * @return List<FlowChart>
      */
     List<FlowChart> flowChartData(Long instanceId) throws IOException;
 
     /**
      * 根据流程定义ID,获取流程图的图片流(不渲染颜色)
-     * @param definitionId
-     * @return
-     * @throws IOException
+     * @param definitionId 流程定义id
+     * @return base64编码的图片流字符串
      */
     String flowChartNoColor(Long definitionId) throws IOException;
 
     /**
      * 根据流程定义ID,获取流程图元数据
-     * @param definitionId
-     * @return
-     * @throws IOException
+     * @param definitionId 流程定义id
+     * @return List<FlowChart>
      */
     List<FlowChart> flowChartNoColorData(Long definitionId) throws IOException;
 
     /**
      * 激活流程
-     * @param id 流程定义id: [必传]
+     * @param id 流程定义id
      */
     boolean active(Long id);
 
     /**
      * 挂起流程：流程定义挂起后，相关的流程实例都无法继续流转
-     * @param id 流程定义id: [必传]
+     * @param id 流程定义id
      */
     boolean unActive(Long id);
 

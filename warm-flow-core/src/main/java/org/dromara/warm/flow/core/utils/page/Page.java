@@ -90,12 +90,12 @@ public class Page<T> implements OrderBy {
     /**
      * 计算分页起始页
      *
-     * @param current
-     * @param size
-     * @return
+     * @param pageNum  当前页码
+     * @param size     每页显示记录数
+     * @return 分页结果
      */
-    public static <T> Page<T> pageOf(Integer current, Integer size) {
-        return new Page<>((current - 1) * size, size);
+    public static <T> Page<T> pageOf(Integer pageNum, Integer size) {
+        return new Page<>(pageNum, size);
     }
 
     public int getPageNum() {
@@ -150,14 +150,4 @@ public class Page<T> implements OrderBy {
         return this;
     }
 
-    public Page<T> ifNecessaryChangePage(String dataSourceType) {
-        if ("oracle".equals(dataSourceType)) {
-            this.pageSize = this.pageSize + this.pageNum;
-        } else {
-            int tmpPageSize = this.pageSize;
-            this.pageSize = this.pageNum;
-            this.pageNum = tmpPageSize;
-        }
-        return this;
-    }
 }
