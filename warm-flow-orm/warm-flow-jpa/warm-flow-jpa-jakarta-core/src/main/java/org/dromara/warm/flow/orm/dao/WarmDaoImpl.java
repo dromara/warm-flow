@@ -109,7 +109,7 @@ public abstract class WarmDaoImpl<T extends JPARootEntity<T>> implements WarmDao
             // page 处理
             if (ObjectUtil.isNotNull(page)) {
                 return new Page<>(entityManager.createQuery(criteriaQuery)
-                        .setFirstResult(page.getPageNum())
+                        .setFirstResult((page.getPageNum() - 1) *page.getPageSize())
                         .setMaxResults(page.getPageSize())
                         .getResultList(), total);
             }
