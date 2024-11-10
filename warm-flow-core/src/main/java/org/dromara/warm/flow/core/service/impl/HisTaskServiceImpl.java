@@ -72,6 +72,11 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
         return CollUtil.getOne(hisTaskList);
     }
 
+    public List<HisTask> beenProcessed(Long instanceId, String handler) {
+        List<HisTask> list = list(FlowFactory.newHisTask().setInstanceId(instanceId).setApprover(handler));
+        return null;
+    }
+
     @Override
     public List<HisTask> getByInsAndNodeCodes(Long instanceId, List<String> nodeCodes) {
         return getDao().getByInsAndNodeCodes(instanceId, nodeCodes);

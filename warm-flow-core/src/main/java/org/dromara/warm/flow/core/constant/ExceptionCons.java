@@ -62,7 +62,8 @@ public class ExceptionCons {
     public static final String LOST_DEST_NODE = "目标节点为空!";
 
     public static final String LOST_CUR_NODE = "当前流程节点丢失!";
-    public static final String NULL_NODE_CODE = "目标节点不存在!";
+
+    public static final String NULL_NODE_CODE = "目标节点编码不存在!";
 
     public static final String NULL_BUSINESS_ID = "业务id为空!";
 

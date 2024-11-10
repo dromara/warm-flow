@@ -223,54 +223,20 @@ public interface TaskService extends IWarmService<Task> {
     boolean updateHandler(ModifyHandler modifyHandler);
 
     /**
-     * 撤销
-     *
-     * @param flowParams        flowStatus: 自定义流程状态 [按需传输]
-     *                          hisStatus: 自定义历史任务状态 [按需传输]
-     *                          variable: 流程变量 [按需传输]
-     *                          hisTaskExt: 业务详情扩展字段  [按需传输]
-     *                          message: 审批意见  [按需传输]
-     *                          handler: 当前处理人 [必输]
-     *                          nodeCode: 撤销到的节点 [必输]
-     *                          permissionFlag: 当前处理人的权限 [必输]
-     * @param taskId            任务id [必输]
-     * @return Task             取回到的节点任务
-     * @author xiarg
-     * @since 2024/9/22 13:59
-     */
-    Task revoke(FlowParams flowParams, Long taskId);
-
-    /**
      * 取回
      *
-     * @param flowParams        flowStatus: 自定义流程状态 [按需传输]
-     *                          hisStatus: 自定义历史任务状态 [按需传输]
-     *                          nodeCode: 自定义取回到的节点编码，如果没传nodeCode，则默认跳转开始节点 [按需传输]
-     *                          hisTaskExt: 业务详情扩展字段 [按需传输]
-     *                          message: 审批意见 [按需传输]
-     *                          handler: 当前处理人 [必输]
-     * @param instanceId        实例id [必输]
-     * @return Task             取回到的节点任务
-     * @author xiarg
-     * @since 2024/9/22 13:59
-     */
-    Task initiatorRetrieve(FlowParams flowParams, Long instanceId);
-
-    /**
-     * 取回
-     *
-     * @param flowParams        flowStatus: 自定义流程实例状态 [必输]
+     * @param instanceId        实例id [必传]
+     * @param flowParams        handler: 当前处理人 [必传]
+     *                          nodeCode: 取回到的节点编码，如果为空，则默认取回到开始节点 [按需传输]
+     *                          flowStatus: 自定义流程状态 [按需传输]
      *                          hisStatus: 自定义历史任务状态 [按需传输]
      *                          hisTaskExt: 业务详情扩展字段 [按需传输]
      *                          message: 审批意见 [按需传输]
-     *                          nodeCode: 取回到的节点编码 [必输]
-     *                          handler: 当前处理人 [必输]
-     * @param instance          流程实例 [必输]
-     * @return Task             取回到的节点任务
+     * @return Instance         流程实例
      * @author xiarg
      * @since 2024/9/22 13:59
      */
-    Task commonRetrieve(FlowParams flowParams, Instance instance);
+    Instance retrieve(Long instanceId, FlowParams flowParams);
 
     /**
      * 设置流程待办任务对象
