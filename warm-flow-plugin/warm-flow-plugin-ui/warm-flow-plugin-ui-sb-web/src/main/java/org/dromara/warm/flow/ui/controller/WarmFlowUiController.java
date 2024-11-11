@@ -17,10 +17,13 @@ package org.dromara.warm.flow.ui.controller;
 
 import org.dromara.warm.flow.core.FlowFactory;
 import org.dromara.warm.flow.core.dto.ApiResult;
+import org.dromara.warm.flow.core.dto.FlowPage;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.utils.ExceptionUtil;
 import org.dromara.warm.flow.ui.dto.DefDto;
+import org.dromara.warm.flow.ui.dto.FormDto;
+import org.dromara.warm.flow.ui.dto.FormQuery;
 import org.dromara.warm.flow.ui.dto.HandlerQuery;
 import org.dromara.warm.flow.ui.service.HandlerSelectService;
 import org.dromara.warm.flow.ui.vo.HandlerSelectVo;
@@ -110,4 +113,25 @@ public class WarmFlowUiController {
             throw new FlowException(ExceptionUtil.handleMsg("办理人权限设置列表结果失败", e));
         }
     }
+
+    /**
+     * 已发布表单列表
+     * @return FlowPage<FormDto>
+     */
+    @GetMapping("/publish-form")
+    public ApiResult<FlowPage<FormDto>> publishForm(FormQuery formQuery) {
+        try {
+            // 该接口不需要业务系统实现
+            HandlerSelectService handlerSelectService = FrameInvoker.getBean(HandlerSelectService.class);
+            if (handlerSelectService == null) {
+                return ApiResult.ok(new FlowPage<>());
+            }
+            FlowPage<FormDto> publishForm = handlerSelectService.publishForm(formQuery);
+            return ApiResult.ok(publishForm);
+        } catch (Exception e) {
+            log.error("已发布表单列表异常", e);
+            throw new FlowException(ExceptionUtil.handleMsg("已发布表单列表异常", e));
+        }
+    }
+
 }

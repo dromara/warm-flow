@@ -11,6 +11,7 @@ import org.dromara.warm.flow.core.utils.AssertUtil;
 import org.dromara.warm.flow.core.utils.ClassUtil;
 import org.dromara.warm.flow.core.utils.CollUtil;
 import org.dromara.warm.flow.core.utils.ObjectUtil;
+import org.dromara.warm.flow.core.utils.page.Page;
 
 import java.util.List;
 
@@ -59,7 +60,7 @@ public class FormServiceImpl extends WarmServiceImpl<FlowFormDao<Form>, Form> im
 
     @Override
     public Form getByCode(String formCode, String formVersion) {
-        List<Form> list = FlowFactory.formService().list(FlowFactory.newForm().setFormCode(formCode).setVersion(formVersion));
+        List<Form> list = list(FlowFactory.newForm().setFormCode(formCode).setVersion(formVersion));
         AssertUtil.isTrue(CollUtil.isEmpty(list), ExceptionCons.NOT_FOUNT_TASK);
         AssertUtil.isTrue(list.size() > 1, ExceptionCons.FORM_NOT_ONE);
         return list.get(0);
@@ -72,9 +73,8 @@ public class FormServiceImpl extends WarmServiceImpl<FlowFormDao<Form>, Form> im
     }
 
     @Override
-    public List<Form> list(String name) {
-        List<Form> list = FlowFactory.formService().list(FlowFactory.newForm().setFormName(name));
-        AssertUtil.isTrue(CollUtil.isEmpty(list), ExceptionCons.NOT_FOUNT_TASK);
-        return list;
+    public Page<Form> publishPage(String formName, Integer pageNum, Integer pageSize) {
+        return page(FlowFactory.newForm().setFormName(formName).setIsPublish(1),
+                Page.<Form>pageOf(pageNum, pageSize));
     }
 }

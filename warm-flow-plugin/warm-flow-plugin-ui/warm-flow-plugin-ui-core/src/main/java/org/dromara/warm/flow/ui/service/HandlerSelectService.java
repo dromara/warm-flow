@@ -15,19 +15,20 @@
  */
 package org.dromara.warm.flow.ui.service;
 
+import org.dromara.warm.flow.core.FlowFactory;
 import org.dromara.warm.flow.core.dto.FlowPage;
+import org.dromara.warm.flow.core.entity.Form;
 import org.dromara.warm.flow.core.utils.HttpStatus;
 import org.dromara.warm.flow.core.utils.StreamUtils;
-import org.dromara.warm.flow.ui.dto.HandlerFunDto;
-import org.dromara.warm.flow.ui.dto.HandlerQuery;
-import org.dromara.warm.flow.ui.dto.Tree;
-import org.dromara.warm.flow.ui.dto.TreeFunDto;
+import org.dromara.warm.flow.core.utils.page.Page;
+import org.dromara.warm.flow.ui.dto.*;
 import org.dromara.warm.flow.ui.utils.TreeUtil;
 import org.dromara.warm.flow.ui.vo.HandlerAuth;
 import org.dromara.warm.flow.ui.vo.HandlerSelectVo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 流程设计器-获取办理人权限设置列表接口
@@ -82,5 +83,20 @@ public interface HandlerSelectService {
                 .setMsg("查询成功")
                 .setRows(handlerAuths)
                 .setTotal(total));
+    }
+
+    default FlowPage<FormDto> publishForm(FormQuery query) {
+        Page<Form> formPage = FlowFactory.formService().publishPage(query.getFormName(), query.getPageNum(), query.getPageSize());
+        return new FlowPage<FormDto>().setRows(formPage.getList().stream().map((form -> {
+                    FormDto formDto = new FormDto();
+                            formDto.setId(form.getId());
+                            formDto.setFormName(form.getFormName());
+                            formDto.setFormCode(form.getFormCode());
+                            formDto.setVersion(form.getVersion());
+                    return formDto;
+                })).collect(Collectors.toList()))
+                .setCode(HttpStatus.SUCCESS)
+                .setMsg("查询成功")
+                .setTotal(formPage.getTotal());
     }
 }

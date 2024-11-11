@@ -1,10 +1,8 @@
 package org.dromara.warm.flow.core.service;
 
-import org.dromara.warm.flow.core.entity.Definition;
 import org.dromara.warm.flow.core.entity.Form;
 import org.dromara.warm.flow.core.orm.service.IWarmService;
-
-import java.util.List;
+import org.dromara.warm.flow.core.utils.page.Page;
 
 /**
  *  流程表单Service接口
@@ -58,7 +56,19 @@ public interface FormService extends IWarmService<Form> {
      */
     Form getByCode(String formCode, String formVersion);
 
+    /**
+     *
+     * @param id
+     * @return
+     */
     Form getById(Long id);
 
-    List<Form> list(String name);
+    /**
+     *
+     * @param formName
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    Page<Form> publishPage(String formName, Integer pageNum, Integer pageSize);
 }

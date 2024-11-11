@@ -29,6 +29,8 @@ import org.dromara.warm.flow.core.listener.ListenerVariable;
 import org.dromara.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import org.dromara.warm.flow.core.service.TaskService;
 import org.dromara.warm.flow.core.utils.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -41,6 +43,8 @@ import java.util.*;
  * @since 2023-03-29
  */
 public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> implements TaskService {
+
+    private static final Logger log = LoggerFactory.getLogger(TaskServiceImpl.class);
 
     @Override
     public TaskService setDao(FlowTaskDao<Task> warmDao) {
@@ -981,7 +985,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         HisTask hisTask = FlowFactory.hisTaskService().getById(hisTaskId);
         AssertUtil.isNull(hisTask, ExceptionCons.NOT_FOUND_FLOW_TASK);
 
-        AssertUtil.isTrue(Objects.equals(hisTask.getApprover(), flowParams.getHandler()), ExceptionCons.NULL_ROLE_NODE);
+        log.info("当前用户：{}  历史任务用户：{}", flowParams.getHandler(), hisTask.getApprover());
+//        AssertUtil.isTrue(Objects.equals(hisTask.getApprover(), flowParams.getHandler()), ExceptionCons.NULL_ROLE_NODE);
 
         Instance instance = FlowFactory.insService().getById(hisTask.getInstanceId());
         AssertUtil.isNull(instance, ExceptionCons.NOT_FOUNT_INSTANCE);
