@@ -322,5 +322,12 @@ public interface TaskService extends IWarmService<Task> {
      */
     Instance handle(Long taskId, FlowParams flowParams, Map<String, Object> formData);
 
-
+    /**
+     * 获取表单及数据(使用表单场景)
+     *
+     * @param hisTaskId
+     * @param flowParams
+     * @return
+     */
+    FlowForm hisLoad(Long hisTaskId, FlowParams flowParams);
 }

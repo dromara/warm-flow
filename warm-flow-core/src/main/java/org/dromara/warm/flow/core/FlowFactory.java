@@ -115,7 +115,7 @@ public class FlowFactory {
     }
 
     public static FormService formService() {
-        if (ObjectUtil.isNotNull(userService)) {
+        if (ObjectUtil.isNotNull(formService)) {
             return formService;
         }
         return formService = FrameInvoker.getBean(FormService.class);
