@@ -444,7 +444,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 .setPermissionList(CollUtil.isNotEmpty(node.getDynamicPermissionFlagList())
                         ? node.getDynamicPermissionFlagList(): StringUtils.str2List(node.getPermissionFlag(), ","));
 
-        if (StringUtils.isNotEmpty(node.getFormCustom()) && StringUtils.isNotEmpty(node.getFormPath())) {
+        if (StringUtils.isNotEmpty(node.getFormCustom()) && !Objects.equals(node.getFormCustom(), FlowCons.FORM_CUSTOM_P)
+                && StringUtils.isNotEmpty(node.getFormPath())) {
             // 节点有自定义表单则使用
             addTask.setFormCustom(node.getFormCustom()).setFormPath(node.getFormPath());
         } else {
@@ -926,12 +927,12 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         ListenerVariable listenerVariable = new ListenerVariable(definition, instance, nowNode, flowParams.getVariable(), task);
 
         FlowForm flowForm = new FlowForm();
-        if (FlowCons.FORM_CUSTOM_Y.equals(task.getFormCustom())) {
+        if (FlowCons.FORM_CUSTOM_Y.equals(nowNode.getFormCustom())) {
             ListenerUtil.execute(listenerVariable, Listener.LISTENER_FORM_LOAD, nowNode.getListenerPath(), nowNode.getListenerType());
             Form form = FlowFactory.formService().getById(Long.valueOf(task.getFormPath()));
             flowForm.setForm(form);
             flowForm.setData(listenerVariable.getResult());
-        } else if(FlowCons.FORM_CUSTOM_P.equals(task.getFormCustom())
+        } else if(FlowCons.FORM_CUSTOM_P.equals(nowNode.getFormCustom())
                 && FlowCons.FORM_CUSTOM_Y.equals(definition.getFormCustom())) {
             ListenerUtil.execute(listenerVariable, Listener.LISTENER_FORM_LOAD, definition.getListenerPath(), definition.getListenerType());
             Form form = FlowFactory.formService().getById(Long.valueOf(task.getFormPath()));
@@ -968,9 +969,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
         listenerVariable.setParams(formData);
 
-        if (FlowCons.FORM_CUSTOM_Y.equals(task.getFormCustom())) {
+        if (FlowCons.FORM_CUSTOM_Y.equals(nowNode.getFormCustom())) {
             ListenerUtil.execute(listenerVariable, Listener.LISTENER_FORM_HANDLE, nowNode.getListenerPath(), nowNode.getListenerType());
-        } else if(FlowCons.FORM_CUSTOM_P.equals(task.getFormCustom())
+        } else if(FlowCons.FORM_CUSTOM_P.equals(nowNode.getFormCustom())
                 && FlowCons.FORM_CUSTOM_Y.equals(definition.getFormCustom())) {
             ListenerUtil.execute(listenerVariable, Listener.LISTENER_FORM_HANDLE, definition.getListenerPath(), definition.getListenerType());
         } else {
@@ -1002,12 +1003,12 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         ListenerVariable listenerVariable = new ListenerVariable(definition, instance, nowNode, flowParams.getVariable(), null);
 
         FlowForm flowForm = new FlowForm();
-        if (FlowCons.FORM_CUSTOM_Y.equals(hisTask.getFormCustom())) {
+        if (FlowCons.FORM_CUSTOM_Y.equals(nowNode.getFormCustom())) {
             ListenerUtil.execute(listenerVariable, Listener.LISTENER_FORM_LOAD, nowNode.getListenerPath(), nowNode.getListenerType());
             Form form = FlowFactory.formService().getById(Long.valueOf(hisTask.getFormPath()));
             flowForm.setForm(form);
             flowForm.setData(listenerVariable.getResult());
-        } else if(FlowCons.FORM_CUSTOM_P.equals(hisTask.getFormCustom())
+        } else if(FlowCons.FORM_CUSTOM_P.equals(nowNode.getFormCustom())
                 && FlowCons.FORM_CUSTOM_Y.equals(definition.getFormCustom())) {
             ListenerUtil.execute(listenerVariable, Listener.LISTENER_FORM_LOAD, definition.getListenerPath(), definition.getListenerType());
             Form form = FlowFactory.formService().getById(Long.valueOf(hisTask.getFormPath()));
