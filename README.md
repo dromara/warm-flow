@@ -116,4 +116,5 @@ http://warm-flow.cn
     [revert] 撤销修改  
     [style] 代码风格相关无影响运行结果的  
     [update] 其他修改  
+    [upgrade] 升级版本  
     
