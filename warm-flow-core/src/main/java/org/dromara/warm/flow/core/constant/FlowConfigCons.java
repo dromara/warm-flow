@@ -66,5 +66,10 @@ public class FlowConfigCons {
     /**
      * 是否支持ui
      */
-    public static final String ui = "warm-flow.ui";
+    public static final String UI = "warm-flow.ui";
+
+    /**
+     * 如果需要工作流共享业务系统权限
+     */
+    public static final String TOKEN_NAME = "warm-flow.token-name";
 }

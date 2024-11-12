@@ -13,7 +13,7 @@ import store from './store'
 
 // 注册指令
 import plugins from './plugins' // plugins
-import {TokenKey} from "./utils/auth.js";
+import {TokenKey, TokenName} from "./utils/auth.js";
 
 // svg图标
 import 'virtual:svg-icons-register'
@@ -21,6 +21,7 @@ import SvgIcon from '@/components/SvgIcon'
 import elementIcons from '@/components/SvgIcon/svgicon'
 
 import { parseTime } from '@/utils/ruoyi'
+import {tokenName} from "./api/anony.js";
 
 const app = createApp(App)
 
@@ -28,6 +29,9 @@ const urlParams = new URLSearchParams(window.location.search);
 const params = {};
 for (const [key, value] of urlParams.entries()) {
   if ("token" === key) {
+    await tokenName().then(res => {
+      Cookies.set(TokenName, res.data);
+    });
     Cookies.set(TokenKey, value)
   }
   params[key] = value;
