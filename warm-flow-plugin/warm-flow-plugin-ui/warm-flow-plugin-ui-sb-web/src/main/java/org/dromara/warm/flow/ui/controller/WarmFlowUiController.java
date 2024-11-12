@@ -38,7 +38,7 @@ import java.util.List;
  * @author warm
  */
 @RestController
-@RequestMapping("/warm-flow-ui")
+@RequestMapping("/warm-flow")
 public class WarmFlowUiController {
 
     private static final Logger log = LoggerFactory.getLogger(WarmFlowUiController.class);

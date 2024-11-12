@@ -13,6 +13,7 @@ import store from './store'
 
 // 注册指令
 import plugins from './plugins' // plugins
+import {TokenKey} from "./utils/auth.js";
 
 // svg图标
 import 'virtual:svg-icons-register'
@@ -26,6 +27,9 @@ const app = createApp(App)
 const urlParams = new URLSearchParams(window.location.search);
 const params = {};
 for (const [key, value] of urlParams.entries()) {
+  if ("token" === key) {
+    Cookies.set(TokenKey, value)
+  }
   params[key] = value;
 }
 
