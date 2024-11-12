@@ -17,10 +17,15 @@ package org.dromara.warm.flow.ui.controller;
 
 import org.dromara.warm.flow.core.FlowFactory;
 import org.dromara.warm.flow.core.dto.ApiResult;
+import org.dromara.warm.flow.core.utils.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 设计器Controller 匿名访问
@@ -38,8 +43,15 @@ public class WarmFlowUiController {
      */
     @GetMapping("/token-name")
     @Transactional(rollbackFor = Exception.class)
-    public ApiResult<String> tokenName() {
-        return ApiResult.ok(FlowFactory.getFlowConfig().getTokenName());
+    public ApiResult<List<String>> tokenName() {
+        String tokenName = FlowFactory.getFlowConfig().getTokenName();
+        if (StringUtils.isEmpty(tokenName)) {
+            return ApiResult.fail("未配置tokenName");
+        }
+        String[] tokenNames = tokenName.split(",");
+        List<String> tokenNameList = Arrays.stream(tokenNames).filter(StringUtils::isNotEmpty)
+                .map(String::trim).collect(Collectors.toList());
+        return ApiResult.ok(tokenNameList);
     }
 
 }

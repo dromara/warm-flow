@@ -84,7 +84,7 @@ public class WarmFlow implements Serializable {
     private boolean ui = true;
 
     /**
-     * 如果需要工作流共享业务系统权限，默认Authorization
+     * 如果需要工作流共享业务系统权限，默认Authorization，如果有多个token，用逗号分隔
      */
     private String tokenName = "Authorization";
 
