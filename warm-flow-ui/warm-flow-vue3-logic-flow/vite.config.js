@@ -14,6 +14,7 @@ export default defineConfig(({ mode, command }) => {
     plugins: createVitePlugins(env, command === 'build'),
    // 设置打包后的路径
     build: {
+      chunkSizeWarningLimit: 3000,
       rollupOptions: {
         output: {
           chunkFileNames: 'js/[name]-[hash].js',

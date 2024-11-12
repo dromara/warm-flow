@@ -307,7 +307,7 @@ getTabsType();
 </script>
 
 <style scoped lang="scss">
-::v-deep.app-container {
+:deep(.app-container) {
   padding: 0;
   .Tabs {
     border: 0;

@@ -29,7 +29,7 @@ const urlParams = new URLSearchParams(window.location.search);
 const params = {};
 for (const [key, value] of urlParams.entries()) {
   if ("token" === key) {
-    await tokenName().then(res => {
+    tokenName().then(res => {
       Cookies.set(TokenName, res.data);
     });
     Cookies.set(TokenKey, value)
