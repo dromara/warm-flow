@@ -15,10 +15,13 @@
  */
 package org.dromara.warm.flow.ui.config;
 
+import org.dromara.warm.flow.ui.controller.WarmFlowController;
 import org.dromara.warm.flow.ui.controller.WarmFlowUiController;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * 工作流设计器配置类
@@ -27,7 +30,16 @@ import org.springframework.context.annotation.Import;
  */
 @Configuration
 @ConditionalOnProperty(value = "warm-flow.ui", havingValue = "true", matchIfMissing = true)
-@Import({ResourcesConfig.class, WarmFlowUiController.class})
-public class WarmFlowUiConfig {
+@Import({WarmFlowUiController.class
+        , WarmFlowController.class})
+public class WarmFlowUiConfig implements WebMvcConfigurer
+{
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry)
+    {
+        /** warm-flow配置 */
+        registry.addResourceHandler("/warm-flow-ui/**")
+                .addResourceLocations("classpath:/META-INF/resources/warm-flow-ui/", "classpath:/warm-flow-ui/");
 
+    }
 }

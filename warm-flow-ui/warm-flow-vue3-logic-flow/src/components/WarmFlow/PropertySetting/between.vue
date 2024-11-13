@@ -188,7 +188,7 @@ getPermissionFlag();
   color: #828f9e;
   font-size: 12px;
 }
-::v-deep.permissionItem {
+:deep(.permissionItem) {
   .el-form-item__content {
     display: block;
   }

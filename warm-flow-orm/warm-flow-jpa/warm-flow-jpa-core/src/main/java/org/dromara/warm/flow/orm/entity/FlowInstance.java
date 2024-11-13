@@ -188,7 +188,7 @@ public class FlowInstance extends JPARootEntity<FlowInstance> implements Instanc
     private String variable;
 
     /**
-     * 流程状态（0待提交 1审批中 2 审批通过 3自动通过 8已完成 9已退回 10失效）
+     * 流程状态（0待提交 1审批中 2 审批通过 3自动通过 4终止 5作废 6撤销 7取回  8已完成 9已退回 10失效）
      */
     @Column(name = "flow_status")
     private String flowStatus;

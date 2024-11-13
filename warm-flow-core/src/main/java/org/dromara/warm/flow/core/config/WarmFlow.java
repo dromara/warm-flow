@@ -83,6 +83,11 @@ public class WarmFlow implements Serializable {
      */
     private boolean ui = true;
 
+    /**
+     * 如果需要工作流共享业务系统权限，默认Authorization，如果有多个token，用逗号分隔
+     */
+    private String tokenName = "Authorization";
+
     public static WarmFlow init() {
         WarmFlow flowConfig = new WarmFlow();
         // 设置banner
@@ -92,9 +97,15 @@ public class WarmFlow implements Serializable {
         }
 
         // 设置ui开关
-        String ui = FrameInvoker.getCfg(FlowConfigCons.ui);
+        String ui = FrameInvoker.getCfg(FlowConfigCons.UI);
         if (StringUtils.isNotEmpty(ui)) {
             flowConfig.setUi(ObjectUtil.isStrTrue(ui));
+        }
+
+        // 设置TOKEN_NAME开关
+        String tokenName = FrameInvoker.getCfg(FlowConfigCons.TOKEN_NAME);
+        if (StringUtils.isNotEmpty(tokenName)) {
+            flowConfig.setTokenName(tokenName);
         }
 
         // 设置id生成器类型
@@ -238,5 +249,13 @@ public class WarmFlow implements Serializable {
 
     public void setUi(boolean ui) {
         this.ui = ui;
+    }
+
+    public String getTokenName() {
+        return tokenName;
+    }
+
+    public void setTokenName(String tokenName) {
+        this.tokenName = tokenName;
     }
 }

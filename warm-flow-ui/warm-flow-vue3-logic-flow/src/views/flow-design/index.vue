@@ -28,6 +28,9 @@ import {
   logicFlowJsonToFlowXml,
   xml2LogicFlowJson
 } from "@/components/WarmFlow/js/tool";
+import useAppStore from "@/store/app";
+const appStore = useAppStore();
+const appParams = computed(() => useAppStore().appParams);
 
 const { proxy } = getCurrentInstance();
 
@@ -42,17 +45,12 @@ const xmlString = ref('');
 const jsonString = ref('');
 const skipConditionShow = ref(true);
 
-
-
-function init() {
-
-  definitionId.value = proxy.$appParams.id;
-  if (proxy.$appParams.disabled === 'true') {
+onMounted(async () => {
+  if (!appParams.value) await appStore.fetchTokenName();
+  definitionId.value = appParams.value.id;
+  if (appParams.value.disabled === 'true') {
     disabled.value = true
   }
-}
-
-onMounted(() => {
   use();
   lf.value = new LogicFlow({
     container: proxy.$refs.container,
@@ -66,6 +64,7 @@ onMounted(() => {
   initControl();
   initMenu();
   initEvent();
+  console.log()
   if (definitionId.value) {
     getXmlString(definitionId.value).then(res => {
       xmlString.value = res.data;
@@ -290,8 +289,6 @@ function initEvent() {
 function close() {
   window.parent.postMessage({ method: "close" }, "*");
 }
-
-init();
 </script>
 
 <style scoped>

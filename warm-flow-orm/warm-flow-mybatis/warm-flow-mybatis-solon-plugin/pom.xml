@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.dromara</groupId>
         <artifactId>warm-flow-mybatis</artifactId>
-        <version>1.3.2-m1</version>
+        <version>1.3.4</version>
     </parent>
 
     <artifactId>warm-flow-mybatis-solon-plugin</artifactId>

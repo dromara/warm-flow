@@ -274,7 +274,7 @@ comment on column FLOW_INSTANCE.NODE_NAME is '开始节点名称'
 comment on column FLOW_INSTANCE.VARIABLE is '任务变量'
 /
 
-comment on column FLOW_INSTANCE.FLOW_STATUS is '流程状态（0待提交 1审批中 2 审批通过 3自动通过 8已完成 9已退回 10失效）'
+comment on column FLOW_INSTANCE.FLOW_STATUS is '流程状态（0待提交 1审批中 2 审批通过 3自动通过 4终止 5作废 6撤销 7取回  8已完成 9已退回 10失效）'
 /
 
 comment on column FLOW_INSTANCE.ACTIVITY_STATUS is '流程激活状态（0挂起 1激活）'
