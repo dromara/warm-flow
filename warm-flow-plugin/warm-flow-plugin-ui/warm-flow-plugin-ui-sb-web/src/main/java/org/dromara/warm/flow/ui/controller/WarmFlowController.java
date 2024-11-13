@@ -72,6 +72,40 @@ public class WarmFlowController {
     }
 
     /**
+     * 保存流程json字符串
+     *
+     * @param defDto 流程定义dto
+     * @return ApiResult<Void>
+     * @throws Exception 异常
+     * @author xiarg
+     * @since 2024/10/29 16:31
+     */
+    @PostMapping("/save-json")
+    @Transactional(rollbackFor = Exception.class)
+    public ApiResult<Void> saveJson(@RequestBody DefDto defDto) throws Exception {
+        FlowFactory.defService().saveJson(defDto.getId(), defDto.getJsonString());
+        return ApiResult.ok();
+    }
+
+    /**
+     * 获取流程xml字符串
+     *
+     * @param id 流程定义id
+     * @return ApiResult<String>
+     * @author xiarg
+     * @since 2024/10/29 16:31
+     */
+    @GetMapping("/json-string/{id}")
+    public ApiResult<String> jsonString(@PathVariable("id") Long id) {
+        try {
+            return ApiResult.ok(FlowFactory.defService().jsonString(id));
+        } catch (Exception e) {
+            log.error("获取流程json字符串", e);
+            throw new FlowException(ExceptionUtil.handleMsg("获取流程json字符串失败", e));
+        }
+    }
+
+    /**
      * 办理人权限设置列表tabs页签
      * @return List<SelectGroup>
      */

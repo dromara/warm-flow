@@ -22,7 +22,7 @@ export function getXmlString(id) {
 // 保存json流程定义
 export function saveJson(data) {
   return request({
-    url: urlPrefix + 'warm-flow-ui/save-json',
+    url: urlPrefix + 'warm-flow/save-json',
     method: 'post',
     data: data
   })
@@ -31,7 +31,7 @@ export function saveJson(data) {
 // 获取流程定义json字符串
 export function getJsonString(id) {
   return request({
-    url: urlPrefix + 'warm-flow-ui/json-string/' + id,
+    url: urlPrefix + 'warm-flow/json-string/' + id,
     method: 'get'
   })
 }
