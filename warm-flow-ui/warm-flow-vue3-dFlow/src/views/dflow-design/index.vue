@@ -4,7 +4,7 @@
 </template>
 
 <script setup>
-    import { nextTick, ref } from 'vue'
+    import { ref } from 'vue'
     import FlowIndex from '@/components/Dflow/FlowIndex.vue'
     import { uuid } from '@/utils/tool';
     const readonly = ref(false)

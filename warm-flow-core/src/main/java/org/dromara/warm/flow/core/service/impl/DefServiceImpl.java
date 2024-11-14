@@ -672,7 +672,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     }
 
     @Override
-    public void saveJson(Long defId, String jsonString) throws Exception {
+    public void saveJson(Long defId, String jsonString) {
         if (ObjectUtil.isNull(defId) || StringUtils.isEmpty(jsonString)) {
             return;
         }

@@ -32,9 +32,9 @@ public interface JsonConvert {
     public Map<String, Object> strToMap(String jsonStr);
 
     /**
-     * 将map转为字符串
-     * @param variable map
+     * 将对象转为字符串
+     * @param variable object
      * @return json字符串
      */
-    public String mapToStr(Map<String, Object> variable);
+    public String mapToStr(Object variable);
 }

@@ -18,7 +18,7 @@ package org.dromara.warm.plugin.json;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.dromara.warm.flow.core.json.JsonConvert;
-import org.dromara.warm.flow.core.utils.MapUtil;
+import org.dromara.warm.flow.core.utils.ObjectUtil;
 import org.dromara.warm.flow.core.utils.StringUtils;
 
 import java.lang.reflect.Type;
@@ -49,13 +49,13 @@ public class JsonConvertGson implements JsonConvert {
     }
 
     /**
-     * 将map转为字符串
-     * @param variable map
+     * 将对象转为字符串
+     * @param variable object
      * @return json字符串
      */
     @Override
-    public String mapToStr(Map<String, Object> variable) {
-        if (MapUtil.isNotEmpty(variable)) {
+    public String mapToStr(Object variable) {
+        if (ObjectUtil.isNotNull(variable)) {
             return gson.toJson(variable);
         }
         return null;

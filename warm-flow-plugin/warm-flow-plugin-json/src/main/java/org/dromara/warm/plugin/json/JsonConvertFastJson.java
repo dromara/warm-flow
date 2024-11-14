@@ -18,7 +18,7 @@ package org.dromara.warm.plugin.json;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.TypeReference;
 import org.dromara.warm.flow.core.json.JsonConvert;
-import org.dromara.warm.flow.core.utils.MapUtil;
+import org.dromara.warm.flow.core.utils.ObjectUtil;
 import org.dromara.warm.flow.core.utils.StringUtils;
 
 import java.util.HashMap;
@@ -45,13 +45,13 @@ public class JsonConvertFastJson implements JsonConvert {
     }
 
     /**
-     * 将map转为字符串
-     * @param variable map
+     * 将对象转为字符串
+     * @param variable object
      * @return json字符串
      */
     @Override
-    public String mapToStr(Map<String, Object> variable) {
-        if (MapUtil.isNotEmpty(variable)) {
+    public String mapToStr(Object variable) {
+        if (ObjectUtil.isNotNull(variable)) {
             return JSON.toJSONString(variable);
         }
         return null;
