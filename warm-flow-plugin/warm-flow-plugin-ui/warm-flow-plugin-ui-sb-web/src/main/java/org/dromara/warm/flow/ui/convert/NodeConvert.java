@@ -23,7 +23,8 @@ import java.util.Map;
 public interface NodeConvert {
 
     /**
-     *  允许返回多个node
+     * 允许返回多个node
+     *
      * @param startNodeId
      * @param endNodeId
      * @param nextNodeId

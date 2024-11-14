@@ -23,21 +23,19 @@ import org.dromara.warm.flow.core.enums.SkipType;
 
 import java.util.*;
 
-public class ParallelNodeConvert extends NodeConvertAbstract{
+public class ParallelNodeConvert extends NodeConvertAbstract {
 
     @Override
-    public List<Node> convert(Map<String, Object> jsonObject, String startNodeId, String endNodeId, String nextNodeId){
+    public List<Node> convert(Map<String, Object> jsonObject, String startNodeId, String endNodeId, String nextNodeId) {
         // 并行网关，会在子节点 最前面加一个条件分支， 否则会出问题
         List<Node> seaflowNodeList = new ArrayList<>();
-        String startParallelNodeId = (String)jsonObject.get("nodeId");
+        String startParallelNodeId = (String) jsonObject.get("nodeId");
         Node serialNode = FlowFactory.newNode();
         serialNode.setNodeCode(startParallelNodeId);
         serialNode.setNodeType(NodeType.PARALLEL.getKey());
 //        serialNode.setDirection("1");
         //加一个并行网关
         seaflowNodeList.add(serialNode);
-
-
 
 
         //前
@@ -47,16 +45,16 @@ public class ParallelNodeConvert extends NodeConvertAbstract{
         endNode.setNodeCode(UUID.randomUUID().toString());
 
 //        seaflowNodeList.add(startNode);
-        List<List<Map<String,Object>>> childNodes =  (List<List<Map<String,Object>>>)jsonObject.get("childNodes");
-        List<Skip>  startSkips = new ArrayList<>();
+        List<List<Map<String, Object>>> childNodes = (List<List<Map<String, Object>>>) jsonObject.get("childNodes");
+        List<Skip> startSkips = new ArrayList<>();
         for (int j = 0; j < childNodes.size(); j++) {
-            List<Map<String,Object>> jsonArray = childNodes.get(j);
+            List<Map<String, Object>> jsonArray = childNodes.get(j);
             jsonArray.get(0).put("nodeType", NodeType.BETWEEN.getValue());
             // 跳转 不变
             Skip startNodeSkip = FlowFactory.newSkip();
             startNodeSkip.setSkipType(SkipType.PASS.getKey());
 
-            startNodeSkip.setNextNodeCode((String)jsonArray.get(0).get("nodeId"));
+            startNodeSkip.setNextNodeCode((String) jsonArray.get(0).get("nodeId"));
             startSkips.add(startNodeSkip);
 
             List<Node> convert = NodeConvertUtil.convert(jsonArray, startNodeId, endNodeId);
@@ -72,7 +70,7 @@ public class ParallelNodeConvert extends NodeConvertAbstract{
         }
         serialNode.setSkipList(startSkips);
 
-        String emptyNodeCode  = UUID.randomUUID().toString();
+        String emptyNodeCode = UUID.randomUUID().toString();
         //并行网关（出） 连接空节点
         Skip parallelOutSkip = FlowFactory.newSkip();
         parallelOutSkip.setSkipType(SkipType.PASS.getKey());
@@ -92,8 +90,7 @@ public class ParallelNodeConvert extends NodeConvertAbstract{
 //                GlobalCreateListener.class.getName()));
 
 
-
-        if(nextNodeId != null){
+        if (nextNodeId != null) {
             List<Skip> endSkipList = new ArrayList<>();
             for (String nodeId : nextNodeId.split(",")) {
                 Skip endSkip = FlowFactory.newSkip();

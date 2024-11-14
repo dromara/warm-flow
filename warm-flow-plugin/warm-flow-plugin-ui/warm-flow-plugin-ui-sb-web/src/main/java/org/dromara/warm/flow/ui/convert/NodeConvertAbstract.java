@@ -21,12 +21,14 @@ import org.dromara.warm.flow.core.entity.Node;
 
 import java.util.Map;
 
-public abstract  class NodeConvertAbstract implements NodeConvert {
+public abstract class NodeConvertAbstract implements NodeConvert {
 
 
-    public  Node getNode(Map<String, Object> jsonObject) {
+    public Node getNode(Map<String, Object> jsonObject) {
         return FlowFactory.newNode();
-    };
+    }
+
+    ;
 
 
 }

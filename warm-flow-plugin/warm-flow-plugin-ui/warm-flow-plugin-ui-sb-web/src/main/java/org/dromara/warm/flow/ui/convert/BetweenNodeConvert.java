@@ -25,7 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-public  class  BetweenNodeConvert extends NodeConvertAbstract{
+public class BetweenNodeConvert extends NodeConvertAbstract {
     @Override
     public List<Node> convert(Map<String, Object> jsonObject, String startNodeId, String endNodeId, String nextNodeId) {
         Node node = getNode(jsonObject);

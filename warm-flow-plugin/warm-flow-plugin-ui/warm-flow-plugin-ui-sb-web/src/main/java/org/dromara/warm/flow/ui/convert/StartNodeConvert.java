@@ -26,9 +26,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-public class StartNodeConvert extends NodeConvertAbstract{
+public class StartNodeConvert extends NodeConvertAbstract {
     @Override
-    public List<Node> convert(Map<String,Object> jsonObject, String startNodeId, String endNodeId, String nextNodeId) {
+    public List<Node> convert(Map<String, Object> jsonObject, String startNodeId, String endNodeId, String nextNodeId) {
         // 节点
         Node seaflowNode = FlowFactory.newNode();
         // 设置发起人为自己

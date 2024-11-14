@@ -41,29 +41,29 @@ public class NodeConvertUtil {
     }
 
     /**
-     *   页面json  转换为node 和 skip, 请根据业务自行修改
+     * 页面json  转换为node 和 skip, 请根据业务自行修改
      */
-    public static List<Node> convert(List<Map<String,Object>> jsonArray, String startNodeId, String endNodeId) {
+    public static List<Node> convert(List<Map<String, Object>> jsonArray, String startNodeId, String endNodeId) {
         List<Node> seaflowNodeList = new ArrayList<>();
-        if(StringUtils.isEmpty(startNodeId)){
+        if (StringUtils.isEmpty(startNodeId)) {
             startNodeId = (String) jsonArray.get(0).get("nodeId");
         }
-        if(StringUtils.isEmpty(endNodeId)){
-            endNodeId =  (String) jsonArray.get(jsonArray.size() - 1).get("nodeId");
+        if (StringUtils.isEmpty(endNodeId)) {
+            endNodeId = (String) jsonArray.get(jsonArray.size() - 1).get("nodeId");
         }
 
 //        String currentNodeId = null;
         String nextNodeId = null;
-        for(int i = 0; i < jsonArray.size(); i++) {
-            Map<String,Object> node = jsonArray.get(i);
+        for (int i = 0; i < jsonArray.size(); i++) {
+            Map<String, Object> node = jsonArray.get(i);
             String type = (String) node.get("nodeType");
-            if((i + 1) < jsonArray.size()){
-                Map<String,Object>  nextNode = jsonArray.get(i + 1);
+            if ((i + 1) < jsonArray.size()) {
+                Map<String, Object> nextNode = jsonArray.get(i + 1);
                 nextNodeId = (String) nextNode.get("nodeId");
 
                 //当前节点 和下个节点 都为网关时候， 中间加个自动通过节点
-                if(NodeType.isGateWay(NodeType.getKeyByValue((String) nextNode.get("nodeType")))
-                    && NodeType.isGateWay(NodeType.getKeyByValue(type))){
+                if (NodeType.isGateWay(NodeType.getKeyByValue((String) nextNode.get("nodeType")))
+                        && NodeType.isGateWay(NodeType.getKeyByValue(type))) {
 
                     String emptyNodeCode = UUID.randomUUID().toString();
                     Node emptyNode = FlowFactory.newNode();
@@ -83,15 +83,14 @@ public class NodeConvertUtil {
                     // 更新下个节点的nodeId
                     nextNodeId = emptyNodeCode;
                 }
-            }else{
+            } else {
                 nextNodeId = null;
             }
 
 
-
             NodeConvertAbstract nodeConvert = nodeConvertMap.get(type);
 
-            if(nodeConvert != null) {
+            if (nodeConvert != null) {
 //                currentNodeId = node.getStr("nodeId");
                 List<Node> convert = nodeConvert.convert(node, startNodeId, endNodeId, nextNodeId);
                 seaflowNodeList.addAll(convert);
