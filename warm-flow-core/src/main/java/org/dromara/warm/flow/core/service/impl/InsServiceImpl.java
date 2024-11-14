@@ -86,7 +86,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
 
         // 办理人变量替换
         if (CollUtil.isNotEmpty(addTasks)) {
-            addTasks.forEach(addTask -> addTask.getPermissionList().replaceAll(s -> VariableUtil.eval(s, flowParams.getVariable())));
+            VariableUtil.replacement(addTasks,flowParams);
         }
 
         // 执行分派监听器

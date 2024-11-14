@@ -16,13 +16,18 @@
 package org.dromara.warm.flow.core.utils;
 
 import org.dromara.warm.flow.core.constant.ExceptionCons;
+import org.dromara.warm.flow.core.dto.FlowParams;
+import org.dromara.warm.flow.core.entity.Task;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.variable.DefaultVariableStrategy;
 import org.dromara.warm.flow.core.variable.VariableStrategy;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 /**
  * 变量替换工具类
@@ -68,6 +73,20 @@ public class VariableUtil {
         }
 
         return expression;
+    }
+
+    /**
+     * @param addTasks 任务列表
+     * @param flowParams 内置参数
+     */
+    public static void replacement(List<Task> addTasks, FlowParams flowParams) {
+        addTasks.forEach(addTask -> {
+            List<String> permissionList = addTask.getPermissionList().stream()
+                    .map(s -> VariableUtil.eval(s, flowParams.getVariable()))
+                    .flatMap(eval -> Arrays.stream(eval.split(",")))
+                    .collect(Collectors.toList());
+            addTask.setPermissionList(permissionList);
+        });
     }
 
 }
