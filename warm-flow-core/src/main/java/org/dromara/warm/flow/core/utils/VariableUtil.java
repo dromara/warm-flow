@@ -80,13 +80,10 @@ public class VariableUtil {
      * @param flowParams 内置参数
      */
     public static void replacement(List<Task> addTasks, FlowParams flowParams) {
-        addTasks.forEach(addTask -> {
-            List<String> permissionList = addTask.getPermissionList().stream()
-                    .map(s -> VariableUtil.eval(s, flowParams.getVariable()))
-                    .flatMap(eval -> Arrays.stream(eval.split(",")))
-                    .collect(Collectors.toList());
-            addTask.setPermissionList(permissionList);
-        });
+        addTasks.forEach(addTask -> addTask.setPermissionList(addTask.getPermissionList().stream()
+                .map(s -> VariableUtil.eval(s, flowParams.getVariable()))
+                .flatMap(eval -> Arrays.stream(eval.split(",")))
+                .collect(Collectors.toList())));
     }
 
 }
