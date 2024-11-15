@@ -330,11 +330,11 @@
                 <artifactId>warm-flow-plugin-ui-sb-web</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
-            <dependency>
-                <groupId>org.dromara</groupId>
-                <artifactId>warm-flow-plugin-ui-solon-web</artifactId>
-                <version>${warm-flow}</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.dromara</groupId>-->
+<!--                <artifactId>warm-flow-plugin-ui-solon-web</artifactId>-->
+<!--                <version>${warm-flow}</version>-->
+<!--            </dependency>-->
         </dependencies>
     </dependencyManagement>
 
@@ -347,6 +347,10 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -391,6 +395,18 @@
                             </goals>
                         </execution>
                     </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.2.0</version>
+                    <configuration>
+                        <archive>
+                            <manifestEntries>
+                                <Implementation-Version>${warm-flow}</Implementation-Version>
+                            </manifestEntries>
+                        </archive>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

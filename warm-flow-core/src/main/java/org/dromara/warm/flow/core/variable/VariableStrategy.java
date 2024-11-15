@@ -15,6 +15,7 @@
  */
 package org.dromara.warm.flow.core.variable;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,5 +37,5 @@ public interface VariableStrategy {
      * @param variable 流程变量
      * @return 执行结果
      */
-    String eval(String expression, Map<String, Object> variable);
+    List<String> eval(String expression, Map<String, Object> variable);
 }

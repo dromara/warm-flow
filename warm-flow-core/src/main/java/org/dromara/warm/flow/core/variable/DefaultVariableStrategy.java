@@ -16,8 +16,6 @@
 package org.dromara.warm.flow.core.variable;
 
 import org.dromara.warm.flow.core.constant.FlowCons;
-import org.dromara.warm.flow.core.utils.ObjectUtil;
-import org.dromara.warm.flow.core.utils.StringUtils;
 
 import java.util.Map;
 
@@ -26,7 +24,7 @@ import java.util.Map;
  *
  * @author warm
  */
-public class DefaultVariableStrategy implements VariableStrategy {
+public class DefaultVariableStrategy extends VariableStrategyAbstract {
 
     @Override
     public String getType() {
@@ -34,16 +32,9 @@ public class DefaultVariableStrategy implements VariableStrategy {
     }
 
     @Override
-    public String eval(String expression, Map<String, Object> variable) {
+    public Object preEval(String expression, Map<String, Object> variable) {
         String result = expression.replace("${", "").replace("}", "");
-        Object o = variable.get(result);
-        if (ObjectUtil.isNotNull(o)) {
-            String variableStr = (String) o;
-            if (StringUtils.isEmpty(variableStr)) {
-                return null;
-            }
-            return variableStr;
-        }
-        return null;
+        return variable.get(result);
     }
+
 }

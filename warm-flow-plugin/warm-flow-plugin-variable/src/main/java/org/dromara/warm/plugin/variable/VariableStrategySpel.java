@@ -16,8 +16,7 @@
 package org.dromara.warm.plugin.variable;
 
 import org.dromara.warm.flow.core.constant.FlowCons;
-import org.dromara.warm.flow.core.utils.ObjectUtil;
-import org.dromara.warm.flow.core.variable.VariableStrategy;
+import org.dromara.warm.flow.core.variable.VariableStrategyAbstract;
 import org.dromara.warm.plugin.spel.SpelHelper;
 
 import java.util.Map;
@@ -27,7 +26,7 @@ import java.util.Map;
  *
  * @author warm
  */
-public class VariableStrategySpel implements VariableStrategy {
+public class VariableStrategySpel extends VariableStrategyAbstract {
 
     @Override
     public String getType() {
@@ -35,8 +34,7 @@ public class VariableStrategySpel implements VariableStrategy {
     }
 
     @Override
-    public String eval(String expression, Map<String, Object> variable) {
-        Object o = SpelHelper.parseExpression(expression, variable);
-        return ObjectUtil.isNull(o) ? null : o.toString();
+    public Object preEval(String expression, Map<String, Object> variable) {
+        return SpelHelper.parseExpression(expression, variable);
     }
 }

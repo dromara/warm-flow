@@ -22,10 +22,7 @@ import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.variable.DefaultVariableStrategy;
 import org.dromara.warm.flow.core.variable.VariableStrategy;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -55,9 +52,9 @@ public class VariableUtil {
      * @param variable
      * @return
      */
-    public static String eval(String expression, Map<String, Object> variable) {
+    public static List<String> eval(String expression, Map<String, Object> variable) {
         if (StringUtils.isNotEmpty(expression)) {
-            AtomicReference<String> result = new AtomicReference<>();
+            AtomicReference<List<String>> result = new AtomicReference<>();
             map.forEach((k, v) -> {
                 if (expression.startsWith(k + "|")) {
                     if (v == null) {
@@ -67,12 +64,12 @@ public class VariableUtil {
                 }
             });
 
-            if (StringUtils.isNotEmpty(result.get())) {
+            if (CollUtil.isNotEmpty(result.get())) {
                 return result.get();
             }
         }
 
-        return expression;
+        return Collections.singletonList(expression);
     }
 
     /**
@@ -82,7 +79,7 @@ public class VariableUtil {
     public static void replacement(List<Task> addTasks, FlowParams flowParams) {
         addTasks.forEach(addTask -> addTask.setPermissionList(addTask.getPermissionList().stream()
                 .map(s -> VariableUtil.eval(s, flowParams.getVariable()))
-                .flatMap(eval -> Arrays.stream(eval.split(",")))
+                .flatMap(List::stream)
                 .collect(Collectors.toList())));
     }
 
