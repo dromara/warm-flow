@@ -107,7 +107,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
         // 办理人变量替换
         if (CollUtil.isNotEmpty(addTasks)) {
-            VariableUtil.replacement(addTasks,flowParams);
+            VariableUtil.replacement(addTasks, flowParams.getVariable());
         }
         // 执行分派监听器
         ListenerUtil.executeListener(new ListenerVariable(r.definition, r.instance, r.nowNode, flowParams.getVariable()
@@ -460,6 +460,16 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         return tasks.stream().max(Comparator.comparingLong(Task::getId)).orElse(null);
     }
 
+    @Override
+    public void mergeVariable(Instance instance, Map<String, Object> variable) {
+        if (MapUtil.isNotEmpty(variable)) {
+            String variableStr = instance.getVariable();
+            Map<String, Object> deserialize = FlowFactory.jsonConvert.strToMap(variableStr);
+            deserialize.putAll(variable);
+            instance.setVariable(FlowFactory.jsonConvert.mapToStr(deserialize));
+        }
+    }
+
     private R getAndCheck(Long taskId) {
         return getAndCheck(getById(taskId));
     }
@@ -727,13 +737,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     // 设置任务完成后的实例相关信息
     private void setInsFinishInfo(Instance instance, List<Task> addTasks, FlowParams flowParams) {
         instance.setUpdateTime(new Date());
-        Map<String, Object> variable = flowParams.getVariable();
-        if (MapUtil.isNotEmpty(variable)) {
-            String variableStr = instance.getVariable();
-            Map<String, Object> deserialize = FlowFactory.jsonConvert.strToMap(variableStr);
-            deserialize.putAll(variable);
-            instance.setVariable(FlowFactory.jsonConvert.mapToStr(deserialize));
-        }
+        // 合并流程变量到实例对象
+        mergeVariable(instance, flowParams.getVariable());
         if (CollUtil.isNotEmpty(addTasks)) {
             addTasks.removeIf(addTask -> {
                 if (NodeType.isEnd(addTask.getNodeType())) {

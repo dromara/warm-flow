@@ -86,13 +86,12 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
 
         // 办理人变量替换
         if (CollUtil.isNotEmpty(addTasks)) {
-            VariableUtil.replacement(addTasks,flowParams);
+            VariableUtil.replacement(addTasks, flowParams.getVariable());
         }
 
         // 执行分派监听器
         ListenerUtil.executeListener(new ListenerVariable(definition, instance, startNode, flowParams.getVariable()
                 , null, nextNodes, addTasks).setFlowParams(flowParams), Listener.LISTENER_ASSIGNMENT);
-
 
         // 开启流程，保存流程信息
         saveFlowInfo(instance, addTasks, hisTasks);

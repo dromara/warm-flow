@@ -16,13 +16,15 @@
 package org.dromara.warm.flow.core.utils;
 
 import org.dromara.warm.flow.core.constant.ExceptionCons;
-import org.dromara.warm.flow.core.dto.FlowParams;
 import org.dromara.warm.flow.core.entity.Task;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.variable.DefaultVariableStrategy;
 import org.dromara.warm.flow.core.variable.VariableStrategy;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -74,11 +76,11 @@ public class VariableUtil {
 
     /**
      * @param addTasks 任务列表
-     * @param flowParams 内置参数
+     * @param variable 流程变量
      */
-    public static void replacement(List<Task> addTasks, FlowParams flowParams) {
+    public static void replacement(List<Task> addTasks, Map<String, Object> variable) {
         addTasks.forEach(addTask -> addTask.setPermissionList(addTask.getPermissionList().stream()
-                .map(s -> VariableUtil.eval(s, flowParams.getVariable()))
+                .map(s -> VariableUtil.eval(s, variable))
                 .flatMap(List::stream)
                 .collect(Collectors.toList())));
     }

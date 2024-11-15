@@ -24,6 +24,7 @@ import org.dromara.warm.flow.core.entity.Task;
 import org.dromara.warm.flow.core.orm.service.IWarmService;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 待办任务Service接口
@@ -265,4 +266,10 @@ public interface TaskService extends IWarmService<Task> {
     Task getNextTask(List<Task> tasks);
 
 
+    /**
+     * 合并流程变量到实例对象
+     * @param instance 流程实例
+     * @param variable 流程变量
+     */
+    void mergeVariable(Instance instance, Map<String, Object> variable);
 }
