@@ -132,4 +132,6 @@ public class ExceptionCons {
     public static final String NOT_FOUND_FLOW_TASK = "未获取到流程任务";
 
     public static final String FLOW_HAVE_USELESS_SKIP = "存在无用的跳转";
+
+    public static final String TASKID_INSTANCEID_NULL = "流程ID和任务ID不能都为空";
 }

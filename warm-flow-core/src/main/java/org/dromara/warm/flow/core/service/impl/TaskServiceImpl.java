@@ -729,6 +729,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             // 查询审批人和转办人
             permissions = StreamUtils.toList(task.getUserList(), User::getProcessedBy);
         }
+        if (CollUtil.isEmpty(flowParams.getPermissionFlag())){
+            flowParams.permissionFlag(new ArrayList<>(FlowFactory.checkAuthHander().currentUserPermissions(null)));
+        }
         // 当前节点
         AssertUtil.isTrue(CollUtil.isNotEmpty(permissions) && (CollUtil.isEmpty(flowParams.getPermissionFlag())
                 || CollUtil.notContainsAny(flowParams.getPermissionFlag(), permissions)), ExceptionCons.NULL_ROLE_NODE);

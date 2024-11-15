@@ -17,14 +17,13 @@ package org.dromara.warm.flow.core;
 
 import org.dromara.warm.flow.core.config.WarmFlow;
 import org.dromara.warm.flow.core.entity.*;
+import org.dromara.warm.flow.core.handler.CheckAuthHander;
 import org.dromara.warm.flow.core.handler.DataFillHandler;
 import org.dromara.warm.flow.core.handler.TenantHandler;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.json.JsonConvert;
 import org.dromara.warm.flow.core.service.*;
-import org.dromara.warm.flow.core.utils.ClassUtil;
 import org.dromara.warm.flow.core.utils.ObjectUtil;
-import org.dromara.warm.flow.core.utils.StringUtils;
 
 import java.util.function.Supplier;
 
@@ -43,7 +42,7 @@ public class FlowFactory {
     private static SkipService skipService = null;
     private static TaskService taskService = null;
     private static UserService UserService = null;
-
+    private static CheckAuthHander checkAuthHander=null;
 
     private static Supplier<Definition> defSupplier;
     private static Supplier<HisTask> hisTaskSupplier;
@@ -56,6 +55,7 @@ public class FlowFactory {
     private static WarmFlow flowConfig;
 
     private static DataFillHandler dataFillHandler;
+
 
     private static boolean tenantHandlerFlag;
 
@@ -110,6 +110,13 @@ public class FlowFactory {
             return UserService;
         }
         return UserService = FrameInvoker.getBean(UserService.class);
+    }
+
+    public static CheckAuthHander checkAuthHander() {
+        if (ObjectUtil.isNotNull(checkAuthHander)) {
+            return checkAuthHander;
+        }
+        return checkAuthHander = FrameInvoker.getBean(CheckAuthHander.class);
     }
 
     public static void setNewDef(Supplier<Definition> supplier) {
@@ -184,48 +191,20 @@ public class FlowFactory {
      * 获取填充类
      */
     public static DataFillHandler dataFillHandler() {
-        if (ObjectUtil.isNotNull(FlowFactory.dataFillHandler)) {
-            return FlowFactory.dataFillHandler;
+        if (ObjectUtil.isNotNull(dataFillHandler)) {
+            return dataFillHandler;
         }
-        DataFillHandler o = null;
-        try {
-            String dataFillHandlerPath = flowConfig.getDataFillHandlerPath();
-            if (!StringUtils.isEmpty(dataFillHandlerPath)) {
-                Class<?> clazz = ClassUtil.getClazz(dataFillHandlerPath);
-                if (clazz != null) {
-                    return FlowFactory.dataFillHandler = o = (DataFillHandler) clazz.newInstance();
-                }
-            }
-            o = FrameInvoker.getBean(DataFillHandler.class);
-        } catch (Exception ignored) {
-        }
-        if (ObjectUtil.isNull(o)) {
-            return FlowFactory.dataFillHandler = new DataFillHandler() {};
-        }
-        return FlowFactory.dataFillHandler = o;
+        return dataFillHandler = FrameInvoker.getBean(DataFillHandler.class);
     }
 
     /**
      * 获取租户数据
      */
     public static TenantHandler tenantHandler() {
-        if (ObjectUtil.isNotNull(FlowFactory.tenantHandler) || tenantHandlerFlag) {
-            return FlowFactory.tenantHandler;
+        if (ObjectUtil.isNotNull(tenantHandler)) {
+            return tenantHandler;
         }
-        TenantHandler o = null;
-        try {
-            String tenantHandlerPath = flowConfig.getTenantHandlerPath();
-            if (!StringUtils.isEmpty(tenantHandlerPath)) {
-                Class<?> clazz = ClassUtil.getClazz(tenantHandlerPath);
-                if (clazz != null) {
-                    return FlowFactory.tenantHandler = o = (TenantHandler) clazz.newInstance();
-                }
-            }
-            o = FrameInvoker.getBean(TenantHandler.class);
-        } catch (Exception ignored) {
-        }
-        tenantHandlerFlag = true;
-        return FlowFactory.tenantHandler = o;
+        return tenantHandler = FrameInvoker.getBean(TenantHandler.class);
     }
 
     /**
