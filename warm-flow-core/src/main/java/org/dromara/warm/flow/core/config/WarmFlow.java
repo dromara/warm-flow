@@ -71,6 +71,12 @@ public class WarmFlow implements Serializable {
      * 租户模式处理类路径
      */
     private String tenantHandlerPath;
+
+    /**
+     * 办理人权限处理类路径
+     */
+    private String permissionHandlerPath;
+
     /**
      * 数据源类型, mybatis模块对orm进一步的封装, 由于各数据库分页语句存在差异,
      * 当配置此参数时, 以此参数结果为基准, 未配置时, 取DataSource中数据源类型,
@@ -109,7 +115,7 @@ public class WarmFlow implements Serializable {
         }
 
         // 设置id生成器类型
-        String keyType = FrameInvoker.getCfg(FlowConfigCons.KEYTYPE);
+        String keyType = FrameInvoker.getCfg(FlowConfigCons.KEY_TYPE);
         if (StringUtils.isNotEmpty(keyType)) {
             flowConfig.setKeyType(keyType);
         }
@@ -118,10 +124,13 @@ public class WarmFlow implements Serializable {
         setLogicDelete(flowConfig);
 
         // 设置租户模式
-        flowConfig.setTenantHandlerPath(FrameInvoker.getCfg(FlowConfigCons.TENANTHANDLERPATH));
+        flowConfig.setTenantHandlerPath(FrameInvoker.getCfg(FlowConfigCons.TENANT_HANDLER_PATH));
 
         // 设置数据填充处理类
-        flowConfig.setDataFillHandlerPath(FrameInvoker.getCfg(FlowConfigCons.DATAFILLHANDLEPATH));
+        flowConfig.setDataFillHandlerPath(FrameInvoker.getCfg(FlowConfigCons.DATA_FILL_HANDLE_PATH));
+
+        // 设置办理人权限处理类
+        flowConfig.setPermissionHandlerPath(FrameInvoker.getCfg(FlowConfigCons.PERMISSION_HANDLE_PATH));
 
         // 设置数据源类型
         flowConfig.setDataSourceType(FrameInvoker.getCfg(FlowConfigCons.DATA_SOURCE_TYPE));
@@ -143,14 +152,14 @@ public class WarmFlow implements Serializable {
     }
 
     private static void setLogicDelete(WarmFlow flowConfig) {
-        String logicDelete = FrameInvoker.getCfg(FlowConfigCons.LOGICDELETE);
+        String logicDelete = FrameInvoker.getCfg(FlowConfigCons.LOGIC_DELETE);
         if (ObjectUtil.isStrTrue(logicDelete)) {
             flowConfig.setLogicDelete(ObjectUtil.isStrTrue(logicDelete));
-            String logicDeleteValue = FrameInvoker.getCfg(FlowConfigCons.LOGICDELETEVALUE);
+            String logicDeleteValue = FrameInvoker.getCfg(FlowConfigCons.LOGIC_DELETE_VALUE);
             if (StringUtils.isNotEmpty(logicDeleteValue)) {
                 flowConfig.setLogicDeleteValue(logicDeleteValue);
             }
-            String logicNotDeleteValue = FrameInvoker.getCfg(FlowConfigCons.LOGICNOTDELETEVALUE);
+            String logicNotDeleteValue = FrameInvoker.getCfg(FlowConfigCons.LOGIC_NOT_DELETE_VALUE);
             if (StringUtils.isNotEmpty(logicNotDeleteValue)) {
                 flowConfig.setLogicNotDeleteValue(logicNotDeleteValue);
             }
@@ -233,6 +242,14 @@ public class WarmFlow implements Serializable {
 
     public void setTenantHandlerPath(String tenantHandlerPath) {
         this.tenantHandlerPath = tenantHandlerPath;
+    }
+
+    public String getPermissionHandlerPath() {
+        return permissionHandlerPath;
+    }
+
+    public void setPermissionHandlerPath(String permissionHandlerPath) {
+        this.permissionHandlerPath = permissionHandlerPath;
     }
 
     public String getDataSourceType() {

@@ -470,6 +470,35 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         }
     }
 
+    @Override
+    public boolean checkAuth(Long instanceId, Long taskId, String... permissionList) {
+//        AssertUtil.isTrue(instanceId == null && taskId == null, ExceptionCons.TASKID_INSTANCEID_NULL);
+//        if (instanceId != null) {
+//            Instance instance = FlowFactory.insService().getById(instanceId);
+//            AssertUtil.isNull(instance, ExceptionCons.NOT_FOUNT_INSTANCE);
+//        }
+//        if (permissionList == null) {
+//            String[] array = FlowFactory.permissionHandler().permissions();
+//            AssertUtil.isTrue(array.length < 1, ExceptionCons.NOT_AUTHORITY);
+//            permissionList = array;
+//        }
+//        Task flowTask = FlowFactory.newTask();
+//        flowTask.setInstanceId(instanceId);
+//        flowTask.setId(taskId);
+//        List<Task> taskList = FlowFactory.taskService().list(flowTask);
+//        AssertUtil.isEmpty(taskList, ExceptionCons.NOT_FOUND_FLOW_TASK);
+//        return Arrays.stream(permissionList)
+//                .anyMatch(permission -> taskList.stream()
+//                        .anyMatch(task -> {
+//                            User flowUser = FlowFactory.newUser();
+//                            flowUser.setAssociated(task.getId());
+//                            flowUser.setProcessedBy(permission);
+//                            return FlowFactory.userService().selectCount(flowUser) > 0;
+//                        })
+//                );
+        return true;
+    }
+
     private R getAndCheck(Long taskId) {
         return getAndCheck(getById(taskId));
     }
@@ -713,24 +742,24 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     /**
      * 判断当前处理人是否有权限处理
      *
-     * @param NowNode         当前节点权限（动态权限）
+     * @param nowNode         当前节点权限（动态权限）
      * @param task            当前任务（任务id）
      * @param flowParams:包含流程相关参数的对象
      */
-    private void checkAuth(Node NowNode, Task task, FlowParams flowParams) {
+    private void checkAuth(Node nowNode, Task task, FlowParams flowParams) {
         if (flowParams.isIgnore()) {
             return;
         }
         // 如果有动态权限标识，则优先使用动态权限标识
         List<String> permissions;
-        if (CollUtil.isNotEmpty(NowNode.getDynamicPermissionFlagList())) {
-            permissions = NowNode.getDynamicPermissionFlagList();
+        if (nowNode != null && CollUtil.isNotEmpty(nowNode.getDynamicPermissionFlagList())) {
+            permissions = nowNode.getDynamicPermissionFlagList();
         } else {
             // 查询审批人和转办人
             permissions = StreamUtils.toList(task.getUserList(), User::getProcessedBy);
         }
         if (CollUtil.isEmpty(flowParams.getPermissionFlag())){
-            flowParams.permissionFlag(new ArrayList<>(FlowFactory.checkAuthHander().currentUserPermissions(null)));
+            flowParams.permissionFlag(FlowFactory.permissionHandler().permissions());
         }
         // 当前节点
         AssertUtil.isTrue(CollUtil.isNotEmpty(permissions) && (CollUtil.isEmpty(flowParams.getPermissionFlag())

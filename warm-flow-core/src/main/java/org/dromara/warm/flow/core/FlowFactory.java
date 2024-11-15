@@ -17,14 +17,17 @@ package org.dromara.warm.flow.core;
 
 import org.dromara.warm.flow.core.config.WarmFlow;
 import org.dromara.warm.flow.core.entity.*;
-import org.dromara.warm.flow.core.handler.CheckAuthHander;
 import org.dromara.warm.flow.core.handler.DataFillHandler;
+import org.dromara.warm.flow.core.handler.PermissionHandler;
 import org.dromara.warm.flow.core.handler.TenantHandler;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.json.JsonConvert;
 import org.dromara.warm.flow.core.service.*;
+import org.dromara.warm.flow.core.utils.ClassUtil;
 import org.dromara.warm.flow.core.utils.ObjectUtil;
+import org.dromara.warm.flow.core.utils.StringUtils;
 
+import java.lang.reflect.Constructor;
 import java.util.function.Supplier;
 
 /**
@@ -42,7 +45,6 @@ public class FlowFactory {
     private static SkipService skipService = null;
     private static TaskService taskService = null;
     private static UserService UserService = null;
-    private static CheckAuthHander checkAuthHander=null;
 
     private static Supplier<Definition> defSupplier;
     private static Supplier<HisTask> hisTaskSupplier;
@@ -56,10 +58,9 @@ public class FlowFactory {
 
     private static DataFillHandler dataFillHandler;
 
-
-    private static boolean tenantHandlerFlag;
-
     private static TenantHandler tenantHandler;
+
+    private static PermissionHandler permissionHandler = null;
 
     public static JsonConvert jsonConvert;
 
@@ -110,13 +111,6 @@ public class FlowFactory {
             return UserService;
         }
         return UserService = FrameInvoker.getBean(UserService.class);
-    }
-
-    public static CheckAuthHander checkAuthHander() {
-        if (ObjectUtil.isNotNull(checkAuthHander)) {
-            return checkAuthHander;
-        }
-        return checkAuthHander = FrameInvoker.getBean(CheckAuthHander.class);
     }
 
     public static void setNewDef(Supplier<Definition> supplier) {
@@ -191,20 +185,24 @@ public class FlowFactory {
      * 获取填充类
      */
     public static DataFillHandler dataFillHandler() {
-        if (ObjectUtil.isNotNull(dataFillHandler)) {
-            return dataFillHandler;
-        }
-        return dataFillHandler = FrameInvoker.getBean(DataFillHandler.class);
+        return dataFillHandler = getHandler(dataFillHandler, flowConfig.getDataFillHandlerPath()
+                , DataFillHandler.class, () -> new DataFillHandler(){});
+    }
+
+    /**
+     * 获取填充类
+     */
+    public static PermissionHandler permissionHandler() {
+        return permissionHandler = getHandler(permissionHandler, flowConfig.getPermissionHandlerPath()
+                , PermissionHandler.class, () -> new PermissionHandler(){});
     }
 
     /**
      * 获取租户数据
      */
     public static TenantHandler tenantHandler() {
-        if (ObjectUtil.isNotNull(tenantHandler)) {
-            return tenantHandler;
-        }
-        return tenantHandler = FrameInvoker.getBean(TenantHandler.class);
+        return tenantHandler = getHandler(tenantHandler, flowConfig.getTenantHandlerPath()
+                , TenantHandler.class, () -> new TenantHandler(){});
     }
 
     /**
@@ -219,5 +217,31 @@ public class FlowFactory {
      */
     public static String dataSourceType() {
         return flowConfig.getDataSourceType();
+    }
+
+    /**
+     * 获取填充类
+     */
+    private static <T> T getHandler(T hander, String handlerPath, Class<T> tClazz, Supplier<T> supplier) {
+        if (hander != null) {
+            return hander;
+        }
+        try {
+            if (!StringUtils.isEmpty(handlerPath)) {
+                Class<?> clazz = ClassUtil.getClazz(handlerPath);
+                if (clazz != null && tClazz.isAssignableFrom(clazz)) {
+                    Constructor<?> constructor = clazz.getConstructor();
+                    hander = tClazz.cast(constructor.newInstance());
+                }
+            }
+        } catch (Exception ignored) {
+        }
+        if (hander == null) {
+            hander = FrameInvoker.getBean(tClazz);
+        }
+        if (hander == null) {
+            hander = supplier.get();
+        }
+        return hander;
     }
 }
