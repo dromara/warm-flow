@@ -181,28 +181,37 @@ public class FlowFactory {
         return FlowFactory.flowConfig.isLogicDelete();
     }
 
+    public static void setDataFillHandler(String handlerPath) {
+        dataFillHandler = getHandler(handlerPath, DataFillHandler.class, () -> new DataFillHandler(){});;
+    }
+
+    public static void setTenantHandler(String handlerPath) {
+        tenantHandler = getHandler(handlerPath, TenantHandler.class, () -> new TenantHandler(){});
+    }
+
+    public static void setPermissionHandler(String handlerPath) {
+        permissionHandler = getHandler(handlerPath, PermissionHandler.class, () -> new PermissionHandler(){});;
+    }
+
     /**
      * 获取填充类
      */
     public static DataFillHandler dataFillHandler() {
-        return dataFillHandler = getHandler(dataFillHandler, flowConfig.getDataFillHandlerPath()
-                , DataFillHandler.class, () -> new DataFillHandler(){});
+        return dataFillHandler;
     }
 
     /**
      * 获取填充类
      */
     public static PermissionHandler permissionHandler() {
-        return permissionHandler = getHandler(permissionHandler, flowConfig.getPermissionHandlerPath()
-                , PermissionHandler.class, () -> new PermissionHandler(){});
+        return permissionHandler;
     }
 
     /**
      * 获取租户数据
      */
     public static TenantHandler tenantHandler() {
-        return tenantHandler = getHandler(tenantHandler, flowConfig.getTenantHandlerPath()
-                , TenantHandler.class, () -> new TenantHandler(){});
+        return tenantHandler;
     }
 
     /**
@@ -222,10 +231,8 @@ public class FlowFactory {
     /**
      * 获取填充类
      */
-    private static <T> T getHandler(T hander, String handlerPath, Class<T> tClazz, Supplier<T> supplier) {
-        if (hander != null) {
-            return hander;
-        }
+    private static <T> T getHandler(String handlerPath, Class<T> tClazz, Supplier<T> supplier) {
+        T hander = null;
         try {
             if (!StringUtils.isEmpty(handlerPath)) {
                 Class<?> clazz = ClassUtil.getClazz(handlerPath);

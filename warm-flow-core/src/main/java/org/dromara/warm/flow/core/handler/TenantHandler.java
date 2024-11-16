@@ -16,7 +16,7 @@
 package org.dromara.warm.flow.core.handler;
 
 /**
- * 全家租户处理器接口
+ * 全局租户处理器接口
  *
  * @author warm
  */

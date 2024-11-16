@@ -42,8 +42,8 @@ public class TenantDeleteUtil {
             entity.setDelFlag(flowConfig.getLogicNotDeleteValue());
         }
 
-        if (ObjectUtil.isNotNull(FlowFactory.tenantHandler())) {
-            TenantHandler tenantHandler = FlowFactory.tenantHandler();
+        TenantHandler tenantHandler = FlowFactory.tenantHandler();
+        if (ObjectUtil.isNotNull(tenantHandler)) {
             entity.setTenantId(tenantHandler.getTenantId());
         }
         return entity;

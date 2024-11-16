@@ -84,8 +84,8 @@ public class TenantDeleteUtil {
      * @since 2024/5/10 11:16
      */
     private static void handleQueryWrapper(QueryWrapper queryWrapper, WarmFlow flowConfig) {
-        if (ObjectUtil.isNotNull(FlowFactory.tenantHandler())) {
-            TenantHandler tenantHandler = FlowFactory.tenantHandler();
+        TenantHandler tenantHandler = FlowFactory.tenantHandler();
+        if (ObjectUtil.isNotNull(tenantHandler)) {
             queryWrapper.eq("tenant_Id", tenantHandler.getTenantId());
         }
         if (flowConfig.isLogicDelete()) {
@@ -104,8 +104,8 @@ public class TenantDeleteUtil {
         if (flowConfig.isLogicDelete()) {
             entity.setDelFlag(flowConfig.getLogicNotDeleteValue());
         }
-        if (ObjectUtil.isNotNull(FlowFactory.tenantHandler())) {
-            TenantHandler tenantHandler = FlowFactory.tenantHandler();
+        TenantHandler tenantHandler = FlowFactory.tenantHandler();
+        if (ObjectUtil.isNotNull(tenantHandler)) {
             entity.setTenantId(tenantHandler.getTenantId());
         }
     }

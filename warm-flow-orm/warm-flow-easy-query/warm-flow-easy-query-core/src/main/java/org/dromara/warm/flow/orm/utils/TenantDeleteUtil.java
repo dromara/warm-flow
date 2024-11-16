@@ -34,8 +34,8 @@ public class TenantDeleteUtil {
      * 填充上下文条件
      */
     public static <T extends RootEntity> T applyContextCondition(final T entity) {
-        if (ObjectUtil.isNotNull(FlowFactory.tenantHandler())) {
-            TenantHandler tenantHandler = FlowFactory.tenantHandler();
+        TenantHandler tenantHandler = FlowFactory.tenantHandler();
+        if (ObjectUtil.isNotNull(tenantHandler)) {
             entity.setTenantId(tenantHandler.getTenantId());
         }
         return entity;

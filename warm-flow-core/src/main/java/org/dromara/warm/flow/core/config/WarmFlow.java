@@ -22,6 +22,8 @@ import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.json.JsonConvert;
 import org.dromara.warm.flow.core.utils.*;
 import org.dromara.warm.flow.core.variable.VariableStrategy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 
@@ -32,6 +34,7 @@ import java.io.Serializable;
  */
 public class WarmFlow implements Serializable {
 
+    private static final Logger log = LoggerFactory.getLogger(WarmFlow.class);
     /**
      * 开关
      */
@@ -125,12 +128,19 @@ public class WarmFlow implements Serializable {
 
         // 设置租户模式
         flowConfig.setTenantHandlerPath(FrameInvoker.getCfg(FlowConfigCons.TENANT_HANDLER_PATH));
+        FlowFactory.setTenantHandler(flowConfig.getTenantHandlerPath());
 
         // 设置数据填充处理类
         flowConfig.setDataFillHandlerPath(FrameInvoker.getCfg(FlowConfigCons.DATA_FILL_HANDLE_PATH));
+        FlowFactory.setDataFillHandler(flowConfig.getDataFillHandlerPath());
 
         // 设置办理人权限处理类
         flowConfig.setPermissionHandlerPath(FrameInvoker.getCfg(FlowConfigCons.PERMISSION_HANDLE_PATH));
+        FlowFactory.setPermissionHandler(flowConfig.getPermissionHandlerPath());
+
+        log.info("FlowFactory.tenantHandler(): {}", FlowFactory.tenantHandler());
+        log.info("FlowFactory.dataFillHandler(): {}", FlowFactory.dataFillHandler());
+        log.info("FlowFactory.permissionHandler(): {}", FlowFactory.permissionHandler());
 
         // 设置数据源类型
         flowConfig.setDataSourceType(FrameInvoker.getCfg(FlowConfigCons.DATA_SOURCE_TYPE));
