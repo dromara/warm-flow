@@ -75,6 +75,8 @@ public class ExceptionCons {
 
     public static final String NULL_INSTANCE_ID = "流程实例id不能为空!";
 
+    public static final String NULL_TASK_ID = "任务id不能为空!";
+
     public static final String NOT_FOUNT_TASK = "待办任务获取失败!";
 
     public static final String TASK_NOT_ONE = "此接口不能同时跳转多个待办任务，请更换!";
@@ -103,10 +105,6 @@ public class ExceptionCons {
 
     public static final String IS_ALREADY_DEPUTE = "已经是受托人，不可委托";
 
-    public static final String LOAD_EXPRESSION_STRATEGY_ERROR = "SPI加载条件表达式失败!";
-
-    public static final String LOAD_JSON_CONVERT_ERROR = "SPI加载json库失败,";
-
     public static final String JPA_PERSISTENCE_PROVIDER_NOT_FOUND = "jpa_persistence_provider配置不能为空";
 
     public static final String BACK_TASK_NOT_EXECUTED = "未完成过任务, 不能退回";
@@ -125,7 +123,7 @@ public class ExceptionCons {
 
     public static final String NOT_DEF_PROMOTER_NOT_RETRIEVE = "不是当前流程的发起人，无法取回";
 
-    public static final String CUR_USER_NOT_EMPTY = "当前处理人不能为空";
+    public static final String HANDLER_NOT_EMPTY = "办理人不能为空";
 
     public static final String NODE_IS_END = "目标节点是结束节点，不可跳转";
 
@@ -134,4 +132,13 @@ public class ExceptionCons {
     public static final String FLOW_HAVE_USELESS_SKIP = "存在无用的跳转";
 
     public static final String TASKID_INSTANCEID_NULL = "流程ID和任务ID不能都为空";
+
+    public static final String NUll_TRANSFER_HANDLER = "转办对象不能为空";
+
+    public static final String NUll_DEPUTE_HANDLER = "委托对象不能为空";
+
+    public static final String NUll_ADD_SIGNATURE_HANDLER = "加签对象不能为空";
+
+    public static final String NUll_REDUCTION_SIGNATURE_HANDLER = "减签对象不能为空";
+
 }

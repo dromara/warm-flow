@@ -186,6 +186,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     @Override
     public boolean transfer(Long taskId, FlowParams flowParams) {
+        AssertUtil.isNotNull(taskId, ExceptionCons.NULL_TASK_ID);
+        AssertUtil.isNotNull(flowParams.getHandler(), ExceptionCons.HANDLER_NOT_EMPTY);
+        AssertUtil.isNotNull(flowParams.getAddHandlers(), ExceptionCons.NUll_TRANSFER_HANDLER);
         List<User> users = FlowFactory.userService().getByProcessedBys(taskId, flowParams.getAddHandlers(), UserType.TRANSFER.getKey());
         AssertUtil.isNotEmpty(users, ExceptionCons.IS_ALREADY_TRANSFER);
         flowParams.cooperateType(CooperateType.TRANSFER.getKey())
@@ -212,6 +215,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
     @Override
     public boolean depute(Long taskId, FlowParams flowParams) {
+        AssertUtil.isNotNull(taskId, ExceptionCons.NULL_TASK_ID);
+        AssertUtil.isNotNull(flowParams.getHandler(), ExceptionCons.HANDLER_NOT_EMPTY);
+        AssertUtil.isNotNull(flowParams.getAddHandlers(), ExceptionCons.NUll_DEPUTE_HANDLER);
         List<User> users = FlowFactory.userService().getByProcessedBys(taskId, flowParams.getAddHandlers(), UserType.DEPUTE.getKey());
         AssertUtil.isNotEmpty(users, ExceptionCons.IS_ALREADY_DEPUTE);
         flowParams.cooperateType(CooperateType.DEPUTE.getKey())
@@ -239,6 +245,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     @Override
     public boolean addSignature(Long taskId, FlowParams flowParams) {
+        AssertUtil.isNotNull(taskId, ExceptionCons.NULL_TASK_ID);
+        AssertUtil.isNotNull(flowParams.getHandler(), ExceptionCons.HANDLER_NOT_EMPTY);
+        AssertUtil.isNotNull(flowParams.getAddHandlers(), ExceptionCons.NUll_ADD_SIGNATURE_HANDLER);
         List<User> users = FlowFactory.userService().getByProcessedBys(taskId, flowParams.getAddHandlers(), UserType.APPROVAL.getKey());
         AssertUtil.isNotEmpty(users, ExceptionCons.IS_ALREADY_SIGN);
         flowParams.cooperateType(CooperateType.ADD_SIGNATURE.getKey());
@@ -264,6 +273,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     @Override
     public boolean reductionSignature(Long taskId, FlowParams flowParams) {
+        AssertUtil.isNotNull(taskId, ExceptionCons.NULL_TASK_ID);
+        AssertUtil.isNotNull(flowParams.getHandler(), ExceptionCons.HANDLER_NOT_EMPTY);
+        AssertUtil.isNotNull(flowParams.getReductionHandlers(), ExceptionCons.NUll_REDUCTION_SIGNATURE_HANDLER);
         List<User> users = FlowFactory.userService().list(FlowFactory.newUser().setAssociated(taskId)
                 .setType(UserType.APPROVAL.getKey()));
         AssertUtil.isTrue(CollUtil.isEmpty(users) || users.size() == 1, ExceptionCons.REDUCTION_SIGN_ONE_ERROR);
@@ -503,6 +515,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     private R getAndCheck(Long taskId) {
+        AssertUtil.isNotNull(taskId, ExceptionCons.NULL_TASK_ID);
         return getAndCheck(getById(taskId));
     }
 

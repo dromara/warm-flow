@@ -99,7 +99,7 @@ public interface TaskService extends IWarmService<Task> {
      *
      * @param taskId         修改的任务id [必传]
      * @param flowParams:包含流程相关参数的对象 - handler     当前办理人唯一标识，代替老版本的curUser  [必传]
-     *                                     - permissionFlag 用户权限标识集合 [必传]
+     *                                     - permissionFlag 用户所拥有的权限标识[按需传输，ignore为false，则必传]
      *                                     - addHandlers    转办对象 [必传]
      *                                     - message        审批意见 [按需传输]
      *                                     - ignore   转办忽略权限校验，默认不忽略（true：忽略，false：不忽略）[按需传输]
@@ -175,7 +175,7 @@ public interface TaskService extends IWarmService<Task> {
      * @param taskId         修改的任务id [必传]
      * @param flowParams:包含流程相关参数的对象 - handler     当前办理人唯一标识，代替老版本的curUser  [必传]
      *                                     - permissionFlag 用户权限标识集合 [必传]
-     *                                     - reductionHandlers 减少办理人 [必传]
+     *                                     - reductionHandlers 减签对象 [必传]
      *                                     - message        审批意见 [按需传输]
      *                                     - ignore   转办忽略权限校验，默认不忽略（true：忽略，false：不忽略）[按需传输]
      */
@@ -201,7 +201,7 @@ public interface TaskService extends IWarmService<Task> {
      * @param flowParams:包含流程相关参数的对象 - handler     当前办理人唯一标识，代替老版本的curUser  [必传]
      *                                      - permissionFlag: 用户所拥有的权限标识[按需传输，ignore为false，则必传]
      *                                      - addHandlers: 增加办理人：加签，转办，委托[按需传输]
-     *                                      - reductionHandlers: 减少办理人：减签，委托[按需传输]
+     *                                      - reductionHandlers: 减签对象：减签，委托[按需传输]
      *                                      - message: 审批意见[按需传输]
      *                                      - cooperateType: 协作方式(2转办 3委派 6加签 7减签）[按需传输]
      *                                      - ignore: 转办忽略权限校验,默认忽略（true：忽略，false：不忽略）[按需传输]
