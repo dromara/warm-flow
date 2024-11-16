@@ -29,25 +29,33 @@ public interface GlobalListener extends Serializable {
      * 开始监听器，任务开始办理时执行
      * @param listenerVariable 监听器变量
      */
-    void start(ListenerVariable listenerVariable);
+    default void start(ListenerVariable listenerVariable){
+
+    }
 
     /**
      * 分派监听器，动态修改代办任务信息
      * @param listenerVariable  监听器变量
      */
-    void assignment(ListenerVariable listenerVariable);
+    default void assignment(ListenerVariable listenerVariable) {
+
+    }
 
     /**
      * 完成监听器，当前任务完成后执行
      * @param listenerVariable  监听器变量
      */
-    void finish(ListenerVariable listenerVariable);
+    default void finish(ListenerVariable listenerVariable) {
+
+    }
 
     /**
      * 创建监听器，任务创建时执行
      * @param listenerVariable  监听器变量
      */
-    void create(ListenerVariable listenerVariable);
+    default void create(ListenerVariable listenerVariable) {
+
+    }
 
     default void notify(String type, ListenerVariable listenerVariable) {
         switch (type) {
