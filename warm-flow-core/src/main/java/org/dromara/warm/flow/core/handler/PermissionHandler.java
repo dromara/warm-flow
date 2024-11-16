@@ -19,8 +19,6 @@ public interface PermissionHandler {
      * 返回当前用户权限集合
      *
      */
-    default List<String> permissions() {
-        return null;
-    }
+    List<String> permissions();
 
 }

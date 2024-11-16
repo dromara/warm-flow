@@ -27,8 +27,6 @@ public interface TenantHandler {
      *
      * @return 租户ID
      */
-    default String getTenantId() {
-        return null;
-    }
+    String getTenantId();
 
 }

@@ -186,11 +186,11 @@ public class FlowFactory {
     }
 
     public static void setTenantHandler(String handlerPath) {
-        tenantHandler = getHandler(handlerPath, TenantHandler.class, () -> new TenantHandler(){});
+        tenantHandler = getHandler(handlerPath, TenantHandler.class, null);
     }
 
     public static void setPermissionHandler(String handlerPath) {
-        permissionHandler = getHandler(handlerPath, PermissionHandler.class, () -> new PermissionHandler(){});;
+        permissionHandler = getHandler(handlerPath, PermissionHandler.class, null);
     }
 
     /**
@@ -246,7 +246,7 @@ public class FlowFactory {
         if (hander == null) {
             hander = FrameInvoker.getBean(tClazz);
         }
-        if (hander == null) {
+        if (hander == null && supplier != null) {
             hander = supplier.get();
         }
         return hander;
