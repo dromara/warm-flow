@@ -37,7 +37,7 @@ public class FlowCons {
     public static final String WARMFLOWINITIATOR = "warmFlowInitiator";
 
     /**
-     * 流程监听器参数,全局参数
+     * 监听器参数
      */
     public static final String WARM_LISTENER_PARAM = "WarmListenerParam";
 

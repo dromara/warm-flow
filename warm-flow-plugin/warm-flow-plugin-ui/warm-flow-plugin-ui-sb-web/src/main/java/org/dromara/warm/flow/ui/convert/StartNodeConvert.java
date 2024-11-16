@@ -35,8 +35,8 @@ public class StartNodeConvert extends NodeConvertAbstract{
         seaflowNode.setPermissionFlag(FlowCons.WARMFLOWINITIATOR);
 
 //        seaflowNode.setListenerType(String.join(",", Listener.LISTENER_ASSIGNMENT, Listener.LISTENER_CREATE));
-//        seaflowNode.setListenerPath(String.join("@@", GlobalAssignmentListener.class.getName(),
-//                GlobalCreateListener.class.getName()));
+//        seaflowNode.setListenerPath(String.join("@@", DefAssignmentListener.class.getName(),
+//                DefCreateListener.class.getName()));
         // 跳转
         Skip flowSkip = FlowFactory.newSkip();
         flowSkip.setNowNodeCode(seaflowNode.getNodeCode());

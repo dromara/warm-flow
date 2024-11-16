@@ -88,8 +88,8 @@ public class ParallelNodeConvert extends NodeConvertAbstract{
 //        emptyNode.setEmptyApprove(emptyApprove);
         // 多个用逗号分割， 这里先写死
 //        emptyNode.setListenerType(String.join(",", Listener.LISTENER_ASSIGNMENT, Listener.LISTENER_CREATE));
-//        emptyNode.setListenerPath(String.join("@@", GlobalAssignmentListener.class.getName(),
-//                GlobalCreateListener.class.getName()));
+//        emptyNode.setListenerPath(String.join("@@", DefAssignmentListener.class.getName(),
+//                DefCreateListener.class.getName()));
 
 
 
