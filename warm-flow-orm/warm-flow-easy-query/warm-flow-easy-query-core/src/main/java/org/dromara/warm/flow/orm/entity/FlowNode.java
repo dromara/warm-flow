@@ -89,10 +89,6 @@ public class FlowNode implements Node, ProxyEntityAvailable<FlowNode, FlowNodePr
     @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private BigDecimal nodeRatio;
 
-    /** 动态权限标识（权限类型:权限标识，可以多个，如role:1,role:2) */
-    @ColumnIgnore
-    private List<String> dynamicPermissionFlagList;
-
     /** 流程节点坐标 */
     @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String coordinate;
@@ -148,7 +144,6 @@ public class FlowNode implements Node, ProxyEntityAvailable<FlowNode, FlowNodePr
             ", nodeName='" + nodeName + '\'' +
             ", permissionFlag='" + permissionFlag + '\'' +
             ", nodeRatio=" + nodeRatio +
-            ", dynamicPermissionFlagList=" + dynamicPermissionFlagList +
             ", coordinate='" + coordinate + '\'' +
             ", version='" + version + '\'' +
             ", skipAnyNode='" + skipAnyNode + '\'' +

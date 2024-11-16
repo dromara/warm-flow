@@ -21,7 +21,6 @@ import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.listener.Listener;
 import org.dromara.warm.flow.core.listener.ListenerVariable;
-import org.dromara.warm.flow.core.listener.NodePermission;
 import org.dromara.warm.flow.core.listener.ValueHolder;
 
 import java.util.HashMap;
@@ -37,32 +36,6 @@ public class ListenerUtil {
 
     private ListenerUtil() {
 
-    }
-
-    /**
-     * 执行权限监听器,并赋值权限值集合
-     *
-     * @param listenerVariable
-     */
-    public static void executeGetNodePermission(ListenerVariable listenerVariable) {
-        for (Node node : listenerVariable.getNextNodes()) {
-            if (StringUtils.isNotEmpty(node.getListenerType()) && node.getListenerType().contains(Listener.LISTENER_PERMISSION)) {
-                //执行权限监听器
-                executeListener(listenerVariable, Listener.LISTENER_PERMISSION, node);
-
-                //拿到监听器内的权限标识 给NowNode.的PermissionFlag 赋值
-                if (CollUtil.isNotEmpty(listenerVariable.getNodePermissionList())) {
-                    NodePermission permissionByNode = listenerVariable.getPermissionByNode(node.getNodeCode());
-                    if (ObjectUtil.isNotNull(permissionByNode) && StringUtils.isNotEmpty(permissionByNode.getPermissionFlag())) {
-                        if (CollUtil.isNotEmpty(permissionByNode.getPermissionFlagList())) {
-                            node.setDynamicPermissionFlagList(permissionByNode.getPermissionFlagList());
-                        } else if (StringUtils.isNotEmpty(permissionByNode.getPermissionFlag())) {
-                            node.setDynamicPermissionFlagList(CollUtil.strToColl(permissionByNode.getPermissionFlag(), ","));
-                        }
-                    }
-                }
-            }
-        }
     }
 
     /**

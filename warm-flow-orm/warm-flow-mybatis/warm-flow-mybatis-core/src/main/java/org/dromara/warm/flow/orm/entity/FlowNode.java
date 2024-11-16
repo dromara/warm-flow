@@ -83,10 +83,6 @@ public class FlowNode implements Node {
      */
     private BigDecimal nodeRatio;
     /**
-     * 动态权限标识（权限类型:权限标识，可以多个，如role:1,role:2)
-     */
-    private List<String> dynamicPermissionFlagList;
-    /**
      * 流程节点坐标
      */
     private String coordinate;
@@ -247,17 +243,6 @@ public class FlowNode implements Node {
     }
 
     @Override
-    public List<String> getDynamicPermissionFlagList() {
-        return dynamicPermissionFlagList;
-    }
-
-    @Override
-    public FlowNode setDynamicPermissionFlagList(List<String> dynamicPermissionFlagList) {
-        this.dynamicPermissionFlagList = dynamicPermissionFlagList;
-        return this;
-    }
-
-    @Override
     public String getCoordinate() {
         return coordinate;
     }
@@ -384,7 +369,6 @@ public class FlowNode implements Node {
                 ", nodeName='" + nodeName + '\'' +
                 ", permissionFlag='" + permissionFlag + '\'' +
                 ", nodeRatio=" + nodeRatio +
-                ", dynamicPermissionFlagList=" + dynamicPermissionFlagList +
                 ", coordinate='" + coordinate + '\'' +
                 ", version='" + version + '\'' +
                 ", skipAnyNode='" + skipAnyNode + '\'' +

@@ -71,13 +71,6 @@ public class ListenerVariable {
      */
     private FlowParams flowParams;
 
-    /**
-     * 权限监听器使用
-     * 权限标识 例如：[role:admin,user:2]
-     */
-    @Deprecated
-    private List<NodePermission> nodePermissionList;
-
     public ListenerVariable() {
     }
 
@@ -192,21 +185,6 @@ public class ListenerVariable {
         return this;
     }
 
-    public List<NodePermission> getNodePermissionList() {
-        return nodePermissionList;
-    }
-
-    public void setNodePermissionList(List<NodePermission> nodePermissionList) {
-        this.nodePermissionList = nodePermissionList;
-    }
-
-    public NodePermission getPermissionByNode(String nodeCode) {
-
-        return nodePermissionList.stream().filter(t -> t.getNodeCode().equals(nodeCode))
-                .findFirst()
-                .orElse(null);
-    }
-
     public FlowParams getFlowParams() {
         return flowParams;
     }
@@ -227,7 +205,6 @@ public class ListenerVariable {
                 ", nextTasks=" + nextTasks +
                 ", variable=" + variable +
                 ", flowParams=" + flowParams +
-                ", nodePermissionList=" + nodePermissionList +
                 '}';
     }
 

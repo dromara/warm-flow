@@ -212,12 +212,6 @@ public class FlowNode extends JPARootEntity<FlowNode> implements Node {
     private BigDecimal nodeRatio;
 
     /**
-     * 动态权限标识（权限类型:权限标识，可以多个，如role:1,role:2)
-     */
-    @Transient
-    private List<String> dynamicPermissionFlagList;
-
-    /**
      * 流程节点坐标
      */
     private String coordinate;
@@ -327,17 +321,6 @@ public class FlowNode extends JPARootEntity<FlowNode> implements Node {
     @Override
     public FlowNode setNodeRatio(BigDecimal nodeRatio) {
         this.nodeRatio = nodeRatio;
-        return this;
-    }
-
-    @Override
-    public List<String> getDynamicPermissionFlagList() {
-        return dynamicPermissionFlagList;
-    }
-
-    @Override
-    public FlowNode setDynamicPermissionFlagList(List<String> dynamicPermissionFlagList) {
-        this.dynamicPermissionFlagList = dynamicPermissionFlagList;
         return this;
     }
 
@@ -466,7 +449,6 @@ public class FlowNode extends JPARootEntity<FlowNode> implements Node {
                 ", nodeName='" + nodeName + '\'' +
                 ", permissionFlag='" + permissionFlag + '\'' +
                 ", nodeRatio=" + nodeRatio +
-                ", dynamicPermissionFlagList='" + dynamicPermissionFlagList + '\'' +
                 ", coordinate='" + coordinate + '\'' +
                 ", version='" + version + '\'' +
                 ", skipAnyNode='" + skipAnyNode + '\'' +

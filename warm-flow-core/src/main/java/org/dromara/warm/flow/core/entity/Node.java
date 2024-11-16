@@ -69,10 +69,6 @@ public interface Node extends RootEntity {
 
     public Node setNodeRatio(BigDecimal nodeRatio);
 
-    public List<String> getDynamicPermissionFlagList();
-
-    public Node setDynamicPermissionFlagList(List<String> permissionFlagList);
-
     public String getPermissionFlag();
 
     public Node setPermissionFlag(String permissionFlag);

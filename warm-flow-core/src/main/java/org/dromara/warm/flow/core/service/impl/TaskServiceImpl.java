@@ -77,7 +77,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         }
 
         // 判断当前处理人是否有权限处理
-        checkAuth(r.nowNode, task, flowParams);
+        checkAuth(task, flowParams);
 
         //或签、会签、票签逻辑处理
         if (cooperate(r.nowNode, task, flowParams)) {
@@ -97,10 +97,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                     .getByInsAndNodeCodes(task.getInstanceId(), StreamUtils.toList(nextNodes, Node::getNodeCode));
             AssertUtil.isEmpty(rejectHisTasks, ExceptionCons.BACK_TASK_NOT_EXECUTED);
         }
-
-        // 判断下一结点是否有权限监听器,有执行权限监听器nextNode.setPermissionFlag,无走数据库的权限标识符
-        ListenerUtil.executeGetNodePermission(new ListenerVariable(r.definition, r.instance, r.nowNode
-                , flowParams.getVariable(), task, nextNodes).setFlowParams(flowParams));
 
         // 构建增待办任务和设置结束任务历史记录
         List<Task> addTasks = buildAddTasks(flowParams, task, r.instance, nextNodes, nextNode, r.definition);
@@ -143,7 +139,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
         // 判断当前处理人是否有权限处理
         task.setUserList(FlowFactory.userService().listByAssociatedAndTypes(task.getId()));
-        checkAuth(r.nowNode, task, flowParams);
+        checkAuth(task, flowParams);
 
         // 所有待办转历史
         Node endNode = FlowFactory.nodeService().getOne(FlowFactory.newNode()
@@ -435,8 +431,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 .setNodeName(node.getNodeName())
                 .setNodeType(node.getNodeType())
                 .setCreateTime(new Date())
-                .setPermissionList(CollUtil.isNotEmpty(node.getDynamicPermissionFlagList())
-                        ? node.getDynamicPermissionFlagList(): StringUtils.str2List(node.getPermissionFlag(), ","));
+                .setPermissionList(StringUtils.str2List(node.getPermissionFlag(), ","));
 
         if (StringUtils.isNotEmpty(node.getFormCustom()) && StringUtils.isNotEmpty(node.getFormPath())) {
             // 节点有自定义表单则使用
@@ -758,22 +753,15 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     /**
      * 判断当前处理人是否有权限处理
      *
-     * @param nowNode         当前节点权限（动态权限）
      * @param task            当前任务（任务id）
      * @param flowParams:包含流程相关参数的对象
      */
-    private void checkAuth(Node nowNode, Task task, FlowParams flowParams) {
+    private void checkAuth(Task task, FlowParams flowParams) {
         if (flowParams.isIgnore()) {
             return;
         }
-        // 如果有动态权限标识，则优先使用动态权限标识
-        List<String> permissions;
-        if (nowNode != null && CollUtil.isNotEmpty(nowNode.getDynamicPermissionFlagList())) {
-            permissions = nowNode.getDynamicPermissionFlagList();
-        } else {
-            // 查询审批人和转办人
-            permissions = StreamUtils.toList(task.getUserList(), User::getProcessedBy);
-        }
+        // 查询审批人和转办人
+        List<String> permissions = StreamUtils.toList(task.getUserList(), User::getProcessedBy);
         if (CollUtil.isEmpty(flowParams.getPermissionFlag())){
             flowParams.permissionFlag(FlowFactory.permissionHandler().permissions());
         }
