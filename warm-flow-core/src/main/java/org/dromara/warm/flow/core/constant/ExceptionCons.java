@@ -87,7 +87,7 @@ public class ExceptionCons {
 
     public static final String NOT_PUBLISH_NODE = "此流程编码[%s]的流程节点未发布!";
 
-    public static final String NOT_PUBLISH_TASK = "存在正在执行的待办任务，不可取消!";
+    public static final String EXIST_START_TASK = "流程定义已开启过审批任务，不可操作!";
 
     public static final String MSG_OVER_LENGTH = "意见长度过长!";
 

@@ -131,6 +131,10 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
      */
     @Override
     public boolean removeDef(List<Long> ids) {
+        ids.forEach(id -> {
+            List<Instance> instances = FlowFactory.insService().list(FlowFactory.newIns().setDefinitionId(id));
+            AssertUtil.isNotEmpty(instances, ExceptionCons.EXIST_START_TASK);
+        });
         FlowFactory.nodeService().deleteNodeByDefIds(ids);
         FlowFactory.skipService().deleteSkipByDefIds(ids);
         return removeByIds(ids);
@@ -151,8 +155,8 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
 
     @Override
     public boolean unPublish(Long id) {
-        List<Task> tasks = FlowFactory.taskService().list(FlowFactory.newTask().setDefinitionId(id));
-        AssertUtil.isNotEmpty(tasks, ExceptionCons.NOT_PUBLISH_TASK);
+        List<Instance> instances = FlowFactory.insService().list(FlowFactory.newIns().setDefinitionId(id));
+        AssertUtil.isNotEmpty(instances, ExceptionCons.EXIST_START_TASK);
         Definition definition = FlowFactory.newDef().setId(id);
         definition.setIsPublish(PublishStatus.UNPUBLISHED.getKey());
         return updateById(definition);
