@@ -22,6 +22,7 @@ import org.dromara.warm.flow.core.handler.PermissionHandler;
 import org.dromara.warm.flow.core.handler.TenantHandler;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.json.JsonConvert;
+import org.dromara.warm.flow.core.listener.GlobalListener;
 import org.dromara.warm.flow.core.service.*;
 import org.dromara.warm.flow.core.utils.ObjectUtil;
 
@@ -57,7 +58,9 @@ public class FlowFactory {
 
     private static TenantHandler tenantHandler;
 
-    private static PermissionHandler permissionHandler = null;
+    private static PermissionHandler permissionHandler;
+
+    private static GlobalListener globalListener;
 
     public static JsonConvert jsonConvert;
 
@@ -190,6 +193,10 @@ public class FlowFactory {
         permissionHandler = FrameInvoker.initBean(PermissionHandler.class, null, null);
     }
 
+     public static void initGlobalListener() {
+        globalListener = FrameInvoker.initBean(GlobalListener.class, null, null);
+    }
+
     /**
      * 获取填充类
      */
@@ -209,6 +216,13 @@ public class FlowFactory {
      */
     public static TenantHandler tenantHandler() {
         return tenantHandler;
+    }
+
+    /**
+     * 获取全局监听器
+     */
+    public static GlobalListener globalListener() {
+        return globalListener;
     }
 
     /**

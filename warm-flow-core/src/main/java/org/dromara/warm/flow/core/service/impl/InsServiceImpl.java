@@ -92,7 +92,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         // 开启流程，保存流程信息
         saveFlowInfo(instance, addTasks, hisTasks);
 
-        // 执行结束监听器和下一节点的节点开始监听器
+        // 执行完成监听器和下一节点的节点开始监听器
         ListenerUtil.endCreateListener(new ListenerVariable(definition, instance, startNode, flowParams.getVariable()
                 , null, nextNodes, addTasks).setFlowParams(flowParams));
 

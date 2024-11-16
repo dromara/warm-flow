@@ -15,10 +15,12 @@
  */
 package org.dromara.warm.flow.core.utils;
 
+import org.dromara.warm.flow.core.FlowFactory;
 import org.dromara.warm.flow.core.constant.FlowCons;
 import org.dromara.warm.flow.core.entity.Definition;
 import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
+import org.dromara.warm.flow.core.listener.GlobalListener;
 import org.dromara.warm.flow.core.listener.Listener;
 import org.dromara.warm.flow.core.listener.ListenerVariable;
 import org.dromara.warm.flow.core.listener.ValueHolder;
@@ -39,41 +41,45 @@ public class ListenerUtil {
     }
 
     /**
-     * 执行结束监听器和下一节点的开始监听器
+     * 执行完成监听器和下一节点的开始监听器
      *
-     * @param listenerVariable
+     * @param listenerVariable 监听器变量
      */
     public static void endCreateListener(ListenerVariable listenerVariable) {
         // 执行任务完成监听器
-        executeListener(listenerVariable, Listener.LISTENER_END);
+        executeListener(listenerVariable, Listener.LISTENER_FINISH);
         // 执行任务创建监听器
         listenerVariable.getNextNodes().forEach(node -> executeListener(listenerVariable, Listener.LISTENER_CREATE, node));
     }
 
-    public static void executeListener(ListenerVariable listenerVariable, String lisType) {
-        executeListener(listenerVariable, lisType, listenerVariable.getNode());
+    public static void executeListener(ListenerVariable listenerVariable, String type) {
+        executeListener(listenerVariable, type, listenerVariable.getNode());
     }
 
-    public static void executeListener(ListenerVariable listenerVariable, String lisType, Node listenerNode) {
+    public static void executeListener(ListenerVariable listenerVariable, String type, Node listenerNode) {
         // 执行监听器
         //listenerPath({"name": "John Doe", "age": 30})@@listenerPath@@listenerPath
         String listenerType = listenerNode.getListenerType();
-        execute(listenerVariable, lisType, listenerNode.getListenerPath(), listenerType);
+        execute(listenerVariable, type, listenerNode.getListenerPath(), listenerType);
         Definition definition = listenerVariable.getDefinition();
-        execute(listenerVariable, lisType, definition.getListenerPath(), definition.getListenerType());
+        execute(listenerVariable, type, definition.getListenerPath(), definition.getListenerType());
+        GlobalListener globalListener = FlowFactory.globalListener();
+        if (ObjectUtil.isNotNull(globalListener)) {
+            globalListener.notify(type, listenerVariable);
+        }
     }
 
-    private static void execute(ListenerVariable listenerVariable, String lisType, String listenerPathStr, String lisListType) {
-        if (StringUtils.isNotEmpty(lisListType)) {
-            String[] listenerTypeArr = lisListType.split(",");
+    private static void execute(ListenerVariable listenerVariable, String type, String listenerPaths, String listenerTypes) {
+        if (StringUtils.isNotEmpty(listenerTypes)) {
+            String[] listenerTypeArr = listenerTypes.split(",");
             for (int i = 0; i < listenerTypeArr.length; i++) {
-                String listenerTypeStr = listenerTypeArr[i].trim();
-                if (listenerTypeStr.equals(lisType)) {
+                String listenerType = listenerTypeArr[i].trim();
+                if (listenerType.equals(type)) {
                     //"listenerPath1({\"name\": \"John Doe\", \"age\": 30})@@listenerPath2";
-                    if (StringUtils.isNotEmpty(listenerPathStr)) {
+                    if (StringUtils.isNotEmpty(listenerPaths)) {
                         //"listenerPath1({\"name\": \"John Doe\", \"age\": 30})";
                         //listenerPath2
-                        String[] listenerPathArr = listenerPathStr.split(FlowCons.splitAt);
+                        String[] listenerPathArr = listenerPaths.split(FlowCons.splitAt);
                         String listenerPath = listenerPathArr[i].trim();
                         ValueHolder valueHolder = new ValueHolder();
                         //截取出path 和params
@@ -88,8 +94,6 @@ public class ListenerUtil {
                                 if (StringUtils.isNotEmpty(valueHolder.getParams())) {
                                     variable.put(FlowCons.WARM_LISTENER_PARAM, valueHolder.getParams());
                                 }
-                                // TODO min 此处判断是否有对应类型的全局监听器，如果有则执行全局监听器
-
                                 listener.notify(listenerVariable.setVariable(variable));
                             }
 

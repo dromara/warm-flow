@@ -18,14 +18,9 @@ package org.dromara.warm.flow.core.listener;
 import java.io.Serializable;
 
 /**
- * 节点监听器，与节点绑定
+ * 监听器
  */
 public interface Listener extends Serializable {
-
-    /**
-     * 创建监听器，任务创建时执行
-     */
-    String LISTENER_CREATE = "create";
 
     /**
      * 开始监听器，任务开始办理时执行
@@ -33,20 +28,19 @@ public interface Listener extends Serializable {
     String LISTENER_START = "start";
 
     /**
-     * 结束监听器，当前任务完成后执行
-     */
-    String LISTENER_END = "finish";
-
-    /**
      * 分派监听器，动态修改代办任务信息
      */
     String LISTENER_ASSIGNMENT = "assignment";
 
     /**
-     * 权限监听器，办理任务动态设置权限(1.2.4版本后建议使用分派监听器修改办理人)
+     * 完成监听器，当前任务完成后执行
      */
-    @Deprecated
-    String LISTENER_PERMISSION = "permission";
+    String LISTENER_FINISH = "finish";
+
+    /**
+     * 创建监听器，任务创建时执行
+     */
+    String LISTENER_CREATE = "create";
 
     void notify(ListenerVariable listenerVariable);
 }

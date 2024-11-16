@@ -165,7 +165,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         handUndoneTask(r.instance, flowParams);
         // 最后判断是否存在节点监听器，存在执行节点监听器
         ListenerUtil.executeListener(new ListenerVariable(r.definition, r.instance, r.nowNode, flowParams.getVariable()
-                , task), Listener.LISTENER_END);
+                , task), Listener.LISTENER_FINISH);
         return r.instance;
     }
 
@@ -350,7 +350,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         }
         // 最后判断是否存在节点监听器，存在执行节点监听器
         ListenerUtil.executeListener(new ListenerVariable(r.definition, r.instance, r.nowNode, flowParams.getVariable()
-                , r.task), Listener.LISTENER_END);
+                , r.task), Listener.LISTENER_FINISH);
         return true;
     }
     @Override

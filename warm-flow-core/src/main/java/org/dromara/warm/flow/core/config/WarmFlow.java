@@ -132,6 +132,9 @@ public class WarmFlow implements Serializable {
         // 设置办理人权限处理类
         FlowFactory.initPermissionHandler();
 
+        // 设置全局监听器
+        FlowFactory.initGlobalListener();
+
         // 设置数据源类型
         flowConfig.setDataSourceType(FrameInvoker.getCfg(FlowConfigCons.DATA_SOURCE_TYPE));
         printBanner(flowConfig);
