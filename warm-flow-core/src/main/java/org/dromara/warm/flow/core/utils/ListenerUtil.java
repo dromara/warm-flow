@@ -112,7 +112,9 @@ public class ListenerUtil {
                             if (ObjectUtil.isNotNull(listener)) {
                                 Map<String, Object> variable = listenerVariable.getVariable();
                                 variable = MapUtil.isEmpty(variable) ? new HashMap<>() : variable;
-                                variable.put(FlowCons.WARM_LISTENER_PARAM, valueHolder.getParams());
+                                if (StringUtils.isNotEmpty(valueHolder.getParams())) {
+                                    variable.put(FlowCons.WARM_LISTENER_PARAM, valueHolder.getParams());
+                                }
                                 // TODO min 此处判断是否有对应类型的全局监听器，如果有则执行全局监听器
 
                                 listener.notify(listenerVariable.setVariable(variable));

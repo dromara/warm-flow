@@ -76,11 +76,6 @@ public class WarmFlow implements Serializable {
     private String tenantHandlerPath;
 
     /**
-     * 办理人权限处理类路径
-     */
-    private String permissionHandlerPath;
-
-    /**
      * 数据源类型, mybatis模块对orm进一步的封装, 由于各数据库分页语句存在差异,
      * 当配置此参数时, 以此参数结果为基准, 未配置时, 取DataSource中数据源类型,
      * 兜底为mysql数据库
@@ -128,15 +123,14 @@ public class WarmFlow implements Serializable {
 
         // 设置租户模式
         flowConfig.setTenantHandlerPath(FrameInvoker.getCfg(FlowConfigCons.TENANT_HANDLER_PATH));
-        FlowFactory.setTenantHandler(flowConfig.getTenantHandlerPath());
+        FlowFactory.initTenantHandler(flowConfig.getTenantHandlerPath());
 
         // 设置数据填充处理类
         flowConfig.setDataFillHandlerPath(FrameInvoker.getCfg(FlowConfigCons.DATA_FILL_HANDLE_PATH));
-        FlowFactory.setDataFillHandler(flowConfig.getDataFillHandlerPath());
+        FlowFactory.initDataFillHandler(flowConfig.getDataFillHandlerPath());
 
         // 设置办理人权限处理类
-        flowConfig.setPermissionHandlerPath(FrameInvoker.getCfg(FlowConfigCons.PERMISSION_HANDLE_PATH));
-        FlowFactory.setPermissionHandler(flowConfig.getPermissionHandlerPath());
+        FlowFactory.initPermissionHandler();
 
         // 设置数据源类型
         flowConfig.setDataSourceType(FrameInvoker.getCfg(FlowConfigCons.DATA_SOURCE_TYPE));
@@ -248,14 +242,6 @@ public class WarmFlow implements Serializable {
 
     public void setTenantHandlerPath(String tenantHandlerPath) {
         this.tenantHandlerPath = tenantHandlerPath;
-    }
-
-    public String getPermissionHandlerPath() {
-        return permissionHandlerPath;
-    }
-
-    public void setPermissionHandlerPath(String permissionHandlerPath) {
-        this.permissionHandlerPath = permissionHandlerPath;
     }
 
     public String getDataSourceType() {

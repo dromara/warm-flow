@@ -53,11 +53,6 @@ public class FlowConfigCons {
     public static final String DATA_FILL_HANDLE_PATH = "warm-flow.data-fill-handler-path";
 
     /**
-     * 办理人权限处理类路径
-     */
-    public static final String PERMISSION_HANDLE_PATH = "warm-flow.permission-handler-path";
-
-    /**
      * 租户处理类路径
      */
     public static final String TENANT_HANDLER_PATH = "warm-flow.tenant_handler_path";

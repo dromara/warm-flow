@@ -15,6 +15,7 @@
  */
 package org.dromara.warm.flow.core.utils;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -54,5 +55,20 @@ public class MapUtil {
      */
     public static <K, V> Map<K, V> emptyDefault(Map<K, V> map, Map<K, V> defaultMap) {
         return isEmpty(map) ? defaultMap : map;
+    }
+
+    /**
+     * 合并多个map
+     * @param maps 需要合并的map
+     */
+    @SafeVarargs
+    public static <K, V> Map<K, V> mergeAll(Map<K, V>... maps) {
+        Map<K, V> map = new HashMap<>();
+        for (Map<K, V> m : maps) {
+            if (isNotEmpty(m)) {
+                map.putAll(m);
+            }
+        }
+        return map;
     }
 }

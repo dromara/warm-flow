@@ -60,7 +60,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // TODO min 后续考虑并发问题，待办任务和实例表不同步，可给待办任务id加锁，抽取所接口，方便后续兼容分布式锁
         // 流程开启前正确性校验
         R r = getAndCheck(task);
-
+        flowParams.variable(MapUtil.mergeAll(r.instance.getVariableMap(), flowParams.getVariable()));
         // 非第一个记得跳转类型必传
         if (!NodeType.isStart(task.getNodeType())) {
             AssertUtil.isFalse(StringUtils.isNotEmpty(flowParams.getSkipType()), ExceptionCons.NULL_CONDITIONVALUE);
@@ -106,8 +106,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         List<Task> addTasks = buildAddTasks(flowParams, task, r.instance, nextNodes, nextNode, r.definition);
 
         // 办理人变量替换
-        if (CollUtil.isNotEmpty(addTasks)) {
-            VariableUtil.replacement(addTasks, flowParams.getVariable());
+        if (addTasks != null && !addTasks.isEmpty()) {
+            VariableUtil.replacement(addTasks, MapUtil.mergeAll(r.instance.getVariableMap(), flowParams.getVariable()));
         }
         // 执行分派监听器
         ListenerUtil.executeListener(new ListenerVariable(r.definition, r.instance, r.nowNode, flowParams.getVariable()
@@ -137,6 +137,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     @Override
     public Instance termination(Task task, FlowParams flowParams) {
         R r = getAndCheck(task);
+        flowParams.variable(MapUtil.mergeAll(r.instance.getVariableMap(), flowParams.getVariable()));
         ListenerUtil.executeListener(new ListenerVariable(r.definition, r.instance, r.nowNode, flowParams.getVariable()
                 , task).setFlowParams(flowParams), Listener.LISTENER_START);
 
@@ -156,7 +157,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                         : FlowStatus.TERMINATE.getKey());
 
         // 待办任务转历史
-        flowParams.setSkipType(SkipType.PASS.getKey()).flowStatus(r.instance.getFlowStatus());
+        flowParams.skipType(SkipType.PASS.getKey()).flowStatus(r.instance.getFlowStatus());
         List<HisTask> insHisList = FlowFactory.hisTaskService().setSkipInsHis(task, Collections.singletonList(endNode)
                 , flowParams);
         FlowFactory.hisTaskService().saveBatch(insHisList);
@@ -292,6 +293,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     public boolean updateHandler(Long taskId, FlowParams flowParams) {
         // 获取待办任务
         R r = getAndCheck(taskId);
+        flowParams.variable(MapUtil.mergeAll(r.instance.getVariableMap(), flowParams.getVariable()));
         // 执行开始监听器
         ListenerUtil.executeListener(new ListenerVariable(r.definition, r.instance, r.nowNode, null, r.task)
                 , Listener.LISTENER_START);
@@ -358,6 +360,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     @Override
     public Instance retrieve(Long instanceId, FlowParams flowParams) {
         Instance instance = FlowFactory.insService().getById(instanceId);
+        flowParams.variable(MapUtil.mergeAll(instance.getVariableMap(), flowParams.getVariable()));
         AssertUtil.isNull(instance, ExceptionCons.NOT_FOUNT_INSTANCE);
         // 验证权限是不是当前任务的发起人
         AssertUtil.isFalse(instance.getCreateBy().equals(flowParams.getHandler())
@@ -389,7 +392,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 给回退到的那个节点赋权限-给当前处理人权限
         Task nextTask = addTask(nextNode, instance, definition, flowParams);
         // 流程参数
-        flowParams.setSkipType(SkipType.REJECT.getKey());
+        flowParams.skipType(SkipType.REJECT.getKey());
         // 删除待办任务，保存历史，删除所有代办任务的权限人
         if (StringUtils.isNotEmpty(flowParams.getFlowStatus())) {
             flowParams.flowStatus(FlowStatus.RETRIEVE.getKey());

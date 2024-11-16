@@ -23,11 +23,8 @@ import org.dromara.warm.flow.core.handler.TenantHandler;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.json.JsonConvert;
 import org.dromara.warm.flow.core.service.*;
-import org.dromara.warm.flow.core.utils.ClassUtil;
 import org.dromara.warm.flow.core.utils.ObjectUtil;
-import org.dromara.warm.flow.core.utils.StringUtils;
 
-import java.lang.reflect.Constructor;
 import java.util.function.Supplier;
 
 /**
@@ -181,16 +178,16 @@ public class FlowFactory {
         return FlowFactory.flowConfig.isLogicDelete();
     }
 
-    public static void setDataFillHandler(String handlerPath) {
-        dataFillHandler = getHandler(handlerPath, DataFillHandler.class, () -> new DataFillHandler(){});;
+    public static void initDataFillHandler(String handlerPath) {
+        dataFillHandler = FrameInvoker.initBean(DataFillHandler.class, handlerPath, () -> new DataFillHandler(){});;
     }
 
-    public static void setTenantHandler(String handlerPath) {
-        tenantHandler = getHandler(handlerPath, TenantHandler.class, null);
+    public static void initTenantHandler(String handlerPath) {
+        tenantHandler = FrameInvoker.initBean(TenantHandler.class, handlerPath, null);
     }
 
-    public static void setPermissionHandler(String handlerPath) {
-        permissionHandler = getHandler(handlerPath, PermissionHandler.class, null);
+    public static void initPermissionHandler() {
+        permissionHandler = FrameInvoker.initBean(PermissionHandler.class, null, null);
     }
 
     /**
@@ -228,27 +225,4 @@ public class FlowFactory {
         return flowConfig.getDataSourceType();
     }
 
-    /**
-     * 获取填充类
-     */
-    private static <T> T getHandler(String handlerPath, Class<T> tClazz, Supplier<T> supplier) {
-        T hander = null;
-        try {
-            if (!StringUtils.isEmpty(handlerPath)) {
-                Class<?> clazz = ClassUtil.getClazz(handlerPath);
-                if (clazz != null && tClazz.isAssignableFrom(clazz)) {
-                    Constructor<?> constructor = clazz.getConstructor();
-                    hander = tClazz.cast(constructor.newInstance());
-                }
-            }
-        } catch (Exception ignored) {
-        }
-        if (hander == null) {
-            hander = FrameInvoker.getBean(tClazz);
-        }
-        if (hander == null && supplier != null) {
-            hander = supplier.get();
-        }
-        return hander;
-    }
 }
