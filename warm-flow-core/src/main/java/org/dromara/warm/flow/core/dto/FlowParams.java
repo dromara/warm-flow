@@ -15,6 +15,11 @@
  */
 package org.dromara.warm.flow.core.dto;
 
+import org.dromara.warm.flow.core.FlowFactory;
+import org.dromara.warm.flow.core.handler.PermissionHandler;
+import org.dromara.warm.flow.core.utils.CollUtil;
+import org.dromara.warm.flow.core.utils.StringUtils;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -185,10 +190,22 @@ public class FlowParams implements Serializable {
     }
 
     public String getHandler() {
+        if (StringUtils.isEmpty(handler)) {
+            PermissionHandler permissionHandler = FlowFactory.permissionHandler();
+            if (permissionHandler != null) {
+                handler = permissionHandler.getHandler();
+            }
+        }
         return handler;
     }
 
     public List<String> getPermissionFlag() {
+        if (CollUtil.isEmpty(permissionFlag)) {
+            PermissionHandler permissionHandler = FlowFactory.permissionHandler();
+            if (permissionHandler != null) {
+                permissionFlag = permissionHandler.permissions();
+            }
+        }
         return permissionFlag;
     }
 

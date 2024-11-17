@@ -762,10 +762,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         }
         // 查询审批人和转办人
         List<String> permissions = StreamUtils.toList(task.getUserList(), User::getProcessedBy);
-        if (CollUtil.isEmpty(flowParams.getPermissionFlag())){
-            flowParams.permissionFlag(FlowFactory.permissionHandler().permissions());
-        }
-        // 当前节点
+        // 当前办理人拥有的权限和设计时候填的权限集合是否有交集，有说明有权限办理
         AssertUtil.isTrue(CollUtil.isNotEmpty(permissions) && (CollUtil.isEmpty(flowParams.getPermissionFlag())
                 || CollUtil.notContainsAny(flowParams.getPermissionFlag(), permissions)), ExceptionCons.NULL_ROLE_NODE);
     }
