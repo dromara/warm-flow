@@ -75,10 +75,7 @@ public class ListenerUtil {
             for (int i = 0; i < listenerTypeArr.length; i++) {
                 String listenerType = listenerTypeArr[i].trim();
                 if (listenerType.equals(type)) {
-                    //"listenerPath1({\"name\": \"John Doe\", \"age\": 30})@@listenerPath2";
                     if (StringUtils.isNotEmpty(listenerPaths)) {
-                        //"listenerPath1({\"name\": \"John Doe\", \"age\": 30})";
-                        //listenerPath2
                         String[] listenerPathArr = listenerPaths.split(FlowCons.splitAt);
                         String listenerPath = listenerPathArr[i].trim();
                         ValueHolder valueHolder = new ValueHolder();
@@ -90,7 +87,11 @@ public class ListenerUtil {
                             Listener listener = (Listener) FrameInvoker.getBean(clazz);
                             if (ObjectUtil.isNotNull(listener)) {
                                 Map<String, Object> variable = listenerVariable.getVariable();
-                                variable = MapUtil.isEmpty(variable) ? new HashMap<>() : variable;
+                                if (MapUtil.isEmpty(variable)) {
+                                    variable = new HashMap<>();
+                                } else {
+                                    variable.remove(FlowCons.WARM_LISTENER_PARAM);
+                                }
                                 if (StringUtils.isNotEmpty(valueHolder.getParams())) {
                                     variable.put(FlowCons.WARM_LISTENER_PARAM, valueHolder.getParams());
                                 }
