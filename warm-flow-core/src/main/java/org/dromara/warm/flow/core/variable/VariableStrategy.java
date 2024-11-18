@@ -19,15 +19,15 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 变量替换策略
+ * 办理人表里表达式策略
  *
  * @author warm
  */
 public interface VariableStrategy {
 
     /**
-     * 获取变量替换类型
-     * @return 变量替换类型
+     * 获取办理人表里表达式策略类型
+     * @return 办理人表里表达式策略类型
      */
     String getType();
 

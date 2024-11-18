@@ -20,7 +20,7 @@ import org.dromara.warm.flow.core.constant.FlowCons;
 import java.util.Map;
 
 /**
- * 默认变量替换策略： @@default@@|${flag}
+ * 默认办理人表里表达式策略： @@default@@|${flag}
  *
  * @author warm
  */

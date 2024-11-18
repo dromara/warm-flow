@@ -25,20 +25,18 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * 变量替换策略抽象类
+ * 办理人表里表达式策略抽象类
  *
  * @author warm
  */
 public abstract class VariableStrategyAbstract implements VariableStrategy {
 
+    public abstract Object preEval(String expression, Map<String, Object> variable);
 
     @Override
     public List<String> eval(String expression, Map<String, Object> variable) {
         return afterEval(preEval(expression, variable));
     }
-
-
-    public abstract Object preEval(String expression, Map<String, Object> variable);
 
 
     public List<String> afterEval(Object o) {
