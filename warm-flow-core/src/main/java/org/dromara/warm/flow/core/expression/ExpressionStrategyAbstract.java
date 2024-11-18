@@ -28,6 +28,24 @@ import java.util.Map;
  */
 public abstract class ExpressionStrategyAbstract implements ExpressionStrategy {
 
+
+    /**
+     * 执行表达式前置方法 合法性校验
+     * @param split 表达式后缀：如flag@@eq@@4
+     * @param variable 流程变量
+     */
+    public void preEval(String[] split, Map<String, Object> variable) {
+        AssertUtil.isEmpty(variable, ExceptionCons.NULL_CONDITIONVALUE);
+        Object o = variable.get(split[0].trim());
+        AssertUtil.isNull(o, ExceptionCons.NULL_CONDITIONVALUE);
+    }
+
+    /**
+     * 执行表达式
+     * @param expression 表达式
+     * @param variable 流程变量
+     * @return 执行结果
+     */
     @Override
     public boolean eval(String expression, Map<String, Object> variable) {
         String[] split = expression.split(FlowCons.splitAt);
@@ -36,12 +54,12 @@ public abstract class ExpressionStrategyAbstract implements ExpressionStrategy {
         return afterEval(split, variableValue);
     }
 
-    public void preEval(String[] split, Map<String, Object> variable) {
-        AssertUtil.isEmpty(variable, ExceptionCons.NULL_CONDITIONVALUE);
-        Object o = variable.get(split[0].trim());
-        AssertUtil.isNull(o, ExceptionCons.NULL_CONDITIONVALUE);
-    }
-
+    /**
+     * 执行表达式后置方法
+     * @param split 如flag@@eq@@4
+     * @param value 流程变量值
+     * @return 执行结果
+     */
     public abstract boolean afterEval(String[] split, String value);
 
 }
