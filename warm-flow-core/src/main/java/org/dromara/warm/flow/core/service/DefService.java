@@ -82,6 +82,14 @@ public interface DefService extends IWarmService<Definition> {
     boolean checkAndSave(Definition definition);
 
     /**
+     * 新增流程定义，并初始化流程节点和流程跳转数据
+     * 校验后新增
+     * @param definition 流程定义对象
+     * @return boolean
+     */
+    boolean saveAndInitNode(Definition definition);
+
+    /**
      * 删除流程定义相关数据
      *
      * @param ids 流程定义id列表

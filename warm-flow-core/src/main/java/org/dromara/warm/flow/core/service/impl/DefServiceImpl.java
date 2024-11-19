@@ -40,6 +40,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.*;
@@ -124,10 +125,89 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         return save(definition);
     }
 
+    @Override
+    public boolean saveAndInitNode(Definition definition) {
+        String version = getNewVersion(definition);
+        definition.setVersion(version);
+        FlowFactory.dataFillHandler().idFill(definition);
+        List<Node> nodeList = new ArrayList<>();
+        List<Skip> skipList = new ArrayList<>();
+
+        Node startNode = FlowFactory.newNode()
+                .setDefinitionId(definition.getId())
+                .setNodeCode(NodeType.START.getValue())
+                .setNodeName("开始")
+                .setNodeType(NodeType.START.getKey())
+                .setCoordinate("260,200|260,200")
+                .setNodeRatio(BigDecimal.ZERO)
+                .setVersion(definition.getVersion());
+        nodeList.add(startNode);
+
+        Node betweenOneNode = FlowFactory.newNode()
+                .setDefinitionId(definition.getId())
+                .setNodeCode("submit")
+                .setNodeName("中间节点-或签1")
+                .setNodeType(NodeType.BETWEEN.getKey())
+                .setCoordinate("420,200|420,200")
+                .setNodeRatio(BigDecimal.ZERO)
+                .setVersion(definition.getVersion());
+        nodeList.add(betweenOneNode);
+
+        Node betweenTwoNode = FlowFactory.newNode()
+                .setDefinitionId(definition.getId())
+                .setNodeCode("approval")
+                .setNodeName("中间节点-或签2")
+                .setNodeType(NodeType.BETWEEN.getKey())
+                .setCoordinate("600,200|600,200")
+                .setNodeRatio(BigDecimal.ZERO)
+                .setVersion(definition.getVersion());
+        nodeList.add(betweenTwoNode);
+
+        Node endNode = FlowFactory.newNode()
+                .setDefinitionId(definition.getId())
+                .setNodeCode(NodeType.END.getValue())
+                .setNodeName("结束")
+                .setNodeType(NodeType.END.getKey())
+                .setCoordinate("760,200|760,200")
+                .setNodeRatio(BigDecimal.ZERO)
+                .setVersion(definition.getVersion());
+        nodeList.add(endNode);
+
+        skipList.add(FlowFactory.newSkip()
+                .setDefinitionId(definition.getId())
+                .setNowNodeCode(startNode.getNodeCode())
+                .setNextNodeType(startNode.getNodeType())
+                .setNextNodeCode(betweenOneNode.getNodeCode())
+                .setNextNodeType(betweenOneNode.getNodeType())
+                .setSkipType(SkipType.PASS.getKey())
+                .setCoordinate("280,200;370,200"));
+
+        skipList.add(FlowFactory.newSkip()
+                .setDefinitionId(definition.getId())
+                .setNowNodeCode(betweenOneNode.getNodeCode())
+                .setNextNodeType(betweenOneNode.getNodeType())
+                .setNextNodeCode(betweenTwoNode.getNodeCode())
+                .setNextNodeType(betweenTwoNode.getNodeType())
+                .setSkipType(SkipType.PASS.getKey())
+                .setCoordinate("470,200;550,200"));
+
+        skipList.add(FlowFactory.newSkip()
+                .setDefinitionId(definition.getId())
+                .setNowNodeCode(betweenTwoNode.getNodeCode())
+                .setNextNodeType(betweenTwoNode.getNodeType())
+                .setNextNodeCode(endNode.getNodeCode())
+                .setNextNodeType(endNode.getNodeType())
+                .setSkipType(SkipType.PASS.getKey())
+                .setCoordinate("650,200;740,200"));
+        FlowFactory.nodeService().saveBatch(nodeList);
+        FlowFactory.skipService().saveBatch(skipList);
+        return save(definition);
+    }
+
     /**
      * 删除流程定义
      *
-     * @param ids
+     * @param ids 流程定义id
      */
     @Override
     public boolean removeDef(List<Long> ids) {
@@ -725,6 +805,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         FlowFactory.skipService().remove(FlowFactory.newSkip().setDefinitionId(defId));
         allNodes.forEach(node -> node.setDefinitionId(defId));
         allSkips.forEach(skip -> skip.setDefinitionId(defId));
+
         // 保存节点，流程连线，权利人
         FlowFactory.nodeService().saveBatch(allNodes);
         FlowFactory.skipService().saveBatch(allSkips);
