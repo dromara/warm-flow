@@ -23,8 +23,8 @@ public enum ActivityStatus {
 
     ACTIVITY(1,"激活");
 
-    private Integer key;
-    private String value;
+    private final Integer key;
+    private final String value;
 
     ActivityStatus(Integer key, String value) {
         this.key = key;

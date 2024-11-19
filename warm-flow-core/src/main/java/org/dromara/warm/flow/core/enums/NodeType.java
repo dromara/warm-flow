@@ -47,8 +47,8 @@ public enum NodeType {
      */
     PARALLEL(4, "parallel");
 
-    private Integer key;
-    private String value;
+    private final Integer key;
+    private final String value;
 
     NodeType(Integer key, String value) {
         this.key = key;

@@ -41,8 +41,8 @@ public enum CooperateType {
     ADD_SIGNATURE(6, "加签"),
     REDUCTION_SIGNATURE(7, "减签");
 
-    private Integer key;
-    private String value;
+    private final Integer key;
+    private final String value;
 
     CooperateType(Integer key, String value) {
         this.key = key;

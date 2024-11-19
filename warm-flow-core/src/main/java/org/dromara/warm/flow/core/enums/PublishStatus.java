@@ -26,8 +26,8 @@ public enum PublishStatus {
     UNPUBLISHED(0, "未发布"),
     PUBLISHED(1, "已发布");
 
-    private Integer key;
-    private String value;
+    private final Integer key;
+    private final String value;
 
     PublishStatus(Integer key, String value) {
         this.key = key;

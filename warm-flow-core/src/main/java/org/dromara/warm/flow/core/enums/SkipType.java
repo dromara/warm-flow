@@ -28,8 +28,8 @@ public enum SkipType {
     REJECT("REJECT", "退回"),
     NONE("NONE", "无动作");
 
-    private String key;
-    private String value;
+    private final String key;
+    private final String value;
 
     SkipType(String key, String value) {
         this.key = key;

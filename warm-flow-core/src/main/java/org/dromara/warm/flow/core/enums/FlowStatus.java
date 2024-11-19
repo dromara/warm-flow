@@ -46,8 +46,8 @@ public enum FlowStatus {
 
     INVALID("10", "失效");
 
-    private String key;
-    private String value;
+    private final String key;
+    private final String value;
 
     FlowStatus(String key, String value) {
         this.key = key;
