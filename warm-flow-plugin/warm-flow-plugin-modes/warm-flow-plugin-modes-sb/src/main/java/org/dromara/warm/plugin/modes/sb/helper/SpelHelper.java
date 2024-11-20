@@ -13,7 +13,7 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.dromara.warm.plugin.spel;
+package org.dromara.warm.plugin.modes.sb.helper;
 
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.springframework.beans.BeansException;
@@ -49,12 +49,13 @@ public class SpelHelper implements ApplicationContextAware {
      */
     private static BeanResolver beanResolver = null;
 
-   public static BeanResolver beanResolver() {
-       if (beanResolver == null) {
-           beanResolver = new BeanFactoryResolver(getBeanFactory());
+    public static BeanResolver beanResolver() {
+        if (beanResolver == null) {
+            beanResolver = new BeanFactoryResolver(getBeanFactory());
         }
-       return beanResolver;
-   }
+        return beanResolver;
+    }
+
     /**
      * @param expression
      * @return
@@ -80,7 +81,6 @@ public class SpelHelper implements ApplicationContextAware {
             return applicationContext;
         }
     }
-
 
 
 }

@@ -13,20 +13,20 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.dromara.warm.plugin.expression;
+package org.dromara.warm.plugin.modes.sb.expression;
 
 import org.dromara.warm.flow.core.constant.FlowCons;
-import org.dromara.warm.flow.core.expression.ConditionStrategy;
-import org.dromara.warm.plugin.spel.SpelHelper;
+import org.dromara.warm.flow.core.listener.ListenerStrategy;
+import org.dromara.warm.plugin.modes.sb.helper.SpelHelper;
 
 import java.util.Map;
 
 /**
- * spel条件表达式 @@spel@@|#{@user.eval()}
+ * spel监听器表达式 @@spel@@|#{@user.eval()}
  *
  * @author warm
  */
-public class ConditionStrategySpel implements ConditionStrategy {
+public class ListenerStrategySpel implements ListenerStrategy {
 
     @Override
     public String getType() {
@@ -34,7 +34,8 @@ public class ConditionStrategySpel implements ConditionStrategy {
     }
 
     @Override
-    public Boolean eval(String expression, Map<String, Object> variable) {
-        return Boolean.TRUE.equals(SpelHelper.parseExpression(expression, variable));
+    public Void eval(String expression, Map<String, Object> variable) {
+        SpelHelper.parseExpression(expression, variable);
+        return null;
     }
 }

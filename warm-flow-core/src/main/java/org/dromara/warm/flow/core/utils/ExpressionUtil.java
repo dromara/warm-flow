@@ -59,7 +59,7 @@ public class ExpressionUtil {
     }
 
     /**
-     * 表达式替换
+     * 条件表达式替换
      *
      * @param expression 条件表达式，比如“@@eq@@|flag@@eq@@4” ，或者自定义策略
      * @param variable   变量
@@ -86,6 +86,17 @@ public class ExpressionUtil {
                 })
                 .flatMap(List::stream)
                 .collect(Collectors.toList())));
+    }
+
+    /**
+     * 监听器表达式替换
+     *
+     * @param expression 条件表达式，比如“@@eq@@|flag@@eq@@4” ，或者自定义策略
+     * @param variable   变量
+     * @return boolean
+     */
+    public static boolean evalListener(String expression, Map<String, Object> variable) {
+        return eval(ConditionStrategy.getExpressionMap(), expression, variable);
     }
 
     /**

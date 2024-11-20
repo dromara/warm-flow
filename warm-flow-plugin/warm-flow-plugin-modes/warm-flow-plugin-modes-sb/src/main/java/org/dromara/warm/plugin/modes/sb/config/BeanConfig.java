@@ -21,8 +21,13 @@ import org.dromara.warm.flow.core.dao.*;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.service.*;
 import org.dromara.warm.flow.core.service.impl.*;
+import org.dromara.warm.flow.core.utils.ExpressionUtil;
 import org.dromara.warm.flow.orm.dao.*;
 import org.dromara.warm.flow.orm.entity.*;
+import org.dromara.warm.plugin.modes.sb.expression.ConditionStrategySpel;
+import org.dromara.warm.plugin.modes.sb.expression.ListenerStrategySpel;
+import org.dromara.warm.plugin.modes.sb.expression.VariableStrategySpel;
+import org.dromara.warm.plugin.modes.sb.helper.SpelHelper;
 import org.dromara.warm.plugin.modes.sb.utils.SpringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,11 +41,12 @@ import java.util.Objects;
 
 /**
  * 工作流bean注册配置
+ *
  * @author warm
  * @since 2023/6/5 23:01
  */
 @SuppressWarnings("rawtypes unchecked")
-@Import(SpringUtil.class)
+@Import({SpringUtil.class, SpelHelper.class})
 @ConditionalOnProperty(value = "warm-flow.enabled", havingValue = "true", matchIfMissing = true)
 public class BeanConfig {
 
@@ -124,10 +130,18 @@ public class BeanConfig {
         FrameInvoker.setBeanFunction(SpringUtil::getBean);
         WarmFlow flowConfig = WarmFlow.init();
         FlowFactory.setFlowConfig(flowConfig);
+        setExpression();
         after(flowConfig);
         log.info("【warm-flow】，加载完成");
         return FlowFactory.getFlowConfig();
     }
+
+    private void setExpression() {
+        ExpressionUtil.setExpression(new ConditionStrategySpel());
+        ExpressionUtil.setExpression(new ListenerStrategySpel());
+        ExpressionUtil.setExpression(new VariableStrategySpel());
+    }
+
     public void setNewEntity() {
         FlowFactory.setNewDef(FlowDefinition::new);
         FlowFactory.setNewIns(FlowInstance::new);

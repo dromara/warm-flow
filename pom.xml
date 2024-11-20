@@ -292,16 +292,6 @@
             </dependency>
             <dependency>
                 <groupId>org.dromara</groupId>
-                <artifactId>warm-flow-plugin-expression</artifactId>
-                <version>${warm-flow}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.dromara</groupId>
-                <artifactId>warm-flow-plugin-variable</artifactId>
-                <version>${warm-flow}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.dromara</groupId>
                 <artifactId>warm-flow-plugin-modes-sb</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
