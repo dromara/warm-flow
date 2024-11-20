@@ -15,60 +15,88 @@
  */
 package org.dromara.warm.flow.core.utils;
 
-import org.dromara.warm.flow.core.constant.ExceptionCons;
-import org.dromara.warm.flow.core.exception.FlowException;
+import org.dromara.warm.flow.core.entity.Task;
 import org.dromara.warm.flow.core.expression.*;
+import org.dromara.warm.flow.core.strategy.ExpressionStrategy;
+import org.dromara.warm.flow.core.variable.DefaultVariableStrategy;
+import org.dromara.warm.flow.core.variable.VariableStrategy;
 
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 /**
- * 条件表达式工具类
+ * 表达式工具类
  *
  * @author warm
  */
 public class ExpressionUtil {
 
-    private static final Map<String, ExpressionStrategy> map = new HashMap<>();
-
-    private ExpressionUtil() {
-    }
-
     static {
-        setExpression(new ExpressionStrategyEq());
-        setExpression(new ExpressionStrategyGe());
-        setExpression(new ExpressionStrategyGt());
-        setExpression(new ExpressionStrategyLe());
-        setExpression(new ExpressionStrategyLike());
-        setExpression(new ExpressionStrategyLt());
-        setExpression(new ExpressionStrategyNe());
-        setExpression(new ExpressionStrategyNotLike());
-    }
+        // 注册条件表达式
+        setExpression(new ConditionStrategyEq());
+        setExpression(new ConditionStrategyGe());
+        setExpression(new ConditionStrategyGt());
+        setExpression(new ConditionStrategyLe());
+        setExpression(new ConditionStrategyLike());
+        setExpression(new ConditionStrategyLt());
+        setExpression(new ConditionStrategyNe());
+        setExpression(new ConditionStrategyNotLike());
 
-    public static void setExpression(ExpressionStrategy expressionStrategy) {
-        map.put(expressionStrategy.getType(), expressionStrategy);
+        // 注册办理人变量表达式
+        setExpression(new DefaultVariableStrategy());
     }
 
     /**
-     * @param expression 条件表达式，比如“@@eq@@|flag@@eq@@4” ，或者自定义策略
-     * @param variable
-     * @return
+     * 设置表达式
+     *
+     * @param expressionStrategy 表达式策略
+     * @param <T>                表达式类型
      */
-    public static boolean eval(String expression, Map<String, Object> variable) {
-        if (StringUtils.isEmpty(expression)) {
-            return true;
-        }
-        AtomicBoolean flag = new AtomicBoolean(false);
-        map.forEach((k, v) -> {
-            if (expression.startsWith(k + "|")) {
-                if (v == null) {
-                    throw new FlowException(ExceptionCons.NULL_EXPRESSION_STRATEGY);
-                }
-                flag.set(v.eval(expression.replace(k + "|", ""), variable));
-            }
-        });
-        return flag.get();
+    public static <T> void setExpression(ExpressionStrategy<T> expressionStrategy) {
+        expressionStrategy.setExpression(expressionStrategy);
     }
 
+    /**
+     * 表达式替换
+     *
+     * @param expression 条件表达式，比如“@@eq@@|flag@@eq@@4” ，或者自定义策略
+     * @param variable   变量
+     * @return boolean
+     */
+    public static boolean evalCondition(String expression, Map<String, Object> variable) {
+        return eval(ConditionStrategy.getExpressionMap(), expression, variable);
+    }
+
+    /**
+     * 办理人变量表达式替换
+     *
+     * @param addTasks 任务列表
+     * @param variable 流程变量
+     */
+    public static void evalVariable(List<Task> addTasks, Map<String, Object> variable) {
+        addTasks.forEach(addTask -> addTask.setPermissionList(addTask.getPermissionList().stream()
+                .map(s -> {
+                    List<String> result = eval(VariableStrategy.getExpressionMap(), s, variable);
+                    if (CollUtil.isNotEmpty(result)) {
+                        return result;
+                    }
+                    return Collections.singletonList(s);
+                })
+                .flatMap(List::stream)
+                .collect(Collectors.toList())));
+    }
+
+    /**
+     * 表达式替换
+     *
+     * @param expression 条件表达式，比如“@@eq@@|flag@@eq@@4” ，或者自定义策略
+     * @param variable   变量
+     * @return boolean
+     */
+    public static <T> T eval(Map<String, ExpressionStrategy<T>> map, String expression
+            , Map<String, Object> variable) {
+        return ExpressionStrategy.getValue(map, expression, variable);
+    }
 }

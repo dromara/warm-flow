@@ -19,23 +19,23 @@ import org.dromara.warm.flow.core.constant.FlowCons;
 import org.dromara.warm.flow.core.utils.MathUtil;
 
 /**
- * 条件表达式不等于 @@ne@@|flag@@ne@@4
+ * 条件表达式大于 @@gt@@|flag@@gt@@4
  *
  * @author warm
  */
-public class ExpressionStrategyNe extends ExpressionStrategyAbstract {
+public class ConditionStrategyGt extends ConditionStrategyAbstract {
 
     @Override
     public String getType() {
-        return FlowCons.splitAt + "ne" + FlowCons.splitAt;
+        return FlowCons.splitAt + "gt" + FlowCons.splitAt;
     }
 
     @Override
-    public boolean afterEval(String[] split, String value) {
+    public Boolean afterEval(String[] split, String value) {
         if (MathUtil.isNumeric(split[2].trim())) {
-            return MathUtil.determineSize(value, split[2].trim()) != 0;
+            return MathUtil.determineSize(value, split[2].trim()) > 0;
         } else {
-            return !value.equals(split[2].trim());
+            return false;
         }
     }
 

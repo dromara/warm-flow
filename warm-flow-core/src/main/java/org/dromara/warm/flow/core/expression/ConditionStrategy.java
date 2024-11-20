@@ -15,28 +15,25 @@
  */
 package org.dromara.warm.flow.core.expression;
 
-import org.dromara.warm.flow.core.constant.FlowCons;
-import org.dromara.warm.flow.core.utils.MathUtil;
+import org.dromara.warm.flow.core.strategy.ExpressionStrategy;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * 条件表达式等于 @@eq@@|flag@@eq@@4
+ * 条件表达式
  *
  * @author warm
  */
-public class ExpressionStrategyEq extends ExpressionStrategyAbstract {
+public interface ConditionStrategy extends ExpressionStrategy<Boolean> {
 
-    @Override
-    public String getType() {
-        return FlowCons.splitAt + "eq" + FlowCons.splitAt;
+    Map<String, ExpressionStrategy<Boolean>> map = new HashMap<>();
+
+    default void setExpression(ExpressionStrategy<Boolean> expressionStrategy) {
+        map.put(expressionStrategy.getType(), expressionStrategy);
     }
 
-    @Override
-    public boolean afterEval(String[] split, String value) {
-        if (MathUtil.isNumeric(split[2].trim())) {
-            return MathUtil.determineSize(value, split[2].trim()) == 0;
-        } else {
-            return value.equals(split[2].trim());
-        }
+    static Map<String, ExpressionStrategy<Boolean>> getExpressionMap() {
+        return map;
     }
-
 }

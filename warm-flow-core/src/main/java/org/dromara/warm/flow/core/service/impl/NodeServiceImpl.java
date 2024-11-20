@@ -101,9 +101,9 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
     /**
      * 通过校验跳转类型获取跳转集合
      *
-     * @param nowNode       当前节点信息
-     * @param skips         跳转集合
-     * @param skipType      跳转类型
+     * @param nowNode  当前节点信息
+     * @param skips    跳转集合
+     * @param skipType 跳转类型
      * @return List<Skip>
      * @author xiarg
      * @since 2024/8/21 11:32
@@ -139,7 +139,7 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
                     if (NodeType.isGateWaySerial(nextNode.getNodeType())) {
                         AssertUtil.isEmpty(variable, ExceptionCons.MUST_CONDITIONVALUE_NODE);
                         if (ObjectUtil.isNotNull(t.getSkipCondition())) {
-                            return ExpressionUtil.eval(t.getSkipCondition(), variable);
+                            return ExpressionUtil.evalCondition(t.getSkipCondition(), variable);
                         }
                     }
                     // 并行网关返回多个跳转

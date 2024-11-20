@@ -15,26 +15,28 @@
  */
 package org.dromara.warm.flow.core.expression;
 
-import java.util.Map;
+import org.dromara.warm.flow.core.constant.FlowCons;
+import org.dromara.warm.flow.core.utils.MathUtil;
 
 /**
- * 条件表达式
+ * 条件表达式小于 @@lt@@|flag@@lt@@4
  *
  * @author warm
  */
-public interface ExpressionStrategy {
+public class ConditionStrategyLt extends ConditionStrategyAbstract {
 
-    /**
-     * 获取表达式类型
-     * @return 表达式类型
-     */
-    String getType();
+    @Override
+    public String getType() {
+        return FlowCons.splitAt + "lt" + FlowCons.splitAt;
+    }
 
-    /**
-     * 执行表达式
-     * @param expression 表达式
-     * @param variable 流程变量
-     * @return 执行结果
-     */
-    boolean eval(String expression, Map<String, Object> variable);
+    @Override
+    public Boolean afterEval(String[] split, String value) {
+        if (MathUtil.isNumeric(split[2].trim())) {
+            return MathUtil.determineSize(value, split[2].trim()) < 0;
+        } else {
+            return false;
+        }
+    }
+
 }

@@ -13,28 +13,28 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.dromara.warm.flow.core.variable;
+package org.dromara.warm.plugin.expression;
 
-import org.dromara.warm.flow.core.strategy.ExpressionStrategy;
+import org.dromara.warm.flow.core.constant.FlowCons;
+import org.dromara.warm.flow.core.expression.ConditionStrategy;
+import org.dromara.warm.plugin.spel.SpelHelper;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
- * 办理人变量表达式策略
+ * spel条件表达式 @@spel@@|#{@user.eval()}
  *
  * @author warm
  */
-public interface VariableStrategy extends ExpressionStrategy<List<String>> {
+public class ConditionStrategySpel implements ConditionStrategy {
 
-    Map<String, ExpressionStrategy<List<String>>> map = new HashMap<>();
-
-    default void setExpression(ExpressionStrategy<List<String>> variableStrategy) {
-        map.put(variableStrategy.getType(), variableStrategy);
+    @Override
+    public String getType() {
+        return FlowCons.splitAt + "spel" + FlowCons.splitAt;
     }
 
-    static Map<String, ExpressionStrategy<List<String>>> getExpressionMap() {
-        return map;
+    @Override
+    public Boolean eval(String expression, Map<String, Object> variable) {
+        return Boolean.TRUE.equals(SpelHelper.parseExpression(expression, variable));
     }
 }

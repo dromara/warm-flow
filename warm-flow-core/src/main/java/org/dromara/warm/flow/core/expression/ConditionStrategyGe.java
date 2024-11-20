@@ -23,7 +23,7 @@ import org.dromara.warm.flow.core.utils.MathUtil;
  *
  * @author warm
  */
-public class ExpressionStrategyGe extends ExpressionStrategyAbstract {
+public class ConditionStrategyGe extends ConditionStrategyAbstract {
 
     @Override
     public String getType() {
@@ -31,7 +31,7 @@ public class ExpressionStrategyGe extends ExpressionStrategyAbstract {
     }
 
     @Override
-    public boolean afterEval(String[] split, String value) {
+    public Boolean afterEval(String[] split, String value) {
         if (MathUtil.isNumeric(split[2].trim())) {
             return MathUtil.determineSize(value, split[2].trim()) > 0 || MathUtil.determineSize(value, split[2].trim()) == 0;
         } else {

@@ -82,7 +82,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
 
         // 办理人变量替换
         if (CollUtil.isNotEmpty(addTasks)) {
-            VariableUtil.replacement(addTasks, flowParams.getVariable());
+            ExpressionUtil.evalVariable(addTasks, flowParams.getVariable());
         }
 
         // 执行分派监听器
@@ -129,9 +129,9 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
     /**
      * 设置历史任务
      *
-     * @param nextNodes 下一节点集合
+     * @param nextNodes  下一节点集合
      * @param flowParams 流程参数
-     * @param startNode 开始节点
+     * @param startNode  开始节点
      * @param instanceId 流程实例id
      */
     private List<HisTask> setHisTask(List<Node> nextNodes, FlowParams flowParams, Node startNode, Long instanceId) {
@@ -166,7 +166,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
      * 设置流程实例对象
      *
      * @param firstBetweenNode 第一个中间节点
-     * @param businessId 业务id
+     * @param businessId       业务id
      * @return Instance
      */
     private Instance setStartInstance(Node firstBetweenNode, String businessId
@@ -180,7 +180,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
                 .setNodeType(firstBetweenNode.getNodeType())
                 .setNodeCode(firstBetweenNode.getNodeCode())
                 .setNodeName(firstBetweenNode.getNodeName())
-                .setFlowStatus(ObjectUtil.isNotNull(flowParams.getFlowStatus())? flowParams.getFlowStatus()
+                .setFlowStatus(ObjectUtil.isNotNull(flowParams.getFlowStatus()) ? flowParams.getFlowStatus()
                         : FlowStatus.TOBESUBMIT.getKey())
                 .setActivityStatus(ActivityStatus.ACTIVITY.getKey())
                 .setVariable(FlowFactory.jsonConvert.mapToStr(flowParams.getVariable()))

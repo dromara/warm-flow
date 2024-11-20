@@ -22,7 +22,7 @@ import org.dromara.warm.flow.core.constant.FlowCons;
  *
  * @author warm
  */
-public class ExpressionStrategyNotLike extends ExpressionStrategyAbstract {
+public class ConditionStrategyNotLike extends ConditionStrategyAbstract {
 
     @Override
     public String getType() {
@@ -30,7 +30,7 @@ public class ExpressionStrategyNotLike extends ExpressionStrategyAbstract {
     }
 
     @Override
-    public boolean afterEval(String[] split, String value) {
+    public Boolean afterEval(String[] split, String value) {
         return !split[2].trim().contains(value);
     }
 

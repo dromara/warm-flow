@@ -19,23 +19,23 @@ import org.dromara.warm.flow.core.constant.FlowCons;
 import org.dromara.warm.flow.core.utils.MathUtil;
 
 /**
- * 条件表达式小于 @@lt@@|flag@@lt@@4
+ * 条件表达式等于 @@eq@@|flag@@eq@@4
  *
  * @author warm
  */
-public class ExpressionStrategyLt extends ExpressionStrategyAbstract {
+public class ConditionStrategyEq extends ConditionStrategyAbstract {
 
     @Override
     public String getType() {
-        return FlowCons.splitAt + "lt" + FlowCons.splitAt;
+        return FlowCons.splitAt + "eq" + FlowCons.splitAt;
     }
 
     @Override
-    public boolean afterEval(String[] split, String value) {
+    public Boolean afterEval(String[] split, String value) {
         if (MathUtil.isNumeric(split[2].trim())) {
-            return MathUtil.determineSize(value, split[2].trim()) < 0;
+            return MathUtil.determineSize(value, split[2].trim()) == 0;
         } else {
-            return false;
+            return value.equals(split[2].trim());
         }
     }
 

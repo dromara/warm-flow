@@ -17,10 +17,13 @@ package org.dromara.warm.flow.core.config;
 
 import org.dromara.warm.flow.core.FlowFactory;
 import org.dromara.warm.flow.core.constant.FlowConfigCons;
-import org.dromara.warm.flow.core.expression.ExpressionStrategy;
+import org.dromara.warm.flow.core.expression.ConditionStrategy;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.json.JsonConvert;
-import org.dromara.warm.flow.core.utils.*;
+import org.dromara.warm.flow.core.utils.ExpressionUtil;
+import org.dromara.warm.flow.core.utils.ObjectUtil;
+import org.dromara.warm.flow.core.utils.ServiceLoaderUtil;
+import org.dromara.warm.flow.core.utils.StringUtils;
 import org.dromara.warm.flow.core.variable.VariableStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -143,12 +146,13 @@ public class WarmFlow implements Serializable {
         spiLoad();
         return flowConfig;
     }
+
     public static void spiLoad() {
         // 通过SPI机制加载条件表达式策略实现类
-        ServiceLoaderUtil.loadList(ExpressionStrategy.class).forEach(ExpressionUtil::setExpression);
+        ServiceLoaderUtil.loadList(ConditionStrategy.class).forEach(ExpressionUtil::setExpression);
 
         // 通过SPI机制加载办理人变量表达式策略实现类
-        ServiceLoaderUtil.loadList(VariableStrategy.class).forEach(VariableUtil::setExpression);
+        ServiceLoaderUtil.loadList(VariableStrategy.class).forEach(ExpressionUtil::setExpression);
 
         // 通过SPI机制加载json转换策略实现类
         FlowFactory.jsonConvert(ServiceLoaderUtil.loadFirst(JsonConvert.class));

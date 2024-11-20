@@ -26,12 +26,13 @@ import java.util.Map;
  *
  * @author warm
  */
-public abstract class ExpressionStrategyAbstract implements ExpressionStrategy {
+public abstract class ConditionStrategyAbstract implements ConditionStrategy {
 
 
     /**
      * 执行表达式前置方法 合法性校验
-     * @param split 表达式后缀：如flag@@eq@@4
+     *
+     * @param split    表达式后缀：如flag@@eq@@4
      * @param variable 流程变量
      */
     public void preEval(String[] split, Map<String, Object> variable) {
@@ -42,12 +43,13 @@ public abstract class ExpressionStrategyAbstract implements ExpressionStrategy {
 
     /**
      * 执行表达式
+     *
      * @param expression 表达式
-     * @param variable 流程变量
+     * @param variable   流程变量
      * @return 执行结果
      */
     @Override
-    public boolean eval(String expression, Map<String, Object> variable) {
+    public Boolean eval(String expression, Map<String, Object> variable) {
         String[] split = expression.split(FlowCons.splitAt);
         preEval(split, variable);
         String variableValue = String.valueOf(variable.get(split[0].trim()));
@@ -56,10 +58,11 @@ public abstract class ExpressionStrategyAbstract implements ExpressionStrategy {
 
     /**
      * 执行表达式后置方法
+     *
      * @param split 如flag@@eq@@4
      * @param value 流程变量值
      * @return 执行结果
      */
-    public abstract boolean afterEval(String[] split, String value);
+    public abstract Boolean afterEval(String[] split, String value);
 
 }
