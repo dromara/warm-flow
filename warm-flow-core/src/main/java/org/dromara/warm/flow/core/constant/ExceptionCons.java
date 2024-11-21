@@ -35,7 +35,7 @@ public class ExceptionCons {
 
     public static final String MUL_START_SKIP = "节点流转条件不能超过1个!";
 
-    public static final String MUST_CONDITIONVALUE_NODE = "互斥网关必须传递条件!";
+    public static final String MUST_CONDITION_VALUE_NODE = "互斥网关必须传递条件!";
 
     public static final String ALREADY_EXIST = "流程已经存在,请通过创建新版本的流程对该流程进行更新!";
 
@@ -47,15 +47,17 @@ public class ExceptionCons {
 
     public static final String NULL_SKIP_TYPE = "无法跳转到节点,请检查跳转类型是否匹配!";
 
-    public static final String NULL_CONDITIONVALUE_NODE = "未找到跳转条件，不支持跳转!";
+    public static final String NULL_CONDITION_VALUE_NODE = "未找到跳转条件，不支持跳转!";
 
-    public static final String NULL_CONDITIONVALUE = "跳转条件不能为空!";
+    public static final String NULL_CONDITION_VALUE = "跳转条件不能为空!";
 
-    public static final String NULL_EXPRESSION_STRATEGY = "条件表达式策略不能为空!";
+    public static final String NULL_CONDITION_STRATEGY = "条件表达式策略不能为空!";
 
     public static final String NULL_VARIABLE_STRATEGY = "办理人变量表达式策略不能为空!";
 
-    public static final String FRIST_FORBID_BACK = "禁止退回到第一个节点";
+    public static final String NULL_LISTENER_STRATEGY = "办理人变量表达式策略不能为空!";
+
+    public static final String FIRST_FORBID_BACK = "禁止退回到第一个节点";
 
     public static final String NULL_ROLE_NODE = "无法跳转到该节点,请检查当前用户是否有权限!";
 

@@ -13,7 +13,7 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.dromara.warm.flow.core.expression;
+package org.dromara.warm.flow.core.condition;
 
 import org.dromara.warm.flow.core.constant.ExceptionCons;
 import org.dromara.warm.flow.core.constant.FlowCons;
@@ -36,9 +36,9 @@ public abstract class ConditionStrategyAbstract implements ConditionStrategy {
      * @param variable 流程变量
      */
     public void preEval(String[] split, Map<String, Object> variable) {
-        AssertUtil.isEmpty(variable, ExceptionCons.NULL_CONDITIONVALUE);
+        AssertUtil.isEmpty(variable, ExceptionCons.NULL_CONDITION_VALUE);
         Object o = variable.get(split[0].trim());
-        AssertUtil.isNull(o, ExceptionCons.NULL_CONDITIONVALUE);
+        AssertUtil.isNull(o, ExceptionCons.NULL_CONDITION_VALUE);
     }
 
     /**

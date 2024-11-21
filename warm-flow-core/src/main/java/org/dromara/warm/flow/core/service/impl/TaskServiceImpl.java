@@ -19,7 +19,6 @@ import org.dromara.warm.flow.core.FlowFactory;
 import org.dromara.warm.flow.core.constant.ExceptionCons;
 import org.dromara.warm.flow.core.dao.FlowTaskDao;
 import org.dromara.warm.flow.core.dto.FlowParams;
-import org.dromara.warm.flow.core.dto.ModifyHandler;
 import org.dromara.warm.flow.core.entity.*;
 import org.dromara.warm.flow.core.enums.*;
 import org.dromara.warm.flow.core.listener.Listener;
@@ -63,7 +62,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         flowParams.variable(MapUtil.mergeAll(r.instance.getVariableMap(), flowParams.getVariable()));
         // 非第一个记得跳转类型必传
         if (!NodeType.isStart(task.getNodeType())) {
-            AssertUtil.isFalse(StringUtils.isNotEmpty(flowParams.getSkipType()), ExceptionCons.NULL_CONDITIONVALUE);
+            AssertUtil.isFalse(StringUtils.isNotEmpty(flowParams.getSkipType()), ExceptionCons.NULL_CONDITION_VALUE);
         }
 
         // 执行开始监听器
@@ -194,23 +193,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     @Override
-    public boolean transfer(Long taskId, String curUser, List<String> permissionFlag, List<String> addHandlers, String message) {
-        List<User> users = FlowFactory.userService().getByProcessedBys(taskId, addHandlers, UserType.TRANSFER.getKey());
-        AssertUtil.isNotEmpty(users, ExceptionCons.IS_ALREADY_TRANSFER);
-
-        ModifyHandler modifyHandler = ModifyHandler.build()
-                .taskId(taskId)
-                .addHandlers(addHandlers)
-                .reductionHandlers(Collections.singletonList(curUser))
-                .permissionFlag(permissionFlag)
-                .cooperateType(CooperateType.TRANSFER.getKey())
-                .message(message)
-                .curUser(curUser)
-                .ignore(false);
-        return updateHandler(modifyHandler);
-    }
-
-    @Override
     public boolean depute(Long taskId, FlowParams flowParams) {
         AssertUtil.isNotNull(taskId, ExceptionCons.NULL_TASK_ID);
         AssertUtil.isNotNull(flowParams.getHandler(), ExceptionCons.HANDLER_NOT_EMPTY);
@@ -221,23 +203,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 .reductionHandlers(Collections.singletonList(flowParams.getHandler()));
 
         return updateHandler(taskId, flowParams);
-    }
-
-    @Override
-    public boolean depute(Long taskId, String curUser, List<String> permissionFlag, List<String> addHandlers, String message) {
-        List<User> users = FlowFactory.userService().getByProcessedBys(taskId, addHandlers, UserType.DEPUTE.getKey());
-        AssertUtil.isNotEmpty(users, ExceptionCons.IS_ALREADY_DEPUTE);
-
-        ModifyHandler modifyHandler = ModifyHandler.build()
-                .taskId(taskId)
-                .addHandlers(addHandlers)
-                .reductionHandlers(Collections.singletonList(curUser))
-                .permissionFlag(permissionFlag)
-                .cooperateType(CooperateType.DEPUTE.getKey())
-                .message(message)
-                .curUser(curUser)
-                .ignore(false);
-        return updateHandler(modifyHandler);
     }
 
     @Override
@@ -253,22 +218,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     @Override
-    public boolean addSignature(Long taskId, String curUser, List<String> permissionFlag, List<String> addHandlers, String message) {
-        List<User> users = FlowFactory.userService().getByProcessedBys(taskId, addHandlers, UserType.APPROVAL.getKey());
-        AssertUtil.isNotEmpty(users, ExceptionCons.IS_ALREADY_SIGN);
-
-        ModifyHandler modifyHandler = ModifyHandler.build()
-                .taskId(taskId)
-                .addHandlers(addHandlers)
-                .permissionFlag(permissionFlag)
-                .cooperateType(CooperateType.ADD_SIGNATURE.getKey())
-                .message(message)
-                .curUser(curUser)
-                .ignore(false);
-        return updateHandler(modifyHandler);
-    }
-
-    @Override
     public boolean reductionSignature(Long taskId, FlowParams flowParams) {
         AssertUtil.isNotNull(taskId, ExceptionCons.NULL_TASK_ID);
         AssertUtil.isNotNull(flowParams.getHandler(), ExceptionCons.HANDLER_NOT_EMPTY);
@@ -279,23 +228,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         flowParams.cooperateType(CooperateType.REDUCTION_SIGNATURE.getKey());
 
         return updateHandler(taskId, flowParams);
-    }
-
-    @Override
-    public boolean reductionSignature(Long taskId, String curUser, List<String> permissionFlag, List<String> reductionHandlers, String message) {
-        List<User> users = FlowFactory.userService().list(FlowFactory.newUser().setAssociated(taskId)
-                .setType(UserType.APPROVAL.getKey()));
-
-        AssertUtil.isTrue(CollUtil.isEmpty(users) || users.size() == 1, ExceptionCons.REDUCTION_SIGN_ONE_ERROR);
-        ModifyHandler modifyHandler = ModifyHandler.build()
-                .taskId(taskId)
-                .reductionHandlers(reductionHandlers)
-                .permissionFlag(permissionFlag)
-                .cooperateType(CooperateType.REDUCTION_SIGNATURE.getKey())
-                .message(message)
-                .curUser(curUser)
-                .ignore(false);
-        return updateHandler(modifyHandler);
     }
 
     @Override
@@ -353,18 +285,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         ListenerUtil.executeListener(new ListenerVariable(r.definition, r.instance, r.nowNode, flowParams.getVariable()
                 , r.task), Listener.LISTENER_FINISH);
         return true;
-    }
-
-    @Override
-    public boolean updateHandler(ModifyHandler modifyHandler) {
-        return updateHandler(modifyHandler.getTaskId(), new FlowParams()
-                .handler(modifyHandler.getCurUser())
-                .permissionFlag(modifyHandler.getPermissionFlag())
-                .addHandlers(modifyHandler.getAddHandlers())
-                .reductionHandlers(modifyHandler.getReductionHandlers())
-                .cooperateType(modifyHandler.getCooperateType())
-                .message(modifyHandler.getMessage())
-                .ignore(modifyHandler.isIgnore()));
     }
 
     @Override

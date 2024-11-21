@@ -16,7 +16,7 @@
 package org.dromara.warm.plugin.modes.sb.expression;
 
 import org.dromara.warm.flow.core.constant.FlowCons;
-import org.dromara.warm.flow.core.expression.ConditionStrategy;
+import org.dromara.warm.flow.core.condition.ConditionStrategy;
 import org.dromara.warm.plugin.modes.sb.helper.SpelHelper;
 
 import java.util.Map;
@@ -30,7 +30,7 @@ public class ConditionStrategySpel implements ConditionStrategy {
 
     @Override
     public String getType() {
-        return FlowCons.splitAt + "spel" + FlowCons.splitAt;
+        return FlowCons.splitAt + "spel" + FlowCons.splitAt + "|";
     }
 
     @Override

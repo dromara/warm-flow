@@ -15,12 +15,7 @@
  */
 package org.dromara.warm.flow.core.strategy;
 
-import org.dromara.warm.flow.core.constant.ExceptionCons;
-import org.dromara.warm.flow.core.exception.FlowException;
-import org.dromara.warm.flow.core.utils.StringUtils;
-
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * 策略类接口
@@ -37,6 +32,16 @@ public interface ExpressionStrategy<T> {
     String getType();
 
     /**
+     * 是否截取表达式前缀，然后在进行替换，默认不截取
+     * 如果截取，比如@@spel@@|#{@user.evalVar()} , 截取@@spel@@|，后再执行#{@user.evalVar()}解析
+     *
+     * @return 类型
+     */
+    default Boolean isIntercept() {
+        return false;
+    }
+
+    /**
      * 执行表达式
      *
      * @param expression 表达式
@@ -48,26 +53,4 @@ public interface ExpressionStrategy<T> {
 
     void setExpression(ExpressionStrategy<T> expressionStrategy);
 
-    /**
-     * 获取表达式对应的值
-     *
-     * @param expression 变量表达式，比如“@@default@@|${flag}” ，或者自定义策略
-     * @param variable   流程变量
-     * @return 执行结果
-     */
-    static <T> T getValue(Map<String, ExpressionStrategy<T>> map, String expression, Map<String, Object> variable) {
-        AtomicReference<T> result = new AtomicReference<>();
-        if (StringUtils.isNotEmpty(expression)) {
-            map.forEach((k, v) -> {
-                if (expression.startsWith(k + "|")) {
-                    if (v == null) {
-                        throw new FlowException(ExceptionCons.NULL_EXPRESSION_STRATEGY);
-                    }
-                    result.set(v.eval(expression.replace(k + "|", ""), variable));
-                }
-            });
-        }
-
-        return result.get();
-    }
 }

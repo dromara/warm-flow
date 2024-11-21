@@ -15,8 +15,6 @@
  */
 package org.dromara.warm.flow.core.variable;
 
-import org.dromara.warm.flow.core.constant.FlowCons;
-
 import java.util.Map;
 
 /**
@@ -28,7 +26,7 @@ public class DefaultVariableStrategy extends VariableStrategyAbstract {
 
     @Override
     public String getType() {
-        return FlowCons.splitAt + "default" + FlowCons.splitAt;
+        return "$";
     }
 
     @Override

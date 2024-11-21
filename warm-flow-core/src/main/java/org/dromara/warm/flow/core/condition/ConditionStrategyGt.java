@@ -13,27 +13,27 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.dromara.warm.flow.core.expression;
+package org.dromara.warm.flow.core.condition;
 
 import org.dromara.warm.flow.core.constant.FlowCons;
 import org.dromara.warm.flow.core.utils.MathUtil;
 
 /**
- * 条件表达式小于 @@lt@@|flag@@lt@@4
+ * 条件表达式大于 @@gt@@|flag@@gt@@4
  *
  * @author warm
  */
-public class ConditionStrategyLt extends ConditionStrategyAbstract {
+public class ConditionStrategyGt extends ConditionStrategyAbstract {
 
     @Override
     public String getType() {
-        return FlowCons.splitAt + "lt" + FlowCons.splitAt;
+        return FlowCons.splitAt + "gt" + FlowCons.splitAt;
     }
 
     @Override
     public Boolean afterEval(String[] split, String value) {
         if (MathUtil.isNumeric(split[2].trim())) {
-            return MathUtil.determineSize(value, split[2].trim()) < 0;
+            return MathUtil.determineSize(value, split[2].trim()) > 0;
         } else {
             return false;
         }

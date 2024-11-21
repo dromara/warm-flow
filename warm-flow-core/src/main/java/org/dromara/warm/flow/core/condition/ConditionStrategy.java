@@ -13,25 +13,31 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.dromara.warm.flow.core.expression;
+package org.dromara.warm.flow.core.condition;
 
-import org.dromara.warm.flow.core.constant.FlowCons;
+import org.dromara.warm.flow.core.strategy.ExpressionStrategy;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
- * 条件表达式包含 @@like@@|flag@@like@@4
+ * 条件表达式
  *
  * @author warm
  */
-public class ConditionStrategyLike extends ConditionStrategyAbstract {
+public interface ConditionStrategy extends ExpressionStrategy<Boolean> {
 
-    @Override
-    public String getType() {
-        return FlowCons.splitAt + "like" + FlowCons.splitAt;
+    Map<String, ExpressionStrategy<Boolean>> map = new LinkedHashMap<>();
+
+    default void setExpression(ExpressionStrategy<Boolean> expressionStrategy) {
+        map.put(expressionStrategy.getType(), expressionStrategy);
     }
 
-    @Override
-    public Boolean afterEval(String[] split, String value) {
-        return split[2].trim().contains(value);
+    static Map<String, ExpressionStrategy<Boolean>> getExpressionMap() {
+        return map;
     }
 
+    default Boolean isIntercept() {
+        return true;
+    }
 }

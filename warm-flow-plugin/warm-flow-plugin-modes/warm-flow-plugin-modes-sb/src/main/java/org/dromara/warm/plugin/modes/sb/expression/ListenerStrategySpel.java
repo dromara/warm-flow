@@ -15,7 +15,6 @@
  */
 package org.dromara.warm.plugin.modes.sb.expression;
 
-import org.dromara.warm.flow.core.constant.FlowCons;
 import org.dromara.warm.flow.core.listener.ListenerStrategy;
 import org.dromara.warm.plugin.modes.sb.helper.SpelHelper;
 
@@ -30,7 +29,7 @@ public class ListenerStrategySpel implements ListenerStrategy {
 
     @Override
     public String getType() {
-        return FlowCons.splitAt + "spel" + FlowCons.splitAt;
+        return "#";
     }
 
     @Override

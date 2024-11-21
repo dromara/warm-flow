@@ -74,7 +74,7 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
     public Node getNextNode(Long definitionId, String nowNodeCode, String anyNodeCode, String skipType) {
         AssertUtil.isNull(definitionId, ExceptionCons.NOT_DEFINITION_ID);
         AssertUtil.isEmpty(nowNodeCode, ExceptionCons.LOST_NODE_CODE);
-        AssertUtil.isEmpty(skipType, ExceptionCons.NULL_CONDITIONVALUE);
+        AssertUtil.isEmpty(skipType, ExceptionCons.NULL_CONDITION_VALUE);
 
         // 如果指定了跳转节点，直接获取节点
         if (StringUtils.isNotEmpty(anyNodeCode)) {
@@ -94,7 +94,7 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
         // 根据跳转查询出跳转到的那个节点
         Node nextNode = getOne(FlowFactory.newNode().setNodeCode(nextSkip.getNextNodeCode()).setDefinitionId(definitionId));
         AssertUtil.isNull(nextNode, ExceptionCons.NULL_NODE_CODE);
-        AssertUtil.isTrue(NodeType.isStart(nextNode.getNodeType()), ExceptionCons.FRIST_FORBID_BACK);
+        AssertUtil.isTrue(NodeType.isStart(nextNode.getNodeType()), ExceptionCons.FIRST_FORBID_BACK);
         return nextNode;
     }
 
@@ -137,7 +137,7 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
             if (!NodeType.isStart(nextNode.getNodeType())) {
                 skipsGateway = skipsGateway.stream().filter(t -> {
                     if (NodeType.isGateWaySerial(nextNode.getNodeType())) {
-                        AssertUtil.isEmpty(variable, ExceptionCons.MUST_CONDITIONVALUE_NODE);
+                        AssertUtil.isEmpty(variable, ExceptionCons.MUST_CONDITION_VALUE_NODE);
                         if (ObjectUtil.isNotNull(t.getSkipCondition())) {
                             return ExpressionUtil.evalCondition(t.getSkipCondition(), variable);
                         }
@@ -146,7 +146,7 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
                     return true;
                 }).collect(Collectors.toList());
             }
-            AssertUtil.isEmpty(skipsGateway, ExceptionCons.NULL_CONDITIONVALUE_NODE);
+            AssertUtil.isEmpty(skipsGateway, ExceptionCons.NULL_CONDITION_VALUE_NODE);
             List<String> nextNodeCodes = StreamUtils.toList(skipsGateway, Skip::getNextNodeCode);
             List<Node> nextNodes = FlowFactory.nodeService()
                     .getByNodeCodes(nextNodeCodes, nextNode.getDefinitionId());

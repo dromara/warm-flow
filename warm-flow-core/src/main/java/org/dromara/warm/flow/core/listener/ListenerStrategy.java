@@ -17,8 +17,8 @@ package org.dromara.warm.flow.core.listener;
 
 import org.dromara.warm.flow.core.strategy.ExpressionStrategy;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 监听器表达式策略
@@ -27,13 +27,10 @@ import java.util.Map;
  */
 public interface ListenerStrategy extends ExpressionStrategy<Void> {
 
-    Map<String, ExpressionStrategy<Void>> map = new HashMap<>();
+    List<ExpressionStrategy<Void>> expressionStrategyList = new ArrayList<>();
 
     default void setExpression(ExpressionStrategy<Void> expressionStrategy) {
-        map.put(expressionStrategy.getType(), expressionStrategy);
+        expressionStrategyList.add(expressionStrategy);
     }
 
-    static Map<String, ExpressionStrategy<Void>> getExpressionMap() {
-        return map;
-    }
 }

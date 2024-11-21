@@ -17,9 +17,8 @@ package org.dromara.warm.flow.core.variable;
 
 import org.dromara.warm.flow.core.strategy.ExpressionStrategy;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 办理人变量表达式策略
@@ -28,13 +27,10 @@ import java.util.Map;
  */
 public interface VariableStrategy extends ExpressionStrategy<List<String>> {
 
-    Map<String, ExpressionStrategy<List<String>>> map = new HashMap<>();
+    List<ExpressionStrategy<List<String>>> expressionStrategyList = new ArrayList<>();
 
-    default void setExpression(ExpressionStrategy<List<String>> variableStrategy) {
-        map.put(variableStrategy.getType(), variableStrategy);
+    default void setExpression(ExpressionStrategy<List<String>> expressionStrategy) {
+        expressionStrategyList.add(expressionStrategy);
     }
 
-    static Map<String, ExpressionStrategy<List<String>>> getExpressionMap() {
-        return map;
-    }
 }
