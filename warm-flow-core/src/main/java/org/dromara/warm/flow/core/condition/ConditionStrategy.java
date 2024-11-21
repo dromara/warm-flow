@@ -21,12 +21,15 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * 条件表达式
+ * 条件表达式接口
  *
  * @author warm
  */
 public interface ConditionStrategy extends ExpressionStrategy<Boolean> {
 
+    /**
+     * 条件表达式策略实现类map
+     */
     Map<String, ExpressionStrategy<Boolean>> map = new LinkedHashMap<>();
 
     default void setExpression(ExpressionStrategy<Boolean> expressionStrategy) {

@@ -21,12 +21,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 监听器表达式策略
+ * 监听器表达式策略接口
  *
  * @author warm
  */
 public interface ListenerStrategy extends ExpressionStrategy<Boolean> {
 
+    /**
+     * 监听器表达式策略实现类集合
+     */
     List<ExpressionStrategy<Boolean>> expressionStrategyList = new ArrayList<>();
 
     default void setExpression(ExpressionStrategy<Boolean> expressionStrategy) {

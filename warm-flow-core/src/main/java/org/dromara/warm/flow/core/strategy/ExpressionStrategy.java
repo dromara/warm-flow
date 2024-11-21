@@ -18,7 +18,7 @@ package org.dromara.warm.flow.core.strategy;
 import java.util.Map;
 
 /**
- * 策略类接口
+ * 表达式策略类接口
  *
  * @author warm
  */
@@ -32,7 +32,7 @@ public interface ExpressionStrategy<T> {
     String getType();
 
     /**
-     * 是否截取表达式前缀，然后在进行替换，默认不截取
+     * 是否截取表达式前缀，然后在进行执行，默认不截取
      * 如果截取，比如@@spel@@|#{@user.evalVar()} , 截取@@spel@@|，后再执行#{@user.evalVar()}解析
      *
      * @return 类型
@@ -51,6 +51,10 @@ public interface ExpressionStrategy<T> {
     T eval(String expression, Map<String, Object> variable);
 
 
+    /**
+     * 设置表达式
+     * @param expressionStrategy 表达式
+     */
     void setExpression(ExpressionStrategy<T> expressionStrategy);
 
 }
