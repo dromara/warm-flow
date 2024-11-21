@@ -82,8 +82,7 @@ public class ExpressionUtil {
     public static void evalVariable(List<Task> addTasks, Map<String, Object> variable) {
         addTasks.forEach(addTask -> addTask.setPermissionList(addTask.getPermissionList().stream()
                 .map(s -> {
-                    List<String> result = getValueNew(VariableStrategy.expressionStrategyList, s, variable
-                            , ExceptionCons.NULL_VARIABLE_STRATEGY);
+                    List<String> result = evalVariable(s, variable);
                     if (CollUtil.isNotEmpty(result)) {
                         return result;
                     }
@@ -94,13 +93,26 @@ public class ExpressionUtil {
     }
 
     /**
+     * 办理人变量表达式替换
+     *
+     * @param expression 表达式，比如“${flag}或者#{@user.notify(#listenerVariable)}” ，或者自定义策略
+     * @param variable   流程变量
+     * @return List<String>
+     */
+    public static List<String> evalVariable(String expression, Map<String, Object> variable) {
+        return getValueNew(VariableStrategy.expressionStrategyList, expression, variable
+                            , ExceptionCons.NULL_VARIABLE_STRATEGY);
+    }
+
+    /**
      * 监听器表达式替换
      *
-     * @param expression 条件表达式，比如“@@eq@@|flag@@eq@@4” ，或者自定义策略
+     * @param expression 条件表达式，比如“#{@user.notify(#listenerVariable)}” ，或者自定义策略
      * @param variable   变量
      */
-    public static void evalListener(String expression, Map<String, Object> variable) {
-        getValueNew(ListenerStrategy.expressionStrategyList, expression, variable, ExceptionCons.NULL_LISTENER_STRATEGY);
+    public static boolean evalListener(String expression, Map<String, Object> variable) {
+        return Boolean.TRUE.equals(getValueNew(ListenerStrategy.expressionStrategyList, expression, variable
+                , ExceptionCons.NULL_LISTENER_STRATEGY));
     }
 
     /**

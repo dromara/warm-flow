@@ -25,11 +25,11 @@ import java.util.List;
  *
  * @author warm
  */
-public interface ListenerStrategy extends ExpressionStrategy<Void> {
+public interface ListenerStrategy extends ExpressionStrategy<Boolean> {
 
-    List<ExpressionStrategy<Void>> expressionStrategyList = new ArrayList<>();
+    List<ExpressionStrategy<Boolean>> expressionStrategyList = new ArrayList<>();
 
-    default void setExpression(ExpressionStrategy<Void> expressionStrategy) {
+    default void setExpression(ExpressionStrategy<Boolean> expressionStrategy) {
         expressionStrategyList.add(expressionStrategy);
     }
 

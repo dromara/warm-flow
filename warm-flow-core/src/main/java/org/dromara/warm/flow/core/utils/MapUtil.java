@@ -71,4 +71,10 @@ public class MapUtil {
         }
         return map;
     }
+
+    public static <K, V> Map<K, V> newAndPut(K k, V v) {
+        Map<K, V> map = new HashMap<>();
+        map.put(k, v);
+        return map;
+    }
 }

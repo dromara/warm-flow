@@ -33,8 +33,9 @@ public class ListenerStrategySpel implements ListenerStrategy {
     }
 
     @Override
-    public Void eval(String expression, Map<String, Object> variable) {
+    public Boolean eval(String expression, Map<String, Object> variable) {
         SpelHelper.parseExpression(expression, variable);
-        return null;
+        // 恒返回true，说明匹配上监听器表达式，扩展策略也一定要返回true
+        return true;
     }
 }

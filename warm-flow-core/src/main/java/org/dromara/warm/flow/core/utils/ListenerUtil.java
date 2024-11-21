@@ -81,6 +81,13 @@ public class ListenerUtil {
                         ValueHolder valueHolder = new ValueHolder();
                         //截取出path 和params
                         getListenerPath(listenerPath, valueHolder);
+
+                        Map<String, Object> expressionMap = MapUtil.newAndPut("listenerVariable", listenerVariable);
+                        // 如果返回为true，说明配置的path是表达式,并且已经执行完，不需要执行后续加载类路径（优先执行表达式监听器）
+                        if (ExpressionUtil.evalListener(listenerPath, expressionMap)) {
+                            return;
+                        }
+
                         Class<?> clazz = ClassUtil.getClazz(valueHolder.getPath());
                         // 增加传入类路径校验Listener接口, 防止强制类型转换失败
                         if (ObjectUtil.isNotNull(clazz) && Listener.class.isAssignableFrom(clazz)) {
