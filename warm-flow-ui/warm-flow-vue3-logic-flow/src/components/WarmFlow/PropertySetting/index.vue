@@ -119,6 +119,12 @@ watch(() => props.node, n => {
         n.properties.collaborativeWay = nodeRatio === "0.000" ? "1" : nodeRatio === "100.000" ? "3" : nodeRatio ? "2" : "1";
       }
       n.properties.formCustom = JSON.stringify(n.properties) === "{}" ? "N" : (n.properties.formCustom || "");
+      let listenerTypes = n.properties.listenerType ? n.properties.listenerType.split(",") : [];
+      let listenerPaths = n.properties.listenerPath ? n.properties.listenerPath.split(",") : [];
+      n.properties.listenerRows = listenerTypes.map((type, index) => ({
+        listenerType: type,
+        listenerPath: listenerPaths[index]
+      }));
       form.value = {
         nodeType: n.type,
         nodeCode: n.id,
@@ -177,24 +183,20 @@ watch(() => form.value.skipAnyNode, (n) => {
     skipAnyNode: n
   })
 });
-watch(() => form.value.listenerType, (n) => {
-  // 确保 n 是一个数组
-  if (!Array.isArray(n)) {
-    n = [n]; // 将 n 转换为数组
-  }
 
-  // 将数组元素连接为字符串
-  let listenerTypeStr = n.join(",");
+// 监听：监听器路类型数组
+watch(() => form.value.listenerRows?.map(e => e.listenerType), (n) => {
   // 监听监听器类型变化并更新
   props.lf.setProperties(objId.value, {
-    listenerType: listenerTypeStr
+    listenerType: n.join(",")
   })
 });
 
-watch(() => form.value.listenerPath, (n) => {
-  // 监听监听器路径变化并更新
+// 监听：监听器路径数组
+watch(() => form.value.listenerRows?.map(e => e.listenerPath), (n) => {
+  // 监听监听器类型变化并更新
   props.lf.setProperties(objId.value, {
-    listenerPath: n
+    listenerPath: n.join("@@")
   })
 });
 
