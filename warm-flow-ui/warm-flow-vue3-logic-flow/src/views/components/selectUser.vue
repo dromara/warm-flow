@@ -307,9 +307,9 @@ getTabsType();
 </script>
 
 <style scoped lang="scss">
-:deep(.app-container) {
+.app-container {
   padding: 0;
-  .Tabs {
+  :deep(.Tabs) {
     border: 0;
     .el-tabs__content {
       display: none;
