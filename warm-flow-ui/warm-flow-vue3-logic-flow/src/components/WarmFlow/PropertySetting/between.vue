@@ -71,27 +71,45 @@
           </el-radio-group>
         </el-form-item>
       </slot>
+
       <slot name="form-item-task-listenerType" :model="form" field="listenerType">
         <el-form-item label="监听器类型">
-          <el-select v-model="form.listenerType" multiple>
-            <el-option label="任务创建" value="create"></el-option>
-            <el-option label="任务开始办理" value="start"></el-option>
-            <el-option label="分派监听器" value="assignment"></el-option>
-            <el-option label="权限认证" value="permission"></el-option>
-            <el-option label="任务完成" value="finish"></el-option>
-          </el-select>
+          <el-table :data="form.listenerRows" style="width: 100%">
+            <el-table-column prop="listenerType" label="类型" width="80">
+              <template #header>
+                <span style="color: red; margin-right: 4px">*</span>类型
+              </template>
+              <template #default="scope">
+                <el-form-item :prop="'listenerRows.' + scope.$index + '.listenerType'" :rules="rules.listenerType">
+                  <el-select v-model="scope.row.listenerType" placeholder="请选择类型">
+                    <el-option label="开始" value="start"></el-option>
+                    <el-option label="分派" value="assignment"></el-option>
+                    <el-option label="完成" value="finish"></el-option>
+                    <el-option label="创建" value="create"></el-option>
+                  </el-select>
+                </el-form-item>
+              </template>
+            </el-table-column>
+            <el-table-column prop="listenerPath" label="路径">
+              <template #header>
+                <span style="color: red; margin-right: 4px">*</span>路径
+              </template>
+              <template #default="scope">
+                <el-form-item :prop="'listenerRows.' + scope.$index + '.listenerPath'" :rules="rules.listenerPath">
+                  <el-input v-model="scope.row.listenerPath" placeholder="请输入路径"></el-input>
+                </el-form-item>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" width="60">
+              <template #default="scope">
+                <el-button size="mini" type="danger" icon="el-icon-delete" @click="handleDeleteRow(scope.$index)"/>
+              </template>
+            </el-table-column>
+          </el-table>
+          <el-button type="primary" @click="handleAddRow">增加行</el-button>
         </el-form-item>
       </slot>
-      <slot name="form-item-task-listenerPath" :model="form" field="listenerPath">
-        <el-form-item label="监听器路径" description="输入监听器的路径，以@@分隔,顺序与监听器类型一致">
-          <el-input type="textarea" v-model="form.listenerPath" rows="8"></el-input>
-          <el-tooltip class="box-item" effect="dark" content="输入监听器的路径，以@@分隔，顺序与监听器类型一致">
-            <el-icon :size="14" class="mt5">
-              <WarningFilled />
-            </el-icon>
-          </el-tooltip>
-        </el-form-item>
-      </slot>
+
       <slot name="form-item-task-formCustom" :model="form" field="formCustom">
         <el-form-item label="审批表单是否自定义">
           <el-select v-model="form.formCustom">
@@ -132,12 +150,17 @@ const props = defineProps({
   },
 });
 
-const form = ref(props.modelValue);
+const form = ref({
+  ...props.modelValue,
+  listenerRows: props.modelValue.listenerRows || [] // 确保 listenerRows 是一个数组
+});
 const rules = reactive({
   nodeRatio: [
     { required: false, message: "请输入", trigger: "change" },
     { pattern: /^(?:[1-9]\d?|0\.\d{1,3}|[1-9]\d?\.\d{1,3})$/, message: "请输入(0, 100)的值，最多保留三位小数", trigger: ["change", "blur"] }
-  ]
+  ],
+  listenerType: [{ required: true, message: '监听器类型不能为空', trigger: 'change' }],
+  listenerPath: [{ required: true, message: '监听器路径不能为空', trigger: 'blur' }]
 });
 const userVisible = ref(false);
 const emit = defineEmits(["change"]);
@@ -161,7 +184,12 @@ function addPermission() {
 function getPermissionFlag() {
   form.value.permissionFlag = form.value.permissionFlag ? form.value.permissionFlag.split(",") : [""];
   if (form.value.listenerType) {
-    form.value.listenerType = form.value.listenerType.split(",")
+    const listenerTypes = form.value.listenerType.split(",");
+    const listenerPaths = form.value.listenerPath.split("@@");
+    form.value.listenerRows = listenerTypes.map((type, index) => ({
+      listenerType: type,
+      listenerPath: listenerPaths[index]
+    }));
   }
 }
 
@@ -175,6 +203,16 @@ function handleUserSelect(checkedItemList) {
   form.value.permissionFlag = checkedItemList.map(e => {
     return e.storageId;
   }).filter(n => n);
+}
+
+// 增加行
+function handleAddRow() {
+  form.value.listenerRows.push({ listenerType: '', listenerPath: '' });
+}
+
+// 删除行
+function handleDeleteRow(index) {
+  form.value.listenerRows.splice(index, 1);
 }
 
 getPermissionFlag();
