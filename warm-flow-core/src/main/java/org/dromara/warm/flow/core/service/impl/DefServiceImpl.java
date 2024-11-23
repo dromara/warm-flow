@@ -803,8 +803,16 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         // 删除所有节点和连线
         FlowFactory.nodeService().remove(FlowFactory.newNode().setDefinitionId(defId));
         FlowFactory.skipService().remove(FlowFactory.newSkip().setDefinitionId(defId));
-        allNodes.forEach(node -> node.setDefinitionId(defId));
-        allSkips.forEach(skip -> skip.setDefinitionId(defId));
+
+        allNodes.forEach(node -> node.setId(null)
+                .setDefinitionId(defId)
+                .setCreateTime(null)
+                .setUpdateTime(null));
+
+        allSkips.forEach(skip -> skip.setId(null)
+                .setDefinitionId(defId)
+                .setCreateTime(null)
+                .setUpdateTime(null));
 
         // 保存节点，流程连线，权利人
         FlowFactory.nodeService().saveBatch(allNodes);
