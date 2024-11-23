@@ -320,11 +320,11 @@
                 <artifactId>warm-flow-plugin-ui-sb-web</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
-<!--            <dependency>-->
-<!--                <groupId>org.dromara</groupId>-->
-<!--                <artifactId>warm-flow-plugin-ui-solon-web</artifactId>-->
-<!--                <version>${warm-flow}</version>-->
-<!--            </dependency>-->
+            <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>warm-flow-plugin-ui-solon-web</artifactId>
+                <version>${warm-flow}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

@@ -16,8 +16,6 @@
 package org.dromara.warm.flow.ui;
 
 import org.dromara.warm.flow.core.config.WarmFlow;
-import org.dromara.warm.flow.ui.config.WarmFlowUiConfig;
-import org.dromara.warm.flow.ui.controller.WarmFlowUiController;
 import org.noear.solon.Solon;
 import org.noear.solon.core.AppContext;
 import org.noear.solon.core.Plugin;
@@ -34,12 +32,11 @@ public class XPluginImpl implements Plugin {
 
     @Override
     public void start(AppContext context) {
-        context.beanMake(WarmFlowUiConfig.class);
+        context.beanScan(XPluginImpl.class);
         WarmFlow warmFlow = Solon.context().getBean(WarmFlow.class);
         if (warmFlow.isUi()) {
-            String uiPath = "/";
-            StaticMappings.add("/", new ClassPathStaticRepository("META-INF/resources"));
-            Solon.app().add(uiPath, WarmFlowUiController.class);
+            StaticMappings.add("/warm-flow-ui/"
+                    , new ClassPathStaticRepository("/META-INF/resources/warm-flow-ui/"));
         }
     }
 }
