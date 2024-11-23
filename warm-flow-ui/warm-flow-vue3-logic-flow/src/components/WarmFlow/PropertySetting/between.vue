@@ -61,7 +61,7 @@
         <slot name="form-item-task-permissionFlag" :model="form" field="permissionFlag">
           <el-form-item label="办理人输入" class="permissionItem">
             <div v-for="(tag, index) in form.permissionFlag" :key="index" class="inputGroup">
-              <el-input v-model="form.permissionFlag[index]"></el-input>
+              <el-input v-model="form.permissionFlag[index]" style="width: 200px;"></el-input>
               <Close class="Icon" v-if="form.permissionFlag.length !== 1 && !disabled" @click="delPermission(index)" />
               <Plus class="Icon" v-if="(index === form.permissionFlag.length - 1) && !disabled" @click="addPermission" />
               <el-button class="btn" v-if="(index === form.permissionFlag.length - 1) && !disabled" @click="initUser">选择</el-button>
@@ -95,7 +95,7 @@
         <slot name="form-item-task-listenerType" :model="form" field="listenerType">
           <el-form-item prop="listenerRows" class="listenerItem">
             <el-table :data="form.listenerRows" style="width: 100%">
-              <el-table-column prop="listenerType" label="类型" width="88">
+              <el-table-column prop="listenerType" label="类型" width="80">
                 <template #default="scope">
                   <el-form-item :prop="'listenerRows.' + scope.$index + '.listenerType'" :rules="rules.listenerType">
                     <el-select v-model="scope.row.listenerType" placeholder="请选择类型">
