@@ -722,10 +722,6 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         long latestTimestamp = Long.MIN_VALUE;
 
         for (Definition otherDef : definitions) {
-            if (definition.getVersion() != null && definition.getFlowCode().equals(otherDef.getFlowCode())
-                    && definition.getVersion().equals(otherDef.getVersion())) {
-                throw new FlowException(definition.getFlowCode() + "(" + definition.getVersion() + ")" + ExceptionCons.ALREADY_EXIST);
-            }
             if (definition.getFlowCode().equals(otherDef.getFlowCode())) {
                 try {
                     int version = Integer.parseInt(otherDef.getVersion());
@@ -741,15 +737,12 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                 }
             }
         }
-        String version = definition.getVersion();
-        if (version == null || version.isEmpty()) {
-            if (highestVersion > 0) {
-                version = String.valueOf(highestVersion + 1);
-            } else if (latestNonPositiveVersion != null) {
-                version = latestNonPositiveVersion + "_1";
-            } else {
-                version = "1";
-            }
+
+        String version = "1";
+        if (highestVersion > 0) {
+            version = String.valueOf(highestVersion + 1);
+        } else if (latestNonPositiveVersion != null) {
+            version = latestNonPositiveVersion + "_1";
         }
 
         return version;
