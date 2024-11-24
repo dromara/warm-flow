@@ -722,10 +722,6 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         long latestTimestamp = Long.MIN_VALUE;
 
         for (Definition otherDef : definitions) {
-            if (definition.getVersion() != null && definition.getFlowCode().equals(otherDef.getFlowCode())
-                    && definition.getVersion().equals(otherDef.getVersion())) {
-                throw new FlowException(definition.getFlowCode() + "(" + definition.getVersion() + ")" + ExceptionCons.ALREADY_EXIST);
-            }
             if (definition.getFlowCode().equals(otherDef.getFlowCode())) {
                 try {
                     int version = Integer.parseInt(otherDef.getVersion());
@@ -741,15 +737,12 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                 }
             }
         }
-        String version = definition.getVersion();
-        if (version == null || version.isEmpty()) {
-            if (highestVersion > 0) {
-                version = String.valueOf(highestVersion + 1);
-            } else if (latestNonPositiveVersion != null) {
-                version = latestNonPositiveVersion + "_1";
-            } else {
-                version = "1";
-            }
+
+        String version = "1";
+        if (highestVersion > 0) {
+            version = String.valueOf(highestVersion + 1);
+        } else if (latestNonPositiveVersion != null) {
+            version = latestNonPositiveVersion + "_1";
         }
 
         return version;
@@ -803,8 +796,16 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         // 删除所有节点和连线
         FlowFactory.nodeService().remove(FlowFactory.newNode().setDefinitionId(defId));
         FlowFactory.skipService().remove(FlowFactory.newSkip().setDefinitionId(defId));
-        allNodes.forEach(node -> node.setDefinitionId(defId));
-        allSkips.forEach(skip -> skip.setDefinitionId(defId));
+
+        allNodes.forEach(node -> node.setId(null)
+                .setDefinitionId(defId)
+                .setCreateTime(null)
+                .setUpdateTime(null));
+
+        allSkips.forEach(skip -> skip.setId(null)
+                .setDefinitionId(defId)
+                .setCreateTime(null)
+                .setUpdateTime(null));
 
         // 保存节点，流程连线，权利人
         FlowFactory.nodeService().saveBatch(allNodes);

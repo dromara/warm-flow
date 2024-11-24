@@ -6,6 +6,7 @@
       destroy-on-close
       v-model="drawer"
       direction="rtl"
+      size="37%"
       :append-to-body="true"
       :before-close="handleClose">
       <component :is="componentType" v-model="form" :disabled="disabled" :skipConditionShow="skipConditionShow">
