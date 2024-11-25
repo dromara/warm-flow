@@ -325,6 +325,13 @@ export const logicFlowJsonToFlowXml = (data) => {
     if (node.text) {
       textXy = '|' + node.text.x + ',' + node.text.y;
     }
+    // 监听器数据处理，类型路径其一为空则不保存
+    let listenerType = node.properties.listenerType ? node.properties.listenerType.split(",") : [];
+    let listenerPath = node.properties.listenerPath ? node.properties.listenerPath.split("@@") : [];
+    let listenerRows = [];
+    listenerType.map((e, i) => {
+      if (e && listenerPath[i]) listenerRows.push({ listenerType: e, listenerPath: listenerPath[i] });
+    });
     return {
       nodeType: node.type,
       nodeCode: node.id,
@@ -332,8 +339,8 @@ export const logicFlowJsonToFlowXml = (data) => {
       permissionFlag: node.properties.permissionFlag,
       nodeRatio: node.properties.nodeRatio,
       skipAnyNode: node.properties.skipAnyNode,
-      listenerType: node.properties.listenerType,
-      listenerPath: node.properties.listenerPath,
+      listenerType: listenerRows.map(e => e.listenerType).join(","),
+      listenerPath: listenerRows.map(e => e.listenerPath).join("@@"),
       coordinate: node.x + ',' + node.y + textXy,
       skip: getSkip(node.id),
       formCustom: node.properties.formCustom,

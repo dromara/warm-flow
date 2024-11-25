@@ -1,40 +1,61 @@
 <template>
   <div>
-    <el-form ref="formRef" :model="form" label-width="120px" size="small" :disabled="disabled">
-      <slot name="form-item-task-name" :model="form" field="nodeCode">
-        <el-form-item label="节点编码">
-          <el-input v-model="form.nodeCode" :disabled="disabled"></el-input>
-        </el-form-item>
-      </slot>
-      <slot name="form-item-task-name" :model="form" field="nodeName">
-        <el-form-item label="节点名称">
-          <el-input v-model="form.nodeName" :disabled="disabled"></el-input>
-        </el-form-item>
-      </slot>
-      <slot name="form-item-task-listenerType" :model="form" field="listenerType">
-        <el-form-item label="监听器类型">
-          <el-select v-model="form.listenerType" multiple>
-            <el-option label="任务创建" value="create"></el-option>
-            <el-option label="任务开始办理" value="start"></el-option>
-            <el-option label="分派监听器" value="assignment"></el-option>
-            <el-option label="权限认证" value="permission"></el-option>
-            <el-option label="任务完成" value="finish"></el-option>
-          </el-select>
-        </el-form-item>
-      </slot>
-      <slot name="form-item-task-listenerPath" :model="form" field="listenerPath">
-        <el-form-item label="监听器路径" description="输入监听器的路径，以@@分隔,顺序与监听器类型一致">
-          <el-input type="textarea" v-model="form.listenerPath" rows="8"></el-input>
-          <el-tooltip class="item" effect="dark" content="输入监听器的路径，以@@分隔，顺序与监听器类型一致">
-            <i class="el-icon-question"></i>
-          </el-tooltip>
-        </el-form-item>
-      </slot>
+    <el-tabs type="border-card" class="Tabs" v-model="tabsValue">
+      <el-tab-pane label="基础设置" name="1"></el-tab-pane>
+      <el-tab-pane label="监听器" name="2"></el-tab-pane>
+    </el-tabs>
+    <el-form ref="formRef" class="startForm" :model="form" label-width="120px" size="small" :disabled="disabled">
+      <template v-if="tabsValue === '1'">
+        <slot name="form-item-task-name" :model="form" field="nodeCode">
+          <el-form-item label="节点编码">
+            <el-input v-model="form.nodeCode" :disabled="disabled"></el-input>
+          </el-form-item>
+        </slot>
+        <slot name="form-item-task-name" :model="form" field="nodeName">
+          <el-form-item label="节点名称">
+            <el-input v-model="form.nodeName" :disabled="disabled"></el-input>
+          </el-form-item>
+        </slot>
+      </template>
+      <template v-if="tabsValue === '2'">
+        <slot name="form-item-task-listenerType" :model="form" field="listenerType">
+          <el-form-item prop="listenerRows" class="listenerItem" label-width="0">
+            <el-table :data="form.listenerRows" style="width: 100%">
+              <el-table-column prop="listenerType" label="类型" width="80">
+                <template #default="scope">
+                  <el-form-item :prop="'listenerRows.' + scope.$index + '.listenerType'">
+                    <el-select v-model="scope.row.listenerType" placeholder="请选择类型">
+                      <el-option label="开始" value="start"></el-option>
+                      <el-option label="分派" value="assignment"></el-option>
+                      <el-option label="完成" value="finish"></el-option>
+                      <el-option label="创建" value="create"></el-option>
+                    </el-select>
+                  </el-form-item>
+                </template>
+              </el-table-column>
+              <el-table-column prop="listenerPath" label="路径">
+                <template #default="scope">
+                  <el-form-item :prop="'listenerRows.' + scope.$index + '.listenerPath'">
+                    <el-input v-model="scope.row.listenerPath" placeholder="请输入路径"></el-input>
+                  </el-form-item>
+                </template>
+              </el-table-column>
+              <el-table-column label="操作" width="55" v-if="!disabled">
+                <template #default="scope">
+                  <el-button type="danger" :icon="Delete" @click="handleDeleteRow(scope.$index)"/>
+                </template>
+              </el-table-column>
+            </el-table>
+            <el-button v-if="!disabled" type="primary" style="margin-top: 10px;" @click="handleAddRow">增加行</el-button>
+          </el-form-item>
+        </slot>
+      </template>
     </el-form>
   </div>
 </template>
 
 <script setup name="Start">
+import { Delete } from '@element-plus/icons-vue'
 
 const props = defineProps({
   modelValue: {
@@ -49,6 +70,7 @@ const props = defineProps({
   },
 });
 
+const tabsValue = ref("1");
 const form = ref(props.modelValue);
 const emit = defineEmits(["change"]);
 
@@ -60,10 +82,41 @@ watch(() => form, n => {
 
 
 if (form.value.listenerType) {
-  form.value.listenerType = form.value.listenerType.split(",")
+  const listenerTypes = form.value.listenerType.split(",");
+  const listenerPaths = form.value.listenerPath.split("@@");
+  form.value.listenerRows = listenerTypes.map((type, index) => ({
+    listenerType: type,
+    listenerPath: listenerPaths[index]
+  }));
+}
+
+// 增加行
+function handleAddRow() {
+  form.value.listenerRows.push({ listenerType: '', listenerPath: '' });
+}
+
+// 删除行
+function handleDeleteRow(index) {
+  form.value.listenerRows.splice(index, 1);
 }
 </script>
 
-<style scoped>
-
+<style scoped lang="scss">
+:deep(.Tabs) {
+  border: 0;
+  margin-top: -20px;
+  .el-tabs__content {
+    display: none;
+  }
+  .el-tabs__item.is-active {
+    margin-left: 0;
+    border-top: 1px solid var(--el-border-color);
+    margin-top: 0;
+  }
+}
+.startForm {
+  border: 1px solid #e4e7ed;
+  border-top: 0;
+  padding: 15px;
+}
 </style>
