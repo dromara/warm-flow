@@ -17,7 +17,6 @@ package org.dromara.warm.flow.orm.dao;
 
 import com.mybatisflex.core.query.QueryWrapper;
 import org.dromara.warm.flow.core.dao.FlowDefinitionDao;
-import org.dromara.warm.flow.core.enums.PublishStatus;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.orm.entity.FlowDefinition;
 import org.dromara.warm.flow.orm.mapper.FlowDefinitionMapper;
@@ -45,7 +44,7 @@ public class FlowDefinitionDaoImpl extends WarmDaoImpl<FlowDefinition> implement
 
     @Override
     public List<FlowDefinition> queryByCodeList(List<String> flowCodeList) {
-        QueryWrapper queryWrapper = QueryWrapper.create();
+        QueryWrapper queryWrapper = TenantDeleteUtil.getDefaultWrapper(newEntity());
         queryWrapper.in(FlowDefinition::getFlowCode, flowCodeList);
         return getMapper().selectListByQueryAs(queryWrapper, FlowDefinition.class);
     }
