@@ -51,10 +51,10 @@ public class FlowDefinitionDaoImpl extends WarmDaoImpl<FlowDefinition> implement
     }
 
     @Override
-    public void closeFlowByCodeList(List<String> flowCodeList) {
+    public void updatePublishStatus(List<Long> ids, Integer publishStatus) {
         QueryWrapper queryWrapper = TenantDeleteUtil.getDefaultWrapper(newEntity());
-        queryWrapper.in(FlowDefinition::getFlowCode, flowCodeList);
-        getMapper().updateByQuery(new FlowDefinition().setIsPublish(PublishStatus.EXPIRED.getKey()), queryWrapper);
+        queryWrapper.in(FlowDefinition::getId, ids);
+        getMapper().updateByQuery(new FlowDefinition().setIsPublish(publishStatus), queryWrapper);
     }
 
 }

@@ -71,7 +71,12 @@ public interface DefService extends IWarmService<Definition> {
 
     List<Definition> queryByCodeList(List<String> flowCodeList);
 
-    void closeFlowByCodeList(List<String> flowCodeList);
+    /**
+     * 更新流程定义发布状态
+     * @param defIds 流程定义id列表
+     * @param publishStatus 流程定义发布状态
+     */
+    void updatePublishStatus(List<Long> defIds, Integer publishStatus);
 
     /**
      * 新增流程定义表数据，新增后需要通过saveXml接口保存流程节点和流程跳转数据

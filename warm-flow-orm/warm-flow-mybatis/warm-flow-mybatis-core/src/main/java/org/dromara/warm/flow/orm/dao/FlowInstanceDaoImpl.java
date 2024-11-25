@@ -19,6 +19,9 @@ import org.dromara.warm.flow.core.dao.FlowInstanceDao;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.orm.entity.FlowInstance;
 import org.dromara.warm.flow.orm.mapper.FlowInstanceMapper;
+import org.dromara.warm.flow.orm.utils.TenantDeleteUtil;
+
+import java.util.List;
 
 /**
  * 流程实例Mapper接口
@@ -36,5 +39,10 @@ public class FlowInstanceDaoImpl extends WarmDaoImpl<FlowInstance> implements Fl
     @Override
     public FlowInstance newEntity() {
         return new FlowInstance();
+    }
+
+    @Override
+    public List<FlowInstance> getByDefIds(List<Long> defIds) {
+        return getMapper().getByDefIds(defIds, TenantDeleteUtil.getEntity(newEntity()));
     }
 }

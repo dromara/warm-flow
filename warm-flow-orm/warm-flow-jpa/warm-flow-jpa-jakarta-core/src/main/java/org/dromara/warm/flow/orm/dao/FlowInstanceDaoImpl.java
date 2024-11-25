@@ -17,6 +17,10 @@ package org.dromara.warm.flow.orm.dao;
 
 import org.dromara.warm.flow.core.dao.FlowInstanceDao;
 import org.dromara.warm.flow.orm.entity.FlowInstance;
+import org.dromara.warm.flow.orm.utils.TenantDeleteUtil;
+
+import javax.persistence.criteria.CriteriaQuery;
+import java.util.List;
 
 /**
  * 流程实例Mapper接口
@@ -33,5 +37,17 @@ public class FlowInstanceDaoImpl extends WarmDaoImpl<FlowInstance> implements Fl
     @Override
     public Class<FlowInstance> entityClass() {
         return FlowInstance.class;
+    }
+
+    @Override
+    public List<FlowInstance> getByDefIds(List<Long> defIds) {
+        final FlowInstance entity = TenantDeleteUtil.getEntity(newEntity());
+
+        final CriteriaQuery<FlowInstance> criteriaQuery = createCriteriaQuery((criteriaBuilder, root, predicates, innerCriteriaQuery) -> {
+            entity.commonPredicate().process(criteriaBuilder, root, predicates);
+
+            predicates.add(createIn(criteriaBuilder, root, "definitionId", defIds));
+        });
+        return entityManager.createQuery(criteriaQuery).getResultList();
     }
 }

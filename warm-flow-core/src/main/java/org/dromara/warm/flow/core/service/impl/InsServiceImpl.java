@@ -112,6 +112,11 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
     }
 
     @Override
+    public List<Instance> listByDefIds(List<Long> defIds) {
+        return getDao().getByDefIds(defIds);
+    }
+
+    @Override
     public Instance termination(Long instanceId, FlowParams flowParams) {
         // 获取待办任务
         List<Task> taskList = FlowFactory.taskService().list(FlowFactory.newTask().setInstanceId(instanceId));

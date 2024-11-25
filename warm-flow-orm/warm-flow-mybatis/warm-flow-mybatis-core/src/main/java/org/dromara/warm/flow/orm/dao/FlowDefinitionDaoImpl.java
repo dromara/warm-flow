@@ -46,8 +46,9 @@ public class FlowDefinitionDaoImpl extends WarmDaoImpl<FlowDefinition> implement
         return getMapper().queryByCodeList(flowCodeList, TenantDeleteUtil.getEntity(newEntity()));
     }
 
-    public void closeFlowByCodeList(List<String> flowCodeList) {
-        getMapper().closeFlowByCodeList(flowCodeList, TenantDeleteUtil.getEntity(newEntity()));
+    @Override
+    public void updatePublishStatus(List<Long> ids, Integer publishStatus) {
+        getMapper().updatePublishStatus(ids, publishStatus, TenantDeleteUtil.getEntity(newEntity()));
     }
 
 }

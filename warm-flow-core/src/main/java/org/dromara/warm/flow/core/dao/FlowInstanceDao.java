@@ -17,6 +17,8 @@ package org.dromara.warm.flow.core.dao;
 
 import org.dromara.warm.flow.core.entity.Instance;
 
+import java.util.List;
+
 /**
  * 流程实例Mapper接口
  *
@@ -25,4 +27,11 @@ import org.dromara.warm.flow.core.entity.Instance;
  */
 public interface FlowInstanceDao<T extends Instance> extends WarmDao<T> {
 
+    /**
+     * 根据流程定义ID,查询流程实例集合
+     *
+     * @param defIds 流程定义ID集合
+     * @return 流程实例集合
+     */
+    List<T> getByDefIds(List<Long> defIds);
 }

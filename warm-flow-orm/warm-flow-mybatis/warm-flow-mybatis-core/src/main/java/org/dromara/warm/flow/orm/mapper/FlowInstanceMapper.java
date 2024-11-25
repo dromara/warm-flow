@@ -15,7 +15,10 @@
  */
 package org.dromara.warm.flow.orm.mapper;
 
+import org.apache.ibatis.annotations.Param;
 import org.dromara.warm.flow.orm.entity.FlowInstance;
+
+import java.util.List;
 
 /**
  * 流程实例Mapper接口
@@ -25,4 +28,5 @@ import org.dromara.warm.flow.orm.entity.FlowInstance;
  */
 public interface FlowInstanceMapper extends WarmMapper<FlowInstance> {
 
+    List<FlowInstance> getByDefIds(@Param("defIds") List<Long> defIds, @Param("entity") FlowInstance flowInstance);
 }

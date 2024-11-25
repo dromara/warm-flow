@@ -114,8 +114,8 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     }
 
     @Override
-    public void closeFlowByCodeList(List<String> flowCodeList) {
-        getDao().closeFlowByCodeList(flowCodeList);
+    public void updatePublishStatus(List<Long> ids, Integer publishStatus) {
+        getDao().updatePublishStatus(ids, publishStatus);
     }
 
     @Override
@@ -223,9 +223,32 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     @Override
     public boolean publish(Long id) {
         Definition definition = getById(id);
-        List<String> flowCodeList = Collections.singletonList(definition.getFlowCode());
-        // 把之前的流程定义改为已失效
-        closeFlowByCodeList(flowCodeList);
+        List<Definition> definitions = list(FlowFactory.newDef().setFlowCode(definition.getFlowCode()));
+        // 已发布流程定义，改为已失效或者未发布状态
+        List<Long> otherDefIds = definitions.stream()
+                .filter(item -> !Objects.equals(definition.getId(), item.getId())
+                        && PublishStatus.PUBLISHED.getKey().equals(item.getIsPublish()))
+                .map(Definition::getId)
+                .collect(Collectors.toList());
+        if (CollUtil.isNotEmpty(otherDefIds)) {
+            List<Instance> instanceList = FlowFactory.insService().listByDefIds(otherDefIds);
+            if (CollUtil.isNotEmpty(instanceList)) {
+                // 已发布已使用过的流程定义
+                Set<Long> useDefIds = StreamUtils.toSet(instanceList, Instance::getDefinitionId);
+                if (CollUtil.isNotEmpty(useDefIds)) {
+                    // 已发布已使用过的流程定义，改为已失效
+                    updatePublishStatus(new ArrayList<>(useDefIds), PublishStatus.EXPIRED.getKey());
+
+                    // 已发布未使用的流定义
+                    otherDefIds.removeIf(useDefIds::contains);
+                }
+
+            }
+            if (CollUtil.isNotEmpty(otherDefIds)) {
+                // 已发布未使用过的流程定义，改为未发布
+                updatePublishStatus(otherDefIds, PublishStatus.UNPUBLISHED.getKey());
+            }
+        }
 
         Definition flowDefinition = FlowFactory.newDef();
         flowDefinition.setId(id);

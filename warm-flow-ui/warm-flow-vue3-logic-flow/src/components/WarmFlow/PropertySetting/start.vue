@@ -24,7 +24,7 @@
               <el-table-column prop="listenerType" label="类型" width="80">
                 <template #default="scope">
                   <el-form-item :prop="'listenerRows.' + scope.$index + '.listenerType'">
-                    <el-select v-model="scope.row.listenerType" placeholder="请选择类型">
+                    <el-select v-model="scope.row.listenerType" placeholder="请选择">
                       <el-option label="开始" value="start"></el-option>
                       <el-option label="分派" value="assignment"></el-option>
                       <el-option label="完成" value="finish"></el-option>
@@ -36,7 +36,7 @@
               <el-table-column prop="listenerPath" label="路径">
                 <template #default="scope">
                   <el-form-item :prop="'listenerRows.' + scope.$index + '.listenerPath'">
-                    <el-input v-model="scope.row.listenerPath" placeholder="请输入路径"></el-input>
+                    <el-input v-model="scope.row.listenerPath" placeholder="请输入"></el-input>
                   </el-form-item>
                 </template>
               </el-table-column>

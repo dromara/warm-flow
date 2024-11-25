@@ -286,6 +286,16 @@
         <if test="entity.tenantId != null  and entity.tenantId != ''">and tenant_id = #{entity.tenantId}</if>
     </update>
 
+    <update id="updatePublishStatus" parameterType="java.util.List">
+        update flow_definition set is_publish = #{publishStatus}
+        where id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        <if test="entity.delFlag != null  and entity.delFlag != ''">and del_flag = #{entity.delFlag}</if>
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and tenant_id = #{entity.tenantId}</if>
+    </update>
+
     <delete id="deleteById">
         delete
         from flow_definition

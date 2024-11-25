@@ -59,7 +59,7 @@ public class FlowDefinitionDaoImpl extends WarmDaoImpl<FlowDefinition, FlowDefin
     }
 
     @Override
-    public void closeFlowByCodeList(List<String> flowCodeList) {
+    public void updatePublishStatus(List<Long> ids, Integer publishStatus) {
         FlowDefinition entity = newEntity();
         TenantDeleteUtil.applyContextCondition(entity);
         String tenantId = entity.getTenantId();
@@ -68,10 +68,10 @@ public class FlowDefinitionDaoImpl extends WarmDaoImpl<FlowDefinition, FlowDefin
         entityQuery().updatable(entityClass())
             .useLogicDelete(logicDelete)
             .where(flowDefinition->{
-                flowDefinition.flowCode().in(flowCodeList); // 流程编码过滤
+                flowDefinition.id().in(ids); // 流程编码过滤
                 flowDefinition.tenantId().eq(StringUtils.isNotEmpty(tenantId), tenantId);  // 租户过滤
             })
-            .setColumns(proxy -> proxy.isPublish().set(9)) // 设置为失效
+            .setColumns(proxy -> proxy.isPublish().set(publishStatus)) // 设置为失效
             .executeRows();
     }
 

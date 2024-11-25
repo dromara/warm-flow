@@ -200,6 +200,16 @@
         <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
     </select>
 
+    <select id="getByDefIds" resultMap="FlowInstanceResult">
+        <include refid="selectVo"/>
+        where t.definition_id in
+        <foreach item="defId" collection="defIds" open="(" separator="," close=")">
+            #{defId}
+        </foreach>
+        <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+    </select>
+
     <insert id="insert" parameterType="org.dromara.warm.flow.orm.entity.FlowInstance">
         insert into flow_instance
         <trim prefix="(" suffix=")" suffixOverrides=",">

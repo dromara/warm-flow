@@ -22,6 +22,7 @@ import org.dromara.warm.flow.orm.entity.FlowInstance;
 import org.dromara.warm.flow.orm.entity.proxy.FlowInstanceProxy;
 import org.dromara.warm.flow.orm.utils.TenantDeleteUtil;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -70,5 +71,20 @@ public class FlowInstanceDaoImpl extends WarmDaoImpl<FlowInstance, FlowInstanceP
         proxy.updateTime().eq(Objects.nonNull(entity.getUpdateTime()), entity.getUpdateTime()); // 更新时间
         proxy.ext().eq(StringUtils.isNotEmpty(entity.getExt()), entity.getExt()); // 扩展字段
         proxy.tenantId().eq(StringUtils.isNotEmpty(entity.getTenantId()), entity.getTenantId()); // 租户id
+    }
+
+    @Override
+    public List<FlowInstance> getByDefIds(List<Long> defIds) {
+        FlowInstance entity = newEntity();
+        TenantDeleteUtil.applyContextCondition(entity);
+        String tenantId = entity.getTenantId();
+        final boolean logicDelete = FlowFactory.getFlowConfig().isLogicDelete();
+
+        return entityQuery().queryable(entityClass())
+            .useLogicDelete(logicDelete)
+            .where(proxy -> {
+                proxy.definitionId().in(defIds); // 流程定义id过滤
+                proxy.tenantId().eq(StringUtils.isNotEmpty(tenantId), tenantId);  // 租户过滤
+            }).toList();
     }
 }

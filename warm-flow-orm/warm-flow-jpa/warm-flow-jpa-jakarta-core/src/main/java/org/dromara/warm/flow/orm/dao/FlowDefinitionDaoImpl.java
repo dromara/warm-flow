@@ -69,4 +69,20 @@ public class FlowDefinitionDaoImpl extends WarmDaoImpl<FlowDefinition> implement
         entityManager.createQuery(criteriaUpdate).executeUpdate();
     }
 
+    @Override
+    public void updatePublishStatus(List<Long> ids, Integer publishStatus) {
+        final FlowDefinition entity = TenantDeleteUtil.getEntity(newEntity());
+
+        final CriteriaUpdate<FlowDefinition> criteriaUpdate = createCriteriaUpdate((criteriaBuilder, root, predicates, innerCriteriaUpdate) -> {
+            entity.commonPredicate().process(criteriaBuilder, root, predicates);
+
+            predicates.add(createIn(criteriaBuilder, root, "id", ids));
+
+            // 是否发布（0未发布 1已发布 9失效）
+            innerCriteriaUpdate.set(root.get("isPublish"), publishStatus);
+        });
+
+        entityManager.createQuery(criteriaUpdate).executeUpdate();
+    }
+
 }

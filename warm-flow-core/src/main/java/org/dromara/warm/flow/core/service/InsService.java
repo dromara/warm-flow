@@ -89,4 +89,12 @@ public interface InsService extends IWarmService<Instance> {
      * @param id 流程实例id: [必传]
      */
     boolean unActive(Long id);
+
+    /**
+     * 根据流程定义id集合，查询流程实例集合
+     *
+     * @param defIds 流程定义id集合
+     * @return 流程实例集合
+     */
+    List<Instance> listByDefIds(List<Long> defIds);
 }

@@ -15,10 +15,14 @@
  */
 package org.dromara.warm.flow.orm.dao;
 
+import com.mybatisflex.core.query.QueryWrapper;
 import org.dromara.warm.flow.core.dao.FlowInstanceDao;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.orm.entity.FlowInstance;
 import org.dromara.warm.flow.orm.mapper.FlowInstanceMapper;
+import org.dromara.warm.flow.orm.utils.TenantDeleteUtil;
+
+import java.util.List;
 
 /**
  * 流程实例Mapper接口
@@ -38,4 +42,10 @@ public class FlowInstanceDaoImpl extends WarmDaoImpl<FlowInstance> implements Fl
         return new FlowInstance();
     }
 
+    @Override
+    public List<FlowInstance> getByDefIds(List<Long> defIds) {
+        QueryWrapper queryWrapper = TenantDeleteUtil.getDefaultWrapper(newEntity());
+        queryWrapper.in(FlowInstance::getDefinitionId, defIds);
+        return getMapper().selectListByQuery(queryWrapper);
+    }
 }

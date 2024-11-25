@@ -30,7 +30,5 @@ public interface FlowDefinitionDao<T extends Definition> extends WarmDao<T> {
 
     List<T> queryByCodeList(List<String> flowCodeList);
 
-    void closeFlowByCodeList(List<String> flowCodeList);
-
-
+    void updatePublishStatus(List<Long> ids, Integer publishStatus);
 }

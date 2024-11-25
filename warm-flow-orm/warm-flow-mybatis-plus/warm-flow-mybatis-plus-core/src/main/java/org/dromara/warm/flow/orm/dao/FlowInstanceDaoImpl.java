@@ -15,10 +15,13 @@
  */
 package org.dromara.warm.flow.orm.dao;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.dromara.warm.flow.core.dao.FlowInstanceDao;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.orm.entity.FlowInstance;
 import org.dromara.warm.flow.orm.mapper.FlowInstanceMapper;
+
+import java.util.List;
 
 /**
  * 流程实例Mapper接口
@@ -38,4 +41,10 @@ public class FlowInstanceDaoImpl extends WarmDaoImpl<FlowInstance> implements Fl
         return new FlowInstance();
     }
 
+    @Override
+    public List<FlowInstance> getByDefIds(List<Long> defIds) {
+        LambdaQueryWrapper<FlowInstance> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(FlowInstance::getDefinitionId, defIds);
+        return getMapper().selectList(queryWrapper);
+    }
 }
