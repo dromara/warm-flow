@@ -84,7 +84,18 @@
                 <groupId>org.noear</groupId>
                 <artifactId>solon</artifactId>
                 <version>${solon.version}</version>
-                <optional>true</optional>
+            </dependency>
+
+            <dependency>
+                <groupId>org.noear</groupId>
+                <artifactId>solon.data</artifactId>
+                <version>${solon.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.noear</groupId>
+                <artifactId>solon.web.staticfiles</artifactId>
+                <version>${solon.version}</version>
             </dependency>
 
             <dependency>
@@ -326,155 +337,103 @@
     <profiles>
         <!-- Deployment profile (required so these plugins are only used when deploying) -->
         <profile>
-            <id>deploy</id>
+            <id>release</id>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>3.8.1</version>
                     </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.2.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-jar-plugin</artifactId>
+                        <version>3.2.0</version>
+                        <configuration>
+                            <archive>
+                                <manifestEntries>
+                                    <Implementation-Version>${warm-flow}</Implementation-Version>
+                                </manifestEntries>
+                            </archive>
+                        </configuration>
                     </plugin>
+
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.10.4</version>
+                        <configuration>
+                            <windowtitle>Warm-Flow</windowtitle>
+                            <doctitle>Warm-Flow</doctitle>
+                            <show>private</show>
+                            <detectLinks>false</detectLinks>
+                            <detectOfflineLinks>true</detectOfflineLinks>
+                            <linksource>true</linksource>
+                            <additionalparam>-Xdoclint:none</additionalparam>
+                            <detectJavaApiLink>true</detectJavaApiLink>
+                            <source>8</source>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
-                    <!-- GPG plugin -->
+
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
+                        <version>3.2.5</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <configuration>
+                                    <gpgArguments>
+                                        <arg>--pinentry-mode</arg>
+                                        <arg>loopback</arg>
+                                    </gpgArguments>
+                                </configuration>
+                            </execution>
+                        </executions>
                     </plugin>
 
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.5.0</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>ossrh</publishingServerId>
+                            <autoPublish>true</autoPublish>
+                        </configuration>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
     </profiles>
 
-<!--    &lt;!&ndash; 下面这个标签里的不能改 &ndash;&gt;-->
-<!--    <distributionManagement>-->
-<!--        <repository>-->
-<!--            <id>ossrh</id>-->
-<!--            <name>Nexus Release Repository</name>-->
-<!--            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2</url>-->
-<!--        </repository>-->
-<!--        <snapshotRepository>-->
-<!--            <id>sonatype-nexus-snapshots</id>-->
-<!--            <name>Nexus Snapshot Repository</name>-->
-<!--            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>-->
-<!--        </snapshotRepository>-->
-<!--    </distributionManagement>-->
-
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>3.1.0</version>
-                    <executions>
-                        <execution>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>jar-no-fork</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.2.0</version>
-                    <configuration>
-                        <archive>
-                            <manifestEntries>
-                                <Implementation-Version>${warm-flow}</Implementation-Version>
-                            </manifestEntries>
-                        </archive>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.10.4</version>
-                    <configuration>
-                        <windowtitle>Warm-Flow</windowtitle>
-                        <doctitle>Warm-Flow</doctitle>
-                        <show>private</show>
-                        <detectLinks>false</detectLinks>
-                        <detectOfflineLinks>true</detectOfflineLinks>
-                        <linksource>true</linksource>
-                        <additionalparam>-Xdoclint:none</additionalparam>
-                        <detectJavaApiLink>true</detectJavaApiLink>
-                        <source>8</source>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <phase>compile</phase>
-                            <goals>
-                                <goal>jar</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-gpg-plugin</artifactId>
-                    <version>1.6</version>
-                    <executions>
-                        <execution>
-                            <id>sign-artifacts</id>
-                            <phase>verify</phase>
-                            <goals>
-                                <goal>sign</goal>
-                            </goals>
-                            <configuration>
-                                <!-- Prevent `gpg` from using pinentry programs -->
-                                <gpgArguments>
-                                    <arg>--pinentry-mode</arg>
-                                    <arg>loopback</arg>
-                                </gpgArguments>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-<!--                <plugin>-->
-<!--                    <groupId>org.sonatype.plugins</groupId>-->
-<!--                    <artifactId>nexus-staging-maven-plugin</artifactId>-->
-<!--                    <version>1.6.8</version>-->
-<!--                    <extensions>true</extensions>-->
-<!--                    <configuration>-->
-<!--                        <serverId>ossrh</serverId>-->
-<!--                        <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>-->
-<!--                        <autoReleaseAfterClose>true</autoReleaseAfterClose>-->
-<!--                    </configuration>-->
-<!--                </plugin>-->
-                <plugin>
-                    <groupId>org.sonatype.central</groupId>
-                    <artifactId>central-publishing-maven-plugin</artifactId>
-                    <version>0.5.0</version>
-                    <extensions>true</extensions>
-                    <configuration>
-                        <!-- 这里的publishingServerId是在settings.xml中配置的server认证信息 -->
-                        <!-- 注意 Github Action 中的 server-id 也要与此保持一致 -->
-                        <publishingServerId>ossrh</publishingServerId>
-                        <autoPublish>true</autoPublish>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-        <plugins>
-<!--            <plugin>-->
-<!--                <groupId>org.sonatype.plugins</groupId>-->
-<!--                <artifactId>nexus-staging-maven-plugin</artifactId>-->
-<!--            </plugin>-->
-            <plugin>
-                <groupId>org.sonatype.central</groupId>
-                <artifactId>central-publishing-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 
     <!-- mvn clean deploy -P release-->
     <!-- mvn clean install -Dmaven.test.skip=true   -->

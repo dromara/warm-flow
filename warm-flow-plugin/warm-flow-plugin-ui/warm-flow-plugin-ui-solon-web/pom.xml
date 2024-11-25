@@ -24,19 +24,11 @@
 
         <dependency>
             <groupId>org.noear</groupId>
-            <artifactId>solon</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.noear</groupId>
             <artifactId>solon.data</artifactId>
-            <version>3.0.1</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.noear</groupId>
             <artifactId>solon.web.staticfiles</artifactId>
-            <version>3.0.1-M3</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 
