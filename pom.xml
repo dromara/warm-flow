@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.dromara</groupId>
+    <groupId>org.dromara.warm</groupId>
     <artifactId>warm-flow</artifactId>
     <version>1.3.4</version>
     <packaging>pom</packaging>
@@ -136,101 +136,101 @@
             </dependency>
 
             <dependency>
-                <groupId>org.dromara</groupId>
+                <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-core</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.dromara</groupId>
+                <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-easy-query-core</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
             <dependency>
-                <groupId>org.dromara</groupId>
+                <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-easy-query-solon-plugin</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
             <dependency>
-                <groupId>org.dromara</groupId>
+                <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-easy-query-sb-starter</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.dromara</groupId>
+                <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-mybatis-core</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.dromara</groupId>
+                <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-mybatis-sb-starter</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.dromara</groupId>
+                <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-mybatis-sb3-starter</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.dromara</groupId>
+                <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-mybatis-solon-plugin</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.dromara</groupId>
+                <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-mybatis-plus-core</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.dromara</groupId>
+                <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-mybatis-plus-sb-starter</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.dromara</groupId>
+                <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-mybatis-plus-sb3-starter</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.dromara</groupId>
+                <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-mybatis-plus-solon-plugin</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.dromara</groupId>
+                <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-jpa-core</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.dromara</groupId>
+                <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-jpa-sb-starter</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.dromara</groupId>
+                <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-jpa-solon-plugin</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
 
 <!--            <dependency>-->
-<!--                <groupId>org.dromara</groupId>-->
+<!--                <groupId>org.dromara.warm</groupId>-->
 <!--                <artifactId>warm-flow-jpa-jakarta-core</artifactId>-->
 <!--                <version>${warm-flow}</version>-->
 <!--            </dependency>-->
 
 <!--            <dependency>-->
-<!--                <groupId>org.dromara</groupId>-->
+<!--                <groupId>org.dromara.warm</groupId>-->
 <!--                <artifactId>warm-flow-jpa-sb3-starter</artifactId>-->
 <!--                <version>${warm-flow}</version>-->
 <!--            </dependency>-->
@@ -266,62 +266,57 @@
             </dependency>
 
             <dependency>
-                <groupId>org.dromara</groupId>
+                <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-mybatis-flex-core</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
             <dependency>
-                <groupId>org.dromara</groupId>
+                <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-mybatis-flex-sb-starter</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
             <dependency>
-                <groupId>org.dromara</groupId>
+                <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-mybatis-flex-sb3-starter</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
             <dependency>
-                <groupId>org.dromara</groupId>
+                <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-mybatis-flex-solon-plugin</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
             <dependency>
-                <groupId>org.dromara</groupId>
-                <artifactId>warm-flow-plugin-spel</artifactId>
-                <version>${warm-flow}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.dromara</groupId>
+                <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-plugin-modes-sb</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
             <dependency>
-                <groupId>org.dromara</groupId>
+                <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-plugin-modes-solon</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
             <dependency>
-                <groupId>org.dromara</groupId>
+                <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-plugin-json</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
             <dependency>
-                <groupId>org.dromara</groupId>
+                <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-plugin-vue3-ui</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
             <dependency>
-                <groupId>org.dromara</groupId>
+                <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-plugin-ui-core</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
             <dependency>
-                <groupId>org.dromara</groupId>
+                <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-plugin-ui-sb-web</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
             <dependency>
-                <groupId>org.dromara</groupId>
+                <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-plugin-ui-solon-web</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
@@ -351,24 +346,25 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
                     </plugin>
+
                 </plugins>
             </build>
         </profile>
     </profiles>
 
-    <!-- 下面这个标签里的不能改 -->
-    <distributionManagement>
-        <repository>
-            <id>ossrh</id>
-            <name>Nexus Release Repository</name>
-            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2</url>
-        </repository>
-        <snapshotRepository>
-            <id>sonatype-nexus-snapshots</id>
-            <name>Nexus Snapshot Repository</name>
-            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
+<!--    &lt;!&ndash; 下面这个标签里的不能改 &ndash;&gt;-->
+<!--    <distributionManagement>-->
+<!--        <repository>-->
+<!--            <id>ossrh</id>-->
+<!--            <name>Nexus Release Repository</name>-->
+<!--            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2</url>-->
+<!--        </repository>-->
+<!--        <snapshotRepository>-->
+<!--            <id>sonatype-nexus-snapshots</id>-->
+<!--            <name>Nexus Snapshot Repository</name>-->
+<!--            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>-->
+<!--        </snapshotRepository>-->
+<!--    </distributionManagement>-->
 
     <build>
         <pluginManagement>
@@ -443,23 +439,39 @@
                         </execution>
                     </executions>
                 </plugin>
+<!--                <plugin>-->
+<!--                    <groupId>org.sonatype.plugins</groupId>-->
+<!--                    <artifactId>nexus-staging-maven-plugin</artifactId>-->
+<!--                    <version>1.6.8</version>-->
+<!--                    <extensions>true</extensions>-->
+<!--                    <configuration>-->
+<!--                        <serverId>ossrh</serverId>-->
+<!--                        <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>-->
+<!--                        <autoReleaseAfterClose>true</autoReleaseAfterClose>-->
+<!--                    </configuration>-->
+<!--                </plugin>-->
                 <plugin>
-                    <groupId>org.sonatype.plugins</groupId>
-                    <artifactId>nexus-staging-maven-plugin</artifactId>
-                    <version>1.6.8</version>
+                    <groupId>org.sonatype.central</groupId>
+                    <artifactId>central-publishing-maven-plugin</artifactId>
+                    <version>0.5.0</version>
                     <extensions>true</extensions>
                     <configuration>
-                        <serverId>ossrh</serverId>
-                        <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-                        <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        <!-- 这里的publishingServerId是在settings.xml中配置的server认证信息 -->
+                        <!-- 注意 Github Action 中的 server-id 也要与此保持一致 -->
+                        <publishingServerId>ossrh</publishingServerId>
+                        <autoPublish>true</autoPublish>
                     </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
+<!--            <plugin>-->
+<!--                <groupId>org.sonatype.plugins</groupId>-->
+<!--                <artifactId>nexus-staging-maven-plugin</artifactId>-->
+<!--            </plugin>-->
             <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
