@@ -52,4 +52,3 @@ export function handlerResult(query) {
     params: query
   })
 }
-

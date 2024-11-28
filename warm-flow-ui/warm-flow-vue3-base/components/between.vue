@@ -19,7 +19,7 @@
         <slot name="form-item-task-collaborativeWay" :model="form" field="collaborativeWay">
           <el-form-item label="协作方式">
             <el-radio-group v-model="form.collaborativeWay">
-              <el-radio label="1" v-if="form.collaborativeWay ==='1'">
+              <el-radio label="1" v-if="form.collaborativeWay ==='1' || showWays">
                 <span class="flex-hc">
                   或签
                   <el-tooltip class="box-item" effect="dark" content="只需一个人审批">
@@ -29,7 +29,7 @@
                   </el-tooltip>
                 </span>
               </el-radio>
-              <el-radio label="2" v-if="form.collaborativeWay ==='2'">
+              <el-radio label="2" v-if="form.collaborativeWay ==='2' || showWays">
                 <span class="flex-hc">
                   票签
                   <el-tooltip class="box-item" effect="dark" content="部分办理人审批，只支持选择用户">
@@ -39,7 +39,7 @@
                   </el-tooltip>
                 </span>
               </el-radio>
-              <el-radio label="3" v-if="form.collaborativeWay ==='3'">
+              <el-radio label="3" v-if="form.collaborativeWay ==='3' || showWays">
                 <span class="flex-hc">
                   会签
                   <el-tooltip class="box-item" effect="dark" content="所有办理都需要审批，只支持选择用户">
@@ -134,7 +134,7 @@
 </template>
 
 <script setup name="Between">
-import selectUser from "@/views/components/selectUser";
+import selectUser from "./selectUser";
 import { Delete } from '@element-plus/icons-vue'
 const { proxy } = getCurrentInstance();
 
@@ -149,6 +149,11 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
+  // 是否展示所有协作方式
+  showWays: {
+    type: Boolean,
+    default: false
+  }
 });
 
 const tabsValue = ref("1");

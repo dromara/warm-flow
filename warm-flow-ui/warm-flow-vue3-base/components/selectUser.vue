@@ -101,7 +101,7 @@
 </template>
 
 <script setup name="User">
-import { handlerResult, handlerType } from "@/api/flow/definition.js";
+import { handlerResult, handlerType } from "../api/flow/definition.js";
 
 const { proxy } = getCurrentInstance();
 

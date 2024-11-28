@@ -19,12 +19,12 @@
 </template>
 
 <script setup name="Definition">
-import start from './start.vue'
-import between from './between.vue'
+import start from '&/components/start.vue'
+import between from '&/components/between.vue'
 import serial from './serial.vue'
 import parallel from './parallel.vue'
 import end from './end.vue'
-import skip from './skip.vue'
+import skip from '&/components/skip.vue'
 
 const COMPONENT_LIST = {
   start,
@@ -115,10 +115,11 @@ watch(() => props.node, n => {
         conditionValue: conditionValue
       }
     } else {
-      let nodeRatio = n.properties.nodeRatio || "";
       if (!n.properties.collaborativeWay) {
+        let nodeRatio = n.properties.nodeRatio || "";
         n.properties.collaborativeWay = nodeRatio === "0.000" ? "1" : nodeRatio === "100.000" ? "3" : nodeRatio ? "2" : "1";
       }
+      if (n.properties.collaborativeWay === "2" && !n.properties.nodeRatio) n.properties.nodeRatio = "50";
       n.properties.formCustom = JSON.stringify(n.properties) === "{}" ? "N" : (n.properties.formCustom || "");
       let listenerTypes = n.properties.listenerType ? n.properties.listenerType.split(",") : [];
       let listenerPaths = n.properties.listenerPath ? n.properties.listenerPath.split("@@") : [];
@@ -160,7 +161,7 @@ watch(() => form.value.nodeName, (n) => {
 watch(() => form.value.collaborativeWay, (n) => {
   // 监听节点属性变化并更新
   props.lf.setProperties(objId.value, {
-    nodeRatio: n === "1" ? "0.000" : n === "3" ? "100.000" : ""
+    nodeRatio: n === "1" ? "0.000" : n === "3" ? "100.000" : "50"
   })
 });
 

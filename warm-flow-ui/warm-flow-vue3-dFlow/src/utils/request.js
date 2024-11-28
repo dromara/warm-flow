@@ -1,7 +1,8 @@
 import axios from 'axios'
-import { ElNotification , ElMessage } from 'element-plus'
+import { ElNotification, ElMessage } from 'element-plus'
 import { tansParams } from '@/utils/ruoyi'
 import cache from '@/plugins/cache'
+import { getToken, getTokenName } from "./auth.js";
 
 // 是否显示重新登录
 export let isRelogin = { show: false };
@@ -19,6 +20,18 @@ const service = axios.create({
 service.interceptors.request.use(config => {
   // 是否需要防止数据重复提交
   const isRepeatSubmit = (config.headers || {}).repeatSubmit === false
+  if (getTokenName()) {
+    let tokenName = getTokenName();
+    if (tokenName) {
+      let tokenNames = tokenName.split(",");
+      for (let i = 0; i < tokenNames.length; i++) {
+        if (getToken(tokenNames[i])) {
+          // 让每个请求携带自定义token 请根据实际情况自行修改
+          config.headers[tokenNames[i]] = getToken(tokenNames[i])
+        }
+      }
+    }
+  }
   // get请求映射params参数
   if (config.method === 'get' && config.params) {
     let url = config.url + '?' + tansParams(config.params);
@@ -57,27 +70,27 @@ service.interceptors.request.use(config => {
   }
   return config
 }, error => {
-    console.log(error)
-    Promise.reject(error)
+  console.log(error)
+  Promise.reject(error)
 })
 
 // 响应拦截器
 service.interceptors.response.use(res => {
-    // 未设置状态码则默认成功状态
-    const code = res.data.code || 200;
-    // 获取错误信息
-    const msg = res.data.msg
-    // 二进制数据则直接返回
-    if (res.request.responseType ===  'blob' || res.request.responseType ===  'arraybuffer') {
-      return res.data
-    }
-     if (code !== 200) {
-      ElNotification.error({ title: msg })
-      return Promise.reject(new Error(msg))
-    } else {
-      return  Promise.resolve(res.data)
-    }
-  },
+  // 未设置状态码则默认成功状态
+  const code = res.data.code || 200;
+  // 获取错误信息
+  const msg = res.data.msg
+  // 二进制数据则直接返回
+  if (res.request.responseType === 'blob' || res.request.responseType === 'arraybuffer') {
+    return res.data
+  }
+  if (code !== 200) {
+    ElNotification.error({ title: msg })
+    return Promise.reject(new Error(msg))
+  } else {
+    return Promise.resolve(res.data)
+  }
+},
   error => {
     console.log('err' + error)
     let { message } = error;
