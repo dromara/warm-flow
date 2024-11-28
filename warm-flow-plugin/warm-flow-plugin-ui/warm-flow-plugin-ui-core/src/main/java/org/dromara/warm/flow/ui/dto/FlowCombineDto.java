@@ -13,61 +13,58 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.dromara.warm.flow.core.dto;
+package org.dromara.warm.flow.ui.dto;
 
+import org.dromara.warm.flow.orm.entity.FlowDefinition;
+import org.dromara.warm.flow.orm.entity.FlowNode;
+import org.dromara.warm.flow.orm.entity.FlowSkip;
 
-import org.dromara.warm.flow.core.FlowFactory;
-import org.dromara.warm.flow.core.entity.Definition;
-import org.dromara.warm.flow.core.entity.Node;
-import org.dromara.warm.flow.core.entity.Skip;
-
-import java.util.ArrayList;
 import java.util.List;
 
-
 /**
- * 流程数据集合
+ * 流程设计器-流程定义数据传输对象
  *
  * @author warm
- * @since 2023/3/30 14:27
  */
-public class FlowCombine {
+public class FlowCombineDto {
+
     /**
-     * 所有的流程定义
+     * 流程定义
      */
-    private Definition definition = FlowFactory.newDef();
+    private FlowDefinition definition;
 
     /**
      * 所有的流程节点
      */
-    private List<Node> allNodes = new ArrayList<>();
+    private List<FlowNode> allNodes;
 
     /**
      * 所有的流程节点跳转关联
      */
-    private List<Skip> allSkips = new ArrayList<>();
+    private List<FlowSkip> allSkips;
 
-    public Definition getDefinition() {
+    public FlowDefinition getDefinition() {
         return definition;
     }
 
-    public void setDefinition(Definition definition) {
+    public void setDefinition(FlowDefinition definition) {
         this.definition = definition;
     }
 
-    public List<Node> getAllNodes() {
+    public List<FlowNode> getAllNodes() {
         return allNodes;
     }
 
-    public void setAllNodes(List<Node> allNodes) {
+    public void setAllNodes(List<FlowNode> allNodes) {
         this.allNodes = allNodes;
     }
 
-    public List<Skip> getAllSkips() {
+    public List<FlowSkip> getAllSkips() {
         return allSkips;
     }
 
-    public void setAllSkips(List<Skip> allSkips) {
+    public void setAllSkips(List<FlowSkip> allSkips) {
         this.allSkips = allSkips;
     }
+
 }

@@ -50,7 +50,7 @@ public class JsonConvertFastJson implements JsonConvert {
      * @return json字符串
      */
     @Override
-    public String mapToStr(Object variable) {
+    public String objToStr(Object variable) {
         if (ObjectUtil.isNotNull(variable)) {
             return JSON.toJSONString(variable);
         }

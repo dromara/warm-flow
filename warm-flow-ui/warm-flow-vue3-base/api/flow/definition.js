@@ -28,10 +28,10 @@ export function saveJson(data) {
   })
 }
 
-// 获取流程定义json字符串
-export function getJsonString(id) {
+// 获取流程定义
+export function queryDef(id) {
   return request({
-    url: urlPrefix + 'warm-flow/json-string/' + id,
+    url: urlPrefix + 'warm-flow/query-def/' + id,
     method: 'get'
   })
 }

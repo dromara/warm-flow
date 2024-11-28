@@ -147,25 +147,25 @@ export const xml2LogicFlowJson = (xml) => {
  * @param {*} json
  * @returns LogicFlow的数据
  */
-export const json2LogicFlowJson = (json) => {
+export const json2LogicFlowJson = (definition) => {
   const graphData = {
     nodes: [],
     edges: []
   }
-  if (!json.length) {
-    return graphData
-  }
-  const flowCombine = JSON.parse(json)
   // 解析definition属性
-  const definition = flowCombine.definition
   graphData.flowCode = definition.flowCode
   graphData.flowName = definition.flowName
   graphData.version = definition.version
   graphData.fromCustom = definition.fromCustom
   graphData.fromPath = definition.fromPath
   // 解析节点
-  const allSkips = flowCombine.allSkips
-  const allNodes = flowCombine.allNodes
+  const allSkips = definition.nodeList.reduce((acc, node) => {
+    if (node.skipList && Array.isArray(node.skipList)) {
+      acc.push(...node.skipList);
+    }
+    return acc;
+  }, [])
+  const allNodes = definition.nodeList;
   let node = null
   let lfNode = {}
   let coordinate = null
@@ -477,6 +477,7 @@ export const logicFlowJsonToFlowJson = (data) => {
     return coordinate
   }
   // 流程定义
+  flowCombine.definition.id = data.id
   flowCombine.definition.flowCode = data.flowCode
   flowCombine.definition.flowName = data.flowName
   flowCombine.definition.version = data.version

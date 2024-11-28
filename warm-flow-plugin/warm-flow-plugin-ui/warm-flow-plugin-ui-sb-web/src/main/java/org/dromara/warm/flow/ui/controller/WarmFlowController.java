@@ -17,10 +17,16 @@ package org.dromara.warm.flow.ui.controller;
 
 import org.dromara.warm.flow.core.FlowFactory;
 import org.dromara.warm.flow.core.dto.ApiResult;
+import org.dromara.warm.flow.core.dto.FlowCombine;
+import org.dromara.warm.flow.core.entity.Definition;
+import org.dromara.warm.flow.core.entity.Node;
+import org.dromara.warm.flow.core.entity.Skip;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.utils.ExceptionUtil;
+import org.dromara.warm.flow.core.utils.StreamUtils;
 import org.dromara.warm.flow.ui.dto.DefDto;
+import org.dromara.warm.flow.ui.dto.FlowCombineDto;
 import org.dromara.warm.flow.ui.dto.HandlerQuery;
 import org.dromara.warm.flow.ui.service.HandlerSelectService;
 import org.dromara.warm.flow.ui.vo.HandlerSelectVo;
@@ -74,7 +80,7 @@ public class WarmFlowController {
     /**
      * 保存流程json字符串
      *
-     * @param defDto 流程定义dto
+     * @param flowCombine 流程数据集合
      * @return ApiResult<Void>
      * @throws Exception 异常
      * @author xiarg
@@ -82,23 +88,27 @@ public class WarmFlowController {
      */
     @PostMapping("/save-json")
     @Transactional(rollbackFor = Exception.class)
-    public ApiResult<Void> saveJson(@RequestBody DefDto defDto) throws Exception {
-        FlowFactory.defService().saveJson(defDto.getId(), defDto.getJsonString());
+    public ApiResult<Void> saveJson(@RequestBody FlowCombineDto flowCombine) throws Exception {
+        FlowCombine combine = new FlowCombine();
+        combine.setDefinition(flowCombine.getDefinition());
+        combine.setAllNodes(StreamUtils.toList(flowCombine.getAllNodes(), Node::copy));
+        combine.setAllSkips(StreamUtils.toList(flowCombine.getAllSkips(), Skip::copy));
+        FlowFactory.defService().saveJson(combine);
         return ApiResult.ok();
     }
 
     /**
-     * 获取流程xml字符串
+     * 获取流程定义全部数据(包含节点和跳转)
      *
      * @param id 流程定义id
-     * @return ApiResult<String>
+     * @return ApiResult<Definition>
      * @author xiarg
      * @since 2024/10/29 16:31
      */
-    @GetMapping("/json-string/{id}")
-    public ApiResult<String> jsonString(@PathVariable("id") Long id) {
+    @GetMapping("/query-def/{id}")
+    public ApiResult<Definition> jsonString(@PathVariable("id") Long id) {
         try {
-            return ApiResult.ok(FlowFactory.defService().jsonString(id));
+            return ApiResult.ok(FlowFactory.defService().queryDef(id));
         } catch (Exception e) {
             log.error("获取流程json字符串", e);
             throw new FlowException(ExceptionUtil.handleMsg("获取流程json字符串失败", e));

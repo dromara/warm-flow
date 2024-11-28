@@ -36,5 +36,5 @@ public interface JsonConvert {
      * @param variable object
      * @return json字符串
      */
-    public String mapToStr(Object variable);
+    public String objToStr(Object variable);
 }

@@ -17,41 +17,4 @@
         <module>warm-flow-plugin-modes-solon</module>
     </modules>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.dromara.warm</groupId>
-            <artifactId>warm-flow-mybatis-core</artifactId>
-            <optional>true</optional>
-        </dependency>
-
-        <dependency>
-            <groupId>org.dromara.warm</groupId>
-            <artifactId>warm-flow-mybatis-plus-core</artifactId>
-            <optional>true</optional>
-        </dependency>
-
-        <dependency>
-            <groupId>org.dromara.warm</groupId>
-            <artifactId>warm-flow-mybatis-flex-core</artifactId>
-            <optional>true</optional>
-        </dependency>
-
-        <dependency>
-            <groupId>org.dromara.warm</groupId>
-            <artifactId>warm-flow-easy-query-core</artifactId>
-            <optional>true</optional>
-        </dependency>
-
-        <dependency>
-            <groupId>org.dromara.warm</groupId>
-            <artifactId>warm-flow-jpa-core</artifactId>
-            <optional>true</optional>
-        </dependency>
-
-        <!--        <dependency>-->
-        <!--            <groupId>org.dromara.warm</groupId>-->
-        <!--            <artifactId>warm-flow-jpa-jakarta-core</artifactId>-->
-        <!--            <optional>true</optional>-->
-        <!--        </dependency>-->
-    </dependencies>
 </project>

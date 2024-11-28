@@ -188,7 +188,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
                 .setFlowStatus(ObjectUtil.isNotNull(flowParams.getFlowStatus()) ? flowParams.getFlowStatus()
                         : FlowStatus.TOBESUBMIT.getKey())
                 .setActivityStatus(ActivityStatus.ACTIVITY.getKey())
-                .setVariable(FlowFactory.jsonConvert.mapToStr(flowParams.getVariable()))
+                .setVariable(FlowFactory.jsonConvert.objToStr(flowParams.getVariable()))
                 .setCreateTime(now)
                 .setUpdateTime(now)
                 .setCreateBy(flowParams.getHandler())

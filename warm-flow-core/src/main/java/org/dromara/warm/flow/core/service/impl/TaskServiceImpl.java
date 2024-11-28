@@ -398,7 +398,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             String variableStr = instance.getVariable();
             Map<String, Object> deserialize = FlowFactory.jsonConvert.strToMap(variableStr);
             deserialize.putAll(variable);
-            instance.setVariable(FlowFactory.jsonConvert.mapToStr(deserialize));
+            instance.setVariable(FlowFactory.jsonConvert.objToStr(deserialize));
         }
     }
 

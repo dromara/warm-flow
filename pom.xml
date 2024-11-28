@@ -278,54 +278,70 @@
 
             <dependency>
                 <groupId>org.dromara.warm</groupId>
+                <artifactId>warm-flow-orm-pom</artifactId>
+                <version>${warm-flow}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-mybatis-flex-core</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-mybatis-flex-sb-starter</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-mybatis-flex-sb3-starter</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-mybatis-flex-solon-plugin</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-plugin-modes-sb</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-plugin-modes-solon</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-plugin-json</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-plugin-vue3-ui</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-plugin-ui-core</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-plugin-ui-sb-web</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-plugin-ui-solon-web</artifactId>

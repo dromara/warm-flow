@@ -19,6 +19,12 @@
 
         <dependency>
             <groupId>org.dromara.warm</groupId>
+            <artifactId>warm-flow-orm-pom</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>org.dromara.warm</groupId>
             <artifactId>warm-flow-plugin-json</artifactId>
         </dependency>
 
