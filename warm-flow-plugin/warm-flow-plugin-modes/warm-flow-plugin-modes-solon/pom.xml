@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.dromara.warm</groupId>
         <artifactId>warm-flow-plugin-modes</artifactId>
-        <version>1.3.4</version>
+        <version>1.3.5-m1</version>
     </parent>
 
     <artifactId>warm-flow-plugin-modes-solon</artifactId>
@@ -20,36 +20,6 @@
         <dependency>
             <groupId>org.noear</groupId>
             <artifactId>solon</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.dromara.warm</groupId>
-            <artifactId>warm-flow-mybatis-core</artifactId>
-            <optional>true</optional>
-        </dependency>
-
-        <dependency>
-            <groupId>org.dromara.warm</groupId>
-            <artifactId>warm-flow-mybatis-plus-core</artifactId>
-            <optional>true</optional>
-        </dependency>
-
-        <dependency>
-            <groupId>org.dromara.warm</groupId>
-            <artifactId>warm-flow-mybatis-flex-core</artifactId>
-            <optional>true</optional>
-        </dependency>
-
-        <dependency>
-            <groupId>org.dromara.warm</groupId>
-            <artifactId>warm-flow-easy-query-core</artifactId>
-            <optional>true</optional>
-        </dependency>
-
-        <dependency>
-            <groupId>org.dromara.warm</groupId>
-            <artifactId>warm-flow-jpa-core</artifactId>
-            <optional>true</optional>
         </dependency>
 
         <dependency>
