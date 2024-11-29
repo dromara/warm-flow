@@ -24,7 +24,7 @@ import PropertySetting from '@/components/WarmFlow/PropertySetting/index.vue'
 import {saveXml, getXmlString, queryDef, saveJson} from "&/api/flow/definition";
 import {
   json2LogicFlowJson,
-  logicFlowJsonToFlowJson,
+  logicFlowJsonToWarmFlow,
   logicFlowJsonToFlowXml,
   xml2LogicFlowJson
 } from "@/components/WarmFlow/js/tool";
@@ -182,7 +182,7 @@ function initControl() {
         value.value['nodes'] = graphData['nodes']
         value.value['edges'] = graphData['edges']
         value.value['id'] = definitionId.value
-        let jsonString = logicFlowJsonToFlowJson(value.value);
+        let jsonString = logicFlowJsonToWarmFlow(value.value);
         console.log(JSON.stringify(jsonString))
         saveJson(jsonString).then(response => {
           proxy.$modal.msgSuccess("保存成功");

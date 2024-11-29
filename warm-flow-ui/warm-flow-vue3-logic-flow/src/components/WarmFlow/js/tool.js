@@ -106,7 +106,6 @@ export const xml2LogicFlowJson = (xml) => {
         edge.targetNodeId = skipEle.textContent
         edge.text = {
           value: skipEle.getAttribute('skipName')
-
         }
         edge.properties.skipCondition = skipEle.getAttribute('skipCondition')
         edge.properties.skipName = skipEle.getAttribute('skipName')
@@ -166,21 +165,18 @@ export const json2LogicFlowJson = (definition) => {
     return acc;
   }, [])
   const allNodes = definition.nodeList;
-  let node = null
-  let lfNode = {}
-  let coordinate = null
   // 解析节点
   if (allNodes.length) {
     for (var i = 0, len = allNodes.length; i < len; i++) {
-      node = allNodes[i]
-      lfNode = {
+      let node = allNodes[i]
+      let lfNode = {
         text:{},
         properties: {}
       }
       // 处理节点
       lfNode.type = NODE_TYPE_MAP[node.nodeType]
       lfNode.id = node.nodeCode
-      coordinate = node.coordinate
+      let coordinate = node.coordinate
       if (coordinate) {
         const attr = coordinate.split('|')
         const nodeXy = attr[0].split(',')
@@ -202,6 +198,8 @@ export const json2LogicFlowJson = (definition) => {
       lfNode.properties.formPath = node.formPath
       graphData.nodes.push(lfNode)
     }
+  }
+  if (allSkips.length) {
     // 处理边
     let skipEle = null
     let edge = {}
@@ -245,6 +243,7 @@ export const json2LogicFlowJson = (definition) => {
       graphData.edges.push(edge)
     }
   }
+
   return graphData
 }
 
@@ -427,13 +426,12 @@ export const logicFlowJsonToFlowXml = (data) => {
  * @param {*} data(...definitionInfo,nodes,edges)
  * @returns
  */
-export const logicFlowJsonToFlowJson = (data) => {
+export const logicFlowJsonToWarmFlow = (data) => {
   // 先构建成流程对象
-  const flowCombine = {
-    definition : {},
-    allNodes : [],
-    allSkips : []
+  const definition = {
+    nodeList : []
   }
+
   /**
    * 根据节点的类型值，获取key
    * @param {*} mapValue 节点类型映射
@@ -452,7 +450,7 @@ export const logicFlowJsonToFlowJson = (data) => {
    * @returns
    */
   const getNodeType = (nodeCode) => {
-    for (const node of flowCombine.allNodes) {
+    for (const node of definition.nodeList) {
       if (nodeCode === node.nodeCode) {
         return node.nodeType
       }
@@ -477,12 +475,12 @@ export const logicFlowJsonToFlowJson = (data) => {
     return coordinate
   }
   // 流程定义
-  flowCombine.definition.id = data.id
-  flowCombine.definition.flowCode = data.flowCode
-  flowCombine.definition.flowName = data.flowName
-  flowCombine.definition.version = data.version
-  flowCombine.definition.fromCustom = data.fromCustom
-  flowCombine.definition.fromPath = data.fromPath
+  definition.id = data.id
+  definition.flowCode = data.flowCode
+  definition.flowName = data.flowName
+  definition.version = data.version
+  definition.fromCustom = data.fromCustom
+  definition.fromPath = data.fromPath
   // 流程节点
   data.nodes.forEach(anyNode => {
     let node = {}
@@ -502,21 +500,23 @@ export const logicFlowJsonToFlowJson = (data) => {
     }
     node.handlerType = anyNode.properties.handlerType
     node.handlerPath = anyNode.properties.handlerPath
-    node.version = flowCombine.definition.version
-    flowCombine.allNodes.push(node)
+    node.version = definition.version
+    node.skipList = []
+    data.edges.forEach(anyEdge => {
+      if (anyEdge.sourceNodeId === anyNode.id) {
+        let skip = {}
+        skip.skipType = anyEdge.properties.skipType
+        skip.skipCondition = anyEdge.properties.skipCondition
+        skip.skipName = anyEdge?.text?.value || anyEdge.properties.skipName
+        skip.nowNodeCode = anyEdge.sourceNodeId
+        skip.nowNodeType = getNodeType(skip.nowNodeCode)
+        skip.nextNodeCode = anyEdge.targetNodeId
+        skip.nextNodeType = getNodeType(skip.nextNodeCode)
+        skip.coordinate = getCoordinate(anyEdge)
+        node.skipList.push(skip)
+      }
+    })
+    definition.nodeList.push(node)
   })
-  // 流程跳转
-  data.edges.forEach(anyEdge => {
-    let skip = {}
-    skip.skipType = anyEdge.properties.skipType
-    skip.skipCondition = anyEdge.properties.skipCondition
-    skip.skipName = anyEdge?.text?.value || anyEdge.properties.skipName
-    skip.nowNodeCode = anyEdge.sourceNodeId
-    skip.nowNodeType = getNodeType(skip.nowNodeCode)
-    skip.nextNodeCode = anyEdge.targetNodeId
-    skip.nextNodeType = getNodeType(skip.nextNodeCode)
-    skip.coordinate = getCoordinate(anyEdge)
-    flowCombine.allSkips.push(skip)
-  })
-  return JSON.stringify(flowCombine)
+  return JSON.stringify(definition)
 }

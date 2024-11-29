@@ -24,11 +24,10 @@ import org.dromara.warm.flow.core.entity.Skip;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.utils.ExceptionUtil;
-import org.dromara.warm.flow.core.utils.StreamUtils;
 import org.dromara.warm.flow.ui.dto.DefDto;
-import org.dromara.warm.flow.ui.dto.FlowCombineDto;
 import org.dromara.warm.flow.ui.dto.HandlerQuery;
 import org.dromara.warm.flow.ui.service.HandlerSelectService;
+import org.dromara.warm.flow.ui.vo.DefVo;
 import org.dromara.warm.flow.ui.vo.HandlerSelectVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +36,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * 设计器Controller 可选择是否放行，放行可与业务系统共享权限，主要是用来访问业务系统数据
@@ -80,7 +82,7 @@ public class WarmFlowController {
     /**
      * 保存流程json字符串
      *
-     * @param flowCombine 流程数据集合
+     * @param defVo 流程数据集合
      * @return ApiResult<Void>
      * @throws Exception 异常
      * @author xiarg
@@ -88,11 +90,21 @@ public class WarmFlowController {
      */
     @PostMapping("/save-json")
     @Transactional(rollbackFor = Exception.class)
-    public ApiResult<Void> saveJson(@RequestBody FlowCombineDto flowCombine) throws Exception {
+    public ApiResult<Void> saveJson(@RequestBody DefVo defVo) throws Exception {
+        Definition definition = new DefVo().copyDef(defVo);
         FlowCombine combine = new FlowCombine();
-        combine.setDefinition(flowCombine.getDefinition());
-        combine.setAllNodes(StreamUtils.toList(flowCombine.getAllNodes(), Node::copy));
-        combine.setAllSkips(StreamUtils.toList(flowCombine.getAllSkips(), Skip::copy));
+        combine.setDefinition(definition);
+        combine.setAllNodes(definition.getNodeList());
+        List<Skip> skipList = Optional.of(definition)
+                .map(Definition::getNodeList)
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(Node::getSkipList)
+                .filter(Objects::nonNull)
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
+
+        combine.setAllSkips(skipList);
         FlowFactory.defService().saveJson(combine);
         return ApiResult.ok();
     }
@@ -106,9 +118,10 @@ public class WarmFlowController {
      * @since 2024/10/29 16:31
      */
     @GetMapping("/query-def/{id}")
-    public ApiResult<Definition> jsonString(@PathVariable("id") Long id) {
+    public ApiResult<DefVo> queryDef(@PathVariable("id") Long id) {
         try {
-            return ApiResult.ok(FlowFactory.defService().queryDef(id));
+            Definition definition = FlowFactory.defService().getAllDataDefinition(id);
+            return ApiResult.ok(new DefVo().copyDef(definition));
         } catch (Exception e) {
             log.error("获取流程json字符串", e);
             throw new FlowException(ExceptionUtil.handleMsg("获取流程json字符串失败", e));

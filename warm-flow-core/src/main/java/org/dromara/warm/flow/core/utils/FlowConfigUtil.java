@@ -143,7 +143,6 @@ public class FlowConfigUtil {
         return node;
     }
 
-    @SuppressWarnings("unchecked")
     public static Document createDocument(Definition definition) {
         // 创建document对象
         Document document = DocumentHelper.createDocument();
@@ -201,6 +200,63 @@ public class FlowConfigUtil {
         }
         return document;
     }
+    public static Definition copyDef(Definition definition) {
+        Definition def = FlowFactory.newDef()
+                .setFlowCode(definition.getFlowCode())
+                .setFlowName(definition.getFlowName())
+                .setVersion(definition.getVersion())
+                .setCategory(definition.getCategory())
+                .setFormCustom(definition.getFormCustom())
+                .setFormPath(definition.getFormPath())
+                .setListenerType(definition.getListenerType())
+                .setListenerPath(definition.getListenerPath())
+                .setExt(definition.getExt());
+
+        List<Node> nodeList = new ArrayList<>();
+        def.setNodeList(nodeList);
+        for (Node node : definition.getNodeList()) {
+            // 向节点中添加子节点
+            Node node1 = FlowFactory.newNode()
+                    .setNodeType(node.getNodeType())
+                    .setNodeCode(node.getNodeCode())
+                    .setNodeName(node.getNodeName())
+                    .setPermissionFlag(node.getPermissionFlag())
+                    .setNodeRatio(node.getNodeRatio())
+                    .setCoordinate(node.getCoordinate())
+                    .setSkipAnyNode(node.getSkipAnyNode())
+                    .setListenerType(node.getListenerType())
+                    .setListenerPath(node.getListenerPath())
+                    .setHandlerType(node.getHandlerType())
+                    .setHandlerPath(node.getHandlerPath())
+                    .setFormCustom(node.getFormCustom())
+                    .setFormPath(node.getFormPath());
+            nodeList.add(node1);
+
+            List<Skip> skipList = new ArrayList<>();
+            node1.setSkipList(skipList);
+
+            if (CollUtil.isNotEmpty(node.getSkipList())) {
+                for (Skip skip : node.getSkipList()) {
+                    Skip skip1 = FlowFactory.newSkip();
+                    skip1.setCoordinate(skip.getCoordinate());
+                    if (StringUtils.isNotEmpty(skip.getSkipType())) {
+                        skip1.setSkipType(skip.getSkipType());
+                    }
+                    if (StringUtils.isNotEmpty(skip.getSkipName())) {
+                        skip1.setSkipName(skip.getSkipName());
+                    }
+                    if (StringUtils.isNotEmpty(skip.getSkipCondition())) {
+                        skip1.setSkipCondition(skip.getSkipCondition());
+                    }
+                    skip1.setNextNodeCode(skip.getNextNodeCode());
+                    skipList.add(skip1);
+                }
+            }
+
+        }
+        return def;
+    }
+
 
     private static FlowCombine structureFlow(Definition definition) {
         // 获取流程

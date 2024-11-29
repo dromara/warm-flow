@@ -170,22 +170,19 @@ public interface DefService extends IWarmService<Definition> {
     boolean unActive(Long id);
 
     /**
-     * 传入流程定义id、流程定义json字符串，保存流程定义数据
+     * 获取流程定义全部数据(包含节点和跳转)
+     * @param id 流程定义id
+     * @return Definition
+     */
+    Definition getAllDataDefinition(Long id);
+
+    /**
+     * 获取流程定义全部数据(包含节点和跳转)，保存流程定义数据
      *
      * @param flowCombine 流程数据集合
      * @author xiarg
      * @since 2024/10/29 16:30
      */
     void saveJson(FlowCombine flowCombine) throws Exception;
-
-    /**
-     * 获取流程定义全部数据(包含节点和跳转)
-     *
-     * @param defId 流程定义id
-     * @return Definition
-     * @author xiarg
-     * @since 2024/10/29 16:31
-     */
-    Definition queryDef(Long defId);
 
 }

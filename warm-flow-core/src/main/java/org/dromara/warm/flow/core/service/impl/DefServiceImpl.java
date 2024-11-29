@@ -335,6 +335,29 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         return flowChartChain.getFlowChartList();
     }
 
+    @Override
+    public Definition getAllDataDefinition(Long id) {
+        Definition definition = getDao().selectById(id);
+        List<Node> nodeList = FlowFactory.nodeService().list(FlowFactory.newNode().setDefinitionId(id));
+        definition.setNodeList(nodeList);
+        List<Skip> skips = FlowFactory.skipService().list(FlowFactory.newSkip().setDefinitionId(id));
+        Map<String, List<Skip>> flowSkipMap = skips.stream()
+                .collect(Collectors.groupingBy(Skip::getNowNodeCode));
+        nodeList.forEach(flowNode -> flowNode.setSkipList(flowSkipMap.get(flowNode.getNodeCode())));
+        return definition;
+    }
+
+    @Override
+    public void saveJson(FlowCombine flowCombine) {
+        if (ObjectUtil.isNull(flowCombine)) {
+            return;
+        }
+        // 校验流程定义合法性
+        checkFlowLegal(flowCombine);
+        // 保存流程节点和跳转
+        saveNodeAndSkip(flowCombine.getDefinition().getId(), flowCombine);
+    }
+
     /**
      * DefService 根据流程实例ID获取流程图的图片流(渲染颜色)
      * @param instanceId 实例id
@@ -706,17 +729,6 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         return color;
     }
 
-    public Definition getAllDataDefinition(Long id) {
-        Definition definition = getDao().selectById(id);
-        List<Node> nodeList = FlowFactory.nodeService().list(FlowFactory.newNode().setDefinitionId(id));
-        definition.setNodeList(nodeList);
-        List<Skip> skips = FlowFactory.skipService().list(FlowFactory.newSkip().setDefinitionId(id));
-        Map<String, List<Skip>> flowSkipMap = skips.stream()
-                .collect(Collectors.groupingBy(Skip::getNowNodeCode));
-        nodeList.forEach(flowNode -> flowNode.setSkipList(flowSkipMap.get(flowNode.getNodeCode())));
-        return definition;
-    }
-
     /**
      * 每次只做新增操作,保证新增的flowCode+version是唯一的
      *
@@ -769,17 +781,6 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         return version;
     }
 
-    @Override
-    public void saveJson(FlowCombine flowCombine) {
-        if (ObjectUtil.isNull(flowCombine)) {
-            return;
-        }
-        // 校验流程定义合法性
-        checkFlowLegal(flowCombine);
-        // 保存流程节点和跳转
-        saveNodeAndSkip(flowCombine.getDefinition().getId(), flowCombine);
-    }
-
     private void checkFlowLegal(FlowCombine flowCombine) {
         Definition definition = flowCombine.getDefinition();
         String flowName = definition.getFlowName();
@@ -830,11 +831,6 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         // 保存节点，流程连线，权利人
         FlowFactory.nodeService().saveBatch(allNodes);
         FlowFactory.skipService().saveBatch(allSkips);
-    }
-
-    @Override
-    public Definition queryDef(Long defId) {
-        return getAllDataDefinition(defId);
     }
 
 }
