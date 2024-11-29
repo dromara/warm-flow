@@ -13,15 +13,13 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.dromara.warm.flow.ui.vo;
+package org.dromara.warm.flow.core.vo;
 
+import org.dromara.warm.flow.core.FlowFactory;
 import org.dromara.warm.flow.core.entity.Definition;
 import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.entity.Skip;
 import org.dromara.warm.flow.core.utils.CollUtil;
-import org.dromara.warm.flow.orm.entity.FlowDefinition;
-import org.dromara.warm.flow.orm.entity.FlowNode;
-import org.dromara.warm.flow.orm.entity.FlowSkip;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -237,7 +235,7 @@ public class DefVo {
     }
 
     public Definition copyDef(DefVo defVo) {
-        Definition definition = new FlowDefinition()
+        Definition definition = FlowFactory.newDef()
                 .setId(defVo.getId())
                 .setFlowCode(defVo.getFlowCode())
                 .setFlowName(defVo.getFlowName())
@@ -253,7 +251,7 @@ public class DefVo {
         definition.setNodeList(nodeList);
         for (NodeVo nodeVo : defVo.getNodeList()) {
             // 向节点中添加子节点
-            Node node = new FlowNode()
+            Node node = FlowFactory.newNode()
                     .setNodeType(nodeVo.getNodeType())
                     .setNodeCode(nodeVo.getNodeCode())
                     .setNodeName(nodeVo.getNodeName())
@@ -274,7 +272,7 @@ public class DefVo {
 
             if (CollUtil.isNotEmpty(nodeVo.getSkipList())) {
                 for (SkipVo skipVo : nodeVo.getSkipList()) {
-                    skipList.add(new FlowSkip()
+                    skipList.add(FlowFactory.newSkip()
                             .setCoordinate(skipVo.getCoordinate())
                             .setSkipType(skipVo.getSkipType())
                             .setSkipName(skipVo.getSkipName())

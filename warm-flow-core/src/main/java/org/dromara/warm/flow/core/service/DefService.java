@@ -20,6 +20,7 @@ import org.dromara.warm.flow.core.dto.FlowCombine;
 import org.dromara.warm.flow.core.entity.Definition;
 import org.dromara.warm.flow.core.orm.service.IWarmService;
 import org.dom4j.Document;
+import org.dromara.warm.flow.core.vo.DefVo;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -175,6 +176,13 @@ public interface DefService extends IWarmService<Definition> {
      * @return Definition
      */
     Definition getAllDataDefinition(Long id);
+
+    /**
+     * 查询流程设计所需的数据，比如流程图渲染，导出流程定义
+     * @param id 流程定义id
+     * @return DefVo
+     */
+    DefVo queryDesign(Long id);
 
     /**
      * 获取流程定义全部数据(包含节点和跳转)，保存流程定义数据

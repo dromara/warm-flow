@@ -27,7 +27,7 @@ import org.dromara.warm.flow.core.utils.ExceptionUtil;
 import org.dromara.warm.flow.ui.dto.DefDto;
 import org.dromara.warm.flow.ui.dto.HandlerQuery;
 import org.dromara.warm.flow.ui.service.HandlerSelectService;
-import org.dromara.warm.flow.ui.vo.DefVo;
+import org.dromara.warm.flow.core.vo.DefVo;
 import org.dromara.warm.flow.ui.vo.HandlerSelectVo;
 import org.noear.solon.annotation.*;
 import org.noear.solon.data.annotation.Tran;
@@ -124,8 +124,7 @@ public class WarmFlowController {
     @Mapping("/query-def/{id}")
     public ApiResult<DefVo> queryDef(Long id) {
         try {
-            Definition definition = FlowFactory.defService().getAllDataDefinition(id);
-            return ApiResult.ok(new DefVo().copyDef(definition));
+            return ApiResult.ok(FlowFactory.defService().queryDesign(id));
         } catch (Exception e) {
             log.error("获取流程json字符串", e);
             throw new FlowException(ExceptionUtil.handleMsg("获取流程json字符串失败", e));

@@ -31,6 +31,7 @@ import org.dromara.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import org.dromara.warm.flow.core.service.DefService;
 import org.dromara.warm.flow.core.utils.Base64;
 import org.dromara.warm.flow.core.utils.*;
+import org.dromara.warm.flow.core.vo.DefVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -345,6 +346,11 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                 .collect(Collectors.groupingBy(Skip::getNowNodeCode));
         nodeList.forEach(flowNode -> flowNode.setSkipList(flowSkipMap.get(flowNode.getNodeCode())));
         return definition;
+    }
+
+    @Override
+    public DefVo queryDesign(Long id) {
+        return new DefVo().copyDef(getAllDataDefinition(id));
     }
 
     @Override

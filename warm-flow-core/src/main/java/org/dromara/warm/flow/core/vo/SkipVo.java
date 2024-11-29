@@ -13,7 +13,7 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.dromara.warm.flow.ui.vo;
+package org.dromara.warm.flow.core.vo;
 
 /**
  * 节点跳转关联对象Vo
