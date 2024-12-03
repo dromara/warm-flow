@@ -4,20 +4,21 @@
       <el-tab-pane label="基础设置" name="1"></el-tab-pane>
       <el-tab-pane label="监听器" name="2"></el-tab-pane>
     </el-tabs>
-    <el-form ref="formRef" class="betweenForm" :model="form" label-width="135px" size="small" :rules="rules" :disabled="disabled">
+    <el-form ref="formRef" class="betweenForm" :model="form" label-width="100px" size="small" :rules="rules"
+             :disabled="disabled" label-position="left">
       <template v-if="tabsValue === '1'">
         <slot name="form-item-task-nodeCode" :model="form" field="nodeCode">
-          <el-form-item label="节点编码">
+          <el-form-item label="节点编码：">
             <el-input v-model="form.nodeCode" :disabled="disabled"></el-input>
           </el-form-item>
         </slot>
         <slot name="form-item-task-nodeName" :model="form" field="nodeName">
-          <el-form-item label="节点名称">
+          <el-form-item label="节点名称：">
             <el-input v-model="form.nodeName" :disabled="disabled"></el-input>
           </el-form-item>
         </slot>
         <slot name="form-item-task-collaborativeWay" :model="form" field="collaborativeWay">
-          <el-form-item label="协作方式">
+          <el-form-item label="协作方式：">
             <el-radio-group v-model="form.collaborativeWay">
               <el-radio label="1" v-if="form.collaborativeWay ==='1' || showWays">
                 <span class="flex-hc">
@@ -53,14 +54,23 @@
           </el-form-item>
         </slot>
         <slot name="form-item-task-nodeRatio" :model="form" field="nodeRatio" v-if="form.collaborativeWay === '2'">
-          <el-form-item label="票签占比" prop="nodeRatio">
+          <el-form-item label="票签占比：" prop="nodeRatio">
             <el-input v-model="form.nodeRatio" type="number" placeholder="请输入"></el-input>
             <div class="placeholder">票签比例范围：(0-100)的值</div>
           </el-form-item>
         </slot>
         <slot name="form-item-task-permissionFlag" :model="form" field="permissionFlag">
-          <el-form-item label="办理人输入" class="permissionItem">
+          <el-form-item label="办理人输入：" class="permissionItem">
             <div v-for="(tag, index) in form.permissionFlag" :key="index" class="inputGroup">
+              <el-select v-if="oneDictList" v-model="form.permissionFlag[index]" placeholder="请选择">
+                <el-option
+                    v-for="dict in oneDictList"
+                    :key="dict.value"
+                    :label="dict.label"
+                    :value="parseInt(dict.value)"
+                ></el-option>
+              </el-select>
+
               <el-input v-model="form.permissionFlag[index]" style="width: 200px;"></el-input>
               <Close class="Icon" v-if="form.permissionFlag.length !== 1 && !disabled" @click="delPermission(index)" />
               <Plus class="Icon" v-if="(index === form.permissionFlag.length - 1) && !disabled" @click="addPermission" />
@@ -69,7 +79,7 @@
           </el-form-item>
         </slot>
         <slot name="form-item-task-skipAnyNode" :model="form" field="skipAnyNode">
-          <el-form-item label="是否可以跳转任意节点">
+          <el-form-item label="任意跳转：">
             <el-radio-group v-model="form.skipAnyNode">
               <el-radio label="N">否</el-radio>
               <el-radio label="Y">是</el-radio>
@@ -77,7 +87,7 @@
           </el-form-item>
         </slot>
         <slot name="form-item-task-formCustom" :model="form" field="formCustom">
-          <el-form-item label="审批表单是否自定义" prop="formCustom">
+          <el-form-item label="审批表单：" prop="formCustom">
             <el-select v-model="form.formCustom">
               <el-option label="使用流程表单" value="P"></el-option>
               <el-option label="节点表单路径" value="N"></el-option>
@@ -86,12 +96,12 @@
           </el-form-item>
         </slot>
         <slot name="form-item-task-formPath" :model="form" field="formPath" v-if="form.formCustom === 'N'">
-          <el-form-item label="审批表单路径">
+          <el-form-item label="审批表单路径：">
             <el-input v-model="form.formPath"></el-input>
           </el-form-item>
         </slot>
         <slot name="form-item-task-formPath" :model="form" field="formPath" v-else-if="form.formCustom === 'Y'">
-          <el-form-item label="审批流程表单">
+          <el-form-item label="审批流程表单：">
             <el-select v-model="form.formPath">
               <el-option v-for="item in definitionList" :key="id" :label="`${item.formName} ${item.version}`" :value="item.id"></el-option>
             </el-select>
@@ -143,7 +153,7 @@
 <script setup name="Between">
 import selectUser from "./selectUser";
 import { Delete } from '@element-plus/icons-vue'
-import { publishedList } from "../api/flow/definition";
+import { publishedList, handlerDict } from "../api/flow/definition";
 const { proxy } = getCurrentInstance();
 
 const props = defineProps({
@@ -176,6 +186,7 @@ const rules = reactive({
 });
 const userVisible = ref(false);
 const definitionList = ref([]); // 流程表单列表
+const oneDictList = ref(); // 办理人选项
 const emit = defineEmits(["change"]);
 
 watch(() => form, n => {
@@ -211,7 +222,18 @@ function getDefinition() {
   publishedList({ pageNum: 1, pageSize: 9999 }).then(response => {
     definitionList.value = response.data.rows;
   });
-};
+}
+
+/** 查询表单定义列表 */
+function getHandlerDict() {
+  handlerDict().then(response => {
+    console.log('handlerDict', response)
+    if (response.code === 200 && response.data && response.data.oneDictList) {
+      console.log('handlerDict', response)
+      oneDictList.value = response.data.oneDictList;
+    }
+  });
+}
 
 // 打开用户选择弹窗
 function initUser() {
@@ -237,6 +259,7 @@ function handleDeleteRow(index) {
 
 getPermissionFlag();
 getDefinition();
+getHandlerDict();
 </script>
 
 <style scoped lang="scss">

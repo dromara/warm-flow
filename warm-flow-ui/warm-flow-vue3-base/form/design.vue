@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { listDefinition, saveFormContent } from '../api/form/definition';
+import { listDefinition, saveFormContent } from '../api/form/from';
 
 export default {
   name: 'formDesign',

@@ -13,32 +13,20 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.dromara.warm.flow.core.chart;
+package org.dromara.warm.flow.ui.service;
 
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
+import org.dromara.warm.flow.ui.vo.DictGroup;
 
 /**
- * 流程图绘制
+ * 流程设计器-获取办理人选择项
  *
  * @author warm
  */
-public class FlowChartChain {
+public interface HandlerDictService {
 
-    private final List<FlowChart> flowChartList = new ArrayList<>();
-
-    public void addFlowChart(FlowChart flowChart) {
-        flowChartList.add(flowChart);
-    }
-
-    public void draw(Graphics2D graphics, int n) {
-        for (FlowChart flowChart : flowChartList) {
-            flowChart.setN(n).draw(graphics);
-        }
-    }
-
-    public List<FlowChart> getFlowChartList() {
-        return flowChartList;
-    }
+    /**
+     * 获取办理人选择项
+     * @return 结果
+     */
+    DictGroup getHandlerDict();
 }

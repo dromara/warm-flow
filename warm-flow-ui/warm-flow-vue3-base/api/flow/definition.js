@@ -53,6 +53,14 @@ export function handlerResult(query) {
   })
 }
 
+// 办理人选择项
+export function handlerDict() {
+  return request({
+    url: urlPrefix + 'warm-flow/handler-dict',
+    method: 'get'
+  })
+}
+
 // 查询已发布表单定义列表
 export function publishedList(query) {
   return request({

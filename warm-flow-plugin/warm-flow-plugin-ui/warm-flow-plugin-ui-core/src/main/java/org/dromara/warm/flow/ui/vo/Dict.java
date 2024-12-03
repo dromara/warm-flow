@@ -13,32 +13,41 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.dromara.warm.flow.core.chart;
+package org.dromara.warm.flow.ui.vo;
 
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.Serializable;
 
 /**
- * 流程图绘制
+ * 字典
  *
  * @author warm
  */
-public class FlowChartChain {
+public class Dict implements Serializable
+{
+    private static final long serialVersionUID = 1L;
 
-    private final List<FlowChart> flowChartList = new ArrayList<>();
+    /** 字典标签 */
+    private String label;
 
-    public void addFlowChart(FlowChart flowChart) {
-        flowChartList.add(flowChart);
+    /** 字典值 */
+    private String value;
+
+
+    public String getLabel()
+    {
+        return label;
     }
 
-    public void draw(Graphics2D graphics, int n) {
-        for (FlowChart flowChart : flowChartList) {
-            flowChart.setN(n).draw(graphics);
-        }
+    public void setLabel(String label)
+    {
+        this.label = label;
     }
 
-    public List<FlowChart> getFlowChartList() {
-        return flowChartList;
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
     }
 }

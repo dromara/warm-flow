@@ -24,20 +24,20 @@ import org.dromara.warm.flow.core.entity.Skip;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.utils.ExceptionUtil;
+import org.dromara.warm.flow.core.vo.DefVo;
 import org.dromara.warm.flow.ui.dto.DefDto;
 import org.dromara.warm.flow.ui.dto.HandlerQuery;
+import org.dromara.warm.flow.ui.service.HandlerDictService;
 import org.dromara.warm.flow.ui.service.HandlerSelectService;
-import org.dromara.warm.flow.core.vo.DefVo;
+import org.dromara.warm.flow.ui.vo.Dict;
+import org.dromara.warm.flow.ui.vo.DictGroup;
 import org.dromara.warm.flow.ui.vo.HandlerSelectVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -161,6 +161,40 @@ public class WarmFlowController {
             }
            HandlerSelectVo handlerSelectVo = handlerSelectService.getHandlerSelect(query);
             return ApiResult.ok(handlerSelectVo);
+        } catch (Exception e) {
+            log.error("办理人权限设置列表结果异常", e);
+            throw new FlowException(ExceptionUtil.handleMsg("办理人权限设置列表结果失败", e));
+        }
+    }
+    /**
+     * 办理人选择项
+     * @return List<DictionaryGroup>
+     */
+    @GetMapping("/handler-dict")
+    public ApiResult<DictGroup> handlerResult() {
+        try {
+            // 需要业务系统实现该接口
+            HandlerDictService handlerDictService = FrameInvoker.getBean(HandlerDictService.class);
+            if (handlerDictService == null) {
+                DictGroup dictGroup = new DictGroup();
+                dictGroup.setOneDictList(new ArrayList<>());
+                Dict dict = new Dict();
+                dict.setLabel("默认表达式");
+                dict.setValue("${handler}");
+                Dict dict1 = new Dict();
+                dict1.setLabel("spel表达式");
+                dict1.setValue("#{@user.evalVar(#handler)}");
+                Dict dict2 = new Dict();
+                dict2.setLabel("其他");
+                dict2.setValue("");
+                dictGroup.getOneDictList().add(dict);
+                dictGroup.getOneDictList().add(dict1);
+                dictGroup.getOneDictList().add(dict2);
+
+                return ApiResult.ok(dictGroup);
+            }
+            DictGroup dictGroup = handlerDictService.getHandlerDict();
+            return ApiResult.ok(dictGroup);
         } catch (Exception e) {
             log.error("办理人权限设置列表结果异常", e);
             throw new FlowException(ExceptionUtil.handleMsg("办理人权限设置列表结果失败", e));
