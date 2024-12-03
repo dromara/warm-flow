@@ -344,9 +344,6 @@ getTabsType();
         min-width: 100%;
       }
     }
-    .el-tree::-webkit-scrollbar {
-      width: 10px;
-    }
   }
 }
 </style>
