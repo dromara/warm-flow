@@ -77,17 +77,24 @@
           </el-form-item>
         </slot>
         <slot name="form-item-task-formCustom" :model="form" field="formCustom">
-          <el-form-item label="审批表单是否自定义">
+          <el-form-item label="审批表单是否自定义" prop="formCustom">
             <el-select v-model="form.formCustom">
-              <el-option label="使用流程表单" :value="''"></el-option>
-              <!-- <el-option label="节点自定义表单" value="Y"></el-option> -->
+              <el-option label="使用流程表单" value="P"></el-option>
               <el-option label="节点表单路径" value="N"></el-option>
+              <el-option label="节点流程表单" value="Y"></el-option>
             </el-select>
           </el-form-item>
         </slot>
         <slot name="form-item-task-formPath" :model="form" field="formPath" v-if="form.formCustom === 'N'">
           <el-form-item label="审批表单路径">
             <el-input v-model="form.formPath"></el-input>
+          </el-form-item>
+        </slot>
+        <slot name="form-item-task-formPath" :model="form" field="formPath" v-else-if="form.formCustom === 'Y'">
+          <el-form-item label="审批流程表单">
+            <el-select v-model="form.formPath">
+              <el-option v-for="item in definitionList" :key="id" :label="`${item.formName} ${item.version}`" :value="item.id"></el-option>
+            </el-select>
           </el-form-item>
         </slot>
       </template>
@@ -136,6 +143,7 @@
 <script setup name="Between">
 import selectUser from "./selectUser";
 import { Delete } from '@element-plus/icons-vue'
+import { publishedList } from "../api/flow/definition";
 const { proxy } = getCurrentInstance();
 
 const props = defineProps({
@@ -167,6 +175,7 @@ const rules = reactive({
   listenerPath: [{ required: true, message: '监听器路径不能为空', trigger: 'blur' }]
 });
 const userVisible = ref(false);
+const definitionList = ref([]); // 流程表单列表
 const emit = defineEmits(["change"]);
 
 watch(() => form, n => {
@@ -197,6 +206,13 @@ function getPermissionFlag() {
   }
 }
 
+/** 查询表单定义列表 */
+function getDefinition() {
+  publishedList({ pageNum: 1, pageSize: 9999 }).then(response => {
+    definitionList.value = response.data.rows;
+  });
+};
+
 // 打开用户选择弹窗
 function initUser() {
   userVisible.value = true;
@@ -220,6 +236,7 @@ function handleDeleteRow(index) {
 }
 
 getPermissionFlag();
+getDefinition();
 </script>
 
 <style scoped lang="scss">

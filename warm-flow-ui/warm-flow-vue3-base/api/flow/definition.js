@@ -52,3 +52,12 @@ export function handlerResult(query) {
     params: query
   })
 }
+
+// 查询已发布表单定义列表
+export function publishedList(query) {
+  return request({
+    url: urlPrefix + 'warm-flow-ui/publish-form',
+    method: 'get',
+    params: query
+  })
+}
