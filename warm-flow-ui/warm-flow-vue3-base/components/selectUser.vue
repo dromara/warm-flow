@@ -333,5 +333,20 @@ getTabsType();
       flex: none;
     }
   }
+  .head-container {
+    .el-tree {
+      max-height: 679px;
+      overflow: auto;
+      margin: -15px;
+      padding-right: 10px;
+      :deep(.el-tree-node) {
+        display: table;
+        min-width: 100%;
+      }
+    }
+    .el-tree::-webkit-scrollbar {
+      width: 10px;
+    }
+  }
 }
 </style>
