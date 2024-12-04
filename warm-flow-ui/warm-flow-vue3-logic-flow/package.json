@@ -15,6 +15,7 @@
     "url": "https://gitee.com/dromara/warm-flow.git"
   },
   "dependencies": {
+    "@form-create/designer": "^3.2.6",
     "@logicflow/core": "^1.2.15",
     "@logicflow/extension": "^1.2.16",
     "@element-plus/icons-vue": "2.3.1",

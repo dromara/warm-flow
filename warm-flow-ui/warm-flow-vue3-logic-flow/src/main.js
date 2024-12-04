@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 
+import FcDesigner from '@form-create/designer';
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import locale from 'element-plus/es/locale/lang/zh-cn'
@@ -34,4 +35,5 @@ app.use(ElementPlus, {
   locale: locale,
 })
 
+app.use(FcDesigner);
 app.mount('#app')

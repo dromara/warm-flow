@@ -64,7 +64,6 @@ onMounted(async () => {
   initControl();
   initMenu();
   initEvent();
-  console.log()
   // if (definitionId.value) {
   //   getXmlString(definitionId.value).then(res => {
   //     xmlString.value = res.data;
