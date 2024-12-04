@@ -62,9 +62,9 @@
         <slot name="form-item-task-permissionFlag" :model="form" field="permissionFlag">
           <el-form-item label="办理人输入：" class="permissionItem">
             <div v-for="(tag, index) in form.permissionFlag" :key="index" class="inputGroup">
-              <el-select v-if="oneDictList" v-model="form.permissionFlag[index]" placeholder="请选择">
+              <el-select v-if="dictList" v-model="form.permissionFlag[index]" placeholder="请选择">
                 <el-option
-                    v-for="dict in oneDictList"
+                    v-for="dict in dictList"
                     :key="dict.value"
                     :label="dict.label"
                     :value="parseInt(dict.value)"
@@ -186,7 +186,7 @@ const rules = reactive({
 });
 const userVisible = ref(false);
 const definitionList = ref([]); // 流程表单列表
-const oneDictList = ref(); // 办理人选项
+const dictList = ref(); // 办理人选项
 const emit = defineEmits(["change"]);
 
 watch(() => form, n => {
@@ -228,9 +228,9 @@ function getDefinition() {
 function getHandlerDict() {
   handlerDict().then(response => {
     console.log('handlerDict', response)
-    if (response.code === 200 && response.data && response.data.oneDictList) {
+    if (response.code === 200 && response.data) {
       console.log('handlerDict', response)
-      oneDictList.value = response.data.oneDictList;
+      dictList.value = response.data;
     }
   });
 }

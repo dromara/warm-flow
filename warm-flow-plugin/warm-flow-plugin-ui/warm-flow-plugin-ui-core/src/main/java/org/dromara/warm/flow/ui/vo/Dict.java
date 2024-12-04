@@ -16,6 +16,7 @@
 package org.dromara.warm.flow.ui.vo;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 字典
@@ -31,6 +32,8 @@ public class Dict implements Serializable
 
     /** 字典值 */
     private String value;
+
+    private List<Dict> childList;
 
 
     public String getLabel()
@@ -49,5 +52,13 @@ public class Dict implements Serializable
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public List<Dict> getChildList() {
+        return childList;
+    }
+
+    public void setChildList(List<Dict> childList) {
+        this.childList = childList;
     }
 }

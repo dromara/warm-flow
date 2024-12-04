@@ -20,17 +20,16 @@ import org.dromara.warm.flow.core.dto.FlowPage;
 import java.util.List;
 
 /**
- * 流程设计器-办理人权限设置列表结果
- * 办理人权限设置列表，可能存在多个，比如：部门、角色、用户的情况
+ * 流程设计器-办理人选择
  *
  * @author warm
  */
 public class HandlerSelectVo {
 
-    /** 办理人权限设置列表 */
+    /** 办理人选择，分页列表，有具体办理对象 比如：部门、角色和用户等情况 */
     private FlowPage<HandlerAuth> handlerAuths;
 
-    /** 左侧树状选择 */
+    /** 左侧树状选择，配合{@link #handlerAuths}使用，比如用户先选择部门，然后选择用户 */
     private List<TreeSelection> treeSelections;
 
     public FlowPage<HandlerAuth> getHandlerAuths() {

@@ -30,7 +30,6 @@ import org.dromara.warm.flow.ui.dto.HandlerQuery;
 import org.dromara.warm.flow.ui.service.HandlerDictService;
 import org.dromara.warm.flow.ui.service.HandlerSelectService;
 import org.dromara.warm.flow.ui.vo.Dict;
-import org.dromara.warm.flow.ui.vo.DictGroup;
 import org.dromara.warm.flow.ui.vo.HandlerSelectVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -168,16 +167,15 @@ public class WarmFlowController {
     }
     /**
      * 办理人选择项
-     * @return List<DictionaryGroup>
+     * @return List<Dict>
      */
     @GetMapping("/handler-dict")
-    public ApiResult<DictGroup> handlerResult() {
+    public ApiResult<List<Dict>> handlerDict() {
         try {
             // 需要业务系统实现该接口
             HandlerDictService handlerDictService = FrameInvoker.getBean(HandlerDictService.class);
             if (handlerDictService == null) {
-                DictGroup dictGroup = new DictGroup();
-                dictGroup.setOneDictList(new ArrayList<>());
+                List<Dict> dictList = new ArrayList<>();
                 Dict dict = new Dict();
                 dict.setLabel("默认表达式");
                 dict.setValue("${handler}");
@@ -187,14 +185,13 @@ public class WarmFlowController {
                 Dict dict2 = new Dict();
                 dict2.setLabel("其他");
                 dict2.setValue("");
-                dictGroup.getOneDictList().add(dict);
-                dictGroup.getOneDictList().add(dict1);
-                dictGroup.getOneDictList().add(dict2);
+                dictList.add(dict);
+                dictList.add(dict1);
+                dictList.add(dict2);
 
-                return ApiResult.ok(dictGroup);
+                return ApiResult.ok(dictList);
             }
-            DictGroup dictGroup = handlerDictService.getHandlerDict();
-            return ApiResult.ok(dictGroup);
+            return ApiResult.ok(handlerDictService.getHandlerDict());
         } catch (Exception e) {
             log.error("办理人权限设置列表结果异常", e);
             throw new FlowException(ExceptionUtil.handleMsg("办理人权限设置列表结果失败", e));

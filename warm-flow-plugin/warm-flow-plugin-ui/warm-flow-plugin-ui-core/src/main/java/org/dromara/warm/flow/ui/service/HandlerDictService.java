@@ -15,7 +15,9 @@
  */
 package org.dromara.warm.flow.ui.service;
 
-import org.dromara.warm.flow.ui.vo.DictGroup;
+import org.dromara.warm.flow.ui.vo.Dict;
+
+import java.util.List;
 
 /**
  * 流程设计器-获取办理人选择项
@@ -28,5 +30,5 @@ public interface HandlerDictService {
      * 获取办理人选择项
      * @return 结果
      */
-    DictGroup getHandlerDict();
+    List<Dict> getHandlerDict();
 }
