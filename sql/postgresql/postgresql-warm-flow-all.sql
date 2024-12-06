@@ -57,8 +57,7 @@ CREATE TABLE flow_node (
     update_time timestamp NULL, -- 更新时间
     del_flag bpchar(1) NULL DEFAULT '0'::character varying, -- 删除标志
     tenant_id varchar(40) NULL, -- 租户id
-    CONSTRAINT flow_node_pkey PRIMARY KEY (id),
-    CONSTRAINT info_id_code UNIQUE (definition_id, node_code)
+    CONSTRAINT flow_node_pkey PRIMARY KEY (id)
 );
 COMMENT ON TABLE flow_node IS '流程结点表';
 
