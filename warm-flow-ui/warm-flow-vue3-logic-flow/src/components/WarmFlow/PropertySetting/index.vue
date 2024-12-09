@@ -150,7 +150,7 @@ watch(() => form.value.skipType, (n) => {
 });
 
 watch(() => form.value.nodeName, (n) => {
-  // 监听节点名称变化并更新
+  // 更新流程节点上的文本内容
   props.lf.updateText(objId.value, n)
   // 监听节点名称变化并更新
   props.lf.setProperties(objId.value, {
