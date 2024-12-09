@@ -70,4 +70,8 @@ public class FlowCons {
      * 使用流程全局表单
      */
     public static final String FORM_CUSTOM_P = "P";
+    /**
+     * 表单数据
+     */
+    public static final String FORM_DATA = "formData";
 }

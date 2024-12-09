@@ -64,7 +64,7 @@ export function handlerDict() {
 // 查询已发布表单定义列表
 export function publishedList(query) {
   return request({
-    url: urlPrefix + 'warm-flow-ui/publish-form',
+    url: urlPrefix + 'warm-flow-ui/published-form',
     method: 'get',
     params: query
   })

@@ -5,7 +5,7 @@
 </template>
 
 <script setup name="formDesign">
-import { listDefinition, saveFormContent } from '../api/form/definition';
+import {getForm, saveFormContent} from '../api/form/definition';
 const { proxy } = getCurrentInstance();
 import useAppStore from "@/store/app";
 const appParams = computed(() => useAppStore().appParams);
@@ -46,8 +46,8 @@ function handleSave() {
 
 // 获取详情
 function getInfo() {
-  listDefinition({ id: definitionId.value }).then(res => {
-    let formContent = res.rows[0].formContent;
+  getForm(definitionId.value).then(res => {
+    let formContent = res;
     if (formContent) {
       nextTick(() => {
         formContent = JSON.parse(formContent);

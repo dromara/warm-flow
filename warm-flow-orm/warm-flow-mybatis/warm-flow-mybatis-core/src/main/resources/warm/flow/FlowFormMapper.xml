@@ -38,7 +38,7 @@
 
     <sql id="paging_end">
         <if test="page !=null and page.pageNum != null and page.pageSize != null">LIMIT
-            #{page.pageNum} offset #{page.pageSize}
+            #{page.pageSize} offset #{page.pageNum}
         </if>
     </sql>
 

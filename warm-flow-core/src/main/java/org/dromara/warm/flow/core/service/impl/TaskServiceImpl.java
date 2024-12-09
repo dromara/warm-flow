@@ -854,7 +854,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         ListenerUtil.executeListener(new ListenerVariable(definition, instance, nowNode, flowParams.getVariable(), task)
                 .setFlowParams(flowParams), Listener.LISTENER_START);
 
-        // checkAuth(nowNode, task, flowParams);
+        checkAuth(task, flowParams);
 
         ListenerVariable listenerVariable = new ListenerVariable(definition, instance, nowNode, flowParams.getVariable(), task);
 
@@ -867,7 +867,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         } else if(FlowCons.FORM_CUSTOM_P.equals(nowNode.getFormCustom())
                 && FlowCons.FORM_CUSTOM_Y.equals(definition.getFormCustom())) {
             ListenerUtil.execute(listenerVariable, Listener.LISTENER_FORM_LOAD, definition.getListenerPath(), definition.getListenerType());
-            Form form = FlowFactory.formService().getById(Long.valueOf(task.getFormPath()));
+            Form form = FlowFactory.formService().getById(Long.valueOf(definition.getFormPath()));
             flowForm.setForm(form);
             flowForm.setData(listenerVariable.getResult());
         } else {
@@ -882,34 +882,26 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         HisTask hisTask = FlowFactory.hisTaskService().getById(hisTaskId);
         AssertUtil.isNull(hisTask, ExceptionCons.NOT_FOUND_FLOW_TASK);
 
-        Instance instance = FlowFactory.insService().getById(hisTask.getInstanceId());
-        AssertUtil.isNull(instance, ExceptionCons.NOT_FOUNT_INSTANCE);
-
-        Definition definition = FlowFactory.defService().getById(instance.getDefinitionId());
-        AssertUtil.isFalse(judgeActivityStatus(definition, instance), ExceptionCons.NOT_ACTIVITY);
-        AssertUtil.isTrue(NodeType.isEnd(instance.getNodeType()), ExceptionCons.FLOW_FINISH);
+        Definition definition = FlowFactory.defService().getById(hisTask.getDefinitionId());
+        AssertUtil.isNull(definition, ExceptionCons.NOT_FOUNT_DEF);
 
         Node nowNode = CollUtil.getOne(FlowFactory.nodeService()
                 .getByNodeCodes(Collections.singletonList(hisTask.getNodeCode()), hisTask.getDefinitionId()));
         AssertUtil.isNull(nowNode, ExceptionCons.LOST_CUR_NODE);
 
-        ListenerVariable listenerVariable = new ListenerVariable(definition, instance, nowNode, flowParams.getVariable(), null);
-
         FlowForm flowForm = new FlowForm();
         if (FlowCons.FORM_CUSTOM_Y.equals(nowNode.getFormCustom())) {
-            ListenerUtil.execute(listenerVariable, Listener.LISTENER_FORM_LOAD, nowNode.getListenerPath(), nowNode.getListenerType());
             Form form = FlowFactory.formService().getById(Long.valueOf(hisTask.getFormPath()));
             flowForm.setForm(form);
-            flowForm.setData(listenerVariable.getResult());
         } else if(FlowCons.FORM_CUSTOM_P.equals(nowNode.getFormCustom())
                 && FlowCons.FORM_CUSTOM_Y.equals(definition.getFormCustom())) {
-            ListenerUtil.execute(listenerVariable, Listener.LISTENER_FORM_LOAD, definition.getListenerPath(), definition.getListenerType());
-            Form form = FlowFactory.formService().getById(Long.valueOf(hisTask.getFormPath()));
+            Form form = FlowFactory.formService().getById(Long.valueOf(definition.getFormPath()));
             flowForm.setForm(form);
-            flowForm.setData(listenerVariable.getResult());
         } else {
             // 当前流程不支持内置表单,不作处理
         }
+        flowForm.setData(hisTask.getVariableMap().get(FlowCons.FORM_DATA));
+
         return flowForm;
     }
 }

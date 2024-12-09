@@ -73,8 +73,17 @@ public class FormServiceImpl extends WarmServiceImpl<FlowFormDao<Form>, Form> im
     }
 
     @Override
-    public Page<Form> publishPage(String formName, Integer pageNum, Integer pageSize) {
+    public Page<Form> publishedPage(String formName, Integer pageNum, Integer pageSize) {
         return page(FlowFactory.newForm().setFormName(formName).setIsPublish(1),
                 Page.<Form>pageOf(pageNum, pageSize));
+    }
+
+    @Override
+    public boolean saveContent(Long id, String formContent) {
+        Form form = getById(id);
+        AssertUtil.isTrue(form.getIsPublish().equals(PublishStatus.PUBLISHED.getKey()), ExceptionCons.FORM_ALREADY_PUBLISH);
+
+        form.setFormContent(formContent);
+        return updateById(form);
     }
 }

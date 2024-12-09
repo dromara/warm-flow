@@ -13,6 +13,8 @@ public class FormDto {
 
     private String formCode;
 
+    private String formContent;
+
     private String version;
 
     public Long getId() {
@@ -37,6 +39,14 @@ public class FormDto {
 
     public void setFormCode(String formCode) {
         this.formCode = formCode;
+    }
+
+    public String getFormContent() {
+        return formContent;
+    }
+
+    public void setFormContent(String formContent) {
+        this.formContent = formContent;
     }
 
     public String getVersion() {

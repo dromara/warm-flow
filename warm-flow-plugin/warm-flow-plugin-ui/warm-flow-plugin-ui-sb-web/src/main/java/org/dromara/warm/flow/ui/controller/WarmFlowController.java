@@ -205,14 +205,13 @@ public class WarmFlowController {
     }
 
     /**
-     * 已发布表单列表
+     * 已发布表单列表 该接口不需要业务系统实现
      * @return FlowPage<FormDto>
      */
-    @GetMapping("/publish-form")
-    public ApiResult<FlowPage<FormDto>> publishForm(FormQuery formQuery) {
+    @GetMapping("/published-form")
+    public ApiResult<FlowPage<FormDto>> publishedForm(FormQuery formQuery) {
         try {
-            // 该接口不需要业务系统实现
-            Page<Form> formPage = FlowFactory.formService().publishPage(formQuery.getFormName(), formQuery.getPageNum(), formQuery.getPageSize());
+            Page<Form> formPage = FlowFactory.formService().publishedPage(formQuery.getFormName(), formQuery.getPageNum(), formQuery.getPageSize());
             FlowPage<FormDto> data = new FlowPage<FormDto>().setRows(formPage.getList().stream().map((form -> {
                         FormDto formDto = new FormDto();
                         formDto.setId(form.getId());
@@ -231,11 +230,29 @@ public class WarmFlowController {
         }
     }
 
+    /**
+     * 读取表单内容
+     * @param id
+     * @return
+     */
+    @GetMapping("/form-content/{id}")
+    public ApiResult<String> getFormContent(@PathVariable("id") Long id) {
+        try {
+            return ApiResult.ok(FlowFactory.formService().getById(id).getFormContent());
+        } catch (Exception e) {
+            log.error("获取表单内容字符串", e);
+            throw new FlowException(ExceptionUtil.handleMsg("获取表单内容字符串失败", e));
+        }
+    }
 
-    @GetMapping("/form-action")
-    public ApiResult<Map> formAction(FormQuery formQuery) {
-        // loadDict =>
-        // loadXx =>
+    /**
+     * 保存表单内容,该接口不需要系统实现
+     * @param formDto
+     * @return
+     */
+    @PostMapping("/form-content")
+    public ApiResult<Void> saveFormContent(FormDto formDto) {
+        FlowFactory.formService().saveContent(formDto.getId(), formDto.getFormContent());
         return ApiResult.ok();
     }
 }

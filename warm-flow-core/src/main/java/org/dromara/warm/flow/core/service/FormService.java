@@ -64,11 +64,18 @@ public interface FormService extends IWarmService<Form> {
     Form getById(Long id);
 
     /**
-     *
+     * 已发布表单
      * @param formName
      * @param pageNum
      * @param pageSize
      * @return
      */
-    Page<Form> publishPage(String formName, Integer pageNum, Integer pageSize);
+    Page<Form> publishedPage(String formName, Integer pageNum, Integer pageSize);
+
+    /**
+     * 保存表单内容
+     * @param id
+     * @param formContent
+     */
+    boolean saveContent(Long id, String formContent);
 }
