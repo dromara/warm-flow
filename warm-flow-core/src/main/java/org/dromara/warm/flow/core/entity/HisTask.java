@@ -15,8 +15,11 @@
  */
 package org.dromara.warm.flow.core.entity;
 
+import org.dromara.warm.flow.core.FlowFactory;
+
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 历史任务记录对象 flow_his_task
@@ -113,6 +116,14 @@ public interface HisTask extends RootEntity {
     public String getMessage();
 
     public HisTask setMessage(String message);
+
+    public String getVariable();
+
+    public HisTask setVariable(String variable);
+
+    default public Map<String, Object> getVariableMap() {
+        return FlowFactory.jsonConvert.strToMap(this.getVariable());
+    }
 
     public String getExt();
 

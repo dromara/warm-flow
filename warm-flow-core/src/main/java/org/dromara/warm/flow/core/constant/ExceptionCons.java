@@ -123,6 +123,14 @@ public class ExceptionCons {
 
     public static final String INSTANCE_ALREADY_SUSPENDED = "当前流程实例已经挂起";
 
+    public static final String FORM_ALREADY_PUBLISH = "当前表单状态已发布";
+
+    public static final String FORM_ALREADY_UN_PUBLISH = "当前表单状态未发布";
+
+    public static final String FORM_NOT_ONE = "表单数据错误, 请联系管理员排查!";
+
+    public static final String ID_EMPTY = "ID不能为空";
+
     public static final String NOT_DEF_PROMOTER_NOT_RETRIEVE = "不是当前流程的发起人，无法取回";
 
     public static final String HANDLER_NOT_EMPTY = "办理人不能为空";

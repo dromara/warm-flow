@@ -18,14 +18,20 @@ package org.dromara.warm.flow.ui.controller;
 import org.dromara.warm.flow.core.FlowFactory;
 import org.dromara.warm.flow.core.dto.ApiResult;
 import org.dromara.warm.flow.core.dto.FlowCombine;
+import org.dromara.warm.flow.core.dto.FlowPage;
 import org.dromara.warm.flow.core.entity.Definition;
+import org.dromara.warm.flow.core.entity.Form;
 import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.entity.Skip;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.utils.ExceptionUtil;
+import org.dromara.warm.flow.core.utils.HttpStatus;
+import org.dromara.warm.flow.core.utils.page.Page;
 import org.dromara.warm.flow.core.vo.DefVo;
 import org.dromara.warm.flow.ui.dto.DefDto;
+import org.dromara.warm.flow.ui.dto.FormDto;
+import org.dromara.warm.flow.ui.dto.FormQuery;
 import org.dromara.warm.flow.ui.dto.HandlerQuery;
 import org.dromara.warm.flow.ui.service.HandlerDictService;
 import org.dromara.warm.flow.ui.service.HandlerSelectService;
@@ -196,5 +202,40 @@ public class WarmFlowController {
             log.error("办理人权限设置列表结果异常", e);
             throw new FlowException(ExceptionUtil.handleMsg("办理人权限设置列表结果失败", e));
         }
+    }
+
+    /**
+     * 已发布表单列表
+     * @return FlowPage<FormDto>
+     */
+    @GetMapping("/publish-form")
+    public ApiResult<FlowPage<FormDto>> publishForm(FormQuery formQuery) {
+        try {
+            // 该接口不需要业务系统实现
+            Page<Form> formPage = FlowFactory.formService().publishPage(formQuery.getFormName(), formQuery.getPageNum(), formQuery.getPageSize());
+            FlowPage<FormDto> data = new FlowPage<FormDto>().setRows(formPage.getList().stream().map((form -> {
+                        FormDto formDto = new FormDto();
+                        formDto.setId(form.getId());
+                        formDto.setFormName(form.getFormName());
+                        formDto.setFormCode(form.getFormCode());
+                        formDto.setVersion(form.getVersion());
+                        return formDto;
+                    })).collect(Collectors.toList()))
+                    .setCode(HttpStatus.SUCCESS)
+                    .setMsg("查询成功")
+                    .setTotal(formPage.getTotal());
+            return ApiResult.ok(data);
+        } catch (Exception e) {
+            log.error("已发布表单列表异常", e);
+            throw new FlowException(ExceptionUtil.handleMsg("已发布表单列表异常", e));
+        }
+    }
+
+
+    @GetMapping("/form-action")
+    public ApiResult<Map> formAction(FormQuery formQuery) {
+        // loadDict =>
+        // loadXx =>
+        return ApiResult.ok();
     }
 }

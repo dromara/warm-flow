@@ -69,7 +69,7 @@ public class ListenerUtil {
         }
     }
 
-    private static void execute(ListenerVariable listenerVariable, String type, String listenerPaths, String listenerTypes) {
+    public static void execute(ListenerVariable listenerVariable, String type, String listenerPaths, String listenerTypes) {
         if (StringUtils.isNotEmpty(listenerTypes)) {
             String[] listenerTypeArr = listenerTypes.split(",");
             for (int i = 0; i < listenerTypeArr.length; i++) {

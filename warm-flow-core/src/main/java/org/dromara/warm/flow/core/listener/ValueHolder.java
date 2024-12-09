@@ -17,6 +17,7 @@ package org.dromara.warm.flow.core.listener;
 
 public class ValueHolder {
     private String path;
+    private Listener listener;
     private String params;
 
 
@@ -31,6 +32,14 @@ public class ValueHolder {
         this.path = path;
     }
 
+    public Listener getListener() {
+        return listener;
+    }
+
+    public void setListener(Listener listener) {
+        this.listener = listener;
+    }
+
     public String getParams() {
         return params;
     }
@@ -43,6 +52,7 @@ public class ValueHolder {
     public String toString() {
         return "ValueHolder{" +
                 "path='" + path + '\'' +
+                ", listener=" + listener + '\'' +
                 ", params='" + params + '\'' +
                 '}';
     }

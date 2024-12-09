@@ -42,5 +42,11 @@ public interface Listener extends Serializable {
      */
     String LISTENER_CREATE = "create";
 
+    /**
+     * 表单数据加载监听器，1.3.0 内置表单使用
+     */
+    String LISTENER_FORM_LOAD = "formLoad";
+
+
     void notify(ListenerVariable listenerVariable);
 }

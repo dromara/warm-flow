@@ -147,6 +147,11 @@ public class FlowHisTask implements HisTask {
     private String message;
 
     /**
+     * 流程变量
+     */
+    private String variable;
+
+    /**
      * 审批意见
      */
     private String ext;
@@ -410,6 +415,18 @@ public class FlowHisTask implements HisTask {
         return this;
     }
 
+
+    @Override
+    public String getVariable() {
+        return variable;
+    }
+
+    @Override
+    public FlowHisTask setVariable(String variable) {
+        this.variable = variable;
+        return this;
+    }
+
     @Override
     public String getExt() {
         return ext;
@@ -477,6 +494,7 @@ public class FlowHisTask implements HisTask {
                 ", permissionList=" + permissionList +
                 ", flowStatus=" + flowStatus +
                 ", message='" + message + '\'' +
+                ", variable='" + variable + '\'' +
                 ", ext='" + ext + '\'' +
                 ", createBy='" + createBy + '\'' +
                 ", formCustom='" + formCustom + '\'' +

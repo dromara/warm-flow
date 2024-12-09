@@ -15,6 +15,7 @@
  */
 package org.dromara.warm.flow.core.service;
 
+import org.dromara.warm.flow.core.dto.FlowForm;
 import org.dromara.warm.flow.core.dto.FlowParams;
 import org.dromara.warm.flow.core.entity.Definition;
 import org.dromara.warm.flow.core.entity.Instance;
@@ -213,4 +214,23 @@ public interface TaskService extends IWarmService<Task> {
      * @param permissionList 当前登录用户权限集合
      */
     boolean checkAuth(Long instanceId, Long taskId, String... permissionList);
+
+
+    /**
+     * 获取表单及数据(使用表单场景)
+     *
+     * @param taskId
+     * @param flowParams
+     * @return
+     */
+    FlowForm load(Long taskId, FlowParams flowParams);
+
+    /**
+     * 获取表单及数据(使用表单场景)
+     *
+     * @param hisTaskId
+     * @param flowParams
+     * @return
+     */
+    FlowForm hisLoad(Long hisTaskId, FlowParams flowParams);
 }

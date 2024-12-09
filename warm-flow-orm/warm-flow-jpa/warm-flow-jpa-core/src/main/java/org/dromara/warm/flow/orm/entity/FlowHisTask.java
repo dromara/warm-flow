@@ -88,6 +88,9 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
                 if (Objects.nonNull(this.message)) {
                     predicates.add(criteriaBuilder.equal(root.get("message"), this.message));
                 }
+                if (StringUtils.isNotEmpty(this.variable)) {
+                    predicates.add(criteriaBuilder.equal(root.get("variable"), this.variable));
+                }
                 if (Objects.nonNull(this.ext)) {
                     predicates.add(criteriaBuilder.equal(root.get("ext"), this.ext));
                 }
@@ -139,6 +142,9 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
         }
         if (Objects.nonNull(updateEntity.message)) {
             this.message = updateEntity.message;
+        }
+        if (StringUtils.isNotEmpty(updateEntity.variable)) {
+            this.variable = updateEntity.variable;
         }
         if (Objects.nonNull(updateEntity.ext)) {
             this.ext = updateEntity.ext;
@@ -277,6 +283,12 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
      */
     @Column(name = "message")
     private String message;
+
+    /**
+     * 流程变量
+     */
+    @Column(name = "variable")
+    private String variable;
 
     /**
      * 扩展字段，预留给业务系统使用
@@ -441,7 +453,7 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
     }
 
     @Override
-    public HisTask setCollaborator(String collaborator) {
+    public FlowHisTask setCollaborator(String collaborator) {
         this.collaborator = collaborator;
         return this;
     }
@@ -464,7 +476,7 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
     }
 
     @Override
-    public HisTask setSkipType(String skipType) {
+    public FlowHisTask setSkipType(String skipType) {
         this.skipType = skipType;
         return this;
     }
@@ -492,12 +504,23 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
     }
 
     @Override
+    public String getVariable() {
+        return variable;
+    }
+
+    @Override
+    public FlowHisTask setVariable(String variable) {
+        this.variable = variable;
+        return this;
+    }
+
+    @Override
     public String getExt() {
         return ext;
     }
 
     @Override
-    public HisTask setExt(String ext) {
+    public FlowHisTask setExt(String ext) {
         this.ext = ext;
         return this;
     }
@@ -558,6 +581,7 @@ public class FlowHisTask extends JPARootEntity<FlowHisTask> implements HisTask {
                 ", skipType=" + skipType +
                 ", flowStatus=" + flowStatus +
                 ", message='" + message + '\'' +
+                ", variable='" + variable + '\'' +
                 ", ext='" + ext + '\'' +
                 ", createBy='" + createBy + '\'' +
                 ", formCustom='" + formCustom + '\'' +

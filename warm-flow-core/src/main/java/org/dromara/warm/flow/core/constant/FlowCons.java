@@ -55,4 +55,19 @@ public class FlowCons {
      * 雪花id 14位
      */
     public static final String SNOWID19 = "SnowId19";
+
+
+    /**
+     * 表单自定义状态
+     * 内置表单
+     */
+    public static final String FORM_CUSTOM_Y = "Y";
+    /**
+     * 外挂表单路径
+     */
+    public static final String FORM_CUSTOM_N = "N";
+    /**
+     * 使用流程全局表单
+     */
+    public static final String FORM_CUSTOM_P = "P";
 }

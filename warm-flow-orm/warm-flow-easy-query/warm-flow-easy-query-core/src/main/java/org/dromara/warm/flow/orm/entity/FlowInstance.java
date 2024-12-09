@@ -85,7 +85,6 @@ public class FlowInstance implements Instance, ProxyEntityAvailable<FlowInstance
     private String nodeName;
 
     /** 流程变量 */
-    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String variable;
 
     /** 流程状态（0待提交 1审批中 2 审批通过 3自动通过 4终止 5作废 6撤销 7取回  8已完成 9已退回 10失效） */
@@ -111,11 +110,6 @@ public class FlowInstance implements Instance, ProxyEntityAvailable<FlowInstance
     /** 扩展字段 */
     @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String ext;
-
-    @Override
-    public Map<String, Object> getVariableMap() {
-        return FlowFactory.jsonConvert.strToMap(variable);
-    }
 
     @Override
     public String toString() {

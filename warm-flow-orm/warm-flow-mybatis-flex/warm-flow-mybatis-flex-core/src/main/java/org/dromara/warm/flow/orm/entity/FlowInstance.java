@@ -260,11 +260,6 @@ public class FlowInstance implements Instance {
     }
 
     @Override
-    public Map<String, Object> getVariableMap() {
-        return FlowFactory.jsonConvert.strToMap(variable);
-    }
-
-    @Override
     public String getFlowStatus() {
         return flowStatus;
     }

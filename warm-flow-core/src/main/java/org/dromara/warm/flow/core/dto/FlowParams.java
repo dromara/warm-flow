@@ -21,6 +21,7 @@ import org.dromara.warm.flow.core.utils.CollUtil;
 import org.dromara.warm.flow.core.utils.StringUtils;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -181,6 +182,10 @@ public class FlowParams implements Serializable {
         return variable;
     }
 
+    public String getVariableStr() {
+        return FlowFactory.jsonConvert.objToStr(variable);
+    }
+
     public String getNodeCode() {
         return nodeCode;
     }
@@ -270,6 +275,14 @@ public class FlowParams implements Serializable {
 
     public FlowParams ignore(boolean ignore) {
         this.ignore = ignore;
+        return this;
+    }
+
+    public FlowParams formData(Map<String, Object> formData) {
+        if (this.variable == null) {
+            this.variable = new HashMap<>();
+        }
+        this.variable.put("formData", formData);
         return this;
     }
 }

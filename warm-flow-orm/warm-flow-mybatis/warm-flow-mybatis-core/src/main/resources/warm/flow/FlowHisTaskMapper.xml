@@ -22,6 +22,7 @@
         <result property="formCustom" column="form_custom"/>
         <result property="formPath" column="form_path"/>
         <result property="message" column="message"/>
+        <result property="variable" column="variable"/>
         <result property="ext" column="ext"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
@@ -49,6 +50,7 @@
                t.form_custom,
                t.form_path,
                t.message,
+               t.variable,
                t.ext,
                t.create_time,
                t.update_time,
@@ -91,6 +93,7 @@
             <if test="entity.formCustom != null  and entity.formCustom != ''">and t.form_custom = #{entity.formCustom}</if>
             <if test="entity.formPath != null  and entity.formPath != ''">and t.form_path = #{entity.formPath}</if>
             <if test="entity.message != null  and entity.message != ''">and t.message = #{entity.message}</if>
+            <if test="entity.variable != null  and entity.variable != ''">and t.variable = #{entity.variable}</if>
             <if test="entity.ext != null  and entity.ext != ''">and t.ext = #{entity.ext}</if>
             <if test="entity.createTime != null">and t.create_time = #{entity.createTime}</if>
             <if test="entity.updateTime != null">and t.update_time = #{entity.updateTime}</if>
@@ -147,6 +150,7 @@
         form_custom,
         form_path,
         message,
+        variable,
         ext,
         create_time,
         update_time,
@@ -173,6 +177,7 @@
             #{item.formCustom},
             #{item.formPath},
             #{item.message},
+            #{item.variable},
             #{item.ext},
             #{item.createTime},
             #{item.updateTime},
@@ -201,6 +206,7 @@
         form_custom,
         form_path,
         message,
+        variable,
         ext,
         create_time,
         update_time,
@@ -226,6 +232,7 @@
             #{item.formCustom},
             #{item.formPath},
             #{item.message},
+            #{item.variable},
             #{item.ext},
             #{item.createTime},
             #{item.updateTime},
@@ -309,6 +316,7 @@
             <if test="formCustom != null and formCustom != ''">form_custom,</if>
             <if test="formPath != null and formPath != ''">form_path,</if>
             <if test="message != null">message,</if>
+            <if test="variable != null">message,</if>
             <if test="ext != null">ext,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
@@ -333,6 +341,7 @@
             <if test="formCustom != null and formCustom != ''">#{formCustom},</if>
             <if test="formPath != null and formPath != ''">#{formPath},</if>
             <if test="message != null">#{message},</if>
+            <if test="variable != null">#{variable},</if>
             <if test="ext != null">#{ext},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
@@ -359,6 +368,7 @@
             <if test="formCustom != null and formCustom != ''">form_custom = #{formCustom},</if>
             <if test="formPath != null and formPath != ''">form_path = #{formPath},</if>
             <if test="message != null">message = #{message},</if>
+            <if test="variable != null">variable = #{variable},</if>
             <if test="ext != null">ext = #{ext},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
@@ -443,6 +453,7 @@
             <if test="formCustom != null and formCustom != ''">and form_custom = #{formCustom}</if>
             <if test="formPath != null and formPath != ''">and form_path = #{formPath}</if>
             <if test="message != null">and message = #{message}</if>
+            <if test="variable != null">and variable = #{variable}</if>
             <if test="ext != null">and ext = #{ext}</if>
             <if test="createTime != null">and create_time = #{createTime}</if>
             <if test="updateTime != null">and update_time = #{updateTime}</if>
@@ -477,6 +488,7 @@
             <if test="entity.formCustom != null and entity.formCustom != ''">and form_custom = #{entity.formCustom}</if>
             <if test="entity.formPath != null and entity.formPath != ''">and form_path = #{entity.formPath}</if>
             <if test="entity.message != null">and message = #{entity.message}</if>
+            <if test="entity.variable != null">and variable = #{entity.variable}</if>
             <if test="entity.ext != null">and ext = #{entity.ext}</if>
             <if test="entity.createTime != null">and create_time = #{entity.createTime}</if>
             <if test="entity.updateTime != null">and update_time = #{entity.updateTime}</if>

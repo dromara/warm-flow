@@ -128,6 +128,9 @@ public class FlowHisTask implements HisTask, ProxyEntityAvailable<FlowHisTask, F
     /** 审批意见 */
     private String message;
 
+    /** 流程变量 */
+    private String variable;
+
     /** 业务详情 存业务类的json */
     private String ext;
 
@@ -169,6 +172,7 @@ public class FlowHisTask implements HisTask, ProxyEntityAvailable<FlowHisTask, F
             ", skipType=" + skipType +
             ", flowStatus=" + flowStatus +
             ", message='" + message + '\'' +
+            ", variable='" + variable + '\'' +
             ", ext='" + ext + '\'' +
             ", createBy='" + createBy + '\'' +
             ", formCustom='" + formCustom + '\'' +

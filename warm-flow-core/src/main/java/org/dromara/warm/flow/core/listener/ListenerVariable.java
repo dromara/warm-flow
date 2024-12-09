@@ -71,6 +71,13 @@ public class ListenerVariable {
      */
     private FlowParams flowParams;
 
+
+    /**
+     * 监听器返回值
+     */
+    private Object result;
+
+
     public ListenerVariable() {
     }
 
@@ -194,6 +201,16 @@ public class ListenerVariable {
         return this;
     }
 
+
+    public Object getResult() {
+        return result;
+    }
+
+    public ListenerVariable setResult(Object result) {
+        this.result = result;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "ListenerVariable{" +
@@ -205,7 +222,7 @@ public class ListenerVariable {
                 ", nextTasks=" + nextTasks +
                 ", variable=" + variable +
                 ", flowParams=" + flowParams +
+                ", result=" + result +
                 '}';
     }
-
 }
