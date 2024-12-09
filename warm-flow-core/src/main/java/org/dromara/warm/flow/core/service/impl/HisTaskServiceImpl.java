@@ -106,6 +106,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
                     .setFormCustom(task.getFormCustom())
                     .setFormPath(task.getFormPath())
                     .setMessage(flowParams.getMessage())
+                    .setVariable(flowParams.getVariableStr())
                     //业务详情添加至历史记录
                     .setExt(flowParams.getHisTaskExt())
                     .setCreateTime(task.getCreateTime());
@@ -140,6 +141,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
                     .setFormCustom(task.getFormCustom())
                     .setFormPath(task.getFormPath())
                     .setMessage(flowParams.getMessage())
+                    .setVariable(flowParams.getVariableStr())
                     //业务详情添加至历史记录
                     .setExt(flowParams.getHisTaskExt())
                     .setCreateTime(task.getCreateTime());
@@ -171,6 +173,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
                 .setFormCustom(task.getFormCustom())
                 .setFormPath(task.getFormPath())
                 .setMessage(flowParams.getMessage())
+                .setVariable(flowParams.getVariableStr())
                 //业务详情添加至历史记录
                 .setExt(flowParams.getHisTaskExt())
                 .setCreateTime(task.getCreateTime());
@@ -199,6 +202,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
                 .setFormCustom(task.getFormCustom())
                 .setFormPath(task.getFormPath())
                 .setMessage(flowParams.getMessage())
+                .setVariable(flowParams.getVariableStr())
                 //业务详情添加至历史记录
                 .setExt(flowParams.getHisTaskExt())
                 .setCreateTime(task.getCreateTime());
@@ -225,6 +229,9 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
                     .setFormCustom(task.getFormCustom())
                     .setFormPath(task.getFormPath())
                     .setMessage(flowParams.getMessage())
+                    .setVariable(flowParams.getVariableStr())
+                    //业务详情添加至历史记录
+                    .setExt(flowParams.getHisTaskExt())
                     .setCreateTime(task.getCreateTime());
             FlowFactory.dataFillHandler().idFill(hisTask);
             hisTasks.add(hisTask);
@@ -254,8 +261,9 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
                 .setFormCustom(task.getFormCustom())
                 .setFormPath(task.getFormPath())
                 .setMessage(flowParams.getMessage())
+                .setVariable(flowParams.getVariableStr())
                 //业务详情添加至历史记录
-                .setExt(flowParams.getExt())
+                .setExt(flowParams.getHisTaskExt())
                 .setCreateTime(task.getCreateTime());
         FlowFactory.dataFillHandler().idFill(hisTask);
         return hisTask;

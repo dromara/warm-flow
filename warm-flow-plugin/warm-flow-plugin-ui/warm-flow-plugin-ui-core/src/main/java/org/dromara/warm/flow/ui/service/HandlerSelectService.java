@@ -85,18 +85,4 @@ public interface HandlerSelectService {
                 .setTotal(total));
     }
 
-    default FlowPage<FormDto> publishForm(FormQuery query) {
-        Page<Form> formPage = FlowFactory.formService().publishPage(query.getFormName(), query.getPageNum(), query.getPageSize());
-        return new FlowPage<FormDto>().setRows(formPage.getList().stream().map((form -> {
-                    FormDto formDto = new FormDto();
-                            formDto.setId(form.getId());
-                            formDto.setFormName(form.getFormName());
-                            formDto.setFormCode(form.getFormCode());
-                            formDto.setVersion(form.getVersion());
-                    return formDto;
-                })).collect(Collectors.toList()))
-                .setCode(HttpStatus.SUCCESS)
-                .setMsg("查询成功")
-                .setTotal(formPage.getTotal());
-    }
 }

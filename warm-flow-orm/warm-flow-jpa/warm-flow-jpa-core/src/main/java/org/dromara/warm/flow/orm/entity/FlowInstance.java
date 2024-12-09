@@ -302,11 +302,6 @@ public class FlowInstance extends JPARootEntity<FlowInstance> implements Instanc
     }
 
     @Override
-    public Map<String, Object> getVariableMap() {
-        return FlowFactory.jsonConvert.strToMap(variable);
-    }
-
-    @Override
     public String getFlowStatus() {
         return flowStatus;
     }

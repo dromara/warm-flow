@@ -751,8 +751,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         instance.setUpdateTime(new Date());
         Map<String, Object> variable = flowParams.getVariable();
         if (MapUtil.isNotEmpty(variable)) {
-            String variableStr = instance.getVariable();
-            Map<String, Object> deserialize = FlowFactory.jsonConvert.strToMap(variableStr);
+            Map<String, Object> deserialize = instance.getVariableMap();
             deserialize.putAll(variable);
             instance.setVariable(FlowFactory.jsonConvert.mapToStr(deserialize));
         }
@@ -943,42 +942,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         }
 
         return flowForm;
-    }
-
-    @Override
-    public Instance handle(Long taskId, FlowParams flowParams, Map<String, Object> formData) {
-        Task task = getById(taskId);
-        AssertUtil.isNull(task, ExceptionCons.NOT_FOUNT_TASK);
-
-        Instance instance = FlowFactory.insService().getById(task.getInstanceId());
-        AssertUtil.isNull(instance, ExceptionCons.NOT_FOUNT_INSTANCE);
-
-        Definition definition = FlowFactory.defService().getById(instance.getDefinitionId());
-        AssertUtil.isFalse(judgeActivityStatus(definition, instance), ExceptionCons.NOT_ACTIVITY);
-        AssertUtil.isTrue(NodeType.isEnd(instance.getNodeType()), ExceptionCons.FLOW_FINISH);
-
-        Node nowNode = CollUtil.getOne(FlowFactory.nodeService()
-                .getByNodeCodes(Collections.singletonList(task.getNodeCode()), task.getDefinitionId()));
-        AssertUtil.isNull(nowNode, ExceptionCons.LOST_CUR_NODE);
-
-        // 检查权限
-        checkAuth(nowNode, task, flowParams);
-
-        // 执行开始监听器
-        ListenerVariable listenerVariable = new ListenerVariable(definition, instance, nowNode, flowParams.getVariable(), task);
-
-        listenerVariable.setParams(formData);
-
-        if (FlowCons.FORM_CUSTOM_Y.equals(nowNode.getFormCustom())) {
-            ListenerUtil.execute(listenerVariable, Listener.LISTENER_FORM_HANDLE, nowNode.getListenerPath(), nowNode.getListenerType());
-        } else if(FlowCons.FORM_CUSTOM_P.equals(nowNode.getFormCustom())
-                && FlowCons.FORM_CUSTOM_Y.equals(definition.getFormCustom())) {
-            ListenerUtil.execute(listenerVariable, Listener.LISTENER_FORM_HANDLE, definition.getListenerPath(), definition.getListenerType());
-        } else {
-            // 当前流程不支持内置表单,不作处理
-        }
-
-        return skip(flowParams, task);
     }
 
     @Override

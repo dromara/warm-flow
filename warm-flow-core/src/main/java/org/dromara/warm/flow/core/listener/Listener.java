@@ -53,10 +53,6 @@ public interface Listener extends Serializable {
      */
     String LISTENER_FORM_LOAD = "formLoad";
 
-    /**
-     * 表单审批处理监听器，1.3.0 内置表单使用
-     */
-    String LISTENER_FORM_HANDLE = "formHandle";
 
     void notify(ListenerVariable listenerVariable);
 }
