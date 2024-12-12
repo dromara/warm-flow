@@ -5,7 +5,7 @@
 </template>
 
 <script setup name="formDesign">
-import {getForm, saveFormContent} from '../api/form/definition';
+import {getFormContent, saveFormContent} from '../api/form/definition';
 const { proxy } = getCurrentInstance();
 import useAppStore from "@/store/app";
 const appParams = computed(() => useAppStore().appParams);
@@ -46,8 +46,8 @@ function handleSave() {
 
 // 获取详情
 function getInfo() {
-  getForm(definitionId.value).then(res => {
-    let formContent = res;
+  getFormContent(definitionId.value).then(res => {
+    let formContent = res.data;
     if (formContent) {
       nextTick(() => {
         formContent = JSON.parse(formContent);

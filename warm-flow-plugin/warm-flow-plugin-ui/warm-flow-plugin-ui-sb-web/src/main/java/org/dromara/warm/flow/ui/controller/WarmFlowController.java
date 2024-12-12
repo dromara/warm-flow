@@ -237,8 +237,7 @@ public class WarmFlowController {
      */
     @GetMapping("/form-content/{id}")
     public ApiResult<String> getFormContent(@PathVariable("id") Long id) {
-        try {
-            return ApiResult.ok(FlowFactory.formService().getById(id).getFormContent());
+        try {return ApiResult.ok(FlowFactory.formService().getById(id).getFormContent());
         } catch (Exception e) {
             log.error("获取表单内容字符串", e);
             throw new FlowException(ExceptionUtil.handleMsg("获取表单内容字符串失败", e));
@@ -251,7 +250,7 @@ public class WarmFlowController {
      * @return
      */
     @PostMapping("/form-content")
-    public ApiResult<Void> saveFormContent(FormDto formDto) {
+    public ApiResult<Void> saveFormContent(@RequestBody FormDto formDto) {
         FlowFactory.formService().saveContent(formDto.getId(), formDto.getFormContent());
         return ApiResult.ok();
     }
