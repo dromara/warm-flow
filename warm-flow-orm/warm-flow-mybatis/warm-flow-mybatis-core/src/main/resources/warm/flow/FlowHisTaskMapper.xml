@@ -316,7 +316,7 @@
             <if test="formCustom != null and formCustom != ''">form_custom,</if>
             <if test="formPath != null and formPath != ''">form_path,</if>
             <if test="message != null">message,</if>
-            <if test="variable != null">message,</if>
+            <if test="variable != null">variable,</if>
             <if test="ext != null">ext,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>

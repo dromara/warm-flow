@@ -863,16 +863,15 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             ListenerUtil.execute(listenerVariable, Listener.LISTENER_FORM_LOAD, nowNode.getListenerPath(), nowNode.getListenerType());
             Form form = FlowFactory.formService().getById(Long.valueOf(task.getFormPath()));
             flowForm.setForm(form);
-            flowForm.setData(listenerVariable.getResult());
         } else if(FlowCons.FORM_CUSTOM_P.equals(nowNode.getFormCustom())
                 && FlowCons.FORM_CUSTOM_Y.equals(definition.getFormCustom())) {
             ListenerUtil.execute(listenerVariable, Listener.LISTENER_FORM_LOAD, definition.getListenerPath(), definition.getListenerType());
             Form form = FlowFactory.formService().getById(Long.valueOf(definition.getFormPath()));
             flowForm.setForm(form);
-            flowForm.setData(listenerVariable.getResult());
         } else {
             // 当前流程不支持内置表单,不作处理
         }
+        flowForm.setData(instance.getVariableMap().get(FlowCons.FORM_DATA));
 
         return flowForm;
     }
