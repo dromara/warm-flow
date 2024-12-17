@@ -15,11 +15,10 @@
  */
 package org.dromara.warm.flow.core.condition;
 
-import org.dromara.warm.flow.core.constant.FlowCons;
 import org.dromara.warm.flow.core.utils.MathUtil;
 
 /**
- * 条件表达式大于 @@gt@@|flag@@gt@@4
+ * 条件表达式大于 gt|flag|4
  *
  * @author warm
  */
@@ -27,13 +26,13 @@ public class ConditionStrategyGt extends ConditionStrategyAbstract {
 
     @Override
     public String getType() {
-        return FlowCons.splitAt + "gt" + FlowCons.splitAt;
+        return "gt";
     }
 
     @Override
-    public Boolean afterEval(String[] split, String value) {
-        if (MathUtil.isNumeric(split[2].trim())) {
-            return MathUtil.determineSize(value, split[2].trim()) > 0;
+    public Boolean afterEval(String value, String variableValue) {
+        if (MathUtil.isNumeric(value)) {
+            return MathUtil.determineSize(variableValue, value) > 0;
         } else {
             return false;
         }

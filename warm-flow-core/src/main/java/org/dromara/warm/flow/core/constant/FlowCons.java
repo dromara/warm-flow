@@ -28,6 +28,9 @@ public class FlowCons {
      * 分隔符
      */
     public static final String splitAt = "@@";
+    public static final String splitVertical = "\\|";
+    public static final String splitAnd = "and";
+    public static final String splitOr = "or";
 
     public static final Pattern listenerPattern = Pattern.compile("^([^()]*)(.*)$");
 

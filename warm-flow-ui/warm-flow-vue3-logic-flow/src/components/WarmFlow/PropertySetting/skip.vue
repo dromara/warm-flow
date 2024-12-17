@@ -60,12 +60,11 @@ const emit = defineEmits(["change"]);
 
 watch(() => form, n => {
   n = n.value;
-  let skipCondition = n.skipCondition;
-  skipCondition = "@@" + n.conditionType + "@@|";
-  if (n.conditionType !== 'spel') {
+  let skipCondition = '';
+  skipCondition = n.conditionType + "|";
+  if (!/^spel/.test(n.conditionType)) {
     skipCondition = skipCondition
-      + (n.condition ? n.condition : '') + "@@"
-      + n.conditionType + "@@";
+      + (n.condition ? n.condition : '') + "|";
   }
   n.skipCondition = skipCondition
     + (n.conditionValue ? n.conditionValue : '')

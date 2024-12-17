@@ -38,7 +38,7 @@ COMMENT ON COLUMN flow_definition.tenant_id IS '租户id';
 
 CREATE TABLE flow_node (
     id int8 NOT NULL, -- 主键id
-    node_type int2 NOT NULL, -- 节点类型（0开始节点 1中间节点 2结束结点 3互斥网关 4并行网关）
+    node_type int2 NOT NULL, -- 节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）
     definition_id int8 NOT NULL, -- 流程定义id
     node_code varchar(100) NOT NULL, -- 流程节点编码
     node_name varchar(100) NULL, -- 流程节点名称
@@ -59,10 +59,10 @@ CREATE TABLE flow_node (
     tenant_id varchar(40) NULL, -- 租户id
     CONSTRAINT flow_node_pkey PRIMARY KEY (id)
 );
-COMMENT ON TABLE flow_node IS '流程结点表';
+COMMENT ON TABLE flow_node IS '流程节点表';
 
 COMMENT ON COLUMN flow_node.id IS '主键id';
-COMMENT ON COLUMN flow_node.node_type IS '节点类型（0开始节点 1中间节点 2结束结点 3互斥网关 4并行网关）';
+COMMENT ON COLUMN flow_node.node_type IS '节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）';
 COMMENT ON COLUMN flow_node.definition_id IS '流程定义id';
 COMMENT ON COLUMN flow_node.node_code IS '流程节点编码';
 COMMENT ON COLUMN flow_node.node_name IS '流程节点名称';
@@ -100,7 +100,7 @@ CREATE TABLE flow_skip (
     tenant_id varchar(40) NULL, -- 租户id
     CONSTRAINT flow_skip_pkey PRIMARY KEY (id)
 );
-COMMENT ON TABLE flow_skip IS '结点跳转关联表';
+COMMENT ON TABLE flow_skip IS '节点跳转关联表';
 
 COMMENT ON COLUMN flow_skip.id IS '主键id';
 COMMENT ON COLUMN flow_skip.definition_id IS '流程定义id';
@@ -121,7 +121,7 @@ CREATE TABLE flow_instance (
 	id int8 NOT NULL, -- 主键id
 	definition_id int8 NOT NULL, -- 对应flow_definition表的id
 	business_id varchar(40) NOT NULL, -- 业务id
-	node_type int2 NOT NULL, -- 结点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）
+	node_type int2 NOT NULL, -- 节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）
 	node_code varchar(40) NOT NULL, -- 流程节点编码
 	node_name varchar(100) NULL, -- 流程节点名称
 	variable text NULL, -- 任务变量
@@ -140,7 +140,7 @@ COMMENT ON TABLE flow_instance IS '流程实例表';
 COMMENT ON COLUMN flow_instance.id IS '主键id';
 COMMENT ON COLUMN flow_instance.definition_id IS '对应flow_definition表的id';
 COMMENT ON COLUMN flow_instance.business_id IS '业务id';
-COMMENT ON COLUMN flow_instance.node_type IS '结点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）';
+COMMENT ON COLUMN flow_instance.node_type IS '节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）';
 COMMENT ON COLUMN flow_instance.node_code IS '流程节点编码';
 COMMENT ON COLUMN flow_instance.node_name IS '流程节点名称';
 COMMENT ON COLUMN flow_instance.variable IS '任务变量';

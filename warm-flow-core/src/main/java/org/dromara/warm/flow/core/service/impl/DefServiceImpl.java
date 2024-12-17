@@ -64,10 +64,20 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
 
     @Override
     public Definition importXml(InputStream is) throws Exception {
+        return importFlow(readXml(is));
+    }
+
+    @Override
+    public FlowCombine readXml(InputStream is) throws Exception {
         if (ObjectUtil.isNull(is)) {
             return null;
         }
-        FlowCombine combine = FlowConfigUtil.readConfig(is);
+        return FlowConfigUtil.readConfig(is);
+    }
+
+
+    @Override
+    public Definition importFlow(FlowCombine combine) {
         // 流程定义
         Definition definition = combine.getDefinition();
         // 所有的流程节点
@@ -77,6 +87,17 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         // 根据不同策略进行新增
         insertFlow(definition, allNodes, allSkips);
         return definition;
+    }
+
+    @Override
+    public void insertFlow(Definition definition, List<Node> allNodes, List<Skip> allSkips) {
+        definition.setVersion(getNewVersion(definition));
+        for (Node node : allNodes) {
+            node.setVersion(definition.getVersion());
+        }
+        FlowFactory.defService().save(definition);
+        FlowFactory.nodeService().saveBatch(allNodes);
+        FlowFactory.skipService().saveBatch(allSkips);
     }
 
     @Override
@@ -120,15 +141,12 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
 
     @Override
     public boolean checkAndSave(Definition definition) {
-        String version = getNewVersion(definition);
-        definition.setVersion(version);
-        return save(definition);
+        return save(definition.setVersion(getNewVersion(definition)));
     }
 
     @Override
     public boolean saveAndInitNode(Definition definition) {
-        String version = getNewVersion(definition);
-        definition.setVersion(version);
+        definition.setVersion(getNewVersion(definition));
         FlowFactory.dataFillHandler().idFill(definition);
         List<Node> nodeList = new ArrayList<>();
         List<Skip> skipList = new ArrayList<>();
@@ -268,6 +286,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     @Override
     public boolean copyDef(Long id) {
         Definition definition = getById(id).copy();
+        definition.setVersion(getNewVersion(definition));
         AssertUtil.isNull(definition, ExceptionCons.NOT_FOUNT_DEF);
 
         List<Node> nodeList = FlowFactory.nodeService().list(FlowFactory.newNode().setDefinitionId(id))
@@ -275,8 +294,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         List<Skip> skipList = FlowFactory.skipService().list(FlowFactory.newSkip().setDefinitionId(id))
                 .stream().map(Skip::copy).collect(Collectors.toList());
         FlowFactory.dataFillHandler().idFill(definition.setId(null));
-        definition.setVersion(definition.getVersion() + "_copy")
-                .setIsPublish(PublishStatus.UNPUBLISHED.getKey())
+        definition.setIsPublish(PublishStatus.UNPUBLISHED.getKey())
                 .setCreateTime(null)
                 .setUpdateTime(null);
 
@@ -719,23 +737,6 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         return definition;
     }
 
-    /**
-     * 每次只做新增操作,保证新增的flowCode+version是唯一的
-     *
-     * @param definition 流程定义
-     * @param allNodes 所有节点
-     * @param allSkips 所有跳转
-     */
-    private void insertFlow(Definition definition, List<Node> allNodes, List<Skip> allSkips) {
-        String version = getNewVersion(definition);
-        definition.setVersion(version);
-        for (Node node : allNodes) {
-            node.setVersion(version);
-        }
-        FlowFactory.defService().save(definition);
-        FlowFactory.nodeService().saveBatch(allNodes);
-        FlowFactory.skipService().saveBatch(allSkips);
-    }
 
     private String getNewVersion(Definition definition) {
         List<String> flowCodeList = Collections.singletonList(definition.getFlowCode());

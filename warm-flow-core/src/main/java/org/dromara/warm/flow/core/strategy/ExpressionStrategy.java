@@ -33,12 +33,21 @@ public interface ExpressionStrategy<T> {
 
     /**
      * 是否截取表达式前缀，然后在进行执行，默认不截取
-     * 如果截取，比如@@spel@@|#{@user.evalVar()} , 截取@@spel@@|，后再执行#{@user.evalVar()}解析
+     * 如果截取，比如spel|#{@user.evalVar()} , 截取spel|，后再执行#{@user.evalVar()}解析
      *
      * @return 类型
      */
     default Boolean isIntercept() {
         return false;
+    }
+
+    /**
+     * 当选择截取，并且希望拼接上某些字符串，在进行截取
+     *
+     * @return 类型
+     */
+    default String interceptStr() {
+        return "";
     }
 
     /**

@@ -15,14 +15,13 @@
  */
 package org.dromara.warm.plugin.modes.sb.expression;
 
-import org.dromara.warm.flow.core.constant.FlowCons;
 import org.dromara.warm.flow.core.condition.ConditionStrategy;
 import org.dromara.warm.plugin.modes.sb.helper.SpelHelper;
 
 import java.util.Map;
 
 /**
- * spel条件表达式 @@spel@@|#{@user.eval()}
+ * spel条件表达式 #{@user.eval()}
  *
  * @author warm
  */
@@ -30,7 +29,7 @@ public class ConditionStrategySpel implements ConditionStrategy {
 
     @Override
     public String getType() {
-        return FlowCons.splitAt + "spel" + FlowCons.splitAt + "|";
+        return "spel";
     }
 
     @Override

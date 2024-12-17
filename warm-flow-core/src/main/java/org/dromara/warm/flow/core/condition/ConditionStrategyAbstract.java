@@ -18,6 +18,7 @@ package org.dromara.warm.flow.core.condition;
 import org.dromara.warm.flow.core.constant.ExceptionCons;
 import org.dromara.warm.flow.core.constant.FlowCons;
 import org.dromara.warm.flow.core.utils.AssertUtil;
+import org.dromara.warm.flow.core.utils.ExpressionUtil;
 
 import java.util.Map;
 
@@ -32,37 +33,39 @@ public abstract class ConditionStrategyAbstract implements ConditionStrategy {
     /**
      * 执行表达式前置方法 合法性校验
      *
-     * @param split    表达式后缀：如flag@@eq@@4
+     * @param name    变量名称：flag
      * @param variable 流程变量
      */
-    public void preEval(String[] split, Map<String, Object> variable) {
+    public void preEval(String name, Map<String, Object> variable) {
         AssertUtil.isEmpty(variable, ExceptionCons.NULL_CONDITION_VALUE);
-        Object o = variable.get(split[0].trim());
+        Object o = variable.get(name);
         AssertUtil.isNull(o, ExceptionCons.NULL_CONDITION_VALUE);
     }
 
     /**
      * 执行表达式
-     *
-     * @param expression 表达式
+
+     * @param expression 表达式：flag|5
+     *                   在{@link ExpressionUtil#evalCondition}中格式为，比如：eq|flag|5，
+     *                   截取前缀进入此方法后为：flag|5
      * @param variable   流程变量
      * @return 执行结果
      */
     @Override
     public Boolean eval(String expression, Map<String, Object> variable) {
-        String[] split = expression.split(FlowCons.splitAt);
-        preEval(split, variable);
+        String[] split = expression.split(FlowCons.splitVertical);
+        preEval(split[0].trim(), variable);
         String variableValue = String.valueOf(variable.get(split[0].trim()));
-        return afterEval(split, variableValue);
+        return afterEval(split[1].trim(), variableValue);
     }
 
     /**
      * 执行表达式后置方法
      *
-     * @param split 如flag@@eq@@4
-     * @param value 流程变量值
+     * @param value 表达式最后一个参数，比如：eq|flag|5的[5]
+     * @param variableValue 流程变量值
      * @return 执行结果
      */
-    public abstract Boolean afterEval(String[] split, String value);
+    public abstract Boolean afterEval(String value, String variableValue);
 
 }

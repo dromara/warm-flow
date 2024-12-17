@@ -138,7 +138,7 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
                 skipsGateway = skipsGateway.stream().filter(t -> {
                     if (NodeType.isGateWaySerial(nextNode.getNodeType())) {
                         AssertUtil.isEmpty(variable, ExceptionCons.MUST_CONDITION_VALUE_NODE);
-                        if (ObjectUtil.isNotNull(t.getSkipCondition())) {
+                        if (StringUtils.isNotEmpty(t.getSkipCondition())) {
                             return ExpressionUtil.evalCondition(t.getSkipCondition(), variable);
                         }
                     }

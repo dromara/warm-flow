@@ -90,13 +90,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 如果是网关节点，则重新获取后续节点
         List<Node> nextNodes = FlowFactory.nodeService().getNextByCheckGateway(flowParams.getVariable(), nextNode);
 
-        // 不能退回，未完成过任务
-        if (SkipType.isReject(flowParams.getSkipType())) {
-            List<HisTask> rejectHisTasks = FlowFactory.hisTaskService()
-                    .getByInsAndNodeCodes(task.getInstanceId(), StreamUtils.toList(nextNodes, Node::getNodeCode));
-            AssertUtil.isEmpty(rejectHisTasks, ExceptionCons.BACK_TASK_NOT_EXECUTED);
-        }
-
         // 构建增待办任务和设置结束任务历史记录
         List<Task> addTasks = buildAddTasks(flowParams, task, r.instance, nextNodes, nextNode, r.definition);
 

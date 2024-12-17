@@ -99,13 +99,13 @@ create table FLOW_NODE
 )
 /
 
-comment on table FLOW_NODE is '流程结点表'
+comment on table FLOW_NODE is '流程节点表'
 /
 
 comment on column FLOW_NODE.ID is '主键id'
 /
 
-comment on column FLOW_NODE.NODE_TYPE is '节点类型（0开始节点 1中间节点 2结束结点 3互斥网关 4并行网关）'
+comment on column FLOW_NODE.NODE_TYPE is '节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）'
 /
 
 comment on column FLOW_NODE.DEFINITION_ID is '对应flow_definition表的id'
