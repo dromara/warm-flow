@@ -20,7 +20,7 @@
     </modules>
 
     <properties>
-        <mybatis-plus.version>3.5.1</mybatis-plus.version>
+        <mybatis-plus.version>3.5.6</mybatis-plus.version>
     </properties>
 
     <dependencyManagement>

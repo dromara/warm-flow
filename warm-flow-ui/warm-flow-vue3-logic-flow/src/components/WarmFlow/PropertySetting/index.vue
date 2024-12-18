@@ -97,7 +97,7 @@ watch(() => props.node, n => {
       let condition, conditionType, conditionValue = ''
       if (skipCondition) {
         let conditionSpl = skipCondition.split('|')
-        if (skipCondition && /^spel/.test(skipCondition)) {
+        if (skipCondition && (/^spel/.test(skipCondition) || /^default/.test(skipCondition))) {
           conditionType = conditionSpl && conditionSpl.length > 0 ? conditionSpl[0] : ''
           conditionValue = conditionSpl && conditionSpl.length > 1 ? conditionSpl[1] : ''
         } else if (skipCondition) {

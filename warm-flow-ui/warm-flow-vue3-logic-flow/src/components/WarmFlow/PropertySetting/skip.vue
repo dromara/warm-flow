@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form ref="formRef" :model="form" label-width="120px" size="small" :disabled="disabled">
+    <el-form ref="formRef" :model="form" label-width="80px" size="small" :disabled="disabled">
       <slot name="form-item-task-skipName" v-if="skipConditionShow" :model="form" field="skipName">
         <el-form-item label="跳转名称">
           <el-input v-model="form.skipName" placeholder="跳转名称"/>
@@ -16,8 +16,10 @@
       </slot>
       <slot name="form-item-task-skipCondition" v-if="skipConditionShow" :model="form" field="skipCondition">
         <el-form-item label="跳转条件">
-          <el-input v-model="form.condition" v-if="!spelFlag" placeholder="条件名" style="width: 20%"/>
-          <el-select v-model="form.conditionType" placeholder="请选择条件方式" style="width: 35%;margin-left: 1%" @change="changeOper">
+          <el-input v-model="form.condition" v-if="!spelFlag" placeholder="条件名" :style="{ width: !spelFlag? '30%' : '0%' }"/>
+          <el-select v-model="form.conditionType" placeholder="请选择条件方式" :style="{ width: spelFlag? '18%' : '25%', 'margin-left': '1%' }" @change="changeOper">
+            <el-option label="默认" value="default"/>
+            <el-option label="spel" value="spel"/>
             <el-option label="大于" value="gt"/>
             <el-option label="大于等于" value="ge"/>
             <el-option label="等于" value="eq"/>
@@ -26,9 +28,8 @@
             <el-option label="小于等于" value="le"/>
             <el-option label="包含" value="like"/>
             <el-option label="不包含" value="notNike"/>
-            <el-option label="spel表达式" value="spel"/>
           </el-select>
-          <el-input v-model="form.conditionValue" placeholder="条件值" style="width: 42%;margin-left: 1%;margin-right: 1%;"/>
+          <el-input v-model="form.conditionValue" placeholder="条件值" :style="{ width: spelFlag? '80%' : '43%', 'margin-left': '1%' }"/>
         </el-form-item>
       </slot>
     </el-form>
@@ -62,7 +63,7 @@ watch(() => form, n => {
   n = n.value;
   let skipCondition = '';
   skipCondition = n.conditionType + "|";
-  if (!/^spel/.test(n.conditionType)) {
+  if (!/^spel/.test(n.conditionType) && !/^default/.test(n.conditionType)) {
     skipCondition = skipCondition
       + (n.condition ? n.condition : '') + "|";
   }
@@ -74,10 +75,12 @@ watch(() => form, n => {
 }, {deep: true});
 
 function changeOper(obj) {
-  spelFlag.value = obj === 'spel';
+  spelFlag.value = (obj === 'spel' || obj === 'default');
 }
 
-if (props.modelValue?.conditionType === 'spel') spelFlag.value = true;
+if (props.modelValue?.conditionType === 'spel' || props.modelValue?.conditionType === 'default') {
+  spelFlag.value = true;
+}
 
 </script>
 

@@ -68,37 +68,8 @@ public class ExpressionUtil {
      * @return boolean
      */
     public static boolean evalCondition(String expression, Map<String, Object> variable) {
-        List<String> expressions = splitAndPreserveKeywords(expression);
-        boolean result = false;
-        for (int i = 0; i < expressions.size(); i++) {
-            String ex = expressions.get(i);
-            if (i == 0) {
-                // 第一次开头没有and或者or，直接赋值
-                result = Boolean.TRUE.equals(getValue(ConditionStrategy.expressionStrategyList, ex, variable
-                        , ExceptionCons.NULL_CONDITION_STRATEGY));
-            } else if (FlowCons.splitAnd.equals(ex)) {
-                if (i + 1 < expressions.size()) {
-                    result = result && Boolean.TRUE.equals(getValue(ConditionStrategy.expressionStrategyList
-                            , expressions.get(++i), variable, ExceptionCons.NULL_CONDITION_STRATEGY));
-                    // 如果中间有and，那如果为false，不满足直接返回
-                    if (!result) {
-                        return result;
-                    }
-                }
-
-            } else if (FlowCons.splitOr.equals(ex)) {
-                if (i + 1 < expressions.size()) {
-                    result = result && Boolean.TRUE.equals(getValue(ConditionStrategy.expressionStrategyList
-                            , expressions.get(++i), variable, ExceptionCons.NULL_CONDITION_STRATEGY));
-                    // 如果中间有or，那如果为false，不满足直接返回
-                    if (!result) {
-                        return result;
-                    }
-                }
-            }
-        }
-
-        return result;
+        return Boolean.TRUE.equals(getValue(ConditionStrategy.expressionStrategyList, expression, variable
+                , ExceptionCons.NULL_CONDITION_STRATEGY));
     }
 
     /**
