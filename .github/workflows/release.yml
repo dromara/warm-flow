@@ -3,7 +3,7 @@ name: Maven Central Repo Deployment
 # 触发脚本的事件  这里为发布release之后触发
 on:
   push:
-    branches: 
+    branches:
        master
 
 # 定义一个发行任务
@@ -26,7 +26,11 @@ jobs:
           server-username: ${{ secrets.OSSRH_USER }}
           server-password: ${{ secrets.OSSRH_PASSWORD }}
           gpg-passphrase:  ${{ secrets.GPG_PASSWORD }}
-      # 3. 发布到Maven中央仓库
+      # 3. 执行 Maven 打包命令
+      - name: Build and Package
+        run: mvn clean deploy -P release
+
+      # 4. 发布到Maven中央仓库
       - name: Publish to Maven Central Repo
         # 这里用到了其他人写的action脚本，详细可以去看他的文档。
         uses: samuelmeuli/action-maven-publish@v1
