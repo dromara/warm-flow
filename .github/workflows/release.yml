@@ -2,8 +2,10 @@
 name: Maven Central Repo Deployment
 # 触发脚本的事件  这里为发布release之后触发
 on:
-  release:
-    types: [released]
+  push:
+    branches: 
+       master
+
 # 定义一个发行任务
 jobs:
   publish:
