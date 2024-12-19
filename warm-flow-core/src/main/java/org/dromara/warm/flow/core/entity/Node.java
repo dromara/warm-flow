@@ -77,25 +77,31 @@ public interface Node extends RootEntity {
 
     public Node setCoordinate(String coordinate);
 
+    @Deprecated
     public String getSkipAnyNode();
 
+    @Deprecated
     public Node setSkipAnyNode(String skipAnyNode);
 
-    String getListenerType();
+    public String getAnyNodeSkip();
 
-    Node setListenerType(String listenerType);
+    public Node setAnyNodeSkip(String anyNodeSkip);
 
-    String getListenerPath();
+    public String getListenerType();
 
-    Node setListenerPath(String listenerPath);
+    public Node setListenerType(String listenerType);
 
-    String getHandlerType();
+    public String getListenerPath();
 
-    Node setHandlerType(String listenerType);
+    public Node setListenerPath(String listenerPath);
 
-    String getHandlerPath();
+    public String getHandlerType();
 
-    Node setHandlerPath(String listenerPath);
+    public Node setHandlerType(String listenerType);
+
+    public String getHandlerPath();
+
+    public Node setHandlerPath(String listenerPath);
 
     public String getFormCustom();
 

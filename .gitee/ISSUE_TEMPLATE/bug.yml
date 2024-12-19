@@ -31,7 +31,7 @@ body:
   - type: textarea
     attributes:
       label: 问题描述和复现
-      description: 请详细告诉问题描述，如何复现你遇到的问题。
+      description: 请详细告诉问题描述，如何复现你遇到的问题，如有必要请提供流程定义xml。
     validations:
       required: true
   - type: textarea

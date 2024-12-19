@@ -55,7 +55,7 @@
         <slot name="form-item-task-nodeRatio" :model="form" field="nodeRatio" v-if="form.collaborativeWay === '2'">
           <el-form-item label="票签占比" prop="nodeRatio">
             <el-input v-model="form.nodeRatio" type="number" placeholder="请输入"></el-input>
-            <div class="placeholder">票签比例范围：(0-100)的值</div>
+            <div class="placeholder mt5">票签比例范围：(0-100)的值</div>
           </el-form-item>
         </slot>
         <slot name="form-item-task-permissionFlag" :model="form" field="permissionFlag">
@@ -68,24 +68,21 @@
             </div>
           </el-form-item>
         </slot>
-<!--        <slot name="form-item-task-skipAnyNode" :model="form" field="skipAnyNode">-->
-<!--          <el-form-item label="是否可以跳转任意节点">-->
-<!--            <el-radio-group v-model="form.skipAnyNode">-->
-<!--              <el-radio label="N">否</el-radio>-->
-<!--              <el-radio label="Y">是</el-radio>-->
-<!--            </el-radio-group>-->
-<!--          </el-form-item>-->
-<!--        </slot>-->
         <slot name="form-item-task-formCustom" :model="form" field="formCustom">
-          <el-form-item label="跳转任意节点">
-            <el-select v-model="form.skipAnyNode">
+          <el-form-item label="驳回到指定节点">
+            <template #label>
+              <span v-if="form.collaborativeWay === '2'"  class="mr5" style="color: red;">*</span>驳回到指定节点
+            </template>
+            <el-select v-model="form.anyNodeSkip">
+              <el-option label="" :value="''"></el-option>
               <el-option
-                  v-for="dict in filteredNodes"
-                  :key="dict.id"
-                  :label="dict.text.value"
-                  :value="dict.id"
+                  v-for="dict in nodes"
+                  :key="dict.nodeCode"
+                  :label="dict.nodeName"
+                  :value="dict.nodeCode"
               />
             </el-select>
+            <div class="placeholder mt5">票签必须选择驳到指定节点！</div>
           </el-form-item>
         </slot>
         <slot name="form-item-task-formCustom" :model="form" field="formCustom">
@@ -148,7 +145,7 @@
 <script setup name="Between">
 import selectUser from "@/views/components/selectUser";
 import { Delete } from '@element-plus/icons-vue'
-const { proxy } = getCurrentInstance();
+import {previousNodeList} from "../../../api/flow/definition.js";
 
 const props = defineProps({
   modelValue: {
@@ -161,8 +158,8 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
-  nodes: {
-    type: Array,
+  definitionId: {
+    type: Number,
     default () {
       return []
     }
@@ -171,6 +168,9 @@ const props = defineProps({
 
 const tabsValue = ref("1");
 const form = ref(props.modelValue);
+const nodes = ref([]);
+const userVisible = ref(false);
+
 const rules = reactive({
   nodeRatio: [
     { required: false, message: "请输入", trigger: "change" },
@@ -179,7 +179,7 @@ const rules = reactive({
   listenerType: [{ required: true, message: '监听器类型不能为空', trigger: 'change' }],
   listenerPath: [{ required: true, message: '监听器路径不能为空', trigger: 'blur' }]
 });
-const userVisible = ref(false);
+
 const emit = defineEmits(["change"]);
 
 watch(() => form, n => {
@@ -195,6 +195,16 @@ function delPermission(index) {
 // 添加办理人
 function addPermission() {
   form.value.permissionFlag.push("");
+}
+
+/** 选择角色权限范围触发 */
+function getPreviousNodeList() {
+  previousNodeList(props.definitionId, form.value.nodeCode).then(res => {
+      if (res && res.data) {
+        nodes.value = res.data
+      }
+  })
+
 }
 
 /** 选择角色权限范围触发 */
@@ -232,11 +242,8 @@ function handleDeleteRow(index) {
   form.value.listenerRows.splice(index, 1);
 }
 
-const filteredNodes = computed(() => {
-  return props.nodes.filter(node => !["serial", "parallel"].includes(node.type));
-});
-
 getPermissionFlag();
+getPreviousNodeList();
 </script>
 
 <style scoped lang="scss">

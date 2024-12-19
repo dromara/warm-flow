@@ -29,3 +29,7 @@ update flow_skip set skip_condition = REPLACE(skip_condition,'@@notNike@@|','not
 update flow_skip set skip_condition = REPLACE(skip_condition,'@@notNike@@','|');
 
 update flow_skip set skip_condition = REPLACE(skip_condition,'@@spel@@|','spel|');
+
+ALTER TABLE `flow_node`
+    MODIFY COLUMN `skip_any_node` varchar(100) NULL DEFAULT 'N' COMMENT '是否可以退回任意节点（Y是 N否）即将删除' AFTER `coordinate`,
+    ADD COLUMN `any_node_skip` varchar(100) DEFAULT NULL COMMENT '任意结点跳转' AFTER `skip_any_node`;

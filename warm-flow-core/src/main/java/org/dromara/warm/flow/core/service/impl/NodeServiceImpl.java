@@ -23,15 +23,13 @@ import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.entity.Skip;
 import org.dromara.warm.flow.core.enums.NodeType;
 import org.dromara.warm.flow.core.enums.PublishStatus;
+import org.dromara.warm.flow.core.enums.SkipType;
 import org.dromara.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import org.dromara.warm.flow.core.service.NodeService;
 import org.dromara.warm.flow.core.utils.*;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -61,6 +59,42 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
     @Override
     public List<Node> getByNodeCodes(List<String> nodeCodes, Long definitionId) {
         return getDao().getByNodeCodes(nodeCodes, definitionId);
+    }
+
+    @Override
+    public List<Node> previousNodeList(Long nodeId) {
+        Node nowNode = getById(nodeId);
+        return previousNodeList(nowNode.getDefinitionId(), nowNode.getNodeCode());
+    }
+
+    @Override
+    public List<Node> previousNodeList(Long definitionId, String nowNodeCode) {
+
+        List<Node> nodeList = list(FlowFactory.newNode().setDefinitionId(definitionId));
+        Map<String, Node> nodeMap = StreamUtils.toMap(nodeList, Node::getNodeCode, node -> node);
+        List<Skip> skipList = FlowFactory.skipService().list(FlowFactory.newSkip().setDefinitionId(definitionId));
+        Map<String, List<Skip>> skipLastMap = skipList.stream().filter(skip -> SkipType.isPass(skip.getSkipType()))
+                .collect(Collectors.groupingBy(Skip::getNextNodeCode, LinkedHashMap::new, Collectors.toList()));
+
+        List<Node> previousNode = new ArrayList<>();
+        List<String> previousCode = getPreviousCode(skipLastMap, nowNodeCode);
+        for (String nodeCode : previousCode) {
+            Node node = nodeMap.get(nodeCode);
+            if (!NodeType.isGateWay(node.getNodeType())) {
+                previousNode.add(node);
+            }
+        }
+        Collections.reverse(previousNode);
+        Set<String> sameCode = new HashSet<>();
+        previousNode.removeIf(node -> {
+            if (sameCode.contains(node.getNodeCode())) {
+                return true;
+            }
+            sameCode.add(node.getNodeCode());
+            return false;
+        });
+        Collections.reverse(previousNode);
+        return previousNode;
     }
 
     @Override
@@ -103,6 +137,18 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
         AssertUtil.isNull(nextNode, ExceptionCons.NULL_NODE_CODE);
         AssertUtil.isTrue(NodeType.isStart(nextNode.getNodeType()), ExceptionCons.FIRST_FORBID_BACK);
         return nextNode;
+    }
+
+    private List<String> getPreviousCode(Map<String, List<Skip>> skipLastMap, String nowNodeCode) {
+        List<String> previousCode = new ArrayList<>();
+        if (CollUtil.isNotEmpty(skipLastMap.get(nowNodeCode))) {
+            List<Skip> skipList = skipLastMap.get(nowNodeCode);
+            for (Skip skip : skipList) {
+                previousCode.add(skip.getNowNodeCode());
+                previousCode.addAll(getPreviousCode(skipLastMap, skip.getNowNodeCode()));
+            }
+        }
+        return previousCode;
     }
 
     /**

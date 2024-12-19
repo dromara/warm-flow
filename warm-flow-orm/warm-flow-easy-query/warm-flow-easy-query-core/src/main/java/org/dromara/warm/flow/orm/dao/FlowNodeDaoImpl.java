@@ -105,7 +105,7 @@ public class FlowNodeDaoImpl extends WarmDaoImpl<FlowNode, FlowNodeProxy> implem
         proxy.permissionFlag().eq(StringUtils.isNotEmpty(entity.getPermissionFlag()), entity.getPermissionFlag()); // 权限标识
         proxy.nodeRatio().eq(Objects.nonNull(entity.getNodeRatio()), entity.getNodeRatio()); // 流程签署比例值
         proxy.coordinate().eq(StringUtils.isNotEmpty(entity.getCoordinate()), entity.getCoordinate()); // 流程节点坐标
-        proxy.skipAnyNode().eq(StringUtils.isNotEmpty(entity.getSkipAnyNode()), entity.getSkipAnyNode()); // 是否可以跳转任意节点（Y是 N否）
+        proxy.skipAnyNode().eq(StringUtils.isNotEmpty(entity.getSkipAnyNode()), entity.getSkipAnyNode()); // 是否可以退回任意节点（Y是 N否）即将删除
         proxy.listenerType().eq(StringUtils.isNotEmpty(entity.getListenerType()), entity.getListenerType()); // 监听器类型
         proxy.listenerPath().eq(StringUtils.isNotEmpty(entity.getListenerPath()), entity.getListenerPath()); // 监听器路径
         proxy.handlerType().eq(StringUtils.isNotEmpty(entity.getHandlerType()), entity.getHandlerType()); // 处理器类型

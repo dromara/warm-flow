@@ -19,10 +19,10 @@ import com.easy.query.core.annotation.*;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import lombok.Data;
+import lombok.experimental.Accessors;
 import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.entity.Skip;
 import org.dromara.warm.flow.orm.entity.proxy.FlowNodeProxy;
-import lombok.experimental.Accessors;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -60,7 +60,7 @@ public class FlowNode implements Node, ProxyEntityAvailable<FlowNode, FlowNodePr
     private String tenantId;
 
     /** 删除标记 */
-    @LogicDelete(strategy = LogicDeleteStrategyEnum.CUSTOM,strategyName = "WarmFlowLogicDelete")
+    @LogicDelete(strategy = LogicDeleteStrategyEnum.CUSTOM, strategyName = "WarmFlowLogicDelete")
     private String delFlag;
 
     /** 节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关） */
@@ -95,9 +95,14 @@ public class FlowNode implements Node, ProxyEntityAvailable<FlowNode, FlowNodePr
     @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String version;
 
-    /** 是否可以跳转任意节点（Y是 N否） */
+    /** 是否可以退回任意节点（Y是 N否）即将删除 */
+    @Deprecated
     @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String skipAnyNode;
+
+    /** 任意结点跳转 */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
+    private String anyNodeSkip;
 
     /** 监听器类型 */
     @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)

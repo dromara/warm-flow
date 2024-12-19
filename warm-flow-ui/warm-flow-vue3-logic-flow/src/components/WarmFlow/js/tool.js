@@ -23,7 +23,7 @@ const NODE_NAMES = ['start', 'between', 'serial', 'parallel', 'end']
 const DEFINITION_KEYS = ['flowCode', 'flowName', 'version', 'fromCustom', 'fromPath']
 // 节点属性
 const NODE_ATTR_KEYS = ['nodeType', 'nodeCode', 'nodeName', 'coordinate', 'nodeRatio', 'permissionFlag', "skipAnyNode"
-    , "listenerType", "listenerPath", "formCustom", "formPath"]
+    , "anyNodeSkip", "listenerType", "listenerPath", "formCustom", "formPath"]
 // 变迁节点属性
 const SKIP_ATTR_KEYS = ['skipName', 'skipType', 'coordinate', 'skipCondition']
 
@@ -196,6 +196,7 @@ export const json2LogicFlowJson = (json) => {
       lfNode.properties.nodeRatio = node.nodeRatio.toString()
       lfNode.properties.permissionFlag = node.permissionFlag
       lfNode.properties.skipAnyNode = node.skipAnyNode
+      lfNode.properties.anyNodeSkip = node.anyNodeSkip
       lfNode.properties.listenerType = node.listenerType
       lfNode.properties.listenerPath = node.listenerPath
       lfNode.properties.formCustom = node.formCustom
@@ -339,6 +340,7 @@ export const logicFlowJsonToFlowXml = (data) => {
       permissionFlag: node.properties.permissionFlag,
       nodeRatio: node.properties.nodeRatio,
       skipAnyNode: node.properties.skipAnyNode,
+      anyNodeSkip: node.properties.anyNodeSkip,
       listenerType: listenerRows.map(e => e.listenerType).join(","),
       listenerPath: listenerRows.map(e => e.listenerPath).join("@@"),
       coordinate: node.x + ',' + node.y + textXy,
@@ -491,6 +493,7 @@ export const logicFlowJsonToFlowJson = (data) => {
     node.permissionFlag = anyNode.properties.permissionFlag
     node.nodeRatio = anyNode.properties.nodeRatio
     node.skipAnyNode = anyNode.properties.skipAnyNode
+    node.anyNodeSkip = anyNode.properties.anyNodeSkip
     node.listenerType = anyNode.properties.listenerType
     node.listenerPath = anyNode.properties.listenerPath
     node.formCustom = anyNode.properties.formCustom

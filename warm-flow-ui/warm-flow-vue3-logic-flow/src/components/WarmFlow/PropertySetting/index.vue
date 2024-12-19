@@ -10,7 +10,7 @@
       :append-to-body="true"
       :before-close="handleClose">
       <component :is="componentType" v-model="form" :disabled="disabled" :skipConditionShow="skipConditionShow"
-                 :nodes="nodes">
+                 :definitionId="definitionId">
         <template v-slot:[key]="data" v-for="(item, key) in $slots">
           <slot :name="key" v-bind="data || {}"></slot>
         </template>
@@ -26,6 +26,8 @@ import serial from './serial.vue'
 import parallel from './parallel.vue'
 import end from './end.vue'
 import skip from './skip.vue'
+
+const { proxy } = getCurrentInstance();
 
 const COMPONENT_LIST = {
   start,
@@ -63,8 +65,8 @@ const props = defineProps({
     type: Boolean,
     default: true
   },
-  nodes: {
-    type: Array,
+  definitionId: {
+    type: Number,
     default () {
       return []
     }
@@ -187,10 +189,10 @@ watch(() => form.value.permissionFlag, (n) => {
   })
 }, { deep: true });
 
-watch(() => form.value.skipAnyNode, (n) => {
+watch(() => form.value.anyNodeSkip, (n) => {
   // 监听跳转属性变化并更新
   props.lf.setProperties(objId.value, {
-    skipAnyNode: n
+    anyNodeSkip: n
   })
 });
 
@@ -248,6 +250,9 @@ function show () {
 
 function handleClose () {
   // 监听节点编码变量并更新
+  if (form.value.collaborativeWay === "2" && !form.value.anyNodeSkip) {
+    proxy.$modal.notifyWarning("票签必须选择驳到指定节点！");
+  }
   if (nodeCode.value && objId.value) {
     if (['skip'].includes(props.node?.type)) {
       if (!props.lf.getEdgeModelById(nodeCode.value)) {

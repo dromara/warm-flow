@@ -226,10 +226,16 @@ public class FlowNode extends JPARootEntity<FlowNode> implements Node {
      */
     private String version;
     /**
-     * 是否可以跳转任意节点（Y是 N否）
+     * 是否可以退回任意节点（Y是 N否）即将删除
      */
+    @Deprecated
     @Column(name = "skip_any_node")
     private String skipAnyNode;
+    /**
+     * 任意结点跳转
+     */
+    @Column(name = "any_node_skip")
+    private String anyNodeSkip;
     /**
      * 监听器类型
      */

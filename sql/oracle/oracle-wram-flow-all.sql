@@ -84,6 +84,7 @@ create table FLOW_NODE
     NODE_RATIO NUMBER(6,3),
     COORDINATE VARCHAR2(100),
     SKIP_ANY_NODE VARCHAR2(100) default 'N',
+    ANY_NODE_SKIP VARCHAR2(100),
     LISTENER_TYPE VARCHAR2(100),
     LISTENER_PATH VARCHAR2(500),
     HANDLER_TYPE VARCHAR2(100),
@@ -123,7 +124,10 @@ comment on column FLOW_NODE.NODE_RATIO is '流程签署比例值'
 comment on column FLOW_NODE.COORDINATE is '坐标'
 /
 
-comment on column FLOW_NODE.SKIP_ANY_NODE is '是否可以退回任意节点 (Y是 N否)'
+comment on column FLOW_NODE.SKIP_ANY_NODE is '是否可以退回任意节点（Y是 N否）即将删除'
+/
+
+comment on column FLOW_NODE.ANY_NODE_SKIP is '任意结点跳转'
 /
 
 comment on column FLOW_NODE.LISTENER_TYPE is '监听器类型'

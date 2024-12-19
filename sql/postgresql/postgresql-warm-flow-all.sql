@@ -45,7 +45,8 @@ CREATE TABLE flow_node (
     permission_flag varchar(200) NULL, -- 权限标识（权限类型:权限标识，可以多个，用逗号隔开)
     node_ratio numeric(6, 3) NULL, -- 流程签署比例值
     coordinate varchar(100) NULL, -- 坐标
-    skip_any_node varchar(100) NULL DEFAULT 'N'::character varying, -- 是否可以退回任意节点（Y是 N否）
+    skip_any_node varchar(100) NULL DEFAULT 'N'::character varying, -- 是否可以退回任意节点（Y是 N否）即将删除
+    any_node_skip varchar(100) NULL, -- 任意结点跳转
     listener_type varchar(100) NULL, -- 监听器类型
     listener_path varchar(400) NULL, -- 监听器路径
     handler_type varchar(100) NULL, -- 处理器类型
@@ -69,7 +70,8 @@ COMMENT ON COLUMN flow_node.node_name IS '流程节点名称';
 COMMENT ON COLUMN flow_node.permission_flag IS '权限标识（权限类型:权限标识，可以多个，用逗号隔开)';
 COMMENT ON COLUMN flow_node.node_ratio IS '流程签署比例值';
 COMMENT ON COLUMN flow_node.coordinate IS '坐标';
-COMMENT ON COLUMN flow_node.skip_any_node IS '是否可以退回任意节点（Y是 N否）';
+COMMENT ON COLUMN flow_node.skip_any_node IS '是否可以退回任意节点（Y是 N否）即将删除';
+COMMENT ON COLUMN flow_node.any_node_skip IS '任意结点跳转';
 COMMENT ON COLUMN flow_node.listener_type IS '监听器类型';
 COMMENT ON COLUMN flow_node.listener_path IS '监听器路径';
 COMMENT ON COLUMN flow_node.handler_type IS '处理器类型';

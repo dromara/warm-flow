@@ -17,6 +17,7 @@ package org.dromara.warm.flow.ui.controller;
 
 import org.dromara.warm.flow.core.FlowFactory;
 import org.dromara.warm.flow.core.dto.ApiResult;
+import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.utils.ExceptionUtil;
@@ -107,7 +108,7 @@ public class WarmFlowController {
 
     /**
      * 办理人权限设置列表tabs页签
-     * @return List<SelectGroup>
+     * @return List<String>
      */
     @GetMapping("/handler-type")
     public ApiResult<List<String>> handlerType() {
@@ -127,7 +128,7 @@ public class WarmFlowController {
 
     /**
      * 办理人权限设置列表结果
-     * @return List<SelectGroup>
+     * @return HandlerSelectVo
      */
     @GetMapping("/handler-result")
     public ApiResult<HandlerSelectVo> handlerResult(HandlerQuery query) {
@@ -142,6 +143,19 @@ public class WarmFlowController {
         } catch (Exception e) {
             log.error("办理人权限设置列表结果异常", e);
             throw new FlowException(ExceptionUtil.handleMsg("办理人权限设置列表结果失败", e));
+        }
+    }
+    /**
+     * 获取所有的前置节点集合
+     * @return List<Node>
+     */
+    @GetMapping("/previous-node-list/{definitionId}/{nowNodeCode}")
+    public ApiResult<List<Node>> previousNodeList(@PathVariable Long definitionId,  @PathVariable String nowNodeCode) {
+        try {
+            return ApiResult.ok(FlowFactory.nodeService().previousNodeList(definitionId, nowNodeCode));
+        } catch (Exception e) {
+            log.error("获取所有的前置节点集合异常", e);
+            throw new FlowException(ExceptionUtil.handleMsg("获取所有的前置节点集合失败", e));
         }
     }
 }
