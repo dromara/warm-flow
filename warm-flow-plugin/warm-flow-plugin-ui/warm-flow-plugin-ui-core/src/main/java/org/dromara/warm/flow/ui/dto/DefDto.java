@@ -15,43 +15,32 @@
  */
 package org.dromara.warm.flow.ui.dto;
 
+
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 流程设计器-流程定义数据传输对象
  *
  * @author warm
  */
+@Getter
+@Setter
 public class DefDto {
 
-    /** 流程定义id */
+    /**
+     * 流程定义id
+     */
     private Long id;
 
-    /** 流程定义xml字符串 */
+    /**
+     * 流程定义xml字符串
+     */
     private String xmlString;
 
-    /** 流程定义json字符串 */
+    /**
+     * 流程定义json字符串
+     */
     private String jsonString;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getXmlString() {
-        return xmlString;
-    }
-
-    public void setXmlString(String xmlString) {
-        this.xmlString = xmlString;
-    }
-
-    public String getJsonString() {
-        return jsonString;
-    }
-
-    public void setJsonString(String jsonString) {
-        this.jsonString = jsonString;
-    }
 }

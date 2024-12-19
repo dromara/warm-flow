@@ -15,6 +15,9 @@
  */
 package org.dromara.warm.flow.core.chart;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.dromara.warm.flow.core.utils.DrawUtils;
 import org.dromara.warm.flow.core.utils.ObjectUtil;
 import org.dromara.warm.flow.core.utils.StringUtils;
@@ -25,6 +28,9 @@ import java.util.Arrays;
 /**
  * 流程图开始或者结束节点
  */
+@Getter
+@Setter
+@Accessors(chain = true)
 public class SkipChart implements FlowChart {
     private int n;
 
@@ -36,59 +42,11 @@ public class SkipChart implements FlowChart {
 
     private TextChart textChart;
 
-    public SkipChart() {
-    }
-
     public SkipChart(int[] xPoints, int[] yPoints, Color c, TextChart textChart) {
         this.xPoints = xPoints;
         this.yPoints = yPoints;
         this.c = c;
         this.textChart = textChart;
-    }
-
-    public int getN() {
-        return n;
-    }
-
-    public SkipChart setN(int n) {
-        this.n = n;
-        return this;
-    }
-
-    public int[] getxPoints() {
-        return xPoints;
-    }
-
-    public SkipChart setxPoints(int[] xPoints) {
-        this.xPoints = xPoints;
-        return this;
-    }
-
-    public int[] getyPoints() {
-        return yPoints;
-    }
-
-    public SkipChart setyPoints(int[] yPoints) {
-        this.yPoints = yPoints;
-        return this;
-    }
-
-    public Color getC() {
-        return c;
-    }
-
-    public SkipChart setC(Color c) {
-        this.c = c;
-        return this;
-    }
-
-    public TextChart getTextChart() {
-        return textChart;
-    }
-
-    public SkipChart setTextChart(TextChart textChart) {
-        this.textChart = textChart;
-        return this;
     }
 
     @Override
@@ -129,8 +87,8 @@ public class SkipChart implements FlowChart {
         }
         graphics.fillPolygon(xArrow, yArrow, 3);
         if (ObjectUtil.isNotNull(textChart) && StringUtils.isNotEmpty(textChart.getTitle())) {
-            textChart.setxText(textChart.getxText() - DrawUtils.stringWidth(graphics, textChart.getTitle()) / 2);
-            textChart.setyText(textChart.getyText() - 10);
+            textChart.setXText(textChart.getXText() - DrawUtils.stringWidth(graphics, textChart.getTitle()) / 2);
+            textChart.setYText(textChart.getYText() - 10);
             // 填充文字说明
             textChart.setN(n).draw(graphics);
         }

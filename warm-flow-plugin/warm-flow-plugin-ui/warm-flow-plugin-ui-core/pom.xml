@@ -16,9 +16,16 @@
             <groupId>org.dromara.warm</groupId>
             <artifactId>warm-flow-plugin-vue3-ui</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.dromara.warm</groupId>
             <artifactId>warm-flow-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

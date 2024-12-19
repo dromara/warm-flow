@@ -76,12 +76,19 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
         AssertUtil.isEmpty(nowNodeCode, ExceptionCons.LOST_NODE_CODE);
         AssertUtil.isEmpty(skipType, ExceptionCons.NULL_CONDITION_VALUE);
 
+        // 查询当前节点
+        Node nowNode = getOne(FlowFactory.newNode().setNodeCode(nowNodeCode).setDefinitionId(definitionId));
+
         // 如果指定了跳转节点，直接获取节点
         if (StringUtils.isNotEmpty(anyNodeCode)) {
             return getOne(FlowFactory.newNode().setNodeCode(anyNodeCode).setDefinitionId(definitionId));
         }
-        // 查询当前节点
-        Node nowNode = getOne(FlowFactory.newNode().setNodeCode(nowNodeCode).setDefinitionId(definitionId));
+
+//        // 如果配置了任意跳转节点，直接获取节点
+//        if (StringUtils.isNotEmpty(nowNode.getSkipAnyNode())) {
+//            return getOne(FlowFactory.newNode().setNodeCode(nowNode.getSkipAnyNode()).setDefinitionId(definitionId));
+//        }
+
         AssertUtil.isNull(nowNode, ExceptionCons.LOST_CUR_NODE);
         // 获取跳转关系
         List<Skip> skips = FlowFactory.skipService().list(FlowFactory.newSkip().setDefinitionId(definitionId)

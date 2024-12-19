@@ -15,6 +15,9 @@
  */
 package org.dromara.warm.flow.core.chart;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.dromara.warm.flow.core.utils.DrawUtils;
 import org.dromara.warm.flow.core.utils.ObjectUtil;
 import org.dromara.warm.flow.core.utils.StringUtils;
@@ -24,6 +27,9 @@ import java.awt.*;
 /**
  * 流程图中间节点
  */
+@Getter
+@Setter
+@Accessors(chain = true)
 public class BetweenChart implements FlowChart {
     private int n;
 
@@ -35,9 +41,6 @@ public class BetweenChart implements FlowChart {
 
     private TextChart textChart;
 
-    public BetweenChart() {
-    }
-
     public BetweenChart(int xRect, int yRect, Color c, TextChart textChart) {
         this.xRect = xRect;
         this.yRect = yRect;
@@ -45,57 +48,12 @@ public class BetweenChart implements FlowChart {
         this.textChart = textChart;
     }
 
-    public int getN() {
-        return n;
-    }
-
-    public BetweenChart setN(int n) {
-        this.n = n;
-        return this;
-    }
-
-    public int getxRect() {
-        return xRect;
-    }
-
-    public BetweenChart setxRect(int xRect) {
-        this.xRect = xRect;
-        return this;
-    }
-
-    public int getyRect() {
-        return yRect;
-    }
-
-    public BetweenChart setyRect(int yRect) {
-        this.yRect = yRect;
-        return this;
-    }
-
-    public Color getC() {
-        return c;
-    }
-
-    public BetweenChart setC(Color c) {
-        this.c = c;
-        return this;
-    }
-
-    public TextChart getTextChart() {
-        return textChart;
-    }
-
-    public BetweenChart setTextChart(TextChart textChart) {
-        this.textChart = textChart;
-        return this;
-    }
-
     @Override
     public void draw(Graphics2D graphics) {
         graphics.setColor(c);
         graphics.drawRoundRect((xRect - 50) * n, (yRect - 40)  * n, 100 * n, 80 * n, 20 * n, 20 * n);
         if (ObjectUtil.isNotNull(textChart) && StringUtils.isNotEmpty(textChart.getTitle())) {
-            textChart.setxText(textChart.getxText() - DrawUtils.stringWidth(graphics, textChart.getTitle()) / 2);
+            textChart.setXText(textChart.getXText() - DrawUtils.stringWidth(graphics, textChart.getTitle()) / 2);
             // 填充文字说明
             textChart.setN(n).draw(graphics);
         }

@@ -15,6 +15,8 @@
  */
 package org.dromara.warm.flow.core.entity;
 
+import org.dromara.warm.flow.core.FlowFactory;
+
 import java.util.Date;
 import java.util.Map;
 
@@ -74,7 +76,9 @@ public interface Instance extends RootEntity {
 
     Instance setVariable(String variable);
 
-    Map<String, Object> getVariableMap();
+    default Map<String, Object> getVariableMap()  {
+        return FlowFactory.jsonConvert.strToMap(getVariable());
+    }
 
     public String getFlowStatus();
 

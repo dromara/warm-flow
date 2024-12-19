@@ -18,11 +18,10 @@ package org.dromara.warm.flow.orm.entity;
 import com.easy.query.core.annotation.*;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
+import lombok.Data;
 import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.entity.Skip;
 import org.dromara.warm.flow.orm.entity.proxy.FlowNodeProxy;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.math.BigDecimal;
@@ -36,8 +35,7 @@ import java.util.List;
  * @author warm
  * @since 2023-03-29
  */
-@Getter
-@Setter
+@Data
 @EntityProxy
 @Accessors(chain = true)
 @Table("flow_node")
@@ -129,30 +127,4 @@ public class FlowNode implements Node, ProxyEntityAvailable<FlowNode, FlowNodePr
     @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String formPath;
 
-    @Override
-    public String toString() {
-        return "FlowNode{" +
-            "skipList=" + skipList +
-            ", id=" + id +
-            ", createTime=" + createTime +
-            ", updateTime=" + updateTime +
-            ", tenantId='" + tenantId + '\'' +
-            ", delFlag='" + delFlag + '\'' +
-            ", nodeType=" + nodeType +
-            ", definitionId=" + definitionId +
-            ", nodeCode='" + nodeCode + '\'' +
-            ", nodeName='" + nodeName + '\'' +
-            ", permissionFlag='" + permissionFlag + '\'' +
-            ", nodeRatio=" + nodeRatio +
-            ", coordinate='" + coordinate + '\'' +
-            ", version='" + version + '\'' +
-            ", skipAnyNode='" + skipAnyNode + '\'' +
-            ", listenerType='" + listenerType + '\'' +
-            ", listenerPath='" + listenerPath + '\'' +
-            ", handlerType='" + handlerType + '\'' +
-            ", handlerPath='" + handlerPath + '\'' +
-            ", formCustom='" + formCustom + '\'' +
-            ", formPath='" + formPath + '\'' +
-            '}';
-    }
 }

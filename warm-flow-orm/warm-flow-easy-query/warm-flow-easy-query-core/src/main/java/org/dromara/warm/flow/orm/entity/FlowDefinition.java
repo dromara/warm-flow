@@ -18,12 +18,11 @@ package org.dromara.warm.flow.orm.entity;
 import com.easy.query.core.annotation.*;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
+import lombok.Data;
 import org.dromara.warm.flow.core.entity.Definition;
 import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.entity.User;
 import org.dromara.warm.flow.orm.entity.proxy.FlowDefinitionProxy;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.util.ArrayList;
@@ -36,8 +35,7 @@ import java.util.List;
  * @author warm
  * @since 2023-03-29
  */
-@Getter
-@Setter
+@Data
 @Accessors(chain = true)
 @EntityProxy
 @EasyAlias("flowDefinition")
@@ -117,26 +115,4 @@ public class FlowDefinition implements Definition,ProxyEntityAvailable<FlowDefin
     @ColumnIgnore
     private List<User> userList = new ArrayList<>();
 
-
-    @Override
-    public String toString() {
-        return "FlowDefinition{" +
-            "id=" + id +
-            ", createTime=" + createTime +
-            ", updateTime=" + updateTime +
-            ", flowCode='" + flowCode + '\'' +
-            ", flowName='" + flowName + '\'' +
-            ", category='" + category + '\'' +
-            ", version='" + version + '\'' +
-            ", isPublish=" + isPublish +
-            ", formCustom='" + formCustom + '\'' +
-            ", formPath='" + formPath + '\'' +
-            ", activityStatus=" + activityStatus +
-            ", listenerType='" + listenerType + '\'' +
-            ", listenerPath='" + listenerPath + '\'' +
-            ", ext='" + ext + '\'' +
-            ", xmlString='" + xmlString + '\'' +
-            ", nodeList=" + nodeList +
-            '}';
-    }
 }

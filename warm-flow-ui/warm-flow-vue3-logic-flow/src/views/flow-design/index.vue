@@ -1,7 +1,7 @@
 <template>
   <div class="container" ref="container">
     <PropertySetting ref="propertySettingRef" :node="nodeClick" v-model="processForm" :lf="lf" :disabled="disabled"
-      :skipConditionShow="skipConditionShow">
+      :skipConditionShow="skipConditionShow" :nodes="value.nodes">
       <template v-slot:[key]="data" v-for="(item, key) in $slots">
         <slot :name="key" v-bind="data || {}"></slot>
       </template>

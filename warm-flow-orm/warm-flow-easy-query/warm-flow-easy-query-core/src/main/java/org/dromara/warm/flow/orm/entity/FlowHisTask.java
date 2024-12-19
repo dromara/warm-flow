@@ -18,10 +18,9 @@ package org.dromara.warm.flow.orm.entity;
 import com.easy.query.core.annotation.*;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
+import lombok.Data;
 import org.dromara.warm.flow.core.entity.HisTask;
 import org.dromara.warm.flow.orm.entity.proxy.FlowHisTaskProxy;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.util.Date;
@@ -33,8 +32,7 @@ import java.util.List;
  * @author warm
  * @since 2023-03-29
  */
-@Getter
-@Setter
+@Data
 @EntityProxy
 @Accessors(chain = true)
 @EasyAlias("flowHisTask")
@@ -144,35 +142,4 @@ public class FlowHisTask implements HisTask, ProxyEntityAvailable<FlowHisTask, F
     @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String formPath;
 
-
-    @Override
-    public String toString() {
-        return "FlowHisTask{" +
-            "id=" + id +
-            ", createTime=" + createTime +
-            ", updateTime=" + updateTime +
-            ", definitionId=" + definitionId +
-            ", flowName='" + flowName + '\'' +
-            ", instanceId=" + instanceId +
-            ", taskId=" + taskId +
-            ", cooperateType=" + cooperateType +
-            ", tenantId='" + tenantId + '\'' +
-            ", businessId='" + businessId + '\'' +
-            ", nodeCode='" + nodeCode + '\'' +
-            ", nodeName='" + nodeName + '\'' +
-            ", nodeType=" + nodeType +
-            ", targetNodeCode='" + targetNodeCode + '\'' +
-            ", targetNodeName='" + targetNodeName + '\'' +
-            ", approver='" + approver + '\'' +
-            ", collaborator='" + collaborator + '\'' +
-            ", permissionList=" + permissionList +
-            ", skipType=" + skipType +
-            ", flowStatus=" + flowStatus +
-            ", message='" + message + '\'' +
-            ", ext='" + ext + '\'' +
-            ", createBy='" + createBy + '\'' +
-            ", formCustom='" + formCustom + '\'' +
-            ", formPath='" + formPath + '\'' +
-            "} " + super.toString();
-    }
 }

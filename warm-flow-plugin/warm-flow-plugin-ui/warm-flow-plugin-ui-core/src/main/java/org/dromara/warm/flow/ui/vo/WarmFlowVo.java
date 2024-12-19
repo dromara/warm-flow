@@ -15,6 +15,10 @@
  */
 package org.dromara.warm.flow.ui.vo;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
 import java.util.List;
 
 /**
@@ -22,17 +26,14 @@ import java.util.List;
  *
  * @author warm
  */
+@Getter
+@Setter
+@Accessors(chain = true)
 public class WarmFlowVo {
 
-    /** 如果需要工作流共享业务系统权限，默认Authorization */
+    /**
+     * 如果需要工作流共享业务系统权限，默认Authorization
+     */
     private List<String> tokenNameList;
 
-    public List<String> getTokenNameList() {
-        return tokenNameList;
-    }
-
-    public WarmFlowVo setTokenNameList(List<String> tokenNameList) {
-        this.tokenNameList = tokenNameList;
-        return this;
-    }
 }

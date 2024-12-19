@@ -16,6 +16,8 @@
 package org.dromara.warm.flow.core.dto;
 
 
+import lombok.Getter;
+import lombok.Setter;
 import org.dromara.warm.flow.core.FlowFactory;
 import org.dromara.warm.flow.core.entity.Definition;
 import org.dromara.warm.flow.core.entity.Node;
@@ -31,6 +33,8 @@ import java.util.List;
  * @author warm
  * @since 2023/3/30 14:27
  */
+@Getter
+@Setter
 public class FlowCombine {
     /**
      * 所有的流程定义
@@ -47,27 +51,4 @@ public class FlowCombine {
      */
     private List<Skip> allSkips = new ArrayList<>();
 
-    public Definition getDefinition() {
-        return definition;
-    }
-
-    public void setDefinition(Definition definition) {
-        this.definition = definition;
-    }
-
-    public List<Node> getAllNodes() {
-        return allNodes;
-    }
-
-    public void setAllNodes(List<Node> allNodes) {
-        this.allNodes = allNodes;
-    }
-
-    public List<Skip> getAllSkips() {
-        return allSkips;
-    }
-
-    public void setAllSkips(List<Skip> allSkips) {
-        this.allSkips = allSkips;
-    }
 }

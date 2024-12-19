@@ -9,7 +9,8 @@
       size="37%"
       :append-to-body="true"
       :before-close="handleClose">
-      <component :is="componentType" v-model="form" :disabled="disabled" :skipConditionShow="skipConditionShow">
+      <component :is="componentType" v-model="form" :disabled="disabled" :skipConditionShow="skipConditionShow"
+                 :nodes="nodes">
         <template v-slot:[key]="data" v-for="(item, key) in $slots">
           <slot :name="key" v-bind="data || {}"></slot>
         </template>
@@ -62,6 +63,12 @@ const props = defineProps({
     type: Boolean,
     default: true
   },
+  nodes: {
+    type: Array,
+    default () {
+      return []
+    }
+  }
 });
 
 const drawer = ref(false);

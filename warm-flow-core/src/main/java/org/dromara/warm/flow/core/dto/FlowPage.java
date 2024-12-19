@@ -15,6 +15,11 @@
  */
 package org.dromara.warm.flow.core.dto;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -23,6 +28,10 @@ import java.util.List;
  *
  * @author ruoyi
  */
+@Getter
+@Setter
+@NoArgsConstructor
+@Accessors(chain = true)
 public class FlowPage<T> implements Serializable
 {
     private static final long serialVersionUID = 1L;
@@ -40,13 +49,6 @@ public class FlowPage<T> implements Serializable
     private String msg;
 
     /**
-     * 表格数据对象
-     */
-    public FlowPage()
-    {
-    }
-
-    /**
      * 分页
      *
      * @param list 列表数据
@@ -58,39 +60,4 @@ public class FlowPage<T> implements Serializable
         this.total = total;
     }
 
-    public long getTotal() {
-        return total;
-    }
-
-    public FlowPage<T> setTotal(long total) {
-        this.total = total;
-        return this;
-    }
-
-    public List<T> getRows() {
-        return rows;
-    }
-
-    public FlowPage<T> setRows(List<T> rows) {
-        this.rows = rows;
-        return this;
-    }
-
-    public int getCode() {
-        return code;
-    }
-
-    public FlowPage<T> setCode(int code) {
-        this.code = code;
-        return this;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public FlowPage<T> setMsg(String msg) {
-        this.msg = msg;
-        return this;
-    }
 }

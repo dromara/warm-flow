@@ -15,6 +15,8 @@
  */
 package org.dromara.warm.flow.core.chart;
 
+import lombok.Getter;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,22 +26,18 @@ import java.util.List;
  *
  * @author warm
  */
+@Getter
 public class FlowChartChain {
 
     private final List<FlowChart> flowChartList = new ArrayList<>();
 
-    public FlowChartChain addFlowChart(FlowChart flowChart) {
+    public void addFlowChart(FlowChart flowChart) {
         flowChartList.add(flowChart);
-        return this;
     }
 
     public void draw(Graphics2D graphics, int n) {
         for (FlowChart flowChart : flowChartList) {
             flowChart.setN(n).draw(graphics);
         }
-    }
-
-    public List<FlowChart> getFlowChartList() {
-        return flowChartList;
     }
 }

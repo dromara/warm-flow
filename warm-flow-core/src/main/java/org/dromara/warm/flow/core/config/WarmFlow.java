@@ -15,6 +15,8 @@
  */
 package org.dromara.warm.flow.core.config;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.dromara.warm.flow.core.FlowFactory;
 import org.dromara.warm.flow.core.constant.FlowConfigCons;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
@@ -32,9 +34,10 @@ import java.io.Serializable;
  *
  * @author warm
  */
+@Getter
+@Setter
 public class WarmFlow implements Serializable {
 
-    private static final Logger log = LoggerFactory.getLogger(WarmFlow.class);
     /**
      * 开关
      */
@@ -119,7 +122,7 @@ public class WarmFlow implements Serializable {
         }
 
         // 设置逻辑删除
-        setLogicDelete(flowConfig);
+        calLogicDelete(flowConfig);
 
         // 设置租户模式
         flowConfig.setTenantHandlerPath(FrameInvoker.getCfg(FlowConfigCons.TENANT_HANDLER_PATH));
@@ -149,7 +152,7 @@ public class WarmFlow implements Serializable {
         FlowFactory.jsonConvert(ServiceLoaderUtil.loadFirst(JsonConvert.class));
     }
 
-    private static void setLogicDelete(WarmFlow flowConfig) {
+    private static void calLogicDelete(WarmFlow flowConfig) {
         String logicDelete = FrameInvoker.getCfg(FlowConfigCons.LOGIC_DELETE);
         if (ObjectUtil.isStrTrue(logicDelete)) {
             flowConfig.setLogicDelete(ObjectUtil.isStrTrue(logicDelete));
@@ -178,91 +181,4 @@ public class WarmFlow implements Serializable {
         }
     }
 
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public boolean isBanner() {
-        return banner;
-    }
-
-    public void setBanner(boolean banner) {
-        this.banner = banner;
-    }
-
-    public String getKeyType() {
-        return keyType;
-    }
-
-    public void setKeyType(String keyType) {
-        this.keyType = keyType;
-    }
-
-    public boolean isLogicDelete() {
-        return logicDelete;
-    }
-
-    public void setLogicDelete(boolean logicDelete) {
-        this.logicDelete = logicDelete;
-    }
-
-    public String getLogicDeleteValue() {
-        return logicDeleteValue;
-    }
-
-    public void setLogicDeleteValue(String logicDeleteValue) {
-        this.logicDeleteValue = logicDeleteValue;
-    }
-
-    public String getLogicNotDeleteValue() {
-        return logicNotDeleteValue;
-    }
-
-    public void setLogicNotDeleteValue(String logicNotDeleteValue) {
-        this.logicNotDeleteValue = logicNotDeleteValue;
-    }
-
-    public String getDataFillHandlerPath() {
-        return dataFillHandlerPath;
-    }
-
-    public void setDataFillHandlerPath(String dataFillHandlerPath) {
-        this.dataFillHandlerPath = dataFillHandlerPath;
-    }
-
-    public String getTenantHandlerPath() {
-        return tenantHandlerPath;
-    }
-
-    public void setTenantHandlerPath(String tenantHandlerPath) {
-        this.tenantHandlerPath = tenantHandlerPath;
-    }
-
-    public String getDataSourceType() {
-        return dataSourceType;
-    }
-
-    public void setDataSourceType(String dataSourceType) {
-        this.dataSourceType = dataSourceType;
-    }
-
-    public boolean isUi() {
-        return ui;
-    }
-
-    public void setUi(boolean ui) {
-        this.ui = ui;
-    }
-
-    public String getTokenName() {
-        return tokenName;
-    }
-
-    public void setTokenName(String tokenName) {
-        this.tokenName = tokenName;
-    }
 }

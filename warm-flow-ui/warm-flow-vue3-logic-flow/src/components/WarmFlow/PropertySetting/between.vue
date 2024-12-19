@@ -68,12 +68,24 @@
             </div>
           </el-form-item>
         </slot>
-        <slot name="form-item-task-skipAnyNode" :model="form" field="skipAnyNode">
-          <el-form-item label="是否可以跳转任意节点">
-            <el-radio-group v-model="form.skipAnyNode">
-              <el-radio label="N">否</el-radio>
-              <el-radio label="Y">是</el-radio>
-            </el-radio-group>
+<!--        <slot name="form-item-task-skipAnyNode" :model="form" field="skipAnyNode">-->
+<!--          <el-form-item label="是否可以跳转任意节点">-->
+<!--            <el-radio-group v-model="form.skipAnyNode">-->
+<!--              <el-radio label="N">否</el-radio>-->
+<!--              <el-radio label="Y">是</el-radio>-->
+<!--            </el-radio-group>-->
+<!--          </el-form-item>-->
+<!--        </slot>-->
+        <slot name="form-item-task-formCustom" :model="form" field="formCustom">
+          <el-form-item label="跳转任意节点">
+            <el-select v-model="form.skipAnyNode">
+              <el-option
+                  v-for="dict in filteredNodes"
+                  :key="dict.id"
+                  :label="dict.text.value"
+                  :value="dict.id"
+              />
+            </el-select>
           </el-form-item>
         </slot>
         <slot name="form-item-task-formCustom" :model="form" field="formCustom">
@@ -149,6 +161,12 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
+  nodes: {
+    type: Array,
+    default () {
+      return []
+    }
+  }
 });
 
 const tabsValue = ref("1");
@@ -213,6 +231,10 @@ function handleAddRow() {
 function handleDeleteRow(index) {
   form.value.listenerRows.splice(index, 1);
 }
+
+const filteredNodes = computed(() => {
+  return props.nodes.filter(node => !["serial", "parallel"].includes(node.type));
+});
 
 getPermissionFlag();
 </script>

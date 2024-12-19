@@ -15,6 +15,9 @@
  */
 package org.dromara.warm.flow.orm.entity;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 import org.dromara.warm.flow.core.FlowFactory;
 import org.dromara.warm.flow.core.entity.Instance;
 import org.dromara.warm.flow.core.utils.StringUtils;
@@ -40,6 +43,9 @@ import java.util.Objects;
  * @author vanlin
  * @since 2024-05-08
  */
+@Data
+@Accessors(chain = true)
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "flow_instance")
 public class FlowInstance extends JPARootEntity<FlowInstance> implements Instance {
@@ -221,176 +227,4 @@ public class FlowInstance extends JPARootEntity<FlowInstance> implements Instanc
     @Column(name = "ext")
     private String ext;
 
-
-    @Override
-    public Long getDefinitionId() {
-        return definitionId;
-    }
-
-    @Override
-    public FlowInstance setDefinitionId(Long definitionId) {
-        this.definitionId = definitionId;
-        return this;
-    }
-
-    @Override
-    public String getFlowName() {
-        return flowName;
-    }
-
-    @Override
-    public FlowInstance setFlowName(String flowName) {
-        this.flowName = flowName;
-        return this;
-    }
-
-    @Override
-    public String getBusinessId() {
-        return businessId;
-    }
-
-    @Override
-    public FlowInstance setBusinessId(String businessId) {
-        this.businessId = businessId;
-        return this;
-    }
-
-    @Override
-    public Integer getNodeType() {
-        return nodeType;
-    }
-
-    @Override
-    public FlowInstance setNodeType(Integer nodeType) {
-        this.nodeType = nodeType;
-        return this;
-    }
-
-    @Override
-    public String getNodeCode() {
-        return nodeCode;
-    }
-
-    @Override
-    public FlowInstance setNodeCode(String nodeCode) {
-        this.nodeCode = nodeCode;
-        return this;
-    }
-
-    @Override
-    public String getNodeName() {
-        return nodeName;
-    }
-
-    @Override
-    public FlowInstance setNodeName(String nodeName) {
-        this.nodeName = nodeName;
-        return this;
-    }
-
-    @Override
-    public String getVariable() {
-        return variable;
-    }
-
-    @Override
-    public FlowInstance setVariable(String variable) {
-        this.variable = variable;
-        return this;
-    }
-
-    @Override
-    public Map<String, Object> getVariableMap() {
-        return FlowFactory.jsonConvert.strToMap(variable);
-    }
-
-    @Override
-    public String getFlowStatus() {
-        return flowStatus;
-    }
-
-    @Override
-    public FlowInstance setFlowStatus(String flowStatus) {
-        this.flowStatus = flowStatus;
-        return this;
-    }
-
-    @Override
-    public Integer getActivityStatus() {
-        return activityStatus;
-    }
-
-    @Override
-    public Instance setActivityStatus(Integer activityStatus) {
-        this.activityStatus = activityStatus;
-        return this;
-    }
-
-    @Override
-    public String getCreateBy() {
-        return createBy;
-    }
-
-    @Override
-    public FlowInstance setCreateBy(String createBy) {
-        this.createBy = createBy;
-        return this;
-    }
-
-    @Override
-    public String getFormCustom() {
-        return formCustom;
-    }
-
-    @Override
-    public FlowInstance setFormCustom(String formCustom) {
-        this.formCustom = formCustom;
-        return this;
-    }
-
-    @Override
-    public String getFormPath() {
-        return formPath;
-    }
-
-    @Override
-    public FlowInstance setFormPath(String formPath) {
-        this.formPath = formPath;
-        return this;
-    }
-
-    @Override
-    public String getExt() {
-        return ext;
-    }
-
-    @Override
-    public FlowInstance setExt(String ext) {
-        this.ext = ext;
-        return this;
-    }
-
-    @Override
-    public String toString() {
-        return "FlowInstance{" +
-                "id=" + super.getId() +
-                ", createTime=" + super.getCreateTime() +
-                ", updateTime=" + super.getUpdateTime() +
-                ", tenantId='" + super.getTenantId() + '\'' +
-                ", delFlag='" + super.getDelFlag() + '\'' +
-                ", definitionId=" + definitionId +
-                ", flowName='" + flowName + '\'' +
-                ", businessId='" + businessId + '\'' +
-                ", nodeType=" + nodeType +
-                ", nodeCode='" + nodeCode + '\'' +
-                ", nodeName='" + nodeName + '\'' +
-                ", variable='" + variable + '\'' +
-                ", flowStatus=" + flowStatus +
-                ", activityStatus=" + activityStatus +
-                ", createBy='" + createBy + '\'' +
-                ", formCustom='" + formCustom + '\'' +
-                ", formPath='" + formPath + '\'' +
-                ", ext='" + ext + '\'' +
-                "}";
-    }
 }

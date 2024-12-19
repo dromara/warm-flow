@@ -15,6 +15,9 @@
  */
 package org.dromara.warm.flow.orm.entity;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 import org.dromara.warm.flow.core.entity.Definition;
 import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.entity.User;
@@ -42,6 +45,9 @@ import java.util.Objects;
  * @author vanlin
  * @since 2024-05-08
  */
+@Data
+@Accessors(chain = true)
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "flow_definition")
 public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Definition {
@@ -239,179 +245,4 @@ public class FlowDefinition extends JPARootEntity<FlowDefinition> implements Def
     @Transient
     private List<User> userList = new ArrayList<>();
 
-    @Override
-    public String getFlowCode() {
-        return flowCode;
-    }
-
-    @Override
-    public FlowDefinition setFlowCode(String flowCode) {
-        this.flowCode = flowCode;
-        return this;
-    }
-
-    @Override
-    public String getFlowName() {
-        return flowName;
-    }
-
-    @Override
-    public FlowDefinition setFlowName(String flowName) {
-        this.flowName = flowName;
-        return this;
-    }
-
-    @Override
-    public String getCategory() {
-        return category;
-    }
-
-    @Override
-    public FlowDefinition setCategory(String category) {
-        this.category = category;
-        return this;
-    }
-
-    @Override
-    public String getVersion() {
-        return version;
-    }
-
-    @Override
-    public FlowDefinition setVersion(String version) {
-        this.version = version;
-        return this;
-    }
-
-    @Override
-    public Integer getIsPublish() {
-        return isPublish;
-    }
-
-    @Override
-    public FlowDefinition setIsPublish(Integer isPublish) {
-        this.isPublish = isPublish;
-        return this;
-    }
-
-    @Override
-    public String getFormCustom() {
-        return formCustom;
-    }
-
-    @Override
-    public FlowDefinition setFormCustom(String formCustom) {
-        this.formCustom = formCustom;
-        return this;
-    }
-
-    @Override
-    public String getFormPath() {
-        return formPath;
-    }
-
-    @Override
-    public FlowDefinition setFormPath(String formPath) {
-        this.formPath = formPath;
-        return this;
-    }
-
-    @Override
-    public Integer getActivityStatus() {
-        return activityStatus;
-    }
-
-    @Override
-    public Definition setActivityStatus(Integer activityStatus) {
-        this.activityStatus = activityStatus;
-        return this;
-    }
-
-    @Override
-    public String getListenerType() {
-        return listenerType;
-    }
-
-    @Override
-    public FlowDefinition setListenerType(String listenerType) {
-        this.listenerType = listenerType;
-        return this;
-    }
-
-    @Override
-    public String getListenerPath() {
-        return listenerPath;
-    }
-
-    @Override
-    public FlowDefinition setListenerPath(String listenerPath) {
-        this.listenerPath = listenerPath;
-        return this;
-    }
-
-    @Override
-    public String getExt() {
-        return ext;
-    }
-
-    @Override
-    public FlowDefinition setExt(String ext) {
-        this.ext = ext;
-        return this;
-    }
-
-    @Override
-    public String getXmlString() {
-        return xmlString;
-    }
-
-    @Override
-    public FlowDefinition setXmlString(String xmlString) {
-        this.xmlString = xmlString;
-        return this;
-    }
-
-    @Override
-    public List<Node> getNodeList() {
-        return nodeList;
-    }
-
-    @Override
-    public FlowDefinition setNodeList(List<Node> nodeList) {
-        this.nodeList = nodeList;
-        return this;
-    }
-
-    @Override
-    public List<User> getUserList() {
-        return userList;
-    }
-
-    @Override
-    public Definition setUserList(List<User> userList) {
-        this.userList = userList;
-        return this;
-    }
-
-    @Override
-    public String toString() {
-        return "FlowDefinition{" +
-                "id=" + super.getId() +
-                ", createTime=" + super.getCreateTime() +
-                ", updateTime=" + super.getUpdateTime() +
-                ", flowCode='" + flowCode + '\'' +
-                ", flowName='" + flowName + '\'' +
-                ", category='" + category + '\'' +
-                ", version='" + version + '\'' +
-                ", isPublish=" + isPublish +
-                ", formCustom='" + formCustom + '\'' +
-                ", formPath='" + formPath + '\'' +
-                ", activityStatus=" + activityStatus +
-                ", listenerType='" + listenerType + '\'' +
-                ", listenerPath='" + listenerPath + '\'' +
-                ", ext='" + ext + '\'' +
-                ", xmlString='" + xmlString + '\'' +
-                ", nodeList=" + nodeList +
-                '}';
-    }
 }
