@@ -28,7 +28,7 @@ jobs:
           gpg-passphrase:  ${{ secrets.GPG_PASSWORD }}
       # 3. 执行 Maven 打包命令
       - name: Build and Package
-        run: mvn clean deploy
+        run: mvn clean deploy -P release
 
       # 4. 发布到Maven中央仓库
       - name: Publish to Maven Central Repo
