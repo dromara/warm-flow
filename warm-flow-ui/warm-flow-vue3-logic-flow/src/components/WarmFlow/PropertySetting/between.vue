@@ -73,7 +73,7 @@
             <template #label>
               <span v-if="form.collaborativeWay === '2'"  class="mr5" style="color: red;">*</span>驳回到指定节点
             </template>
-            <el-select v-model="form.anyNodeSkip">
+            <el-select v-model="form.anyNodeSkip" STYLE="width: 80%">
               <el-option label="" :value="''"></el-option>
               <el-option
                   v-for="dict in nodes"
