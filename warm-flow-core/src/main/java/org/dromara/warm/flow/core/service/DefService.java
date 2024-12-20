@@ -18,6 +18,8 @@ package org.dromara.warm.flow.core.service;
 import org.dromara.warm.flow.core.chart.FlowChart;
 import org.dromara.warm.flow.core.dto.FlowCombine;
 import org.dromara.warm.flow.core.entity.Definition;
+import org.dromara.warm.flow.core.entity.Node;
+import org.dromara.warm.flow.core.entity.Skip;
 import org.dromara.warm.flow.core.orm.service.IWarmService;
 import org.dom4j.Document;
 import org.dromara.warm.flow.core.vo.DefVo;
@@ -40,6 +42,29 @@ public interface DefService extends IWarmService<Definition> {
      * @param is 流程定义xml的输入流
      */
     Definition importXml(InputStream is) throws Exception;
+
+    /**
+     * 读取流程配置文件
+     * @param is  流程配置文件输入流
+     * @return 流程数据集合
+     */
+    FlowCombine readXml(InputStream is) throws Exception;
+
+    /**
+     * 导入流程定义
+     * @param combine 流程数据集合
+     * @return 流程定义
+     */
+    Definition importFlow(FlowCombine combine);
+
+    /**
+     * 每次只做新增操作,保证新增的flowCode+version是唯一的
+     *
+     * @param definition 流程定义
+     * @param allNodes 所有节点
+     * @param allSkips 所有跳转
+     */
+    void insertFlow(Definition definition, List<Node> allNodes, List<Skip> allSkips);
 
     /**
      * 保存流程节点和流程跳转数据

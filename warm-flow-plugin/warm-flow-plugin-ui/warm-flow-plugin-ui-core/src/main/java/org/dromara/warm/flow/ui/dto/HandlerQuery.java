@@ -15,12 +15,17 @@
  */
 package org.dromara.warm.flow.ui.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 流程设计器-办理人权限设置列表查询参数
  * 办理人权限列表选择框，可能存在多个，比如：部门、角色、用户的情况
  *
  * @author warm
  */
+@Getter
+@Setter
 public class HandlerQuery {
 
     /**
@@ -63,67 +68,4 @@ public class HandlerQuery {
      */
     private String endTime;
 
-    public String getHandlerCode() {
-        return handlerCode;
-    }
-
-    public void setHandlerCode(String handlerCode) {
-        this.handlerCode = handlerCode;
-    }
-
-    public String getHandlerName() {
-        return handlerName;
-    }
-
-    public void setHandlerName(String handlerName) {
-        this.handlerName = handlerName;
-    }
-
-    public String getHandlerType() {
-        return handlerType;
-    }
-
-    public void setHandlerType(String handlerType) {
-        this.handlerType = handlerType;
-    }
-
-    public String getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(String groupId) {
-        this.groupId = groupId;
-    }
-
-    public Integer getPageNum() {
-        return pageNum;
-    }
-
-    public void setPageNum(Integer pageNum) {
-        this.pageNum = pageNum;
-    }
-
-    public Integer getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(Integer pageSize) {
-        this.pageSize = pageSize;
-    }
-
-    public String getBeginTime() {
-        return beginTime;
-    }
-
-    public void setBeginTime(String beginTime) {
-        this.beginTime = beginTime;
-    }
-
-    public String getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(String endTime) {
-        this.endTime = endTime;
-    }
 }

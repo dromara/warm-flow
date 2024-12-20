@@ -25,7 +25,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class TreeUtil {
-    private TreeUtil() {}
+    private TreeUtil() {
+    }
 
     /**
      * 构建所需要树结构
@@ -33,21 +34,17 @@ public class TreeUtil {
      * @param trees 部门列表
      * @return 树结构列表
      */
-    public static List<TreeSelection> buildTree(List<Tree> trees)
-    {
+    public static List<TreeSelection> buildTree(List<Tree> trees) {
         List<Tree> returnList = new ArrayList<>();
         List<String> tempList = trees.stream().map(Tree::getId).collect(Collectors.toList());
-        for (Tree dept : trees)
-        {
+        for (Tree dept : trees) {
             // 如果是顶级节点, 遍历该父节点的所有子节点
-            if (!tempList.contains(dept.getParentId()))
-            {
+            if (!tempList.contains(dept.getParentId())) {
                 recursionFn(trees, dept);
                 returnList.add(dept);
             }
         }
-        if (returnList.isEmpty())
-        {
+        if (returnList.isEmpty()) {
             returnList = trees;
         }
         return StreamUtils.toList(returnList, TreeSelection::new);
@@ -56,15 +53,12 @@ public class TreeUtil {
     /**
      * 递归列表
      */
-    private static void recursionFn(List<Tree> list, Tree t)
-    {
+    private static void recursionFn(List<Tree> list, Tree t) {
         // 得到子节点列表
         List<Tree> childList = getChildList(list, t);
         t.setChildren(childList);
-        for (Tree tChild : childList)
-        {
-            if (hasChild(list, tChild))
-            {
+        for (Tree tChild : childList) {
+            if (hasChild(list, tChild)) {
                 recursionFn(list, tChild);
             }
         }
@@ -73,16 +67,14 @@ public class TreeUtil {
     /**
      * 判断是否有子节点
      */
-    private static boolean hasChild(List<Tree> list, Tree t)
-    {
+    private static boolean hasChild(List<Tree> list, Tree t) {
         return !getChildList(list, t).isEmpty();
     }
 
     /**
      * 得到子节点列表
      */
-    private static List<Tree> getChildList(List<Tree> list, Tree t)
-    {
+    private static List<Tree> getChildList(List<Tree> list, Tree t) {
         List<Tree> tlist = new ArrayList<>();
         for (Tree n : list) {
             if (StringUtils.isNotEmpty(n.getParentId()) && n.getParentId().equals(t.getId())) {

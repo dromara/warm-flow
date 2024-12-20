@@ -15,6 +15,9 @@
  */
 package org.dromara.warm.flow.orm.entity;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 import org.dromara.warm.flow.core.entity.User;
 import org.dromara.warm.flow.core.utils.StringUtils;
 import org.dromara.warm.flow.orm.utils.JPAPredicateFunction;
@@ -38,6 +41,9 @@ import java.util.Objects;
  * @author xiarg
  * @since 2024/5/10 10:58
  */
+@Data
+@Accessors(chain = true)
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "flow_user")
 public class FlowUser extends JPARootEntity<FlowUser> implements User {
@@ -123,61 +129,4 @@ public class FlowUser extends JPARootEntity<FlowUser> implements User {
     @Column(name = "create_by")
     private String createBy;
 
-    @Override
-    public String getType() {
-        return type;
-    }
-
-    @Override
-    public FlowUser setType(String type) {
-        this.type = type;
-        return this;
-    }
-
-    @Override
-    public String getProcessedBy() {
-        return processedBy;
-    }
-
-    @Override
-    public FlowUser setProcessedBy(String processedBy) {
-        this.processedBy = processedBy;
-        return this;
-    }
-
-    @Override
-    public Long getAssociated() {
-        return associated;
-    }
-
-    @Override
-    public FlowUser setAssociated(Long associated) {
-        this.associated = associated;
-        return this;
-    }
-
-    @Override
-    public String getCreateBy() {
-        return this.createBy;
-    }
-
-    @Override
-    public User setCreateBy(String createBy) {
-        this.createBy = createBy;
-        return this;
-    }
-
-    @Override
-    public String toString() {
-        return "FlowUser{" +
-                "id=" + super.getId() +
-                ", createTime=" + super.getCreateTime() +
-                ", updateTime=" + super.getUpdateTime() +
-                ", tenantId='" + super.getTenantId() + '\'' +
-                ", delFlag='" + super.getDelFlag() + '\'' +
-                ", type='" + type + '\'' +
-                ", processed_by='" + processedBy + '\'' +
-                ", associated=" + associated +
-                '}';
-    }
 }

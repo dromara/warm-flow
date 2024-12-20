@@ -69,3 +69,11 @@ export function publishedList(query) {
     params: query
   })
 }
+
+// 获取所有的前置节点集合
+export function previousNodeList(definitionId, nowNodeCode) {
+  return request({
+    url: urlPrefix + `warm-flow/previous-node-list/${definitionId}/${nowNodeCode}`,
+    method: 'get',
+  })
+}

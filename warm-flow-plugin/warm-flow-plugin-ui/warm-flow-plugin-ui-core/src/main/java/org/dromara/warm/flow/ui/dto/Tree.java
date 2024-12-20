@@ -15,6 +15,10 @@
  */
 package org.dromara.warm.flow.ui.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,55 +28,31 @@ import java.util.List;
  *
  * @author ruoyi
  */
+@Getter
+@Setter
+@Accessors(chain = true)
 public class Tree implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    /** ID */
+    /**
+     * ID
+     */
     private String id;
 
-    /** 名称 */
+    /**
+     * 名称
+     */
     private String name;
 
-    /** 父ID */
+    /**
+     * 父ID
+     */
     private String parentId;
 
-    /** 子 */
+    /**
+     * 子
+     */
     private List<Tree> children = new ArrayList<>();
 
-    public String getId() {
-        return id;
-    }
-
-    public Tree setId(String id) {
-        this.id = id;
-        return this;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Tree setName(String name) {
-        this.name = name;
-        return this;
-    }
-
-    public String getParentId() {
-        return parentId;
-    }
-
-    public Tree setParentId(String parentId) {
-        this.parentId = parentId;
-        return this;
-    }
-
-    public List<Tree> getChildren() {
-        return children;
-    }
-
-    public Tree setChildren(List<Tree> children) {
-        this.children = children;
-        return this;
-    }
 }

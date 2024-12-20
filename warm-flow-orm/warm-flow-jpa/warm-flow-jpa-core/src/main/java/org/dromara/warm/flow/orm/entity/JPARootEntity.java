@@ -15,6 +15,9 @@
  */
 package org.dromara.warm.flow.orm.entity;
 
+import lombok.Data;
+import lombok.ToString;
+import lombok.experimental.Accessors;
 import org.dromara.warm.flow.core.entity.RootEntity;
 import org.dromara.warm.flow.orm.utils.JPAPredicateFunction;
 import org.dromara.warm.flow.orm.utils.JPAUpdateMergeFunction;
@@ -38,6 +41,7 @@ import java.util.Objects;
  * @description
  * @since 2024/5/10 17:59
  */
+@ToString
 @MappedSuperclass
 public abstract class JPARootEntity<T extends RootEntity> implements RootEntity {
 
@@ -169,17 +173,5 @@ public abstract class JPARootEntity<T extends RootEntity> implements RootEntity 
         this.delFlag = delFlag;
         return (T) this;
     }
-
-    @Override
-    public String toString() {
-        return "JPARootEntity{" +
-                "id=" + id +
-                ", createTime=" + createTime +
-                ", updateTime=" + updateTime +
-                ", tenantId='" + tenantId + '\'' +
-                ", delFlag='" + delFlag + '\'' +
-                '}';
-    }
-
 
 }

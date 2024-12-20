@@ -48,6 +48,22 @@ public interface NodeService extends IWarmService<Node> {
     List<Node> getByNodeCodes(List<String> nodeCodes, Long definitionId);
 
     /**
+     * 根据节点id获取下所有的前置节点集合
+     * @param nodeId 节点id
+     * @return 所有的前置节点集合
+     */
+    List<Node> previousNodeList(Long nodeId);
+
+    /**
+     * 根据流程定义id和当前节点code获取所有的前置节点集合
+     *
+     * @param definitionId 程定义id
+     * @param nowNodeCode 当前节点code
+     * @return 所有的前置节点集合
+     */
+    List<Node> previousNodeList(Long definitionId, String nowNodeCode);
+
+    /**
      * 根据流程定义和当前节点code获取下一节点,如是网关跳过取下一节点,并行网关返回多个节点
      * anyNodeCode不为空，则可跳转anyNodeCode节点
      *

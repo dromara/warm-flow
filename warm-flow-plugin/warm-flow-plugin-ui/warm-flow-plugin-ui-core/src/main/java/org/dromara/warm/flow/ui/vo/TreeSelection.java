@@ -15,6 +15,8 @@
  */
 package org.dromara.warm.flow.ui.vo;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.dromara.warm.flow.ui.dto.Tree;
 
 import java.io.Serializable;
@@ -26,54 +28,31 @@ import java.util.stream.Collectors;
  *
  * @author warm
  */
-public class TreeSelection implements Serializable
-{
+@Getter
+@Setter
+public class TreeSelection implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /** 节点ID */
+    /**
+     * 节点ID
+     */
     private String id;
 
-    /** 节点名称 */
+    /**
+     * 节点名称
+     */
     private String label;
 
-    /** 子节点 */
+    /**
+     * 子节点
+     */
     private List<TreeSelection> children;
 
-    public TreeSelection(Tree tree)
-    {
+    public TreeSelection(Tree tree) {
         this.id = tree.getId();
         this.label = tree.getName();
         this.children = tree.getChildren().stream().map(TreeSelection::new).collect(Collectors.toList());
     }
 
-    public String getId()
-    {
-        return id;
-    }
-
-    public void setId(String id)
-    {
-        this.id = id;
-    }
-
-    public String getLabel()
-    {
-        return label;
-    }
-
-    public void setLabel(String label)
-    {
-        this.label = label;
-    }
-
-    public List<TreeSelection> getChildren()
-    {
-        return children;
-    }
-
-    public void setChildren(List<TreeSelection> children)
-    {
-        this.children = children;
-    }
 
 }

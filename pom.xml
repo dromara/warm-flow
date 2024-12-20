@@ -6,7 +6,7 @@
 
     <groupId>org.dromara.warm</groupId>
     <artifactId>warm-flow</artifactId>
-    <version>1.3.5-m1</version>
+    <version>1.3.6-m1</version>
     <packaging>pom</packaging>
 
     <name>warm-flow</name>
@@ -351,31 +351,23 @@
     </dependencyManagement>
 
     <profiles>
-        <!-- Deployment profile (required so these plugins are only used when deploying) -->
         <profile>
             <id>release</id>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <version>3.8.1</version>
-                    </plugin>
-
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
-                        <version>3.2.1</version>
+                        <version>3.1.0</version>
                         <executions>
                             <execution>
                                 <id>attach-sources</id>
                                 <goals>
-                                    <goal>jar</goal>
+                                    <goal>jar-no-fork</goal>
                                 </goals>
                             </execution>
                         </executions>
                     </plugin>
-
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-jar-plugin</artifactId>
@@ -388,36 +380,31 @@
                             </archive>
                         </configuration>
                     </plugin>
-
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <version>2.10.4</version>
                         <configuration>
-                            <windowtitle>Warm-Flow</windowtitle>
-                            <doctitle>Warm-Flow</doctitle>
                             <show>private</show>
-                            <detectLinks>false</detectLinks>
-                            <detectOfflineLinks>true</detectOfflineLinks>
-                            <linksource>true</linksource>
+                            <nohelp>true</nohelp>
+                            <charset>UTF-8</charset>
+                            <encoding>UTF-8</encoding>
+                            <docencoding>UTF-8</docencoding>
                             <additionalparam>-Xdoclint:none</additionalparam>
-                            <detectJavaApiLink>true</detectJavaApiLink>
-                            <source>8</source>
                         </configuration>
                         <executions>
                             <execution>
-                                <phase>compile</phase>
+                                <phase>package</phase>
                                 <goals>
                                     <goal>jar</goal>
                                 </goals>
                             </execution>
                         </executions>
                     </plugin>
-
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>3.2.5</version>
+                        <version>1.6</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -425,16 +412,16 @@
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>
-                                <configuration>
-                                    <gpgArguments>
-                                        <arg>--pinentry-mode</arg>
-                                        <arg>loopback</arg>
-                                    </gpgArguments>
-                                </configuration>
+<!--                                <configuration>-->
+<!--                                    &lt;!&ndash; Prevent `gpg` from using pinentry programs &ndash;&gt;-->
+<!--                                    <gpgArguments>-->
+<!--                                        <arg>&#45;&#45;pinentry-mode</arg>-->
+<!--                                        <arg>loopback</arg>-->
+<!--                                    </gpgArguments>-->
+<!--                                </configuration>-->
                             </execution>
                         </executions>
                     </plugin>
-
                     <plugin>
                         <groupId>org.sonatype.central</groupId>
                         <artifactId>central-publishing-maven-plugin</artifactId>
@@ -444,6 +431,11 @@
                             <publishingServerId>ossrh</publishingServerId>
                             <autoPublish>true</autoPublish>
                         </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-deploy-plugin</artifactId>
+                        <version>2.8.2</version>
                     </plugin>
                 </plugins>
             </build>
@@ -455,7 +447,7 @@
     <!-- mvn clean install -Dmaven.test.skip=true   -->
     <!-- 跳过测试：mvn package -Dmaven.test.skip=true   -->
     <!-- 检测依赖最新版本：mvn versions:display-dependency-updates  -->
-    <!-- 统一修改版本号：mvn versions:set -DnewVersion=3.0  -->
+    <!-- 统一修改版本号：mvn versions:set -DnewVersion=1.3.5  -->
     <!-- mvn versions:commit -->
     <!-- mvn versions:revert -->
     <!-- mvn -N versions:update-child-modules  -->
@@ -463,5 +455,4 @@
 
     <!-- mvn clean source:jar install -->
     <!-- mvn deploy -Dmaven.test.skip=true -e -P release -->
-    <!-- mvn deploy -e -P release -->
 </project>

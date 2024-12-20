@@ -18,6 +18,8 @@ package org.dromara.warm.flow.orm.entity;
 import com.mybatisflex.annotation.Column;
 import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.Table;
+import lombok.Data;
+import lombok.experimental.Accessors;
 import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.entity.Skip;
 
@@ -32,6 +34,8 @@ import java.util.List;
  * @author warm
  * @since 2023-03-29
  */
+@Data
+@Accessors(chain = true)
 @Table("flow_node")
 public class FlowNode implements Node {
 
@@ -97,9 +101,14 @@ public class FlowNode implements Node {
      */
     private String version;
     /**
-     * 是否可以跳转任意节点（Y是 N否）
+     * 是否可以退回任意节点（Y是 N否）即将删除
      */
+    @Deprecated
     private String skipAnyNode;
+    /**
+     * 任意结点跳转
+     */
+    private String anyNodeSkip;
     /**
      * 监听器类型
      */
@@ -127,261 +136,4 @@ public class FlowNode implements Node {
      */
     private String formPath;
 
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public FlowNode setId(Long id) {
-        this.id = id;
-        return this;
-    }
-
-    @Override
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    @Override
-    public FlowNode setCreateTime(Date createTime) {
-        this.createTime = createTime;
-        return this;
-    }
-
-    @Override
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    @Override
-    public FlowNode setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-        return this;
-    }
-
-    @Override
-    public String getTenantId() {
-        return tenantId;
-    }
-
-    @Override
-    public FlowNode setTenantId(String tenantId) {
-        this.tenantId = tenantId;
-        return this;
-    }
-
-    @Override
-    public String getDelFlag() {
-        return delFlag;
-    }
-
-    @Override
-    public FlowNode setDelFlag(String delFlag) {
-        this.delFlag = delFlag;
-        return this;
-    }
-
-    @Override
-    public Integer getNodeType() {
-        return nodeType;
-    }
-
-    @Override
-    public FlowNode setNodeType(Integer nodeType) {
-        this.nodeType = nodeType;
-        return this;
-    }
-
-    @Override
-    public Long getDefinitionId() {
-        return definitionId;
-    }
-
-    @Override
-    public FlowNode setDefinitionId(Long definitionId) {
-        this.definitionId = definitionId;
-        return this;
-    }
-
-    @Override
-    public String getNodeCode() {
-        return nodeCode;
-    }
-
-    @Override
-    public FlowNode setNodeCode(String nodeCode) {
-        this.nodeCode = nodeCode;
-        return this;
-    }
-
-    @Override
-    public String getNodeName() {
-        return nodeName;
-    }
-
-    @Override
-    public FlowNode setNodeName(String nodeName) {
-        this.nodeName = nodeName;
-        return this;
-    }
-
-    @Override
-    public String getPermissionFlag() {
-        return permissionFlag;
-    }
-
-    @Override
-    public FlowNode setPermissionFlag(String permissionFlag) {
-        this.permissionFlag = permissionFlag;
-        return this;
-    }
-
-    @Override
-    public BigDecimal getNodeRatio() {
-        return nodeRatio;
-    }
-
-    @Override
-    public FlowNode setNodeRatio(BigDecimal nodeRatio) {
-        this.nodeRatio = nodeRatio;
-        return this;
-    }
-
-    @Override
-    public String getCoordinate() {
-        return coordinate;
-    }
-
-    @Override
-    public FlowNode setCoordinate(String coordinate) {
-        this.coordinate = coordinate;
-        return this;
-    }
-
-    @Override
-    public String getVersion() {
-        return version;
-    }
-
-    @Override
-    public FlowNode setVersion(String version) {
-        this.version = version;
-        return this;
-    }
-
-    @Override
-    public String getSkipAnyNode() {
-        return skipAnyNode;
-    }
-
-    @Override
-    public FlowNode setSkipAnyNode(String skipAnyNode) {
-        this.skipAnyNode = skipAnyNode;
-        return this;
-    }
-
-    @Override
-    public String getListenerType() {
-        return listenerType;
-    }
-
-    @Override
-    public FlowNode setListenerType(String listenerType) {
-        this.listenerType = listenerType;
-        return this;
-    }
-
-    @Override
-    public String getListenerPath() {
-        return listenerPath;
-    }
-
-    @Override
-    public FlowNode setListenerPath(String listenerPath) {
-        this.listenerPath = listenerPath;
-        return this;
-    }
-
-    @Override
-    public String getHandlerType() {
-        return handlerType;
-    }
-
-    @Override
-    public FlowNode setHandlerType(String listenerType) {
-        this.handlerType = listenerType;
-        return this;
-    }
-
-    @Override
-    public String getHandlerPath() {
-        return handlerPath;
-    }
-
-    @Override
-    public FlowNode setHandlerPath(String listenerPath) {
-        this.handlerPath = listenerPath;
-        return this;
-    }
-
-    @Override
-    public String getFormCustom() {
-        return formCustom;
-    }
-
-    @Override
-    public FlowNode setFormCustom(String formCustom) {
-        this.formCustom = formCustom;
-        return this;
-    }
-
-    @Override
-    public String getFormPath() {
-        return formPath;
-    }
-
-    @Override
-    public FlowNode setFormPath(String formPath) {
-        this.formPath = formPath;
-        return this;
-    }
-
-    @Override
-    public List<Skip> getSkipList() {
-        return skipList;
-    }
-
-    @Override
-    public FlowNode setSkipList(List<Skip> skipList) {
-        this.skipList = skipList;
-        return this;
-    }
-
-    @Override
-    public String toString() {
-        return "FlowNode{" +
-                "skipList=" + skipList +
-                ", id=" + id +
-                ", createTime=" + createTime +
-                ", updateTime=" + updateTime +
-                ", tenantId='" + tenantId + '\'' +
-                ", delFlag='" + delFlag + '\'' +
-                ", nodeType=" + nodeType +
-                ", definitionId=" + definitionId +
-                ", nodeCode='" + nodeCode + '\'' +
-                ", nodeName='" + nodeName + '\'' +
-                ", permissionFlag='" + permissionFlag + '\'' +
-                ", nodeRatio=" + nodeRatio +
-                ", coordinate='" + coordinate + '\'' +
-                ", version='" + version + '\'' +
-                ", skipAnyNode='" + skipAnyNode + '\'' +
-                ", listenerType='" + listenerType + '\'' +
-                ", listenerPath='" + listenerPath + '\'' +
-                ", handlerType='" + handlerType + '\'' +
-                ", handlerPath='" + handlerPath + '\'' +
-                ", formCustom='" + formCustom + '\'' +
-                ", formPath='" + formPath + '\'' +
-                '}';
-    }
 }

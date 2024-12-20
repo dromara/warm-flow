@@ -15,46 +15,25 @@
  */
 package org.dromara.warm.flow.ui.vo;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
 import java.util.List;
 
 /**
- * 办理人选择组对象
+ * 流程配置vo
  *
  * @author warm
  */
-public class SelectGroup {
+@Getter
+@Setter
+@Accessors(chain = true)
+public class WarmFlowVo {
 
-    private String label;
+    /**
+     * 如果需要工作流共享业务系统权限，默认Authorization
+     */
+    private List<String> tokenNameList;
 
-    private String value;
-
-    private List<SelectGroup> options;
-
-    public String getLabel() {
-        return label;
-    }
-
-    public SelectGroup setLabel(String label) {
-        this.label = label;
-        return this;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public SelectGroup setValue(String value) {
-        this.value = value;
-        return this;
-    }
-
-    public List<SelectGroup> getOptions() {
-        return options;
-    }
-
-    public SelectGroup setOptions(List<SelectGroup> options) {
-        this.options = options;
-        return this;
-    }
 }
-

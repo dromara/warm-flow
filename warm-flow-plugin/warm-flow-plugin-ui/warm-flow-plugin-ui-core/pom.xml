@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.dromara.warm</groupId>
         <artifactId>warm-flow-plugin-ui</artifactId>
-        <version>1.3.5-m1</version>
+        <version>1.3.6-m1</version>
     </parent>
 
     <artifactId>warm-flow-plugin-ui-core</artifactId>
@@ -16,6 +16,7 @@
             <groupId>org.dromara.warm</groupId>
             <artifactId>warm-flow-plugin-vue3-ui</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.dromara.warm</groupId>
             <artifactId>warm-flow-core</artifactId>
@@ -25,6 +26,12 @@
             <groupId>org.dromara.warm</groupId>
             <artifactId>warm-flow-orm-pom</artifactId>
             <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

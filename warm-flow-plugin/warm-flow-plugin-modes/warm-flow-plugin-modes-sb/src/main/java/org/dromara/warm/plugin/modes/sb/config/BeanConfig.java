@@ -24,6 +24,7 @@ import org.dromara.warm.flow.core.service.impl.*;
 import org.dromara.warm.flow.core.utils.ExpressionUtil;
 import org.dromara.warm.flow.orm.dao.*;
 import org.dromara.warm.flow.orm.entity.*;
+import org.dromara.warm.plugin.modes.sb.expression.ConditionStrategyDefault;
 import org.dromara.warm.plugin.modes.sb.expression.ConditionStrategySpel;
 import org.dromara.warm.plugin.modes.sb.expression.ListenerStrategySpel;
 import org.dromara.warm.plugin.modes.sb.expression.VariableStrategySpel;
@@ -147,6 +148,7 @@ public class BeanConfig {
     }
 
     private void setExpression() {
+        ExpressionUtil.setExpression(new ConditionStrategyDefault());
         ExpressionUtil.setExpression(new ConditionStrategySpel());
         ExpressionUtil.setExpression(new ListenerStrategySpel());
         ExpressionUtil.setExpression(new VariableStrategySpel());

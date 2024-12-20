@@ -15,10 +15,9 @@
  */
 package org.dromara.warm.flow.core.condition;
 
-import org.dromara.warm.flow.core.constant.FlowCons;
-
 /**
- * 条件表达式不包含 @@notNike@@|flag@@notNike@@4
+ * 条件表达式不包含 notNike|flag|4
+ * 条件表达式不包含 notNike|flag|4 and eq|flag|5 or lt|flag|6
  *
  * @author warm
  */
@@ -26,12 +25,12 @@ public class ConditionStrategyNotLike extends ConditionStrategyAbstract {
 
     @Override
     public String getType() {
-        return FlowCons.splitAt + "notNike" + FlowCons.splitAt;
+        return "notNike";
     }
 
     @Override
-    public Boolean afterEval(String[] split, String value) {
-        return !split[2].trim().contains(value);
+    public Boolean afterEval(String value, String variableValue) {
+        return !value.contains(variableValue);
     }
 
 }
