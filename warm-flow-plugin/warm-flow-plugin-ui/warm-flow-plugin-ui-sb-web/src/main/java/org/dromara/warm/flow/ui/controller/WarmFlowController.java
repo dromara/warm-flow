@@ -150,7 +150,8 @@ public class WarmFlowController {
      * @return List<Node>
      */
     @GetMapping("/previous-node-list/{definitionId}/{nowNodeCode}")
-    public ApiResult<List<Node>> previousNodeList(@PathVariable Long definitionId,  @PathVariable String nowNodeCode) {
+    public ApiResult<List<Node>> previousNodeList(@PathVariable("definitionId") Long definitionId
+            , @PathVariable("nowNodeCode") String nowNodeCode) {
         try {
             return ApiResult.ok(FlowFactory.nodeService().previousNodeList(definitionId, nowNodeCode));
         } catch (Exception e) {

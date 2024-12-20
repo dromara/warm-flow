@@ -10,7 +10,7 @@
       :append-to-body="true"
       :before-close="handleClose">
       <component :is="componentType" v-model="form" :disabled="disabled" :skipConditionShow="skipConditionShow"
-                 :definitionId="definitionId">
+                 :nodes="nodes" :skips="skips">
         <template v-slot:[key]="data" v-for="(item, key) in $slots">
           <slot :name="key" v-bind="data || {}"></slot>
         </template>
@@ -65,8 +65,14 @@ const props = defineProps({
     type: Boolean,
     default: true
   },
-  definitionId: {
-    type: Number,
+  nodes: {
+    type: Array,
+    default () {
+      return []
+    }
+  },
+  skips: {
+    type: Array,
     default () {
       return []
     }
@@ -249,10 +255,6 @@ function show () {
 }
 
 function handleClose () {
-  // 监听节点编码变量并更新
-  if (form.value.collaborativeWay === "2" && !form.value.anyNodeSkip) {
-    proxy.$modal.notifyWarning("票签必须选择驳到指定节点！");
-  }
   if (nodeCode.value && objId.value) {
     if (['skip'].includes(props.node?.type)) {
       if (!props.lf.getEdgeModelById(nodeCode.value)) {

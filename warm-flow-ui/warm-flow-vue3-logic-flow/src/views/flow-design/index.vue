@@ -1,7 +1,7 @@
 <template>
   <div class="container" ref="container">
     <PropertySetting ref="propertySettingRef" :node="nodeClick" v-model="processForm" :lf="lf" :disabled="disabled"
-      :skipConditionShow="skipConditionShow" :definitionId="definitionId">
+      :skipConditionShow="skipConditionShow" :nodes="nodes" :skips="skips">
       <template v-slot:[key]="data" v-for="(item, key) in $slots">
         <slot :name="key" v-bind="data || {}"></slot>
       </template>
@@ -44,6 +44,8 @@ const value = ref({});
 const xmlString = ref('');
 const jsonString = ref('');
 const skipConditionShow = ref(true);
+const nodes = ref([]);
+const skips = ref([]);
 
 onMounted(async () => {
   if (!appParams.value) await appStore.fetchTokenName();
@@ -64,7 +66,6 @@ onMounted(async () => {
   initControl();
   initMenu();
   initEvent();
-  console.log()
   if (definitionId.value) {
     getXmlString(definitionId.value).then(res => {
       xmlString.value = res.data;
@@ -256,6 +257,9 @@ function initEvent() {
   const { eventCenter } = lf.value.graphModel
   eventCenter.on('node:dbclick', (args) => {
     nodeClick.value = args.data
+    let graphData = lf.value.getGraphData()
+    nodes.value = graphData['nodes']
+    skips.value = graphData['edges']
     proxy.$nextTick(() => {
       propertySettingRef.value.show()
     })
@@ -265,6 +269,9 @@ function initEvent() {
     nodeClick.value = args.data
     const nodeModel = lf.value.getNodeModelById(nodeClick.value.sourceNodeId);
     skipConditionShow.value = nodeModel['type'] === 'serial'
+    let graphData = lf.value.getGraphData()
+    nodes.value = graphData['nodes']
+    skips.value = graphData['edges']
     proxy.$nextTick(() => {
       propertySettingRef.value.show(nodeModel['nodeType'] === 'serial')
     })

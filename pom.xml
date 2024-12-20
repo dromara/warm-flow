@@ -6,7 +6,7 @@
 
     <groupId>org.dromara.warm</groupId>
     <artifactId>warm-flow</artifactId>
-    <version>1.3.5</version>
+    <version>1.3.6-m1</version>
     <packaging>pom</packaging>
 
     <name>warm-flow</name>
@@ -426,6 +426,16 @@
         </profile>
     </profiles>
 
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 
     <!-- mvn clean deploy -P release-->
     <!-- mvn clean install -Dmaven.test.skip=true   -->
