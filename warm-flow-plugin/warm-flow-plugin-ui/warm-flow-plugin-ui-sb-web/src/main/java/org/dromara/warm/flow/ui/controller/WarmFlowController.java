@@ -24,6 +24,8 @@ import org.dromara.warm.flow.core.entity.Definition;
 import org.dromara.warm.flow.core.entity.Form;
 import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.entity.Skip;
+import org.dromara.warm.flow.core.dto.*;
+import org.dromara.warm.flow.core.entity.*;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.utils.ExceptionUtil;
@@ -256,6 +258,59 @@ public class WarmFlowController {
         return ApiResult.ok();
     }
 
+
+    /**
+     * 根据任务id获取待办任务表单及数据
+     *
+     * @param taskId 当前任务id
+     * @return {@link ApiResult<FlowForm>}
+     * @author liangli
+     * @date 2024/8/21 17:08
+     **/
+    @GetMapping(value = "/execute/load/{taskId}")
+    public ApiResult<FlowForm> load(@PathVariable("taskId") Long taskId) {
+        FlowParams flowParams = FlowParams.build();
+
+        return ApiResult.ok(FlowFactory.taskService().load(taskId, flowParams));
+    }
+
+    /**
+     * 根据任务id获取已办任务表单及数据
+     *
+     * @param hisTaskId
+     * @return
+     */
+    @GetMapping(value = "/execute/hisLoad/{taskId}")
+    public ApiResult<FlowForm> hisLoad(@PathVariable("taskId") Long hisTaskId) {
+        FlowParams flowParams = FlowParams.build();
+
+        return ApiResult.ok(FlowFactory.taskService().hisLoad(hisTaskId, flowParams));
+    }
+
+    /**
+     * 通用表单流程审批接口
+     *
+     * @param formData
+     * @param taskId
+     * @param skipType
+     * @param message
+     * @param nodeCode
+     * @param flowStatus
+     * @return
+     */
+    @PostMapping(value = "/execute/handle/{taskId}")
+    public ApiResult<Instance> handle(@RequestBody Map<String, Object> formData, @PathVariable("taskId") Long taskId, String skipType, String message
+            , String nodeCode, String flowStatus) {
+        FlowParams flowParams = FlowParams.build()
+                .skipType(skipType)
+                .nodeCode(nodeCode)
+                .message(message);
+
+        flowParams.formData(formData);
+
+        return ApiResult.ok(FlowFactory.taskService().skip(taskId, flowParams));
+    }
+
     /**
      * 获取所有的前置节点集合
      * @return List<Node>
@@ -269,4 +324,5 @@ public class WarmFlowController {
             throw new FlowException(ExceptionUtil.handleMsg("获取所有的前置节点集合失败", e));
         }
     }
+
 }
