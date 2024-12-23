@@ -36,4 +36,6 @@ app.use(ElementPlus, {
 })
 
 app.use(FcDesigner);
+app.use(FcDesigner.formCreate);
+
 app.mount('#app')
