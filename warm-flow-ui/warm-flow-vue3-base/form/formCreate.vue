@@ -98,7 +98,6 @@ async function formInit(data) {
   option.value = formContent.option;
   if (option.value) option.value.submitBtn = false;
   formData.value = response.data.data; // 表单内容
-  message.value = response.data.data.message || "000000000000000";
   proxy.$nextTick(() => {
     window.parent.postMessage({ method: "getOffsetHeight", offsetHeight: proxy.$refs.form.$el.offsetHeight }, "*");
   });
