@@ -20,7 +20,7 @@
 </template>
 
 <script setup name="formCreate">
-import { getFormContent, executeLoad, executeHandle, hisLoad } from "&/api/form/definition";
+import { getFormContent, executeLoad, executeHandle, hisLoad } from "../api/form/definition";
 import formCreate from "@form-create/element-ui";
 const { proxy } = getCurrentInstance();
 const disabled = ref(false);
