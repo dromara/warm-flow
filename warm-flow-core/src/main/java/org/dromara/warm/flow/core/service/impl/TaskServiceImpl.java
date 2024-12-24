@@ -863,8 +863,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             ListenerUtil.execute(listenerVariable, Listener.LISTENER_FORM_LOAD, nowNode.getListenerPath(), nowNode.getListenerType());
             Form form = FlowFactory.formService().getById(Long.valueOf(task.getFormPath()));
             flowForm.setForm(form);
-        } else if(FlowCons.FORM_CUSTOM_P.equals(nowNode.getFormCustom())
-                && FlowCons.FORM_CUSTOM_Y.equals(definition.getFormCustom())) {
+        } else if(StringUtils.isEmpty(nowNode.getFormCustom()) && FlowCons.FORM_CUSTOM_Y.equals(definition.getFormCustom())) {
             ListenerUtil.execute(listenerVariable, Listener.LISTENER_FORM_LOAD, definition.getListenerPath(), definition.getListenerType());
             Form form = FlowFactory.formService().getById(Long.valueOf(definition.getFormPath()));
             flowForm.setForm(form);
@@ -892,8 +891,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         if (FlowCons.FORM_CUSTOM_Y.equals(nowNode.getFormCustom())) {
             Form form = FlowFactory.formService().getById(Long.valueOf(hisTask.getFormPath()));
             flowForm.setForm(form);
-        } else if(FlowCons.FORM_CUSTOM_P.equals(nowNode.getFormCustom())
-                && FlowCons.FORM_CUSTOM_Y.equals(definition.getFormCustom())) {
+        } else if(StringUtils.isEmpty(nowNode.getFormCustom()) && FlowCons.FORM_CUSTOM_Y.equals(definition.getFormCustom())) {
             Form form = FlowFactory.formService().getById(Long.valueOf(definition.getFormPath()));
             flowForm.setForm(form);
         } else {
