@@ -16,14 +16,6 @@
 package org.dromara.warm.flow.ui.controller;
 
 import org.dromara.warm.flow.core.FlowFactory;
-import org.dromara.warm.flow.core.dto.ApiResult;
-import org.dromara.warm.flow.core.entity.Node;
-import org.dromara.warm.flow.core.dto.FlowCombine;
-import org.dromara.warm.flow.core.dto.FlowPage;
-import org.dromara.warm.flow.core.entity.Definition;
-import org.dromara.warm.flow.core.entity.Form;
-import org.dromara.warm.flow.core.entity.Node;
-import org.dromara.warm.flow.core.entity.Skip;
 import org.dromara.warm.flow.core.dto.*;
 import org.dromara.warm.flow.core.entity.*;
 import org.dromara.warm.flow.core.exception.FlowException;
@@ -263,7 +255,7 @@ public class WarmFlowController {
      * 根据任务id获取待办任务表单及数据
      *
      * @param taskId 当前任务id
-     * @return {@link ApiResult<FlowForm>}
+     * @return {@link ApiResult< FlowForm >}
      * @author liangli
      * @date 2024/8/21 17:08
      **/
@@ -316,7 +308,7 @@ public class WarmFlowController {
      * @return List<Node>
      */
     @GetMapping("/previous-node-list/{definitionId}/{nowNodeCode}")
-    public ApiResult<List<Node>> previousNodeList(@PathVariable Long definitionId,  @PathVariable String nowNodeCode) {
+    public ApiResult<List<Node>> previousNodeList(@PathVariable Long definitionId, @PathVariable String nowNodeCode) {
         try {
             return ApiResult.ok(FlowFactory.nodeService().previousNodeList(definitionId, nowNodeCode));
         } catch (Exception e) {

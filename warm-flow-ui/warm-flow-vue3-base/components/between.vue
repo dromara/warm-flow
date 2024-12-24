@@ -202,7 +202,6 @@ const rules = reactive({
   listenerType: [{ required: true, message: '监听器类型不能为空', trigger: 'change' }],
   listenerPath: [{ required: true, message: '监听器路径不能为空', trigger: 'blur' }]
 });
-const userVisible = ref(false);
 const definitionList = ref([]); // 流程表单列表
 const dictList = ref(); // 办理人选项
 const emit = defineEmits(["change"]);
