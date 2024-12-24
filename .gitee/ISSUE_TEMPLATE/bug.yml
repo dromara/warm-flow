@@ -20,7 +20,7 @@ body:
     attributes:
       label: 功能不好用不会用是否已经看过项目文档？
       options:
-        - label: http://www.warm-flow.cn/
+        - label: https://warm-flow.dromara.org/
           required: true
   - type: checkboxes
     attributes:

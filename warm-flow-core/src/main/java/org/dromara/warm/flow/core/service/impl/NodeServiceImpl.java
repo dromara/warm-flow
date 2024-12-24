@@ -118,10 +118,10 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
             return getOne(FlowFactory.newNode().setNodeCode(anyNodeCode).setDefinitionId(definitionId));
         }
 
-//        // 如果配置了任意跳转节点，直接获取节点
-//        if (StringUtils.isNotEmpty(nowNode.getSkipAnyNode())) {
-//            return getOne(FlowFactory.newNode().setNodeCode(nowNode.getSkipAnyNode()).setDefinitionId(definitionId));
-//        }
+        // 如果配置了任意跳转节点，直接获取节点
+        if (StringUtils.isNotEmpty(nowNode.getAnyNodeSkip()) && SkipType.isReject(skipType)) {
+            return getOne(FlowFactory.newNode().setNodeCode(nowNode.getAnyNodeSkip()).setDefinitionId(definitionId));
+        }
 
         AssertUtil.isNull(nowNode, ExceptionCons.LOST_CUR_NODE);
         // 获取跳转关系

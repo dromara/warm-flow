@@ -83,16 +83,15 @@
             <template #label>
               <span v-if="form.collaborativeWay === '2'"  class="mr5" style="color: red;">*</span>驳回到指定节点
             </template>
-            <el-select v-model="form.anyNodeSkip" STYLE="width: 80%">
-              <el-option label="" :value="''"></el-option>
+            <el-select v-model="form.anyNodeSkip" style="width: 80%" clearable>
               <el-option
-                  v-for="dict in nodes"
-                  :key="dict.nodeCode"
-                  :label="dict.nodeName"
-                  :value="dict.nodeCode"
+                  v-for="dict in filteredNodes"
+                  :key="dict.id"
+                  :label="dict.text.value"
+                  :value="dict.id"
               />
             </el-select>
-            <div class="placeholder mt5">票签必须选择驳到指定节点！</div>
+            <div class="placeholder mt5">【票签】必须选择驳到指定节点！</div>
           </el-form-item>
         </slot>
         <slot name="form-item-task-formCustom" :model="form" field="formCustom">
@@ -162,7 +161,7 @@
 <script setup name="Between">
 import selectUser from "./selectUser";
 import { Delete } from '@element-plus/icons-vue'
-import { publishedList, handlerDict, previousNodeList } from "../api/flow/definition";
+import { publishedList, handlerDict } from "../api/flow/definition";
 const { proxy } = getCurrentInstance();
 
 const props = defineProps({
@@ -181,8 +180,14 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
-  definitionId: {
-    type: Number,
+  nodes: {
+    type: Array,
+    default () {
+      return []
+    }
+  },
+  skips: {
+    type: Array,
     default () {
       return []
     }
@@ -191,7 +196,6 @@ const props = defineProps({
 
 const tabsValue = ref("1");
 const form = ref(props.modelValue);
-const nodes = ref([]);
 const userVisible = ref(false);
 
 const rules = reactive({
@@ -223,16 +227,6 @@ function delPermission(index) {
 // 添加办理人
 function addPermission() {
   form.value.permissionFlag.push("");
-}
-
-/** 选择角色权限范围触发 */
-function getPreviousNodeList() {
-  previousNodeList(props.definitionId, form.value.nodeCode).then(res => {
-      if (res && res.data) {
-        nodes.value = res.data
-      }
-  })
-
 }
 
 /** 选择角色权限范围触发 */
@@ -288,10 +282,28 @@ function handleDeleteRow(index) {
   form.value.listenerRows.splice(index, 1);
 }
 
+const filteredNodes = computed(() => {
+  let skipList = props.skips.filter(skip => skip.properties.skipType === "PASS");
+
+  let previousCode = getPreviousCode(skipList, form.value.nodeCode)
+  return props.nodes.filter(node => !["serial", "parallel"].includes(node.type)
+      && previousCode.includes(node.id)).reverse();
+});
+
+function getPreviousCode(skipList, nowNodeCode) {
+  const previousCode = [];
+  for (const skip of skipList) {
+    if (skip.targetNodeId === nowNodeCode) {
+      previousCode.push(skip.sourceNodeId);
+      previousCode.push(...getPreviousCode(skipList, skip.sourceNodeId));
+    }
+  }
+  return previousCode;
+}
+
 getPermissionFlag();
 getDefinition();
 getHandlerDict();
-getPreviousNodeList();
 </script>
 
 <style scoped lang="scss">
