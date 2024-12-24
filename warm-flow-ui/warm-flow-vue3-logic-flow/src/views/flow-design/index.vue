@@ -82,7 +82,13 @@ onMounted(async () => {
         value.value = json2LogicFlowJson(jsonString.value);
         lf.value.render(value.value);
       }
+    }).catch(() => {
+      lf.value.render({});
     });
+  }
+  if (!definitionId.value) {
+    proxy.$modal.notifyError("流程id不能为空！");
+    lf.value.render({});
   }
 })
 

@@ -16,22 +16,29 @@
 package org.dromara.warm.flow.ui.controller;
 
 import org.dromara.warm.flow.core.FlowFactory;
-import org.dromara.warm.flow.core.dto.ApiResult;
-import org.dromara.warm.flow.core.entity.Node;
+import org.dromara.warm.flow.core.dto.*;
+import org.dromara.warm.flow.core.entity.*;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.utils.ExceptionUtil;
+import org.dromara.warm.flow.core.utils.HttpStatus;
+import org.dromara.warm.flow.core.utils.page.Page;
+import org.dromara.warm.flow.core.vo.DefVo;
 import org.dromara.warm.flow.ui.dto.DefDto;
+import org.dromara.warm.flow.ui.dto.FormDto;
+import org.dromara.warm.flow.ui.dto.FormQuery;
 import org.dromara.warm.flow.ui.dto.HandlerQuery;
+import org.dromara.warm.flow.ui.service.HandlerDictService;
 import org.dromara.warm.flow.ui.service.HandlerSelectService;
+import org.dromara.warm.flow.ui.vo.Dict;
 import org.dromara.warm.flow.ui.vo.HandlerSelectVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 设计器Controller 可选择是否放行，放行可与业务系统共享权限，主要是用来访问业务系统数据
@@ -248,7 +255,7 @@ public class WarmFlowController {
      * 根据任务id获取待办任务表单及数据
      *
      * @param taskId 当前任务id
-     * @return {@link ApiResult< FlowForm >}
+     * @return {@link ApiResult<FlowForm>}
      * @author liangli
      * @date 2024/8/21 17:08
      **/
@@ -283,6 +290,7 @@ public class WarmFlowController {
      * @param flowStatus
      * @return
      */
+    @Transactional
     @PostMapping(value = "/execute/handle/{taskId}")
     public ApiResult<Instance> handle(@RequestBody Map<String, Object> formData, @PathVariable("taskId") Long taskId, String skipType, String message
             , String nodeCode, String flowStatus) {

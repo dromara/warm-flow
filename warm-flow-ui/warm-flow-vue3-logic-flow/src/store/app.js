@@ -20,7 +20,7 @@ const useAppStore = defineStore(
                 Cookies.set(TokenName, res.data)
             }
         });
-
+        this.appParams= null
         for (const [key, value] of urlParams.entries()) {
             if (tokenNames && tokenNames.length > 0 && tokenNames.includes(key)) {
                 Cookies.set(TokenPrefix + key, value);

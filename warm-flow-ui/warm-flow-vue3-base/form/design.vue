@@ -46,19 +46,24 @@ function handleSave() {
 
 // 获取详情
 function getInfo() {
-  getFormContent(definitionId.value).then(res => {
-    let formContent = res.data;
-    if (formContent) {
-      nextTick(() => {
-        formContent = JSON.parse(formContent);
-        if (formContent.rule) proxy.$refs.designer.setRule(formContent.rule);
-        if (formContent.option) proxy.$refs.designer.setOption(formContent.option);
-      });
-    }
-  });
+  definitionId.value = appParams.value?.id;
+  if (!definitionId.value) {
+    proxy.$modal.notifySuccess("流程id不能为空！");
+  } else {
+    getFormContent(definitionId.value).then(res => {
+      let formContent = res.data;
+      if (formContent) {
+        nextTick(() => {
+          formContent = JSON.parse(formContent);
+          if (formContent.rule) proxy.$refs.designer.setRule(formContent.rule);
+          if (formContent.option) proxy.$refs.designer.setOption(formContent.option);
+        });
+      }
+    });
+  }
 }
-definitionId.value = appParams.value?.id;
-if (definitionId.value) getInfo();
+getInfo();
+
 </script>
 
 <style scoped lang="scss">
