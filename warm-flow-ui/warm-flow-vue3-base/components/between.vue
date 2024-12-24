@@ -96,10 +96,9 @@
         </slot>
         <slot name="form-item-task-formCustom" :model="form" field="formCustom">
           <el-form-item label="审批表单：" prop="formCustom">
-            <el-select v-model="form.formCustom">
-              <el-option label="使用流程表单" value=""></el-option>
-              <el-option label="节点表单路径" value="N"></el-option>
-              <el-option label="节点流程表单" value="Y"></el-option>
+            <el-select v-model="form.formCustom" clearable>
+              <el-option label="表单路径" value="N"></el-option>
+              <el-option label="动态表单" value="Y"></el-option>
             </el-select>
           </el-form-item>
         </slot>
