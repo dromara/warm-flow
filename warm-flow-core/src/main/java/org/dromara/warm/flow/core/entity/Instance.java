@@ -76,8 +76,8 @@ public interface Instance extends RootEntity {
 
     Instance setVariable(String variable);
 
-    default Map<String, Object> getVariableMap() {
-        return FlowFactory.jsonConvert.strToMap(this.getVariable());
+    default Map<String, Object> getVariableMap()  {
+        return FlowFactory.jsonConvert.strToMap(getVariable());
     }
 
     public String getFlowStatus();

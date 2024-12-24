@@ -18,10 +18,9 @@ package org.dromara.warm.flow.orm.entity;
 import com.easy.query.core.annotation.*;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
+import lombok.Data;
 import org.dromara.warm.flow.core.entity.User;
 import org.dromara.warm.flow.orm.entity.proxy.FlowUserProxy;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.util.Date;
@@ -32,8 +31,7 @@ import java.util.Date;
  * @author xiarg
  * @since 2024/5/10 10:58
  */
-@Getter
-@Setter
+@Data
 @EntityProxy
 @Accessors(chain = true)
 @Table("flow_user")
@@ -74,18 +72,4 @@ public class FlowUser implements User, ProxyEntityAvailable<FlowUser, FlowUserPr
     @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String createBy;
 
-
-    @Override
-    public String toString() {
-        return "FlowUser{" +
-            "id=" + id +
-            ", createTime=" + createTime +
-            ", updateTime=" + updateTime +
-            ", tenantId='" + tenantId + '\'' +
-            ", delFlag='" + delFlag + '\'' +
-            ", type='" + type + '\'' +
-            ", processed_by='" + processedBy + '\'' +
-            ", associated=" + associated +
-            '}';
-    }
 }

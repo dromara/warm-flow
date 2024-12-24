@@ -15,6 +15,9 @@
  */
 package org.dromara.warm.flow.ui.vo;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.dromara.warm.flow.core.dto.FlowPage;
 
 import java.util.List;
@@ -24,6 +27,9 @@ import java.util.List;
  *
  * @author warm
  */
+@Getter
+@Setter
+@Accessors(chain = true)
 public class HandlerSelectVo {
 
     /** 办理人选择，分页列表，有具体办理对象 比如：部门、角色和用户等情况 */
@@ -32,21 +38,4 @@ public class HandlerSelectVo {
     /** 左侧树状选择，配合{@link #handlerAuths}使用，比如用户先选择部门，然后选择用户 */
     private List<TreeSelection> treeSelections;
 
-    public FlowPage<HandlerAuth> getHandlerAuths() {
-        return handlerAuths;
-    }
-
-    public HandlerSelectVo setHandlerAuths(FlowPage<HandlerAuth> handlerAuths) {
-        this.handlerAuths = handlerAuths;
-        return this;
-    }
-
-    public List<TreeSelection> getTreeSelections() {
-        return treeSelections;
-    }
-
-    public HandlerSelectVo setTreeSelections(List<TreeSelection> treeSelections) {
-        this.treeSelections = treeSelections;
-        return this;
-    }
 }

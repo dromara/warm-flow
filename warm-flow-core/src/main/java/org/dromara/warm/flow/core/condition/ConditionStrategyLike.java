@@ -15,10 +15,8 @@
  */
 package org.dromara.warm.flow.core.condition;
 
-import org.dromara.warm.flow.core.constant.FlowCons;
-
 /**
- * 条件表达式包含 @@like@@|flag@@like@@4
+ * 条件表达式包含 like|flag|4
  *
  * @author warm
  */
@@ -26,12 +24,12 @@ public class ConditionStrategyLike extends ConditionStrategyAbstract {
 
     @Override
     public String getType() {
-        return FlowCons.splitAt + "like" + FlowCons.splitAt;
+        return "like";
     }
 
     @Override
-    public Boolean afterEval(String[] split, String value) {
-        return split[2].trim().contains(value);
+    public Boolean afterEval(String value, String variableValue) {
+        return value.contains(variableValue);
     }
 
 }

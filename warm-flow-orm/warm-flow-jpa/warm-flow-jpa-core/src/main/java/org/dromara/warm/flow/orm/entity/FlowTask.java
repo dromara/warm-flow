@@ -15,6 +15,9 @@
  */
 package org.dromara.warm.flow.orm.entity;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 import org.dromara.warm.flow.core.entity.Task;
 import org.dromara.warm.flow.core.entity.User;
 import org.dromara.warm.flow.core.utils.StringUtils;
@@ -39,6 +42,9 @@ import java.util.Objects;
  * @author vanlin
  * @since 2024-05-08
  */
+@Data
+@Accessors(chain = true)
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "flow_task")
 public class FlowTask extends JPARootEntity<FlowTask> implements Task {
@@ -192,146 +198,4 @@ public class FlowTask extends JPARootEntity<FlowTask> implements Task {
     @Column(name = "form_path")
     private String formPath;
 
-    @Override
-    public Long getDefinitionId() {
-        return definitionId;
-    }
-
-    @Override
-    public FlowTask setDefinitionId(Long definitionId) {
-        this.definitionId = definitionId;
-        return this;
-    }
-
-    @Override
-    public Long getInstanceId() {
-        return instanceId;
-    }
-
-    @Override
-    public FlowTask setInstanceId(Long instanceId) {
-        this.instanceId = instanceId;
-        return this;
-    }
-
-    @Override
-    public String getFlowName() {
-        return flowName;
-    }
-
-    @Override
-    public FlowTask setFlowName(String flowName) {
-        this.flowName = flowName;
-        return this;
-    }
-
-    @Override
-    public String getBusinessId() {
-        return businessId;
-    }
-
-    @Override
-    public FlowTask setBusinessId(String businessId) {
-        this.businessId = businessId;
-        return this;
-    }
-
-    @Override
-    public String getNodeCode() {
-        return nodeCode;
-    }
-
-    @Override
-    public FlowTask setNodeCode(String nodeCode) {
-        this.nodeCode = nodeCode;
-        return this;
-    }
-
-    @Override
-    public String getNodeName() {
-        return nodeName;
-    }
-
-    @Override
-    public FlowTask setNodeName(String nodeName) {
-        this.nodeName = nodeName;
-        return this;
-    }
-
-    @Override
-    public Integer getNodeType() {
-        return nodeType;
-    }
-
-    @Override
-    public FlowTask setNodeType(Integer nodeType) {
-        this.nodeType = nodeType;
-        return this;
-    }
-
-    @Override
-    public List<String> getPermissionList() {
-        return permissionList;
-    }
-
-    @Override
-    public FlowTask setPermissionList(List<String> permissionList) {
-        this.permissionList = permissionList;
-        return this;
-    }
-
-    @Override
-    public List<User> getUserList() {
-        return userList;
-    }
-
-    @Override
-    public FlowTask setUserList(List<User> userList) {
-        this.userList = userList;
-        return this;
-    }
-
-    @Override
-    public String getFormCustom() {
-        return formCustom;
-    }
-
-    @Override
-    public FlowTask setFormCustom(String formCustom) {
-        this.formCustom = formCustom;
-        return this;
-    }
-
-    @Override
-    public String getFormPath() {
-        return formPath;
-    }
-
-    @Override
-    public FlowTask setFormPath(String formPath) {
-        this.formPath = formPath;
-        return this;
-    }
-
-    @Override
-    public String toString() {
-        return "FlowTask{" +
-                "id=" + super.getId() +
-                ", createTime=" + super.getCreateTime() +
-                ", updateTime=" + super.getUpdateTime() +
-                ", tenantId='" + super.getTenantId() + '\'' +
-                ", delFlag='" + super.getDelFlag() + '\'' +
-                ", definitionId=" + definitionId +
-                ", instanceId=" + instanceId +
-                ", flowName='" + flowName + '\'' +
-                ", businessId='" + businessId + '\'' +
-                ", nodeCode='" + nodeCode + '\'' +
-                ", nodeName='" + nodeName + '\'' +
-                ", nodeType=" + nodeType +
-                ", permissionList=" + permissionList +
-                ", userList=" + userList +
-                ", formCustom='" + formCustom + '\'' +
-                ", formPath='" + formPath + '\'' +
-                "} ";
-    }
 }

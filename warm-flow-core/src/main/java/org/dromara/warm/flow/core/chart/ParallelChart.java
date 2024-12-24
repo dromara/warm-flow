@@ -15,11 +15,19 @@
  */
 package org.dromara.warm.flow.core.chart;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
 import java.awt.*;
 
 /**
  * 流程图并行网关
  */
+@Getter
+@Setter
+@Accessors(chain = true)
 public class ParallelChart implements FlowChart {
     private int n;
 
@@ -29,50 +37,12 @@ public class ParallelChart implements FlowChart {
 
     private Color c;
 
-    public ParallelChart() {
-    }
-
     public ParallelChart(int xParallel, int yParallel, Color c) {
         this.xParallel = xParallel;
         this.yParallel = yParallel;
         this.c = c;
     }
 
-    public int getN() {
-        return n;
-    }
-
-    public ParallelChart setN(int n) {
-        this.n = n;
-        return this;
-    }
-
-    public int getxParallel() {
-        return xParallel;
-    }
-
-    public ParallelChart setxParallel(int xParallel) {
-        this.xParallel = xParallel;
-        return this;
-    }
-
-    public int getyParallel() {
-        return yParallel;
-    }
-
-    public ParallelChart setyParallel(int yParallel) {
-        this.yParallel = yParallel;
-        return this;
-    }
-
-    public Color getC() {
-        return c;
-    }
-
-    public ParallelChart setC(Color c) {
-        this.c = c;
-        return this;
-    }
 
     @Override
     public void draw(Graphics2D graphics) {

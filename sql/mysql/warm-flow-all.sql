@@ -22,14 +22,15 @@ CREATE TABLE `flow_definition`
 CREATE TABLE `flow_node`
 (
     `id`              bigint unsigned NOT NULL COMMENT '主键id',
-    `node_type`       tinyint(1) NOT NULL COMMENT '节点类型（0开始节点 1中间节点 2结束结点 3互斥网关 4并行网关）',
+    `node_type`       tinyint(1) NOT NULL COMMENT '节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）',
     `definition_id`   bigint       NOT NULL COMMENT '流程定义id',
     `node_code`       varchar(100) NOT NULL COMMENT '流程节点编码',
     `node_name`       varchar(100) DEFAULT NULL COMMENT '流程节点名称',
     `permission_flag` varchar(200) DEFAULT NULL COMMENT '权限标识（权限类型:权限标识，可以多个，用逗号隔开)',
     `node_ratio`      DECIMAL(6,3) DEFAULT NULL COMMENT '流程签署比例值',
     `coordinate`      varchar(100) DEFAULT NULL COMMENT '坐标',
-    `skip_any_node`   varchar(100) DEFAULT 'N' COMMENT '是否可以退回任意节点（Y是 N否）',
+    `skip_any_node`   varchar(100) DEFAULT 'N' COMMENT '是否可以退回任意节点（Y是 N否）即将删除',
+    `any_node_skip`   varchar(100) DEFAULT NULL COMMENT '任意结点跳转',
     `listener_type`   varchar(100) DEFAULT NULL COMMENT '监听器类型',
     `listener_path`   varchar(400) DEFAULT NULL COMMENT '监听器路径',
     `handler_type`    varchar(100)  DEFAULT NULL COMMENT '处理器类型',
@@ -42,7 +43,7 @@ CREATE TABLE `flow_node`
     `del_flag`        char(1)      DEFAULT '0' COMMENT '删除标志',
     `tenant_id`       varchar(40)  DEFAULT NULL COMMENT '租户id',
     PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB  COMMENT='流程结点表';
+) ENGINE=InnoDB  COMMENT='流程节点表';
 
 CREATE TABLE `flow_skip`
 (
@@ -61,14 +62,14 @@ CREATE TABLE `flow_skip`
     `del_flag`    char(1)      DEFAULT '0' COMMENT '删除标志',
     `tenant_id`     varchar(40)  DEFAULT NULL COMMENT '租户id',
     PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB  COMMENT='结点跳转关联表';
+) ENGINE=InnoDB  COMMENT='节点跳转关联表';
 
 CREATE TABLE `flow_instance`
 (
     `id`            bigint      NOT NULL COMMENT '主键id',
     `definition_id` bigint      NOT NULL COMMENT '对应flow_definition表的id',
     `business_id`   varchar(40) NOT NULL COMMENT '业务id',
-    `node_type`     tinyint(1) NOT NULL COMMENT '结点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）',
+    `node_type`     tinyint(1) NOT NULL COMMENT '节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）',
     `node_code`     varchar(40) NOT NULL COMMENT '流程节点编码',
     `node_name`     varchar(100) DEFAULT NULL COMMENT '流程节点名称',
     `variable`      text COMMENT '任务变量',

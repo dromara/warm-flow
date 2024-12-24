@@ -15,11 +15,18 @@
  */
 package org.dromara.warm.flow.core.chart;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
 import java.awt.*;
 
 /**
  * 流程图互斥网关
  */
+@Getter
+@Setter
+@Accessors(chain = true)
 public class SerialChart implements FlowChart {
     private int n;
 
@@ -29,49 +36,10 @@ public class SerialChart implements FlowChart {
 
     private Color c;
 
-    public SerialChart() {
-    }
-
     public SerialChart(int xSerial, int ySerial, Color c) {
         this.xSerial = xSerial;
         this.ySerial = ySerial;
         this.c = c;
-    }
-
-    public int getN() {
-        return n;
-    }
-
-    public SerialChart setN(int n) {
-        this.n = n;
-        return this;
-    }
-
-    public int getxSerial() {
-        return xSerial;
-    }
-
-    public SerialChart setxSerial(int xSerial) {
-        this.xSerial = xSerial;
-        return this;
-    }
-
-    public int getySerial() {
-        return ySerial;
-    }
-
-    public SerialChart setySerial(int ySerial) {
-        this.ySerial = ySerial;
-        return this;
-    }
-
-    public Color getC() {
-        return c;
-    }
-
-    public SerialChart setC(Color c) {
-        this.c = c;
-        return this;
     }
 
     @Override

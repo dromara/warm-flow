@@ -15,6 +15,10 @@
  */
 package org.dromara.warm.flow.core.chart;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.dromara.warm.flow.core.utils.DrawUtils;
 import org.dromara.warm.flow.core.utils.ObjectUtil;
 import org.dromara.warm.flow.core.utils.StringUtils;
@@ -24,6 +28,9 @@ import java.awt.*;
 /**
  * 流程图开始或者结束节点
  */
+@Getter
+@Setter
+@Accessors(chain = true)
 public class OvalChart implements FlowChart {
     private int n;
 
@@ -35,9 +42,6 @@ public class OvalChart implements FlowChart {
 
     private TextChart textChart;
 
-    public OvalChart() {
-    }
-
     public OvalChart(int xStartOval, int yStartOval, Color c, TextChart textChart) {
         this.xStartOval = xStartOval;
         this.yStartOval = yStartOval;
@@ -45,58 +49,13 @@ public class OvalChart implements FlowChart {
         this.textChart = textChart;
     }
 
-    public int getN() {
-        return n;
-    }
-
-    public OvalChart setN(int n) {
-        this.n = n;
-        return this;
-    }
-
-    public int getxStartOval() {
-        return xStartOval;
-    }
-
-    public OvalChart setxStartOval(int xStartOval) {
-        this.xStartOval = xStartOval;
-        return this;
-    }
-
-    public int getyStartOval() {
-        return yStartOval;
-    }
-
-    public OvalChart setyStartOval(int yStartOval) {
-        this.yStartOval = yStartOval;
-        return this;
-    }
-
-    public Color getC() {
-        return c;
-    }
-
-    public OvalChart setC(Color c) {
-        this.c = c;
-        return this;
-    }
-
-    public TextChart getTextChart() {
-        return textChart;
-    }
-
-    public OvalChart setTextChart(TextChart textChart) {
-        this.textChart = textChart;
-        return this;
-    }
-
     @Override
     public void draw(Graphics2D graphics) {
         graphics.setColor(c);
         graphics.drawOval((xStartOval - 20) * n, (yStartOval - 20) * n, 40 * n, 40 * n);
         if (ObjectUtil.isNotNull(textChart) && StringUtils.isNotEmpty(textChart.getTitle())) {
-            textChart.setxText(textChart.getxText() - DrawUtils.stringWidth(graphics, textChart.getTitle()) / 2);
-            textChart.setyText(textChart.getyText() + 5);
+            textChart.setXText(textChart.getXText() - DrawUtils.stringWidth(graphics, textChart.getTitle()) / 2);
+            textChart.setYText(textChart.getYText() + 5);
             // 填充文字说明
             textChart.setN(n).draw(graphics);
         }

@@ -15,25 +15,30 @@
  */
 package org.dromara.warm.plugin.modes.sb.expression;
 
+
 import org.dromara.warm.flow.core.condition.ConditionStrategy;
 import org.dromara.warm.plugin.modes.sb.helper.SpelHelper;
 
 import java.util.Map;
 
 /**
- * spel条件表达式 #{@user.eval()}
+ * 默认条件表达式 default|${flag == 5 && flag > 4}
  *
  * @author warm
  */
-public class ConditionStrategySpel implements ConditionStrategy {
+public class ConditionStrategyDefault implements ConditionStrategy {
 
     @Override
     public String getType() {
-        return "spel";
+        return "default";
     }
 
     @Override
     public Boolean eval(String expression, Map<String, Object> variable) {
+        expression = expression.replace("$", "#");
+        for (Map.Entry<String, Object> entry: variable.entrySet()) {
+            expression = expression.replace(entry.getKey(), entry.getValue().toString());
+        }
         return Boolean.TRUE.equals(SpelHelper.parseExpression(expression, variable));
     }
 }

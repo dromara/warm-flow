@@ -17,7 +17,9 @@ package org.dromara.warm.flow.core.condition;
 
 import org.dromara.warm.flow.core.strategy.ExpressionStrategy;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,19 +30,19 @@ import java.util.Map;
 public interface ConditionStrategy extends ExpressionStrategy<Boolean> {
 
     /**
-     * 条件表达式策略实现类map
+     * 条件表达式策略实现类集合
      */
-    Map<String, ExpressionStrategy<Boolean>> map = new LinkedHashMap<>();
+    List<ExpressionStrategy<Boolean>> expressionStrategyList = new ArrayList<>();
 
     default void setExpression(ExpressionStrategy<Boolean> expressionStrategy) {
-        map.put(expressionStrategy.getType(), expressionStrategy);
-    }
-
-    static Map<String, ExpressionStrategy<Boolean>> getExpressionMap() {
-        return map;
+        expressionStrategyList.add(expressionStrategy);
     }
 
     default Boolean isIntercept() {
         return true;
+    }
+
+    default String interceptStr() {
+        return "|";
     }
 }

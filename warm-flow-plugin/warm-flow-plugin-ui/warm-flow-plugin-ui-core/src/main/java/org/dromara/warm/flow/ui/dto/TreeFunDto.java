@@ -15,6 +15,10 @@
  */
 package org.dromara.warm.flow.ui.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
 import java.util.List;
 import java.util.function.Function;
 
@@ -23,58 +27,33 @@ import java.util.function.Function;
  *
  * @author warm
  */
+@Getter
+@Setter
+@Accessors(chain = true)
 public class TreeFunDto<T> {
 
-    /** 左侧树列表 */
+    /**
+     * 左侧树列表
+     */
     private List<T> list;
 
-    /** 获取左侧树ID Function */
+    /**
+     * 获取左侧树ID Function
+     */
     private Function<T, String> id;
 
-    /** 获取左侧树名称 Function */
+    /**
+     * 获取左侧树名称 Function
+     */
     private Function<T, String> name;
 
-    /** 获取左侧树父级ID Function */
+    /**
+     * 获取左侧树父级ID Function
+     */
     private Function<T, String> parentId;
 
     public TreeFunDto(List<T> list) {
         this.list = list;
-    }
-
-    public List<T> getList() {
-        return list;
-    }
-
-    public TreeFunDto<T> setList(List<T> list) {
-        this.list = list;
-        return this;
-    }
-
-    public Function<T, String> getParentId() {
-        return parentId;
-    }
-
-    public TreeFunDto<T> setParentId(Function<T, String> parentId) {
-        this.parentId = parentId;
-        return this;
-    }
-
-    public Function<T, String> getName() {
-        return name;
-    }
-
-    public TreeFunDto<T> setName(Function<T, String> name) {
-        this.name = name;
-        return this;
-    }
-
-    public Function<T, String> getId() {
-        return id;
-    }
-
-    public TreeFunDto<T> setId(Function<T, String> id) {
-        this.id = id;
-        return this;
     }
 
 }

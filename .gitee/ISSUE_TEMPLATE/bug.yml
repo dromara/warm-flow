@@ -20,7 +20,7 @@ body:
     attributes:
       label: 功能不好用不会用是否已经看过项目文档？
       options:
-        - label: http://www.warm-flow.cn/
+        - label: https://warm-flow.dromara.org/
           required: true
   - type: checkboxes
     attributes:
@@ -31,7 +31,7 @@ body:
   - type: textarea
     attributes:
       label: 问题描述和复现
-      description: 请详细告诉问题描述，如何复现你遇到的问题。
+      description: 请详细告诉问题描述，如何复现你遇到的问题，如有必要请提供流程定义xml。
     validations:
       required: true
   - type: textarea

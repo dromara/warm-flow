@@ -16,8 +16,10 @@
 package org.dromara.warm.flow.ui.controller;
 
 import org.dromara.warm.flow.core.FlowFactory;
+import org.dromara.warm.flow.core.config.WarmFlow;
 import org.dromara.warm.flow.core.dto.ApiResult;
 import org.dromara.warm.flow.core.utils.StringUtils;
+import org.dromara.warm.flow.ui.vo.WarmFlowVo;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,7 +44,6 @@ public class WarmFlowUiController {
      * @throws Exception 异常
      */
     @GetMapping("/token-name")
-    @Transactional(rollbackFor = Exception.class)
     public ApiResult<List<String>> tokenName() {
         String tokenName = FlowFactory.getFlowConfig().getTokenName();
         if (StringUtils.isEmpty(tokenName)) {
@@ -52,6 +53,26 @@ public class WarmFlowUiController {
         List<String> tokenNameList = Arrays.stream(tokenNames).filter(StringUtils::isNotEmpty)
                 .map(String::trim).collect(Collectors.toList());
         return ApiResult.ok(tokenNameList);
+    }
+
+    /**
+     * 保存流程xml字符串
+     * @return ApiResult<String>
+     * @throws Exception 异常
+     */
+    @GetMapping("/config")
+    public ApiResult<WarmFlowVo> config() {
+        WarmFlowVo warmFlowVo = new WarmFlowVo();
+        String tokenName = FlowFactory.getFlowConfig().getTokenName();
+        if (StringUtils.isEmpty(tokenName)) {
+            return ApiResult.fail("未配置tokenName");
+        }
+        String[] tokenNames = tokenName.split(",");
+        List<String> tokenNameList = Arrays.stream(tokenNames).filter(StringUtils::isNotEmpty)
+                .map(String::trim).collect(Collectors.toList());
+
+        warmFlowVo.setTokenNameList(tokenNameList);
+        return ApiResult.ok(warmFlowVo);
     }
 
 }

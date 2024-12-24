@@ -9,7 +9,8 @@
       size="37%"
       :append-to-body="true"
       :before-close="handleClose">
-      <component :is="componentType" v-model="form" :disabled="disabled" :skipConditionShow="skipConditionShow">
+      <component :is="componentType" v-model="form" :disabled="disabled" :skipConditionShow="skipConditionShow"
+                 :nodes="nodes" :skips="skips">
         <template v-slot:[key]="data" v-for="(item, key) in $slots">
           <slot :name="key" v-bind="data || {}"></slot>
         </template>
@@ -25,6 +26,8 @@ import serial from './serial.vue'
 import parallel from './parallel.vue'
 import end from './end.vue'
 import skip from '&/components/skip.vue'
+
+const { proxy } = getCurrentInstance();
 
 const COMPONENT_LIST = {
   start,
@@ -62,6 +65,18 @@ const props = defineProps({
     type: Boolean,
     default: true
   },
+  nodes: {
+    type: Array,
+    default () {
+      return []
+    }
+  },
+  skips: {
+    type: Array,
+    default () {
+      return []
+    }
+  }
 });
 
 const drawer = ref(false);
@@ -94,17 +109,19 @@ watch(() => props.node, n => {
     objId.value = n.id
     if (n.type === 'skip') {
       let skipCondition = n.properties.skipCondition
-      let conditionSpl = skipCondition ? skipCondition.split('@@|') : []
-      let conditionSplTwo = conditionSpl && conditionSpl.length > 0 ? conditionSpl[1]: []
-      let condition, conditionType, conditionValue = '';
-      if (conditionSpl && conditionSpl.length > 0 && conditionSpl[0] === '@@spel') {
-        conditionType = 'spel'
-        conditionValue = conditionSplTwo
-      } else if (conditionSpl && conditionSpl.length > 0 && conditionSpl[0] !== '@@spel') {
-        condition = conditionSplTwo && conditionSplTwo.length > 0 ? conditionSplTwo.split("@@")[0] : ''
-        conditionType = conditionSplTwo && conditionSplTwo.length > 0 ? conditionSplTwo.split("@@")[1] : ''
-        conditionValue = conditionSplTwo && conditionSplTwo.length > 0 ? conditionSplTwo.split("@@")[2] : ''
+      let condition, conditionType, conditionValue = ''
+      if (skipCondition) {
+        let conditionSpl = skipCondition.split('|')
+        if (skipCondition && (/^spel/.test(skipCondition) || /^default/.test(skipCondition))) {
+          conditionType = conditionSpl && conditionSpl.length > 0 ? conditionSpl[0] : ''
+          conditionValue = conditionSpl && conditionSpl.length > 1 ? conditionSpl[1] : ''
+        } else if (skipCondition) {
+          conditionType = conditionSpl && conditionSpl.length > 0 ? conditionSpl[0] : ''
+          condition = conditionSpl && conditionSpl.length > 1 ? conditionSpl[1] : ''
+          conditionValue = conditionSpl && conditionSpl.length > 2 ? conditionSpl[2] : ''
+        }
       }
+
       form.value = {
         nodeType: n.type,
         skipType: n.properties.skipType,
@@ -179,10 +196,10 @@ watch(() => form.value.permissionFlag, (n) => {
   })
 }, { deep: true });
 
-watch(() => form.value.skipAnyNode, (n) => {
+watch(() => form.value.anyNodeSkip, (n) => {
   // 监听跳转属性变化并更新
   props.lf.setProperties(objId.value, {
-    skipAnyNode: n
+    anyNodeSkip: n
   })
 });
 
@@ -239,7 +256,6 @@ function show () {
 }
 
 function handleClose () {
-  // 监听节点编码变量并更新
   if (nodeCode.value && objId.value) {
     if (['skip'].includes(props.node?.type)) {
       if (!props.lf.getEdgeModelById(nodeCode.value)) {

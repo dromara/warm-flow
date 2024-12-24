@@ -16,6 +16,8 @@
 package org.dromara.warm.flow.orm.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import lombok.Data;
+import lombok.experimental.Accessors;
 import org.dromara.warm.flow.core.entity.User;
 
 import java.util.Date;
@@ -26,6 +28,8 @@ import java.util.Date;
  * @author xiarg
  * @since 2024/5/10 10:58
  */
+@Data
+@Accessors(chain = true)
 @TableName("flow_user")
 public class FlowUser implements User {
 
@@ -78,116 +82,4 @@ public class FlowUser implements User {
      */
     private String createBy;
 
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public FlowUser setId(Long id) {
-        this.id = id;
-        return this;
-    }
-
-    @Override
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    @Override
-    public FlowUser setCreateTime(Date createTime) {
-        this.createTime = createTime;
-        return this;
-    }
-
-    @Override
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    @Override
-    public FlowUser setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-        return this;
-    }
-
-    @Override
-    public String getTenantId() {
-        return tenantId;
-    }
-
-    @Override
-    public FlowUser setTenantId(String tenantId) {
-        this.tenantId = tenantId;
-        return this;
-    }
-
-    @Override
-    public String getDelFlag() {
-        return delFlag;
-    }
-
-    @Override
-    public FlowUser setDelFlag(String delFlag) {
-        this.delFlag = delFlag;
-        return this;
-    }
-
-    @Override
-    public String getType() {
-        return type;
-    }
-
-    @Override
-    public FlowUser setType(String type) {
-        this.type = type;
-        return this;
-    }
-
-    @Override
-    public String getProcessedBy() {
-        return processedBy;
-    }
-
-    @Override
-    public FlowUser setProcessedBy(String processedBy) {
-        this.processedBy = processedBy;
-        return this;
-    }
-
-    @Override
-    public Long getAssociated() {
-        return associated;
-    }
-
-    @Override
-    public FlowUser setAssociated(Long associated) {
-        this.associated = associated;
-        return this;
-    }
-
-    @Override
-    public String getCreateBy() {
-        return this.createBy;
-    }
-
-    @Override
-    public User setCreateBy(String createBy) {
-        this.createBy = createBy;
-        return this;
-    }
-
-    @Override
-    public String toString() {
-        return "FlowUser{" +
-                "id=" + id +
-                ", createTime=" + createTime +
-                ", updateTime=" + updateTime +
-                ", tenantId='" + tenantId + '\'' +
-                ", delFlag='" + delFlag + '\'' +
-                ", type='" + type + '\'' +
-                ", processed_by='" + processedBy + '\'' +
-                ", associated=" + associated +
-                '}';
-    }
 }

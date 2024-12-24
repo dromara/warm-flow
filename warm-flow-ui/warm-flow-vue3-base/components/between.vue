@@ -56,7 +56,7 @@
         <slot name="form-item-task-nodeRatio" :model="form" field="nodeRatio" v-if="form.collaborativeWay === '2'">
           <el-form-item label="票签占比：" prop="nodeRatio">
             <el-input v-model="form.nodeRatio" type="number" placeholder="请输入"></el-input>
-            <div class="placeholder">票签比例范围：(0-100)的值</div>
+            <div class="placeholder mt5">票签比例范围：(0-100)的值</div>
           </el-form-item>
         </slot>
         <slot name="form-item-task-permissionFlag" :model="form" field="permissionFlag">
@@ -78,12 +78,20 @@
             </div>
           </el-form-item>
         </slot>
-        <slot name="form-item-task-skipAnyNode" :model="form" field="skipAnyNode">
-          <el-form-item label="任意跳转：">
-            <el-radio-group v-model="form.skipAnyNode">
-              <el-radio label="N">否</el-radio>
-              <el-radio label="Y">是</el-radio>
-            </el-radio-group>
+        <slot name="form-item-task-formCustom" :model="form" field="formCustom">
+          <el-form-item label="驳回到指定节点">
+            <template #label>
+              <span v-if="form.collaborativeWay === '2'"  class="mr5" style="color: red;">*</span>驳回到指定节点
+            </template>
+            <el-select v-model="form.anyNodeSkip" style="width: 80%" clearable>
+              <el-option
+                  v-for="dict in filteredNodes"
+                  :key="dict.id"
+                  :label="dict.text.value"
+                  :value="dict.id"
+              />
+            </el-select>
+            <div class="placeholder mt5">【票签】必须选择驳到指定节点！</div>
           </el-form-item>
         </slot>
         <slot name="form-item-task-formCustom" :model="form" field="formCustom">
@@ -171,11 +179,25 @@ const props = defineProps({
   showWays: {
     type: Boolean,
     default: false
+  },
+  nodes: {
+    type: Array,
+    default () {
+      return []
+    }
+  },
+  skips: {
+    type: Array,
+    default () {
+      return []
+    }
   }
 });
 
 const tabsValue = ref("1");
 const form = ref(props.modelValue);
+const userVisible = ref(false);
+
 const rules = reactive({
   nodeRatio: [
     { required: false, message: "请输入", trigger: "change" },
@@ -184,7 +206,6 @@ const rules = reactive({
   listenerType: [{ required: true, message: '监听器类型不能为空', trigger: 'change' }],
   listenerPath: [{ required: true, message: '监听器路径不能为空', trigger: 'blur' }]
 });
-const userVisible = ref(false);
 const definitionList = ref([]); // 流程表单列表
 const dictList = ref(); // 办理人选项
 const emit = defineEmits(["change"]);
@@ -259,6 +280,25 @@ function handleAddRow() {
 // 删除行
 function handleDeleteRow(index) {
   form.value.listenerRows.splice(index, 1);
+}
+
+const filteredNodes = computed(() => {
+  let skipList = props.skips.filter(skip => skip.properties.skipType === "PASS");
+
+  let previousCode = getPreviousCode(skipList, form.value.nodeCode)
+  return props.nodes.filter(node => !["serial", "parallel"].includes(node.type)
+      && previousCode.includes(node.id)).reverse();
+});
+
+function getPreviousCode(skipList, nowNodeCode) {
+  const previousCode = [];
+  for (const skip of skipList) {
+    if (skip.targetNodeId === nowNodeCode) {
+      previousCode.push(skip.sourceNodeId);
+      previousCode.push(...getPreviousCode(skipList, skip.sourceNodeId));
+    }
+  }
+  return previousCode;
 }
 
 getPermissionFlag();

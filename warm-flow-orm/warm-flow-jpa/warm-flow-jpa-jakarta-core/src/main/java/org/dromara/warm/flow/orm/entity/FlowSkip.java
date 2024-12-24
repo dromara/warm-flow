@@ -15,6 +15,9 @@
  */
 package org.dromara.warm.flow.orm.entity;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 import org.dromara.warm.flow.core.entity.Skip;
 import org.dromara.warm.flow.core.utils.StringUtils;
 import org.dromara.warm.flow.orm.utils.JPAPredicateFunction;
@@ -38,6 +41,9 @@ import java.util.Objects;
  * @author vanlin
  * @since 2024-05-08
  */
+@Data
+@Accessors(chain = true)
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "flow_skip")
 public class FlowSkip extends JPARootEntity<FlowSkip> implements Skip {
@@ -193,134 +199,4 @@ public class FlowSkip extends JPARootEntity<FlowSkip> implements Skip {
     @Column(name = "coordinate")
     private String coordinate;
 
-    @Override
-    public Long getDefinitionId() {
-        return definitionId;
-    }
-
-    @Override
-    public FlowSkip setDefinitionId(Long definitionId) {
-        this.definitionId = definitionId;
-        return this;
-    }
-
-    @Override
-    public Long getNodeId() {
-        return nodeId;
-    }
-
-    @Override
-    public FlowSkip setNodeId(Long nodeId) {
-        this.nodeId = nodeId;
-        return this;
-    }
-
-    @Override
-    public String getNowNodeCode() {
-        return nowNodeCode;
-    }
-
-    @Override
-    public FlowSkip setNowNodeCode(String nowNodeCode) {
-        this.nowNodeCode = nowNodeCode;
-        return this;
-    }
-
-    @Override
-    public Integer getNowNodeType() {
-        return nowNodeType;
-    }
-
-    @Override
-    public FlowSkip setNowNodeType(Integer nowNodeType) {
-        this.nowNodeType = nowNodeType;
-        return this;
-    }
-
-    @Override
-    public String getNextNodeCode() {
-        return nextNodeCode;
-    }
-
-    @Override
-    public FlowSkip setNextNodeCode(String nextNodeCode) {
-        this.nextNodeCode = nextNodeCode;
-        return this;
-    }
-
-    @Override
-    public Integer getNextNodeType() {
-        return nextNodeType;
-    }
-
-    @Override
-    public FlowSkip setNextNodeType(Integer nextNodeType) {
-        this.nextNodeType = nextNodeType;
-        return this;
-    }
-
-    @Override
-    public String getSkipName() {
-        return skipName;
-    }
-
-    @Override
-    public FlowSkip setSkipName(String skipName) {
-        this.skipName = skipName;
-        return this;
-    }
-
-    @Override
-    public String getSkipType() {
-        return skipType;
-    }
-
-    @Override
-    public FlowSkip setSkipType(String skipType) {
-        this.skipType = skipType;
-        return this;
-    }
-
-    @Override
-    public String getSkipCondition() {
-        return skipCondition;
-    }
-
-    @Override
-    public FlowSkip setSkipCondition(String skipCondition) {
-        this.skipCondition = skipCondition;
-        return this;
-    }
-
-    @Override
-    public String getCoordinate() {
-        return coordinate;
-    }
-
-    @Override
-    public FlowSkip setCoordinate(String coordinate) {
-        this.coordinate = coordinate;
-        return this;
-    }
-
-    @Override
-    public String toString() {
-        return "FlowSkip{" +
-                "id=" + super.getId() +
-                ", createTime=" + super.getCreateTime() +
-                ", updateTime=" + super.getUpdateTime() +
-                ", tenantId='" + super.getTenantId() + '\'' +
-                ", delFlag='" + super.getDelFlag() + '\'' +
-                ", definitionId=" + definitionId +
-                ", nodeId=" + nodeId +
-                ", nowNodeCode='" + nowNodeCode + '\'' +
-                ", nowNodeType=" + nowNodeType +
-                ", nextNodeCode='" + nextNodeCode + '\'' +
-                ", nextNodeType=" + nextNodeType +
-                ", skipName='" + skipName + '\'' +
-                ", skipType='" + skipType + '\'' +
-                ", skipCondition='" + skipCondition + '\'' +
-                ", coordinate='" + coordinate + '\'' +
-                "} ";
-    }
 }

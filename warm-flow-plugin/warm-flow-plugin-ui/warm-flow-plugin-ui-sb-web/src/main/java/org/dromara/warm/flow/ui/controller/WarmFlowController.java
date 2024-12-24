@@ -16,29 +16,22 @@
 package org.dromara.warm.flow.ui.controller;
 
 import org.dromara.warm.flow.core.FlowFactory;
-import org.dromara.warm.flow.core.dto.*;
-import org.dromara.warm.flow.core.entity.*;
+import org.dromara.warm.flow.core.dto.ApiResult;
+import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.utils.ExceptionUtil;
-import org.dromara.warm.flow.core.utils.HttpStatus;
-import org.dromara.warm.flow.core.utils.page.Page;
-import org.dromara.warm.flow.core.vo.DefVo;
 import org.dromara.warm.flow.ui.dto.DefDto;
-import org.dromara.warm.flow.ui.dto.FormDto;
-import org.dromara.warm.flow.ui.dto.FormQuery;
 import org.dromara.warm.flow.ui.dto.HandlerQuery;
-import org.dromara.warm.flow.ui.service.HandlerDictService;
 import org.dromara.warm.flow.ui.service.HandlerSelectService;
-import org.dromara.warm.flow.ui.vo.Dict;
 import org.dromara.warm.flow.ui.vo.HandlerSelectVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 设计器Controller 可选择是否放行，放行可与业务系统共享权限，主要是用来访问业务系统数据
@@ -113,7 +106,7 @@ public class WarmFlowController {
      * 获取流程定义全部数据(包含节点和跳转)
      *
      * @param id 流程定义id
-     * @return ApiResult<Definition>
+     * @return ApiResult<DefVo>
      * @author xiarg
      * @since 2024/10/29 16:31
      */
@@ -129,7 +122,7 @@ public class WarmFlowController {
 
     /**
      * 办理人权限设置列表tabs页签
-     * @return List<SelectGroup>
+     * @return List<String>
      */
     @GetMapping("/handler-type")
     public ApiResult<List<String>> handlerType() {
@@ -149,7 +142,7 @@ public class WarmFlowController {
 
     /**
      * 办理人权限设置列表结果
-     * @return List<SelectGroup>
+     * @return HandlerSelectVo
      */
     @GetMapping("/handler-result")
     public ApiResult<HandlerSelectVo> handlerResult(HandlerQuery query) {
@@ -159,7 +152,7 @@ public class WarmFlowController {
             if (handlerSelectService == null) {
                 return ApiResult.ok(new HandlerSelectVo());
             }
-           HandlerSelectVo handlerSelectVo = handlerSelectService.getHandlerSelect(query);
+            HandlerSelectVo handlerSelectVo = handlerSelectService.getHandlerSelect(query);
             return ApiResult.ok(handlerSelectVo);
         } catch (Exception e) {
             log.error("办理人权限设置列表结果异常", e);
@@ -255,7 +248,7 @@ public class WarmFlowController {
      * 根据任务id获取待办任务表单及数据
      *
      * @param taskId 当前任务id
-     * @return {@link ApiResult<FlowForm>}
+     * @return {@link ApiResult< FlowForm >}
      * @author liangli
      * @date 2024/8/21 17:08
      **/
@@ -301,6 +294,21 @@ public class WarmFlowController {
         flowParams.formData(formData);
 
         return ApiResult.ok(FlowFactory.taskService().skip(taskId, flowParams));
+    }
+
+    /**
+     * 获取所有的前置节点集合
+     * @return List<Node>
+     */
+    @GetMapping("/previous-node-list/{definitionId}/{nowNodeCode}")
+    public ApiResult<List<Node>> previousNodeList(@PathVariable("definitionId") Long definitionId
+            , @PathVariable("nowNodeCode") String nowNodeCode) {
+        try {
+            return ApiResult.ok(FlowFactory.nodeService().previousNodeList(definitionId, nowNodeCode));
+        } catch (Exception e) {
+            log.error("获取所有的前置节点集合异常", e);
+            throw new FlowException(ExceptionUtil.handleMsg("获取所有的前置节点集合失败", e));
+        }
     }
 
 }

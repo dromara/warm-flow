@@ -19,11 +19,10 @@ package org.dromara.warm.flow.orm.entity;
 import com.easy.query.core.annotation.*;
 import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
+import lombok.Data;
 import org.dromara.warm.flow.core.entity.Task;
 import org.dromara.warm.flow.core.entity.User;
 import org.dromara.warm.flow.orm.entity.proxy.FlowTaskProxy;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.util.Date;
@@ -35,8 +34,7 @@ import java.util.List;
  * @author warm
  * @since 2023-03-29
  */
-@Getter
-@Setter
+@Data
 @Accessors(chain = true)
 @EntityProxy
 @Table("flow_task")
@@ -105,25 +103,4 @@ public class FlowTask implements Task, ProxyEntityAvailable<FlowTask, FlowTaskPr
     @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String formPath;
 
-
-    @Override
-    public String toString() {
-        return "FlowTask{" +
-            "id=" + id +
-            ", createTime=" + createTime +
-            ", updateTime=" + updateTime +
-            ", definitionId=" + definitionId +
-            ", instanceId=" + instanceId +
-            ", tenantId='" + tenantId + '\'' +
-            ", flowName='" + flowName + '\'' +
-            ", businessId='" + businessId + '\'' +
-            ", nodeCode='" + nodeCode + '\'' +
-            ", nodeName='" + nodeName + '\'' +
-            ", nodeType=" + nodeType +
-            ", permissionList=" + permissionList +
-            ", userList=" + userList +
-            ", formCustom='" + formCustom + '\'' +
-            ", formPath='" + formPath + '\'' +
-            "} " + super.toString();
-    }
 }
