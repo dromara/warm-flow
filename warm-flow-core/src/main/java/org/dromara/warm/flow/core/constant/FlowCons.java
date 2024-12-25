@@ -69,10 +69,7 @@ public class FlowCons {
      * 外挂表单路径
      */
     public static final String FORM_CUSTOM_N = "N";
-    /**
-     * 使用流程全局表单
-     */
-    public static final String FORM_CUSTOM_P = "P";
+
     /**
      * 表单数据
      */
