@@ -13,7 +13,11 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.dromara.warm.flow.core.vo;
+package org.dromara.warm.flow.core.dto;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * 节点跳转关联对象Vo
@@ -21,7 +25,10 @@ package org.dromara.warm.flow.core.vo;
  * @author warm
  * @since 2023-03-29
  */
-public class SkipVo {
+@Setter
+@Getter
+@Accessors(chain = true)
+public class SkipJson {
 
     /**
      * 当前流程节点的编码
@@ -52,59 +59,5 @@ public class SkipVo {
      * 流程跳转坐标
      */
     private String coordinate;
-
-    public String getNowNodeCode() {
-        return nowNodeCode;
-    }
-
-    public SkipVo setNowNodeCode(String nowNodeCode) {
-        this.nowNodeCode = nowNodeCode;
-        return this;
-    }
-
-    public String getNextNodeCode() {
-        return nextNodeCode;
-    }
-
-    public SkipVo setNextNodeCode(String nextNodeCode) {
-        this.nextNodeCode = nextNodeCode;
-        return this;
-    }
-
-    public String getSkipName() {
-        return skipName;
-    }
-
-    public SkipVo setSkipName(String skipName) {
-        this.skipName = skipName;
-        return this;
-    }
-
-    public String getSkipType() {
-        return skipType;
-    }
-
-    public SkipVo setSkipType(String skipType) {
-        this.skipType = skipType;
-        return this;
-    }
-
-    public String getSkipCondition() {
-        return skipCondition;
-    }
-
-    public SkipVo setSkipCondition(String skipCondition) {
-        this.skipCondition = skipCondition;
-        return this;
-    }
-
-    public String getCoordinate() {
-        return coordinate;
-    }
-
-    public SkipVo setCoordinate(String coordinate) {
-        this.coordinate = coordinate;
-        return this;
-    }
 
 }

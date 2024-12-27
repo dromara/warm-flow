@@ -203,7 +203,7 @@ public class FlowConfigUtil {
         return document;
     }
 
-    private static FlowCombine structureFlow(Definition definition) {
+    public static FlowCombine structureFlow(Definition definition) {
         // 获取流程
         FlowCombine combine = new FlowCombine();
         // 流程定义
@@ -328,8 +328,6 @@ public class FlowConfigUtil {
                 FlowFactory.dataFillHandler().idFill(skip);
                 // 流程id
                 skip.setDefinitionId(definitionId);
-                // 节点id
-                skip.setNodeId(node.getId());
                 if (NodeType.isGateWaySerial(node.getNodeType())) {
                     String target = skip.getSkipCondition() + ":" + skip.getNextNodeCode();
                     AssertUtil.contains(gateWaySet, target, "[" + nodeName + "]" + ExceptionCons.SAME_CONDITION_NODE);

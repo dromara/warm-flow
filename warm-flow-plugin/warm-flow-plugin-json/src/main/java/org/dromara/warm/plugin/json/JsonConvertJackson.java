@@ -15,7 +15,9 @@
  */
 package org.dromara.warm.plugin.json;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.json.JsonConvert;
@@ -37,7 +39,9 @@ public class JsonConvertJackson implements JsonConvert {
 
     private static final Logger log = LoggerFactory.getLogger(JsonConvertJackson.class);
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = new ObjectMapper()
+            .enable(SerializationFeature.INDENT_OUTPUT)
+            .setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
     /**
      * 将字符串转为map
      * @param jsonStr json字符串
@@ -57,6 +61,25 @@ public class JsonConvertJackson implements JsonConvert {
     }
 
     /**
+     * 将字符串转为bean
+     * @param jsonStr json字符串
+     * @param clazz Class<T>
+     * @return T
+     */
+    @Override
+    public <T> T strToBean(String jsonStr, Class<T> clazz) {
+        if (StringUtils.isNotEmpty(jsonStr)) {
+            try {
+                return objectMapper.readValue(jsonStr, clazz);
+            } catch (IOException e) {
+                log.error("json转换异常", e);
+                throw new FlowException("json转换异常");
+            }
+        }
+        return null;
+    }
+
+    /**
      * 将对象转为字符串
      * @param variable object
      * @return json字符串
@@ -65,7 +88,7 @@ public class JsonConvertJackson implements JsonConvert {
     public String objToStr(Object variable) {
         if (ObjectUtil.isNotNull(variable)) {
             try {
-                return objectMapper.writeValueAsString(variable);
+                return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(variable);
             } catch (Exception e) {
                 log.error("Map转换异常", e);
                 throw new FlowException("Map转换异常");

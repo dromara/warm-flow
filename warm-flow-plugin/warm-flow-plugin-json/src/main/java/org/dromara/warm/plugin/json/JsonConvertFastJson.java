@@ -16,6 +16,7 @@
 package org.dromara.warm.plugin.json;
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONWriter;
 import com.alibaba.fastjson2.TypeReference;
 import org.dromara.warm.flow.core.json.JsonConvert;
 import org.dromara.warm.flow.core.utils.ObjectUtil;
@@ -45,6 +46,20 @@ public class JsonConvertFastJson implements JsonConvert {
     }
 
     /**
+     * 将字符串转为bean
+     * @param jsonStr json字符串
+     * @param clazz Class<T>
+     * @return T
+     */
+    @Override
+    public <T> T strToBean(String jsonStr, Class<T> clazz) {
+        if (StringUtils.isNotEmpty(jsonStr)) {
+            return JSON.parseObject(jsonStr, clazz);
+        }
+        return null;
+    }
+
+    /**
      * 将对象转为字符串
      * @param variable object
      * @return json字符串
@@ -52,7 +67,7 @@ public class JsonConvertFastJson implements JsonConvert {
     @Override
     public String objToStr(Object variable) {
         if (ObjectUtil.isNotNull(variable)) {
-            return JSON.toJSONString(variable);
+            return JSON.toJSONString(variable, JSONWriter.Feature.PrettyFormat);
         }
         return null;
     }

@@ -151,4 +151,6 @@ public class ExceptionCons {
 
     public static final String NUll_REDUCTION_SIGNATURE_HANDLER = "减签对象不能为空";
 
+    public static final String READ_IS_ERROR = "读取is流失败";
+
 }

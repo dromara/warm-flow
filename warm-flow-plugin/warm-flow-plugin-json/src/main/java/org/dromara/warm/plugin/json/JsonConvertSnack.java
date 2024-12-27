@@ -19,6 +19,8 @@ import org.dromara.warm.flow.core.json.JsonConvert;
 import org.dromara.warm.flow.core.utils.ObjectUtil;
 import org.dromara.warm.flow.core.utils.StringUtils;
 import org.noear.snack.ONode;
+import org.noear.snack.core.Feature;
+import org.noear.snack.core.Options;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,6 +48,17 @@ public class JsonConvertSnack implements JsonConvert {
     }
 
     /**
+     * 将字符串转为bean
+     * @param jsonStr json字符串
+     * @param clazz Class<T>
+     * @return T
+     */
+    @Override
+    public <T> T strToBean(String jsonStr, Class<T> clazz) {
+        return StringUtils.isEmpty(jsonStr) ? null : ONode.deserialize(jsonStr, clazz);
+    }
+
+    /**
      * 将对象转为字符串
      * @param variable object
      * @return json字符串
@@ -53,7 +66,7 @@ public class JsonConvertSnack implements JsonConvert {
     @Override
     public String objToStr(Object variable) {
         if (ObjectUtil.isNotNull(variable)) {
-            return ONode.serialize(variable);
+            return ONode.stringify(variable, Options.def().add(Feature.PrettyFormat));
         }
         return null;
     }

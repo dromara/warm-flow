@@ -16,17 +16,17 @@
 package org.dromara.warm.flow.ui.controller;
 
 import org.dromara.warm.flow.core.FlowFactory;
-import org.dromara.warm.flow.core.dto.*;
-import org.dromara.warm.flow.core.entity.*;
+import org.dromara.warm.flow.core.dto.ApiResult;
+import org.dromara.warm.flow.core.dto.DefJson;
+import org.dromara.warm.flow.core.dto.FlowForm;
+import org.dromara.warm.flow.core.dto.FlowParams;
+import org.dromara.warm.flow.core.entity.Form;
+import org.dromara.warm.flow.core.entity.Instance;
+import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.utils.ExceptionUtil;
-import org.dromara.warm.flow.core.utils.HttpStatus;
-import org.dromara.warm.flow.core.utils.page.Page;
-import org.dromara.warm.flow.core.vo.DefVo;
-import org.dromara.warm.flow.ui.dto.DefDto;
 import org.dromara.warm.flow.ui.dto.FormDto;
-import org.dromara.warm.flow.ui.dto.FormQuery;
 import org.dromara.warm.flow.ui.dto.HandlerQuery;
 import org.dromara.warm.flow.ui.service.HandlerDictService;
 import org.dromara.warm.flow.ui.service.HandlerSelectService;
@@ -37,8 +37,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 设计器Controller 可选择是否放行，放行可与业务系统共享权限，主要是用来访问业务系统数据
@@ -52,37 +54,9 @@ public class WarmFlowController {
     private static final Logger log = LoggerFactory.getLogger(WarmFlowController.class);
 
     /**
-     * 保存流程xml字符串
-     * @param defDto 流程定义dto
-     * @return ApiResult<Void>
-     * @throws Exception 异常
-     */
-    @PostMapping("/save-xml")
-    @Transactional(rollbackFor = Exception.class)
-    public ApiResult<Void> saveXml(@RequestBody DefDto defDto) throws Exception {
-        FlowFactory.defService().saveXml(defDto.getId(), defDto.getXmlString());
-        return ApiResult.ok();
-    }
-
-    /**
-     * 获取流程xml字符串
-     * @param id 流程定义id
-     * @return ApiResult<String>
-     */
-    @GetMapping("/xml-string/{id}")
-    public ApiResult<String> xmlString(@PathVariable("id") Long id) {
-        try {
-            return ApiResult.ok(FlowFactory.defService().xmlString(id));
-        } catch (Exception e) {
-            log.error("获取流程xml字符串", e);
-            throw new FlowException(ExceptionUtil.handleMsg("获取流程xml字符串失败", e));
-        }
-    }
-
-    /**
      * 保存流程json字符串
      *
-     * @param defVo 流程数据集合
+     * @param defJson 流程数据集合
      * @return ApiResult<Void>
      * @throws Exception 异常
      * @author xiarg
@@ -90,27 +64,13 @@ public class WarmFlowController {
      */
     @PostMapping("/save-json")
     @Transactional(rollbackFor = Exception.class)
-    public ApiResult<Void> saveJson(@RequestBody DefVo defVo) throws Exception {
-        Definition definition = new DefVo().copyDef(defVo);
-        FlowCombine combine = new FlowCombine();
-        combine.setDefinition(definition);
-        combine.setAllNodes(definition.getNodeList());
-        List<Skip> skipList = Optional.of(definition)
-                .map(Definition::getNodeList)
-                .orElse(Collections.emptyList())
-                .stream()
-                .map(Node::getSkipList)
-                .filter(Objects::nonNull)
-                .flatMap(List::stream)
-                .collect(Collectors.toList());
-
-        combine.setAllSkips(skipList);
-        FlowFactory.defService().saveJson(combine);
+    public ApiResult<Void> saveJson(@RequestBody DefJson defJson) throws Exception {
+        FlowFactory.defService().saveDef(defJson);
         return ApiResult.ok();
     }
 
     /**
-     * 获取流程定义全部数据(包含节点和跳转)
+     * 获取流程定义数据(包含节点和跳转)
      *
      * @param id 流程定义id
      * @return ApiResult<DefVo>
@@ -118,7 +78,7 @@ public class WarmFlowController {
      * @since 2024/10/29 16:31
      */
     @GetMapping("/query-def/{id}")
-    public ApiResult<DefVo> queryDef(@PathVariable("id") Long id) {
+    public ApiResult<DefJson> queryDef(@PathVariable("id") Long id) {
         try {
             return ApiResult.ok(FlowFactory.defService().queryDesign(id));
         } catch (Exception e) {
@@ -166,6 +126,7 @@ public class WarmFlowController {
             throw new FlowException(ExceptionUtil.handleMsg("办理人权限设置列表结果失败", e));
         }
     }
+
     /**
      * 办理人选择项
      * @return List<Dict>
@@ -201,24 +162,11 @@ public class WarmFlowController {
 
     /**
      * 已发布表单列表 该接口不需要业务系统实现
-     * @return FlowPage<FormDto>
      */
     @GetMapping("/published-form")
-    public ApiResult<FlowPage<FormDto>> publishedForm(FormQuery formQuery) {
+    public ApiResult<List<Form>> publishedForm() {
         try {
-            Page<Form> formPage = FlowFactory.formService().publishedPage(formQuery.getFormName(), formQuery.getPageNum(), formQuery.getPageSize());
-            FlowPage<FormDto> data = new FlowPage<FormDto>().setRows(formPage.getList().stream().map((form -> {
-                        FormDto formDto = new FormDto();
-                        formDto.setId(form.getId());
-                        formDto.setFormName(form.getFormName());
-                        formDto.setFormCode(form.getFormCode());
-                        formDto.setVersion(form.getVersion());
-                        return formDto;
-                    })).collect(Collectors.toList()))
-                    .setCode(HttpStatus.SUCCESS)
-                    .setMsg("查询成功")
-                    .setTotal(formPage.getTotal());
-            return ApiResult.ok(data);
+            return ApiResult.ok(FlowFactory.formService().list(FlowFactory.newForm().setIsPublish(1)));
         } catch (Exception e) {
             log.error("已发布表单列表异常", e);
             throw new FlowException(ExceptionUtil.handleMsg("已发布表单列表异常", e));
@@ -287,13 +235,12 @@ public class WarmFlowController {
      * @param skipType
      * @param message
      * @param nodeCode
-     * @param flowStatus
      * @return
      */
     @Transactional
     @PostMapping(value = "/execute/handle/{taskId}")
     public ApiResult<Instance> handle(@RequestBody Map<String, Object> formData, @PathVariable("taskId") Long taskId, String skipType, String message
-            , String nodeCode, String flowStatus) {
+            , String nodeCode) {
         FlowParams flowParams = FlowParams.build()
                 .skipType(skipType)
                 .nodeCode(nodeCode)

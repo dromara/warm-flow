@@ -31,7 +31,7 @@ import org.dromara.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import org.dromara.warm.flow.core.service.DefService;
 import org.dromara.warm.flow.core.utils.Base64;
 import org.dromara.warm.flow.core.utils.*;
-import org.dromara.warm.flow.core.vo.DefVo;
+import org.dromara.warm.flow.core.dto.DefJson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,8 +62,36 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     }
 
     @Override
+    public Definition importIs(InputStream is) {
+        StringBuilder stringBuilder = new StringBuilder();
+        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is))) {
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                stringBuilder.append(line);
+                stringBuilder.append(System.lineSeparator());
+            }
+        } catch (IOException e) {
+            throw new FlowException(ExceptionCons.READ_IS_ERROR);
+        }
+        return importJson(stringBuilder.toString());
+    }
+
+    @Override
+    public Definition importJson(String defJson) {
+        return importDef(FlowFactory.jsonConvert.strToBean(defJson, DefJson.class));
+    }
+
+    @Override
+    public Definition importDef(DefJson defJson) {
+        Definition definition = DefJson.copyDef(defJson);
+        FlowCombine flowCombine = FlowConfigUtil.structureFlow(definition);
+        return insertFlow(flowCombine.getDefinition(), flowCombine.getAllNodes(), flowCombine.getAllSkips());
+    }
+
+    @Override
     public Definition importXml(InputStream is) throws Exception {
-        return importFlow(readXml(is));
+        FlowCombine flowCombine = readXml(is);
+        return insertFlow(flowCombine.getDefinition(), flowCombine.getAllNodes(), flowCombine.getAllSkips());
     }
 
     @Override
@@ -74,73 +102,16 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         return FlowConfigUtil.readConfig(is);
     }
 
-
     @Override
-    public Definition importFlow(FlowCombine combine) {
-        // 流程定义
-        Definition definition = combine.getDefinition();
-        // 所有的流程节点
-        List<Node> allNodes = combine.getAllNodes();
-        // 所有的流程连线
-        List<Skip> allSkips = combine.getAllSkips();
-        // 根据不同策略进行新增
-        insertFlow(definition, allNodes, allSkips);
-        return definition;
-    }
-
-    @Override
-    public void insertFlow(Definition definition, List<Node> allNodes, List<Skip> allSkips) {
+    public Definition insertFlow(Definition definition, List<Node> nodeList, List<Skip> skipList) {
         definition.setVersion(getNewVersion(definition));
-        for (Node node : allNodes) {
+        for (Node node : nodeList) {
             node.setVersion(definition.getVersion());
         }
         FlowFactory.defService().save(definition);
-        FlowFactory.nodeService().saveBatch(allNodes);
-        FlowFactory.skipService().saveBatch(allSkips);
-    }
-
-    @Override
-    public void saveXml(Definition def) throws Exception {
-        saveXml(def.getId(), def.getXmlString());
-    }
-
-    @Override
-    public void saveXml(Long id, String xmlString) throws Exception {
-        if (ObjectUtil.isNull(id) || StringUtils.isEmpty(xmlString)) {
-            return;
-        }
-        FlowCombine combine = FlowConfigUtil.readConfig(new ByteArrayInputStream
-                (xmlString.getBytes(StandardCharsets.UTF_8)));
-        // 所有的流程节点
-        saveNodeAndSkip(id, combine);
-    }
-
-    @Override
-    public Document exportXml(Long id) {
-        Definition definition = getAllDataDefinition(id);
-        return FlowConfigUtil.createDocument(definition);
-    }
-
-    @Override
-    public String xmlString(Long id) {
-        Definition definition = getAllDataDefinition(id);
-        Document document = FlowConfigUtil.createDocument(definition);
-        return document.asXML();
-    }
-
-    @Override
-    public List<Definition> queryByCodeList(List<String> flowCodeList) {
-        return getDao().queryByCodeList(flowCodeList);
-    }
-
-    @Override
-    public void updatePublishStatus(List<Long> ids, Integer publishStatus) {
-        getDao().updatePublishStatus(ids, publishStatus);
-    }
-
-    @Override
-    public boolean checkAndSave(Definition definition) {
-        return save(definition.setVersion(getNewVersion(definition)));
+        FlowFactory.nodeService().saveBatch(nodeList);
+        FlowFactory.skipService().saveBatch(skipList);
+        return definition;
     }
 
     @Override
@@ -219,6 +190,98 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         FlowFactory.nodeService().saveBatch(nodeList);
         FlowFactory.skipService().saveBatch(skipList);
         return save(definition);
+    }
+
+    @Override
+    public boolean checkAndSave(Definition definition) {
+        return save(definition.setVersion(getNewVersion(definition)));
+    }
+
+    @Override
+    public void saveDef(DefJson defJson) {
+        if (ObjectUtil.isNull(defJson)) {
+            return;
+        }
+        Definition definition = DefJson.copyDef(defJson);
+        FlowCombine flowCombine = new FlowCombine();
+        flowCombine.setDefinition(definition);
+        flowCombine.setAllNodes(definition.getNodeList());
+        List<Skip> skipList = Optional.of(definition)
+                .map(Definition::getNodeList)
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(Node::getSkipList)
+                .filter(Objects::nonNull)
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
+
+        flowCombine.setAllSkips(skipList);
+
+        // 校验流程定义合法性
+        checkFlowLegal(flowCombine);
+        // 保存流程节点和跳转
+        saveNodeAndSkip(flowCombine.getDefinition().getId(), flowCombine);
+    }
+
+    @Override
+    public void saveXml(Definition def) throws Exception {
+        saveXml(def.getId(), def.getXmlString());
+    }
+
+    @Override
+    public void saveXml(Long id, String xmlString) throws Exception {
+        if (ObjectUtil.isNull(id) || StringUtils.isEmpty(xmlString)) {
+            return;
+        }
+        FlowCombine combine = FlowConfigUtil.readConfig(new ByteArrayInputStream
+                (xmlString.getBytes(StandardCharsets.UTF_8)));
+        // 所有的流程节点
+        saveNodeAndSkip(id, combine);
+    }
+
+    @Override
+    public Document exportXml(Long id) {
+        Definition definition = getAllDataDefinition(id);
+        return FlowConfigUtil.createDocument(definition);
+    }
+
+    @Override
+    public String exportJson(Long id) {
+        return FlowFactory.jsonConvert.objToStr(DefJson.copyDef(getAllDataDefinition(id)));
+    }
+
+    @Override
+    public String xmlString(Long id) {
+        Definition definition = getAllDataDefinition(id);
+        Document document = FlowConfigUtil.createDocument(definition);
+        return document.asXML();
+    }
+
+    @Override
+    public Definition getAllDataDefinition(Long id) {
+        Definition definition = getDao().selectById(id);
+        List<Node> nodeList = FlowFactory.nodeService().list(FlowFactory.newNode().setDefinitionId(id));
+        definition.setNodeList(nodeList);
+        List<Skip> skips = FlowFactory.skipService().list(FlowFactory.newSkip().setDefinitionId(id));
+        Map<String, List<Skip>> flowSkipMap = skips.stream()
+                .collect(Collectors.groupingBy(Skip::getNowNodeCode));
+        nodeList.forEach(flowNode -> flowNode.setSkipList(flowSkipMap.get(flowNode.getNodeCode())));
+        return definition;
+    }
+
+    @Override
+    public DefJson queryDesign(Long id) {
+        return DefJson.copyDef(getAllDataDefinition(id));
+    }
+
+    @Override
+    public List<Definition> queryByCodeList(List<String> flowCodeList) {
+        return getDao().queryByCodeList(flowCodeList);
+    }
+
+    @Override
+    public void updatePublishStatus(List<Long> ids, Integer publishStatus) {
+        getDao().updatePublishStatus(ids, publishStatus);
     }
 
     /**
@@ -352,34 +415,6 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         FlowChartChain flowChartChain = new FlowChartChain();
         basicFlowChart(null, definitionId, flowChartChain);
         return flowChartChain.getFlowChartList();
-    }
-
-    @Override
-    public Definition getAllDataDefinition(Long id) {
-        Definition definition = getDao().selectById(id);
-        List<Node> nodeList = FlowFactory.nodeService().list(FlowFactory.newNode().setDefinitionId(id));
-        definition.setNodeList(nodeList);
-        List<Skip> skips = FlowFactory.skipService().list(FlowFactory.newSkip().setDefinitionId(id));
-        Map<String, List<Skip>> flowSkipMap = skips.stream()
-                .collect(Collectors.groupingBy(Skip::getNowNodeCode));
-        nodeList.forEach(flowNode -> flowNode.setSkipList(flowSkipMap.get(flowNode.getNodeCode())));
-        return definition;
-    }
-
-    @Override
-    public DefVo queryDesign(Long id) {
-        return new DefVo().copyDef(getAllDataDefinition(id));
-    }
-
-    @Override
-    public void saveJson(FlowCombine flowCombine) {
-        if (ObjectUtil.isNull(flowCombine)) {
-            return;
-        }
-        // 校验流程定义合法性
-        checkFlowLegal(flowCombine);
-        // 保存流程节点和跳转
-        saveNodeAndSkip(flowCombine.getDefinition().getId(), flowCombine);
     }
 
     /**

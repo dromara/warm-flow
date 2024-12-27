@@ -2,23 +2,6 @@ import request from '@/utils/request'
 
 const urlPrefix = import.meta.env.VITE_URL_PREFIX
 
-// 保存xml流程定义
-export function saveXml(data) {
-  return request({
-    url: urlPrefix + 'warm-flow/save-xml',
-    method: 'post',
-    data: data
-  })
-}
-
-// 获取流程定义xml字符串
-export function getXmlString(id) {
-  return request({
-    url: urlPrefix + 'warm-flow/xml-string/' + id,
-    method: 'get'
-  })
-}
-
 // 保存json流程定义
 export function saveJson(data) {
   return request({
@@ -62,11 +45,10 @@ export function handlerDict() {
 }
 
 // 查询已发布表单定义列表
-export function publishedList(query) {
+export function publishedList() {
   return request({
     url: urlPrefix + 'warm-flow/published-form',
-    method: 'get',
-    params: query
+    method: 'get'
   })
 }
 

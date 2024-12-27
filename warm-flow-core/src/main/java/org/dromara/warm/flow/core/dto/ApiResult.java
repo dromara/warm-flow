@@ -15,6 +15,9 @@
  */
 package org.dromara.warm.flow.core.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 
 /**
@@ -22,6 +25,8 @@ import java.io.Serializable;
  *
  * @author ruoyi
  */
+@Setter
+@Getter
 public class ApiResult<T> implements Serializable
 {
     private static final long serialVersionUID = 1L;
@@ -85,36 +90,6 @@ public class ApiResult<T> implements Serializable
         apiResult.setData(data);
         apiResult.setMsg(msg);
         return apiResult;
-    }
-
-    public int getCode()
-    {
-        return code;
-    }
-
-    public void setCode(int code)
-    {
-        this.code = code;
-    }
-
-    public String getMsg()
-    {
-        return msg;
-    }
-
-    public void setMsg(String msg)
-    {
-        this.msg = msg;
-    }
-
-    public T getData()
-    {
-        return data;
-    }
-
-    public void setData(T data)
-    {
-        this.data = data;
     }
 
     public static <T> Boolean isError(ApiResult<T> ret)

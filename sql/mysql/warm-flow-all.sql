@@ -27,7 +27,7 @@ CREATE TABLE `flow_node`
     `node_code`       varchar(100) NOT NULL COMMENT '流程节点编码',
     `node_name`       varchar(100) DEFAULT NULL COMMENT '流程节点名称',
     `permission_flag` varchar(200) DEFAULT NULL COMMENT '权限标识（权限类型:权限标识，可以多个，用逗号隔开)',
-    `node_ratio`      DECIMAL(6,3) DEFAULT NULL COMMENT '流程签署比例值',
+    `node_ratio`      decimal(6,3) DEFAULT NULL COMMENT '流程签署比例值',
     `coordinate`      varchar(100) DEFAULT NULL COMMENT '坐标',
     `skip_any_node`   varchar(100) DEFAULT 'N' COMMENT '是否可以退回任意节点（Y是 N否）即将删除',
     `any_node_skip`   varchar(100) DEFAULT NULL COMMENT '任意结点跳转',
