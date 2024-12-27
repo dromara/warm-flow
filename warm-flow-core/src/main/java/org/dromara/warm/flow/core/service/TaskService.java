@@ -15,7 +15,7 @@
  */
 package org.dromara.warm.flow.core.service;
 
-import org.dromara.warm.flow.core.dto.FlowForm;
+import org.dromara.warm.flow.core.dto.FlowDto;
 import org.dromara.warm.flow.core.dto.FlowParams;
 import org.dromara.warm.flow.core.entity.Definition;
 import org.dromara.warm.flow.core.entity.Instance;
@@ -223,7 +223,7 @@ public interface TaskService extends IWarmService<Task> {
      * @param flowParams
      * @return
      */
-    FlowForm load(Long taskId, FlowParams flowParams);
+    FlowDto load(Long taskId, FlowParams flowParams);
 
     /**
      * 获取表单及数据(使用表单场景)
@@ -232,5 +232,5 @@ public interface TaskService extends IWarmService<Task> {
      * @param flowParams
      * @return
      */
-    FlowForm hisLoad(Long hisTaskId, FlowParams flowParams);
+    FlowDto hisLoad(Long hisTaskId, FlowParams flowParams);
 }

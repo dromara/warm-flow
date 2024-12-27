@@ -19,7 +19,7 @@ import org.dromara.warm.flow.core.FlowFactory;
 import org.dromara.warm.flow.core.constant.ExceptionCons;
 import org.dromara.warm.flow.core.constant.FlowCons;
 import org.dromara.warm.flow.core.dao.FlowTaskDao;
-import org.dromara.warm.flow.core.dto.FlowForm;
+import org.dromara.warm.flow.core.dto.FlowDto;
 import org.dromara.warm.flow.core.dto.FlowParams;
 import org.dromara.warm.flow.core.entity.*;
 import org.dromara.warm.flow.core.enums.*;
@@ -834,7 +834,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
 
     @Override
-    public FlowForm load(Long taskId, FlowParams flowParams) {
+    public FlowDto load(Long taskId, FlowParams flowParams) {
         Task task = getById(taskId);
         AssertUtil.isNull(task, ExceptionCons.NOT_FOUNT_TASK);
 
@@ -858,25 +858,25 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
         ListenerVariable listenerVariable = new ListenerVariable(definition, instance, nowNode, flowParams.getVariable(), task);
 
-        FlowForm flowForm = new FlowForm();
+        FlowDto flowDto = new FlowDto();
         if (FlowCons.FORM_CUSTOM_Y.equals(nowNode.getFormCustom())) {
             ListenerUtil.execute(listenerVariable, Listener.LISTENER_FORM_LOAD, nowNode.getListenerPath(), nowNode.getListenerType());
             Form form = FlowFactory.formService().getById(Long.valueOf(task.getFormPath()));
-            flowForm.setForm(form);
+            flowDto.setForm(form);
         } else if(StringUtils.isEmpty(nowNode.getFormCustom()) && FlowCons.FORM_CUSTOM_Y.equals(definition.getFormCustom())) {
             ListenerUtil.execute(listenerVariable, Listener.LISTENER_FORM_LOAD, definition.getListenerPath(), definition.getListenerType());
             Form form = FlowFactory.formService().getById(Long.valueOf(definition.getFormPath()));
-            flowForm.setForm(form);
+            flowDto.setForm(form);
         } else {
             // 当前流程不支持内置表单,不作处理
         }
-        flowForm.setData(instance.getVariableMap().get(FlowCons.FORM_DATA));
+        flowDto.setData(instance.getVariableMap().get(FlowCons.FORM_DATA));
 
-        return flowForm;
+        return flowDto;
     }
 
     @Override
-    public FlowForm hisLoad(Long hisTaskId, FlowParams flowParams) {
+    public FlowDto hisLoad(Long hisTaskId, FlowParams flowParams) {
         HisTask hisTask = FlowFactory.hisTaskService().getById(hisTaskId);
         AssertUtil.isNull(hisTask, ExceptionCons.NOT_FOUND_FLOW_TASK);
 
@@ -887,18 +887,18 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 .getByNodeCodes(Collections.singletonList(hisTask.getNodeCode()), hisTask.getDefinitionId()));
         AssertUtil.isNull(nowNode, ExceptionCons.LOST_CUR_NODE);
 
-        FlowForm flowForm = new FlowForm();
+        FlowDto flowDto = new FlowDto();
         if (FlowCons.FORM_CUSTOM_Y.equals(nowNode.getFormCustom())) {
             Form form = FlowFactory.formService().getById(Long.valueOf(hisTask.getFormPath()));
-            flowForm.setForm(form);
+            flowDto.setForm(form);
         } else if(StringUtils.isEmpty(nowNode.getFormCustom()) && FlowCons.FORM_CUSTOM_Y.equals(definition.getFormCustom())) {
             Form form = FlowFactory.formService().getById(Long.valueOf(definition.getFormPath()));
-            flowForm.setForm(form);
+            flowDto.setForm(form);
         } else {
             // 当前流程不支持内置表单,不作处理
         }
-        flowForm.setData(hisTask.getVariableMap().get(FlowCons.FORM_DATA));
+        flowDto.setData(hisTask.getVariableMap().get(FlowCons.FORM_DATA));
 
-        return flowForm;
+        return flowDto;
     }
 }

@@ -30,7 +30,7 @@ export function executeLoad(id) {
 // 办理OA 申请
 export function executeHandle(data, taskId, skipType, message) {
   return request({
-    url: urlPrefix + 'warm-flow/execute/handle/' + taskId + '?skipType=' + skipType + '&message=' + message,
+    url: urlPrefix + 'warm-flow/execute/handle?taskId=' + taskId + '&skipType=' + skipType + '&message=' + message,
     data: data,
     method: 'post'
   })

@@ -18,7 +18,7 @@ package org.dromara.warm.flow.ui.controller;
 import org.dromara.warm.flow.core.FlowFactory;
 import org.dromara.warm.flow.core.dto.ApiResult;
 import org.dromara.warm.flow.core.dto.DefJson;
-import org.dromara.warm.flow.core.dto.FlowForm;
+import org.dromara.warm.flow.core.dto.FlowDto;
 import org.dromara.warm.flow.core.dto.FlowParams;
 import org.dromara.warm.flow.core.entity.Form;
 import org.dromara.warm.flow.core.entity.Instance;
@@ -26,7 +26,6 @@ import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.utils.ExceptionUtil;
-import org.dromara.warm.flow.ui.dto.FormDto;
 import org.dromara.warm.flow.ui.dto.HandlerQuery;
 import org.dromara.warm.flow.ui.service.HandlerDictService;
 import org.dromara.warm.flow.ui.service.HandlerSelectService;
@@ -196,13 +195,13 @@ public class WarmFlowController {
 
     /**
      * 保存表单内容,该接口不需要系统实现
-     * @param formDto
+     * @param flowDto
      * @return
      */
     @Post
     @Mapping("/form-content")
-    public ApiResult<Void> saveFormContent(FormDto formDto) {
-        FlowFactory.formService().saveContent(formDto.getId(), formDto.getFormContent());
+    public ApiResult<Void> saveFormContent(FlowDto flowDto) {
+        FlowFactory.formService().saveContent(flowDto.getId(), flowDto.getFormContent());
         return ApiResult.ok();
     }
 
@@ -211,13 +210,13 @@ public class WarmFlowController {
      * 根据任务id获取待办任务表单及数据
      *
      * @param taskId 当前任务id
-     * @return {@link ApiResult< FlowForm >}
+     * @return {@link ApiResult<  FlowDto  >}
      * @author liangli
      * @date 2024/8/21 17:08
      **/
     @Get
     @Mapping(value = "/execute/load/{taskId}")
-    public ApiResult<FlowForm> load(@Param("taskId") Long taskId) {
+    public ApiResult<FlowDto> load(@Param("taskId") Long taskId) {
         FlowParams flowParams = FlowParams.build();
 
         return ApiResult.ok(FlowFactory.taskService().load(taskId, flowParams));
@@ -231,7 +230,7 @@ public class WarmFlowController {
      */
     @Get
     @Mapping(value = "/execute/hisLoad/{taskId}")
-    public ApiResult<FlowForm> hisLoad(@Param("taskId") Long hisTaskId) {
+    public ApiResult<FlowDto> hisLoad(@Param("taskId") Long hisTaskId) {
         FlowParams flowParams = FlowParams.build();
 
         return ApiResult.ok(FlowFactory.taskService().hisLoad(hisTaskId, flowParams));
