@@ -21,12 +21,10 @@ import Parallel from "@/components/WarmFlow/js/parallel";
 import End from "@/components/WarmFlow/js/end";
 import Skip from "@/components/WarmFlow/js/skip";
 import PropertySetting from '@/components/WarmFlow/PropertySetting/index.vue'
-import {saveXml, getXmlString, queryDef, saveJson} from "&/api/flow/definition";
+import { queryDef, saveJson } from "&/api/flow/definition";
 import {
   json2LogicFlowJson,
-  logicFlowJsonToWarmFlow,
-  logicFlowJsonToFlowXml,
-  xml2LogicFlowJson
+  logicFlowJsonToWarmFlow
 } from "@/components/WarmFlow/js/tool";
 import useAppStore from "@/store/app";
 const appStore = useAppStore();
@@ -41,7 +39,6 @@ const disabled = ref(false);
 const processForm = ref({});
 const propertySettingRef = ref({});
 const value = ref({});
-const xmlString = ref('');
 const jsonString = ref('');
 const skipConditionShow = ref(true);
 const nodes = ref([]);
@@ -66,15 +63,6 @@ onMounted(async () => {
   initControl();
   initMenu();
   initEvent();
-  // if (definitionId.value) {
-  //   getXmlString(definitionId.value).then(res => {
-  //     xmlString.value = res.data;
-  //     if (xmlString.value) {
-  //       value.value = xml2LogicFlowJson(xmlString.value);
-  //       lf.value.render(value.value);
-  //     }
-  //   });
-  // }
   if (definitionId.value) {
     queryDef(definitionId.value).then(res => {
       jsonString.value = res.data;
@@ -169,22 +157,6 @@ function initControl() {
       title: '',
       text: '保存',
       onClick: (lf, ev) => {
-        // let graphData = lf.getGraphData()
-        // value.value['nodes'] = graphData['nodes']
-        // value.value['edges'] = graphData['edges']
-        // console.log("value.value:", value.value)
-        // let xmlString = logicFlowJsonToFlowXml(value.value);
-        // console.log("xmlString.value:", xmlString)
-        // let data = {
-        //   xmlString: xmlString,
-        //   id: definitionId.value
-        // }
-        // saveXml(data).then(response => {
-        //   proxy.$modal.msgSuccess("保存成功");
-        //   if (response.code === 200) {
-        //     close();
-        //   }
-        // });
         let graphData = lf.getGraphData()
         value.value['nodes'] = graphData['nodes']
         value.value['edges'] = graphData['edges']

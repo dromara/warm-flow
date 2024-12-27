@@ -17,11 +17,10 @@ package org.dromara.warm.flow.ui.controller;
 
 import org.dromara.warm.flow.core.FlowFactory;
 import org.dromara.warm.flow.core.dto.ApiResult;
+import org.dromara.warm.flow.core.dto.DefJson;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.utils.ExceptionUtil;
-import org.dromara.warm.flow.core.dto.DefJson;
-import org.dromara.warm.flow.ui.dto.DefDto;
 import org.dromara.warm.flow.ui.dto.HandlerQuery;
 import org.dromara.warm.flow.ui.service.HandlerSelectService;
 import org.dromara.warm.flow.ui.vo.HandlerSelectVo;
@@ -43,36 +42,6 @@ import java.util.List;
 public class WarmFlowController {
 
     private static final Logger log = LoggerFactory.getLogger(WarmFlowController.class);
-
-    /**
-     * 保存流程xml字符串
-     * @param defDto 流程定义dto
-     * @return ApiResult<Void>
-     * @throws Exception 异常
-     */
-    @Post
-    @Mapping("/save-xml")
-    @Tran
-    public ApiResult<Void> saveXml(DefDto defDto) throws Exception {
-        FlowFactory.defService().saveXml(defDto.getId(), defDto.getXmlString());
-        return ApiResult.ok();
-    }
-
-    /**
-     * 获取流程xml字符串
-     * @param id 流程定义id
-     * @return ApiResult<String>
-     */
-    @Get
-    @Mapping("/xml-string/{id}")
-    public ApiResult<String> xmlString(@Param("id") Long id) {
-        try {
-            return ApiResult.ok(FlowFactory.defService().xmlString(id));
-        } catch (Exception e) {
-            log.error("获取流程xml字符串", e);
-            throw new FlowException(ExceptionUtil.handleMsg("获取流程xml字符串失败", e));
-        }
-    }
 
     /**
      * 保存流程json字符串

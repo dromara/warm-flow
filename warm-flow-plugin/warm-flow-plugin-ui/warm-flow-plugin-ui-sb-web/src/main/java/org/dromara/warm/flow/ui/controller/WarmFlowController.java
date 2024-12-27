@@ -17,14 +17,14 @@ package org.dromara.warm.flow.ui.controller;
 
 import org.dromara.warm.flow.core.FlowFactory;
 import org.dromara.warm.flow.core.dto.*;
-import org.dromara.warm.flow.core.entity.*;
+import org.dromara.warm.flow.core.entity.Form;
+import org.dromara.warm.flow.core.entity.Instance;
+import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.utils.ExceptionUtil;
 import org.dromara.warm.flow.core.utils.HttpStatus;
 import org.dromara.warm.flow.core.utils.page.Page;
-import org.dromara.warm.flow.core.dto.DefJson;
-import org.dromara.warm.flow.ui.dto.DefDto;
 import org.dromara.warm.flow.ui.dto.FormDto;
 import org.dromara.warm.flow.ui.dto.FormQuery;
 import org.dromara.warm.flow.ui.dto.HandlerQuery;
@@ -37,7 +37,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -50,34 +53,6 @@ import java.util.stream.Collectors;
 public class WarmFlowController {
 
     private static final Logger log = LoggerFactory.getLogger(WarmFlowController.class);
-
-    /**
-     * 保存流程xml字符串
-     * @param defDto 流程定义dto
-     * @return ApiResult<Void>
-     * @throws Exception 异常
-     */
-    @PostMapping("/save-xml")
-    @Transactional(rollbackFor = Exception.class)
-    public ApiResult<Void> saveXml(@RequestBody DefDto defDto) throws Exception {
-        FlowFactory.defService().saveXml(defDto.getId(), defDto.getXmlString());
-        return ApiResult.ok();
-    }
-
-    /**
-     * 获取流程xml字符串
-     * @param id 流程定义id
-     * @return ApiResult<String>
-     */
-    @GetMapping("/xml-string/{id}")
-    public ApiResult<String> xmlString(@PathVariable("id") Long id) {
-        try {
-            return ApiResult.ok(FlowFactory.defService().xmlString(id));
-        } catch (Exception e) {
-            log.error("获取流程xml字符串", e);
-            throw new FlowException(ExceptionUtil.handleMsg("获取流程xml字符串失败", e));
-        }
-    }
 
     /**
      * 保存流程json字符串
