@@ -25,6 +25,7 @@ import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.entity.Skip;
 import org.dromara.warm.flow.core.utils.CollUtil;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -164,7 +165,7 @@ public class DefJson {
                     .setNodeCode(nodeJson.getNodeCode())
                     .setNodeName(nodeJson.getNodeName())
                     .setPermissionFlag(nodeJson.getPermissionFlag())
-                    .setNodeRatio(nodeJson.getNodeRatio())
+                    .setNodeRatio(nodeJson.getNodeRatio() != null ? nodeJson.getNodeRatio() : BigDecimal.ZERO)
                     .setCoordinate(nodeJson.getCoordinate())
                     .setSkipAnyNode(nodeJson.getSkipAnyNode())
                     .setListenerType(nodeJson.getListenerType())
