@@ -16,17 +16,17 @@
 package org.dromara.warm.flow.ui.controller;
 
 import org.dromara.warm.flow.core.FlowFactory;
-import org.dromara.warm.flow.core.dto.*;
+import org.dromara.warm.flow.core.dto.ApiResult;
+import org.dromara.warm.flow.core.dto.DefJson;
+import org.dromara.warm.flow.core.dto.FlowForm;
+import org.dromara.warm.flow.core.dto.FlowParams;
 import org.dromara.warm.flow.core.entity.Form;
 import org.dromara.warm.flow.core.entity.Instance;
 import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.utils.ExceptionUtil;
-import org.dromara.warm.flow.core.utils.HttpStatus;
-import org.dromara.warm.flow.core.utils.page.Page;
 import org.dromara.warm.flow.ui.dto.FormDto;
-import org.dromara.warm.flow.ui.dto.FormQuery;
 import org.dromara.warm.flow.ui.dto.HandlerQuery;
 import org.dromara.warm.flow.ui.service.HandlerDictService;
 import org.dromara.warm.flow.ui.service.HandlerSelectService;
@@ -41,7 +41,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * 设计器Controller 可选择是否放行，放行可与业务系统共享权限，主要是用来访问业务系统数据
@@ -127,6 +126,7 @@ public class WarmFlowController {
             throw new FlowException(ExceptionUtil.handleMsg("办理人权限设置列表结果失败", e));
         }
     }
+
     /**
      * 办理人选择项
      * @return List<Dict>
@@ -162,24 +162,11 @@ public class WarmFlowController {
 
     /**
      * 已发布表单列表 该接口不需要业务系统实现
-     * @return FlowPage<FormDto>
      */
     @GetMapping("/published-form")
-    public ApiResult<FlowPage<FormDto>> publishedForm(FormQuery formQuery) {
+    public ApiResult<List<Form>> publishedForm() {
         try {
-            Page<Form> formPage = FlowFactory.formService().publishedPage(formQuery.getFormName(), formQuery.getPageNum(), formQuery.getPageSize());
-            FlowPage<FormDto> data = new FlowPage<FormDto>().setRows(formPage.getList().stream().map((form -> {
-                        FormDto formDto = new FormDto();
-                        formDto.setId(form.getId());
-                        formDto.setFormName(form.getFormName());
-                        formDto.setFormCode(form.getFormCode());
-                        formDto.setVersion(form.getVersion());
-                        return formDto;
-                    })).collect(Collectors.toList()))
-                    .setCode(HttpStatus.SUCCESS)
-                    .setMsg("查询成功")
-                    .setTotal(formPage.getTotal());
-            return ApiResult.ok(data);
+            return ApiResult.ok(FlowFactory.formService().list(FlowFactory.newForm().setIsPublish(1)));
         } catch (Exception e) {
             log.error("已发布表单列表异常", e);
             throw new FlowException(ExceptionUtil.handleMsg("已发布表单列表异常", e));
@@ -248,13 +235,12 @@ public class WarmFlowController {
      * @param skipType
      * @param message
      * @param nodeCode
-     * @param flowStatus
      * @return
      */
     @Transactional
     @PostMapping(value = "/execute/handle/{taskId}")
     public ApiResult<Instance> handle(@RequestBody Map<String, Object> formData, @PathVariable("taskId") Long taskId, String skipType, String message
-            , String nodeCode, String flowStatus) {
+            , String nodeCode) {
         FlowParams flowParams = FlowParams.build()
                 .skipType(skipType)
                 .nodeCode(nodeCode)

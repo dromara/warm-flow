@@ -18,19 +18,29 @@ package org.dromara.warm.flow.ui.controller;
 import org.dromara.warm.flow.core.FlowFactory;
 import org.dromara.warm.flow.core.dto.ApiResult;
 import org.dromara.warm.flow.core.dto.DefJson;
+import org.dromara.warm.flow.core.dto.FlowForm;
+import org.dromara.warm.flow.core.dto.FlowParams;
+import org.dromara.warm.flow.core.entity.Form;
+import org.dromara.warm.flow.core.entity.Instance;
+import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.utils.ExceptionUtil;
+import org.dromara.warm.flow.ui.dto.FormDto;
 import org.dromara.warm.flow.ui.dto.HandlerQuery;
+import org.dromara.warm.flow.ui.service.HandlerDictService;
 import org.dromara.warm.flow.ui.service.HandlerSelectService;
+import org.dromara.warm.flow.ui.vo.Dict;
 import org.dromara.warm.flow.ui.vo.HandlerSelectVo;
 import org.noear.solon.annotation.*;
 import org.noear.solon.data.annotation.Tran;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 设计器Controller 可选择是否放行，放行可与业务系统共享权限，主要是用来访问业务系统数据
@@ -118,6 +128,153 @@ public class WarmFlowController {
         } catch (Exception e) {
             log.error("办理人权限设置列表结果异常", e);
             throw new FlowException(ExceptionUtil.handleMsg("办理人权限设置列表结果失败", e));
+        }
+    }
+
+    /**
+     * 办理人选择项
+     * @return List<Dict>
+     */
+    @Get
+    @Mapping("/handler-dict")
+    public ApiResult<List<Dict>> handlerDict() {
+        try {
+            // 需要业务系统实现该接口
+            HandlerDictService handlerDictService = FrameInvoker.getBean(HandlerDictService.class);
+            if (handlerDictService == null) {
+                List<Dict> dictList = new ArrayList<>();
+                Dict dict = new Dict();
+                dict.setLabel("默认表达式");
+                dict.setValue("${handler}");
+                Dict dict1 = new Dict();
+                dict1.setLabel("spel表达式");
+                dict1.setValue("#{@user.evalVar(#handler)}");
+                Dict dict2 = new Dict();
+                dict2.setLabel("其他");
+                dict2.setValue("");
+                dictList.add(dict);
+                dictList.add(dict1);
+                dictList.add(dict2);
+
+                return ApiResult.ok(dictList);
+            }
+            return ApiResult.ok(handlerDictService.getHandlerDict());
+        } catch (Exception e) {
+            log.error("办理人权限设置列表结果异常", e);
+            throw new FlowException(ExceptionUtil.handleMsg("办理人权限设置列表结果失败", e));
+        }
+    }
+
+    /**
+     * 已发布表单列表 该接口不需要业务系统实现
+     */
+    @Get
+    @Mapping("/published-form")
+    public ApiResult<List<Form>> publishedForm() {
+        try {
+            return ApiResult.ok(FlowFactory.formService().list(FlowFactory.newForm().setIsPublish(1)));
+        } catch (Exception e) {
+            log.error("已发布表单列表异常", e);
+            throw new FlowException(ExceptionUtil.handleMsg("已发布表单列表异常", e));
+        }
+    }
+
+    /**
+     * 读取表单内容
+     * @param id
+     * @return
+     */
+    @Get
+    @Mapping("/form-content/{id}")
+    public ApiResult<String> getFormContent(@Param("id") Long id) {
+        try {return ApiResult.ok(FlowFactory.formService().getById(id).getFormContent());
+        } catch (Exception e) {
+            log.error("获取表单内容字符串", e);
+            throw new FlowException(ExceptionUtil.handleMsg("获取表单内容字符串失败", e));
+        }
+    }
+
+    /**
+     * 保存表单内容,该接口不需要系统实现
+     * @param formDto
+     * @return
+     */
+    @Post
+    @Mapping("/form-content")
+    public ApiResult<Void> saveFormContent(FormDto formDto) {
+        FlowFactory.formService().saveContent(formDto.getId(), formDto.getFormContent());
+        return ApiResult.ok();
+    }
+
+
+    /**
+     * 根据任务id获取待办任务表单及数据
+     *
+     * @param taskId 当前任务id
+     * @return {@link ApiResult< FlowForm >}
+     * @author liangli
+     * @date 2024/8/21 17:08
+     **/
+    @Get
+    @Mapping(value = "/execute/load/{taskId}")
+    public ApiResult<FlowForm> load(@Param("taskId") Long taskId) {
+        FlowParams flowParams = FlowParams.build();
+
+        return ApiResult.ok(FlowFactory.taskService().load(taskId, flowParams));
+    }
+
+    /**
+     * 根据任务id获取已办任务表单及数据
+     *
+     * @param hisTaskId
+     * @return
+     */
+    @Get
+    @Mapping(value = "/execute/hisLoad/{taskId}")
+    public ApiResult<FlowForm> hisLoad(@Param("taskId") Long hisTaskId) {
+        FlowParams flowParams = FlowParams.build();
+
+        return ApiResult.ok(FlowFactory.taskService().hisLoad(hisTaskId, flowParams));
+    }
+
+    /**
+     * 通用表单流程审批接口
+     *
+     * @param formData
+     * @param taskId
+     * @param skipType
+     * @param message
+     * @param nodeCode
+     * @return
+     */
+    @Tran
+    @Post
+    @Mapping(value = "/execute/handle/{taskId}")
+    public ApiResult<Instance> handle(Map<String, Object> formData, @Param("taskId") Long taskId, String skipType, String message
+            , String nodeCode) {
+        FlowParams flowParams = FlowParams.build()
+                .skipType(skipType)
+                .nodeCode(nodeCode)
+                .message(message);
+
+        flowParams.formData(formData);
+
+        return ApiResult.ok(FlowFactory.taskService().skip(taskId, flowParams));
+    }
+
+    /**
+     * 获取所有的前置节点集合
+     * @return List<Node>
+     */
+    @Get
+    @Mapping("/previous-node-list/{definitionId}/{nowNodeCode}")
+    public ApiResult<List<Node>> previousNodeList(@Param("definitionId") Long definitionId
+            , @Param("nowNodeCode") String nowNodeCode) {
+        try {
+            return ApiResult.ok(FlowFactory.nodeService().previousNodeList(definitionId, nowNodeCode));
+        } catch (Exception e) {
+            log.error("获取所有的前置节点集合异常", e);
+            throw new FlowException(ExceptionUtil.handleMsg("获取所有的前置节点集合失败", e));
         }
     }
 }

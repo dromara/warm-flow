@@ -45,11 +45,10 @@ export function handlerDict() {
 }
 
 // 查询已发布表单定义列表
-export function publishedList(query) {
+export function publishedList() {
   return request({
     url: urlPrefix + 'warm-flow/published-form',
-    method: 'get',
-    params: query
+    method: 'get'
   })
 }
 

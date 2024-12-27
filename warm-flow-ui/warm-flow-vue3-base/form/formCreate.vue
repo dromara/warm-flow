@@ -73,8 +73,9 @@ function handleBtn(skipType) {
 }
 // 设计表单反显
 async function formInit(data) {
-  let response = null;
-  let formContent = null;
+  debugger
+  let response;
+  let formContent;
   taskId.value = data.taskId;
   // type 来源：0待办-办理 1已办-流程历史记录 2已发布的表单设计
   if (data.type === "0") {

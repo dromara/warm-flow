@@ -243,8 +243,8 @@ function getPermissionFlag() {
 
 /** 查询表单定义列表 */
 function getDefinition() {
-  publishedList({ pageNum: 1, pageSize: 9999 }).then(response => {
-    definitionList.value = response.data.rows;
+  publishedList().then(response => {
+    definitionList.value = response.data;
   });
 }
 
