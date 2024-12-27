@@ -835,42 +835,24 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     @Override
     public FlowDto load(Long taskId, FlowParams flowParams) {
-        Task task = getById(taskId);
-        AssertUtil.isNull(task, ExceptionCons.NOT_FOUNT_TASK);
+        R r = getAndCheck(taskId);
 
-        Instance instance = FlowFactory.insService().getById(task.getInstanceId());
-        AssertUtil.isNull(instance, ExceptionCons.NOT_FOUNT_INSTANCE);
-
-        Definition definition = FlowFactory.defService().getById(instance.getDefinitionId());
-        AssertUtil.isFalse(judgeActivityStatus(definition, instance), ExceptionCons.NOT_ACTIVITY);
-        AssertUtil.isTrue(NodeType.isEnd(instance.getNodeType()), ExceptionCons.FLOW_FINISH);
-
-        Node nowNode = CollUtil.getOne(FlowFactory.nodeService()
-                .getByNodeCodes(Collections.singletonList(task.getNodeCode()), task.getDefinitionId()));
-        AssertUtil.isNull(nowNode, ExceptionCons.LOST_CUR_NODE);
-
-        // 执行开始监听器
-        task.setUserList(FlowFactory.userService().listByAssociatedAndTypes(task.getId()));
-        ListenerUtil.executeListener(new ListenerVariable(definition, instance, nowNode, flowParams.getVariable(), task)
-                .setFlowParams(flowParams), Listener.LISTENER_START);
-
-        checkAuth(task, flowParams);
-
-        ListenerVariable listenerVariable = new ListenerVariable(definition, instance, nowNode, flowParams.getVariable(), task);
+        ListenerVariable listenerVariable = new ListenerVariable(r.definition, r.instance, r.nowNode
+                , flowParams.getVariable(), r.task);
 
         FlowDto flowDto = new FlowDto();
-        if (FlowCons.FORM_CUSTOM_Y.equals(nowNode.getFormCustom())) {
-            ListenerUtil.execute(listenerVariable, Listener.LISTENER_FORM_LOAD, nowNode.getListenerPath(), nowNode.getListenerType());
-            Form form = FlowFactory.formService().getById(Long.valueOf(task.getFormPath()));
+        if (FlowCons.FORM_CUSTOM_Y.equals(r.nowNode.getFormCustom())) {
+            ListenerUtil.execute(listenerVariable, Listener.LISTENER_FORM_LOAD, r.nowNode.getListenerPath()
+                    , r.nowNode.getListenerType());
+            Form form = FlowFactory.formService().getById(Long.valueOf(r.task.getFormPath()));
             flowDto.setForm(form);
-        } else if(StringUtils.isEmpty(nowNode.getFormCustom()) && FlowCons.FORM_CUSTOM_Y.equals(definition.getFormCustom())) {
-            ListenerUtil.execute(listenerVariable, Listener.LISTENER_FORM_LOAD, definition.getListenerPath(), definition.getListenerType());
-            Form form = FlowFactory.formService().getById(Long.valueOf(definition.getFormPath()));
+        } else if(StringUtils.isEmpty(r.nowNode.getFormCustom()) && FlowCons.FORM_CUSTOM_Y.equals(r.definition.getFormCustom())) {
+            ListenerUtil.execute(listenerVariable, Listener.LISTENER_FORM_LOAD, r.definition.getListenerPath()
+                    , r.definition.getListenerType());
+            Form form = FlowFactory.formService().getById(Long.valueOf(r.definition.getFormPath()));
             flowDto.setForm(form);
-        } else {
-            // 当前流程不支持内置表单,不作处理
         }
-        flowDto.setData(instance.getVariableMap().get(FlowCons.FORM_DATA));
+        flowDto.setData(r.instance.getVariableMap().get(FlowCons.FORM_DATA));
 
         return flowDto;
     }

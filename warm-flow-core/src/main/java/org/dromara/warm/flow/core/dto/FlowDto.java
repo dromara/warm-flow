@@ -17,13 +17,7 @@ public class FlowDto implements Serializable {
 
     private Long id;
 
-    private String formName;
-
-    private String formCode;
-
     private String formContent;
-
-    private String version;
 
     private Form form;
 
