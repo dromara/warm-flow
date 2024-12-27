@@ -62,17 +62,4 @@
         <module>warm-flow-mybatis-solon-plugin</module>
     </modules>
 
-    <properties>
-        <mybatis-spring-boot>2.3.0</mybatis-spring-boot>
-    </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.mybatis.spring.boot</groupId>
-                <artifactId>mybatis-spring-boot-starter</artifactId>
-                <version>${mybatis-spring-boot}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 </project>

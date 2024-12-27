@@ -13,48 +13,6 @@
     <description>Warm-Flow is a flow</description>
     <url>https://github.com/dromara/warm-flow</url>
 
-    <issueManagement>
-        <system>Github Issue</system>
-        <url>https://github.com/dromara/warm-flow/issues</url>
-    </issueManagement>
-    <licenses>
-        <license>
-            <name>The Apache Software License, Version 2.0</name>
-            <url>https://apache.org/licenses/LICENSE-2.0.txt</url>
-        </license>
-    </licenses>
-    <scm>
-        <connection>https://github.com/dromara/warm-flow.git</connection>
-        <url>https://github.com/dromara/warm-flow</url>
-    </scm>
-    <developers>
-        <developer>
-            <id>Warm-Flow</id>
-            <name>stupidkid</name>
-            <email>290631660@qq.com</email>
-        </developer>
-        <developer>
-            <id>Warm-Flow</id>
-            <name>xiarigang</name>
-            <email>272227118@qq.com</email>
-        </developer>
-        <developer>
-            <id>Warm-Flow</id>
-            <name>vanlin</name>
-            <email>vanlin@139.com</email>
-        </developer>
-        <developer>
-            <id>Warm-Flow</id>
-            <name>liangli</name>
-            <email>liangli_zsw@163.com</email>
-        </developer>
-        <developer>
-            <id>Warm-Flow</id>
-            <name>Zhen</name>
-            <email>w205782390@163.com</email>
-        </developer>
-    </developers>
-
     <modules>
         <module>warm-flow-core</module>
         <module>warm-flow-orm</module>
@@ -63,27 +21,41 @@
 
     <properties>
         <warm-flow>${project.version}</warm-flow>
+
+        <!-- 环境版本 -->
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
         <java17.version>17</java17.version>
         <java17.path>C:\dev\Amazon Corretto\jdk17.0.6_10\bin\</java17.path>
+
+        <!-- 生态版本 -->
         <spring.boot.version>2.7.18</spring.boot.version>
         <springboot3.version>3.0.1</springboot3.version>
-        <dom4j.version>2.1.3</dom4j.version>
-        <mybatis.version>3.5.15</mybatis.version>
-        <mysql.version>8.0.33</mysql.version>
-        <HikariCP.version>4.0.3</HikariCP.version>
-        <junit.version>4.13.2</junit.version>
         <solon.version>2.8.4</solon.version>
+
+        <mysql.version>8.0.33</mysql.version>
+        <oracle.version>11.2.0.4</oracle.version>
+        <HikariCP.version>4.0.3</HikariCP.version>
+
+        <!-- json库版本 -->
         <snack3.version>3.2.88</snack3.version>
         <jackson.version>2.13.5</jackson.version>
         <fastjson.version>2.0.43</fastjson.version>
         <gson.version>2.9.0</gson.version>
-        <slf4j-api.version>1.7.36</slf4j-api.version>
-        <oracle.version>11.2.0.4</oracle.version>
+
+        <!-- orm库版本 -->
         <easy-query.version>2.0.63</easy-query.version>
+        <mybatis-spring-boot>2.3.0</mybatis-spring-boot>
+        <mybatis.version>3.5.15</mybatis.version>
+        <mybatis-flex.version>1.9.3</mybatis-flex.version>
+        <mybatis-plus.version>3.5.6</mybatis-plus.version>
+
+        <!-- 工具库版本 -->
+        <dom4j.version>2.1.3</dom4j.version>
+        <junit.version>4.13.2</junit.version>
+        <slf4j-api.version>1.7.36</slf4j-api.version>
     </properties>
 
     <dependencyManagement>
@@ -97,6 +69,7 @@
                 <scope>import</scope>
             </dependency>
 
+            <!-- solon的依赖配置-->
             <dependency>
                 <groupId>org.noear</groupId>
                 <artifactId>solon</artifactId>
@@ -116,36 +89,6 @@
             </dependency>
 
             <dependency>
-                <groupId>org.dom4j</groupId>
-                <artifactId>dom4j</artifactId>
-                <version>${dom4j.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.mybatis</groupId>
-                <artifactId>mybatis</artifactId>
-                <version>${mybatis.version}</version>
-            </dependency>
-
-<!--            <dependency>-->
-<!--                <groupId>com.baomidou</groupId>-->
-<!--                <artifactId>dynamic-datasource-spring-boot-starter</artifactId>-->
-<!--                <version>${mybatis-plus.version}</version>-->
-<!--            </dependency>-->
-
-            <dependency>
-                <groupId>org.noear</groupId>
-                <artifactId>mybatis-solon-plugin</artifactId>
-                <version>${solon.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.noear</groupId>
-                <artifactId>mybatis-plus-extension-solon-plugin</artifactId>
-                <version>${solon.version}</version>
-            </dependency>
-
-            <dependency>
                 <groupId>org.noear</groupId>
                 <artifactId>solon-api</artifactId>
                 <version>${solon.version}</version>
@@ -157,12 +100,147 @@
                 <version>${solon.version}</version>
             </dependency>
 
+            <!-- orm 依赖 -->
+            <!-- easy-query 依赖 -->
+            <dependency>
+                <groupId>com.easy-query</groupId>
+                <artifactId>sql-solon-plugin</artifactId>
+                <version>${easy-query.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>com.easy-query</groupId>
                 <artifactId>sql-springboot-starter</artifactId>
                 <version>${easy-query.version}</version>
             </dependency>
 
+            <!-- mysql方言 -->
+            <dependency>
+                <groupId>com.easy-query</groupId>
+                <artifactId>sql-mysql</artifactId>
+                <version>${easy-query.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <!-- entity-query的api包 -->
+            <dependency>
+                <groupId>com.easy-query</groupId>
+                <artifactId>sql-api-proxy</artifactId>
+                <version>${easy-query.version}</version>
+            </dependency>
+            <!-- entity-query的apt包 如果你是多模块只需要在生成apt的对象模块处需要引入 -->
+            <dependency>
+                <groupId>com.easy-query</groupId>
+                <artifactId>sql-processor</artifactId>
+                <version>${easy-query.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mybatis.spring.boot</groupId>
+                <artifactId>mybatis-spring-boot-starter</artifactId>
+                <version>${mybatis-spring-boot}</version>
+            </dependency>
+
+            <!-- mybatis-flex 依赖 -->
+            <dependency>
+                <groupId>com.mybatis-flex</groupId>
+                <artifactId>mybatis-flex-spring-boot-starter</artifactId>
+                <version>${mybatis-flex.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mybatis-flex</groupId>
+                <artifactId>mybatis-flex-solon-plugin</artifactId>
+                <version>${mybatis-flex.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mybatis-flex</groupId>
+                <artifactId>mybatis-flex-core</artifactId>
+                <version>${mybatis-flex.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mybatis-flex</groupId>
+                <artifactId>mybatis-flex-processor</artifactId>
+                <version>${mybatis-flex.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- mybatis 依赖 -->
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis</artifactId>
+                <version>${mybatis.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.noear</groupId>
+                <artifactId>mybatis-solon-plugin</artifactId>
+                <version>${solon.version}</version>
+            </dependency>
+
+
+            <!-- mybatis-plus 依赖 -->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-extension</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.noear</groupId>
+                <artifactId>mybatis-plus-extension-solon-plugin</artifactId>
+                <version>${solon.version}</version>
+            </dependency>
+
+            <!-- json 依赖 -->
+            <dependency>
+                <groupId>org.noear</groupId>
+                <artifactId>snack3</artifactId>
+                <version>${snack3.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba.fastjson2</groupId>
+                <artifactId>fastjson2</artifactId>
+                <version>${fastjson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>${gson.version}</version>
+            </dependency>
+
+            <!-- 工具 依赖 -->
+            <dependency>
+                <groupId>org.dom4j</groupId>
+                <artifactId>dom4j</artifactId>
+                <version>${dom4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j-api.version}</version>
+            </dependency>
+
+<!--            <dependency>-->
+<!--                <groupId>com.baomidou</groupId>-->
+<!--                <artifactId>dynamic-datasource-spring-boot-starter</artifactId>-->
+<!--                <version>${mybatis-plus.version}</version>-->
+<!--            </dependency>-->
+
+            <!-- warm-flow自身 依赖 -->
             <dependency>
                 <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-core</artifactId>
@@ -262,36 +340,6 @@
 <!--                <artifactId>warm-flow-jpa-sb3-starter</artifactId>-->
 <!--                <version>${warm-flow}</version>-->
 <!--            </dependency>-->
-
-            <dependency>
-                <groupId>org.noear</groupId>
-                <artifactId>snack3</artifactId>
-                <version>${snack3.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.alibaba.fastjson2</groupId>
-                <artifactId>fastjson2</artifactId>
-                <version>${fastjson.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.google.code.gson</groupId>
-                <artifactId>gson</artifactId>
-                <version>${gson.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${slf4j-api.version}</version>
-            </dependency>
 
             <dependency>
                 <groupId>org.dromara.warm</groupId>

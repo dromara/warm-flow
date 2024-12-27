@@ -876,8 +876,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         } else if(StringUtils.isEmpty(nowNode.getFormCustom()) && FlowCons.FORM_CUSTOM_Y.equals(definition.getFormCustom())) {
             Form form = FlowFactory.formService().getById(Long.valueOf(definition.getFormPath()));
             flowDto.setForm(form);
-        } else {
-            // 当前流程不支持内置表单,不作处理
         }
         flowDto.setData(hisTask.getVariableMap().get(FlowCons.FORM_DATA));
 

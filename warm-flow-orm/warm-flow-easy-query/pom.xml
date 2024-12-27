@@ -17,14 +17,4 @@
         <module>warm-flow-easy-query-solon-plugin</module>
     </modules>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.easy-query</groupId>
-                <artifactId>sql-solon-plugin</artifactId>
-                <version>${easy-query.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
 </project>
