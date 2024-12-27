@@ -62,13 +62,6 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     }
 
     @Override
-    public Definition importDef(DefJson defJson) {
-        Definition definition = DefJson.copyDef(defJson);
-        FlowCombine flowCombine = FlowConfigUtil.structureFlow(definition);
-        return importFlow(flowCombine);
-    }
-
-    @Override
     public Definition importIs(InputStream is) {
         StringBuilder stringBuilder = new StringBuilder();
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is))) {
@@ -80,7 +73,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         } catch (IOException e) {
             throw new FlowException(ExceptionCons.READ_IS_ERROR);
         }
-        return importDef(FlowFactory.jsonConvert.strToBean(stringBuilder.toString(), DefJson.class));
+        return importJson(stringBuilder.toString());
     }
 
     @Override
@@ -89,8 +82,16 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     }
 
     @Override
+    public Definition importDef(DefJson defJson) {
+        Definition definition = DefJson.copyDef(defJson);
+        FlowCombine flowCombine = FlowConfigUtil.structureFlow(definition);
+        return insertFlow(flowCombine.getDefinition(), flowCombine.getAllNodes(), flowCombine.getAllSkips());
+    }
+
+    @Override
     public Definition importXml(InputStream is) throws Exception {
-        return importFlow(readXml(is));
+        FlowCombine flowCombine = readXml(is);
+        return insertFlow(flowCombine.getDefinition(), flowCombine.getAllNodes(), flowCombine.getAllSkips());
     }
 
     @Override
@@ -101,29 +102,16 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         return FlowConfigUtil.readConfig(is);
     }
 
-
     @Override
-    public Definition importFlow(FlowCombine combine) {
-        // 流程定义
-        Definition definition = combine.getDefinition();
-        // 所有的流程节点
-        List<Node> allNodes = combine.getAllNodes();
-        // 所有的流程连线
-        List<Skip> allSkips = combine.getAllSkips();
-        // 根据不同策略进行新增
-        insertFlow(definition, allNodes, allSkips);
-        return definition;
-    }
-
-    @Override
-    public void insertFlow(Definition definition, List<Node> allNodes, List<Skip> allSkips) {
+    public Definition insertFlow(Definition definition, List<Node> nodeList, List<Skip> skipList) {
         definition.setVersion(getNewVersion(definition));
-        for (Node node : allNodes) {
+        for (Node node : nodeList) {
             node.setVersion(definition.getVersion());
         }
         FlowFactory.defService().save(definition);
-        FlowFactory.nodeService().saveBatch(allNodes);
-        FlowFactory.skipService().saveBatch(allSkips);
+        FlowFactory.nodeService().saveBatch(nodeList);
+        FlowFactory.skipService().saveBatch(skipList);
+        return definition;
     }
 
     @Override
@@ -202,6 +190,11 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         FlowFactory.nodeService().saveBatch(nodeList);
         FlowFactory.skipService().saveBatch(skipList);
         return save(definition);
+    }
+
+    @Override
+    public boolean checkAndSave(Definition definition) {
+        return save(definition.setVersion(getNewVersion(definition)));
     }
 
     @Override
@@ -289,11 +282,6 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     @Override
     public void updatePublishStatus(List<Long> ids, Integer publishStatus) {
         getDao().updatePublishStatus(ids, publishStatus);
-    }
-
-    @Override
-    public boolean checkAndSave(Definition definition) {
-        return save(definition.setVersion(getNewVersion(definition)));
     }
 
     /**
