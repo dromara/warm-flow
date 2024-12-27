@@ -16,3 +16,6 @@ CREATE TABLE `flow_form` (
 ) ENGINE=InnoDB COMMENT='流程表单表';
 
 ALTER TABLE `flow_his_task` ADD COLUMN `variable` text DEFAULT NULL COMMENT '任务变量' AFTER `message`;
+
+ALTER TABLE `flow_node`
+    MODIFY COLUMN `node_ratio` decimal(6, 3) NOT NULL DEFAULT 0.000 COMMENT '流程签署比例值' AFTER `permission_flag`;

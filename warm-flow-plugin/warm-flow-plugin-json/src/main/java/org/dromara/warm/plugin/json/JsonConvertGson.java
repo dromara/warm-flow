@@ -16,6 +16,7 @@
 package org.dromara.warm.plugin.json;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import org.dromara.warm.flow.core.json.JsonConvert;
 import org.dromara.warm.flow.core.utils.ObjectUtil;
@@ -32,7 +33,7 @@ import java.util.Map;
  */
 public class JsonConvertGson implements JsonConvert {
 
-    private static final Gson gson = new Gson();
+    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     /**
      * 将字符串转为map
@@ -46,6 +47,20 @@ public class JsonConvertGson implements JsonConvert {
             return gson.fromJson(jsonStr, type);
         }
         return new HashMap<>();
+    }
+
+    /**
+     * 将字符串转为bean
+     * @param jsonStr json字符串
+     * @param clazz Class<T>
+     * @return T
+     */
+    @Override
+    public <T> T strToBean(String jsonStr, Class<T> clazz) {
+        if (StringUtils.isNotEmpty(jsonStr)) {
+            return gson.fromJson(jsonStr, clazz);
+        }
+        return null;
     }
 
     /**

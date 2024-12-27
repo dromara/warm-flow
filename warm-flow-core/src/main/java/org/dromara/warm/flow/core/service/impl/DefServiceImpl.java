@@ -31,7 +31,7 @@ import org.dromara.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import org.dromara.warm.flow.core.service.DefService;
 import org.dromara.warm.flow.core.utils.Base64;
 import org.dromara.warm.flow.core.utils.*;
-import org.dromara.warm.flow.core.vo.DefVo;
+import org.dromara.warm.flow.core.dto.DefJson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,6 +59,33 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     public DefService setDao(FlowDefinitionDao<Definition> warmDao) {
         this.warmDao = warmDao;
         return this;
+    }
+
+    @Override
+    public Definition importDef(DefJson defJson) {
+        Definition definition = DefJson.copyDef(defJson);
+        FlowCombine flowCombine = FlowConfigUtil.structureFlow(definition);
+        return importFlow(flowCombine);
+    }
+
+    @Override
+    public Definition importIs(InputStream is) {
+        StringBuilder stringBuilder = new StringBuilder();
+        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is))) {
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                stringBuilder.append(line);
+                stringBuilder.append(System.lineSeparator());
+            }
+        } catch (IOException e) {
+            throw new FlowException(ExceptionCons.READ_IS_ERROR);
+        }
+        return importDef(FlowFactory.jsonConvert.strToBean(stringBuilder.toString(), DefJson.class));
+    }
+
+    @Override
+    public Definition importJson(String defJson) {
+        return importDef(FlowFactory.jsonConvert.strToBean(defJson, DefJson.class));
     }
 
     @Override
@@ -119,6 +146,11 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     public Document exportXml(Long id) {
         Definition definition = getAllDataDefinition(id);
         return FlowConfigUtil.createDocument(definition);
+    }
+
+    @Override
+    public String exportJson(Long id) {
+        return FlowFactory.jsonConvert.objToStr(DefJson.copyDef(getAllDataDefinition(id)));
     }
 
     @Override
@@ -367,15 +399,30 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     }
 
     @Override
-    public DefVo queryDesign(Long id) {
-        return new DefVo().copyDef(getAllDataDefinition(id));
+    public DefJson queryDesign(Long id) {
+        return DefJson.copyDef(getAllDataDefinition(id));
     }
 
     @Override
-    public void saveJson(FlowCombine flowCombine) {
-        if (ObjectUtil.isNull(flowCombine)) {
+    public void saveDef(DefJson defJson) {
+        if (ObjectUtil.isNull(defJson)) {
             return;
         }
+        Definition definition = DefJson.copyDef(defJson);
+        FlowCombine flowCombine = new FlowCombine();
+        flowCombine.setDefinition(definition);
+        flowCombine.setAllNodes(definition.getNodeList());
+        List<Skip> skipList = Optional.of(definition)
+                .map(Definition::getNodeList)
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(Node::getSkipList)
+                .filter(Objects::nonNull)
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
+
+        flowCombine.setAllSkips(skipList);
+
         // 校验流程定义合法性
         checkFlowLegal(flowCombine);
         // 保存流程节点和跳转

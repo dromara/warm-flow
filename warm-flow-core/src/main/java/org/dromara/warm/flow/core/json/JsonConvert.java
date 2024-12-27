@@ -32,6 +32,14 @@ public interface JsonConvert {
     public Map<String, Object> strToMap(String jsonStr);
 
     /**
+     * 将字符串转为bean
+     * @param jsonStr json字符串
+     * @param clazz Class<T>
+     * @return T
+     */
+    public <T> T strToBean(String jsonStr, Class<T> clazz);
+
+    /**
      * 将对象转为字符串
      * @param variable object
      * @return json字符串

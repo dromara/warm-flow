@@ -22,7 +22,7 @@ import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.entity.Skip;
 import org.dromara.warm.flow.core.orm.service.IWarmService;
 import org.dom4j.Document;
-import org.dromara.warm.flow.core.vo.DefVo;
+import org.dromara.warm.flow.core.dto.DefJson;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,16 +38,38 @@ public interface DefService extends IWarmService<Definition> {
 
     /**
      * 导入流程定义、流程节点和流程跳转数据
+     * @param defJson 流程定义对象Vo
+     */
+    Definition importDef(DefJson defJson);
+
+    /**
+     * 导入流程定义、流程节点和流程跳转数据
+     * @param is 流程定义的输入流
+     */
+    Definition importIs(InputStream is);
+
+    /**
+     * 导入流程定义、流程节点和流程跳转数据
+     * @param defStr 流程定义的json字符串
+     */
+    Definition importJson(String defStr);
+
+    /**
+     * 导入流程定义、流程节点和流程跳转数据
      *
      * @param is 流程定义xml的输入流
+     * @deprecated 请使用 {@link #importDef(DefJson)}
      */
+    @Deprecated
     Definition importXml(InputStream is) throws Exception;
 
     /**
      * 读取流程配置文件
      * @param is  流程配置文件输入流
      * @return 流程数据集合
+     * @deprecated 请使用 {@link #importDef(DefJson)}
      */
+    @Deprecated
     FlowCombine readXml(InputStream is) throws Exception;
 
     /**
@@ -70,6 +92,7 @@ public interface DefService extends IWarmService<Definition> {
      * 保存流程节点和流程跳转数据
      *
      * @param def 流程定义对象
+     * @deprecated 请使用 {@link #saveDef(DefJson)}
      */
     void saveXml(Definition def) throws Exception;
 
@@ -77,7 +100,9 @@ public interface DefService extends IWarmService<Definition> {
      * 保存流程节点和流程跳转数据
      * @param id 流程定义id
      * @param xmlString 流程定义xml字符串
+     * @deprecated 请使用 {@link #saveDef(DefJson)}
      */
+    @Deprecated
     void saveXml(Long id, String xmlString) throws Exception;
 
     /**
@@ -87,6 +112,13 @@ public interface DefService extends IWarmService<Definition> {
      * @return Document
      */
     Document exportXml(Long id);
+
+    /**
+     * 导出流程定义(流程定义、流程节点和流程跳转数据)的json字符串
+     * @param id 流程定义id
+     * @return json字符串
+     */
+    String exportJson(Long id);
 
     /**
      * 获取流程定义xml(流程定义、流程节点和流程跳转数据)的字符串
@@ -205,17 +237,17 @@ public interface DefService extends IWarmService<Definition> {
     /**
      * 查询流程设计所需的数据，比如流程图渲染，导出流程定义
      * @param id 流程定义id
-     * @return DefVo
+     * @return 流程定义json对象
      */
-    DefVo queryDesign(Long id);
+    DefJson queryDesign(Long id);
 
     /**
      * 获取流程定义全部数据(包含节点和跳转)，保存流程定义数据
      *
-     * @param flowCombine 流程数据集合
+     * @param defJson 流程定义对象Vo
      * @author xiarg
      * @since 2024/10/29 16:30
      */
-    void saveJson(FlowCombine flowCombine) throws Exception;
+    void saveDef(DefJson defJson) throws Exception;
 
 }

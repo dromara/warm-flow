@@ -23,7 +23,7 @@ import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.utils.ExceptionUtil;
 import org.dromara.warm.flow.core.utils.HttpStatus;
 import org.dromara.warm.flow.core.utils.page.Page;
-import org.dromara.warm.flow.core.vo.DefVo;
+import org.dromara.warm.flow.core.dto.DefJson;
 import org.dromara.warm.flow.ui.dto.DefDto;
 import org.dromara.warm.flow.ui.dto.FormDto;
 import org.dromara.warm.flow.ui.dto.FormQuery;
@@ -82,7 +82,7 @@ public class WarmFlowController {
     /**
      * 保存流程json字符串
      *
-     * @param defVo 流程数据集合
+     * @param defJson 流程数据集合
      * @return ApiResult<Void>
      * @throws Exception 异常
      * @author xiarg
@@ -90,27 +90,13 @@ public class WarmFlowController {
      */
     @PostMapping("/save-json")
     @Transactional(rollbackFor = Exception.class)
-    public ApiResult<Void> saveJson(@RequestBody DefVo defVo) throws Exception {
-        Definition definition = new DefVo().copyDef(defVo);
-        FlowCombine combine = new FlowCombine();
-        combine.setDefinition(definition);
-        combine.setAllNodes(definition.getNodeList());
-        List<Skip> skipList = Optional.of(definition)
-                .map(Definition::getNodeList)
-                .orElse(Collections.emptyList())
-                .stream()
-                .map(Node::getSkipList)
-                .filter(Objects::nonNull)
-                .flatMap(List::stream)
-                .collect(Collectors.toList());
-
-        combine.setAllSkips(skipList);
-        FlowFactory.defService().saveJson(combine);
+    public ApiResult<Void> saveJson(@RequestBody DefJson defJson) throws Exception {
+        FlowFactory.defService().saveDef(defJson);
         return ApiResult.ok();
     }
 
     /**
-     * 获取流程定义全部数据(包含节点和跳转)
+     * 获取流程定义数据(包含节点和跳转)
      *
      * @param id 流程定义id
      * @return ApiResult<DefVo>
@@ -118,7 +104,7 @@ public class WarmFlowController {
      * @since 2024/10/29 16:31
      */
     @GetMapping("/query-def/{id}")
-    public ApiResult<DefVo> queryDef(@PathVariable("id") Long id) {
+    public ApiResult<DefJson> queryDef(@PathVariable("id") Long id) {
         try {
             return ApiResult.ok(FlowFactory.defService().queryDesign(id));
         } catch (Exception e) {

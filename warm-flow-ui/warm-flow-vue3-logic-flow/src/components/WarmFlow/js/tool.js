@@ -488,7 +488,9 @@ export const logicFlowJsonToWarmFlow = (data) => {
     let node = {}
     node.nodeType = getNodeTypeValue(anyNode.type)
     node.nodeCode = anyNode.id
-    node.nodeName = anyNode.text.value
+    if (anyNode.text) {
+      node.nodeName = anyNode.text.value
+    }
     node.permissionFlag = anyNode.properties.permissionFlag
     node.nodeRatio = anyNode.properties.nodeRatio
     node.skipAnyNode = anyNode.properties.skipAnyNode
@@ -498,7 +500,7 @@ export const logicFlowJsonToWarmFlow = (data) => {
     node.formCustom = anyNode.properties.formCustom
     node.formPath = anyNode.properties.formPath
     node.coordinate = anyNode.x + ',' + anyNode.y
-    if (anyNode.text.x && anyNode.text.y) {
+    if (anyNode.text && anyNode.text.x && anyNode.text.y) {
       node.coordinate = node.coordinate + '|' + anyNode.text.x + ',' + anyNode.text.y
     }
     node.handlerType = anyNode.properties.handlerType
