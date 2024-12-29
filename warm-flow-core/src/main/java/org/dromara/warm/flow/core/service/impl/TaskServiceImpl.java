@@ -18,7 +18,7 @@ package org.dromara.warm.flow.core.service.impl;
 import org.dromara.warm.flow.core.FlowFactory;
 import org.dromara.warm.flow.core.constant.ExceptionCons;
 import org.dromara.warm.flow.core.constant.FlowCons;
-import org.dromara.warm.flow.core.dao.FlowTaskDao;
+import org.dromara.warm.flow.core.orm.dao.FlowTaskDao;
 import org.dromara.warm.flow.core.dto.FlowDto;
 import org.dromara.warm.flow.core.dto.FlowParams;
 import org.dromara.warm.flow.core.entity.*;

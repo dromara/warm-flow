@@ -17,8 +17,8 @@ package org.dromara.warm.plugin.modes.solon.config;
 
 import org.dromara.warm.flow.core.FlowFactory;
 import org.dromara.warm.flow.core.config.WarmFlow;
-import org.dromara.warm.flow.core.dao.*;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
+import org.dromara.warm.flow.core.orm.dao.*;
 import org.dromara.warm.flow.core.service.*;
 import org.dromara.warm.flow.core.service.impl.*;
 import org.dromara.warm.flow.orm.dao.*;

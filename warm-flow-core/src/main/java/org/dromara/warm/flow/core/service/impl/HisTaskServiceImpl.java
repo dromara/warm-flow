@@ -16,7 +16,7 @@
 package org.dromara.warm.flow.core.service.impl;
 
 import org.dromara.warm.flow.core.FlowFactory;
-import org.dromara.warm.flow.core.dao.FlowHisTaskDao;
+import org.dromara.warm.flow.core.orm.dao.FlowHisTaskDao;
 import org.dromara.warm.flow.core.dto.FlowParams;
 import org.dromara.warm.flow.core.entity.HisTask;
 import org.dromara.warm.flow.core.entity.Node;

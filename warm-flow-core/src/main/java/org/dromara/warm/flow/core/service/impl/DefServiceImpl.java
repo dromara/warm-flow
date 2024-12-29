@@ -19,7 +19,7 @@ import org.dom4j.Document;
 import org.dromara.warm.flow.core.FlowFactory;
 import org.dromara.warm.flow.core.chart.*;
 import org.dromara.warm.flow.core.constant.ExceptionCons;
-import org.dromara.warm.flow.core.dao.FlowDefinitionDao;
+import org.dromara.warm.flow.core.orm.dao.FlowDefinitionDao;
 import org.dromara.warm.flow.core.dto.FlowCombine;
 import org.dromara.warm.flow.core.entity.*;
 import org.dromara.warm.flow.core.enums.ActivityStatus;

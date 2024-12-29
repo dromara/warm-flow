@@ -22,7 +22,7 @@ import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import org.dromara.warm.flow.core.FlowFactory;
-import org.dromara.warm.flow.core.dao.WarmDao;
+import org.dromara.warm.flow.core.orm.dao.WarmDao;
 import org.dromara.warm.flow.core.entity.RootEntity;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.orm.agent.WarmQuery;

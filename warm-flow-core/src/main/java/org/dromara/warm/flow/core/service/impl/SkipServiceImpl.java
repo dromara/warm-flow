@@ -15,7 +15,7 @@
  */
 package org.dromara.warm.flow.core.service.impl;
 
-import org.dromara.warm.flow.core.dao.FlowSkipDao;
+import org.dromara.warm.flow.core.orm.dao.FlowSkipDao;
 import org.dromara.warm.flow.core.entity.Skip;
 import org.dromara.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import org.dromara.warm.flow.core.service.SkipService;

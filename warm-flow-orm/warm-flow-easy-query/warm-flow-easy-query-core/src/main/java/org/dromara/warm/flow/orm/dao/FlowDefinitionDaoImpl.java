@@ -16,7 +16,7 @@
 package org.dromara.warm.flow.orm.dao;
 
 import org.dromara.warm.flow.core.FlowFactory;
-import org.dromara.warm.flow.core.dao.FlowDefinitionDao;
+import org.dromara.warm.flow.core.orm.dao.FlowDefinitionDao;
 import org.dromara.warm.flow.core.utils.StringUtils;
 import org.dromara.warm.flow.orm.entity.FlowDefinition;
 import org.dromara.warm.flow.orm.entity.proxy.FlowDefinitionProxy;

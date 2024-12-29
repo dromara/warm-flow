@@ -16,7 +16,7 @@
 package org.dromara.warm.flow.orm.dao;
 
 import org.dromara.warm.flow.core.FlowFactory;
-import org.dromara.warm.flow.core.dao.FlowUserDao;
+import org.dromara.warm.flow.core.orm.dao.FlowUserDao;
 import org.dromara.warm.flow.core.utils.ArrayUtil;
 import org.dromara.warm.flow.core.utils.CollUtil;
 import org.dromara.warm.flow.core.utils.StringUtils;

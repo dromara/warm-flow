@@ -17,7 +17,7 @@ package org.dromara.warm.flow.orm.dao;
 
 import com.easy.query.core.util.EasyArrayUtil;
 import org.dromara.warm.flow.core.FlowFactory;
-import org.dromara.warm.flow.core.dao.FlowHisTaskDao;
+import org.dromara.warm.flow.core.orm.dao.FlowHisTaskDao;
 import org.dromara.warm.flow.core.enums.SkipType;
 import org.dromara.warm.flow.core.utils.StringUtils;
 import org.dromara.warm.flow.orm.entity.FlowHisTask;

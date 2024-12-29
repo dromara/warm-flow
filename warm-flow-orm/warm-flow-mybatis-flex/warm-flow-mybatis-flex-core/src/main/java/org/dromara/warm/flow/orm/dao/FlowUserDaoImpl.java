@@ -16,7 +16,7 @@
 package org.dromara.warm.flow.orm.dao;
 
 import com.mybatisflex.core.query.QueryWrapper;
-import org.dromara.warm.flow.core.dao.FlowUserDao;
+import org.dromara.warm.flow.core.orm.dao.FlowUserDao;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.utils.ArrayUtil;
 import org.dromara.warm.flow.core.utils.CollUtil;

@@ -2,7 +2,7 @@ package org.dromara.warm.flow.core.service.impl;
 
 import org.dromara.warm.flow.core.FlowFactory;
 import org.dromara.warm.flow.core.constant.ExceptionCons;
-import org.dromara.warm.flow.core.dao.FlowFormDao;
+import org.dromara.warm.flow.core.orm.dao.FlowFormDao;
 import org.dromara.warm.flow.core.entity.Form;
 import org.dromara.warm.flow.core.enums.PublishStatus;
 import org.dromara.warm.flow.core.orm.service.impl.WarmServiceImpl;

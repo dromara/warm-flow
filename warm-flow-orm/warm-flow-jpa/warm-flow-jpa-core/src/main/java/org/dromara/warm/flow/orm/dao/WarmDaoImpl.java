@@ -16,7 +16,7 @@
 package org.dromara.warm.flow.orm.dao;
 
 import org.dromara.warm.flow.core.FlowFactory;
-import org.dromara.warm.flow.core.dao.WarmDao;
+import org.dromara.warm.flow.core.orm.dao.WarmDao;
 import org.dromara.warm.flow.core.orm.agent.WarmQuery;
 import org.dromara.warm.flow.core.utils.AssertUtil;
 import org.dromara.warm.flow.core.utils.CollUtil;

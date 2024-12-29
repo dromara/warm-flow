@@ -13,25 +13,25 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.dromara.warm.flow.core.dao;
+package org.dromara.warm.flow.core.orm.dao;
 
-import org.dromara.warm.flow.core.entity.Instance;
+import org.dromara.warm.flow.core.entity.Task;
 
 import java.util.List;
 
 /**
- * 流程实例Mapper接口
+ * 待办任务Mapper接口
  *
  * @author warm
  * @since 2023-03-29
  */
-public interface FlowInstanceDao<T extends Instance> extends WarmDao<T> {
+public interface FlowTaskDao<T extends Task> extends WarmDao<T> {
 
     /**
-     * 根据流程定义ID,查询流程实例集合
+     * 根据instanceIds删除
      *
-     * @param defIds 流程定义ID集合
-     * @return 流程实例集合
+     * @param instanceIds 主键
+     * @return 结果
      */
-    List<T> getByDefIds(List<Long> defIds);
+    int deleteByInsIds(List<Long> instanceIds);
 }
