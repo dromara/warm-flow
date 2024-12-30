@@ -204,7 +204,7 @@
             </if>
             <if test="types != null and types.length > 0">
                 <choose>
-                    <when test="dataSourceType == 'postgresql'.toString()">
+                    <when test="dataSourceType == 'postgresql'.toString() || dataSourceType == 'oracle'.toString()">
                         and t."type" in
                     </when>
                     <otherwise>
