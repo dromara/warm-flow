@@ -15,12 +15,10 @@
  */
 package org.dromara.warm.flow.ui.controller;
 
-import org.dromara.warm.flow.core.FlowFactory;
-import org.dromara.warm.flow.core.config.WarmFlow;
+import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.dto.ApiResult;
 import org.dromara.warm.flow.core.utils.StringUtils;
 import org.dromara.warm.flow.ui.vo.WarmFlowVo;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -45,7 +43,7 @@ public class WarmFlowUiController {
      */
     @GetMapping("/token-name")
     public ApiResult<List<String>> tokenName() {
-        String tokenName = FlowFactory.getFlowConfig().getTokenName();
+        String tokenName = FlowEngine.getFlowConfig().getTokenName();
         if (StringUtils.isEmpty(tokenName)) {
             return ApiResult.fail("未配置tokenName");
         }
@@ -63,7 +61,7 @@ public class WarmFlowUiController {
     @GetMapping("/config")
     public ApiResult<WarmFlowVo> config() {
         WarmFlowVo warmFlowVo = new WarmFlowVo();
-        String tokenName = FlowFactory.getFlowConfig().getTokenName();
+        String tokenName = FlowEngine.getFlowConfig().getTokenName();
         if (StringUtils.isEmpty(tokenName)) {
             return ApiResult.fail("未配置tokenName");
         }

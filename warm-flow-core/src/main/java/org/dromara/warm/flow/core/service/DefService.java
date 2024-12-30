@@ -213,26 +213,11 @@ public interface DefService extends IWarmService<Definition> {
     String flowChart(Long instanceId) throws IOException;
 
     /**
-     * 根据流程实例ID,获取流程图元数据
-     *
-     * @param instanceId 流程实例id
-     * @return List<FlowChart>
-     */
-    List<FlowChart> flowChartData(Long instanceId) throws IOException;
-
-    /**
      * 根据流程定义ID,获取流程图的图片流(不渲染颜色)
      * @param definitionId 流程定义id
      * @return base64编码的图片流字符串
      */
     String flowChartNoColor(Long definitionId) throws IOException;
-
-    /**
-     * 根据流程定义ID,获取流程图元数据
-     * @param definitionId 流程定义id
-     * @return List<FlowChart>
-     */
-    List<FlowChart> flowChartNoColorData(Long definitionId) throws IOException;
 
     /**
      * 激活流程

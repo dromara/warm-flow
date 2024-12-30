@@ -15,7 +15,7 @@
  */
 package org.dromara.warm.flow.core.entity;
 
-import org.dromara.warm.flow.core.FlowFactory;
+import org.dromara.warm.flow.core.FlowEngine;
 
 import java.util.Date;
 
@@ -87,7 +87,7 @@ public interface Skip extends RootEntity {
 
     public Skip setCoordinate(String coordinate);
     default Skip copy() {
-        return FlowFactory.newSkip()
+        return FlowEngine.newSkip()
                 .setId(getId())
                 .setCreateTime(getCreateTime())
                 .setUpdateTime(getUpdateTime())

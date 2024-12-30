@@ -75,11 +75,12 @@ CREATE TABLE `flow_instance`
     `variable`      text COMMENT '任务变量',
     `flow_status`   varchar(20) NOT NULL COMMENT '流程状态（0待提交 1审批中 2 审批通过 3自动通过 4终止 5作废 6撤销 7取回  8已完成 9已退回 10失效）',
     `activity_status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '流程激活状态（0挂起 1激活）',
+    `def_json`      text COMMENT '流程定义json',
     `create_by`     varchar(64)  DEFAULT '' COMMENT '创建者',
     `create_time`   datetime     DEFAULT NULL COMMENT '创建时间',
     `update_time`   datetime     DEFAULT NULL COMMENT '更新时间',
     `ext`           varchar(500) DEFAULT NULL COMMENT '扩展字段，预留给业务系统使用',
-    `del_flag`    char(1)      DEFAULT '0' COMMENT '删除标志',
+    `del_flag`      char(1)      DEFAULT '0' COMMENT '删除标志',
     `tenant_id`     varchar(40)  DEFAULT NULL COMMENT '租户id',
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB  COMMENT='流程实例表';

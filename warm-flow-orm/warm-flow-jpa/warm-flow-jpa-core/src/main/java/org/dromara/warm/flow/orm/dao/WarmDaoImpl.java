@@ -15,7 +15,7 @@
  */
 package org.dromara.warm.flow.orm.dao;
 
-import org.dromara.warm.flow.core.FlowFactory;
+import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.orm.dao.WarmDao;
 import org.dromara.warm.flow.core.orm.agent.WarmQuery;
 import org.dromara.warm.flow.core.utils.AssertUtil;
@@ -169,7 +169,7 @@ public abstract class WarmDaoImpl<T extends JPARootEntity<T>> implements WarmDao
                 entity.entityPredicate().process(criteriaBuilder, root, predicates);
 
                 // 更新值
-                innerCriteriaUpdate.set(root.get("delFlag"), FlowFactory.getFlowConfig().getLogicDeleteValue());
+                innerCriteriaUpdate.set(root.get("delFlag"), FlowEngine.getFlowConfig().getLogicDeleteValue());
             });
 
             return entityManager.createQuery(criteriaUpdate).executeUpdate();
@@ -195,7 +195,7 @@ public abstract class WarmDaoImpl<T extends JPARootEntity<T>> implements WarmDao
                 }
 
                 // 更新值
-                innerCriteriaUpdate.set(root.get("delFlag"), FlowFactory.getFlowConfig().getLogicDeleteValue());
+                innerCriteriaUpdate.set(root.get("delFlag"), FlowEngine.getFlowConfig().getLogicDeleteValue());
             });
 
             return entityManager.createQuery(criteriaUpdate).executeUpdate();
@@ -238,7 +238,7 @@ public abstract class WarmDaoImpl<T extends JPARootEntity<T>> implements WarmDao
                 }
 
                 // 更新值
-                innerCriteriaUpdate.set(root.get("delFlag"), FlowFactory.getFlowConfig().getLogicDeleteValue());
+                innerCriteriaUpdate.set(root.get("delFlag"), FlowEngine.getFlowConfig().getLogicDeleteValue());
             });
 
             return entityManager.createQuery(criteriaUpdate).executeUpdate();

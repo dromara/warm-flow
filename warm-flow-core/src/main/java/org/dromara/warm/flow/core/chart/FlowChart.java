@@ -32,4 +32,15 @@ public interface FlowChart {
      * @param graphics 画笔
      */
     void draw(Graphics2D graphics);
+
+    /**
+     * 获取文字的宽度
+     *
+     * @param graphics Graphics2D
+     * @param str 文字
+     */
+    default int stringWidth(Graphics2D graphics, String str) {
+        FontMetrics fm = graphics.getFontMetrics(new Font("宋体", Font.PLAIN, 12));
+        return fm.stringWidth(str);
+    }
 }

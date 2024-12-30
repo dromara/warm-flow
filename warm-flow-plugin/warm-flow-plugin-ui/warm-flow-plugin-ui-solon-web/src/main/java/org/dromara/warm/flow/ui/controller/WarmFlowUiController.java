@@ -15,7 +15,7 @@
  */
 package org.dromara.warm.flow.ui.controller;
 
-import org.dromara.warm.flow.core.FlowFactory;
+import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.dto.ApiResult;
 import org.dromara.warm.flow.core.utils.StringUtils;
 import org.noear.solon.annotation.Controller;
@@ -45,7 +45,7 @@ public class WarmFlowUiController {
     @Mapping("/token-name")
     @Tran
     public ApiResult<List<String>> tokenName() {
-        String tokenName = FlowFactory.getFlowConfig().getTokenName();
+        String tokenName = FlowEngine.getFlowConfig().getTokenName();
         if (StringUtils.isEmpty(tokenName)) {
             return ApiResult.fail("未配置tokenName");
         }

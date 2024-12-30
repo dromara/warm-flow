@@ -15,7 +15,7 @@
  */
 package org.dromara.warm.flow.ui.convert;
 
-import org.dromara.warm.flow.core.FlowFactory;
+import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.constant.FlowCons;
 import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.entity.Skip;
@@ -30,7 +30,7 @@ public class StartNodeConvert extends NodeConvertAbstract{
     @Override
     public List<Node> convert(Map<String,Object> jsonObject, String startNodeId, String endNodeId, String nextNodeId) {
         // 节点
-        Node seaflowNode = FlowFactory.newNode();
+        Node seaflowNode = FlowEngine.newNode();
         // 设置发起人为自己
         seaflowNode.setPermissionFlag(FlowCons.WARMFLOWINITIATOR);
 
@@ -38,7 +38,7 @@ public class StartNodeConvert extends NodeConvertAbstract{
 //        seaflowNode.setListenerPath(String.join("@@", DefAssignmentListener.class.getName(),
 //                DefCreateListener.class.getName()));
         // 跳转
-        Skip flowSkip = FlowFactory.newSkip();
+        Skip flowSkip = FlowEngine.newSkip();
         flowSkip.setNowNodeCode(seaflowNode.getNodeCode());
         flowSkip.setSkipType(SkipType.PASS.getKey());
         flowSkip.setNextNodeCode(nextNodeId);

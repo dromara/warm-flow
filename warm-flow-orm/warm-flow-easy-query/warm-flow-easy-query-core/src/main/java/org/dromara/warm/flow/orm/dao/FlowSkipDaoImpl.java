@@ -15,7 +15,7 @@
  */
 package org.dromara.warm.flow.orm.dao;
 
-import org.dromara.warm.flow.core.FlowFactory;
+import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.orm.dao.FlowSkipDao;
 import org.dromara.warm.flow.core.utils.StringUtils;
 import org.dromara.warm.flow.orm.entity.FlowSkip;
@@ -35,7 +35,7 @@ public class FlowSkipDaoImpl extends WarmDaoImpl<FlowSkip, FlowSkipProxy> implem
     public int deleteSkipByDefIds(Collection<? extends Serializable> defIds) {
         FlowSkip entity = newEntity();
         TenantDeleteUtil.applyContextCondition(entity);
-        final boolean logicDelete = FlowFactory.getFlowConfig().isLogicDelete();
+        final boolean logicDelete = FlowEngine.getFlowConfig().isLogicDelete();
 
         return (int) entityQuery().deletable(entityClass())
             .where(proxy -> {
@@ -61,7 +61,7 @@ public class FlowSkipDaoImpl extends WarmDaoImpl<FlowSkip, FlowSkipProxy> implem
     @Override
     public int delete(FlowSkip entity) {
         TenantDeleteUtil.applyContextCondition(entity);
-        final boolean logicDelete = FlowFactory.getFlowConfig().isLogicDelete();
+        final boolean logicDelete = FlowEngine.getFlowConfig().isLogicDelete();
 
         return (int) entityQuery().deletable(entityClass())
             .where(proxy -> {

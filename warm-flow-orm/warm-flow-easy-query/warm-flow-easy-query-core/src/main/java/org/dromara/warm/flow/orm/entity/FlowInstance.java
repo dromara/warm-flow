@@ -103,6 +103,10 @@ public class FlowInstance implements Instance, ProxyEntityAvailable<FlowInstance
     @ColumnIgnore
     private String formPath;
 
+    /** 流程定义json */
+    @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
+    private String defJson;
+
     /** 扩展字段 */
     @EasyWhereCondition(type = EasyWhereCondition.Condition.EQUAL)
     private String ext;

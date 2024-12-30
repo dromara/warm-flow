@@ -16,7 +16,7 @@
 package org.dromara.warm.flow.orm.utils;
 
 import com.mybatisflex.core.query.QueryWrapper;
-import org.dromara.warm.flow.core.FlowFactory;
+import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.config.WarmFlow;
 import org.dromara.warm.flow.core.entity.RootEntity;
 import org.dromara.warm.flow.core.handler.TenantHandler;
@@ -42,7 +42,7 @@ public class TenantDeleteUtil {
      */
     public static <T extends RootEntity> QueryWrapper getDefaultWrapper(T entity) {
         QueryWrapper queryWrapper = QueryWrapper.create(entity);
-        WarmFlow flowConfig = FlowFactory.getFlowConfig();
+        WarmFlow flowConfig = FlowEngine.getFlowConfig();
         handleQueryWrapper(queryWrapper, flowConfig);
         return queryWrapper;
     }
@@ -56,7 +56,7 @@ public class TenantDeleteUtil {
      */
     public static <T extends RootEntity> QueryWrapper getDelWrapper(T entity) {
         QueryWrapper queryWrapper = QueryWrapper.create(entity);
-        WarmFlow flowConfig = FlowFactory.getFlowConfig();
+        WarmFlow flowConfig = FlowEngine.getFlowConfig();
         handleQueryWrapper(queryWrapper, flowConfig);
         return queryWrapper;
     }
@@ -71,7 +71,7 @@ public class TenantDeleteUtil {
     public static <T extends RootEntity> QueryWrapper getIdWrapper(T entity) {
         QueryWrapper queryWrapper = QueryWrapper.create();
         queryWrapper.eq("id", entity.getId());
-        WarmFlow flowConfig = FlowFactory.getFlowConfig();
+        WarmFlow flowConfig = FlowEngine.getFlowConfig();
         handleQueryWrapper(queryWrapper, flowConfig);
         return queryWrapper;
     }
@@ -84,7 +84,7 @@ public class TenantDeleteUtil {
      * @since 2024/5/10 11:16
      */
     private static void handleQueryWrapper(QueryWrapper queryWrapper, WarmFlow flowConfig) {
-        TenantHandler tenantHandler = FlowFactory.tenantHandler();
+        TenantHandler tenantHandler = FlowEngine.tenantHandler();
         if (ObjectUtil.isNotNull(tenantHandler)) {
             queryWrapper.eq("tenant_Id", tenantHandler.getTenantId());
         }
@@ -100,11 +100,11 @@ public class TenantDeleteUtil {
      * @since 2024/5/10 11:16
      */
     public static <T extends RootEntity> void fillEntity(T entity) {
-        WarmFlow flowConfig = FlowFactory.getFlowConfig();
+        WarmFlow flowConfig = FlowEngine.getFlowConfig();
         if (flowConfig.isLogicDelete()) {
             entity.setDelFlag(flowConfig.getLogicNotDeleteValue());
         }
-        TenantHandler tenantHandler = FlowFactory.tenantHandler();
+        TenantHandler tenantHandler = FlowEngine.tenantHandler();
         if (ObjectUtil.isNotNull(tenantHandler)) {
             entity.setTenantId(tenantHandler.getTenantId());
         }
@@ -118,7 +118,7 @@ public class TenantDeleteUtil {
      * @since 2024/5/10 11:16
      */
     public static <T extends RootEntity> T delFillEntity(T entity) {
-        WarmFlow flowConfig = FlowFactory.getFlowConfig();
+        WarmFlow flowConfig = FlowEngine.getFlowConfig();
         if (flowConfig.isLogicDelete()) {
             entity.setDelFlag(flowConfig.getLogicDeleteValue());
         }

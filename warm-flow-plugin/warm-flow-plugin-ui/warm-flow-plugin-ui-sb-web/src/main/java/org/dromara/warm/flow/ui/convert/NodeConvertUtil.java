@@ -15,7 +15,7 @@
  */
 package org.dromara.warm.flow.ui.convert;
 
-import org.dromara.warm.flow.core.FlowFactory;
+import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.entity.Skip;
 import org.dromara.warm.flow.core.enums.NodeType;
@@ -66,7 +66,7 @@ public class NodeConvertUtil {
                     && NodeType.isGateWay(NodeType.getKeyByValue(type))){
 
                     String emptyNodeCode = UUID.randomUUID().toString();
-                    Node emptyNode = FlowFactory.newNode();
+                    Node emptyNode = FlowEngine.newNode();
                     emptyNode.setNodeCode(emptyNodeCode);
                     emptyNode.setNodeType(NodeType.BETWEEN.getKey());
                     // 设置空类别自动通过， 区分前端审批人为空的配置
@@ -74,7 +74,7 @@ public class NodeConvertUtil {
 
 
                     List<Skip> emptySkip = new ArrayList<>();
-                    Skip emSkip = FlowFactory.newSkip();
+                    Skip emSkip = FlowEngine.newSkip();
                     emSkip.setSkipType(SkipType.PASS.getKey());
                     emSkip.setNextNodeCode(nextNodeId);
                     emptySkip.add(emSkip);

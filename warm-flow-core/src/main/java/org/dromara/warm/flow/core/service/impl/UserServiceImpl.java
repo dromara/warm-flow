@@ -15,7 +15,7 @@
  */
 package org.dromara.warm.flow.core.service.impl;
 
-import org.dromara.warm.flow.core.FlowFactory;
+import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.orm.dao.FlowUserDao;
 import org.dromara.warm.flow.core.entity.Task;
 import org.dromara.warm.flow.core.entity.User;
@@ -77,10 +77,10 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
     @Override
     public List<String> getPermission(Long associated, String... types) {
         if (ArrayUtil.isEmpty(types)) {
-            return StreamUtils.toList(list(FlowFactory.newUser().setAssociated(associated)), User::getProcessedBy);
+            return StreamUtils.toList(list(FlowEngine.newUser().setAssociated(associated)), User::getProcessedBy);
         }
         if (types.length == 1) {
-            return StreamUtils.toList(list(FlowFactory.newUser().setAssociated(associated).setType(types[0]))
+            return StreamUtils.toList(list(FlowEngine.newUser().setAssociated(associated).setType(types[0]))
                     , User::getProcessedBy);
         }
         return StreamUtils.toList(getDao().listByAssociatedAndTypes(Collections.singletonList(associated), types)
@@ -90,10 +90,10 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
     @Override
     public List<User> listByAssociatedAndTypes(Long associated, String... types) {
         if (ArrayUtil.isEmpty(types)) {
-            return list(FlowFactory.newUser().setAssociated(associated));
+            return list(FlowEngine.newUser().setAssociated(associated));
         }
         if (types.length == 1) {
-            return list(FlowFactory.newUser().setAssociated(associated).setType(types[0]));
+            return list(FlowEngine.newUser().setAssociated(associated).setType(types[0]));
         }
         return getDao().listByAssociatedAndTypes(Collections.singletonList(associated), types);
     }
@@ -109,10 +109,10 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
     @Override
     public List<User> listByProcessedBys(Long associated, String processedBy, String... types) {
         if (ArrayUtil.isEmpty(types)) {
-            return list(FlowFactory.newUser().setAssociated(associated).setProcessedBy(processedBy));
+            return list(FlowEngine.newUser().setAssociated(associated).setProcessedBy(processedBy));
         }
         if (types.length == 1) {
-            return list(FlowFactory.newUser().setAssociated(associated).setProcessedBy(processedBy).setType(types[0]));
+            return list(FlowEngine.newUser().setAssociated(associated).setProcessedBy(processedBy).setType(types[0]));
         }
         return getDao().listByProcessedBys(associated, Collections.singletonList(processedBy), types);
     }
@@ -131,7 +131,7 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
                                     String handler) {
         // 判断是否clear，如果是true，则先删除当前关联id用户数据
         if (clear) {
-            getDao().delete(FlowFactory.newUser().setAssociated(associated).setCreateBy(handler));
+            getDao().delete(FlowEngine.newUser().setAssociated(associated).setCreateBy(handler));
         }
         // 再新增权限人
         saveBatch(StreamUtils.toList(permissions, permission -> structureUser(associated, permission, type, handler)));
@@ -155,12 +155,12 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
 
     @Override
     public User structureUser(Long associated, String permission, String type, String handler) {
-        User user = FlowFactory.newUser()
+        User user = FlowEngine.newUser()
                 .setType(type)
                 .setProcessedBy(permission)
                 .setAssociated(associated)
                 .setCreateBy(handler);
-        FlowFactory.dataFillHandler().idFill(user);
+        FlowEngine.dataFillHandler().idFill(user);
         return user;
     }
 

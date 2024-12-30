@@ -15,7 +15,7 @@
  */
 package org.dromara.warm.flow.core.utils;
 
-import org.dromara.warm.flow.core.FlowFactory;
+import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.constant.FlowCons;
 import org.dromara.warm.flow.core.entity.Definition;
 import org.dromara.warm.flow.core.entity.Node;
@@ -63,7 +63,7 @@ public class ListenerUtil {
         execute(listenerVariable, type, listenerNode.getListenerPath(), listenerType);
         Definition definition = listenerVariable.getDefinition();
         execute(listenerVariable, type, definition.getListenerPath(), definition.getListenerType());
-        GlobalListener globalListener = FlowFactory.globalListener();
+        GlobalListener globalListener = FlowEngine.globalListener();
         if (ObjectUtil.isNotNull(globalListener)) {
             globalListener.notify(type, listenerVariable);
         }

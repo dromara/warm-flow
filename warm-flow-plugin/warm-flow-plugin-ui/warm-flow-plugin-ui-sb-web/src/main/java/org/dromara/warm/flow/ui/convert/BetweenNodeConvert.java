@@ -15,7 +15,7 @@
  */
 package org.dromara.warm.flow.ui.convert;
 
-import org.dromara.warm.flow.core.FlowFactory;
+import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.entity.Skip;
 import org.dromara.warm.flow.core.enums.SkipType;
@@ -31,7 +31,7 @@ public  class  BetweenNodeConvert extends NodeConvertAbstract{
         Node node = getNode(jsonObject);
         // 拒绝直接结束
         List<Skip> skipList = new ArrayList<>();
-        Skip skipBack = FlowFactory.newSkip();
+        Skip skipBack = FlowEngine.newSkip();
         skipBack.setSkipType(SkipType.REJECT.getKey());
         skipBack.setNextNodeCode(endNodeId);
         skipList.add(skipBack);

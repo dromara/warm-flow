@@ -15,7 +15,7 @@
  */
 package org.dromara.warm.flow.core.utils;
 
-import org.dromara.warm.flow.core.FlowFactory;
+import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.constant.FlowCons;
 import org.dromara.warm.flow.core.keygen.KenGen;
 import org.dromara.warm.flow.core.keygen.SnowFlakeId14;
@@ -48,7 +48,7 @@ public class IdUtils {
         if (instance == null) {
             synchronized (IdUtils.class) {
                 if (instance == null) {
-                    String keyType = FlowFactory.getFlowConfig().getKeyType();
+                    String keyType = FlowEngine.getFlowConfig().getKeyType();
                     if (FlowCons.SNOWID14.equals(keyType)) {
                         instance = new SnowFlakeId14(workerId);
                     } else if (FlowCons.SNOWID15.equals(keyType)) {

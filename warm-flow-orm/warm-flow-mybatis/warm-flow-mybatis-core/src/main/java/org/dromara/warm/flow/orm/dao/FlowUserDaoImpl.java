@@ -15,7 +15,7 @@
  */
 package org.dromara.warm.flow.orm.dao;
 
-import org.dromara.warm.flow.core.FlowFactory;
+import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.orm.dao.FlowUserDao;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.utils.CollUtil;
@@ -48,7 +48,7 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser> implements FlowUserDa
     public int deleteByTaskIds(List<Long> taskIdList) {
         FlowUser entity = TenantDeleteUtil.getEntity(newEntity());
         if (StringUtils.isNotEmpty(entity.getDelFlag())) {
-            return getMapper().updateByTaskIdsLogic(taskIdList, entity, FlowFactory.getFlowConfig().getLogicDeleteValue(),
+            return getMapper().updateByTaskIdsLogic(taskIdList, entity, FlowEngine.getFlowConfig().getLogicDeleteValue(),
                     entity.getDelFlag());
         }
         return getMapper().deleteByTaskIds(taskIdList, entity);
@@ -56,7 +56,7 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser> implements FlowUserDa
 
     @Override
     public List<FlowUser> listByAssociatedAndTypes(List<Long> associateds, String[] types) {
-        String dataSourceType = FlowFactory.dataSourceType();
+        String dataSourceType = FlowEngine.dataSourceType();
         if (CollUtil.isNotEmpty(associateds) && associateds.size() == 1) {
             return getMapper().listByAssociatedAndTypes(types, null
                     , TenantDeleteUtil.getEntity(newEntity()).setAssociated(associateds.get(0)), dataSourceType);
@@ -67,7 +67,7 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser> implements FlowUserDa
 
     @Override
     public List<FlowUser> listByProcessedBys(Long associated, List<String> processedBys, String[] types) {
-        String dataSourceType = FlowFactory.dataSourceType();
+        String dataSourceType = FlowEngine.dataSourceType();
         if (CollUtil.isNotEmpty(processedBys) && processedBys.size() == 1) {
             return getMapper().listByProcessedBys(types, null, TenantDeleteUtil
                     .getEntity(newEntity()).setAssociated(associated).setProcessedBy(processedBys.get(0)), dataSourceType);

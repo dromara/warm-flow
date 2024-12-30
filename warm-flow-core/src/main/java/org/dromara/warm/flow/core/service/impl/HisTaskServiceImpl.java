@@ -15,7 +15,7 @@
  */
 package org.dromara.warm.flow.core.service.impl;
 
-import org.dromara.warm.flow.core.FlowFactory;
+import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.orm.dao.FlowHisTaskDao;
 import org.dromara.warm.flow.core.dto.FlowParams;
 import org.dromara.warm.flow.core.entity.HisTask;
@@ -51,10 +51,10 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
     @Override
     public List<HisTask> listByTaskIdAndCooperateTypes(Long taskId, Integer... cooperateTypes) {
         if (ArrayUtil.isEmpty(cooperateTypes)) {
-            return list(FlowFactory.newHisTask().setTaskId(taskId));
+            return list(FlowEngine.newHisTask().setTaskId(taskId));
         }
         if (cooperateTypes.length == 1) {
-            return list(FlowFactory.newHisTask().setTaskId(taskId).setCooperateType(cooperateTypes[0]));
+            return list(FlowEngine.newHisTask().setTaskId(taskId).setCooperateType(cooperateTypes[0]));
         }
         return getDao().listByTaskIdAndCooperateTypes(taskId, cooperateTypes);
     }
@@ -73,7 +73,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
     }
 
     public List<HisTask> beenProcessed(Long instanceId, String handler) {
-        List<HisTask> list = list(FlowFactory.newHisTask().setInstanceId(instanceId).setApprover(handler));
+        List<HisTask> list = list(FlowEngine.newHisTask().setInstanceId(instanceId).setApprover(handler));
         return null;
     }
 
@@ -92,7 +92,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
         List<HisTask> hisTasks = new ArrayList<>();
         String flowStatus = getFlowStatus(flowParams);
         for (Node nextNode : nextNodes) {
-            HisTask hisTask = FlowFactory.newHisTask()
+            HisTask hisTask = FlowEngine.newHisTask()
                     .setTaskId(task.getId())
                     .setInstanceId(task.getInstanceId())
                     .setCooperateType(ObjectUtil.isNotNull(flowParams.getCooperateType())
@@ -115,7 +115,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
                     //业务详情添加至历史记录
                     .setExt(flowParams.getHisTaskExt())
                     .setCreateTime(task.getCreateTime());
-            FlowFactory.dataFillHandler().idFill(hisTask);
+            FlowEngine.dataFillHandler().idFill(hisTask);
             hisTasks.add(hisTask);
         }
         return hisTasks;
@@ -127,7 +127,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
         List<HisTask> hisTasks = new ArrayList<>();
         String flowStatus = getFlowStatus(flowParams);
         for (String collaborator : collaborators) {
-            HisTask hisTask = FlowFactory.newHisTask()
+            HisTask hisTask = FlowEngine.newHisTask()
                     .setTaskId(task.getId())
                     .setInstanceId(task.getInstanceId())
                     .setCooperateType(ObjectUtil.isNotNull(flowParams.getCooperateType())
@@ -150,7 +150,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
                     //业务详情添加至历史记录
                     .setExt(flowParams.getHisTaskExt())
                     .setCreateTime(task.getCreateTime());
-            FlowFactory.dataFillHandler().idFill(hisTask);
+            FlowEngine.dataFillHandler().idFill(hisTask);
             hisTasks.add(hisTask);
         }
         return hisTasks;
@@ -159,7 +159,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
     @Override
     public HisTask setDeputeHisTask(Task task, FlowParams flowParams, User entrustedUser) {
         String flowStatus = getFlowStatus(flowParams);
-        HisTask hisTask = FlowFactory.newHisTask()
+        HisTask hisTask = FlowEngine.newHisTask()
                 .setTaskId(task.getId())
                 .setInstanceId(task.getInstanceId())
                 .setCooperateType(CooperateType.DEPUTE.getKey())
@@ -182,14 +182,14 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
                 //业务详情添加至历史记录
                 .setExt(flowParams.getHisTaskExt())
                 .setCreateTime(task.getCreateTime());
-        FlowFactory.dataFillHandler().idFill(hisTask);
+        FlowEngine.dataFillHandler().idFill(hisTask);
         return hisTask;
     }
 
     @Override
     public HisTask setSignHisTask(Task task, FlowParams flowParams, BigDecimal nodeRatio, boolean isPass) {
         String flowStatus = getFlowStatus(flowParams);
-        HisTask hisTask = FlowFactory.newHisTask()
+        HisTask hisTask = FlowEngine.newHisTask()
                 .setTaskId(task.getId())
                 .setInstanceId(task.getInstanceId())
                 .setCooperateType(CooperateType.isCountersign(nodeRatio)
@@ -211,7 +211,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
                 //业务详情添加至历史记录
                 .setExt(flowParams.getHisTaskExt())
                 .setCreateTime(task.getCreateTime());
-        FlowFactory.dataFillHandler().idFill(hisTask);
+        FlowEngine.dataFillHandler().idFill(hisTask);
         return hisTask;
     }
 
@@ -219,7 +219,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
     public List<HisTask> autoHisTask(FlowParams flowParams, String flowStatus, Task task, List<User> userList, Integer cooperateType) {
         List<HisTask> hisTasks = new ArrayList<>();
         for (User user : userList) {
-            HisTask hisTask = FlowFactory.newHisTask()
+            HisTask hisTask = FlowEngine.newHisTask()
                     .setTaskId(task.getId())
                     .setInstanceId(task.getInstanceId())
                     .setCooperateType(cooperateType)
@@ -238,7 +238,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
                     //业务详情添加至历史记录
                     .setExt(flowParams.getHisTaskExt())
                     .setCreateTime(task.getCreateTime());
-            FlowFactory.dataFillHandler().idFill(hisTask);
+            FlowEngine.dataFillHandler().idFill(hisTask);
             hisTasks.add(hisTask);
         }
 
@@ -248,7 +248,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
     @Override
     public HisTask setSkipHisTask(Task task, Node nextNode, FlowParams flowParams) {
         String flowStatus = getFlowStatus(flowParams);
-        HisTask hisTask = FlowFactory.newHisTask()
+        HisTask hisTask = FlowEngine.newHisTask()
                 .setTaskId(task.getId())
                 .setInstanceId(task.getInstanceId())
                 .setCooperateType(ObjectUtil.isNotNull(flowParams.getCooperateType())
@@ -270,7 +270,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
                 //业务详情添加至历史记录
                 .setExt(flowParams.getHisTaskExt())
                 .setCreateTime(task.getCreateTime());
-        FlowFactory.dataFillHandler().idFill(hisTask);
+        FlowEngine.dataFillHandler().idFill(hisTask);
         return hisTask;
     }
 

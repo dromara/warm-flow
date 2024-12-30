@@ -17,7 +17,7 @@ package org.dromara.warm.flow.orm.dao;
 
 import com.easy.query.core.util.EasyArrayUtil;
 import com.easy.query.core.util.EasyCollectionUtil;
-import org.dromara.warm.flow.core.FlowFactory;
+import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.orm.dao.FlowUserDao;
 import org.dromara.warm.flow.core.utils.StringUtils;
 import org.dromara.warm.flow.orm.entity.FlowUser;
@@ -36,7 +36,7 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser, FlowUserProxy> implem
     public int deleteByTaskIds(List<Long> taskIdList) {
         FlowUser entity = newEntity();
         TenantDeleteUtil.applyContextCondition(entity);
-        final boolean logicDelete = FlowFactory.getFlowConfig().isLogicDelete();
+        final boolean logicDelete = FlowEngine.getFlowConfig().isLogicDelete();
 
         return (int) entityQuery().deletable(entityClass())
             .where(proxy -> {
@@ -54,7 +54,7 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser, FlowUserProxy> implem
 
         FlowUser entity = newEntity();
         TenantDeleteUtil.applyContextCondition(entity);
-        final boolean logicDelete = FlowFactory.getFlowConfig().isLogicDelete();
+        final boolean logicDelete = FlowEngine.getFlowConfig().isLogicDelete();
         return entityQuery().queryable(entityClass())
             .useLogicDelete(logicDelete)
             .where(proxy -> {
@@ -69,7 +69,7 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser, FlowUserProxy> implem
     public List<FlowUser> listByProcessedBys(Long associated, List<String> processedBys, String[] types) {
         FlowUser entity = newEntity();
         TenantDeleteUtil.applyContextCondition(entity);
-        final boolean logicDelete = FlowFactory.getFlowConfig().isLogicDelete();
+        final boolean logicDelete = FlowEngine.getFlowConfig().isLogicDelete();
         return  entityQuery().queryable(entityClass())
             .useLogicDelete(logicDelete)
             .where(proxy -> {
@@ -94,7 +94,7 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser, FlowUserProxy> implem
     @Override
     public int delete(FlowUser entity) {
         TenantDeleteUtil.applyContextCondition(entity);
-        final boolean logicDelete = FlowFactory.getFlowConfig().isLogicDelete();
+        final boolean logicDelete = FlowEngine.getFlowConfig().isLogicDelete();
         // 没有使用逻辑删除， 直接物理删除
         return (int) entityQuery().deletable(entityClass())
             .useLogicDelete(logicDelete)

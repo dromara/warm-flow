@@ -15,7 +15,7 @@
  */
 package org.dromara.warm.flow.ui.convert;
 
-import org.dromara.warm.flow.core.FlowFactory;
+import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.entity.Skip;
 import org.dromara.warm.flow.core.enums.NodeType;
@@ -33,7 +33,7 @@ public class SerialNodeConvert extends NodeConvertAbstract{
     public List<Node> convert(Map<String,Object> jsonObject, String startNodeId, String endNodeId, String nextNodeId){
 
         List<Node> seaflowNodeList = new ArrayList<>();
-        Node node = FlowFactory.newNode();
+        Node node = FlowEngine.newNode();
         seaflowNodeList.add(node);
         List<Skip> serialSkip = new ArrayList<>();
         // 获取子节点
@@ -51,7 +51,7 @@ public class SerialNodeConvert extends NodeConvertAbstract{
                 // 子节点直接连的还是网关节点，需要加一个node
                 if(NodeType.isGateWay(NodeType.getKeyByValue(subNextNodeType))){
                     String emptyNodeCode = UUID.randomUUID().toString();
-                    Node emptyNode = FlowFactory.newNode();
+                    Node emptyNode = FlowEngine.newNode();
                     emptyNode.setNodeCode(emptyNodeCode);
                     emptyNode.setNodeType(NodeType.BETWEEN.getKey());
                     // 设置空类别自动通过， 区分前端审批人为空的配置
@@ -63,7 +63,7 @@ public class SerialNodeConvert extends NodeConvertAbstract{
 //                            DefCreateListener.class.getName()));
 
                     List<Skip> emptySkip = new ArrayList<>();
-                    Skip emSkip = FlowFactory.newSkip();
+                    Skip emSkip = FlowEngine.newSkip();
                     emSkip.setSkipType(SkipType.PASS.getKey());
                     emSkip.setNextNodeCode(subNextNodeId);
                     emptySkip.add(emSkip);
@@ -91,7 +91,7 @@ public class SerialNodeConvert extends NodeConvertAbstract{
                 String[] nodeIds = nextNodeId.split(",");
                 for(String nodeId : nodeIds){
                     //  设置跳转
-                    Skip skipParentNext = FlowFactory.newSkip();
+                    Skip skipParentNext = FlowEngine.newSkip();
                     skipParentNext.setSkipType(SkipType.PASS.getKey());
                     skipParentNext.setNextNodeCode(nodeId);
                     skipList.add(skipParentNext);
@@ -103,7 +103,7 @@ public class SerialNodeConvert extends NodeConvertAbstract{
                 String emptyNodeCode = UUID.randomUUID().toString();
 
                 // 加个空任务, 多个网关直连走不通
-                Node emptyNode = FlowFactory.newNode();
+                Node emptyNode = FlowEngine.newNode();
                 emptyNode.setNodeCode(emptyNodeCode);
                 emptyNode.setNodeType(NodeType.BETWEEN.getKey());
                 // 设置空类别自动通过， 区分前端审批人为空的配置
@@ -119,7 +119,7 @@ public class SerialNodeConvert extends NodeConvertAbstract{
                 List<Skip> emptySkip = new ArrayList<>();
                 for(String nodeId : nodeIds){
                     //  设置跳转
-                    Skip skipParentNext = FlowFactory.newSkip();
+                    Skip skipParentNext = FlowEngine.newSkip();
                     skipParentNext.setSkipType(SkipType.PASS.getKey());
                     skipParentNext.setNextNodeCode(nodeId);
                     emptySkip.add(skipParentNext);
@@ -140,7 +140,7 @@ public class SerialNodeConvert extends NodeConvertAbstract{
 
     private Skip createSkip(Map<String, Object> subNode, String nextNodeId) {
         //default ：默认跳转配置， 只有条件分支才有
-        Skip skip = FlowFactory.newSkip();
+        Skip skip = FlowEngine.newSkip();
         Boolean defaultSerial =  true; //subNode.getBool("default");
         if(defaultSerial != null && defaultSerial){
             // 设置表单时类别 简单模式 或 复杂模式

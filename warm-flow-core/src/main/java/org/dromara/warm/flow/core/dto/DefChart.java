@@ -13,31 +13,38 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.dromara.warm.flow.core.utils;
+package org.dromara.warm.flow.core.dto;
 
-import java.awt.*;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
- * 流程图绘制工具类
- * 
+ * 流程图所需数据集合
+ *
  * @author warm
- * @since 2023/6/25 16:27
+ * @since 2023/3/30 14:27
  */
-public class DrawUtils {
-
-
-    private DrawUtils() {
-
-    }
+@Getter
+@Setter
+public class DefChart {
+    /**
+     * 流程图所需的流程定义
+     */
+    private DefJson defJson = new DefJson();
 
     /**
-     * 获取文字的宽度
-     *
-     * @param graphics
-     * @param str
+     * 流程图所需的流程节点
      */
-    public static int stringWidth(Graphics2D graphics, String str) {
-        FontMetrics fm = graphics.getFontMetrics(new Font("宋体", Font.PLAIN, 12));
-        return fm.stringWidth(str);
-    }
+    private List<NodeJson> nodeJsonList = new ArrayList<>();
+
+    /**
+     * 流程图所需的流程跳转
+     */
+    private List<SkipJson> skipJsonList = new ArrayList<>();
+
 }

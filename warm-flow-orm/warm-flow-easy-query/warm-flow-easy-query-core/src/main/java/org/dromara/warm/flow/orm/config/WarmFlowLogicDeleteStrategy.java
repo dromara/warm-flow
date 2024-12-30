@@ -5,7 +5,7 @@ import com.easy.query.core.basic.extension.logicdel.abstraction.AbstractLogicDel
 import com.easy.query.core.expression.lambda.SQLExpression1;
 import com.easy.query.core.expression.parser.core.base.ColumnSetter;
 import com.easy.query.core.expression.parser.core.base.WherePredicate;
-import org.dromara.warm.flow.core.FlowFactory;
+import org.dromara.warm.flow.core.FlowEngine;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -21,13 +21,13 @@ public class WarmFlowLogicDeleteStrategy extends AbstractLogicDeleteStrategy {
     @Override
     protected SQLExpression1<WherePredicate<Object>> getPredicateFilterExpression(LogicDeleteBuilder logicDeleteBuilder, String propertyName) {
         // 追加查询条件 逻辑删除字段 = warmFlow 配置的 未删除值
-        return o -> o.eq(propertyName, FlowFactory.getFlowConfig().getLogicNotDeleteValue());
+        return o -> o.eq(propertyName, FlowEngine.getFlowConfig().getLogicNotDeleteValue());
     }
 
     @Override
     protected SQLExpression1<ColumnSetter<Object>> getDeletedSQLExpression(LogicDeleteBuilder logicDeleteBuilder, String propertyName) {
         // 设置逻辑删除字段值为 warmFlow 配置的 删除值
-        return o -> o.set(propertyName, FlowFactory.getFlowConfig().getLogicDeleteValue());
+        return o -> o.set(propertyName, FlowEngine.getFlowConfig().getLogicDeleteValue());
     }
 
     @Override

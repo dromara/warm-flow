@@ -15,7 +15,7 @@
  */
 package org.dromara.warm.plugin.modes.sb.config;
 
-import org.dromara.warm.flow.core.FlowFactory;
+import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.config.WarmFlow;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.orm.dao.*;
@@ -61,6 +61,11 @@ public class BeanConfig {
     @Bean
     public DefService definitionService(FlowDefinitionDao definitionDao) {
         return new DefServiceImpl().setDao(definitionDao);
+    }
+
+    @Bean
+    public ChartService chartService() {
+        return new ChartServiceImpl();
     }
 
     @Bean
@@ -140,11 +145,11 @@ public class BeanConfig {
         FrameInvoker.setCfgFunction((key) -> Objects.requireNonNull(SpringUtil.getBean(Environment.class)).getProperty(key));
         FrameInvoker.setBeanFunction(SpringUtil::getBean);
         WarmFlow flowConfig = WarmFlow.init();
-        FlowFactory.setFlowConfig(flowConfig);
+        FlowEngine.setFlowConfig(flowConfig);
         setExpression();
         after(flowConfig);
         log.info("【warm-flow】，加载完成");
-        return FlowFactory.getFlowConfig();
+        return FlowEngine.getFlowConfig();
     }
 
     private void setExpression() {
@@ -155,14 +160,14 @@ public class BeanConfig {
     }
 
     public void setNewEntity() {
-        FlowFactory.setNewDef(FlowDefinition::new);
-        FlowFactory.setNewIns(FlowInstance::new);
-        FlowFactory.setNewHisTask(FlowHisTask::new);
-        FlowFactory.setNewNode(FlowNode::new);
-        FlowFactory.setNewSkip(FlowSkip::new);
-        FlowFactory.setNewTask(FlowTask::new);
-        FlowFactory.setNewUser(FlowUser::new);
-        FlowFactory.setNewForm(FlowForm::new);
+        FlowEngine.setNewDef(FlowDefinition::new);
+        FlowEngine.setNewIns(FlowInstance::new);
+        FlowEngine.setNewHisTask(FlowHisTask::new);
+        FlowEngine.setNewNode(FlowNode::new);
+        FlowEngine.setNewSkip(FlowSkip::new);
+        FlowEngine.setNewTask(FlowTask::new);
+        FlowEngine.setNewUser(FlowUser::new);
+        FlowEngine.setNewForm(FlowForm::new);
     }
 
     public void after(WarmFlow flowConfig) {

@@ -16,10 +16,8 @@
 package org.dromara.warm.flow.core.chart;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.dromara.warm.flow.core.utils.DrawUtils;
 import org.dromara.warm.flow.core.utils.ObjectUtil;
 import org.dromara.warm.flow.core.utils.StringUtils;
 
@@ -54,7 +52,7 @@ public class OvalChart implements FlowChart {
         graphics.setColor(c);
         graphics.drawOval((xStartOval - 20) * n, (yStartOval - 20) * n, 40 * n, 40 * n);
         if (ObjectUtil.isNotNull(textChart) && StringUtils.isNotEmpty(textChart.getTitle())) {
-            textChart.setXText(textChart.getXText() - DrawUtils.stringWidth(graphics, textChart.getTitle()) / 2);
+            textChart.setXText(textChart.getXText() - stringWidth(graphics, textChart.getTitle()) / 2);
             textChart.setYText(textChart.getYText() + 5);
             // 填充文字说明
             textChart.setN(n).draw(graphics);

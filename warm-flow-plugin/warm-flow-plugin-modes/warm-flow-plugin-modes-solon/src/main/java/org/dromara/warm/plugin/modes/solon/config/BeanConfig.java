@@ -15,7 +15,7 @@
  */
 package org.dromara.warm.plugin.modes.solon.config;
 
-import org.dromara.warm.flow.core.FlowFactory;
+import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.config.WarmFlow;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.orm.dao.*;
@@ -50,6 +50,11 @@ public class BeanConfig {
     @Bean
     public DefService definitionService(FlowDefinitionDao definitionDao) {
         return new DefServiceImpl().setDao(definitionDao);
+    }
+
+    @Bean
+    public ChartService chartService() {
+        return new ChartServiceImpl();
     }
 
     @Bean(injected = true)
@@ -128,20 +133,20 @@ public class BeanConfig {
         FrameInvoker.setCfgFunction((key) -> Solon.cfg().get(key));
         FrameInvoker.setBeanFunction(Solon.context()::getBean);
         WarmFlow flowConfig = WarmFlow.init();
-        FlowFactory.setFlowConfig(flowConfig);
+        FlowEngine.setFlowConfig(flowConfig);
         log.info("【warm-flow】，加载完成");
-        return FlowFactory.getFlowConfig();
+        return FlowEngine.getFlowConfig();
     }
 
     public void setNewEntity() {
-        FlowFactory.setNewDef(FlowDefinition::new);
-        FlowFactory.setNewIns(FlowInstance::new);
-        FlowFactory.setNewHisTask(FlowHisTask::new);
-        FlowFactory.setNewNode(FlowNode::new);
-        FlowFactory.setNewSkip(FlowSkip::new);
-        FlowFactory.setNewTask(FlowTask::new);
-        FlowFactory.setNewUser(FlowUser::new);
-        FlowFactory.setNewForm(FlowForm::new);
+        FlowEngine.setNewDef(FlowDefinition::new);
+        FlowEngine.setNewIns(FlowInstance::new);
+        FlowEngine.setNewHisTask(FlowHisTask::new);
+        FlowEngine.setNewNode(FlowNode::new);
+        FlowEngine.setNewSkip(FlowSkip::new);
+        FlowEngine.setNewTask(FlowTask::new);
+        FlowEngine.setNewUser(FlowUser::new);
+        FlowEngine.setNewForm(FlowForm::new);
     }
 
 }
