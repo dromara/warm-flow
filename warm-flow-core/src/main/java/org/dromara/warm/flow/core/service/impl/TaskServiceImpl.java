@@ -17,6 +17,7 @@ package org.dromara.warm.flow.core.service.impl;
 
 import org.dromara.warm.flow.core.FlowFactory;
 import org.dromara.warm.flow.core.constant.ExceptionCons;
+import org.dromara.warm.flow.core.constant.FlowCons;
 import org.dromara.warm.flow.core.dao.FlowTaskDao;
 import org.dromara.warm.flow.core.dto.FlowParams;
 import org.dromara.warm.flow.core.entity.*;
@@ -346,7 +347,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 .setNodeName(node.getNodeName())
                 .setNodeType(node.getNodeType())
                 .setCreateTime(new Date())
-                .setPermissionList(StringUtils.str2List(node.getPermissionFlag(), ","));
+                .setPermissionList(StringUtils.str2List(node.getPermissionFlag(), FlowCons.splitAt));
 
         if (StringUtils.isNotEmpty(node.getFormCustom()) && StringUtils.isNotEmpty(node.getFormPath())) {
             // 节点有自定义表单则使用

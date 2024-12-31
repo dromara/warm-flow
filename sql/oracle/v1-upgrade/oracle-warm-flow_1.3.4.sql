@@ -1,5 +1,5 @@
-update flow_node set permission_flag =  REPLACE(permission_flag,'@@default@@|','');
-update flow_node set permission_flag =  REPLACE(permission_flag,'@@spel@@|','');
+update FLOW_NODE set PERMISSION_FLAG =  REPLACE(PERMISSION_FLAG,'@@default@@|','');
+update FLOW_NODE set PERMISSION_FLAG =  REPLACE(PERMISSION_FLAG,'@@spel@@|','');
 
-UPDATE flow_node SET permission_flag = REPLACE(permission_flag, '@@default@@|', '');
-UPDATE flow_node SET permission_flag = REPLACE(permission_flag, '@@spel@@|', '');
+UPDATE FLOW_NODE SET PERMISSION_FLAG = REPLACE(PERMISSION_FLAG, '@@default@@|', '');
+UPDATE FLOW_NODE SET PERMISSION_FLAG = REPLACE(PERMISSION_FLAG, '@@spel@@|', '');

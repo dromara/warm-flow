@@ -202,7 +202,7 @@ function addPermission() {
 
 /** 选择角色权限范围触发 */
 function getPermissionFlag() {
-  form.value.permissionFlag = form.value.permissionFlag ? form.value.permissionFlag.split(",") : [""];
+  form.value.permissionFlag = form.value.permissionFlag ? form.value.permissionFlag.split("@@") : [""];
   if (form.value.listenerType) {
     const listenerTypes = form.value.listenerType.split(",");
     const listenerPaths = form.value.listenerPath.split("@@");
