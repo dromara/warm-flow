@@ -1,28 +1,28 @@
-UPDATE flow_skip SET skip_condition = REPLACE(skip_condition, '@@eq@@|', 'eq|');
-UPDATE flow_skip SET skip_condition = REPLACE(skip_condition, '@@eq@@', '|');
+UPDATE FLOW_SKIP SET SKIP_CONDITION = REPLACE(SKIP_CONDITION, '@@eq@@|', 'eq|');
+UPDATE FLOW_SKIP SET SKIP_CONDITION = REPLACE(SKIP_CONDITION, '@@eq@@', '|');
 
-UPDATE flow_skip SET skip_condition = REPLACE(skip_condition, '@@ge@@|', 'ge|');
-UPDATE flow_skip SET skip_condition = REPLACE(skip_condition, '@@ge@@', '|');
+UPDATE FLOW_SKIP SET SKIP_CONDITION = REPLACE(SKIP_CONDITION, '@@ge@@|', 'ge|');
+UPDATE FLOW_SKIP SET SKIP_CONDITION = REPLACE(SKIP_CONDITION, '@@ge@@', '|');
 
-UPDATE flow_skip SET skip_condition = REPLACE(skip_condition, '@@gt@@|', 'gt|');
-UPDATE flow_skip SET skip_condition = REPLACE(skip_condition, '@@gt@@', '|');
+UPDATE FLOW_SKIP SET SKIP_CONDITION = REPLACE(SKIP_CONDITION, '@@gt@@|', 'gt|');
+UPDATE FLOW_SKIP SET SKIP_CONDITION = REPLACE(SKIP_CONDITION, '@@gt@@', '|');
 
-UPDATE flow_skip SET skip_condition = REPLACE(skip_condition, '@@le@@|', 'le|');
-UPDATE flow_skip SET skip_condition = REPLACE(skip_condition, '@@le@@', '|');
+UPDATE FLOW_SKIP SET SKIP_CONDITION = REPLACE(SKIP_CONDITION, '@@le@@|', 'le|');
+UPDATE FLOW_SKIP SET SKIP_CONDITION = REPLACE(SKIP_CONDITION, '@@le@@', '|');
 
-UPDATE flow_skip SET skip_condition = REPLACE(skip_condition, '@@like@@|', 'like|');
-UPDATE flow_skip SET skip_condition = REPLACE(skip_condition, '@@like@@', '|');
+UPDATE FLOW_SKIP SET SKIP_CONDITION = REPLACE(SKIP_CONDITION, '@@like@@|', 'like|');
+UPDATE FLOW_SKIP SET SKIP_CONDITION = REPLACE(SKIP_CONDITION, '@@like@@', '|');
 
-UPDATE flow_skip SET skip_condition = REPLACE(skip_condition, '@@lt@@|', 'lt|');
-UPDATE flow_skip SET skip_condition = REPLACE(skip_condition, '@@lt@@', '|');
+UPDATE FLOW_SKIP SET SKIP_CONDITION = REPLACE(SKIP_CONDITION, '@@lt@@|', 'lt|');
+UPDATE FLOW_SKIP SET SKIP_CONDITION = REPLACE(SKIP_CONDITION, '@@lt@@', '|');
 
-UPDATE flow_skip SET skip_condition = REPLACE(skip_condition, '@@ne@@|', 'ne|');
-UPDATE flow_skip SET skip_condition = REPLACE(skip_condition, '@@ne@@', '|');
+UPDATE FLOW_SKIP SET SKIP_CONDITION = REPLACE(SKIP_CONDITION, '@@ne@@|', 'ne|');
+UPDATE FLOW_SKIP SET SKIP_CONDITION = REPLACE(SKIP_CONDITION, '@@ne@@', '|');
 
-UPDATE flow_skip SET skip_condition = REPLACE(skip_condition, '@@notNike@@|', 'notNike|');
-UPDATE flow_skip SET skip_condition = REPLACE(skip_condition, '@@notNike@@', '|');
+UPDATE FLOW_SKIP SET SKIP_CONDITION = REPLACE(SKIP_CONDITION, '@@notNike@@|', 'notNike|');
+UPDATE FLOW_SKIP SET SKIP_CONDITION = REPLACE(SKIP_CONDITION, '@@notNike@@', '|');
 
-UPDATE flow_skip SET skip_condition = REPLACE(skip_condition, '@@spel@@|', 'spel|');
+UPDATE FLOW_SKIP SET SKIP_CONDITION = REPLACE(SKIP_CONDITION, '@@spel@@|', 'spel|');
 
 ALTER TABLE flow_node ADD any_node_skip VARCHAR2(100) DEFAULT NULL;
 
