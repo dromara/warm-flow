@@ -235,7 +235,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             // 判断当前处理人是否有权限，获取当前办理人的权限
             List<String> permissions = flowParams.getPermissionFlag();
             // 获取任务权限人
-            List<String> taskPermissions = FlowFactory.userService().getPermission(taskId
+            List<String> taskPermissions = FlowEngine.userService().getPermission(taskId
                     , UserType.APPROVAL.getKey(), UserType.TRANSFER.getKey(), UserType.DEPUTE.getKey());
             AssertUtil.isTrue(CollUtil.isNotEmpty(taskPermissions) && (CollUtil.isEmpty(permissions)
                     || CollUtil.notContainsAny(permissions, taskPermissions)), ExceptionCons.NOT_AUTHORITY);
