@@ -47,7 +47,7 @@ import java.util.Objects;
  */
 public abstract class WarmDaoImpl<T extends JPARootEntity<T>> implements WarmDao<T> {
 
-    @PersistenceContext(unitName = "warm-flow-jpa")
+    @PersistenceContext
     protected EntityManager entityManager;
 
     public abstract Class<T> entityClass();

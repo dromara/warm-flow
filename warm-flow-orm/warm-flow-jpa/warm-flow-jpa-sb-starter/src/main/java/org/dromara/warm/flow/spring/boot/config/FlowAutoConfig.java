@@ -44,30 +44,4 @@ import javax.sql.DataSource;
 @ConditionalOnProperty(value = "warm-flow.enabled", havingValue = "true", matchIfMissing = true)
 public class FlowAutoConfig extends BeanConfig {
 
-    private static final Logger log = LoggerFactory.getLogger(FlowAutoConfig.class);
-
-    @Bean
-    @ConditionalOnMissingBean
-    public JpaProperties jpaProperties() {
-        return new JpaProperties();
-    }
-
-    @SuppressWarnings({"unchecked"})
-    @Bean(name = "entityManagerFactoryWarmFlow")
-    @DependsOn("warmFlowSpringUtil")
-    public LocalContainerEntityManagerFactoryBean primaryEntityManagerFactory(DataSource dataSource, JpaProperties jpaProperties) throws ClassNotFoundException {
-        LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
-        factory.setDataSource(dataSource);
-        factory.setJpaPropertyMap(jpaProperties.getProperties());
-        factory.setMappingResources("META-INF/warm-flow-orm.xml");
-        factory.setPersistenceXmlLocation("classpath:/META-INF/warm-flow-persistence.xml");
-        String jpaPersistenceProvider = SpringUtil.getBean(Environment.class).getProperty(FlowJpaConfigCons.JPA_PERSISTENCE_PROVIDER);
-        log.info("warm-flow use jpa persistence provider to be: {}", jpaPersistenceProvider);
-        if (jpaPersistenceProvider == null) {
-            throw new FlowException(ExceptionCons.JPA_PERSISTENCE_PROVIDER_NOT_FOUND);
-        }
-        factory.setPersistenceProviderClass((Class<? extends PersistenceProvider>) Class.forName(jpaPersistenceProvider));
-        factory.setPersistenceUnitName("warm-flow-jpa");
-        return factory;
-    }
 }

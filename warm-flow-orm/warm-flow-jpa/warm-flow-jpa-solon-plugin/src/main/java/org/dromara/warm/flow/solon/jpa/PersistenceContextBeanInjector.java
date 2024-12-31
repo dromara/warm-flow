@@ -53,7 +53,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 2024/6/28 10:07
  */
 public class PersistenceContextBeanInjector implements BeanInjector<PersistenceContext> {
-    private ConcurrentHashMap<String, EntityManagerFactory> ENTITY_MANAGER_FACTORIES = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, EntityManagerFactory> ENTITY_MANAGER_FACTORIES = new ConcurrentHashMap<>();
 
 
     @Override
