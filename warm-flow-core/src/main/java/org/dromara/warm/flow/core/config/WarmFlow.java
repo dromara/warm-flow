@@ -17,7 +17,7 @@ package org.dromara.warm.flow.core.config;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.dromara.warm.flow.core.FlowFactory;
+import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.constant.FlowConfigCons;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.json.JsonConvert;
@@ -124,17 +124,17 @@ public class WarmFlow implements Serializable {
 
         // 设置租户模式
         flowConfig.setTenantHandlerPath(FrameInvoker.getCfg(FlowConfigCons.TENANT_HANDLER_PATH));
-        FlowFactory.initTenantHandler(flowConfig.getTenantHandlerPath());
+        FlowEngine.initTenantHandler(flowConfig.getTenantHandlerPath());
 
         // 设置数据填充处理类
         flowConfig.setDataFillHandlerPath(FrameInvoker.getCfg(FlowConfigCons.DATA_FILL_HANDLE_PATH));
-        FlowFactory.initDataFillHandler(flowConfig.getDataFillHandlerPath());
+        FlowEngine.initDataFillHandler(flowConfig.getDataFillHandlerPath());
 
         // 设置办理人权限处理类
-        FlowFactory.initPermissionHandler();
+        FlowEngine.initPermissionHandler();
 
         // 设置全局监听器
-        FlowFactory.initGlobalListener();
+        FlowEngine.initGlobalListener();
 
         // 设置数据源类型
         flowConfig.setDataSourceType(FrameInvoker.getCfg(FlowConfigCons.DATA_SOURCE_TYPE));
@@ -147,7 +147,7 @@ public class WarmFlow implements Serializable {
 
     public static void spiLoad() {
         // 通过SPI机制加载json转换策略实现类
-        FlowFactory.jsonConvert(ServiceLoaderUtil.loadFirst(JsonConvert.class));
+        FlowEngine.jsonConvert(ServiceLoaderUtil.loadFirst(JsonConvert.class));
     }
 
     private static void calLogicDelete(WarmFlow flowConfig) {

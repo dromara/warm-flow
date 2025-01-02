@@ -192,7 +192,7 @@ watch(() => form.value.nodeRatio, (n) => {
 watch(() => form.value.permissionFlag, (n) => {
   // 监听节点属性变化并更新
   props.lf.setProperties(objId.value, {
-    permissionFlag: Array.isArray(n) ? n.filter(e => e).join(',') : n
+    permissionFlag: Array.isArray(n) ? n.filter(e => e).join('@@') : n
   })
 }, { deep: true });
 

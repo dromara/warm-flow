@@ -15,7 +15,7 @@
  */
 package org.dromara.warm.flow.core.entity;
 
-import org.dromara.warm.flow.core.FlowFactory;
+import org.dromara.warm.flow.core.FlowEngine;
 
 import java.util.Date;
 import java.util.List;
@@ -104,7 +104,7 @@ public interface Definition extends RootEntity {
     Definition setListenerPath(String listenerPath);
 
     default Definition copy() {
-        return FlowFactory.newDef()
+        return FlowEngine.newDef()
                 .setId(this.getId())
                 .setCreateTime(this.getCreateTime())
                 .setUpdateTime(this.getUpdateTime())

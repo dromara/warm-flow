@@ -20,7 +20,7 @@ import com.easy.query.api.proxy.client.EasyEntityQuery;
 import com.easy.query.core.configuration.QueryConfiguration;
 import com.easy.query.core.context.QueryRuntimeContext;
 import com.easy.query.solon.annotation.Db;
-import org.dromara.warm.flow.core.FlowFactory;
+import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.config.WarmFlow;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.orm.config.WarmFlowLogicDeleteFakeStrategy;
@@ -63,6 +63,6 @@ public class FlowAutoConfig extends BeanConfig {
         //endregion
 
 
-        return FlowFactory.getFlowConfig();
+        return FlowEngine.getFlowConfig();
     }
 }

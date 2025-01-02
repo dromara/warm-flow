@@ -13,22 +13,26 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.dromara.warm.flow.core.dao;
+package org.dromara.warm.flow.core.orm.dao;
 
-import org.dromara.warm.flow.core.entity.Definition;
+import org.dromara.warm.flow.core.entity.Skip;
 
-import java.util.List;
+import java.io.Serializable;
+import java.util.Collection;
 
 /**
- * 流程定义Dao接口，不同的orm扩展包实现它
+ * 节点跳转关联Mapper接口
  *
  * @author warm
  * @since 2023-03-29
  */
-public interface FlowDefinitionDao<T extends Definition> extends WarmDao<T> {
+public interface FlowSkipDao<T extends Skip> extends WarmDao<T> {
 
-
-    List<T> queryByCodeList(List<String> flowCodeList);
-
-    void updatePublishStatus(List<Long> ids, Integer publishStatus);
+    /**
+     * 批量删除节点跳转关联
+     *
+     * @param defIds 需要删除的数据主键集合
+     * @return 结果
+     */
+    public int deleteSkipByDefIds(Collection<? extends Serializable> defIds);
 }

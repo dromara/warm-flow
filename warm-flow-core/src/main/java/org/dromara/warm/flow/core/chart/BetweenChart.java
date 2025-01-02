@@ -18,7 +18,6 @@ package org.dromara.warm.flow.core.chart;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.dromara.warm.flow.core.utils.DrawUtils;
 import org.dromara.warm.flow.core.utils.ObjectUtil;
 import org.dromara.warm.flow.core.utils.StringUtils;
 
@@ -53,7 +52,7 @@ public class BetweenChart implements FlowChart {
         graphics.setColor(c);
         graphics.drawRoundRect((xRect - 50) * n, (yRect - 40)  * n, 100 * n, 80 * n, 20 * n, 20 * n);
         if (ObjectUtil.isNotNull(textChart) && StringUtils.isNotEmpty(textChart.getTitle())) {
-            textChart.setXText(textChart.getXText() - DrawUtils.stringWidth(graphics, textChart.getTitle()) / 2);
+            textChart.setXText(textChart.getXText() - stringWidth(graphics, textChart.getTitle()) / 2);
             // 填充文字说明
             textChart.setN(n).draw(graphics);
         }

@@ -3,7 +3,7 @@ package org.dromara.warm.flow.orm.dao;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.enums.SqlKeyword;
-import org.dromara.warm.flow.core.dao.WarmDao;
+import org.dromara.warm.flow.core.orm.dao.WarmDao;
 import org.dromara.warm.flow.core.entity.RootEntity;
 import org.dromara.warm.flow.core.orm.agent.WarmQuery;
 import org.dromara.warm.flow.core.utils.ObjectUtil;

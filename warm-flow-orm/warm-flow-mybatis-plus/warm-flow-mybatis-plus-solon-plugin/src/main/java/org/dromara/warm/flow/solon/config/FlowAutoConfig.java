@@ -15,7 +15,7 @@
  */
 package org.dromara.warm.flow.solon.config;
 
-import org.dromara.warm.flow.core.FlowFactory;
+import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.config.WarmFlow;
 import org.dromara.warm.flow.core.utils.IdUtils;
 import org.dromara.warm.flow.orm.keygen.MybatisPlusIdGen;
@@ -34,6 +34,6 @@ public class FlowAutoConfig {
     public WarmFlow after() {
         // 设置Mybatis-Plus默认主键生成器
         IdUtils.setInstanceNative(new MybatisPlusIdGen());
-        return FlowFactory.getFlowConfig();
+        return FlowEngine.getFlowConfig();
     }
 }

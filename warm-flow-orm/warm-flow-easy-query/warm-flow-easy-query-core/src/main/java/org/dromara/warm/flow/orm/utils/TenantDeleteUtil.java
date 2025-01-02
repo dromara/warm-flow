@@ -15,7 +15,7 @@
  */
 package org.dromara.warm.flow.orm.utils;
 
-import org.dromara.warm.flow.core.FlowFactory;
+import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.entity.RootEntity;
 import org.dromara.warm.flow.core.handler.TenantHandler;
 import org.dromara.warm.flow.core.utils.ObjectUtil;
@@ -34,7 +34,7 @@ public class TenantDeleteUtil {
      * 填充上下文条件
      */
     public static <T extends RootEntity> T applyContextCondition(final T entity) {
-        TenantHandler tenantHandler = FlowFactory.tenantHandler();
+        TenantHandler tenantHandler = FlowEngine.tenantHandler();
         if (ObjectUtil.isNotNull(tenantHandler)) {
             entity.setTenantId(tenantHandler.getTenantId());
         }

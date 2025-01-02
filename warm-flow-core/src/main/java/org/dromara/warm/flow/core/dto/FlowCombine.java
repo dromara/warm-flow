@@ -18,7 +18,7 @@ package org.dromara.warm.flow.core.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.dromara.warm.flow.core.FlowFactory;
+import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.entity.Definition;
 import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.entity.Skip;
@@ -39,7 +39,7 @@ public class FlowCombine {
     /**
      * 所有的流程定义
      */
-    private Definition definition = FlowFactory.newDef();
+    private Definition definition = FlowEngine.newDef();
 
     /**
      * 所有的流程节点

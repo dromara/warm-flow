@@ -1,6 +1,6 @@
 package org.dromara.warm.flow.orm.dao;
 
-import org.dromara.warm.flow.core.dao.FlowFormDao;
+import org.dromara.warm.flow.core.orm.dao.FlowFormDao;
 import org.dromara.warm.flow.orm.entity.FlowForm;
 
 /**

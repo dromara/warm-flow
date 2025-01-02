@@ -16,7 +16,7 @@
 package org.dromara.warm.flow.orm.dao;
 
 import com.mybatisflex.core.query.QueryWrapper;
-import org.dromara.warm.flow.core.dao.WarmDao;
+import org.dromara.warm.flow.core.orm.dao.WarmDao;
 import org.dromara.warm.flow.core.entity.RootEntity;
 import org.dromara.warm.flow.core.orm.agent.WarmQuery;
 import org.dromara.warm.flow.core.utils.ObjectUtil;

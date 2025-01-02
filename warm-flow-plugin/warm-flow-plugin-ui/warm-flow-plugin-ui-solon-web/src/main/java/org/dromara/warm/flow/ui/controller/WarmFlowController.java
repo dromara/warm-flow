@@ -15,10 +15,10 @@
  */
 package org.dromara.warm.flow.ui.controller;
 
-import org.dromara.warm.flow.core.FlowFactory;
+import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.dto.ApiResult;
 import org.dromara.warm.flow.core.dto.DefJson;
-import org.dromara.warm.flow.core.dto.FlowForm;
+import org.dromara.warm.flow.core.dto.FlowDto;
 import org.dromara.warm.flow.core.dto.FlowParams;
 import org.dromara.warm.flow.core.entity.Form;
 import org.dromara.warm.flow.core.entity.Instance;
@@ -26,7 +26,6 @@ import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.utils.ExceptionUtil;
-import org.dromara.warm.flow.ui.dto.FormDto;
 import org.dromara.warm.flow.ui.dto.HandlerQuery;
 import org.dromara.warm.flow.ui.service.HandlerDictService;
 import org.dromara.warm.flow.ui.service.HandlerSelectService;
@@ -66,7 +65,7 @@ public class WarmFlowController {
     @Mapping("/save-json")
     @Tran
     public ApiResult<Void> saveJson(DefJson defJson) throws Exception {
-        FlowFactory.defService().saveDef(defJson);
+        FlowEngine.defService().saveDef(defJson);
         return ApiResult.ok();
     }
 
@@ -82,7 +81,7 @@ public class WarmFlowController {
     @Mapping("/query-def/{id}")
     public ApiResult<DefJson> queryDef(Long id) {
         try {
-            return ApiResult.ok(FlowFactory.defService().queryDesign(id));
+            return ApiResult.ok(FlowEngine.defService().queryDesign(id));
         } catch (Exception e) {
             log.error("获取流程json字符串", e);
             throw new FlowException(ExceptionUtil.handleMsg("获取流程json字符串失败", e));
@@ -172,7 +171,7 @@ public class WarmFlowController {
     @Mapping("/published-form")
     public ApiResult<List<Form>> publishedForm() {
         try {
-            return ApiResult.ok(FlowFactory.formService().list(FlowFactory.newForm().setIsPublish(1)));
+            return ApiResult.ok(FlowEngine.formService().list(FlowEngine.newForm().setIsPublish(1)));
         } catch (Exception e) {
             log.error("已发布表单列表异常", e);
             throw new FlowException(ExceptionUtil.handleMsg("已发布表单列表异常", e));
@@ -187,7 +186,7 @@ public class WarmFlowController {
     @Get
     @Mapping("/form-content/{id}")
     public ApiResult<String> getFormContent(@Param("id") Long id) {
-        try {return ApiResult.ok(FlowFactory.formService().getById(id).getFormContent());
+        try {return ApiResult.ok(FlowEngine.formService().getById(id).getFormContent());
         } catch (Exception e) {
             log.error("获取表单内容字符串", e);
             throw new FlowException(ExceptionUtil.handleMsg("获取表单内容字符串失败", e));
@@ -196,13 +195,13 @@ public class WarmFlowController {
 
     /**
      * 保存表单内容,该接口不需要系统实现
-     * @param formDto
+     * @param flowDto
      * @return
      */
     @Post
     @Mapping("/form-content")
-    public ApiResult<Void> saveFormContent(FormDto formDto) {
-        FlowFactory.formService().saveContent(formDto.getId(), formDto.getFormContent());
+    public ApiResult<Void> saveFormContent(FlowDto flowDto) {
+        FlowEngine.formService().saveContent(flowDto.getId(), flowDto.getFormContent());
         return ApiResult.ok();
     }
 
@@ -211,16 +210,16 @@ public class WarmFlowController {
      * 根据任务id获取待办任务表单及数据
      *
      * @param taskId 当前任务id
-     * @return {@link ApiResult< FlowForm >}
+     * @return {@link ApiResult<  FlowDto  >}
      * @author liangli
      * @date 2024/8/21 17:08
      **/
     @Get
     @Mapping(value = "/execute/load/{taskId}")
-    public ApiResult<FlowForm> load(@Param("taskId") Long taskId) {
+    public ApiResult<FlowDto> load(@Param("taskId") Long taskId) {
         FlowParams flowParams = FlowParams.build();
 
-        return ApiResult.ok(FlowFactory.taskService().load(taskId, flowParams));
+        return ApiResult.ok(FlowEngine.taskService().load(taskId, flowParams));
     }
 
     /**
@@ -231,10 +230,10 @@ public class WarmFlowController {
      */
     @Get
     @Mapping(value = "/execute/hisLoad/{taskId}")
-    public ApiResult<FlowForm> hisLoad(@Param("taskId") Long hisTaskId) {
+    public ApiResult<FlowDto> hisLoad(@Param("taskId") Long hisTaskId) {
         FlowParams flowParams = FlowParams.build();
 
-        return ApiResult.ok(FlowFactory.taskService().hisLoad(hisTaskId, flowParams));
+        return ApiResult.ok(FlowEngine.taskService().hisLoad(hisTaskId, flowParams));
     }
 
     /**
@@ -259,7 +258,7 @@ public class WarmFlowController {
 
         flowParams.formData(formData);
 
-        return ApiResult.ok(FlowFactory.taskService().skip(taskId, flowParams));
+        return ApiResult.ok(FlowEngine.taskService().skip(taskId, flowParams));
     }
 
     /**
@@ -271,7 +270,7 @@ public class WarmFlowController {
     public ApiResult<List<Node>> previousNodeList(@Param("definitionId") Long definitionId
             , @Param("nowNodeCode") String nowNodeCode) {
         try {
-            return ApiResult.ok(FlowFactory.nodeService().previousNodeList(definitionId, nowNodeCode));
+            return ApiResult.ok(FlowEngine.nodeService().previousNodeList(definitionId, nowNodeCode));
         } catch (Exception e) {
             log.error("获取所有的前置节点集合异常", e);
             throw new FlowException(ExceptionUtil.handleMsg("获取所有的前置节点集合失败", e));

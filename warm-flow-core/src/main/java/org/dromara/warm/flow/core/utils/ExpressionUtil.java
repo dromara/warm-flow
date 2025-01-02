@@ -15,11 +15,10 @@
  */
 package org.dromara.warm.flow.core.utils;
 
+import org.dromara.warm.flow.core.condition.*;
 import org.dromara.warm.flow.core.constant.ExceptionCons;
-import org.dromara.warm.flow.core.constant.FlowCons;
 import org.dromara.warm.flow.core.entity.Task;
 import org.dromara.warm.flow.core.exception.FlowException;
-import org.dromara.warm.flow.core.condition.*;
 import org.dromara.warm.flow.core.listener.ListenerStrategy;
 import org.dromara.warm.flow.core.strategy.ExpressionStrategy;
 import org.dromara.warm.flow.core.variable.DefaultVariableStrategy;
@@ -79,6 +78,9 @@ public class ExpressionUtil {
      * @param variable 流程变量
      */
     public static void evalVariable(List<Task> addTasks, Map<String, Object> variable) {
+        if (CollUtil.isEmpty(addTasks)) {
+            return;
+        }
         addTasks.forEach(addTask -> addTask.setPermissionList(addTask.getPermissionList().stream()
                 .map(s -> {
                     List<String> result = evalVariable(s, variable);

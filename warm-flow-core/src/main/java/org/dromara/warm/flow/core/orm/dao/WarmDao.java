@@ -13,7 +13,7 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.dromara.warm.flow.core.dao;
+package org.dromara.warm.flow.core.orm.dao;
 
 import org.dromara.warm.flow.core.orm.agent.WarmQuery;
 import org.dromara.warm.flow.core.utils.page.Page;

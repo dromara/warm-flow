@@ -13,31 +13,22 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.dromara.warm.flow.core.utils;
+package org.dromara.warm.flow.core.orm.dao;
 
-import java.awt.*;
+import org.dromara.warm.flow.core.entity.Definition;
+
+import java.util.List;
 
 /**
- * 流程图绘制工具类
- * 
+ * 流程定义Dao接口，不同的orm扩展包实现它
+ *
  * @author warm
- * @since 2023/6/25 16:27
+ * @since 2023-03-29
  */
-public class DrawUtils {
+public interface FlowDefinitionDao<T extends Definition> extends WarmDao<T> {
 
 
-    private DrawUtils() {
+    List<T> queryByCodeList(List<String> flowCodeList);
 
-    }
-
-    /**
-     * 获取文字的宽度
-     *
-     * @param graphics
-     * @param str
-     */
-    public static int stringWidth(Graphics2D graphics, String str) {
-        FontMetrics fm = graphics.getFontMetrics(new Font("宋体", Font.PLAIN, 12));
-        return fm.stringWidth(str);
-    }
+    void updatePublishStatus(List<Long> ids, Integer publishStatus);
 }

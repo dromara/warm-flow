@@ -72,16 +72,19 @@ public class FlowInstance extends JPARootEntity<FlowInstance> implements Instanc
                 if (Objects.nonNull(this.definitionId)) {
                     predicates.add(criteriaBuilder.equal(root.get("definitionId"), this.definitionId));
                 }
-                if (Objects.nonNull(this.variable)) {
+                if (StringUtils.isNotEmpty(this.variable)) {
                     predicates.add(criteriaBuilder.equal(root.get("variable"), this.variable));
                 }
-                if (Objects.nonNull(this.flowStatus)) {
+                if (StringUtils.isNotEmpty(this.flowStatus)) {
                     predicates.add(criteriaBuilder.equal(root.get("flowStatus"), this.flowStatus));
                 }
                 if (Objects.nonNull(this.activityStatus)) {
                     predicates.add(criteriaBuilder.equal(root.get("activityStatus"),this.activityStatus));
                 }
-                if (Objects.nonNull(this.ext)) {
+                if (StringUtils.isNotEmpty(this.defJson)) {
+                    predicates.add(criteriaBuilder.equal(root.get("defJson"), this.defJson));
+                }
+                if (StringUtils.isNotEmpty(this.ext)) {
                     predicates.add(criteriaBuilder.equal(root.get("ext"), this.ext));
                 }
             };
@@ -103,10 +106,10 @@ public class FlowInstance extends JPARootEntity<FlowInstance> implements Instanc
         if (StringUtils.isNotEmpty(updateEntity.nodeName)) {
             this.nodeName = updateEntity.nodeName;
         }
-        if (Objects.nonNull(updateEntity.variable)) {
+        if (StringUtils.isNotEmpty(updateEntity.variable)) {
             this.variable = updateEntity.variable;
         }
-        if (Objects.nonNull(updateEntity.flowStatus)) {
+        if (StringUtils.isNotEmpty(updateEntity.flowStatus)) {
             this.flowStatus = updateEntity.flowStatus;
         }
         if (Objects.nonNull(updateEntity.activityStatus)) {
@@ -115,7 +118,10 @@ public class FlowInstance extends JPARootEntity<FlowInstance> implements Instanc
         if (StringUtils.isNotEmpty(updateEntity.createBy)) {
             this.createBy = updateEntity.createBy;
         }
-        if (Objects.nonNull(updateEntity.ext)) {
+        if (StringUtils.isNotEmpty(updateEntity.defJson)) {
+            this.defJson = updateEntity.defJson;
+        }
+        if (StringUtils.isNotEmpty(updateEntity.ext)) {
             this.ext = updateEntity.ext;
         }
 
@@ -220,6 +226,12 @@ public class FlowInstance extends JPARootEntity<FlowInstance> implements Instanc
      */
     @Transient
     private String formPath;
+
+    /**
+     * 流程定义json
+     */
+    @Column(name = "def_json")
+    private String defJson;
 
     /**
      * 扩展字段，预留给业务系统使用

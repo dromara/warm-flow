@@ -74,20 +74,17 @@
       <dependency>
         <groupId>com.easy-query</groupId>
         <artifactId>sql-mysql</artifactId>
-        <version>${easy-query.version}</version>
         <scope>provided</scope>
       </dependency>
       <!-- entity-query的api包 -->
       <dependency>
         <groupId>com.easy-query</groupId>
         <artifactId>sql-api-proxy</artifactId>
-        <version>${easy-query.version}</version>
       </dependency>
       <!-- entity-query的apt包 如果你是多模块只需要在生成apt的对象模块处需要引入 -->
       <dependency>
         <groupId>com.easy-query</groupId>
         <artifactId>sql-processor</artifactId>
-        <version>${easy-query.version}</version>
       </dependency>
 
     </dependencies>

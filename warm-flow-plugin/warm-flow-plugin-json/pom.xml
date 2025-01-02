@@ -53,7 +53,7 @@
             <email>w205782390@163.com</email>
         </developer>
     </developers>
-    
+
     <dependencies>
         <dependency>
             <groupId>org.dromara.warm</groupId>

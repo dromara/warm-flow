@@ -15,8 +15,8 @@
  */
 package org.dromara.warm.flow.orm.dao;
 
-import org.dromara.warm.flow.core.FlowFactory;
-import org.dromara.warm.flow.core.dao.FlowHisTaskDao;
+import org.dromara.warm.flow.core.FlowEngine;
+import org.dromara.warm.flow.core.orm.dao.FlowHisTaskDao;
 import org.dromara.warm.flow.core.enums.SkipType;
 import org.dromara.warm.flow.core.utils.StringUtils;
 import org.dromara.warm.flow.orm.entity.FlowHisTask;
@@ -104,7 +104,7 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask> implements Flow
                 predicates.add(createIn(criteriaBuilder, root, "instanceId", instanceIds));
 
                 // 更新值
-                innerCriteriaUpdate.set(root.get("delFlag"), FlowFactory.getFlowConfig().getLogicDeleteValue());
+                innerCriteriaUpdate.set(root.get("delFlag"), FlowEngine.getFlowConfig().getLogicDeleteValue());
             });
 
             return entityManager.createQuery(criteriaUpdate).executeUpdate();

@@ -15,8 +15,8 @@
  */
 package org.dromara.warm.flow.orm.dao;
 
-import org.dromara.warm.flow.core.FlowFactory;
-import org.dromara.warm.flow.core.dao.FlowSkipDao;
+import org.dromara.warm.flow.core.FlowEngine;
+import org.dromara.warm.flow.core.orm.dao.FlowSkipDao;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.utils.StringUtils;
 import org.dromara.warm.flow.orm.entity.FlowSkip;
@@ -54,7 +54,7 @@ public class FlowSkipDaoImpl extends WarmDaoImpl<FlowSkip> implements FlowSkipDa
     public int deleteSkipByDefIds(Collection<? extends Serializable> defIds) {
         FlowSkip entity = TenantDeleteUtil.getEntity(newEntity());
         if (StringUtils.isNotEmpty(entity.getDelFlag())) {
-            return getMapper().updateSkipByDefIdsLogic(defIds, entity, FlowFactory.getFlowConfig().getLogicDeleteValue(), entity.getDelFlag());
+            return getMapper().updateSkipByDefIdsLogic(defIds, entity, FlowEngine.getFlowConfig().getLogicDeleteValue(), entity.getDelFlag());
         }
         return getMapper().deleteSkipByDefIds(defIds, entity);
     }

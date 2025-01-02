@@ -15,8 +15,8 @@
  */
 package org.dromara.warm.flow.orm.dao;
 
-import org.dromara.warm.flow.core.FlowFactory;
-import org.dromara.warm.flow.core.dao.FlowTaskDao;
+import org.dromara.warm.flow.core.FlowEngine;
+import org.dromara.warm.flow.core.orm.dao.FlowTaskDao;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.utils.StringUtils;
 import org.dromara.warm.flow.orm.entity.FlowTask;
@@ -53,7 +53,7 @@ public class FlowTaskDaoImpl extends WarmDaoImpl<FlowTask> implements FlowTaskDa
     public int deleteByInsIds(List<Long> instanceIds) {
         FlowTask entity = TenantDeleteUtil.getEntity(newEntity());
         if (StringUtils.isNotEmpty(entity.getDelFlag())) {
-            return getMapper().updateByInsIdsLogic(instanceIds, entity, FlowFactory.getFlowConfig().getLogicDeleteValue(), entity.getDelFlag());
+            return getMapper().updateByInsIdsLogic(instanceIds, entity, FlowEngine.getFlowConfig().getLogicDeleteValue(), entity.getDelFlag());
         }
         return getMapper().deleteByInsIds(instanceIds, entity);
     }

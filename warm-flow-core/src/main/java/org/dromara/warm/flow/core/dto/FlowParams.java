@@ -15,7 +15,7 @@
  */
 package org.dromara.warm.flow.core.dto;
 
-import org.dromara.warm.flow.core.FlowFactory;
+import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.handler.PermissionHandler;
 import org.dromara.warm.flow.core.utils.CollUtil;
 import org.dromara.warm.flow.core.utils.StringUtils;
@@ -183,7 +183,7 @@ public class FlowParams implements Serializable {
     }
 
     public String getVariableStr() {
-        return FlowFactory.jsonConvert.objToStr(variable);
+        return FlowEngine.jsonConvert.objToStr(variable);
     }
 
     public String getNodeCode() {
@@ -196,7 +196,7 @@ public class FlowParams implements Serializable {
 
     public String getHandler() {
         if (StringUtils.isEmpty(handler)) {
-            PermissionHandler permissionHandler = FlowFactory.permissionHandler();
+            PermissionHandler permissionHandler = FlowEngine.permissionHandler();
             if (permissionHandler != null) {
                 handler = permissionHandler.getHandler();
             }
@@ -206,7 +206,7 @@ public class FlowParams implements Serializable {
 
     public List<String> getPermissionFlag() {
         if (CollUtil.isEmpty(permissionFlag)) {
-            PermissionHandler permissionHandler = FlowFactory.permissionHandler();
+            PermissionHandler permissionHandler = FlowEngine.permissionHandler();
             if (permissionHandler != null) {
                 permissionFlag = permissionHandler.permissions();
             }

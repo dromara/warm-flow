@@ -13,26 +13,25 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.dromara.warm.flow.core.dao;
+package org.dromara.warm.flow.core.orm.dao;
 
-import org.dromara.warm.flow.core.entity.Skip;
+import org.dromara.warm.flow.core.entity.Task;
 
-import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 
 /**
- * 节点跳转关联Mapper接口
+ * 待办任务Mapper接口
  *
  * @author warm
  * @since 2023-03-29
  */
-public interface FlowSkipDao<T extends Skip> extends WarmDao<T> {
+public interface FlowTaskDao<T extends Task> extends WarmDao<T> {
 
     /**
-     * 批量删除节点跳转关联
+     * 根据instanceIds删除
      *
-     * @param defIds 需要删除的数据主键集合
+     * @param instanceIds 主键
      * @return 结果
      */
-    public int deleteSkipByDefIds(Collection<? extends Serializable> defIds);
+    int deleteByInsIds(List<Long> instanceIds);
 }

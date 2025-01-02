@@ -15,7 +15,7 @@
  */
 package org.dromara.warm.flow.ui.convert;
 
-import org.dromara.warm.flow.core.FlowFactory;
+import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.entity.Skip;
 import org.dromara.warm.flow.core.enums.NodeType;
@@ -30,7 +30,7 @@ public class ParallelNodeConvert extends NodeConvertAbstract{
         // 并行网关，会在子节点 最前面加一个条件分支， 否则会出问题
         List<Node> seaflowNodeList = new ArrayList<>();
         String startParallelNodeId = (String)jsonObject.get("nodeId");
-        Node serialNode = FlowFactory.newNode();
+        Node serialNode = FlowEngine.newNode();
         serialNode.setNodeCode(startParallelNodeId);
         serialNode.setNodeType(NodeType.PARALLEL.getKey());
 //        serialNode.setDirection("1");
@@ -43,7 +43,7 @@ public class ParallelNodeConvert extends NodeConvertAbstract{
         //前
 //        seaflowNode startNode = getNode(jsonObject);
         // 后
-        Node endNode = FlowFactory.newNode();
+        Node endNode = FlowEngine.newNode();
         endNode.setNodeCode(UUID.randomUUID().toString());
 
 //        seaflowNodeList.add(startNode);
@@ -53,7 +53,7 @@ public class ParallelNodeConvert extends NodeConvertAbstract{
             List<Map<String,Object>> jsonArray = childNodes.get(j);
             jsonArray.get(0).put("nodeType", NodeType.BETWEEN.getValue());
             // 跳转 不变
-            Skip startNodeSkip = FlowFactory.newSkip();
+            Skip startNodeSkip = FlowEngine.newSkip();
             startNodeSkip.setSkipType(SkipType.PASS.getKey());
 
             startNodeSkip.setNextNodeCode((String)jsonArray.get(0).get("nodeId"));
@@ -62,7 +62,7 @@ public class ParallelNodeConvert extends NodeConvertAbstract{
             List<Node> convert = NodeConvertUtil.convert(jsonArray, startNodeId, endNodeId);
             //  子节点的最后一个 还要处理下连线问题
             Node seaflowNode = convert.get(convert.size() - 1);
-            Skip flowSkip = FlowFactory.newSkip();
+            Skip flowSkip = FlowEngine.newSkip();
             flowSkip.setSkipType(SkipType.PASS.getKey());
             flowSkip.setNextNodeCode(endNode.getNodeCode());
             seaflowNode.getSkipList().add(flowSkip);
@@ -74,13 +74,13 @@ public class ParallelNodeConvert extends NodeConvertAbstract{
 
         String emptyNodeCode  = UUID.randomUUID().toString();
         //并行网关（出） 连接空节点
-        Skip parallelOutSkip = FlowFactory.newSkip();
+        Skip parallelOutSkip = FlowEngine.newSkip();
         parallelOutSkip.setSkipType(SkipType.PASS.getKey());
         parallelOutSkip.setNextNodeCode(emptyNodeCode);
         endNode.setSkipList(Arrays.asList(parallelOutSkip));
 
         // 并行网关（出） 后面再加一个空节点
-        Node emptyNode = FlowFactory.newNode();
+        Node emptyNode = FlowEngine.newNode();
         emptyNode.setNodeCode(emptyNodeCode);
         emptyNode.setNodeType(NodeType.BETWEEN.getKey());
         // 设置空类别自动通过， 区分前端审批人为空的配置
@@ -96,7 +96,7 @@ public class ParallelNodeConvert extends NodeConvertAbstract{
         if(nextNodeId != null){
             List<Skip> endSkipList = new ArrayList<>();
             for (String nodeId : nextNodeId.split(",")) {
-                Skip endSkip = FlowFactory.newSkip();
+                Skip endSkip = FlowEngine.newSkip();
                 endSkip.setSkipType(SkipType.PASS.getKey());
                 endSkip.setNextNodeCode(nodeId);
                 endSkipList.add(endSkip);

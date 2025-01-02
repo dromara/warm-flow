@@ -15,7 +15,7 @@
  */
 package org.dromara.warm.flow.orm.utils;
 
-import org.dromara.warm.flow.core.FlowFactory;
+import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.config.WarmFlow;
 import org.dromara.warm.flow.core.entity.RootEntity;
 import org.dromara.warm.flow.core.handler.TenantHandler;
@@ -37,12 +37,12 @@ public class TenantDeleteUtil {
      * @param <T>
      */
     public static <T extends RootEntity> T getEntity(T entity) {
-        WarmFlow flowConfig = FlowFactory.getFlowConfig();
+        WarmFlow flowConfig = FlowEngine.getFlowConfig();
         if (flowConfig.isLogicDelete()) {
             entity.setDelFlag(flowConfig.getLogicNotDeleteValue());
         }
 
-        TenantHandler tenantHandler = FlowFactory.tenantHandler();
+        TenantHandler tenantHandler = FlowEngine.tenantHandler();
         if (ObjectUtil.isNotNull(tenantHandler)) {
             entity.setTenantId(tenantHandler.getTenantId());
         }

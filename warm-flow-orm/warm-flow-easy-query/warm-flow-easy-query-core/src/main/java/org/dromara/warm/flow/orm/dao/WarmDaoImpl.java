@@ -21,8 +21,8 @@ import com.easy.query.core.enums.SQLExecuteStrategyEnum;
 import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
-import org.dromara.warm.flow.core.FlowFactory;
-import org.dromara.warm.flow.core.dao.WarmDao;
+import org.dromara.warm.flow.core.FlowEngine;
+import org.dromara.warm.flow.core.orm.dao.WarmDao;
 import org.dromara.warm.flow.core.entity.RootEntity;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.orm.agent.WarmQuery;
@@ -52,7 +52,7 @@ public abstract class WarmDaoImpl<T extends RootEntity & ProxyEntityAvailable<T,
 
     @Override
     public T selectById(Serializable id) {
-        boolean logicDelete = FlowFactory.getFlowConfig().isLogicDelete();
+        boolean logicDelete = FlowEngine.getFlowConfig().isLogicDelete();
         return entityQuery().queryable(entityClass())
             .useLogicDelete(logicDelete)
             .whereById(id)
@@ -62,7 +62,7 @@ public abstract class WarmDaoImpl<T extends RootEntity & ProxyEntityAvailable<T,
 
     @Override
     public List<T> selectByIds(Collection<? extends Serializable> ids) {
-        final boolean logicDelete = FlowFactory.getFlowConfig().isLogicDelete();
+        final boolean logicDelete = FlowEngine.getFlowConfig().isLogicDelete();
         return entityQuery().queryable(entityClass())
             .useLogicDelete(logicDelete)
             .whereByIds(ids)
@@ -71,7 +71,7 @@ public abstract class WarmDaoImpl<T extends RootEntity & ProxyEntityAvailable<T,
 
     @Override
     public Page<T> selectPage(T entity, Page<T> page) {
-        final boolean logicDelete = FlowFactory.getFlowConfig().isLogicDelete();
+        final boolean logicDelete = FlowEngine.getFlowConfig().isLogicDelete();
         TenantDeleteUtil.applyContextCondition(entity);
         long total = entityQuery().queryable(entityClass())
             .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT) // 忽略空值查询
@@ -95,7 +95,7 @@ public abstract class WarmDaoImpl<T extends RootEntity & ProxyEntityAvailable<T,
     @Override
     public List<T> selectList(T entity, WarmQuery<T> query) {
         TenantDeleteUtil.applyContextCondition(entity);
-        final boolean logicDelete = FlowFactory.getFlowConfig().isLogicDelete();
+        final boolean logicDelete = FlowEngine.getFlowConfig().isLogicDelete();
         UISort uiSort = UISort.of(query);
         return entityQuery().queryable(entityClass())
             .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT) // 忽略空值查询
@@ -107,7 +107,7 @@ public abstract class WarmDaoImpl<T extends RootEntity & ProxyEntityAvailable<T,
 
     @Override
     public long selectCount(T entity) {
-        final boolean logicDelete = FlowFactory.getFlowConfig().isLogicDelete();
+        final boolean logicDelete = FlowEngine.getFlowConfig().isLogicDelete();
         TenantDeleteUtil.applyContextCondition(entity);
         return entityQuery().queryable(entityClass())
             .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT) // 忽略空值查询
@@ -125,7 +125,7 @@ public abstract class WarmDaoImpl<T extends RootEntity & ProxyEntityAvailable<T,
     @Override
     public int updateById(T entity) {
         TenantDeleteUtil.applyContextCondition(entity);
-        final boolean logicDelete = FlowFactory.getFlowConfig().isLogicDelete();
+        final boolean logicDelete = FlowEngine.getFlowConfig().isLogicDelete();
         return (int) entityQuery().updatable(entity)
             .useLogicDelete(logicDelete)
             .setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS) // 只更新非空字段
@@ -135,7 +135,7 @@ public abstract class WarmDaoImpl<T extends RootEntity & ProxyEntityAvailable<T,
 
     @Override
     public int deleteById(Serializable id) {
-        final boolean logicDelete = FlowFactory.getFlowConfig().isLogicDelete();
+        final boolean logicDelete = FlowEngine.getFlowConfig().isLogicDelete();
         return (int) entityQuery().deletable(entityClass())
             .useLogicDelete(logicDelete)
             .allowDeleteStatement(!logicDelete)
@@ -145,7 +145,7 @@ public abstract class WarmDaoImpl<T extends RootEntity & ProxyEntityAvailable<T,
 
     @Override
     public int deleteByIds(Collection<? extends Serializable> ids) {
-        final boolean logicDelete = FlowFactory.getFlowConfig().isLogicDelete();
+        final boolean logicDelete = FlowEngine.getFlowConfig().isLogicDelete();
         return (int) entityQuery().deletable(entityClass())
             .useLogicDelete(logicDelete)
             .allowDeleteStatement(!logicDelete)
@@ -169,7 +169,7 @@ public abstract class WarmDaoImpl<T extends RootEntity & ProxyEntityAvailable<T,
         for (T record : list) {
             TenantDeleteUtil.applyContextCondition(record);
         }
-        final boolean logicDelete = FlowFactory.getFlowConfig().isLogicDelete();
+        final boolean logicDelete = FlowEngine.getFlowConfig().isLogicDelete();
         entityQuery().updatable(list)
             .useLogicDelete(logicDelete)
             .batch()

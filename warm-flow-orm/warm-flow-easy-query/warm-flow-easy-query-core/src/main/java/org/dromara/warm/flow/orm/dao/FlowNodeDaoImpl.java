@@ -16,8 +16,8 @@
 package org.dromara.warm.flow.orm.dao;
 
 import com.easy.query.core.util.EasyCollectionUtil;
-import org.dromara.warm.flow.core.FlowFactory;
-import org.dromara.warm.flow.core.dao.FlowNodeDao;
+import org.dromara.warm.flow.core.FlowEngine;
+import org.dromara.warm.flow.core.orm.dao.FlowNodeDao;
 import org.dromara.warm.flow.core.utils.StringUtils;
 import org.dromara.warm.flow.orm.entity.FlowNode;
 import org.dromara.warm.flow.orm.entity.proxy.FlowNodeProxy;
@@ -38,7 +38,7 @@ public class FlowNodeDaoImpl extends WarmDaoImpl<FlowNode, FlowNodeProxy> implem
     public List<FlowNode> getByNodeCodes(List<String> nodeCodes, Long definitionId) {
         FlowNode entityFilter = newEntity();
         TenantDeleteUtil.applyContextCondition(entityFilter);
-        final boolean logicDelete = FlowFactory.getFlowConfig().isLogicDelete();
+        final boolean logicDelete = FlowEngine.getFlowConfig().isLogicDelete();
 
         return entityQuery().queryable(entityClass())
             .useLogicDelete(logicDelete)
@@ -55,7 +55,7 @@ public class FlowNodeDaoImpl extends WarmDaoImpl<FlowNode, FlowNodeProxy> implem
 
         final FlowNode entity = newEntity();
         TenantDeleteUtil.applyContextCondition(entity);
-        final boolean logicDelete = FlowFactory.getFlowConfig().isLogicDelete();
+        final boolean logicDelete = FlowEngine.getFlowConfig().isLogicDelete();
 
 
         // 没有使用逻辑删除， 直接物理删除
@@ -84,7 +84,7 @@ public class FlowNodeDaoImpl extends WarmDaoImpl<FlowNode, FlowNodeProxy> implem
     public int delete(FlowNode entity) {
 
         TenantDeleteUtil.applyContextCondition(entity);
-        final boolean logicDelete = FlowFactory.getFlowConfig().isLogicDelete();
+        final boolean logicDelete = FlowEngine.getFlowConfig().isLogicDelete();
 
         return (int) entityQuery().deletable(entityClass())
             .useLogicDelete(logicDelete)

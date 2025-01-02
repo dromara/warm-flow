@@ -117,6 +117,11 @@ public class FlowInstance implements Instance {
     private String formPath;
 
     /**
+     * 流程定义json
+     */
+    private String defJson;
+
+    /**
      * 扩展字段，预留给业务系统使用
      */
     private String ext;

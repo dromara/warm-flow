@@ -19,15 +19,15 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-import org.dromara.warm.flow.core.FlowFactory;
+import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.entity.Definition;
 import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.entity.Skip;
 import org.dromara.warm.flow.core.utils.CollUtil;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 流程定义json对象
@@ -144,7 +144,7 @@ public class DefJson {
     }
 
     public static Definition copyDef(DefJson defJson) {
-        Definition definition = FlowFactory.newDef()
+        Definition definition = FlowEngine.newDef()
                 .setId(defJson.getId())
                 .setFlowCode(defJson.getFlowCode())
                 .setFlowName(defJson.getFlowName())
@@ -160,7 +160,7 @@ public class DefJson {
         definition.setNodeList(nodeList);
         for (NodeJson nodeJson : defJson.getNodeList()) {
             // 向节点中添加子节点
-            Node node = FlowFactory.newNode()
+            Node node = FlowEngine.newNode()
                     .setNodeType(nodeJson.getNodeType())
                     .setNodeCode(nodeJson.getNodeCode())
                     .setNodeName(nodeJson.getNodeName())
@@ -181,7 +181,7 @@ public class DefJson {
 
             if (CollUtil.isNotEmpty(nodeJson.getSkipList())) {
                 for (SkipJson skipJson : nodeJson.getSkipList()) {
-                    skipList.add(FlowFactory.newSkip()
+                    skipList.add(FlowEngine.newSkip()
                             .setCoordinate(skipJson.getCoordinate())
                             .setSkipType(skipJson.getSkipType())
                             .setSkipName(skipJson.getSkipName())
@@ -193,6 +193,41 @@ public class DefJson {
 
         }
         return definition;
+    }
+
+    public static DefChart copyChart(DefJson defJson) {
+        DefChart defChart = new DefChart();
+        defChart.setDefJson(defJson);
+        defChart.setNodeJsonList(defJson.getNodeList());
+        defChart.setSkipJsonList(Optional.of(defJson)
+                .map(DefJson::getNodeList)
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(NodeJson::getSkipList)
+                .filter(Objects::nonNull)
+                .flatMap(List::stream)
+                .collect(Collectors.toList()));
+
+        return defChart;
+    }
+
+    public static FlowCombine copyCombine(DefJson defJson) {
+        Definition definition = copyDef(defJson);
+        FlowCombine flowCombine = new FlowCombine();
+        flowCombine.setDefinition(definition);
+        flowCombine.setAllNodes(definition.getNodeList());
+        List<Skip> skipList = Optional.of(definition)
+                .map(Definition::getNodeList)
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(Node::getSkipList)
+                .filter(Objects::nonNull)
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
+
+        flowCombine.setAllSkips(skipList);
+
+        return flowCombine;
     }
 
 }

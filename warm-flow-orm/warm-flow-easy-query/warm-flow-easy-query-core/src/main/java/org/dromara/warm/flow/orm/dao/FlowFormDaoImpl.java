@@ -1,7 +1,7 @@
 package org.dromara.warm.flow.orm.dao;
 
-import org.dromara.warm.flow.core.FlowFactory;
-import org.dromara.warm.flow.core.dao.FlowFormDao;
+import org.dromara.warm.flow.core.FlowEngine;
+import org.dromara.warm.flow.core.orm.dao.FlowFormDao;
 import org.dromara.warm.flow.core.utils.StringUtils;
 import org.dromara.warm.flow.orm.entity.FlowForm;
 import org.dromara.warm.flow.orm.entity.proxy.FlowFormProxy;
@@ -30,7 +30,7 @@ public class FlowFormDaoImpl extends WarmDaoImpl<FlowForm, FlowFormProxy> implem
     @Override
     public int delete(FlowForm entity) {
         TenantDeleteUtil.applyContextCondition(entity);
-        final boolean logicDelete = FlowFactory.getFlowConfig().isLogicDelete();
+        final boolean logicDelete = FlowEngine.getFlowConfig().isLogicDelete();
 
         // 没有启用逻辑删除， 执行物理删除
         return (int) entityQuery().deletable(entityClass())

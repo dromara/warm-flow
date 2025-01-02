@@ -62,14 +62,14 @@
         <slot name="form-item-task-permissionFlag" :model="form" field="permissionFlag">
           <el-form-item label="办理人输入：" class="permissionItem">
             <div v-for="(tag, index) in form.permissionFlag" :key="index" class="inputGroup">
-              <el-select v-if="dictList" v-model="form.permissionFlag[index]" placeholder="请选择">
-                <el-option
-                    v-for="dict in dictList"
-                    :key="dict.value"
-                    :label="dict.label"
-                    :value="parseInt(dict.value)"
-                ></el-option>
-              </el-select>
+<!--              <el-select v-if="dictList" v-model="form.permissionFlag[index]" placeholder="请选择">-->
+<!--                <el-option-->
+<!--                    v-for="dict in dictList"-->
+<!--                    :key="dict.value"-->
+<!--                    :label="dict.label"-->
+<!--                    :value="parseInt(dict.value)"-->
+<!--                ></el-option>-->
+<!--              </el-select>-->
 
               <el-input v-model="form.permissionFlag[index]" style="width: 200px;"></el-input>
               <Close class="Icon" v-if="form.permissionFlag.length !== 1 && !disabled" @click="delPermission(index)" />
@@ -110,7 +110,7 @@
         <slot name="form-item-task-formPath" :model="form" field="formPath" v-else-if="form.formCustom === 'Y'">
           <el-form-item label="审批流程表单：">
             <el-select v-model="form.formPath">
-              <el-option v-for="item in definitionList" :key="id" :label="`${item.formName} ${item.version}`" :value="item.id"></el-option>
+              <el-option v-for="item in definitionList" :key="id" :label="`${item.formName} - v${item.version}`" :value="item.id"></el-option>
             </el-select>
           </el-form-item>
         </slot>
@@ -230,7 +230,7 @@ function addPermission() {
 
 /** 选择角色权限范围触发 */
 function getPermissionFlag() {
-  form.value.permissionFlag = form.value.permissionFlag ? form.value.permissionFlag.split(",") : [""];
+  form.value.permissionFlag = form.value.permissionFlag ? form.value.permissionFlag.split("@@") : [""];
   if (form.value.listenerType) {
     const listenerTypes = form.value.listenerType.split(",");
     const listenerPaths = form.value.listenerPath.split("@@");
@@ -302,7 +302,7 @@ function getPreviousCode(skipList, nowNodeCode) {
 
 getPermissionFlag();
 getDefinition();
-getHandlerDict();
+// getHandlerDict();
 </script>
 
 <style scoped lang="scss">

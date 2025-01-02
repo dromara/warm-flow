@@ -80,14 +80,39 @@ public interface NodeService extends IWarmService<Node> {
                                      Map<String, Object> variable);
 
     /**
-     * 根据流程定义和当前节点code获取下一节点(不考虑下个节点是网关的情况)
+     * 根据流程定义和当前节点获取下一节点,如是网关跳过取下一节点,并行网关返回多个节点
+     * anyNodeCode不为空，则可跳转anyNodeCode节点
+     *
+     * @param definitionId  流程定义id
+     * @param nowNode   当前节点
+     * @param anyNodeCode   anyNodeCode不为空，则可跳转anyNodeCode节点（优先级最高）
+     * @param skipType      跳转类型（PASS审批通过 REJECT退回）
+     * @param variable      流程变量,下一个节点是网关需要判断跳转条件,并行网关返回多个节点
+     * @return List<Node>
+     */
+    List<Node> getNextNodeList(Long definitionId, Node nowNode, String anyNodeCode, String skipType,
+                               Map<String, Object> variable);
+
+    /**
+     * 根据流程定义和当前节点获取下一节点
+     * anyNodeCode不为空，则可跳转anyNodeCode节点
+     * @param definitionId 流程定义id
+     * @param nowNode 当前节点
+     * @param anyNodeCode   anyNodeCode不为空，则可跳转anyNodeCode节点（优先级最高）
+     * @param skipType      跳转类型（PASS审批通过 REJECT退回）
+     * @return Node
+     */
+    Node getNextNode(Long definitionId, Node nowNode, String anyNodeCode, String skipType);
+
+    /**
+     * 根据流程定义和当前节点code获取下一节点
      * anyNodeCode不为空，则可跳转anyNodeCode节点
      *
      * @param definitionId  流程定义id
      * @param nowNodeCode   当前节点code
      * @param anyNodeCode   anyNodeCode不为空，则可跳转anyNodeCode节点（优先级最高）
      * @param skipType      跳转类型（PASS审批通过 REJECT退回）
-     * @return List<Node>
+     * @return Node
      * @author xiarg
      * @since 2024/8/21 16:48
      */

@@ -16,10 +16,10 @@
 package org.dromara.warm.flow.core.service.impl;
 
 import org.dom4j.Document;
-import org.dromara.warm.flow.core.FlowFactory;
+import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.chart.*;
 import org.dromara.warm.flow.core.constant.ExceptionCons;
-import org.dromara.warm.flow.core.dao.FlowDefinitionDao;
+import org.dromara.warm.flow.core.orm.dao.FlowDefinitionDao;
 import org.dromara.warm.flow.core.dto.FlowCombine;
 import org.dromara.warm.flow.core.entity.*;
 import org.dromara.warm.flow.core.enums.ActivityStatus;
@@ -78,7 +78,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
 
     @Override
     public Definition importJson(String defJson) {
-        return importDef(FlowFactory.jsonConvert.strToBean(defJson, DefJson.class));
+        return importDef(FlowEngine.jsonConvert.strToBean(defJson, DefJson.class));
     }
 
     @Override
@@ -108,20 +108,20 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         for (Node node : nodeList) {
             node.setVersion(definition.getVersion());
         }
-        FlowFactory.defService().save(definition);
-        FlowFactory.nodeService().saveBatch(nodeList);
-        FlowFactory.skipService().saveBatch(skipList);
+        FlowEngine.defService().save(definition);
+        FlowEngine.nodeService().saveBatch(nodeList);
+        FlowEngine.skipService().saveBatch(skipList);
         return definition;
     }
 
     @Override
     public boolean saveAndInitNode(Definition definition) {
         definition.setVersion(getNewVersion(definition));
-        FlowFactory.dataFillHandler().idFill(definition);
+        FlowEngine.dataFillHandler().idFill(definition);
         List<Node> nodeList = new ArrayList<>();
         List<Skip> skipList = new ArrayList<>();
 
-        Node startNode = FlowFactory.newNode()
+        Node startNode = FlowEngine.newNode()
                 .setDefinitionId(definition.getId())
                 .setNodeCode(NodeType.START.getValue())
                 .setNodeName("开始")
@@ -131,7 +131,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                 .setVersion(definition.getVersion());
         nodeList.add(startNode);
 
-        Node betweenOneNode = FlowFactory.newNode()
+        Node betweenOneNode = FlowEngine.newNode()
                 .setDefinitionId(definition.getId())
                 .setNodeCode("submit")
                 .setNodeName("中间节点-或签1")
@@ -141,7 +141,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                 .setVersion(definition.getVersion());
         nodeList.add(betweenOneNode);
 
-        Node betweenTwoNode = FlowFactory.newNode()
+        Node betweenTwoNode = FlowEngine.newNode()
                 .setDefinitionId(definition.getId())
                 .setNodeCode("approval")
                 .setNodeName("中间节点-或签2")
@@ -151,7 +151,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                 .setVersion(definition.getVersion());
         nodeList.add(betweenTwoNode);
 
-        Node endNode = FlowFactory.newNode()
+        Node endNode = FlowEngine.newNode()
                 .setDefinitionId(definition.getId())
                 .setNodeCode(NodeType.END.getValue())
                 .setNodeName("结束")
@@ -161,7 +161,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                 .setVersion(definition.getVersion());
         nodeList.add(endNode);
 
-        skipList.add(FlowFactory.newSkip()
+        skipList.add(FlowEngine.newSkip()
                 .setDefinitionId(definition.getId())
                 .setNowNodeCode(startNode.getNodeCode())
                 .setNextNodeType(startNode.getNodeType())
@@ -170,7 +170,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                 .setSkipType(SkipType.PASS.getKey())
                 .setCoordinate("280,200;370,200"));
 
-        skipList.add(FlowFactory.newSkip()
+        skipList.add(FlowEngine.newSkip()
                 .setDefinitionId(definition.getId())
                 .setNowNodeCode(betweenOneNode.getNodeCode())
                 .setNextNodeType(betweenOneNode.getNodeType())
@@ -179,7 +179,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                 .setSkipType(SkipType.PASS.getKey())
                 .setCoordinate("470,200;550,200"));
 
-        skipList.add(FlowFactory.newSkip()
+        skipList.add(FlowEngine.newSkip()
                 .setDefinitionId(definition.getId())
                 .setNowNodeCode(betweenTwoNode.getNodeCode())
                 .setNextNodeType(betweenTwoNode.getNodeType())
@@ -187,8 +187,8 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                 .setNextNodeType(endNode.getNodeType())
                 .setSkipType(SkipType.PASS.getKey())
                 .setCoordinate("650,200;740,200"));
-        FlowFactory.nodeService().saveBatch(nodeList);
-        FlowFactory.skipService().saveBatch(skipList);
+        FlowEngine.nodeService().saveBatch(nodeList);
+        FlowEngine.skipService().saveBatch(skipList);
         return save(definition);
     }
 
@@ -202,20 +202,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         if (ObjectUtil.isNull(defJson)) {
             return;
         }
-        Definition definition = DefJson.copyDef(defJson);
-        FlowCombine flowCombine = new FlowCombine();
-        flowCombine.setDefinition(definition);
-        flowCombine.setAllNodes(definition.getNodeList());
-        List<Skip> skipList = Optional.of(definition)
-                .map(Definition::getNodeList)
-                .orElse(Collections.emptyList())
-                .stream()
-                .map(Node::getSkipList)
-                .filter(Objects::nonNull)
-                .flatMap(List::stream)
-                .collect(Collectors.toList());
-
-        flowCombine.setAllSkips(skipList);
+        FlowCombine flowCombine = DefJson.copyCombine(defJson);
 
         // 校验流程定义合法性
         checkFlowLegal(flowCombine);
@@ -247,7 +234,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
 
     @Override
     public String exportJson(Long id) {
-        return FlowFactory.jsonConvert.objToStr(DefJson.copyDef(getAllDataDefinition(id)));
+        return FlowEngine.jsonConvert.objToStr(DefJson.copyDef(getAllDataDefinition(id)));
     }
 
     @Override
@@ -260,9 +247,9 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     @Override
     public Definition getAllDataDefinition(Long id) {
         Definition definition = getDao().selectById(id);
-        List<Node> nodeList = FlowFactory.nodeService().list(FlowFactory.newNode().setDefinitionId(id));
+        List<Node> nodeList = FlowEngine.nodeService().list(FlowEngine.newNode().setDefinitionId(id));
         definition.setNodeList(nodeList);
-        List<Skip> skips = FlowFactory.skipService().list(FlowFactory.newSkip().setDefinitionId(id));
+        List<Skip> skips = FlowEngine.skipService().list(FlowEngine.newSkip().setDefinitionId(id));
         Map<String, List<Skip>> flowSkipMap = skips.stream()
                 .collect(Collectors.groupingBy(Skip::getNowNodeCode));
         nodeList.forEach(flowNode -> flowNode.setSkipList(flowSkipMap.get(flowNode.getNodeCode())));
@@ -292,18 +279,18 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     @Override
     public boolean removeDef(List<Long> ids) {
         ids.forEach(id -> {
-            List<Instance> instances = FlowFactory.insService().list(FlowFactory.newIns().setDefinitionId(id));
+            List<Instance> instances = FlowEngine.insService().list(FlowEngine.newIns().setDefinitionId(id));
             AssertUtil.isNotEmpty(instances, ExceptionCons.EXIST_START_TASK);
         });
-        FlowFactory.nodeService().deleteNodeByDefIds(ids);
-        FlowFactory.skipService().deleteSkipByDefIds(ids);
+        FlowEngine.nodeService().deleteNodeByDefIds(ids);
+        FlowEngine.skipService().deleteSkipByDefIds(ids);
         return removeByIds(ids);
     }
 
     @Override
     public boolean publish(Long id) {
         Definition definition = getById(id);
-        List<Definition> definitions = list(FlowFactory.newDef().setFlowCode(definition.getFlowCode()));
+        List<Definition> definitions = list(FlowEngine.newDef().setFlowCode(definition.getFlowCode()));
         // 已发布流程定义，改为已失效或者未发布状态
         List<Long> otherDefIds = definitions.stream()
                 .filter(item -> !Objects.equals(definition.getId(), item.getId())
@@ -311,7 +298,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                 .map(Definition::getId)
                 .collect(Collectors.toList());
         if (CollUtil.isNotEmpty(otherDefIds)) {
-            List<Instance> instanceList = FlowFactory.insService().listByDefIds(otherDefIds);
+            List<Instance> instanceList = FlowEngine.insService().listByDefIds(otherDefIds);
             if (CollUtil.isNotEmpty(instanceList)) {
                 // 已发布已使用过的流程定义
                 Set<Long> useDefIds = StreamUtils.toSet(instanceList, Instance::getDefinitionId);
@@ -330,7 +317,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
             }
         }
 
-        Definition flowDefinition = FlowFactory.newDef();
+        Definition flowDefinition = FlowEngine.newDef();
         flowDefinition.setId(id);
         flowDefinition.setIsPublish(PublishStatus.PUBLISHED.getKey());
         return updateById(flowDefinition);
@@ -338,9 +325,9 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
 
     @Override
     public boolean unPublish(Long id) {
-        List<Instance> instances = FlowFactory.insService().list(FlowFactory.newIns().setDefinitionId(id));
+        List<Instance> instances = FlowEngine.insService().list(FlowEngine.newIns().setDefinitionId(id));
         AssertUtil.isNotEmpty(instances, ExceptionCons.EXIST_START_TASK);
-        Definition definition = FlowFactory.newDef().setId(id);
+        Definition definition = FlowEngine.newDef().setId(id);
         definition.setIsPublish(PublishStatus.UNPUBLISHED.getKey());
         return updateById(definition);
     }
@@ -351,11 +338,11 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         definition.setVersion(getNewVersion(definition));
         AssertUtil.isNull(definition, ExceptionCons.NOT_FOUNT_DEF);
 
-        List<Node> nodeList = FlowFactory.nodeService().list(FlowFactory.newNode().setDefinitionId(id))
+        List<Node> nodeList = FlowEngine.nodeService().list(FlowEngine.newNode().setDefinitionId(id))
                 .stream().map(Node::copy).collect(Collectors.toList());
-        List<Skip> skipList = FlowFactory.skipService().list(FlowFactory.newSkip().setDefinitionId(id))
+        List<Skip> skipList = FlowEngine.skipService().list(FlowEngine.newSkip().setDefinitionId(id))
                 .stream().map(Skip::copy).collect(Collectors.toList());
-        FlowFactory.dataFillHandler().idFill(definition.setId(null));
+        FlowEngine.dataFillHandler().idFill(definition.setId(null));
         definition.setIsPublish(PublishStatus.UNPUBLISHED.getKey())
                 .setCreateTime(null)
                 .setUpdateTime(null);
@@ -365,13 +352,13 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                 .setVersion(definition.getVersion())
                 .setCreateTime(null)
                 .setUpdateTime(null));
-        FlowFactory.nodeService().saveBatch(nodeList);
+        FlowEngine.nodeService().saveBatch(nodeList);
 
         skipList.forEach(skip -> skip.setId(null)
                 .setDefinitionId(definition.getId())
                 .setCreateTime(null)
                 .setUpdateTime(null));
-        FlowFactory.skipService().saveBatch(skipList);
+        FlowEngine.skipService().saveBatch(skipList);
         return save(definition);
     }
 
@@ -393,28 +380,13 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
 
     @Override
     public String flowChart(Long instanceId) {
-        Long definitionId = FlowFactory.insService().getById(instanceId).getDefinitionId();
+        Long definitionId = FlowEngine.insService().getById(instanceId).getDefinitionId();
         return basicFlowChart(instanceId, definitionId);
-    }
-
-    @Override
-    public List<FlowChart> flowChartData(Long instanceId) {
-        Long definitionId = FlowFactory.insService().getById(instanceId).getDefinitionId();
-        FlowChartChain flowChartChain = new FlowChartChain();
-        basicFlowChart(instanceId, definitionId, flowChartChain);
-        return flowChartChain.getFlowChartList();
     }
 
     @Override
     public String flowChartNoColor(Long definitionId) {
         return basicFlowChart(null, definitionId);
-    }
-
-    @Override
-    public List<FlowChart> flowChartNoColorData(Long definitionId) {
-        FlowChartChain flowChartChain = new FlowChartChain();
-        basicFlowChart(null, definitionId, flowChartChain);
-        return flowChartChain.getFlowChartList();
     }
 
     /**
@@ -472,11 +444,9 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
      * @return Map<String, Integer> 节点坐标信息
      */
     public Map<String, Integer> basicFlowChart(Long instanceId, Long definitionId, FlowChartChain flowChartChain) {
-        Instance instance;
+        Instance instance = null;
         if (ObjectUtil.isNotNull(instanceId)) {
-            instance = FlowFactory.insService().getById(instanceId);
-        } else {
-            instance = null;
+            instance = FlowEngine.insService().getById(instanceId);
         }
         Map<String, Color> colorMap = new HashMap<>();
         Map<String, Integer> nodeXY = addNodeChart(colorMap, instance, definitionId, flowChartChain);
@@ -492,7 +462,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
      * @param flowChartChain 流程图链
      */
     private void addSkipChart(Map<String, Color> colorMap, Instance instance, Long definitionId, FlowChartChain flowChartChain) {
-        List<Skip> skipList = FlowFactory.skipService().list(FlowFactory.newSkip().setDefinitionId(definitionId));
+        List<Skip> skipList = FlowEngine.skipService().list(FlowEngine.newSkip().setDefinitionId(definitionId));
         for (Skip skip : skipList) {
             if (StringUtils.isNotEmpty(skip.getCoordinate())) {
                 String[] coordinateSplit = skip.getCoordinate().split("\\|");
@@ -530,8 +500,8 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
      */
     private Map<String, Integer> addNodeChart(Map<String, Color> colorMap, Instance instance, Long definitionId
             , FlowChartChain flowChartChain) {
-        List<Node> nodeList = FlowFactory.nodeService().list(FlowFactory.newNode().setDefinitionId(definitionId));
-        List<Skip> allSkips = FlowFactory.skipService().list(FlowFactory.newSkip()
+        List<Node> nodeList = FlowEngine.nodeService().list(FlowEngine.newNode().setDefinitionId(definitionId));
+        List<Skip> allSkips = FlowEngine.skipService().list(FlowEngine.newSkip()
                 .setDefinitionId(definitionId).setSkipType(SkipType.PASS.getKey()));
         if (ObjectUtil.isNotNull(instance)) {
             // 流程图渲染，过滤掉所有后置节点
@@ -606,7 +576,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         if (NodeType.isEnd(instance.getNodeType())) {
             return nodeList;
         }
-        List<Task> curTasks = FlowFactory.taskService().list(FlowFactory.newTask().setInstanceId(instance.getId()));
+        List<Task> curTasks = FlowEngine.taskService().list(FlowEngine.newTask().setInstanceId(instance.getId()));
         for (Task curTask : curTasks) {
             List<Skip> nextSkips = skipNextMap.get(curTask.getNodeCode());
             getAllNextNode(nextSkips, allNextNode, skipNextMap);
@@ -643,7 +613,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         final Color color = Color.PINK;
         Map<String, List<Skip>> skipLastMap = StreamUtils.groupByKey(allSkips, Skip::getNextNodeCode);
         Map<String, List<Skip>> skipNextMap = StreamUtils.groupByKey(allSkips, Skip::getNowNodeCode);
-        List<HisTask> hisTaskList = FlowFactory.hisTaskService().getNoReject(instance.getId());
+        List<HisTask> hisTaskList = FlowEngine.hisTaskService().getNoReject(instance.getId());
         for (Node node : nodeList) {
             List<Skip> oneNextSkips = skipNextMap.get(node.getNodeCode());
             List<Skip> oneLastSkips = skipLastMap.get(node.getNodeCode());
@@ -657,9 +627,9 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
             if (NodeType.isGateWay(node.getNodeType())) {
                 continue;
             }
-            Task task = FlowFactory.taskService()
-                    .getOne(FlowFactory.newTask().setNodeCode(node.getNodeCode()).setInstanceId(instance.getId()));
-            HisTask curHisTask = FlowFactory.hisTaskService()
+            Task task = FlowEngine.taskService()
+                    .getOne(FlowEngine.newTask().setNodeCode(node.getNodeCode()).setInstanceId(instance.getId()));
+            HisTask curHisTask = FlowEngine.hisTaskService()
                     .getNoReject(node.getNodeCode(), null, hisTaskList);
 
             if (CollUtil.isNotEmpty(oneLastSkips)) {
@@ -672,7 +642,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                         // 如果前置节点是网关，那网关前任意一个任务完成就算完成
                         List<Skip> twoLastSkips = skipLastMap.get(oneLastSkip.getNowNodeCode());
                         for (Skip twoLastSkip : twoLastSkips) {
-                            HisTask twoLastHisTask = FlowFactory.hisTaskService()
+                            HisTask twoLastHisTask = FlowEngine.hisTaskService()
                                     .getNoReject(twoLastSkip.getNowNodeCode(), node.getNodeCode(), hisTaskList);
 
                             // 前前置节点完成时间是否早于前置节点，如果是串行网关，那前前置节点必须只有一个完成，如果是并行网关都要完成
@@ -684,11 +654,11 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                                 }
                             } else {
                                 if (NodeType.isEnd(node.getNodeType()) && NodeType.isEnd(instance.getNodeType())) {
-                                    HisTask curHisTaskN = FlowFactory.hisTaskService()
+                                    HisTask curHisTaskN = FlowEngine.hisTaskService()
                                             .getNoReject(null, node.getNodeCode(), hisTaskList);
                                     if (ObjectUtil.isNotNull(curHisTaskN)) {
                                         c = Color.GREEN;
-                                        curHisTaskN = FlowFactory.hisTaskService()
+                                        curHisTaskN = FlowEngine.hisTaskService()
                                                 .getNoReject(twoLastSkip.getNowNodeCode(), node.getNodeCode(), hisTaskList);
                                         if (ObjectUtil.isNotNull(curHisTaskN)) {
                                             colorPut(colorMap, "skip:" + oneLastSkip.getId().toString(), c);
@@ -711,18 +681,18 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                             setNextColorMap(colorMap, oneNextSkips, c);
                         }
                     } else if (NodeType.isEnd(node.getNodeType()) && NodeType.isEnd(instance.getNodeType())) {
-                        HisTask curHisTaskN = FlowFactory.hisTaskService()
+                        HisTask curHisTaskN = FlowEngine.hisTaskService()
                                 .getNoReject(null, node.getNodeCode(), hisTaskList);
                         if (ObjectUtil.isNotNull(curHisTaskN)) {
                             colorPut(colorMap, "node:" + node.getNodeCode(), Color.GREEN);
-                            curHisTaskN = FlowFactory.hisTaskService()
+                            curHisTaskN = FlowEngine.hisTaskService()
                                     .getNoReject(oneLastSkip.getNowNodeCode(), node.getNodeCode(), hisTaskList);
                             if (ObjectUtil.isNotNull(curHisTaskN)) {
                                 colorPut(colorMap, "skip:" + oneLastSkip.getId().toString(), Color.GREEN);
                             }
                         }
                     } else {
-                        HisTask oneLastHisTask = FlowFactory.hisTaskService()
+                        HisTask oneLastHisTask = FlowEngine.hisTaskService()
                                 .getNoReject(oneLastSkip.getNowNodeCode(), node.getNodeCode(), hisTaskList);
                         // 前前置节点完成时间是否早于前置节点，如果是串行网关，那前前置节点必须只有一个完成，如果是并行网关都要完成
                         if (task != null) {
@@ -856,8 +826,8 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         // 所有的流程连线
         List<Skip> allSkips = flowCombine.getAllSkips();
         // 删除所有节点和连线
-        FlowFactory.nodeService().remove(FlowFactory.newNode().setDefinitionId(defId));
-        FlowFactory.skipService().remove(FlowFactory.newSkip().setDefinitionId(defId));
+        FlowEngine.nodeService().remove(FlowEngine.newNode().setDefinitionId(defId));
+        FlowEngine.skipService().remove(FlowEngine.newSkip().setDefinitionId(defId));
 
         allNodes.forEach(node -> node.setId(null)
                 .setDefinitionId(defId)
@@ -870,8 +840,8 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                 .setUpdateTime(null));
 
         // 保存节点，流程连线，权利人
-        FlowFactory.nodeService().saveBatch(allNodes);
-        FlowFactory.skipService().saveBatch(allSkips);
+        FlowEngine.nodeService().saveBatch(allNodes);
+        FlowEngine.skipService().saveBatch(allSkips);
     }
 
 }

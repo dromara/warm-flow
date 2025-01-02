@@ -15,7 +15,7 @@
  */
 package org.dromara.warm.flow.core.entity;
 
-import org.dromara.warm.flow.core.FlowFactory;
+import org.dromara.warm.flow.core.FlowEngine;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -120,7 +120,7 @@ public interface Node extends RootEntity {
     public Node setSkipList(List<Skip> skipList);
 
     default Node copy() {
-        return FlowFactory.newNode()
+        return FlowEngine.newNode()
                 .setId(this.getId())
                 .setCreateTime(this.getCreateTime())
                 .setUpdateTime(this.getUpdateTime())

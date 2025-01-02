@@ -18,7 +18,6 @@ package org.dromara.warm.flow.core.chart;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.dromara.warm.flow.core.utils.DrawUtils;
 import org.dromara.warm.flow.core.utils.ObjectUtil;
 import org.dromara.warm.flow.core.utils.StringUtils;
 
@@ -87,7 +86,7 @@ public class SkipChart implements FlowChart {
         }
         graphics.fillPolygon(xArrow, yArrow, 3);
         if (ObjectUtil.isNotNull(textChart) && StringUtils.isNotEmpty(textChart.getTitle())) {
-            textChart.setXText(textChart.getXText() - DrawUtils.stringWidth(graphics, textChart.getTitle()) / 2);
+            textChart.setXText(textChart.getXText() - stringWidth(graphics, textChart.getTitle()) / 2);
             textChart.setYText(textChart.getYText() - 10);
             // 填充文字说明
             textChart.setN(n).draw(graphics);

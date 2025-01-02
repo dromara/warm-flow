@@ -15,8 +15,8 @@
  */
 package org.dromara.warm.flow.orm.dao;
 
-import org.dromara.warm.flow.core.FlowFactory;
-import org.dromara.warm.flow.core.dao.WarmDao;
+import org.dromara.warm.flow.core.FlowEngine;
+import org.dromara.warm.flow.core.orm.dao.WarmDao;
 import org.dromara.warm.flow.core.entity.RootEntity;
 import org.dromara.warm.flow.core.orm.agent.WarmQuery;
 import org.dromara.warm.flow.core.utils.ObjectUtil;
@@ -64,7 +64,7 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
     @Override
     public Page<T> selectPage(T entity, Page<T> page) {
         TenantDeleteUtil.getEntity(entity);
-        String dataSourceType = FlowFactory.dataSourceType();
+        String dataSourceType = FlowEngine.dataSourceType();
         ifNecessaryChangePage(page, dataSourceType);
         long total = getMapper().selectCount(entity);
         if (total > 0) {
@@ -77,7 +77,7 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
     @Override
     public List<T> selectList(T entity, WarmQuery<T> query) {
         TenantDeleteUtil.getEntity(entity);
-        String dataSourceType = FlowFactory.dataSourceType();
+        String dataSourceType = FlowEngine.dataSourceType();
         if (ObjectUtil.isNull(query)) {
             return getMapper().selectList(entity, null, null, dataSourceType);
         }
@@ -106,7 +106,7 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
     public int delete(T entity) {
         TenantDeleteUtil.getEntity(entity);
         if (StringUtils.isNotEmpty(entity.getDelFlag())) {
-            return getMapper().updateLogic(entity, FlowFactory.getFlowConfig().getLogicDeleteValue(), entity.getDelFlag());
+            return getMapper().updateLogic(entity, FlowEngine.getFlowConfig().getLogicDeleteValue(), entity.getDelFlag());
         }
         return getMapper().delete(entity);
     }
@@ -115,7 +115,7 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
     public int deleteById(Serializable id) {
         T entity = TenantDeleteUtil.getEntity(newEntity());
         if (StringUtils.isNotEmpty(entity.getDelFlag())) {
-            return getMapper().updateByIdLogic(id, entity, FlowFactory.getFlowConfig().getLogicDeleteValue(), entity.getDelFlag());
+            return getMapper().updateByIdLogic(id, entity, FlowEngine.getFlowConfig().getLogicDeleteValue(), entity.getDelFlag());
         }
         return getMapper().deleteById(id, entity);
     }
@@ -124,7 +124,7 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
     public int deleteByIds(Collection<? extends Serializable> ids) {
         T entity = TenantDeleteUtil.getEntity(newEntity());
         if (StringUtils.isNotEmpty(entity.getDelFlag())) {
-            return getMapper().updateByIdsLogic(ids, entity, FlowFactory.getFlowConfig().getLogicDeleteValue(), entity.getDelFlag());
+            return getMapper().updateByIdsLogic(ids, entity, FlowEngine.getFlowConfig().getLogicDeleteValue(), entity.getDelFlag());
         }
         return getMapper().deleteByIds(ids, entity);
     }
@@ -134,7 +134,7 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
         for (T record : list) {
             TenantDeleteUtil.getEntity(record);
         }
-        String dataSourceType = FlowFactory.dataSourceType();
+        String dataSourceType = FlowEngine.dataSourceType();
         getMapper().saveBatch(list, dataSourceType);
     }
 

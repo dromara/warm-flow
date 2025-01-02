@@ -16,8 +16,8 @@
 package org.dromara.warm.flow.core.orm.service.impl;
 
 
-import org.dromara.warm.flow.core.FlowFactory;
-import org.dromara.warm.flow.core.dao.WarmDao;
+import org.dromara.warm.flow.core.FlowEngine;
+import org.dromara.warm.flow.core.orm.dao.WarmDao;
 import org.dromara.warm.flow.core.handler.DataFillHandler;
 import org.dromara.warm.flow.core.orm.agent.WarmQuery;
 import org.dromara.warm.flow.core.orm.service.IWarmService;
@@ -178,7 +178,7 @@ public abstract class WarmServiceImpl<M extends WarmDao<T>, T> implements IWarmS
 
 
     public void insertFill(T entity) {
-        DataFillHandler dataFillHandler = FlowFactory.dataFillHandler();
+        DataFillHandler dataFillHandler = FlowEngine.dataFillHandler();
         if (ObjectUtil.isNotNull(dataFillHandler)) {
             dataFillHandler.idFill(entity);
             dataFillHandler.insertFill(entity);
@@ -186,7 +186,7 @@ public abstract class WarmServiceImpl<M extends WarmDao<T>, T> implements IWarmS
     }
 
     public void updateFill(T entity) {
-        DataFillHandler dataFillHandler = FlowFactory.dataFillHandler();
+        DataFillHandler dataFillHandler = FlowEngine.dataFillHandler();
         if (ObjectUtil.isNotNull(dataFillHandler)) {
             dataFillHandler.updateFill(entity);
         }

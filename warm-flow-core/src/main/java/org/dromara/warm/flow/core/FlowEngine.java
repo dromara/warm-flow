@@ -29,28 +29,28 @@ import org.dromara.warm.flow.core.utils.ObjectUtil;
 import java.util.function.Supplier;
 
 /**
- * 流程定义工程
+ * 流程引擎
  *
  * @author warm
  */
-public class FlowFactory {
+public class FlowEngine {
 
     private static DefService defService = null;
-    private static HisTaskService hisTaskService = null;
-    private static InsService insService = null;
-
     private static NodeService nodeService = null;
     private static SkipService skipService = null;
+    private static InsService insService = null;
     private static TaskService taskService = null;
+    private static HisTaskService hisTaskService = null;
     private static UserService userService = null;
     private static FormService formService = null;
+    private static ChartService chartService = null;
 
     private static Supplier<Definition> defSupplier;
-    private static Supplier<HisTask> hisTaskSupplier;
-    private static Supplier<Instance> insSupplier;
     private static Supplier<Node> nodeSupplier;
     private static Supplier<Skip> skipSupplier;
+    private static Supplier<Instance> insSupplier;
     private static Supplier<Task> taskSupplier;
+    private static Supplier<HisTask> hisTaskSupplier;
     private static Supplier<User> userSupplier;
     private static Supplier<Form> formSupplier;
 
@@ -73,20 +73,6 @@ public class FlowFactory {
         return defService = FrameInvoker.getBean(DefService.class);
     }
 
-    public static HisTaskService hisTaskService() {
-        if (ObjectUtil.isNotNull(hisTaskService)) {
-            return hisTaskService;
-        }
-        return hisTaskService = FrameInvoker.getBean(HisTaskService.class);
-    }
-
-    public static InsService insService() {
-        if (ObjectUtil.isNotNull(insService)) {
-            return insService;
-        }
-        return insService = FrameInvoker.getBean(InsService.class);
-    }
-
     public static NodeService nodeService() {
         if (ObjectUtil.isNotNull(nodeService)) {
             return nodeService;
@@ -101,11 +87,25 @@ public class FlowFactory {
         return skipService = FrameInvoker.getBean(SkipService.class);
     }
 
+    public static InsService insService() {
+        if (ObjectUtil.isNotNull(insService)) {
+            return insService;
+        }
+        return insService = FrameInvoker.getBean(InsService.class);
+    }
+
     public static TaskService taskService() {
         if (ObjectUtil.isNotNull(taskService)) {
             return taskService;
         }
         return taskService = FrameInvoker.getBean(TaskService.class);
+    }
+
+    public static HisTaskService hisTaskService() {
+        if (ObjectUtil.isNotNull(hisTaskService)) {
+            return hisTaskService;
+        }
+        return hisTaskService = FrameInvoker.getBean(HisTaskService.class);
     }
 
     public static UserService userService() {
@@ -122,32 +122,23 @@ public class FlowFactory {
         return formService = FrameInvoker.getBean(FormService.class);
     }
 
+    public static ChartService chartService() {
+        if (ObjectUtil.isNotNull(chartService)) {
+            return chartService;
+        }
+        return chartService = FrameInvoker.getBean(ChartService.class);
+    }
+
     public static void setNewDef(Supplier<Definition> supplier) {
-        FlowFactory.defSupplier = supplier;
+        FlowEngine.defSupplier = supplier;
     }
 
     public static Definition newDef() {
         return defSupplier.get();
     }
 
-    public static void setNewHisTask(Supplier<HisTask> supplier) {
-        FlowFactory.hisTaskSupplier = supplier;
-    }
-
-    public static HisTask newHisTask() {
-        return hisTaskSupplier.get();
-    }
-
-    public static void setNewIns(Supplier<Instance> supplier) {
-        FlowFactory.insSupplier = supplier;
-    }
-
-    public static Instance newIns() {
-        return insSupplier.get();
-    }
-
     public static void setNewNode(Supplier<Node> supplier) {
-        FlowFactory.nodeSupplier = supplier;
+        FlowEngine.nodeSupplier = supplier;
     }
 
     public static Node newNode() {
@@ -155,23 +146,39 @@ public class FlowFactory {
     }
 
     public static void setNewSkip(Supplier<Skip> supplier) {
-        FlowFactory.skipSupplier = supplier;
+        FlowEngine.skipSupplier = supplier;
     }
 
     public static Skip newSkip() {
         return skipSupplier.get();
     }
 
+    public static void setNewIns(Supplier<Instance> supplier) {
+        FlowEngine.insSupplier = supplier;
+    }
+
+    public static Instance newIns() {
+        return insSupplier.get();
+    }
+
     public static void setNewTask(Supplier<Task> supplier) {
-        FlowFactory.taskSupplier = supplier;
+        FlowEngine.taskSupplier = supplier;
     }
 
     public static Task newTask() {
         return taskSupplier.get();
     }
 
+    public static void setNewHisTask(Supplier<HisTask> supplier) {
+        FlowEngine.hisTaskSupplier = supplier;
+    }
+
+    public static HisTask newHisTask() {
+        return hisTaskSupplier.get();
+    }
+
     public static void setNewUser(Supplier<User> supplier) {
-        FlowFactory.userSupplier = supplier;
+        FlowEngine.userSupplier = supplier;
     }
 
     public static User newUser() {
@@ -179,7 +186,7 @@ public class FlowFactory {
     }
 
     public static void setNewForm(Supplier<Form> supplier) {
-        FlowFactory.formSupplier = supplier;
+        FlowEngine.formSupplier = supplier;
     }
 
     public static Form newForm() {
@@ -187,15 +194,15 @@ public class FlowFactory {
     }
 
     public static WarmFlow getFlowConfig() {
-        return FlowFactory.flowConfig;
+        return FlowEngine.flowConfig;
     }
 
     public static void setFlowConfig(WarmFlow flowConfig) {
-        FlowFactory.flowConfig = flowConfig;
+        FlowEngine.flowConfig = flowConfig;
     }
 
     public static boolean isLogicDelete() {
-        return FlowFactory.flowConfig.isLogicDelete();
+        return FlowEngine.flowConfig.isLogicDelete();
     }
 
     public static void initDataFillHandler(String handlerPath) {
@@ -246,7 +253,7 @@ public class FlowFactory {
      * 获取map和json字符串转换工具类
      */
     public static void jsonConvert(JsonConvert jsonConvert) {
-        FlowFactory.jsonConvert = jsonConvert;
+        FlowEngine.jsonConvert = jsonConvert;
     }
 
     /**

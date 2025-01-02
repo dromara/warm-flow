@@ -13,19 +13,37 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.dromara.warm.flow.core.dao;
+package org.dromara.warm.flow.core.orm.dao;
 
-import org.dromara.warm.flow.core.entity.Task;
+import org.dromara.warm.flow.core.entity.HisTask;
 
 import java.util.List;
 
 /**
- * 待办任务Mapper接口
+ * 历史任务记录Mapper接口
  *
  * @author warm
  * @since 2023-03-29
  */
-public interface FlowTaskDao<T extends Task> extends WarmDao<T> {
+public interface FlowHisTaskDao<T extends HisTask> extends WarmDao<T> {
+
+    /**
+     * 根据instanceId获取未退回的历史记录
+     *
+     * @param instanceId
+     * @return
+     */
+    List<T> getNoReject( Long instanceId);
+
+
+    /**
+     * 根据instanceId和流程编码获取未退回的历史记录
+     *
+     * @param instanceId
+     * @param nodeCodes
+     * @return
+     */
+    List<T> getByInsAndNodeCodes(Long instanceId, List<String> nodeCodes);
 
     /**
      * 根据instanceIds删除
@@ -34,4 +52,13 @@ public interface FlowTaskDao<T extends Task> extends WarmDao<T> {
      * @return 结果
      */
     int deleteByInsIds(List<Long> instanceIds);
+
+    /**
+     * 根据任务id和协作类型查询
+     *
+     * @param taskId
+     * @param cooperateTypes
+     * @return
+     */
+    List<T> listByTaskIdAndCooperateTypes(Long taskId, Integer[] cooperateTypes);
 }

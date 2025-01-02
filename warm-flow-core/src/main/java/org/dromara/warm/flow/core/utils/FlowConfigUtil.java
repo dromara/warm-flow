@@ -15,7 +15,7 @@
  */
 package org.dromara.warm.flow.core.utils;
 
-import org.dromara.warm.flow.core.FlowFactory;
+import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.constant.ExceptionCons;
 import org.dromara.warm.flow.core.dto.FlowCombine;
 import org.dromara.warm.flow.core.entity.Definition;
@@ -67,7 +67,7 @@ public class FlowConfigUtil {
         AssertUtil.isNull(definitionElement, "流程为空！");
 
         // 读取流程定义
-        Definition definition = FlowFactory.newDef();
+        Definition definition = FlowEngine.newDef();
         definition.setFlowCode(definitionElement.attributeValue("flowCode"));
         definition.setFlowName(definitionElement.attributeValue("flowName"));
         definition.setVersion(definitionElement.attributeValue("version"));
@@ -103,7 +103,7 @@ public class FlowConfigUtil {
      * @return
      */
     private static Node initNodeAndCondition(Element nodeElement) {
-        Node node = FlowFactory.newNode();
+        Node node = FlowEngine.newNode();
         node.setNodeType(NodeType.getKeyByValue(nodeElement.attributeValue("nodeType")));
         node.setNodeCode(nodeElement.attributeValue("nodeCode"));
         node.setNodeName(nodeElement.attributeValue("nodeName"));
@@ -122,13 +122,13 @@ public class FlowConfigUtil {
         node.setHandlerPath(nodeElement.attributeValue("handlerPath"));
         node.setFormCustom(nodeElement.attributeValue("formCustom"));
         node.setFormPath(nodeElement.attributeValue("formPath"));
-        FlowFactory.dataFillHandler().idFill(node);
+        FlowEngine.dataFillHandler().idFill(node);
 
         List<Element> skipsElement = nodeElement.elements();
         List<Skip> skips = node.getSkipList();
         // 遍历节点下的跳转条件
         for (Element skipElement : skipsElement) {
-            Skip skip = FlowFactory.newSkip();
+            Skip skip = FlowEngine.newSkip();
             if ("skip".equals(skipElement.getName())) {
                 skip.setNowNodeCode(node.getNodeCode());
                 skip.setNowNodeType(node.getNodeType());
@@ -218,7 +218,7 @@ public class FlowConfigUtil {
         // 发布
         definition.setIsPublish(0);
         definition.setUpdateTime(new Date());
-        FlowFactory.dataFillHandler().idFill(definition);
+        FlowEngine.dataFillHandler().idFill(definition);
 
         List<Node> nodeList = definition.getNodeList();
         // 每一个流程的开始节点个数
@@ -325,7 +325,7 @@ public class FlowConfigUtil {
                     AssertUtil.isTrue(skipNum > 1, "[" + node.getNodeName() + "]" + ExceptionCons.MUL_START_SKIP);
                 }
                 AssertUtil.isEmpty(skip.getNextNodeCode(), "【" + nodeName + "】" + ExceptionCons.LOST_DEST_NODE);
-                FlowFactory.dataFillHandler().idFill(skip);
+                FlowEngine.dataFillHandler().idFill(skip);
                 // 流程id
                 skip.setDefinitionId(definitionId);
                 if (NodeType.isGateWaySerial(node.getNodeType())) {

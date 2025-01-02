@@ -90,6 +90,11 @@ public class NodeJson {
     private String formPath;
 
     /**
+     * 办理状态: 0未办理 1办理中 2已办理
+     */
+    private Integer status = 0;
+
+    /**
      * 跳转条件
      */
     private List<SkipJson> skipList = new ArrayList<>();

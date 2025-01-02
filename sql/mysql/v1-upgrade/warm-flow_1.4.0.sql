@@ -16,3 +16,5 @@ CREATE TABLE `flow_form` (
 ) ENGINE=InnoDB COMMENT='流程表单表';
 
 ALTER TABLE `flow_his_task` ADD COLUMN `variable` text DEFAULT NULL COMMENT '任务变量' AFTER `message`;
+
+ALTER TABLE `flow_instance` ADD COLUMN `def_json` text  DEFAULT NULL COMMENT '流程定义json' AFTER `activity_status`;

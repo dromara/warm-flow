@@ -60,4 +60,9 @@ public class SkipJson {
      */
     private String coordinate;
 
+    /**
+     * 办理状态: 0未办理 1办理中 2已办理
+     */
+    private Integer status = 0;
+
 }
