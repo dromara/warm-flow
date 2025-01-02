@@ -4,19 +4,19 @@
 
 
 <script setup>
+import Design from './views/flow-design/index.vue';
+import Form from './views/form-design/index.vue';
+import FormCreate from './views/form-design/formCreate.vue';
 import useAppStore from "@/store/app";
 const appStore = useAppStore();
 const appParams = computed(() => useAppStore().appParams);
-const component = ref("");
+const component = ref(null);
 onMounted(async () => {
   if (!appParams.value) await appStore.fetchTokenName();
   let pathObj = {
-    form: `./views/form-design/index.vue`,
-    formCreate: `./views/form-design/formCreate.vue`
+    form: Form,
+    formCreate: FormCreate
   };
-  let path = pathObj[appParams.value.type] || `./views/flow-design/index.vue`;
-  import(/* @vite-ignore */path).then((module) => {
-    component.value = module.default;
-  });
+  component.value = pathObj[appParams.value.type] || Design;
 });
 </script>
