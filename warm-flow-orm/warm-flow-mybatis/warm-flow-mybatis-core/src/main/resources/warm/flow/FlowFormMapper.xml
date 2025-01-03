@@ -186,7 +186,7 @@
     <select id="queryByCodeList" resultMap="FlowFormResult">
         <include refid="selectVo"/>
         where t.form_code in
-        <foreach item="item" collection="flowCodeList" open="(" separator="," close=")">
+        <foreach item="item" collection="formCodeList" open="(" separator="," close=")">
             #{item}
         </foreach>
         <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>

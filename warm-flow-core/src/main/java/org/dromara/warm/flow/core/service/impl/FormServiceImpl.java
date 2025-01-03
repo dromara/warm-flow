@@ -102,8 +102,6 @@ public class FormServiceImpl extends WarmServiceImpl<FlowFormDao<Form>, Form> im
         List<String> formCodeList = Collections.singletonList(form.getFormCode());
         List<Form> forms = getDao().queryByCodeList(formCodeList);
         int highestVersion = 0;
-        String latestNonPositiveVersion = null;
-        long latestTimestamp = Long.MIN_VALUE;
 
         for (Form otherForm : forms) {
             if (form.getFormCode().equals(otherForm.getFormCode())) {
@@ -113,11 +111,6 @@ public class FormServiceImpl extends WarmServiceImpl<FlowFormDao<Form>, Form> im
                         highestVersion = version;
                     }
                 } catch (NumberFormatException e) {
-                    long timestamp = otherForm.getCreateTime().getTime();
-                    if (timestamp > latestTimestamp) {
-                        latestTimestamp = timestamp;
-                        latestNonPositiveVersion = otherForm.getVersion();
-                    }
                 }
             }
         }
@@ -125,8 +118,6 @@ public class FormServiceImpl extends WarmServiceImpl<FlowFormDao<Form>, Form> im
         String version = "1";
         if (highestVersion > 0) {
             version = String.valueOf(highestVersion + 1);
-        } else if (latestNonPositiveVersion != null) {
-            version = latestNonPositiveVersion + "_1";
         }
 
         return version;
