@@ -24,8 +24,11 @@ import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.json.JsonConvert;
 import org.dromara.warm.flow.core.listener.GlobalListener;
 import org.dromara.warm.flow.core.service.*;
+import org.dromara.warm.flow.core.utils.ClassUtil;
 import org.dromara.warm.flow.core.utils.ObjectUtil;
+import org.dromara.warm.flow.core.utils.StringUtils;
 
+import java.lang.reflect.Constructor;
 import java.util.function.Supplier;
 
 /**
@@ -35,15 +38,15 @@ import java.util.function.Supplier;
  */
 public class FlowEngine {
 
-    private static DefService defService = null;
-    private static NodeService nodeService = null;
-    private static SkipService skipService = null;
-    private static InsService insService = null;
-    private static TaskService taskService = null;
-    private static HisTaskService hisTaskService = null;
-    private static UserService userService = null;
-    private static FormService formService = null;
-    private static ChartService chartService = null;
+    private static final DefService defService = null;
+    private static final NodeService nodeService = null;
+    private static final SkipService skipService = null;
+    private static final InsService insService = null;
+    private static final TaskService taskService = null;
+    private static final HisTaskService hisTaskService = null;
+    private static final UserService userService = null;
+    private static final FormService formService = null;
+    private static final ChartService chartService = null;
 
     private static Supplier<Definition> defSupplier;
     private static Supplier<Node> nodeSupplier;
@@ -67,130 +70,91 @@ public class FlowEngine {
     public static JsonConvert jsonConvert;
 
     public static DefService defService() {
-        if (ObjectUtil.isNotNull(defService)) {
-            return defService;
-        }
-        return defService = FrameInvoker.getBean(DefService.class);
+        return getObj(defService, DefService.class);
     }
 
     public static NodeService nodeService() {
-        if (ObjectUtil.isNotNull(nodeService)) {
-            return nodeService;
-        }
-        return nodeService = FrameInvoker.getBean(NodeService.class);
+        return getObj(nodeService, NodeService.class);
     }
 
     public static SkipService skipService() {
-        if (ObjectUtil.isNotNull(skipService)) {
-            return skipService;
-        }
-        return skipService = FrameInvoker.getBean(SkipService.class);
+        return getObj(skipService, SkipService.class);
     }
 
     public static InsService insService() {
-        if (ObjectUtil.isNotNull(insService)) {
-            return insService;
-        }
-        return insService = FrameInvoker.getBean(InsService.class);
+        return getObj(insService, InsService.class);
     }
 
     public static TaskService taskService() {
-        if (ObjectUtil.isNotNull(taskService)) {
-            return taskService;
-        }
-        return taskService = FrameInvoker.getBean(TaskService.class);
+        return getObj(taskService, TaskService.class);
     }
 
     public static HisTaskService hisTaskService() {
-        if (ObjectUtil.isNotNull(hisTaskService)) {
-            return hisTaskService;
-        }
-        return hisTaskService = FrameInvoker.getBean(HisTaskService.class);
+        return getObj(hisTaskService, HisTaskService.class);
     }
 
     public static UserService userService() {
-        if (ObjectUtil.isNotNull(userService)) {
-            return userService;
-        }
-        return userService = FrameInvoker.getBean(UserService.class);
+        return getObj(userService, UserService.class);
     }
 
     public static FormService formService() {
-        if (ObjectUtil.isNotNull(formService)) {
-            return formService;
-        }
-        return formService = FrameInvoker.getBean(FormService.class);
+        return getObj(formService, FormService.class);
     }
 
     public static ChartService chartService() {
-        if (ObjectUtil.isNotNull(chartService)) {
-            return chartService;
-        }
-        return chartService = FrameInvoker.getBean(ChartService.class);
-    }
-
-    public static void setNewDef(Supplier<Definition> supplier) {
-        FlowEngine.defSupplier = supplier;
+        return getObj(chartService, ChartService.class);
     }
 
     public static Definition newDef() {
         return defSupplier.get();
     }
 
-    public static void setNewNode(Supplier<Node> supplier) {
-        FlowEngine.nodeSupplier = supplier;
-    }
-
     public static Node newNode() {
         return nodeSupplier.get();
-    }
-
-    public static void setNewSkip(Supplier<Skip> supplier) {
-        FlowEngine.skipSupplier = supplier;
     }
 
     public static Skip newSkip() {
         return skipSupplier.get();
     }
 
-    public static void setNewIns(Supplier<Instance> supplier) {
-        FlowEngine.insSupplier = supplier;
-    }
-
     public static Instance newIns() {
         return insSupplier.get();
-    }
-
-    public static void setNewTask(Supplier<Task> supplier) {
-        FlowEngine.taskSupplier = supplier;
     }
 
     public static Task newTask() {
         return taskSupplier.get();
     }
 
-    public static void setNewHisTask(Supplier<HisTask> supplier) {
-        FlowEngine.hisTaskSupplier = supplier;
-    }
-
     public static HisTask newHisTask() {
         return hisTaskSupplier.get();
-    }
-
-    public static void setNewUser(Supplier<User> supplier) {
-        FlowEngine.userSupplier = supplier;
     }
 
     public static User newUser() {
         return userSupplier.get();
     }
 
-    public static void setNewForm(Supplier<Form> supplier) {
-        FlowEngine.formSupplier = supplier;
-    }
-
     public static Form newForm() {
         return formSupplier.get();
+    }
+
+    public static void setNewEntity(Class<?> tClass, Supplier<?> supplier) {
+        if (Definition.class.equals(tClass)) {
+            FlowEngine.defSupplier = (Supplier<Definition>) supplier;
+        } else if (Node.class.equals(tClass)) {
+            FlowEngine.nodeSupplier = (Supplier<Node>) supplier;
+        } else if (Skip.class.equals(tClass)) {
+            FlowEngine.skipSupplier = (Supplier<Skip>) supplier;
+        } else if (Instance.class.equals(tClass)) {
+            FlowEngine.insSupplier = (Supplier<Instance>) supplier;
+        } else if (Task.class.equals(tClass)) {
+            FlowEngine.taskSupplier = (Supplier<Task>) supplier;
+        } else if (HisTask.class.equals(tClass)) {
+            FlowEngine.hisTaskSupplier = (Supplier<HisTask>) supplier;
+        } else if (User.class.equals(tClass)) {
+            FlowEngine.userSupplier =(Supplier<User>) supplier;
+        } else if (Form.class.equals(tClass)) {
+            FlowEngine.formSupplier = (Supplier<Form>) supplier;
+        }
     }
 
     public static WarmFlow getFlowConfig() {
@@ -201,24 +165,20 @@ public class FlowEngine {
         FlowEngine.flowConfig = flowConfig;
     }
 
-    public static boolean isLogicDelete() {
-        return FlowEngine.flowConfig.isLogicDelete();
-    }
-
     public static void initDataFillHandler(String handlerPath) {
-        dataFillHandler = FrameInvoker.initBean(DataFillHandler.class, handlerPath, () -> new DataFillHandler(){});;
+        dataFillHandler = initBean(DataFillHandler.class, handlerPath, () -> new DataFillHandler(){});;
     }
 
     public static void initTenantHandler(String handlerPath) {
-        tenantHandler = FrameInvoker.initBean(TenantHandler.class, handlerPath, null);
+        tenantHandler = initBean(TenantHandler.class, handlerPath, null);
     }
 
     public static void initPermissionHandler() {
-        permissionHandler = FrameInvoker.initBean(PermissionHandler.class, null, null);
+        permissionHandler = initBean(PermissionHandler.class, null, null);
     }
 
      public static void initGlobalListener() {
-        globalListener = FrameInvoker.initBean(GlobalListener.class, null, null);
+        globalListener = initBean(GlobalListener.class, null, null);
     }
 
     /**
@@ -261,6 +221,43 @@ public class FlowEngine {
      */
     public static String dataSourceType() {
         return flowConfig.getDataSourceType();
+    }
+
+    public static <T> T getObj(T t, Class<T> tClass) {
+        if (ObjectUtil.isNotNull(t)) {
+            return t;
+        }
+        t = FrameInvoker.getBean(tClass);
+        return t;
+    }
+
+    /**
+     * 初始化bean，先从yml配置获取bean的全包名路径，否则从spring容器获取bean，如果都没有，则通过supplier获取bean
+     * @param tClazz bean的class类型
+     * @param beanPath bean全包名路径
+     * @param supplier 获取bean的lambda
+     * @return bean
+     * @param <T> bean类型
+     */
+    private static <T> T initBean(Class<T> tClazz, String beanPath, Supplier<T> supplier) {
+        T hander = null;
+        try {
+            if (!StringUtils.isEmpty(beanPath)) {
+                Class<?> clazz = ClassUtil.getClazz(beanPath);
+                if (clazz != null && tClazz.isAssignableFrom(clazz)) {
+                    Constructor<?> constructor = clazz.getConstructor();
+                    hander = tClazz.cast(constructor.newInstance());
+                }
+            }
+        } catch (Exception ignored) {
+        }
+        if (hander == null) {
+            hander = FrameInvoker.getBean(tClazz);
+        }
+        if (hander == null && supplier != null) {
+            hander = supplier.get();
+        }
+        return hander;
     }
 
 }

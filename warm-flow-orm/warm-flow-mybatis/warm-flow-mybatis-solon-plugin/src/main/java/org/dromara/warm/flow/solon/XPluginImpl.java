@@ -36,7 +36,6 @@ public class XPluginImpl implements Plugin {
 
     @Override
     public void start(AppContext context) {
-        context.beanMake(BeanConfig.class);
         context.beanMake(FlowAutoConfig.class);
         EventBus.subscribe(Configuration.class, e -> {
             List<String> mapperList = Arrays.asList("warm/flow/FlowDefinitionMapper.xml", "warm/flow/FlowHisTaskMapper.xml"

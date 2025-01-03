@@ -107,8 +107,6 @@ public class ExceptionCons {
 
     public static final String IS_ALREADY_DEPUTE = "已经是受托人，不可委托";
 
-    public static final String JPA_PERSISTENCE_PROVIDER_NOT_FOUND = "jpa_persistence_provider配置不能为空";
-
     public static final String BACK_TASK_NOT_EXECUTED = "未完成过任务, 不能退回";
 
     public static final String NOT_ACTIVITY = "当前流程定义或者实例已经挂起，请先激活";

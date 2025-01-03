@@ -15,12 +15,7 @@
  */
 package org.dromara.warm.flow.core.invoker;
 
-import org.dromara.warm.flow.core.utils.ClassUtil;
-import org.dromara.warm.flow.core.utils.StringUtils;
-
-import java.lang.reflect.Constructor;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * 获取bean方法
@@ -73,32 +68,4 @@ public class FrameInvoker<M> {
         }
     }
 
-    /**
-     * 初始化bean，先从yml配置获取bean的全包名路径，否则从spring容器获取bean，如果都没有，则通过supplier获取bean
-     * @param tClazz bean的class类型
-     * @param beanPath bean全包名路径
-     * @param supplier 获取bean的lambda
-     * @return bean
-     * @param <T> bean类型
-     */
-    public static <T> T initBean(Class<T> tClazz, String beanPath, Supplier<T> supplier) {
-        T hander = null;
-        try {
-            if (!StringUtils.isEmpty(beanPath)) {
-                Class<?> clazz = ClassUtil.getClazz(beanPath);
-                if (clazz != null && tClazz.isAssignableFrom(clazz)) {
-                    Constructor<?> constructor = clazz.getConstructor();
-                    hander = tClazz.cast(constructor.newInstance());
-                }
-            }
-        } catch (Exception ignored) {
-        }
-        if (hander == null) {
-            hander = getBean(tClazz);
-        }
-        if (hander == null && supplier != null) {
-            hander = supplier.get();
-        }
-        return hander;
-    }
 }

@@ -19,7 +19,7 @@ import org.dom4j.Document;
 import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.chart.*;
 import org.dromara.warm.flow.core.constant.ExceptionCons;
-import org.dromara.warm.flow.core.orm.dao.FlowDefinitionDao;
+import org.dromara.warm.flow.core.dto.DefJson;
 import org.dromara.warm.flow.core.dto.FlowCombine;
 import org.dromara.warm.flow.core.entity.*;
 import org.dromara.warm.flow.core.enums.ActivityStatus;
@@ -27,11 +27,11 @@ import org.dromara.warm.flow.core.enums.NodeType;
 import org.dromara.warm.flow.core.enums.PublishStatus;
 import org.dromara.warm.flow.core.enums.SkipType;
 import org.dromara.warm.flow.core.exception.FlowException;
+import org.dromara.warm.flow.core.orm.dao.FlowDefinitionDao;
 import org.dromara.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import org.dromara.warm.flow.core.service.DefService;
 import org.dromara.warm.flow.core.utils.Base64;
 import org.dromara.warm.flow.core.utils.*;
-import org.dromara.warm.flow.core.dto.DefJson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -164,7 +164,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         skipList.add(FlowEngine.newSkip()
                 .setDefinitionId(definition.getId())
                 .setNowNodeCode(startNode.getNodeCode())
-                .setNextNodeType(startNode.getNodeType())
+                .setNowNodeType(startNode.getNodeType())
                 .setNextNodeCode(betweenOneNode.getNodeCode())
                 .setNextNodeType(betweenOneNode.getNodeType())
                 .setSkipType(SkipType.PASS.getKey())
@@ -173,7 +173,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         skipList.add(FlowEngine.newSkip()
                 .setDefinitionId(definition.getId())
                 .setNowNodeCode(betweenOneNode.getNodeCode())
-                .setNextNodeType(betweenOneNode.getNodeType())
+                .setNowNodeType(betweenOneNode.getNodeType())
                 .setNextNodeCode(betweenTwoNode.getNodeCode())
                 .setNextNodeType(betweenTwoNode.getNodeType())
                 .setSkipType(SkipType.PASS.getKey())
@@ -182,7 +182,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         skipList.add(FlowEngine.newSkip()
                 .setDefinitionId(definition.getId())
                 .setNowNodeCode(betweenTwoNode.getNodeCode())
-                .setNextNodeType(betweenTwoNode.getNodeType())
+                .setNowNodeType(betweenTwoNode.getNodeType())
                 .setNextNodeCode(endNode.getNodeCode())
                 .setNextNodeType(endNode.getNodeType())
                 .setSkipType(SkipType.PASS.getKey())

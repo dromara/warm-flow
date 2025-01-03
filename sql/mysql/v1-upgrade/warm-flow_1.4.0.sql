@@ -18,3 +18,7 @@ CREATE TABLE `flow_form` (
 ALTER TABLE `flow_his_task` ADD COLUMN `variable` text DEFAULT NULL COMMENT '任务变量' AFTER `message`;
 
 ALTER TABLE `flow_instance` ADD COLUMN `def_json` text  DEFAULT NULL COMMENT '流程定义json' AFTER `activity_status`;
+
+ALTER TABLE `flow_definition`
+    MODIFY COLUMN `is_publish` tinyint(1) NULL DEFAULT 0 COMMENT '是否发布（0未发布 1已发布 9失效）' AFTER `version`,
+    MODIFY COLUMN `activity_status` tinyint(1) NULL DEFAULT 1 COMMENT '流程激活状态（0挂起 1激活）' AFTER `form_path`
