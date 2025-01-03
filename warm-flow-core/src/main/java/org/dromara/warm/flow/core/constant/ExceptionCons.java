@@ -153,4 +153,6 @@ public class ExceptionCons {
 
     public static final String READ_IS_ERROR = "读取is流失败";
 
+    public static final String EXIST_USE_FORM = "流程表单已使用，不可操作!";
+
 }

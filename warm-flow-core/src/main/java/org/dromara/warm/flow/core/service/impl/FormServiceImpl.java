@@ -2,17 +2,18 @@ package org.dromara.warm.flow.core.service.impl;
 
 import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.constant.ExceptionCons;
+import org.dromara.warm.flow.core.entity.Definition;
+import org.dromara.warm.flow.core.entity.Instance;
+import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.orm.dao.FlowFormDao;
 import org.dromara.warm.flow.core.entity.Form;
 import org.dromara.warm.flow.core.enums.PublishStatus;
 import org.dromara.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import org.dromara.warm.flow.core.service.FormService;
-import org.dromara.warm.flow.core.utils.AssertUtil;
-import org.dromara.warm.flow.core.utils.ClassUtil;
-import org.dromara.warm.flow.core.utils.CollUtil;
-import org.dromara.warm.flow.core.utils.ObjectUtil;
+import org.dromara.warm.flow.core.utils.*;
 import org.dromara.warm.flow.core.utils.page.Page;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -41,9 +42,19 @@ public class FormServiceImpl extends WarmServiceImpl<FlowFormDao<Form>, Form> im
     @Override
     public boolean unPublish(Long id) {
         Form form = getById(id);
+        List<Node> nodes = FlowEngine.nodeService().list(FlowEngine.newNode().setFormPath("" + form.getId()));
+        AssertUtil.isNotEmpty(nodes, ExceptionCons.EXIST_USE_FORM);
+        List<Definition> definitions = FlowEngine.defService().list(FlowEngine.newDef().setFormPath("" + form.getId()));
+        AssertUtil.isNotEmpty(definitions, ExceptionCons.EXIST_USE_FORM);
         AssertUtil.isTrue(form.getIsPublish().equals(PublishStatus.UNPUBLISHED.getKey()), ExceptionCons.FORM_ALREADY_UN_PUBLISH);
         form.setIsPublish(PublishStatus.UNPUBLISHED.getKey());
         return updateById(form);
+    }
+
+    @Override
+    public boolean save(Form form) {
+        form.setVersion(getNewVersion(form));
+        return super.save(form);
     }
 
     @Override
@@ -51,7 +62,7 @@ public class FormServiceImpl extends WarmServiceImpl<FlowFormDao<Form>, Form> im
         Form form = ClassUtil.clone(getById(id));
         AssertUtil.isTrue(ObjectUtil.isNull(form), ExceptionCons.NOT_FOUNT_DEF);
         FlowEngine.dataFillHandler().idFill(form.setId(null));
-        form.setVersion(form.getVersion() + "_copy")
+        form.setVersion(getNewVersion(form))
                 .setIsPublish(PublishStatus.UNPUBLISHED.getKey())
                 .setCreateTime(null)
                 .setUpdateTime(null);
@@ -85,5 +96,39 @@ public class FormServiceImpl extends WarmServiceImpl<FlowFormDao<Form>, Form> im
 
         form.setFormContent(formContent);
         return updateById(form);
+    }
+
+    private String getNewVersion(Form form) {
+        List<String> formCodeList = Collections.singletonList(form.getFormCode());
+        List<Form> forms = getDao().queryByCodeList(formCodeList);
+        int highestVersion = 0;
+        String latestNonPositiveVersion = null;
+        long latestTimestamp = Long.MIN_VALUE;
+
+        for (Form otherForm : forms) {
+            if (form.getFormCode().equals(otherForm.getFormCode())) {
+                try {
+                    int version = Integer.parseInt(otherForm.getVersion());
+                    if (version > highestVersion) {
+                        highestVersion = version;
+                    }
+                } catch (NumberFormatException e) {
+                    long timestamp = otherForm.getCreateTime().getTime();
+                    if (timestamp > latestTimestamp) {
+                        latestTimestamp = timestamp;
+                        latestNonPositiveVersion = otherForm.getVersion();
+                    }
+                }
+            }
+        }
+
+        String version = "1";
+        if (highestVersion > 0) {
+            version = String.valueOf(highestVersion + 1);
+        } else if (latestNonPositiveVersion != null) {
+            version = latestNonPositiveVersion + "_1";
+        }
+
+        return version;
     }
 }

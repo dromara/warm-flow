@@ -3,10 +3,12 @@ package org.dromara.warm.flow.orm.dao;
 import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.orm.dao.FlowFormDao;
 import org.dromara.warm.flow.core.utils.StringUtils;
+import org.dromara.warm.flow.orm.entity.FlowDefinition;
 import org.dromara.warm.flow.orm.entity.FlowForm;
 import org.dromara.warm.flow.orm.entity.proxy.FlowFormProxy;
 import org.dromara.warm.flow.orm.utils.TenantDeleteUtil;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -26,6 +28,23 @@ public class FlowFormDaoImpl extends WarmDaoImpl<FlowForm, FlowFormProxy> implem
     public FlowForm newEntity() {
         return new FlowForm();
     }
+
+    @Override
+    public List<FlowForm> queryByCodeList(List<String> formCodeList) {
+
+        FlowForm entity = newEntity();
+        TenantDeleteUtil.applyContextCondition(entity);
+        String tenantId = entity.getTenantId();
+        final boolean logicDelete = FlowEngine.getFlowConfig().isLogicDelete();
+
+        return entityQuery().queryable(entityClass())
+                .useLogicDelete(logicDelete)
+                .where(proxy -> {
+                    proxy.formCode().in(formCodeList); // 流程编码过滤
+                    proxy.tenantId().eq(StringUtils.isNotEmpty(tenantId), tenantId);  // 租户过滤
+                }).toList();
+    }
+
 
     @Override
     public int delete(FlowForm entity) {

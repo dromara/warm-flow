@@ -12,6 +12,18 @@ import org.dromara.warm.flow.orm.entity.FlowForm;
 public class FlowFormDaoImpl extends WarmDaoImpl<FlowForm> implements FlowFormDao<FlowForm> {
 
     @Override
+    public List<FlowForm> queryByCodeList(List<String> formCodeList) {
+        final FlowForm entity = TenantDeleteUtil.getEntity(newEntity());
+
+        final CriteriaQuery<FlowForm> criteriaQuery = createCriteriaQuery((criteriaBuilder, root, predicates, innerCriteriaQuery) -> {
+            entity.commonPredicate().process(criteriaBuilder, root, predicates);
+
+            predicates.add(createIn(criteriaBuilder, root, "formCode", formCodeList));
+        });
+        return entityManager.createQuery(criteriaQuery).getResultList();
+    }
+
+    @Override
     public Class<FlowForm> entityClass() {
         return FlowForm.class;
     }
