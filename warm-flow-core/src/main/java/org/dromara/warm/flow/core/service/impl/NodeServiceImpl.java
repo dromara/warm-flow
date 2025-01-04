@@ -220,9 +220,10 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
             List<Node> nextNodes = FlowEngine.nodeService()
                     .getByNodeCodes(nextNodeCodes, nextNode.getDefinitionId());
             AssertUtil.isEmpty(nextNodes, ExceptionCons.NOT_NODE_DATA);
-            for (Node node : nextNodes) {
-                nextNodes.addAll(getNextByCheckGateway(variable, node));
-            }
+            // TODO 网关直连，暂时注释
+//            for (Node node : nextNodes) {
+//                nextNodes.addAll(getNextByCheckGateway(variable, node));
+//            }
             return nextNodes;
         }
         // 非网关节点直接返回

@@ -92,7 +92,7 @@ public class NodeJson {
     /**
      * 办理状态: 0未办理 1办理中 2已办理
      */
-    private Integer status = 0;
+    private Integer status;
 
     /**
      * 跳转条件
