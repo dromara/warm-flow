@@ -49,6 +49,10 @@ public class OvalChart implements FlowChart {
 
     @Override
     public void draw(Graphics2D graphics) {
+        // 设置填充颜色
+        graphics.setColor(lightColor(c));
+        // 填充圆角矩形
+        graphics.fillOval((xStartOval - 20) * n, (yStartOval - 20) * n, 40 * n, 40 * n);
         graphics.setColor(c);
         graphics.drawOval((xStartOval - 20) * n, (yStartOval - 20) * n, 40 * n, 40 * n);
         if (ObjectUtil.isNotNull(textChart) && StringUtils.isNotEmpty(textChart.getTitle())) {

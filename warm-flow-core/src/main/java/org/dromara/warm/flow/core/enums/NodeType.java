@@ -15,6 +15,8 @@
  */
 package org.dromara.warm.flow.core.enums;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.dromara.warm.flow.core.utils.ObjectUtil;
 
 /**
@@ -23,6 +25,8 @@ import org.dromara.warm.flow.core.utils.ObjectUtil;
  * @author warm
  * @since 2023/3/31 12:16
  */
+@AllArgsConstructor
+@Getter
 public enum NodeType {
     /**
      * 开始节点
@@ -50,11 +54,6 @@ public enum NodeType {
     private final Integer key;
     private final String value;
 
-    NodeType(Integer key, String value) {
-        this.key = key;
-        this.value = value;
-    }
-
     public static Integer getKeyByValue(String value) {
         for (NodeType item : NodeType.values()) {
             if (item.getValue().equals(value)) {
@@ -73,7 +72,7 @@ public enum NodeType {
         return null;
     }
 
-    public static NodeType getByKey(String key) {
+    public static NodeType getByKey(Integer key) {
         for (NodeType item : NodeType.values()) {
             if (item.getKey().equals(key)) {
                 return item;
@@ -143,11 +142,4 @@ public enum NodeType {
         return ObjectUtil.isNotNull(Key) && NodeType.PARALLEL.getKey().equals(Key);
     }
 
-    public Integer getKey() {
-        return key;
-    }
-
-    public String getValue() {
-        return value;
-    }
 }

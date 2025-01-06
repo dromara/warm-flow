@@ -91,6 +91,11 @@ public class DefJson {
      */
     private String ext;
 
+    /**
+     * 扩展map，保存业务自定义扩展属性
+     */
+    private Map<String, Object> extMap;
+
     private List<NodeJson> nodeList = new ArrayList<>();
 
     public static DefJson copyDef(Definition definition) {

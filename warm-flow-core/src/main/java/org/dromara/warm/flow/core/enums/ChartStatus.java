@@ -18,25 +18,31 @@ package org.dromara.warm.flow.core.enums;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.awt.*;
+
 /**
- * 流程用户类型
+ * 流程图状态
  *
- * @author xiarg
- * @since 2024/5/10 16:04
+ * @author warm
+ * @since 2023/3/31 12:16
  */
 @Getter
 @AllArgsConstructor
-public enum UserType {
+public enum ChartStatus {
+    NOT_DONE(0, "未办理", new Color(0, 0, 0)),
 
-    APPROVAL("1", "待办任务的审批人权限"),
-    TRANSFER("2", "待办任务的转办人权限"),
-    DEPUTE("3", "待办任务的委托人权限");
+    TO_DO(1, "待办理", new Color(255, 200, 0)),
 
-    private final String key;
+    DONE(2, "已办理", new Color(157, 255, 0)),
+
+    REJECT(3, "退回", new Color(255, 110, 0));
+
+    private final Integer key;
     private final String value;
+    private final Color color;
 
-    public static String getKeyByValue(String value) {
-        for (UserType item : UserType.values()) {
+    public static Integer getKeyByValue(String value) {
+        for (ChartStatus item : ChartStatus.values()) {
             if (item.getValue().equals(value)) {
                 return item.getKey();
             }
@@ -44,17 +50,17 @@ public enum UserType {
         return null;
     }
 
-    public static String getValueByKey(String key) {
-        for (UserType item : UserType.values()) {
+    public static Color getColorByKey(Integer key) {
+        for (ChartStatus item : ChartStatus.values()) {
             if (item.getKey().equals(key)) {
-                return item.getValue();
+                return item.getColor();
             }
         }
         return null;
     }
 
-    public static UserType getByKey(String key) {
-        for (UserType item : UserType.values()) {
+    public static ChartStatus getByKey(Integer key) {
+        for (ChartStatus item : ChartStatus.values()) {
             if (item.getKey().equals(key)) {
                 return item;
             }

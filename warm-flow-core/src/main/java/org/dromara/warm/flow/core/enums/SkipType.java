@@ -15,6 +15,8 @@
  */
 package org.dromara.warm.flow.core.enums;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.dromara.warm.flow.core.utils.StringUtils;
 
 /**
@@ -23,6 +25,8 @@ import org.dromara.warm.flow.core.utils.StringUtils;
  * @author warm
  * @since 2023/3/31 12:16
  */
+@Getter
+@AllArgsConstructor
 public enum SkipType {
     PASS("PASS", "审批通过"),
     REJECT("REJECT", "退回"),
@@ -30,11 +34,6 @@ public enum SkipType {
 
     private final String key;
     private final String value;
-
-    SkipType(String key, String value) {
-        this.key = key;
-        this.value = value;
-    }
 
     public static String getKeyByValue(String value) {
         for (SkipType item : SkipType.values()) {
@@ -93,11 +92,4 @@ public enum SkipType {
         return StringUtils.isNotEmpty(Key) && (SkipType.NONE.getKey().equals(Key));
     }
 
-    public String getKey() {
-        return key;
-    }
-
-    public String getValue() {
-        return value;
-    }
 }

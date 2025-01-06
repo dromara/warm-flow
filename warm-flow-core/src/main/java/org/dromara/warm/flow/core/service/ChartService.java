@@ -16,6 +16,7 @@
 package org.dromara.warm.flow.core.service;
 
 import org.dromara.warm.flow.core.dto.DefChart;
+import org.dromara.warm.flow.core.dto.PathWayData;
 
 import java.io.IOException;
 
@@ -57,4 +58,18 @@ public interface ChartService {
      * @return DefChart 流程图对象
      */
     DefChart chartDefObj(Long definitionId);
+
+    /**
+     * 获取流程开启时的流程图元数据
+     * @param pathWayData 办理过程中途径数据，用于渲染流程图
+     * @return 流程图元数据json
+     */
+    String startMetadata(PathWayData pathWayData);
+
+    /**
+     * 获取流程运行时的流程图元数据
+     * @param pathWayData 办理过程中途径数据，用于渲染流程图
+     * @return 流程图元数据json
+     */
+    String skipMetadata(PathWayData pathWayData);
 }

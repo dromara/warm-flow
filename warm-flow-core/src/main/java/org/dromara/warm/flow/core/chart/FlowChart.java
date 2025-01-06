@@ -33,6 +33,18 @@ public interface FlowChart {
      */
     void draw(Graphics2D graphics);
 
+    default Color lightColor(Color c) {
+        if (Color.BLACK.equals(c)) {
+            return Color.WHITE;
+        }
+        float red = c.getRed() / 255.0f;
+        float green = c.getGreen() / 255.0f;
+        float blue = c.getBlue() / 255.0f;
+        float alpha = 0.15f; // 透明度
+
+        // 创建带有透明度的颜色
+        return new Color(red, green, blue, alpha);
+    }
     /**
      * 获取文字的宽度
      *

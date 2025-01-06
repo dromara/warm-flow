@@ -15,6 +15,7 @@
  */
 package org.dromara.warm.flow.core.service;
 
+import org.dromara.warm.flow.core.dto.PathWayData;
 import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.orm.service.IWarmService;
 
@@ -88,10 +89,11 @@ public interface NodeService extends IWarmService<Node> {
      * @param anyNodeCode   anyNodeCode不为空，则可跳转anyNodeCode节点（优先级最高）
      * @param skipType      跳转类型（PASS审批通过 REJECT退回）
      * @param variable      流程变量,下一个节点是网关需要判断跳转条件,并行网关返回多个节点
+     * @param pathWayData      办理过程中途径数据，用于渲染流程图
      * @return List<Node>
      */
     List<Node> getNextNodeList(Long definitionId, Node nowNode, String anyNodeCode, String skipType,
-                               Map<String, Object> variable);
+                               Map<String, Object> variable, PathWayData pathWayData);
 
     /**
      * 根据流程定义和当前节点获取下一节点
@@ -100,9 +102,10 @@ public interface NodeService extends IWarmService<Node> {
      * @param nowNode 当前节点
      * @param anyNodeCode   anyNodeCode不为空，则可跳转anyNodeCode节点（优先级最高）
      * @param skipType      跳转类型（PASS审批通过 REJECT退回）
+     * @param pathWayData      办理过程中途径数据，用于渲染流程图
      * @return Node
      */
-    Node getNextNode(Long definitionId, Node nowNode, String anyNodeCode, String skipType);
+    Node getNextNode(Long definitionId, Node nowNode, String anyNodeCode, String skipType, PathWayData pathWayData);
 
     /**
      * 根据流程定义和当前节点code获取下一节点
@@ -119,21 +122,22 @@ public interface NodeService extends IWarmService<Node> {
     Node getNextNode(Long definitionId, String nowNodeCode, String anyNodeCode, String skipType);
 
     /**
+     * 校验是否网关节点,如果是重新获取新的后面的节点
+     *
+     * @param variable      流程变量
+     * @param nextNode      下一个节点
+     * @param pathWayData      办理过程中途径数据，用于渲染流程图
+     * @return List<Node>
+     * @author xiarg
+     * @since 2024/8/21 16:48
+     */
+    List<Node> getNextByCheckGateway(Map<String, Object> variable, Node nextNode, PathWayData pathWayData);
+
+    /**
      * 批量删除流程节点
      *
      * @param defIds 需要删除的数据主键集合
      * @return 结果
      */
     int deleteNodeByDefIds(Collection<? extends Serializable> defIds);
-
-    /**
-     * 校验是否网关节点,如果是重新获取新的后面的节点
-     *
-     * @param variable      流程变量
-     * @param nextNode      下一个节点
-     * @return List<Node>
-     * @author xiarg
-     * @since 2024/8/21 16:48
-     */
-    List<Node> getNextByCheckGateway(Map<String, Object> variable, Node nextNode);
 }

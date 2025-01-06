@@ -15,12 +15,17 @@
  */
 package org.dromara.warm.flow.core.enums;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 /**
  * 节点类型
  *
  * @author warm
  * @since 2023/3/31 12:16
  */
+@Getter
+@AllArgsConstructor
 public enum PublishStatus {
     EXPIRED(9, "已失效"),
     UNPUBLISHED(0, "未发布"),
@@ -28,11 +33,6 @@ public enum PublishStatus {
 
     private final Integer key;
     private final String value;
-
-    PublishStatus(Integer key, String value) {
-        this.key = key;
-        this.value = value;
-    }
 
     public static Integer getKeyByValue(String value) {
         for (PublishStatus item : PublishStatus.values()) {
@@ -52,7 +52,7 @@ public enum PublishStatus {
         return null;
     }
 
-    public static PublishStatus getByKey(String key) {
+    public static PublishStatus getByKey(Integer key) {
         for (PublishStatus item : PublishStatus.values()) {
             if (item.getKey().equals(key)) {
                 return item;
@@ -61,11 +61,4 @@ public enum PublishStatus {
         return null;
     }
 
-    public Integer getKey() {
-        return key;
-    }
-
-    public String getValue() {
-        return value;
-    }
 }

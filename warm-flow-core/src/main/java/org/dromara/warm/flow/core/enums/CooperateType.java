@@ -15,6 +15,9 @@
  */
 package org.dromara.warm.flow.core.enums;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -31,6 +34,8 @@ import java.util.Objects;
  * @author xiarg
  * @since 2024/5/10 16:04
  */
+@Getter
+@AllArgsConstructor
 public enum CooperateType {
 
     APPROVAL(1, "无"),
@@ -43,11 +48,6 @@ public enum CooperateType {
 
     private final Integer key;
     private final String value;
-
-    CooperateType(Integer key, String value) {
-        this.key = key;
-        this.value = value;
-    }
 
     public static Integer getKeyByValue(String value) {
         for (CooperateType item : CooperateType.values()) {
@@ -74,15 +74,6 @@ public enum CooperateType {
             }
         }
         return null;
-    }
-
-
-    public Integer getKey() {
-        return key;
-    }
-
-    public String getValue() {
-        return value;
     }
 
 

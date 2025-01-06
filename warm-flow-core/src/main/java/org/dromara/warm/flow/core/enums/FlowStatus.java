@@ -15,6 +15,8 @@
  */
 package org.dromara.warm.flow.core.enums;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.dromara.warm.flow.core.utils.ObjectUtil;
 
 /**
@@ -23,6 +25,8 @@ import org.dromara.warm.flow.core.utils.ObjectUtil;
  * @author warm
  * @since 2023/3/31 12:16
  */
+@Getter
+@AllArgsConstructor
 public enum FlowStatus {
     TOBESUBMIT("0", "待提交"),
 
@@ -48,11 +52,6 @@ public enum FlowStatus {
 
     private final String key;
     private final String value;
-
-    FlowStatus(String key, String value) {
-        this.key = key;
-        this.value = value;
-    }
 
     public static String getKeyByValue(String value) {
         for (FlowStatus item : FlowStatus.values()) {
@@ -91,11 +90,4 @@ public enum FlowStatus {
         return ObjectUtil.isNotNull(Key) && (FlowStatus.FINISHED.getKey().equals(Key));
     }
 
-    public String getKey() {
-        return key;
-    }
-
-    public String getValue() {
-        return value;
-    }
 }

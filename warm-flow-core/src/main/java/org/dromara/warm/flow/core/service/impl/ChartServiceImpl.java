@@ -17,14 +17,15 @@ package org.dromara.warm.flow.core.service.impl;
 
 import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.chart.*;
-import org.dromara.warm.flow.core.dto.DefChart;
-import org.dromara.warm.flow.core.dto.DefJson;
-import org.dromara.warm.flow.core.dto.NodeJson;
-import org.dromara.warm.flow.core.dto.SkipJson;
+import org.dromara.warm.flow.core.dto.*;
+import org.dromara.warm.flow.core.entity.Instance;
+import org.dromara.warm.flow.core.enums.ChartStatus;
 import org.dromara.warm.flow.core.enums.NodeType;
+import org.dromara.warm.flow.core.enums.SkipType;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.service.ChartService;
 import org.dromara.warm.flow.core.utils.Base64;
+import org.dromara.warm.flow.core.utils.StreamUtils;
 import org.dromara.warm.flow.core.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 流程图绘制Service业务层处理
@@ -70,16 +72,100 @@ public class ChartServiceImpl implements ChartService {
     @Override
     public DefChart chartDefObj(Long definitionId) {
         DefJson defJson = FlowEngine.defService().queryDesign(definitionId);
+        initStatus(defJson);
         return DefJson.copyChart(defJson);
+    }
+
+    @Override
+    public String startMetadata(PathWayData pathWayData) {
+
+        DefJson defJson = FlowEngine.defService().queryDesign(pathWayData.getDefId());
+        List<NodeJson> nodeList = defJson.getNodeList();
+
+        Map<String, NodeJson> nodeMap = StreamUtils.toMap(nodeList, NodeJson::getNodeCode
+                , node -> node.setStatus(ChartStatus.NOT_DONE.getKey()));
+        Map<String, SkipJson> skipMap = nodeList.stream().map(NodeJson::getSkipList).flatMap(List::stream)
+                .collect(Collectors.toMap(skip -> skip.getNowNodeCode() + ":" + skip.getSkipType() + ":" + skip.getNextNodeCode(),
+                        skip -> skip.setStatus(ChartStatus.NOT_DONE.getKey())));
+
+        pathWayData.getPathWayNodes().forEach(node -> nodeMap.get(node.getNodeCode()).setStatus(ChartStatus.DONE.getKey()));
+        pathWayData.getPathWaySkips().forEach(skip -> skipMap.get(skip.getNowNodeCode() + ":" + skip.getSkipType()
+                + ":" + skip.getNextNodeCode()).setStatus(ChartStatus.DONE.getKey()));
+        pathWayData.getTargetNodes().forEach(node -> nodeMap.get(node.getNodeCode()).setStatus(ChartStatus.TO_DO.getKey()));
+
+        return FlowEngine.jsonConvert.objToStr(defJson);
+    }
+
+    @Override
+    public String skipMetadata(PathWayData pathWayData) {
+        Instance instance = FlowEngine.insService().getById(pathWayData.getInsId());
+        String defJsonStr = instance.getDefJson();
+        DefJson defJson = FlowEngine.jsonConvert.strToBean(defJsonStr, DefJson.class);
+        List<NodeJson> nodeList = defJson.getNodeList();
+        List<SkipJson> skipList = nodeList.stream().map(NodeJson::getSkipList).flatMap(List::stream)
+                .collect(Collectors.toList());
+
+        // 如果是之前驳回过的节点，则他对应的跳转线要重新变为未办状态
+        Map<String, List<SkipJson>> skipNextMap = StreamUtils.groupByKey(skipList, SkipJson::getNowNodeCode);
+        List<SkipJson> skipJsons = skipNextMap.get(pathWayData.getPathWayNodes().get(0).getNodeCode());
+        skipJsons.forEach(skipJson -> {
+            if (ChartStatus.REJECT.getKey().equals(skipJson.getStatus())) {
+                skipJson.setStatus(ChartStatus.NOT_DONE.getKey());
+            }
+        });
+
+        Map<String, NodeJson> nodeMap = StreamUtils.toMap(nodeList, NodeJson::getNodeCode, node -> node);
+        Map<String, SkipJson> skipMap = StreamUtils.toMap(skipList, skip -> skip.getNowNodeCode()
+                + ":" + skip.getSkipType() + ":" + skip.getNextNodeCode(), skip -> skip);
+
+        pathWayData.getPathWayNodes().forEach(node -> {
+            NodeJson nodeJson = nodeMap.get(node.getNodeCode());
+            if (SkipType.isPass(pathWayData.getSkipType())) {
+                nodeJson.setStatus(ChartStatus.DONE.getKey());
+            } else if (SkipType.isReject(pathWayData.getSkipType())){
+                nodeJson.setStatus(ChartStatus.REJECT.getKey());
+            }
+        });
+        pathWayData.getPathWaySkips().forEach(skip -> {
+            SkipJson skipJson = skipMap.get(skip.getNowNodeCode() + ":" + skip.getSkipType()+ ":" + skip.getNextNodeCode());
+            if (SkipType.isPass(pathWayData.getSkipType())) {
+                skipJson.setStatus(ChartStatus.DONE.getKey());
+            } else if (SkipType.isReject(pathWayData.getSkipType())){
+                skipJson.setStatus(ChartStatus.REJECT.getKey());
+            }
+        });
+        pathWayData.getTargetNodes().forEach(node -> {
+            NodeJson nodeJson = nodeMap.get(node.getNodeCode());
+            if (NodeType.isEnd(node.getNodeType())) {
+                nodeJson.setStatus(ChartStatus.DONE.getKey());
+            } else {
+                if (SkipType.isPass(pathWayData.getSkipType())) {
+                    nodeJson.setStatus(ChartStatus.TO_DO.getKey());
+                } else if (SkipType.isReject(pathWayData.getSkipType())){
+                    nodeJson.setStatus(ChartStatus.REJECT.getKey());
+                }
+            }
+        });
+
+        return FlowEngine.jsonConvert.objToStr(defJson);
+    }
+
+    private void initStatus(DefJson defJson) {
+        List<NodeJson> nodeList = defJson.getNodeList();
+        List<SkipJson> skipList = nodeList.stream().map(NodeJson::getSkipList).flatMap(List::stream)
+                .collect(Collectors.toList());
+        nodeList.forEach(node -> node.setStatus(ChartStatus.NOT_DONE.getKey()));
+        skipList.forEach(skip -> skip.setStatus(ChartStatus.NOT_DONE.getKey()));
     }
 
     /**
      * DefService 根据流程实例ID获取流程图的图片流(渲染颜色)
+     *
      * @param nodeJsonList 流程节点对象Vo
-     * @param skipJsonList  节点跳转关联对象Vo
-     * @return   流程图base64字符串
+     * @param skipJsonList 节点跳转关联对象Vo
+     * @return 流程图base64字符串
      */
-    public String basicFlowChart(List<NodeJson> nodeJsonList, List<SkipJson> skipJsonList) {
+    private String basicFlowChart(List<NodeJson> nodeJsonList, List<SkipJson> skipJsonList) {
 
         try {
 
@@ -131,7 +217,7 @@ public class ChartServiceImpl implements ChartService {
     /**
      * 添加节点流程图
      *
-     * @param nodeXY 流程图坐标边界
+     * @param nodeXY       流程图坐标边界
      * @param nodeJsonList 流程节点对象Vo
      */
     private void addNodeChart(Map<String, Integer> nodeXY, List<NodeJson> nodeJsonList
@@ -161,7 +247,7 @@ public class ChartServiceImpl implements ChartService {
                     int textY = Integer.parseInt(textSplit[1].split("\\.")[0]);
                     textChart = new TextChart(textX, textY, nodeJson.getNodeName());
                 }
-                Color c = Color.BLACK;
+                Color c = ChartStatus.getColorByKey(nodeJson.getStatus());
                 if (NodeType.isStart(nodeJson.getNodeType())) {
                     flowChartChain.addFlowChart(new OvalChart(nodeX, nodeY, c, textChart));
                 } else if (NodeType.isBetween(nodeJson.getNodeType())) {
@@ -180,7 +266,7 @@ public class ChartServiceImpl implements ChartService {
     /**
      * 添加跳转流程图
      *
-     * @param skipJsonList 节点跳转关联对象Vo
+     * @param skipJsonList   节点跳转关联对象Vo
      * @param flowChartChain 流程图链
      */
     private void addSkipChart(List<SkipJson> skipJsonList, FlowChartChain flowChartChain) {
@@ -202,7 +288,7 @@ public class ChartServiceImpl implements ChartService {
                     skipX[i] = Integer.parseInt(skipSplit[i].split(",")[0].split("\\.")[0]);
                     skipY[i] = Integer.parseInt(skipSplit[i].split(",")[1].split("\\.")[0]);
                 }
-                Color c = Color.BLACK;
+                Color c = ChartStatus.getColorByKey(skipJson.getStatus());
                 flowChartChain.addFlowChart(new SkipChart(skipX, skipY, c, textChart));
             }
         }

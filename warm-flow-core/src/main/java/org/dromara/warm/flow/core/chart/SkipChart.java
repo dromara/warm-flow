@@ -50,6 +50,7 @@ public class SkipChart implements FlowChart {
 
     @Override
     public void draw(Graphics2D graphics) {
+
         graphics.setColor(c);
         // 画跳转线
         xPoints = Arrays.stream(xPoints).map(x -> x * n).toArray();

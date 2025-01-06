@@ -16,12 +16,9 @@
 package org.dromara.warm.flow.core.dto;
 
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.dromara.warm.flow.core.FlowEngine;
-import org.dromara.warm.flow.core.entity.Definition;
+import lombok.experimental.Accessors;
 import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.entity.Skip;
 
@@ -30,29 +27,43 @@ import java.util.List;
 
 
 /**
- * 流程数据集合
+ * 办理过程中途径数据，用于渲染流程图
  *
  * @author warm
- * @since 2023/3/30 14:27
+ * @since 2025/1/4
  */
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-public class FlowCombine {
+@Accessors(chain = true)
+public class PathWayData {
     /**
-     * 所有的流程定义
+     * 流程定义id
      */
-    private Definition definition = FlowEngine.newDef();
+    private Long defId;
 
     /**
-     * 所有的流程节点
+     * 流程实例id
      */
-    private List<Node> allNodes = new ArrayList<>();
+    private Long insId;
 
     /**
-     * 所有的流程节点跳转关联
+     * 跳转类型（PASS审批通过 REJECT退回）
      */
-    private List<Skip> allSkips = new ArrayList<>();
+    private String skipType;
+
+    /**
+     * 目标结点集合
+     */
+    private List<Node> targetNodes = new ArrayList<>();
+
+    /**
+     * 途径结点集合
+     */
+    private List<Node> pathWayNodes = new ArrayList<>();
+
+    /**
+     * 途径流程跳转线
+     */
+    private List<Skip> pathWaySkips = new ArrayList<>();
 
 }

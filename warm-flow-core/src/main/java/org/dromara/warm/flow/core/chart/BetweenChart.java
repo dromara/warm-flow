@@ -49,6 +49,10 @@ public class BetweenChart implements FlowChart {
 
     @Override
     public void draw(Graphics2D graphics) {
+        // 设置填充颜色
+        graphics.setColor(lightColor(c));
+        // 填充圆角矩形
+        graphics.fillRoundRect((xRect - 50) * n, (yRect - 40) * n, 100 * n, 80 * n, 20 * n, 20 * n);
         graphics.setColor(c);
         graphics.drawRoundRect((xRect - 50) * n, (yRect - 40)  * n, 100 * n, 80 * n, 20 * n, 20 * n);
         if (ObjectUtil.isNotNull(textChart) && StringUtils.isNotEmpty(textChart.getTitle())) {

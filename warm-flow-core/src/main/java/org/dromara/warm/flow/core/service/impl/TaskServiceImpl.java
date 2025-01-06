@@ -18,13 +18,14 @@ package org.dromara.warm.flow.core.service.impl;
 import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.constant.ExceptionCons;
 import org.dromara.warm.flow.core.constant.FlowCons;
-import org.dromara.warm.flow.core.orm.dao.FlowTaskDao;
 import org.dromara.warm.flow.core.dto.FlowDto;
 import org.dromara.warm.flow.core.dto.FlowParams;
+import org.dromara.warm.flow.core.dto.PathWayData;
 import org.dromara.warm.flow.core.entity.*;
 import org.dromara.warm.flow.core.enums.*;
 import org.dromara.warm.flow.core.listener.Listener;
 import org.dromara.warm.flow.core.listener.ListenerVariable;
+import org.dromara.warm.flow.core.orm.dao.FlowTaskDao;
 import org.dromara.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import org.dromara.warm.flow.core.service.TaskService;
 import org.dromara.warm.flow.core.utils.*;
@@ -86,11 +87,14 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         }
 
         // 获取后续任务节点结合
+        PathWayData pathWayData = new PathWayData().setInsId(task.getInstanceId()).setSkipType(flowParams.getSkipType());
         List<Node> nextNodes = FlowEngine.nodeService().getNextNodeList(task.getDefinitionId(), r.nowNode
-                , flowParams.getNodeCode(), flowParams.getSkipType(), flowParams.getVariable());
+                , flowParams.getNodeCode(), flowParams.getSkipType(), flowParams.getVariable(), pathWayData);
+        filterUnFinishNode(task, r.instance, nextNodes);
 
         // 构建增待办任务和设置结束任务历史记录
-        List<Task> addTasks = buildAddTasks(flowParams, task, r.instance, nextNodes, r.definition);
+        List<Task> addTasks = StreamUtils.toList(nextNodes, node -> FlowEngine.taskService()
+                .addTask(node, r.instance, r.definition, flowParams));
 
         // 办理人变量替换
         ExpressionUtil.evalVariable(addTasks, MapUtil.mergeAll(r.instance.getVariableMap(), flowParams.getVariable()));
@@ -98,6 +102,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 执行分派监听器
         ListenerUtil.executeListener(new ListenerVariable(r.definition, r.instance, r.nowNode, flowParams.getVariable()
                 , task, nextNodes, addTasks).setFlowParams(flowParams), Listener.LISTENER_ASSIGNMENT);
+
+        // 设置流程图元数据
+        r.instance.setDefJson(FlowEngine.chartService().skipMetadata(pathWayData));
 
         // 更新流程信息
         updateFlowInfo(task, r.instance, addTasks, flowParams, nextNodes);
@@ -135,6 +142,14 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         Node endNode = FlowEngine.nodeService().getOne(FlowEngine.newNode()
                 .setDefinitionId(r.instance.getDefinitionId()).setNodeType(NodeType.END.getKey()));
 
+        // 设置流程图元数据
+        PathWayData pathWayData = new PathWayData()
+                .setInsId(task.getInstanceId())
+                .setSkipType(flowParams.getSkipType())
+                .setPathWayNodes(Collections.singletonList(r.nowNode))
+                .setTargetNodes(Collections.singletonList(endNode));
+        r.instance.setDefJson(FlowEngine.chartService().skipMetadata(pathWayData));
+
         // 流程实例完成
         r.instance.setNodeType(endNode.getNodeType())
                 .setNodeCode(endNode.getNodeCode())
@@ -151,6 +166,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
         // 删除流程相关办理人
         FlowEngine.userService().deleteByTaskIds(Collections.singletonList(task.getId()));
+
         // 处理未完成的任务，当流程完成，还存在待办任务未完成，转历史任务，状态完成。
         handUndoneTask(r.instance, flowParams);
         // 最后判断是否存在节点监听器，存在执行节点监听器
@@ -566,6 +582,24 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 删掉待办用户
         FlowEngine.userService().removeById(todoUser.getId());
         return true;
+    }
+
+    /**
+     * 构建增待办任务
+     *
+     * @param task       待办任务
+     * @param instance   实例
+     */
+    private void filterUnFinishNode(Task task, Instance instance, List<Node> nextNodes) {
+        nextNodes.removeIf(node -> {
+            // 下个节点非并行网关节点，可以直接生成下一个待办任务
+            if (!NodeType.isGateWayParallel(node.getNodeType())) {
+                return false;
+            } else {
+                // 下个节点是并行网关节点，判断前置节点是否都完成
+                return !gateWayParallelIsFinish(task, instance, node.getNodeCode());
+            }
+        });
     }
 
     /**

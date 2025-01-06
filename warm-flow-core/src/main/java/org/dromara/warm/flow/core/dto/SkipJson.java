@@ -19,6 +19,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.util.Map;
+
 /**
  * 节点跳转关联对象Vo
  *
@@ -61,8 +63,13 @@ public class SkipJson {
     private String coordinate;
 
     /**
-     * 办理状态: 0未办理 1办理中 2已办理
+     * 办理状态: 0未办理 1待办理 2已办理
      */
     private Integer status;
+
+    /**
+     * 扩展map，保存业务自定义扩展属性
+     */
+    private Map<String, Object> extMap;
 
 }

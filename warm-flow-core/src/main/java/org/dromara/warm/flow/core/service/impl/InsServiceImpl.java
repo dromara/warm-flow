@@ -17,14 +17,16 @@ package org.dromara.warm.flow.core.service.impl;
 
 import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.constant.ExceptionCons;
-import org.dromara.warm.flow.core.orm.dao.FlowInstanceDao;
 import org.dromara.warm.flow.core.dto.FlowParams;
+import org.dromara.warm.flow.core.dto.PathWayData;
 import org.dromara.warm.flow.core.entity.*;
 import org.dromara.warm.flow.core.enums.ActivityStatus;
 import org.dromara.warm.flow.core.enums.FlowStatus;
 import org.dromara.warm.flow.core.enums.NodeType;
+import org.dromara.warm.flow.core.enums.SkipType;
 import org.dromara.warm.flow.core.listener.Listener;
 import org.dromara.warm.flow.core.listener.ListenerVariable;
+import org.dromara.warm.flow.core.orm.dao.FlowInstanceDao;
 import org.dromara.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import org.dromara.warm.flow.core.service.InsService;
 import org.dromara.warm.flow.core.utils.*;
@@ -59,8 +61,9 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         Node startNode = nodes.stream().filter(t -> NodeType.isStart(t.getNodeType())).findFirst().orElse(null);
         AssertUtil.isNull(startNode, ExceptionCons.LOST_START_NODE);
         // 获取下一个节点，如果是网关节点，则重新获取后续节点
-        List<Node> nextNodes = FlowEngine.nodeService().getNextByCheckGateway(flowParams.getVariable()
-                , getFirstBetween(startNode));
+        PathWayData pathWayData = new PathWayData().setDefId(startNode.getDefinitionId());
+        List<Node> nextNodes = FlowEngine.nodeService().getNextNodeList(startNode.getDefinitionId(), startNode
+                , null, SkipType.PASS.getKey(), null, pathWayData);
 
         // 判断流程定义是否激活状态
         Definition definition = FlowEngine.defService().getById(startNode.getDefinitionId());
@@ -88,6 +91,9 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         // 执行分派监听器
         ListenerUtil.executeListener(new ListenerVariable(definition, instance, startNode, flowParams.getVariable()
                 , null, nextNodes, addTasks).setFlowParams(flowParams), Listener.LISTENER_ASSIGNMENT);
+
+        // 设置流程图元数据
+        instance.setDefJson(FlowEngine.chartService().startMetadata(pathWayData));
 
         // 开启流程，保存流程信息
         saveFlowInfo(instance, addTasks, hisTasks);
@@ -194,20 +200,6 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
                 .setCreateBy(flowParams.getHandler())
                 .setExt(flowParams.getExt());
         return instance;
-    }
-
-    /**
-     * 有且只能有一个开始节点
-     *
-     * @param startNode 开始节点
-     * @return Node
-     */
-    private Node getFirstBetween(Node startNode) {
-        List<Skip> skips = FlowEngine.skipService().list(FlowEngine.newSkip()
-                .setDefinitionId(startNode.getDefinitionId()).setNowNodeCode(startNode.getNodeCode()));
-        Skip skip = skips.get(0);
-        return FlowEngine.nodeService().getOne(FlowEngine.newNode().setDefinitionId(startNode.getDefinitionId())
-                .setNodeCode(skip.getNextNodeCode()));
     }
 
     private boolean toRemoveTask(List<Long> instanceIds) {

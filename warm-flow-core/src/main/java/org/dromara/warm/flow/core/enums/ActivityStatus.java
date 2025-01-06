@@ -15,8 +15,12 @@
  */
 package org.dromara.warm.flow.core.enums;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.dromara.warm.flow.core.utils.ObjectUtil;
 
+@Getter
+@AllArgsConstructor
 public enum ActivityStatus {
 
     SUSPENDED(0,"挂起"),
@@ -26,18 +30,6 @@ public enum ActivityStatus {
     private final Integer key;
     private final String value;
 
-    ActivityStatus(Integer key, String value) {
-        this.key = key;
-        this.value = value;
-    }
-
-    public Integer getKey() {
-        return key;
-    }
-
-    public String getValue() {
-        return value;
-    }
     public static Integer getKeyByValue(String value) {
         for (ActivityStatus item : ActivityStatus.values()) {
             if (item.getValue().equals(value)) {
@@ -56,7 +48,7 @@ public enum ActivityStatus {
         return null;
     }
 
-    public static ActivityStatus getByKey(String key) {
+    public static ActivityStatus getByKey(Integer key) {
         for (ActivityStatus item : ActivityStatus.values()) {
             if (item.getKey().equals(key)) {
                 return item;

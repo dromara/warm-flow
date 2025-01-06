@@ -22,6 +22,7 @@ import lombok.experimental.Accessors;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 流程节点对象Vo
@@ -90,9 +91,14 @@ public class NodeJson {
     private String formPath;
 
     /**
-     * 办理状态: 0未办理 1办理中 2已办理
+     * 办理状态: 0未办理 1待办理 2已办理
      */
     private Integer status;
+
+    /**
+     * 扩展map，保存业务自定义扩展属性
+     */
+    private Map<String, Object> extMap;
 
     /**
      * 跳转条件
