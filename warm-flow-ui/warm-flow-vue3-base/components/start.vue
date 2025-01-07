@@ -55,7 +55,7 @@
 </template>
 
 <script setup name="Start">
-import { Delete } from '@element-plus/icons-vue'
+import { Delete } from '../../warm-flow-vue3-logic-flow/node_modules/@element-plus/icons-vue'
 
 const props = defineProps({
   modelValue: {

@@ -159,7 +159,7 @@
 
 <script setup name="Between">
 import selectUser from "./selectUser";
-import { Delete } from '@element-plus/icons-vue'
+import { Delete } from '../../warm-flow-vue3-logic-flow/node_modules/@element-plus/icons-vue'
 import { publishedList, handlerDict } from "../api/flow/definition";
 const { proxy } = getCurrentInstance();
 

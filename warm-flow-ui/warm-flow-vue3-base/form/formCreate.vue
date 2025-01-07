@@ -21,7 +21,7 @@
 
 <script setup name="formCreate">
 import { getFormContent, executeLoad, executeHandle, hisLoad } from "../api/form/definition";
-import formCreate from "@form-create/element-ui";
+import formCreate from "../../warm-flow-vue3-logic-flow/node_modules/@form-create/element-ui";
 const { proxy } = getCurrentInstance();
 const disabled = ref(false);
 const fApi = ref(null);
