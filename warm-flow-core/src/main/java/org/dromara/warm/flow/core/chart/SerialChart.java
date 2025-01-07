@@ -44,9 +44,13 @@ public class SerialChart implements FlowChart {
 
     @Override
     public void draw(Graphics2D graphics) {
-        graphics.setColor(c);
         int[] xSerials = {(xSerial - 20) * n, xSerial * n, (xSerial + 20) * n, xSerial * n};
         int[] ySerials = {ySerial * n, (ySerial - 20) * n, ySerial * n, (ySerial + 20) * n};
+        // 设置填充颜色
+        graphics.setColor(lightColor(c));
+        // 填充圆角矩形
+        graphics.fillPolygon(xSerials, ySerials, 4);
+        graphics.setColor(c);
         graphics.drawPolygon(xSerials, ySerials, 4);
 
         int[] xPoints1 = {(xSerial - 6) * n, (xSerial + 6) * n};

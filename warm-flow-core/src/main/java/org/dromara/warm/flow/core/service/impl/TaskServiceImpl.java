@@ -88,13 +88,13 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
         // 获取后续任务节点结合
         PathWayData pathWayData = new PathWayData().setInsId(task.getInstanceId()).setSkipType(flowParams.getSkipType());
-        List<Node> nextNodes = FlowEngine.nodeService().getNextNodeList(task.getDefinitionId(), r.nowNode
-                , flowParams.getNodeCode(), flowParams.getSkipType(), flowParams.getVariable(), pathWayData);
-        filterUnFinishNode(task, r.instance, nextNodes);
+        Node nextNode = FlowEngine.nodeService().getNextNode(task.getDefinitionId(), r.nowNode
+                , flowParams.getNodeCode(), flowParams.getSkipType(), pathWayData);
+        List<Node> nextNodes = FlowEngine.nodeService().getNextByCheckGateway(flowParams.getVariable()
+                , nextNode, pathWayData);
 
         // 构建增待办任务和设置结束任务历史记录
-        List<Task> addTasks = StreamUtils.toList(nextNodes, node -> FlowEngine.taskService()
-                .addTask(node, r.instance, r.definition, flowParams));
+        List<Task> addTasks = buildAddTasks(flowParams, task, r.instance, nextNodes, nextNode, r.definition);
 
         // 办理人变量替换
         ExpressionUtil.evalVariable(addTasks, MapUtil.mergeAll(r.instance.getVariableMap(), flowParams.getVariable()));
@@ -130,6 +130,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     @Override
     public Instance termination(Task task, FlowParams flowParams) {
         R r = getAndCheck(task);
+        flowParams.skipType(SkipType.PASS.getKey());
         flowParams.variable(MapUtil.mergeAll(r.instance.getVariableMap(), flowParams.getVariable()));
         ListenerUtil.executeListener(new ListenerVariable(r.definition, r.instance, r.nowNode, flowParams.getVariable()
                 , task).setFlowParams(flowParams), Listener.LISTENER_START);
@@ -158,7 +159,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                         : FlowStatus.TERMINATE.getKey());
 
         // 待办任务转历史
-        flowParams.skipType(SkipType.PASS.getKey()).flowStatus(r.instance.getFlowStatus());
+        flowParams.flowStatus(r.instance.getFlowStatus());
         List<HisTask> insHisList = FlowEngine.hisTaskService().setSkipInsHis(task, Collections.singletonList(endNode)
                 , flowParams);
         FlowEngine.hisTaskService().saveBatch(insHisList);
@@ -589,8 +590,18 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
      *
      * @param task       待办任务
      * @param instance   实例
+     * @param nextNodes   后续节点集合（当没有并行网关节点时，nextNodes相同，否则不同）
+     * @param nextNode   下一个节点
      */
-    private void filterUnFinishNode(Task task, Instance instance, List<Node> nextNodes) {
+    private void filterUnFinishNode(Task task, Instance instance, List<Node> nextNodes, Node nextNode) {
+        boolean buildFlag = false;
+        // 下个节点非并行网关节点，可以直接生成下一个待办任务
+        if (!NodeType.isGateWayParallel(nextNode.getNodeType())
+                || gateWayParallelIsFinish(task, instance, nextNode.getNodeCode())) {
+            buildFlag = true;
+        } else {
+            nextNodes = new ArrayList<>();
+        }
         nextNodes.removeIf(node -> {
             // 下个节点非并行网关节点，可以直接生成下一个待办任务
             if (!NodeType.isGateWayParallel(node.getNodeType())) {
@@ -608,27 +619,21 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
      * @param flowParams 流程参数
      * @param task       待办任务
      * @param instance   实例
+     * @param nextNode   下个节点
      * @return List<Task>
      */
     private List<Task> buildAddTasks(FlowParams flowParams, Task task, Instance instance
-            , List<Node> nextNodes, Definition definition) {
-        List<Task> addTasks = new ArrayList<>();
-        for (Node node : nextNodes) {
-            boolean buildFlag = false;
-            // 下个节点非并行网关节点，可以直接生成下一个待办任务
-            if (!NodeType.isGateWayParallel(node.getNodeType())) {
-                buildFlag = true;
-            } else {
-                // 下个节点是并行网关节点，判断前置节点是否都完成
-                if (gateWayParallelIsFinish(task, instance, node.getNodeCode())) {
-                    buildFlag = true;
-                }
-            }
-            if (buildFlag) {
+            , List<Node> nextNodes, Node nextNode, Definition definition) {
+        // 下个节点非并行网关节点，可以直接生成下一个待办任务，或者下个节点是并行网关节点，判断前置节点都完成
+        if (!NodeType.isGateWayParallel(nextNode.getNodeType())
+                || gateWayParallelIsFinish(task, instance, nextNode.getNodeCode())) {
+            List<Task> addTasks = new ArrayList<>();
+            for (Node node : nextNodes) {
                 addTasks.add(addTask(node, instance, definition, flowParams));
             }
+            return addTasks;
         }
-        return addTasks;
+        return null;
     }
 
     /**

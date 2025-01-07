@@ -15,7 +15,6 @@
  */
 package org.dromara.warm.flow.core.chart;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -46,9 +45,13 @@ public class ParallelChart implements FlowChart {
 
     @Override
     public void draw(Graphics2D graphics) {
-        graphics.setColor(c);
         int[] xParallels = {(xParallel - 20) * n, xParallel * n, (xParallel + 20) * n, xParallel * n};
         int[] yParallels = {yParallel * n, (yParallel - 20) * n, yParallel * n, (yParallel + 20) * n};
+        // 设置填充颜色
+        graphics.setColor(lightColor(c));
+        // 填充圆角矩形
+        graphics.fillPolygon(xParallels, yParallels, 4);
+        graphics.setColor(c);
         graphics.drawPolygon(xParallels, yParallels, 4);
 
         int[] xPoints1 = {(xParallel - 8) * n, (xParallel + 8) * n};

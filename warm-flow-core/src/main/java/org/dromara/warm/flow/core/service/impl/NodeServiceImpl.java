@@ -191,7 +191,7 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
                     .getByNodeCodes(nextNodeCodes, nextNode.getDefinitionId());
             AssertUtil.isEmpty(nextNodes, ExceptionCons.NOT_NODE_DATA);
             if (pathWayData != null) {
-                pathWayData.getPathWayNodes().addAll(nextNodes);
+                pathWayData.getTargetNodes().addAll(nextNodes);
                 pathWayData.getPathWaySkips().addAll(skipsGateway);
             }
             // TODO 网关直连，暂时注释
