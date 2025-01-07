@@ -25,12 +25,12 @@ import org.dromara.warm.flow.core.utils.StringUtils;
 import java.awt.*;
 
 /**
- * 流程图中间节点
+ * 右上角示例
  */
 @Getter
 @Setter
 @Accessors(chain = true)
-public class BetweenChart implements FlowChart {
+public class ExampleChart implements FlowChart {
     private int n;
 
     private int xRect;
@@ -41,7 +41,7 @@ public class BetweenChart implements FlowChart {
 
     private TextChart textChart;
 
-    public BetweenChart(int xRect, int yRect, Color c, TextChart textChart) {
+    public ExampleChart(int xRect, int yRect, Color c, TextChart textChart) {
         this.xRect = xRect;
         this.yRect = yRect;
         this.c = c;
@@ -53,7 +53,7 @@ public class BetweenChart implements FlowChart {
         // 设置填充颜色
         graphics.setColor(lightColor(c));
         // 填充圆角矩形
-        graphics.fillRoundRect((xRect - 50) * n, (yRect - 40) * n, 100 * n, 80 * n, 20 * n, 20 * n);
+        graphics.fillRoundRect(xRect * n, yRect * n, 60 * n, 20 * n, 5 * n, 5 * n);
         graphics.setColor(c);
         // 保存当前的画笔样式
         Stroke originalStroke = graphics.getStroke();
@@ -63,7 +63,7 @@ public class BetweenChart implements FlowChart {
             BasicStroke dashedStroke = new BasicStroke(2.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10f, dashPattern, 0f);
             graphics.setStroke(dashedStroke);
         }
-        graphics.drawRoundRect((xRect - 50) * n, (yRect - 40)  * n, 100 * n, 80 * n, 20 * n, 20 * n);
+        graphics.drawRoundRect(xRect * n, yRect  * n, 60 * n, 20 * n, 5 * n, 5 * n);
         graphics.setStroke(originalStroke);
         if (ObjectUtil.isNotNull(textChart) && StringUtils.isNotEmpty(textChart.getTitle())) {
             textChart.setXText(textChart.getXText() - stringWidth(graphics, textChart.getTitle()) / 2);

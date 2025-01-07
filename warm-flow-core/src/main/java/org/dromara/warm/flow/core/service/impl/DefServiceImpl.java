@@ -421,7 +421,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
             graphics.setColor(Color.WHITE);
             graphics.fillRect(0, 0, width, height);
 
-            flowChartChain.draw(graphics, n);
+            flowChartChain.draw(width, height, graphics, n);
             graphics.setPaintMode();
             graphics.dispose();// 释放此图形的上下文并释放它所使用的所有系统资源
 

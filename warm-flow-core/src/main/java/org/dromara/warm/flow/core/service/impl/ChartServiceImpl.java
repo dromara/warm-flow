@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -52,14 +53,24 @@ public class ChartServiceImpl implements ChartService {
 
     @Override
     public String chartIns(Long instanceId) {
-        DefChart flowChart = chartInsObj(instanceId);
-        return basicFlowChart(flowChart.getNodeJsonList(), flowChart.getSkipJsonList());
+        return chartIns(instanceId, chartChain -> {});
     }
 
     @Override
     public String chartDef(Long definitionId) {
+        return chartDef(definitionId, chartChain -> {});
+    }
+
+    @Override
+    public String chartIns(Long instanceId, Consumer<FlowChartChain> consumer) {
+        DefChart flowChart = chartInsObj(instanceId);
+        return basicFlowChart(flowChart.getNodeJsonList(), flowChart.getSkipJsonList(), consumer);
+    }
+
+    @Override
+    public String chartDef(Long definitionId, Consumer<FlowChartChain> consumer) {
         DefChart flowChart = chartDefObj(definitionId);
-        return basicFlowChart(flowChart.getNodeJsonList(), flowChart.getSkipJsonList());
+        return basicFlowChart(flowChart.getNodeJsonList(), flowChart.getSkipJsonList(), consumer);
     }
 
     @Override
@@ -163,28 +174,29 @@ public class ChartServiceImpl implements ChartService {
      *
      * @param nodeJsonList 流程节点对象Vo
      * @param skipJsonList 节点跳转关联对象Vo
+     * @param consumer 可获取流程图对象，可用于修改流程图样式或者新增内容
      * @return 流程图base64字符串
      */
-    private String basicFlowChart(List<NodeJson> nodeJsonList, List<SkipJson> skipJsonList) {
+    private String basicFlowChart(List<NodeJson> nodeJsonList, List<SkipJson> skipJsonList, Consumer<FlowChartChain> consumer) {
 
         try {
 
-            Map<String, Integer> nodeXY = new HashMap<>();
-            nodeXY.put("minX", 5000);
-            nodeXY.put("minY", 5000);
-            nodeXY.put("maxX", 0);
-            nodeXY.put("maxY", 0);
+            Map<String, Integer> chartXY = new HashMap<>();
+            chartXY.put("minX", 5000);
+            chartXY.put("minY", 5000);
+            chartXY.put("maxX", 0);
+            chartXY.put("maxY", 0);
 
             FlowChartChain flowChartChain = new FlowChartChain();
-            addNodeChart(nodeXY, nodeJsonList, flowChartChain);
-            addSkipChart(skipJsonList, flowChartChain);
+            addNodeChart(chartXY, nodeJsonList, flowChartChain);
+            addSkipChart(chartXY, skipJsonList, flowChartChain);
 
             // 清晰度
             int n = 2;
-            int width = (nodeXY.get("maxX") + nodeXY.get("minX")) * n;
-            int height = (nodeXY.get("maxY") + nodeXY.get("minY")) * n;
-            BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+            int width = (chartXY.get("maxX") + chartXY.get("minX")) * n;
+            int height = (chartXY.get("maxY") + chartXY.get("minY")) * n;
 
+            BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
             // 获取图形上下文,graphics想象成一个画笔
             Graphics2D graphics = image.createGraphics();
             graphics.setStroke(new BasicStroke((2 * n) + 1, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND));
@@ -199,7 +211,9 @@ public class ChartServiceImpl implements ChartService {
             graphics.setColor(Color.WHITE);
             graphics.fillRect(0, 0, width, height);
 
-            flowChartChain.draw(graphics, n);
+            flowChartChain.draw(width, height, graphics, n);
+            // 提供外部扩展
+            consumer.accept(flowChartChain);
             graphics.setPaintMode();
             graphics.dispose();// 释放此图形的上下文并释放它所使用的所有系统资源
 
@@ -217,10 +231,11 @@ public class ChartServiceImpl implements ChartService {
     /**
      * 添加节点流程图
      *
-     * @param nodeXY       流程图坐标边界
+     * @param chartXY       流程图坐标边界
      * @param nodeJsonList 流程节点对象Vo
+     * @param flowChartChain 流程图链
      */
-    private void addNodeChart(Map<String, Integer> nodeXY, List<NodeJson> nodeJsonList
+    private void addNodeChart(Map<String, Integer> chartXY, List<NodeJson> nodeJsonList
             , FlowChartChain flowChartChain) {
         for (NodeJson nodeJson : nodeJsonList) {
             if (StringUtils.isNotEmpty(nodeJson.getCoordinate())) {
@@ -228,18 +243,7 @@ public class ChartServiceImpl implements ChartService {
                 String[] nodeSplit = coordinateSplit[0].split(",");
                 int nodeX = Integer.parseInt(nodeSplit[0].split("\\.")[0]);
                 int nodeY = Integer.parseInt(nodeSplit[1].split("\\.")[0]);
-                if (nodeX > nodeXY.get("maxX")) {
-                    nodeXY.put("maxX", nodeX);
-                }
-                if (nodeX < nodeXY.get("minX")) {
-                    nodeXY.put("minX", nodeX);
-                }
-                if (nodeY > nodeXY.get("maxY")) {
-                    nodeXY.put("maxY", nodeY);
-                }
-                if (nodeY < nodeXY.get("minY")) {
-                    nodeXY.put("minY", nodeY);
-                }
+                setChartXy(chartXY, nodeX, nodeY);
                 TextChart textChart = null;
                 if (coordinateSplit.length > 1) {
                     String[] textSplit = coordinateSplit[1].split(",");
@@ -263,19 +267,33 @@ public class ChartServiceImpl implements ChartService {
         }
     }
 
+    private static void setChartXy(Map<String, Integer> chartXY, int nodeX, int nodeY) {
+        if (nodeX > chartXY.get("maxX")) {
+            chartXY.put("maxX", nodeX);
+        }
+        if (nodeX < chartXY.get("minX")) {
+            chartXY.put("minX", nodeX);
+        }
+        if (nodeY > chartXY.get("maxY")) {
+            chartXY.put("maxY", nodeY);
+        }
+        if (nodeY < chartXY.get("minY")) {
+            chartXY.put("minY", nodeY);
+        }
+    }
+
     /**
      * 添加跳转流程图
      *
+     * @param chartXY       流程图坐标边界
      * @param skipJsonList   节点跳转关联对象Vo
      * @param flowChartChain 流程图链
      */
-    private void addSkipChart(List<SkipJson> skipJsonList, FlowChartChain flowChartChain) {
+    private void addSkipChart(Map<String, Integer> chartXY, List<SkipJson> skipJsonList, FlowChartChain flowChartChain) {
         for (SkipJson skipJson : skipJsonList) {
             if (StringUtils.isNotEmpty(skipJson.getCoordinate())) {
                 String[] coordinateSplit = skipJson.getCoordinate().split("\\|");
-                String[] skipSplit = coordinateSplit[0].split(";");
-                int[] skipX = new int[skipSplit.length];
-                int[] skipY = new int[skipSplit.length];
+
                 TextChart textChart = null;
                 if (coordinateSplit.length > 1) {
                     String[] textSplit = coordinateSplit[1].split(",");
@@ -284,9 +302,13 @@ public class ChartServiceImpl implements ChartService {
                     textChart = new TextChart(textX, textY, skipJson.getSkipName());
                 }
 
+                String[] skipSplit = coordinateSplit[0].split(";");
+                int[] skipX = new int[skipSplit.length];
+                int[] skipY = new int[skipSplit.length];
                 for (int i = 0; i < skipSplit.length; i++) {
                     skipX[i] = Integer.parseInt(skipSplit[i].split(",")[0].split("\\.")[0]);
                     skipY[i] = Integer.parseInt(skipSplit[i].split(",")[1].split("\\.")[0]);
+                    setChartXy(chartXY, skipX[i], skipY[i]);
                 }
                 Color c = ChartStatus.getColorByKey(skipJson.getStatus());
                 flowChartChain.addFlowChart(new SkipChart(skipX, skipY, c, textChart));

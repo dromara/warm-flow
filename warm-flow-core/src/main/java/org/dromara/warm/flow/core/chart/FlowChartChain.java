@@ -16,6 +16,8 @@
 package org.dromara.warm.flow.core.chart;
 
 import lombok.Getter;
+import lombok.Setter;
+import org.dromara.warm.flow.core.enums.ChartStatus;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -27,17 +29,59 @@ import java.util.List;
  * @author warm
  */
 @Getter
+@Setter
 public class FlowChartChain {
 
+    /**
+     * 宽度
+     */
+    private int width;
+
+    /**
+     * 高度
+     */
+    private int height;
+
+    /**
+     * 倍数
+     */
+    private int n;
+
+    /**
+     * 画笔
+     */
+    private Graphics2D graphics;
+
+    /**
+     * 所有图形
+     */
     private final List<FlowChart> flowChartList = new ArrayList<>();
 
     public void addFlowChart(FlowChart flowChart) {
         flowChartList.add(flowChart);
     }
 
-    public void draw(Graphics2D graphics, int n) {
+    public void draw(int width, int height, Graphics2D graphics, int n) {
+        this.width = width;
+        this.height = height;
+        this.n = n;
+        this.graphics = graphics;
+
+        int tmp = width - 600;
+        for (ChartStatus value : ChartStatus.values()) {
+            int nodeX = tmp / 2;
+            int nodeY = 0;
+            int textX = nodeX + 30;
+            int textY = nodeY + 15;
+            TextChart textChart = new TextChart(textX, textY, value.getValue());
+            addFlowChart(new ExampleChart(nodeX, nodeY, value.getColor(), textChart));
+            tmp += 140;
+        }
+
+
+        this.graphics.setStroke(new BasicStroke(2.5f));
         for (FlowChart flowChart : flowChartList) {
-            flowChart.setN(n).draw(graphics);
+            flowChart.setN(n).draw(this.graphics);
         }
     }
 }
