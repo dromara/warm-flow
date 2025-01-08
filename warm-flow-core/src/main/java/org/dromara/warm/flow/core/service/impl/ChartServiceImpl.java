@@ -19,12 +19,14 @@ import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.chart.*;
 import org.dromara.warm.flow.core.dto.*;
 import org.dromara.warm.flow.core.entity.Instance;
+import org.dromara.warm.flow.core.entity.Skip;
 import org.dromara.warm.flow.core.enums.ChartStatus;
 import org.dromara.warm.flow.core.enums.NodeType;
 import org.dromara.warm.flow.core.enums.SkipType;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.service.ChartService;
 import org.dromara.warm.flow.core.utils.Base64;
+import org.dromara.warm.flow.core.utils.CollUtil;
 import org.dromara.warm.flow.core.utils.StreamUtils;
 import org.dromara.warm.flow.core.utils.StringUtils;
 import org.slf4j.Logger;
@@ -112,19 +114,10 @@ public class ChartServiceImpl implements ChartService {
         Instance instance = FlowEngine.insService().getById(pathWayData.getInsId());
         String defJsonStr = instance.getDefJson();
         DefJson defJson = FlowEngine.jsonConvert.strToBean(defJsonStr, DefJson.class);
+
         List<NodeJson> nodeList = defJson.getNodeList();
         List<SkipJson> skipList = nodeList.stream().map(NodeJson::getSkipList).flatMap(List::stream)
                 .collect(Collectors.toList());
-
-        // 如果是之前驳回过的节点，则他对应的跳转线要重新变为未办状态
-        Map<String, List<SkipJson>> skipNextMap = StreamUtils.groupByKey(skipList, SkipJson::getNowNodeCode);
-        List<SkipJson> skipJsons = skipNextMap.get(pathWayData.getPathWayNodes().get(0).getNodeCode());
-        skipJsons.forEach(skipJson -> {
-            if (ChartStatus.REJECT.getKey().equals(skipJson.getStatus())) {
-                skipJson.setStatus(ChartStatus.NOT_DONE.getKey());
-            }
-        });
-
         Map<String, NodeJson> nodeMap = StreamUtils.toMap(nodeList, NodeJson::getNodeCode, node -> node);
         Map<String, SkipJson> skipMap = StreamUtils.toMap(skipList, skip -> skip.getNowNodeCode()
                 + ":" + skip.getSkipType() + ":" + skip.getNextNodeCode(), skip -> skip);
@@ -134,7 +127,7 @@ public class ChartServiceImpl implements ChartService {
             if (SkipType.isPass(pathWayData.getSkipType())) {
                 nodeJson.setStatus(ChartStatus.DONE.getKey());
             } else if (SkipType.isReject(pathWayData.getSkipType())){
-                nodeJson.setStatus(ChartStatus.REJECT.getKey());
+                nodeJson.setStatus(ChartStatus.NOT_DONE.getKey());
             }
         });
         pathWayData.getPathWaySkips().forEach(skip -> {
@@ -142,7 +135,7 @@ public class ChartServiceImpl implements ChartService {
             if (SkipType.isPass(pathWayData.getSkipType())) {
                 skipJson.setStatus(ChartStatus.DONE.getKey());
             } else if (SkipType.isReject(pathWayData.getSkipType())){
-                skipJson.setStatus(ChartStatus.REJECT.getKey());
+                skipJson.setStatus(ChartStatus.NOT_DONE.getKey());
             }
         });
         pathWayData.getTargetNodes().forEach(node -> {
@@ -150,15 +143,68 @@ public class ChartServiceImpl implements ChartService {
             if (NodeType.isEnd(node.getNodeType())) {
                 nodeJson.setStatus(ChartStatus.DONE.getKey());
             } else {
-                if (SkipType.isPass(pathWayData.getSkipType())) {
-                    nodeJson.setStatus(ChartStatus.TO_DO.getKey());
-                } else if (SkipType.isReject(pathWayData.getSkipType())){
-                    nodeJson.setStatus(ChartStatus.REJECT.getKey());
-                }
+                nodeJson.setStatus(ChartStatus.TO_DO.getKey());
             }
         });
 
+        if (SkipType.isReject(pathWayData.getSkipType())) {
+            Map<String, List<SkipJson>> skipNextMap = StreamUtils.groupByKeyFilter(skip ->
+                    !SkipType.isReject(skip.getSkipType()), skipList, SkipJson::getNowNodeCode
+            );
+            pathWayData.getTargetNodes().forEach(node -> {
+                rejectReset(node.getNodeCode(), skipNextMap, nodeMap);
+
+            });
+        }
+
+        pathWayData.getTargetNodes().forEach(node -> {
+            if (NodeType.isEnd(node.getNodeType())) {
+                nodeList.forEach(nodeJson -> {
+                    if (ChartStatus.isToDo(nodeJson.getStatus())) {
+                        nodeJson.setStatus(ChartStatus.NOT_DONE.getKey());
+                    }
+                });
+            }
+        });
+
+
         return FlowEngine.jsonConvert.objToStr(defJson);
+    }
+
+    private void rejectReset(String nodeCode, Map<String, List<SkipJson>> skipNextMap, Map<String, NodeJson> nodeMap) {
+        List<SkipJson> oneNextSkips = skipNextMap.get(nodeCode);
+        for (SkipJson oneNextSkip : oneNextSkips) {
+            if (!ChartStatus.isNotDone(oneNextSkip.getStatus())) {
+                oneNextSkip.setStatus(ChartStatus.NOT_DONE.getKey());
+                NodeJson nodeJson = nodeMap.get(oneNextSkip.getNextNodeCode());
+                if (!ChartStatus.isNotDone(nodeJson.getStatus())) {
+                    nodeJson.setStatus(ChartStatus.NOT_DONE.getKey());
+                    rejectReset(nodeJson.getNodeCode(), skipNextMap, nodeMap);
+                }
+            }
+        }
+    }
+
+    /**
+     * 判断是否属于退回指向节点的后置未完成的结点和跳转线
+     *
+     * @param nextNodeCode 下一个节点编码
+     * @param lastSkips    上一个跳转集合
+     * @param skipMap      跳转map
+     * @return boolean
+     */
+    private boolean judgeReject(String nextNodeCode, List<Skip> lastSkips
+            , Map<String, List<Skip>> skipMap) {
+        if (CollUtil.isNotEmpty(lastSkips)) {
+            for (Skip lastSkip : lastSkips) {
+                if (nextNodeCode.equals(lastSkip.getNowNodeCode())) {
+                    return true;
+                }
+                List<Skip> lastLastSkips = skipMap.get(lastSkip.getNowNodeCode());
+                return judgeReject(nextNodeCode, lastLastSkips, skipMap);
+            }
+        }
+        return false;
     }
 
     private void initStatus(DefJson defJson) {

@@ -94,7 +94,13 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 , nextNode, pathWayData);
 
         // 构建增待办任务和设置结束任务历史记录
-        List<Task> addTasks = buildAddTasks(flowParams, task, r.instance, nextNodes, nextNode, r.definition);
+        List<Task> addTasks = null;
+        if (!NodeType.isGateWayParallel(nextNode.getNodeType())
+                || gateWayParallelIsFinish(task, r.instance, nextNode.getNodeCode())) {
+            addTasks = StreamUtils.toList(nextNodes, node -> addTask(node, r.instance, r.definition, flowParams));
+        } else {
+            pathWayData.getTargetNodes().removeAll(nextNodes);
+        }
 
         // 办理人变量替换
         ExpressionUtil.evalVariable(addTasks, MapUtil.mergeAll(r.instance.getVariableMap(), flowParams.getVariable()));
@@ -529,7 +535,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 除当前办理人外剩余办理人列表
         List<User> restList = StreamUtils.filter(todoList, u -> !Objects.equals(u.getProcessedBy(), flowParams.getHandler()));
 
-        // 会签并且当前人驳回直接返回
+        // 会签并且当前人退回直接返回
         if (CooperateType.isCountersign(nodeRatio) && SkipType.isReject(flowParams.getSkipType())) {
             FlowEngine.userService().removeByIds(StreamUtils.toList(restList, User::getId));
             return false;
@@ -627,11 +633,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 下个节点非并行网关节点，可以直接生成下一个待办任务，或者下个节点是并行网关节点，判断前置节点都完成
         if (!NodeType.isGateWayParallel(nextNode.getNodeType())
                 || gateWayParallelIsFinish(task, instance, nextNode.getNodeCode())) {
-            List<Task> addTasks = new ArrayList<>();
-            for (Node node : nextNodes) {
-                addTasks.add(addTask(node, instance, definition, flowParams));
-            }
-            return addTasks;
+            return StreamUtils.toList(nextNodes, node -> addTask(node, instance, definition, flowParams));
         }
         return null;
     }
@@ -659,6 +661,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         }
         List<HisTask> hisTaskList = FlowEngine.hisTaskService().getNoReject(instance.getId());
         int wayParallelIsFinish = 0;
+        int nodeCount = oneLastSkips.size();
         if (CollUtil.isNotEmpty(oneLastSkips)) {
             for (Skip oneLastSkip : oneLastSkips) {
                 HisTask oneLastHisTask = FlowEngine.hisTaskService()
@@ -669,11 +672,13 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 }
                 List<Skip> twoLastSkips = skipNextMap.get(oneLastSkip.getNowNodeCode());
                 for (Skip twoLastSkip : twoLastSkips) {
+                    nodeCount = twoLastSkips.size();
                     if (NodeType.isStart(twoLastSkip.getNowNodeType())) {
                         wayParallelIsFinish++;
                     } else if (NodeType.isGateWay(twoLastSkip.getNowNodeType())) {
                         // 如果前前置节点是网关，那网关前任意一个任务完成就算完成
                         List<Skip> threeLastSkips = skipNextMap.get(twoLastSkip.getNowNodeCode());
+                        nodeCount = threeLastSkips.size();
                         for (Skip threeLastSkip : threeLastSkips) {
                             HisTask threeLastHisTask = FlowEngine.hisTaskService()
                                     .getNoReject(threeLastSkip.getNowNodeCode(), null, hisTaskList);
@@ -696,7 +701,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 }
             }
         }
-        return wayParallelIsFinish == oneLastSkips.size();
+        return wayParallelIsFinish == nodeCount;
     }
 
     /**

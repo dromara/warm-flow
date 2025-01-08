@@ -121,6 +121,10 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
         AssertUtil.isNull(nowNode, ExceptionCons.LOST_NODE_CODE);
         AssertUtil.isEmpty(skipType, ExceptionCons.NULL_CONDITION_VALUE);
 
+        if (pathWayData != null) {
+            pathWayData.getPathWayNodes().add(nowNode);
+        }
+
         // 如果指定了跳转节点，直接获取节点
         if (StringUtils.isNotEmpty(anyNodeCode)) {
             return getOne(FlowEngine.newNode().setNodeCode(anyNodeCode).setDefinitionId(definitionId));
@@ -145,7 +149,6 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
         AssertUtil.isNull(nextNode, ExceptionCons.NULL_NODE_CODE);
         AssertUtil.isTrue(NodeType.isStart(nextNode.getNodeType()), ExceptionCons.FIRST_FORBID_BACK);
         if (pathWayData != null) {
-            pathWayData.getPathWayNodes().add(nowNode);
             pathWayData.getPathWayNodes().add(nextNode);
             pathWayData.getPathWaySkips().add(nextSkip);
         }

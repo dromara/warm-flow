@@ -304,7 +304,7 @@ public class FlowConfigUtil {
         String nodeCode = node.getNodeCode();
         List<Skip> skipList = node.getSkipList();
         if (!NodeType.isEnd(node.getNodeType())) {
-            AssertUtil.isEmpty(skipList, "开始和中间节点必须有跳转规则");
+            AssertUtil.isEmpty(skipList, ExceptionCons.MUST_SKIP);
         }
         AssertUtil.isEmpty(nodeCode, "[" + nodeName + "]" + ExceptionCons.LOST_NODE_CODE);
 
@@ -328,6 +328,7 @@ public class FlowConfigUtil {
                 FlowEngine.dataFillHandler().idFill(skip);
                 // 流程id
                 skip.setDefinitionId(definitionId);
+                skip.setNowNodeType(node.getNodeType());
                 if (NodeType.isGateWaySerial(node.getNodeType())) {
                     String target = skip.getSkipCondition() + ":" + skip.getNextNodeCode();
                     AssertUtil.contains(gateWaySet, target, "[" + nodeName + "]" + ExceptionCons.SAME_CONDITION_NODE);

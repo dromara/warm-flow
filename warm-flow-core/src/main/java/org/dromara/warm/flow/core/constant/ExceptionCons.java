@@ -43,6 +43,8 @@ public class ExceptionCons {
 
     public static final String LOST_NODE_CODE = "节点编码缺失";
 
+    public static final String MUST_SKIP = "开始或者中间节点必须画跳转线";
+
     public static final String SAME_NODE_CODE = "同一流程中节点编码重复!";
 
     public static final String NULL_SKIP_TYPE = "无法跳转到节点,请检查跳转类型是否匹配!";

@@ -17,6 +17,7 @@ package org.dromara.warm.flow.core.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.dromara.warm.flow.core.utils.ObjectUtil;
 
 import java.awt.*;
 
@@ -33,9 +34,7 @@ public enum ChartStatus {
 
     TO_DO(1, "待办理", new Color(255, 200, 0)),
 
-    DONE(2, "已办理", new Color(157, 255, 0)),
-
-    REJECT(3, "退回", new Color(255, 110, 0));
+    DONE(2, "已办理", new Color(157, 255, 0));
 
     private final Integer key;
     private final String value;
@@ -66,6 +65,33 @@ public enum ChartStatus {
             }
         }
         return null;
+    }
+
+    /**
+     * 判断是否未办理
+     *
+     * @param Key 状态
+     */
+    public static Boolean isNotDone(Integer Key) {
+        return ObjectUtil.isNotNull(Key) && (ChartStatus.NOT_DONE.getKey().equals(Key));
+    }
+
+    /**
+     * 判断是否待办理
+     *
+     * @param Key 状态
+     */
+    public static Boolean isToDo(Integer Key) {
+        return ObjectUtil.isNotNull(Key) && (ChartStatus.TO_DO.getKey().equals(Key));
+    }
+
+    /**
+     * 判断是否已办理
+     *
+     * @param Key 状态
+     */
+    public static Boolean isDone(Integer Key) {
+        return ObjectUtil.isNotNull(Key) && (ChartStatus.DONE.getKey().equals(Key));
     }
 
 }
