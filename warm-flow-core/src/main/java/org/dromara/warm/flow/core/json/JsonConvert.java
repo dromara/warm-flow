@@ -15,6 +15,7 @@
  */
 package org.dromara.warm.flow.core.json;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,6 +39,14 @@ public interface JsonConvert {
      * @return T
      */
     public <T> T strToBean(String jsonStr, Class<T> clazz);
+
+    /**
+     * TODO 未测试
+     * 将字符串转为集合
+     * @param jsonStr json字符串
+     * @return List<T>
+     */
+    public <T> List<T> strToList(String jsonStr);
 
     /**
      * 将对象转为字符串

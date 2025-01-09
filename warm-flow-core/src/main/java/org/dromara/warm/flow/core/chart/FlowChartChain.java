@@ -61,7 +61,7 @@ public class FlowChartChain {
         flowChartList.add(flowChart);
     }
 
-    public void draw(int width, int height, Graphics2D graphics, int n) {
+    public void draw(int width, int height, int offsetW, int offsetH, Graphics2D graphics, int n) {
         this.width = width;
         this.height = height;
         this.n = n;
@@ -77,7 +77,9 @@ public class FlowChartChain {
             addFlowChart(new ExampleChart(nodeX, nodeY, value.getColor(), textChart));
             tmp += 140;
         }
-
+        for (FlowChart flowChart : flowChartList) {
+            flowChart.offset(offsetW, offsetH);
+        }
 
         this.graphics.setStroke(new BasicStroke(2.5f));
         for (FlowChart flowChart : flowChartList) {

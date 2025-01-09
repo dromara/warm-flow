@@ -89,6 +89,18 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     }
 
     @Override
+    public Definition insertFlow(Definition definition, List<Node> nodeList, List<Skip> skipList) {
+        definition.setVersion(getNewVersion(definition));
+        for (Node node : nodeList) {
+            node.setVersion(definition.getVersion());
+        }
+        FlowEngine.defService().save(definition);
+        FlowEngine.nodeService().saveBatch(nodeList);
+        FlowEngine.skipService().saveBatch(skipList);
+        return definition;
+    }
+
+    @Override
     public Definition importXml(InputStream is) throws Exception {
         FlowCombine flowCombine = readXml(is);
         return insertFlow(flowCombine.getDefinition(), flowCombine.getAllNodes(), flowCombine.getAllSkips());
@@ -100,18 +112,6 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
             return null;
         }
         return FlowConfigUtil.readConfig(is);
-    }
-
-    @Override
-    public Definition insertFlow(Definition definition, List<Node> nodeList, List<Skip> skipList) {
-        definition.setVersion(getNewVersion(definition));
-        for (Node node : nodeList) {
-            node.setVersion(definition.getVersion());
-        }
-        FlowEngine.defService().save(definition);
-        FlowEngine.nodeService().saveBatch(nodeList);
-        FlowEngine.skipService().saveBatch(skipList);
-        return definition;
     }
 
     @Override
@@ -421,7 +421,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
             graphics.setColor(Color.WHITE);
             graphics.fillRect(0, 0, width, height);
 
-            flowChartChain.draw(width, height, graphics, n);
+            flowChartChain.draw(width, height, 0, 0, graphics, n);
             graphics.setPaintMode();
             graphics.dispose();// 释放此图形的上下文并释放它所使用的所有系统资源
 

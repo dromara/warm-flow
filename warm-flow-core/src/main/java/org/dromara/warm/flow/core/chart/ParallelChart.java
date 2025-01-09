@@ -30,23 +30,23 @@ import java.awt.*;
 public class ParallelChart implements FlowChart {
     private int n;
 
-    private int xParallel;
+    private int x;
 
-    private int yParallel;
+    private int y;
 
     private Color c;
 
-    public ParallelChart(int xParallel, int yParallel, Color c) {
-        this.xParallel = xParallel;
-        this.yParallel = yParallel;
+    public ParallelChart(int x, int y, Color c) {
+        this.x = x;
+        this.y = y;
         this.c = c;
     }
 
 
     @Override
     public void draw(Graphics2D graphics) {
-        int[] xParallels = {(xParallel - 20) * n, xParallel * n, (xParallel + 20) * n, xParallel * n};
-        int[] yParallels = {yParallel * n, (yParallel - 20) * n, yParallel * n, (yParallel + 20) * n};
+        int[] xParallels = {(x - 20) * n, x * n, (x + 20) * n, x * n};
+        int[] yParallels = {y * n, (y - 20) * n, y * n, (y + 20) * n};
         // 设置填充颜色
         graphics.setColor(lightColor(c));
         // 填充圆角矩形
@@ -54,12 +54,18 @@ public class ParallelChart implements FlowChart {
         graphics.setColor(c);
         graphics.drawPolygon(xParallels, yParallels, 4);
 
-        int[] xPoints1 = {(xParallel - 8) * n, (xParallel + 8) * n};
-        int[] yPoints1 = {yParallel * n, yParallel * n};
+        int[] xPoints1 = {(x - 8) * n, (x + 8) * n};
+        int[] yPoints1 = {y * n, y * n};
         graphics.drawPolyline(xPoints1, yPoints1, xPoints1.length);
 
-        int[] xPoints2 = {xParallel * n, xParallel * n};
-        int[] yPoints2 = {(yParallel - 8) * n, (yParallel + 8) * n};
+        int[] xPoints2 = {x * n, x * n};
+        int[] yPoints2 = {(y - 8) * n, (y + 8) * n};
         graphics.drawPolyline(xPoints2, yPoints2, xPoints2.length);
+    }
+    @Override
+    public void offset(int offsetW, int offsetH) {
+        this.x += offsetW;
+        this.y += offsetH;
+
     }
 }

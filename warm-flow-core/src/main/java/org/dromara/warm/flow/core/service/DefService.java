@@ -15,14 +15,13 @@
  */
 package org.dromara.warm.flow.core.service;
 
-import org.dromara.warm.flow.core.chart.FlowChart;
+import org.dom4j.Document;
+import org.dromara.warm.flow.core.dto.DefJson;
 import org.dromara.warm.flow.core.dto.FlowCombine;
 import org.dromara.warm.flow.core.entity.Definition;
 import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.entity.Skip;
 import org.dromara.warm.flow.core.orm.service.IWarmService;
-import org.dom4j.Document;
-import org.dromara.warm.flow.core.dto.DefJson;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,6 +54,15 @@ public interface DefService extends IWarmService<Definition> {
     Definition importDef(DefJson defJson);
 
     /**
+     * 新增工作流定义，并初始化流程节点和流程跳转数据
+     *
+     * @param definition 流程定义
+     * @param nodeList 流程节点
+     * @param skipList 流程跳转
+     */
+    Definition insertFlow(Definition definition, List<Node> nodeList, List<Skip> skipList);
+
+    /**
      * 导入流程定义、流程节点和流程跳转数据
      *
      * @param is 流程定义xml的输入流
@@ -72,14 +80,6 @@ public interface DefService extends IWarmService<Definition> {
     @Deprecated
     FlowCombine readXml(InputStream is) throws Exception;
 
-    /**
-     * 新增工作流定义，并初始化流程节点和流程跳转数据
-     *
-     * @param definition 流程定义
-     * @param nodeList 流程节点
-     * @param skipList 流程跳转
-     */
-    Definition insertFlow(Definition definition, List<Node> nodeList, List<Skip> skipList);
 
     /**
      * 新增流程定义，并初始化流程节点和流程跳转数据

@@ -23,6 +23,7 @@ import org.dromara.warm.flow.core.utils.ObjectUtil;
 import org.dromara.warm.flow.core.utils.StringUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -59,6 +60,18 @@ public class JsonConvertFastJson implements JsonConvert {
         return null;
     }
 
+    /**
+     * 将字符串转为集合
+     * @param jsonStr json字符串
+     * @return List<T>
+     */
+    @Override
+    public <T> List<T> strToList(String jsonStr) {
+        if (StringUtils.isNotEmpty(jsonStr)) {
+            return JSON.parseObject(jsonStr, new TypeReference<List<T>>() {});
+        }
+        return null;
+    }
     /**
      * 将对象转为字符串
      * @param variable object

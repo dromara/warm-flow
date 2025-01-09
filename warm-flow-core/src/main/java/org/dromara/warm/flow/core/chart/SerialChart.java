@@ -30,22 +30,22 @@ import java.awt.*;
 public class SerialChart implements FlowChart {
     private int n;
 
-    private int xSerial;
+    private int x;
 
-    private int ySerial;
+    private int y;
 
     private Color c;
 
-    public SerialChart(int xSerial, int ySerial, Color c) {
-        this.xSerial = xSerial;
-        this.ySerial = ySerial;
+    public SerialChart(int x, int y, Color c) {
+        this.x = x;
+        this.y = y;
         this.c = c;
     }
 
     @Override
     public void draw(Graphics2D graphics) {
-        int[] xSerials = {(xSerial - 20) * n, xSerial * n, (xSerial + 20) * n, xSerial * n};
-        int[] ySerials = {ySerial * n, (ySerial - 20) * n, ySerial * n, (ySerial + 20) * n};
+        int[] xSerials = {(x - 20) * n, x * n, (x + 20) * n, x * n};
+        int[] ySerials = {y * n, (y - 20) * n, y * n, (y + 20) * n};
         // 设置填充颜色
         graphics.setColor(lightColor(c));
         // 填充圆角矩形
@@ -53,12 +53,18 @@ public class SerialChart implements FlowChart {
         graphics.setColor(c);
         graphics.drawPolygon(xSerials, ySerials, 4);
 
-        int[] xPoints1 = {(xSerial - 6) * n, (xSerial + 6) * n};
-        int[] yPoints1 = {(ySerial - 6) * n, (ySerial + 6) * n};
+        int[] xPoints1 = {(x - 6) * n, (x + 6) * n};
+        int[] yPoints1 = {(y - 6) * n, (y + 6) * n};
         graphics.drawPolyline(xPoints1, yPoints1, xPoints1.length);
 
-        int[] xPoints2 = {(xSerial - 6) * n, (xSerial + 6) * n};
-        int[] yPoints2 = {(ySerial + 6) * n, (ySerial - 6) * n};
+        int[] xPoints2 = {(x - 6) * n, (x + 6) * n};
+        int[] yPoints2 = {(y + 6) * n, (y - 6) * n};
         graphics.drawPolyline(xPoints2, yPoints2, xPoints2.length);
+    }
+
+    @Override
+    public void offset(int offsetW, int offsetH) {
+        this.x += offsetW;
+        this.y += offsetH;
     }
 }

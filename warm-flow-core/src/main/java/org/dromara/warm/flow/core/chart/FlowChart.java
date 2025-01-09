@@ -55,4 +55,8 @@ public interface FlowChart {
         FontMetrics fm = graphics.getFontMetrics(new Font("宋体", Font.PLAIN, 12));
         return fm.stringWidth(str);
     }
+
+    default void offset(int offsetW, int offsetH) {
+
+    }
 }

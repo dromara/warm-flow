@@ -31,21 +31,27 @@ import java.awt.*;
 public class TextChart implements FlowChart {
     private int n;
 
-    private int xText;
+    private int x;
 
-    private int yText;
+    private int y;
 
     private String title;
 
-    public TextChart(int xText, int yText, String title) {
-        this.xText = xText;
-        this.yText = yText;
+    public TextChart(int x, int y, String title) {
+        this.x = x;
+        this.y = y;
         this.title = title;
     }
 
     @Override
     public void draw(Graphics2D graphics) {
         graphics.setColor(Color.BLACK);
-        graphics.drawString(StringUtils.isEmpty(title) ? "" : title, xText * n, yText * n);
+        graphics.drawString(StringUtils.isEmpty(title) ? "" : title, x * n, y * n);
+    }
+
+    @Override
+    public void offset(int offsetW, int offsetH) {
+        this.x += offsetW;
+        this.y += offsetH;
     }
 }

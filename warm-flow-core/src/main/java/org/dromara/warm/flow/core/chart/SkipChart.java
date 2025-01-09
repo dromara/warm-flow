@@ -87,10 +87,22 @@ public class SkipChart implements FlowChart {
         }
         graphics.fillPolygon(xArrow, yArrow, 3);
         if (ObjectUtil.isNotNull(textChart) && StringUtils.isNotEmpty(textChart.getTitle())) {
-            textChart.setXText(textChart.getXText() - stringWidth(graphics, textChart.getTitle()) / 2);
-            textChart.setYText(textChart.getYText() - 10);
+            textChart.setX(textChart.getX() - stringWidth(graphics, textChart.getTitle()) / 2);
+            textChart.setY(textChart.getY() - 10);
             // 填充文字说明
             textChart.setN(n).draw(graphics);
+        }
+    }
+    @Override
+    public void offset(int offsetW, int offsetH) {
+        for (int i = 0; i < xPoints.length; i++) {
+            xPoints[i] = xPoints[i] + offsetW;
+        }
+        for (int i = 0; i < yPoints.length; i++) {
+            yPoints[i] = yPoints[i] + offsetH;
+        }
+        if (ObjectUtil.isNotNull(textChart) && StringUtils.isNotEmpty(textChart.getTitle())) {
+            textChart.offset(offsetW, offsetH);
         }
     }
 }

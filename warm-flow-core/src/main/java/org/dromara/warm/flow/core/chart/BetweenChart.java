@@ -33,17 +33,17 @@ import java.awt.*;
 public class BetweenChart implements FlowChart {
     private int n;
 
-    private int xRect;
+    private int x;
 
-    private int yRect;
+    private int y;
 
     private Color c;
 
     private TextChart textChart;
 
-    public BetweenChart(int xRect, int yRect, Color c, TextChart textChart) {
-        this.xRect = xRect;
-        this.yRect = yRect;
+    public BetweenChart(int x, int y, Color c, TextChart textChart) {
+        this.x = x;
+        this.y = y;
         this.c = c;
         this.textChart = textChart;
     }
@@ -53,7 +53,7 @@ public class BetweenChart implements FlowChart {
         // 设置填充颜色
         graphics.setColor(lightColor(c));
         // 填充圆角矩形
-        graphics.fillRoundRect((xRect - 50) * n, (yRect - 40) * n, 100 * n, 80 * n, 20 * n, 20 * n);
+        graphics.fillRoundRect((x - 50) * n, (y - 40) * n, 100 * n, 80 * n, 20 * n, 20 * n);
         graphics.setColor(c);
         // 保存当前的画笔样式
         Stroke originalStroke = graphics.getStroke();
@@ -63,12 +63,22 @@ public class BetweenChart implements FlowChart {
             BasicStroke dashedStroke = new BasicStroke(2.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10f, dashPattern, 0f);
             graphics.setStroke(dashedStroke);
         }
-        graphics.drawRoundRect((xRect - 50) * n, (yRect - 40)  * n, 100 * n, 80 * n, 20 * n, 20 * n);
+        graphics.drawRoundRect((x - 50) * n, (y - 40)  * n, 100 * n, 80 * n, 20 * n, 20 * n);
         graphics.setStroke(originalStroke);
         if (ObjectUtil.isNotNull(textChart) && StringUtils.isNotEmpty(textChart.getTitle())) {
-            textChart.setXText(textChart.getXText() - stringWidth(graphics, textChart.getTitle()) / 2);
+            textChart.setX(textChart.getX() - stringWidth(graphics, textChart.getTitle()) / 2);
             // 填充文字说明
             textChart.setN(n).draw(graphics);
         }
     }
+
+    @Override
+    public void offset(int offsetW, int offsetH) {
+        this.x += offsetW;
+        this.y += offsetH;
+        if (ObjectUtil.isNotNull(textChart) && StringUtils.isNotEmpty(textChart.getTitle())) {
+            textChart.offset(offsetW, offsetH);
+        }
+    }
+
 }

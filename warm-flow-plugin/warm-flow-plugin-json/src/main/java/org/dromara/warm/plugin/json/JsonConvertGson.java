@@ -24,6 +24,7 @@ import org.dromara.warm.flow.core.utils.StringUtils;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -59,6 +60,20 @@ public class JsonConvertGson implements JsonConvert {
     public <T> T strToBean(String jsonStr, Class<T> clazz) {
         if (StringUtils.isNotEmpty(jsonStr)) {
             return gson.fromJson(jsonStr, clazz);
+        }
+        return null;
+    }
+
+    /**
+     * 将字符串转为集合
+     * @param jsonStr json字符串
+     * @return List<T>
+     */
+    @Override
+    public <T> List<T> strToList(String jsonStr) {
+        if (StringUtils.isNotEmpty(jsonStr)) {
+            Type listType = new TypeToken<List<T>>() {}.getType();
+            return gson.fromJson(jsonStr, listType);
         }
         return null;
     }

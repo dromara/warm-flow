@@ -22,7 +22,9 @@ import org.noear.snack.ONode;
 import org.noear.snack.core.Feature;
 import org.noear.snack.core.Options;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -56,6 +58,16 @@ public class JsonConvertSnack implements JsonConvert {
     @Override
     public <T> T strToBean(String jsonStr, Class<T> clazz) {
         return StringUtils.isEmpty(jsonStr) ? null : ONode.deserialize(jsonStr, clazz);
+    }
+
+    /**
+     * 将字符串转为集合
+     * @param jsonStr json字符串
+     * @return List<T>
+     */
+    @Override
+    public <T> List<T> strToList(String jsonStr) {
+        return StringUtils.isEmpty(jsonStr) ? null : ONode.deserialize(jsonStr, (new ArrayList<T>(){}).getClass());
     }
 
     /**

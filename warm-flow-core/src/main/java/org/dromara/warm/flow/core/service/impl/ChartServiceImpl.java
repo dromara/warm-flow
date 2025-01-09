@@ -19,14 +19,12 @@ import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.chart.*;
 import org.dromara.warm.flow.core.dto.*;
 import org.dromara.warm.flow.core.entity.Instance;
-import org.dromara.warm.flow.core.entity.Skip;
 import org.dromara.warm.flow.core.enums.ChartStatus;
 import org.dromara.warm.flow.core.enums.NodeType;
 import org.dromara.warm.flow.core.enums.SkipType;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.service.ChartService;
 import org.dromara.warm.flow.core.utils.Base64;
-import org.dromara.warm.flow.core.utils.CollUtil;
 import org.dromara.warm.flow.core.utils.StreamUtils;
 import org.dromara.warm.flow.core.utils.StringUtils;
 import org.slf4j.Logger;
@@ -153,7 +151,6 @@ public class ChartServiceImpl implements ChartService {
             );
             pathWayData.getTargetNodes().forEach(node -> {
                 rejectReset(node.getNodeCode(), skipNextMap, nodeMap);
-
             });
         }
 
@@ -183,28 +180,6 @@ public class ChartServiceImpl implements ChartService {
                 }
             }
         }
-    }
-
-    /**
-     * 判断是否属于退回指向节点的后置未完成的结点和跳转线
-     *
-     * @param nextNodeCode 下一个节点编码
-     * @param lastSkips    上一个跳转集合
-     * @param skipMap      跳转map
-     * @return boolean
-     */
-    private boolean judgeReject(String nextNodeCode, List<Skip> lastSkips
-            , Map<String, List<Skip>> skipMap) {
-        if (CollUtil.isNotEmpty(lastSkips)) {
-            for (Skip lastSkip : lastSkips) {
-                if (nextNodeCode.equals(lastSkip.getNowNodeCode())) {
-                    return true;
-                }
-                List<Skip> lastLastSkips = skipMap.get(lastSkip.getNowNodeCode());
-                return judgeReject(nextNodeCode, lastLastSkips, skipMap);
-            }
-        }
-        return false;
     }
 
     private void initStatus(DefJson defJson) {
@@ -239,8 +214,22 @@ public class ChartServiceImpl implements ChartService {
 
             // 清晰度
             int n = 2;
-            int width = (chartXY.get("maxX") + chartXY.get("minX")) * n;
-            int height = (chartXY.get("maxY") + chartXY.get("minY")) * n;
+            int offset = 100;
+            int offsetW = 0;
+            int offsetH = 0;
+            // 如果有坐标小于0，则设置偏移量
+            if (chartXY.get("minX") <0) {
+                offsetW = offset - chartXY.get("minX");
+                chartXY.put("maxX", chartXY.get("maxX") + offsetW);
+                chartXY.put("minX", 0);
+            }
+            if (chartXY.get("minY") <0) {
+                offsetH = offset - chartXY.get("minY");
+                chartXY.put("maxY", chartXY.get("maxY") + offsetH);
+                chartXY.put("minY", 0);
+            }
+            int width = (chartXY.get("maxX") + chartXY.get("minX")) * n + offset;;
+            int height = (chartXY.get("maxY") + chartXY.get("minY")) * n + offset;
 
             BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
             // 获取图形上下文,graphics想象成一个画笔
@@ -257,7 +246,7 @@ public class ChartServiceImpl implements ChartService {
             graphics.setColor(Color.WHITE);
             graphics.fillRect(0, 0, width, height);
 
-            flowChartChain.draw(width, height, graphics, n);
+            flowChartChain.draw(width, height, offsetW, offsetH, graphics, n);
             // 提供外部扩展
             consumer.accept(flowChartChain);
             graphics.setPaintMode();

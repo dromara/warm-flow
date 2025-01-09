@@ -32,17 +32,17 @@ import java.awt.*;
 public class OvalChart implements FlowChart {
     private int n;
 
-    private int xStartOval;
+    private int x;
 
-    private int yStartOval;
+    private int y;
 
     private Color c;
 
     private TextChart textChart;
 
-    public OvalChart(int xStartOval, int yStartOval, Color c, TextChart textChart) {
-        this.xStartOval = xStartOval;
-        this.yStartOval = yStartOval;
+    public OvalChart(int x, int y, Color c, TextChart textChart) {
+        this.x = x;
+        this.y = y;
         this.c = c;
         this.textChart = textChart;
     }
@@ -52,14 +52,23 @@ public class OvalChart implements FlowChart {
         // 设置填充颜色
         graphics.setColor(lightColor(c));
         // 填充圆角矩形
-        graphics.fillOval((xStartOval - 20) * n, (yStartOval - 20) * n, 40 * n, 40 * n);
+        graphics.fillOval((x - 20) * n, (y - 20) * n, 40 * n, 40 * n);
         graphics.setColor(c);
-        graphics.drawOval((xStartOval - 20) * n, (yStartOval - 20) * n, 40 * n, 40 * n);
+        graphics.drawOval((x - 20) * n, (y - 20) * n, 40 * n, 40 * n);
         if (ObjectUtil.isNotNull(textChart) && StringUtils.isNotEmpty(textChart.getTitle())) {
-            textChart.setXText(textChart.getXText() - stringWidth(graphics, textChart.getTitle()) / 2);
-            textChart.setYText(textChart.getYText() + 5);
+            textChart.setX(textChart.getX() - stringWidth(graphics, textChart.getTitle()) / 2);
+            textChart.setY(textChart.getY() + 5);
             // 填充文字说明
             textChart.setN(n).draw(graphics);
+        }
+    }
+
+    @Override
+    public void offset(int offsetW, int offsetH) {
+        this.x += offsetW;
+        this.y += offsetH;
+        if (ObjectUtil.isNotNull(textChart) && StringUtils.isNotEmpty(textChart.getTitle())) {
+            textChart.offset(offsetW, offsetH);
         }
     }
 }

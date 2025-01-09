@@ -16,6 +16,7 @@
 package org.dromara.warm.plugin.json;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.type.TypeFactory;
@@ -28,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -71,6 +73,24 @@ public class JsonConvertJackson implements JsonConvert {
         if (StringUtils.isNotEmpty(jsonStr)) {
             try {
                 return objectMapper.readValue(jsonStr, clazz);
+            } catch (IOException e) {
+                log.error("json转换异常", e);
+                throw new FlowException("json转换异常");
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 将字符串转为集合
+     * @param jsonStr json字符串
+     * @return List<T>
+     */
+    @Override
+    public <T> List<T> strToList(String jsonStr) {
+        if (StringUtils.isNotEmpty(jsonStr)) {
+            try {
+                return objectMapper.readValue(jsonStr, new TypeReference<List<T>>(){});
             } catch (IOException e) {
                 log.error("json转换异常", e);
                 throw new FlowException("json转换异常");
