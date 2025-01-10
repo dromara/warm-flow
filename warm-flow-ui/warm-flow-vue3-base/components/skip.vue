@@ -3,7 +3,7 @@
     <el-form ref="formRef" :model="form" label-width="80px" size="small" :disabled="disabled">
       <slot name="form-item-task-skipName" v-if="skipConditionShow" :model="form" field="skipName">
         <el-form-item label="跳转名称">
-          <el-input v-model="form.skipName" placeholder="跳转名称"/>
+          <el-input v-model="form.skipName" ref="skipInput" placeholder="跳转名称" @change="skipNameChange"/>
         </el-form-item>
       </slot>
       <slot name="form-item-task-skipType" :model="form" field="skipType">
@@ -58,6 +58,7 @@ const props = defineProps({
 const spelFlag = ref(false);
 const form = ref(props.modelValue);
 const emit = defineEmits(["change"]);
+const { proxy } = getCurrentInstance();
 
 watch(() => form, n => {
   n = n.value;
@@ -73,6 +74,10 @@ watch(() => form, n => {
     emit('change', n)
   }
 }, {deep: true});
+
+function skipNameChange() {
+  proxy.$refs.skipInput.focus();
+}
 
 function changeOper(obj) {
   spelFlag.value = (obj === 'spel' || obj === 'default');
