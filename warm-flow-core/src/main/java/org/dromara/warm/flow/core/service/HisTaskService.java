@@ -82,7 +82,7 @@ public interface HisTaskService extends IWarmService<HisTask> {
      * @param nextNodes  后续任务
      * @param flowParams 参数
      */
-    List<HisTask> setSkipInsHis(Task task, List<Node> nextNodes, FlowParams flowParams);
+    HisTask setSkipInsHis(Task task, List<Node> nextNodes, FlowParams flowParams);
 
     /**
      * 设置协作历史记录
@@ -91,9 +91,8 @@ public interface HisTaskService extends IWarmService<HisTask> {
      * @param node          当然任务节点
      * @param flowParams    参数
      * @param collaborators 协作人
-     * @return List<HisTask> 历史任务集合
      */
-    List<HisTask> setCooperateHis(Task task, Node node, FlowParams flowParams
+    HisTask setCooperateHis(Task task, Node node, FlowParams flowParams
             , List<String> collaborators);
 
     /**
@@ -116,16 +115,6 @@ public interface HisTaskService extends IWarmService<HisTask> {
      * @return HisTask 历史任务
      */
     HisTask setSignHisTask(Task task, FlowParams flowParams, BigDecimal nodeRatio, boolean isPass);
-
-    /**
-     * 自动完成历史任务
-     *
-     * @param flowParams 流程参数
-     * @param flowStatus 流程状态
-     * @param task 当前任务
-     * @param userList 用户列表
-     */
-    List<HisTask> autoHisTask(FlowParams flowParams, String flowStatus, Task task, List<User> userList, Integer cooperateType);
 
     /**
      * 设置流程历史任务信息

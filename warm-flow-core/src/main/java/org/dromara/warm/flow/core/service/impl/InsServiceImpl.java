@@ -78,7 +78,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         Instance instance = setStartInstance(nextNodes.get(0), businessId, flowParams);
 
         // 设置历史任务
-        List<HisTask> hisTasks = setHisTask(nextNodes, flowParams, startNode, instance.getId());
+        HisTask hisTask = setHisTask(nextNodes, flowParams, startNode, instance.getId());
 
         List<Task> addTasks = StreamUtils.toList(nextNodes, node -> FlowEngine.taskService()
                 .addTask(node, instance, definition, flowParams));
@@ -96,7 +96,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         instance.setDefJson(FlowEngine.chartService().startMetadata(pathWayData));
 
         // 开启流程，保存流程信息
-        saveFlowInfo(instance, addTasks, hisTasks);
+        saveFlowInfo(instance, addTasks, hisTask);
 
         // 执行完成监听器和下一节点的节点开始监听器
         ListenerUtil.endCreateListener(new ListenerVariable(definition, instance, startNode, flowParams.getVariable()
@@ -145,7 +145,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
      * @param startNode  开始节点
      * @param instanceId 流程实例id
      */
-    private List<HisTask> setHisTask(List<Node> nextNodes, FlowParams flowParams, Node startNode, Long instanceId) {
+    private HisTask setHisTask(List<Node> nextNodes, FlowParams flowParams, Node startNode, Long instanceId) {
         Task startTask = FlowEngine.newTask()
                 .setInstanceId(instanceId)
                 .setDefinitionId(startNode.getDefinitionId())
@@ -162,12 +162,12 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
      *
      * @param instance 流程实例
      * @param addTasks 新增任务
-     * @param hisTasks 历史任务
+     * @param hisTask 历史任务
      */
-    private void saveFlowInfo(Instance instance, List<Task> addTasks, List<HisTask> hisTasks) {
+    private void saveFlowInfo(Instance instance, List<Task> addTasks, HisTask hisTask) {
         // 待办任务设置处理人
         List<User> users = FlowEngine.userService().taskAddUsers(addTasks);
-        FlowEngine.hisTaskService().saveBatch(hisTasks);
+        FlowEngine.hisTaskService().save(hisTask);
         FlowEngine.taskService().saveBatch(addTasks);
         FlowEngine.userService().saveBatch(users);
         save(instance);

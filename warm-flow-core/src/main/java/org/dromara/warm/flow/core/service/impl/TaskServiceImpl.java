@@ -165,9 +165,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
         // 待办任务转历史
         flowParams.flowStatus(r.instance.getFlowStatus());
-        List<HisTask> insHisList = FlowEngine.hisTaskService().setSkipInsHis(task, Collections.singletonList(endNode)
+        HisTask insHis = FlowEngine.hisTaskService().setSkipInsHis(task, Collections.singletonList(endNode)
                 , flowParams);
-        FlowEngine.hisTaskService().saveBatch(insHisList);
+        FlowEngine.hisTaskService().save(insHis);
         FlowEngine.insService().updateById(r.instance);
 
         // 删除流程相关办理人
@@ -264,14 +264,14 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         }
         // 留存历史记录
         flowParams.skipType(SkipType.NONE.getKey());
-        List<HisTask> hisTasks = null;
+        HisTask hisTask = null;
         // 删除对应的操作人
         if (CollUtil.isNotEmpty(flowParams.getReductionHandlers())) {
             for (String reductionHandler : flowParams.getReductionHandlers()) {
                 FlowEngine.userService().remove(FlowEngine.newUser().setAssociated(taskId)
                         .setProcessedBy(reductionHandler));
             }
-            hisTasks = FlowEngine.hisTaskService().setCooperateHis(r.task, r.nowNode
+            hisTask = FlowEngine.hisTaskService().setCooperateHis(r.task, r.nowNode
                     , flowParams, flowParams.getReductionHandlers());
         }
 
@@ -288,11 +288,11 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             FlowEngine.userService().saveBatch(StreamUtils.toList(flowParams.getAddHandlers(), permission ->
                     FlowEngine.userService().structureUser(taskId, permission
                             , type, flowParams.getHandler())));
-            hisTasks = FlowEngine.hisTaskService().setCooperateHis(r.task, r.nowNode
+            hisTask = FlowEngine.hisTaskService().setCooperateHis(r.task, r.nowNode
                     , flowParams, flowParams.getAddHandlers());
         }
-        if (CollUtil.isNotEmpty(hisTasks)) {
-            FlowEngine.hisTaskService().saveBatch(hisTasks);
+        if (ObjectUtil.isNotNull(hisTask)) {
+            FlowEngine.hisTaskService().save(hisTask);
         }
         // 最后判断是否存在节点监听器，存在执行节点监听器
         ListenerUtil.executeListener(new ListenerVariable(r.definition, r.instance, r.nowNode, flowParams.getVariable()
@@ -725,7 +725,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 }
             }
             if (CollUtil.isNotEmpty(noDoneTasks)) {
-                convertHisTask(noDoneTasks, flowParams, FlowStatus.INVALID.getKey());
+                removeInvalidTask(noDoneTasks);
             }
         }
     }
@@ -762,7 +762,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         if (NodeType.isEnd(instance.getNodeType())) {
             List<Task> taskList = list(FlowEngine.newTask().setInstanceId(instance.getId()));
             if (CollUtil.isNotEmpty(taskList)) {
-                convertHisTask(taskList, flowParams, FlowStatus.AUTO_PASS.getKey());
+                removeInvalidTask(taskList);
             }
         }
     }
@@ -770,15 +770,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     /**
      * 待办任务转历史任务。
      */
-    private void convertHisTask(List<Task> taskList, FlowParams flowParams, String flowStatus) {
+    private void removeInvalidTask(List<Task> taskList) {
         List<HisTask> insHisList = new ArrayList<>();
-        for (Task task : taskList) {
-            List<User> userList = FlowEngine.userService().listByAssociatedAndTypes(task.getId());
-            List<HisTask> hisTasks = FlowEngine.hisTaskService().autoHisTask(flowParams, flowStatus, task, userList, CooperateType.APPROVAL.getKey());
-            // 设置每个HisTask的ext字段
-            hisTasks.forEach(hisTask -> hisTask.setExt(flowParams.getHisTaskExt()));
-            insHisList.addAll(hisTasks);
-        }
         removeByIds(StreamUtils.toList(taskList, Task::getId));
         FlowEngine.hisTaskService().saveBatch(insHisList);
         // 删除所有待办任务的权限人
@@ -797,8 +790,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     private void updateFlowInfo(Task task, Instance instance, List<Task> addTasks, FlowParams flowParams
             , List<Node> nextNodes) {
         // 设置流程历史任务信息
-        List<HisTask> insHisList = FlowEngine.hisTaskService().setSkipInsHis(task, nextNodes, flowParams);
-        FlowEngine.hisTaskService().saveBatch(insHisList);
+        HisTask insHis = FlowEngine.hisTaskService().setSkipInsHis(task, nextNodes, flowParams);
+        FlowEngine.hisTaskService().save(insHis);
         // 待办任务设置处理人
         List<User> users = FlowEngine.userService().setSkipUser(addTasks, task.getId());
         removeById(task.getId());

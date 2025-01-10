@@ -23,7 +23,6 @@ import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.entity.Skip;
 import org.dromara.warm.flow.core.orm.service.IWarmService;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -203,21 +202,6 @@ public interface DefService extends IWarmService<Definition> {
      * @return boolean
      */
     boolean copyDef(Long id);
-
-    /**
-     * 根据流程实例ID,获取流程图的图片流(渲染颜色)
-     *
-     * @param instanceId 流程实例id
-     * @return base64编码的图片流字符串
-     */
-    String flowChart(Long instanceId) throws IOException;
-
-    /**
-     * 根据流程定义ID,获取流程图的图片流(不渲染颜色)
-     * @param definitionId 流程定义id
-     * @return base64编码的图片流字符串
-     */
-    String flowChartNoColor(Long definitionId) throws IOException;
 
     /**
      * 激活流程

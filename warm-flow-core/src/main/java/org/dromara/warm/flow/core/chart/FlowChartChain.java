@@ -85,7 +85,7 @@ public class FlowChartChain {
 
     private void setFlowTitle(int width, int height, int n) {
         int textX = (width - 400) / n;
-        int textY = (height - 100) / n;
+        int textY = (height - 50) / n;
         Font font = new Font("微软雅黑", Font.BOLD, 20 * n);
         String title = "Warm-Flow";
         TextChart textChart = new TextChart(textX, textY, title, font)
