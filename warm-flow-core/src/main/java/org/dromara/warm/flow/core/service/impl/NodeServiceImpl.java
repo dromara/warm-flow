@@ -190,22 +190,21 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
             }
             AssertUtil.isEmpty(skipsGateway, ExceptionCons.NULL_CONDITION_VALUE_NODE);
             List<String> nextNodeCodes = StreamUtils.toList(skipsGateway, Skip::getNextNodeCode);
-            List<Node> nextNodes = FlowEngine.nodeService()
-                    .getByNodeCodes(nextNodeCodes, nextNode.getDefinitionId());
+            List<Node> nextNodes = FlowEngine.nodeService().getByNodeCodes(nextNodeCodes, nextNode.getDefinitionId());
             AssertUtil.isEmpty(nextNodes, ExceptionCons.NOT_NODE_DATA);
             if (pathWayData != null) {
-                pathWayData.getTargetNodes().addAll(nextNodes);
+                pathWayData.getPathWayNodes().addAll(nextNodes);
                 pathWayData.getPathWaySkips().addAll(skipsGateway);
             }
-            // TODO 网关直连，暂时注释
-//            for (Node node : nextNodes) {
-//                nextNodes.addAll(getNextByCheckGateway(variable, node));
-//            }
-            return nextNodes;
+            List<Node> newNextNodes = new ArrayList<>();
+            for (Node node : nextNodes) {
+                List<Node> nodeList = getNextByCheckGateway(variable, node, pathWayData);
+                newNextNodes.addAll(nodeList);
+            }
+            return newNextNodes;
         }
         // 非网关节点直接返回
         if (pathWayData != null) {
-            pathWayData.getTargetNodes().add(nextNode);
             pathWayData.getPathWayNodes().remove(nextNode);
         }
         return CollUtil.toList(nextNode);

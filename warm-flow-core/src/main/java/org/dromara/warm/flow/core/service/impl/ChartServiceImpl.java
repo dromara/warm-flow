@@ -147,11 +147,8 @@ public class ChartServiceImpl implements ChartService {
 
         if (SkipType.isReject(pathWayData.getSkipType())) {
             Map<String, List<SkipJson>> skipNextMap = StreamUtils.groupByKeyFilter(skip ->
-                    !SkipType.isReject(skip.getSkipType()), skipList, SkipJson::getNowNodeCode
-            );
-            pathWayData.getTargetNodes().forEach(node -> {
-                rejectReset(node.getNodeCode(), skipNextMap, nodeMap);
-            });
+                    !SkipType.isReject(skip.getSkipType()), skipList, SkipJson::getNowNodeCode);
+            pathWayData.getTargetNodes().forEach(node -> rejectReset(node.getNodeCode(), skipNextMap, nodeMap));
         }
 
         pathWayData.getTargetNodes().forEach(node -> {
