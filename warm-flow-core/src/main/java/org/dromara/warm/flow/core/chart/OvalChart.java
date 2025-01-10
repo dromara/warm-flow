@@ -56,7 +56,6 @@ public class OvalChart implements FlowChart {
         graphics.setColor(c);
         graphics.drawOval((x - 20) * n, (y - 20) * n, 40 * n, 40 * n);
         if (ObjectUtil.isNotNull(textChart) && StringUtils.isNotEmpty(textChart.getTitle())) {
-            textChart.setX(textChart.getX() - stringWidth(graphics, textChart.getTitle()) / 2);
             textChart.setY(textChart.getY() + 5);
             // 填充文字说明
             textChart.setN(n).draw(graphics);

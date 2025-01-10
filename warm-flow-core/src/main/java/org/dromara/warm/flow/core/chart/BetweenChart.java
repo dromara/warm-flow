@@ -66,7 +66,6 @@ public class BetweenChart implements FlowChart {
         graphics.drawRoundRect((x - 50) * n, (y - 40)  * n, 100 * n, 80 * n, 20 * n, 20 * n);
         graphics.setStroke(originalStroke);
         if (ObjectUtil.isNotNull(textChart) && StringUtils.isNotEmpty(textChart.getTitle())) {
-            textChart.setX(textChart.getX() - stringWidth(graphics, textChart.getTitle()) / 2);
             // 填充文字说明
             textChart.setN(n).draw(graphics);
         }

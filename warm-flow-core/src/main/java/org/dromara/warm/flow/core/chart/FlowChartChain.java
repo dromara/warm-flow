@@ -67,16 +67,12 @@ public class FlowChartChain {
         this.n = n;
         this.graphics = graphics;
 
-        int tmp = width - 600;
-        for (ChartStatus value : ChartStatus.values()) {
-            int nodeX = tmp / 2;
-            int nodeY = 0;
-            int textX = nodeX + 30;
-            int textY = nodeY + 15;
-            TextChart textChart = new TextChart(textX, textY, value.getValue());
-            addFlowChart(new ExampleChart(nodeX, nodeY, value.getColor(), textChart));
-            tmp += 140;
-        }
+        // 右上角流程图状态示例
+        setExample(width, n);
+
+        // 右下角log文字
+        setFlowTitle(width, height, n);
+
         for (FlowChart flowChart : flowChartList) {
             flowChart.offset(offsetW, offsetH);
         }
@@ -84,6 +80,29 @@ public class FlowChartChain {
         this.graphics.setStroke(new BasicStroke(2.5f));
         for (FlowChart flowChart : flowChartList) {
             flowChart.setN(n).draw(this.graphics);
+        }
+    }
+
+    private void setFlowTitle(int width, int height, int n) {
+        int textX = (width - 400) / n;
+        int textY = (height - 100) / n;
+        Font font = new Font("微软雅黑", Font.BOLD, 20 * n);
+        String title = "Warm-Flow";
+        TextChart textChart = new TextChart(textX, textY, title, font)
+                .setAlpha(0.80f);
+        addFlowChart(textChart);
+    }
+
+    private void setExample(int width, int n) {
+        int tmp = width - 600;
+        for (ChartStatus value : ChartStatus.values()) {
+            int nodeX = tmp / n;
+            int nodeY = 0;
+            int textX = nodeX + 30;
+            int textY = nodeY + 15;
+            TextChart textChart = new TextChart(textX, textY, value.getValue());
+            addFlowChart(new ExampleChart(nodeX, nodeY, value.getColor(), textChart));
+            tmp += 140;
         }
     }
 }

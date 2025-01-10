@@ -66,7 +66,6 @@ public class ExampleChart implements FlowChart {
         graphics.drawRoundRect(x * n, y * n, 60 * n, 20 * n, 5 * n, 5 * n);
         graphics.setStroke(originalStroke);
         if (ObjectUtil.isNotNull(textChart) && StringUtils.isNotEmpty(textChart.getTitle())) {
-            textChart.setX(textChart.getX() - stringWidth(graphics, textChart.getTitle()) / 2);
             // 填充文字说明
             textChart.setN(n).draw(graphics);
         }

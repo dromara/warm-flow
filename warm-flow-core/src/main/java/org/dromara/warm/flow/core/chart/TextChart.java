@@ -37,15 +37,33 @@ public class TextChart implements FlowChart {
 
     private String title;
 
+    private Font font;
+
+    private float alpha = 1.0f;
+
+    private Color c;
+
     public TextChart(int x, int y, String title) {
         this.x = x;
         this.y = y;
         this.title = title;
     }
 
+    public TextChart(int x, int y, String title, Font font) {
+        this.x = x;
+        this.y = y;
+        this.title = title;
+        this.font = font;
+    }
+
     @Override
     public void draw(Graphics2D graphics) {
-        graphics.setColor(Color.BLACK);
+        graphics.setColor(c == null? Color.BLACK : c);
+        if (font != null) {
+            graphics.setFont(font);
+        }
+        this.setX(this.getX() - stringWidth(graphics, this.getTitle()) / 2);
+        graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
         graphics.drawString(StringUtils.isEmpty(title) ? "" : title, x * n, y * n);
     }
 
