@@ -124,18 +124,22 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
         if (pathWayData != null) {
             pathWayData.getPathWayNodes().add(nowNode);
         }
-
+        Node nextNode = null;
         // 如果指定了跳转节点，直接获取节点
         if (StringUtils.isNotEmpty(anyNodeCode)) {
-            return getOne(FlowEngine.newNode().setNodeCode(anyNodeCode).setDefinitionId(definitionId));
+            nextNode = getOne(FlowEngine.newNode().setNodeCode(anyNodeCode).setDefinitionId(definitionId));
         }
 
         // 如果配置了任意跳转节点，直接获取节点
         if (StringUtils.isNotEmpty(nowNode.getAnyNodeSkip()) && SkipType.isReject(skipType)) {
-            return getOne(FlowEngine.newNode().setNodeCode(nowNode.getAnyNodeSkip()).setDefinitionId(definitionId));
+            nextNode = getOne(FlowEngine.newNode().setNodeCode(nowNode.getAnyNodeSkip()).setDefinitionId(definitionId));
         }
 
-        AssertUtil.isNull(nowNode, ExceptionCons.LOST_CUR_NODE);
+        if (ObjectUtil.isNotNull(nextNode)) {
+            AssertUtil.isTrue(NodeType.isGateWay(nextNode.getNodeType()), ExceptionCons.TAR_NOT_GATEWAY);
+            return nextNode;
+        }
+
         // 获取跳转关系
         List<Skip> skips = FlowEngine.skipService().list(FlowEngine.newSkip().setDefinitionId(definitionId)
                 .setNowNodeCode(nowNode.getNodeCode()));
@@ -145,7 +149,7 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
         AssertUtil.isNull(nextSkip, ExceptionCons.NULL_SKIP_TYPE);
 
         // 根据跳转查询出跳转到的那个节点
-        Node nextNode = getOne(FlowEngine.newNode().setNodeCode(nextSkip.getNextNodeCode()).setDefinitionId(definitionId));
+        nextNode = getOne(FlowEngine.newNode().setNodeCode(nextSkip.getNextNodeCode()).setDefinitionId(definitionId));
         AssertUtil.isNull(nextNode, ExceptionCons.NULL_NODE_CODE);
         AssertUtil.isTrue(NodeType.isStart(nextNode.getNodeType()), ExceptionCons.FIRST_FORBID_BACK);
         if (pathWayData != null) {

@@ -21,4 +21,8 @@ ALTER TABLE `flow_instance` ADD COLUMN `def_json` text  DEFAULT NULL COMMENT '�
 
 ALTER TABLE `flow_definition`
     MODIFY COLUMN `is_publish` tinyint(1) NULL DEFAULT 0 COMMENT '是否发布（0未发布 1已发布 9失效）' AFTER `version`,
-    MODIFY COLUMN `activity_status` tinyint(1) NULL DEFAULT 1 COMMENT '流程激活状态（0挂起 1激活）' AFTER `form_path`
+    MODIFY COLUMN `activity_status` tinyint(1) NULL DEFAULT 1 COMMENT '流程激活状态（0挂起 1激活）' AFTER `form_path`;
+
+ALTER TABLE `flow_his_task`
+    MODIFY COLUMN `target_node_code` varchar(200) NULL DEFAULT NULL COMMENT '目标节点编码' AFTER `node_type`,
+    MODIFY COLUMN `target_node_name` varchar(200) NULL DEFAULT NULL COMMENT '结束节点名称' AFTER `target_node_code`;

@@ -137,6 +137,8 @@ public class ExceptionCons {
 
     public static final String NODE_IS_END = "目标节点是结束节点，不可跳转";
 
+    public static final String TAR_NOT_GATEWAY = "目标节点不能是网关节点!";
+
     public static final String NOT_FOUND_FLOW_TASK = "未获取到流程任务";
 
     public static final String FLOW_HAVE_USELESS_SKIP = "存在无用的跳转";

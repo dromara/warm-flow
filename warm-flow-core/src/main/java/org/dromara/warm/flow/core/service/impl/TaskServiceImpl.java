@@ -93,7 +93,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 , nextNode, pathWayData);
 
         // 判断并行网关节点前置跳转线是否都完成，才能生成新的代办任务
-        filterCanNewTask(r.instance, nextNodes);
+        filterCanNewTask(flowParams.getSkipType(), r.instance, nextNodes);
         pathWayData.getTargetNodes().addAll(nextNodes);
 
         // 构建增待办任务和设置结束任务历史记录
@@ -593,10 +593,15 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     /**
      * 判断并行网关节点前置跳转线是否都完成，才能生成新的代办任务
      *
+     * @param skipType  跳转类型（PASS审批通过 REJECT退回）
      * @param instance  实例
      * @param nextNodes 目标节点集合
      */
-    private void filterCanNewTask(Instance instance, List<Node> nextNodes) {
+    private void filterCanNewTask(String skipType, Instance instance, List<Node> nextNodes) {
+        if (SkipType.isReject(skipType)) {
+            return;
+        }
+
         DefJson defJson = FlowEngine.jsonConvert.strToBean(instance.getDefJson(), DefJson.class);
         List<NodeJson> nodeList = defJson.getNodeList();
         List<SkipJson> skipList = nodeList.stream().map(NodeJson::getSkipList).flatMap(List::stream)
