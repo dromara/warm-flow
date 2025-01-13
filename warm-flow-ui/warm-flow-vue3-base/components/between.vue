@@ -98,7 +98,8 @@
           <el-form-item label="审批表单：" prop="formCustom">
             <el-select v-model="form.formCustom" clearable>
               <el-option label="表单路径" value="N"></el-option>
-              <el-option label="动态表单" value="Y"></el-option>
+              <!--TODO form 开发中-->
+<!--              <el-option label="动态表单" value="Y"></el-option>-->
             </el-select>
           </el-form-item>
         </slot>
@@ -301,7 +302,9 @@ function getPreviousCode(skipList, nowNodeCode) {
 }
 
 getPermissionFlag();
-getDefinition();
+// TODO form 开发中
+// getDefinition();
+
 // getHandlerDict();
 </script>
 
