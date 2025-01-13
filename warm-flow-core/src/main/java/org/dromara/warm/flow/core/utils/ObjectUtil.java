@@ -45,11 +45,6 @@ public class ObjectUtil {
         return !isNull(object);
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T> T cast(Object obj) {
-        return (T) obj;
-    }
-
     /**
      * 判断字符串是否为true
      *

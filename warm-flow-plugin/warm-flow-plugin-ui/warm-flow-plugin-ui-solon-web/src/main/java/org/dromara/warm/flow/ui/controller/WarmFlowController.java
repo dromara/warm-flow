@@ -261,19 +261,4 @@ public class WarmFlowController {
         return ApiResult.ok(FlowEngine.taskService().skip(taskId, flowParams));
     }
 
-    /**
-     * 获取所有的前置节点集合
-     * @return List<Node>
-     */
-    @Get
-    @Mapping("/previous-node-list/{definitionId}/{nowNodeCode}")
-    public ApiResult<List<Node>> previousNodeList(@Param("definitionId") Long definitionId
-            , @Param("nowNodeCode") String nowNodeCode) {
-        try {
-            return ApiResult.ok(FlowEngine.nodeService().previousNodeList(definitionId, nowNodeCode));
-        } catch (Exception e) {
-            log.error("获取所有的前置节点集合异常", e);
-            throw new FlowException(ExceptionUtil.handleMsg("获取所有的前置节点集合失败", e));
-        }
-    }
 }

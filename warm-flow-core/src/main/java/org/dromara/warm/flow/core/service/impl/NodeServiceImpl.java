@@ -31,6 +31,7 @@ import org.dromara.warm.flow.core.utils.*;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -70,32 +71,48 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
 
     @Override
     public List<Node> previousNodeList(Long definitionId, String nowNodeCode) {
+        return prefixOrSuffixNodes(definitionId, nowNodeCode, "previous");
+    }
 
+    @Override
+    public List<Node> suffixNodeList(Long nodeId) {
+        Node nowNode = getById(nodeId);
+        return suffixNodeList(nowNode.getDefinitionId(), nowNode.getNodeCode());
+    }
+
+    @Override
+    public List<Node> suffixNodeList(Long definitionId, String nowNodeCode) {
+        return prefixOrSuffixNodes(definitionId, nowNodeCode, "suffix");
+    }
+
+    public List<Node> prefixOrSuffixNodes(Long definitionId, String nowNodeCode, String type) {
         List<Node> nodeList = list(FlowEngine.newNode().setDefinitionId(definitionId));
         Map<String, Node> nodeMap = StreamUtils.toMap(nodeList, Node::getNodeCode, node -> node);
         List<Skip> skipList = FlowEngine.skipService().list(FlowEngine.newSkip().setDefinitionId(definitionId));
-        Map<String, List<Skip>> skipLastMap = skipList.stream().filter(skip -> SkipType.isPass(skip.getSkipType()))
-                .collect(Collectors.groupingBy(Skip::getNextNodeCode, LinkedHashMap::new, Collectors.toList()));
+        Map<String, List<Skip>> skipMap = skipList.stream().filter(skip -> SkipType.isPass(skip.getSkipType()))
+                .collect(Collectors.groupingBy("previous".equals(type)? Skip::getNextNodeCode: Skip::getNowNodeCode
+                        , LinkedHashMap::new, Collectors.toList()));
 
-        List<Node> previousNode = new ArrayList<>();
-        List<String> previousCode = getPreviousCode(skipLastMap, nowNodeCode);
-        for (String nodeCode : previousCode) {
+        List<Node> prefixOrSuffixNodes = new ArrayList<>();
+        List<String> prefixOrSuffixCode = prefixOrSuffixCodes(skipMap, nowNodeCode
+                , "previous".equals(type)? Skip::getNowNodeCode: Skip::getNextNodeCode);
+        for (String nodeCode : prefixOrSuffixCode) {
             Node node = nodeMap.get(nodeCode);
             if (!NodeType.isGateWay(node.getNodeType())) {
-                previousNode.add(node);
+                prefixOrSuffixNodes.add(node);
             }
         }
-        Collections.reverse(previousNode);
+        Collections.reverse(prefixOrSuffixNodes);
         Set<String> sameCode = new HashSet<>();
-        previousNode.removeIf(node -> {
+        prefixOrSuffixNodes.removeIf(node -> {
             if (sameCode.contains(node.getNodeCode())) {
                 return true;
             }
             sameCode.add(node.getNodeCode());
             return false;
         });
-        Collections.reverse(previousNode);
-        return previousNode;
+        Collections.reverse(prefixOrSuffixNodes);
+        return prefixOrSuffixNodes;
     }
 
     @Override
@@ -220,16 +237,19 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
         return getDao().deleteNodeByDefIds(defIds);
     }
 
-    private List<String> getPreviousCode(Map<String, List<Skip>> skipLastMap, String nowNodeCode) {
-        List<String> previousCode = new ArrayList<>();
-        if (CollUtil.isNotEmpty(skipLastMap.get(nowNodeCode))) {
-            List<Skip> skipList = skipLastMap.get(nowNodeCode);
+    private List<String> prefixOrSuffixCodes(Map<String, List<Skip>> skipMap, String nodeCode
+            , Function<Skip, String> supplier) {
+        List<String> prefixOrSuffixCode = new ArrayList<>();
+        List<Skip> skipList = skipMap.get(nodeCode);
+        if (CollUtil.isNotEmpty(skipList)) {
             for (Skip skip : skipList) {
-                previousCode.add(skip.getNowNodeCode());
-                previousCode.addAll(getPreviousCode(skipLastMap, skip.getNowNodeCode()));
+                if (SkipType.isPass(skip.getSkipType())) {
+                    prefixOrSuffixCode.add(supplier.apply(skip));
+                    prefixOrSuffixCode.addAll(prefixOrSuffixCodes(skipMap, supplier.apply(skip), supplier));
+                }
             }
         }
-        return previousCode;
+        return prefixOrSuffixCode;
     }
 
     /**

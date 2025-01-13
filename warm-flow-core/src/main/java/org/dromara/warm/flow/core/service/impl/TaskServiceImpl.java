@@ -118,7 +118,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         }
 
         // 处理未完成的任务，当流程完成，还存在待办任务未完成，转历史任务，状态完成。
-        handUndoneTask(r.instance, flowParams);
+        handUndoneTask(r.instance);
 
         // 最后判断是否存在节点监听器，存在执行节点监听器
         ListenerUtil.endCreateListener(new ListenerVariable(r.definition, r.instance, r.nowNode
@@ -174,7 +174,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         FlowEngine.userService().deleteByTaskIds(Collections.singletonList(task.getId()));
 
         // 处理未完成的任务，当流程完成，还存在待办任务未完成，转历史任务，状态完成。
-        handUndoneTask(r.instance, flowParams);
+        handUndoneTask(r.instance);
         // 最后判断是否存在节点监听器，存在执行节点监听器
         ListenerUtil.executeListener(new ListenerVariable(r.definition, r.instance, r.nowNode, flowParams.getVariable()
                 , task), Listener.LISTENER_FINISH);
@@ -716,17 +716,13 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             List<Task> tasks = list(FlowEngine.newTask().setInstanceId(task.getInstanceId()));
             List<Skip> allSkips = FlowEngine.skipService().list(FlowEngine.newSkip()
                     .setDefinitionId(task.getDefinitionId()));
-            // 排除执行当前节点的流程跳转
-            Map<String, List<Skip>> skipMap = StreamUtils.groupByKeyFilter(skip ->
-                    !task.getNodeCode().equals(skip.getNextNodeCode()), allSkips, Skip::getNextNodeCode);
             // 属于退回指向节点的后置未完成的任务
             List<Task> noDoneTasks = new ArrayList<>();
+            List<Node> suffixNodeList = FlowEngine.nodeService().suffixNodeList(task.getDefinitionId(), nextNodeCode);
+            List<String> suffixCodes = StreamUtils.toList(suffixNodeList, Node::getNodeCode);
             for (Task flowTask : tasks) {
-                if (!task.getNodeCode().equals(flowTask.getNodeCode())) {
-                    List<Skip> lastSkips = skipMap.get(flowTask.getNodeCode());
-                    if (judgeReject(nextNodeCode, lastSkips, skipMap)) {
-                        noDoneTasks.add(flowTask);
-                    }
+                if (suffixCodes.contains(flowTask.getNodeCode())) {
+                    noDoneTasks.add(flowTask);
                 }
             }
             if (CollUtil.isNotEmpty(noDoneTasks)) {
@@ -737,33 +733,11 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
 
     /**
-     * 判断是否属于退回指向节点的后置未完成的任务
-     *
-     * @param nextNodeCode 下一个节点编码
-     * @param lastSkips    上一个跳转集合
-     * @param skipMap      跳转map
-     * @return boolean
-     */
-    private boolean judgeReject(String nextNodeCode, List<Skip> lastSkips
-            , Map<String, List<Skip>> skipMap) {
-        if (CollUtil.isNotEmpty(lastSkips)) {
-            for (Skip lastSkip : lastSkips) {
-                if (nextNodeCode.equals(lastSkip.getNowNodeCode())) {
-                    return true;
-                }
-                List<Skip> lastLastSkips = skipMap.get(lastSkip.getNowNodeCode());
-                return judgeReject(nextNodeCode, lastLastSkips, skipMap);
-            }
-        }
-        return false;
-    }
-
-    /**
      * 处理未完成的任务，当流程完成，还存在待办任务未完成，转历史任务，状态完成。
      *
      * @param instance 流程实例
      */
-    private void handUndoneTask(Instance instance, FlowParams flowParams) {
+    private void handUndoneTask(Instance instance) {
         if (NodeType.isEnd(instance.getNodeType())) {
             List<Task> taskList = list(FlowEngine.newTask().setInstanceId(instance.getId()));
             if (CollUtil.isNotEmpty(taskList)) {

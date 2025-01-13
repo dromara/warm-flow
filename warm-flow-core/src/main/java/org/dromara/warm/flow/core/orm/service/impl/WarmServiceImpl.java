@@ -120,7 +120,7 @@ public abstract class WarmServiceImpl<M extends WarmDao<T>, T> implements IWarmS
         if (CollUtil.isEmpty(list)) {
             return;
         }
-        this.saveBatch(list, 100);
+        this.saveBatch(list, 1000);
     }
 
     @Override
@@ -129,7 +129,7 @@ public abstract class WarmServiceImpl<M extends WarmDao<T>, T> implements IWarmS
             return;
         }
 
-        List<List<T>> split = CollUtil.split(list, batchSize > 0 ? batchSize : 100);
+        List<List<T>> split = CollUtil.split(list, batchSize > 0 ? batchSize : 1000);
 
         for (List<T> ts : split) {
             ts.forEach(this::insertFill);

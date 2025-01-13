@@ -22,7 +22,6 @@ import org.dromara.warm.flow.core.dto.FlowDto;
 import org.dromara.warm.flow.core.dto.FlowParams;
 import org.dromara.warm.flow.core.entity.Form;
 import org.dromara.warm.flow.core.entity.Instance;
-import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.utils.ExceptionUtil;
@@ -249,21 +248,6 @@ public class WarmFlowController {
         flowParams.formData(formData);
 
         return ApiResult.ok(FlowEngine.taskService().skip(taskId, flowParams));
-    }
-
-    /**
-     * 获取所有的前置节点集合
-     * @return List<Node>
-     */
-    @GetMapping("/previous-node-list/{definitionId}/{nowNodeCode}")
-    public ApiResult<List<Node>> previousNodeList(@PathVariable("definitionId") Long definitionId
-            , @PathVariable("nowNodeCode") String nowNodeCode) {
-        try {
-            return ApiResult.ok(FlowEngine.nodeService().previousNodeList(definitionId, nowNodeCode));
-        } catch (Exception e) {
-            log.error("获取所有的前置节点集合异常", e);
-            throw new FlowException(ExceptionUtil.handleMsg("获取所有的前置节点集合失败", e));
-        }
     }
 
 }
