@@ -33,12 +33,12 @@ import java.util.Map;
 public interface NodeService extends IWarmService<Node> {
 
     /**
-     * 根据流程编码获取流程节点集合
+     * 根据流程编码获取已发布流程节点集合
      *
      * @param flowCode 流程编码
      * @return List<Node>
      */
-    List<Node> getByFlowCode(String flowCode);
+    List<Node> getPublishByFlowCode(String flowCode);
 
     /**
      * 根据流程编码获取开启的唯一流程的流程节点集合

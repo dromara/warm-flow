@@ -55,7 +55,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         AssertUtil.isNull(flowParams.getFlowCode(), ExceptionCons.NULL_FLOW_CODE);
         AssertUtil.isEmpty(businessId, ExceptionCons.NULL_BUSINESS_ID);
         // 获取已发布的流程节点
-        List<Node> nodes = FlowEngine.nodeService().getByFlowCode(flowParams.getFlowCode());
+        List<Node> nodes = FlowEngine.nodeService().getPublishByFlowCode(flowParams.getFlowCode());
         AssertUtil.isEmpty(nodes, String.format(ExceptionCons.NOT_PUBLISH_NODE, flowParams.getFlowCode()));
         // 获取开始节点
         Node startNode = nodes.stream().filter(t -> NodeType.isStart(t.getNodeType())).findFirst().orElse(null);

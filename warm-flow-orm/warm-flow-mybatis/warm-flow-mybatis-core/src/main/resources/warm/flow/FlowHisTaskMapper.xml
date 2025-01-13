@@ -270,11 +270,14 @@
 
     <select id="getByInsAndNodeCodes" resultMap="FlowHisTaskResult">
         <include refid="selectVo"/>
-        where t.node_code in
-        <foreach item="nodeCode" collection="nodeCodes" open="(" separator="," close=")">
-            #{nodeCode}
-        </foreach>
-        and t.instance_id = #{instanceId}
+        where
+        t.instance_id = #{instanceId}
+        <if test="nodeCodes != null and nodeCodes.length > 0">
+            AND t.node_code in
+            <foreach item="nodeCode" collection="nodeCodes" open="(" separator="," close=")">
+                #{nodeCode}
+            </foreach>
+        </if>
         <if test="entity.delFlag != null and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
         <if test="entity.tenantId != null and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
         order by t.create_time desc

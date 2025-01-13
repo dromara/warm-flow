@@ -43,26 +43,10 @@ public interface HisTaskService extends IWarmService<HisTask> {
     List<HisTask> listByTaskIdAndCooperateTypes(Long taskId, Integer... cooperateTypes);
 
     /**
-     * 根据instanceId获取未退回的历史记录
+     * 根据实例Id和节点编码查询
      *
      * @param instanceId 流程实例id
-     */
-    List<HisTask> getNoReject(Long instanceId);
-
-    /**
-     * 根据nodeCode和targetNodeCode获取未退回的历史记录
-     * @param nodeCode 节点编码
-     * @param targetNodeCode 目标节点编码
-     * @param hisTasks 历史任务集合
-     * @return HisTask
-     */
-    HisTask getNoReject(String nodeCode, String targetNodeCode, List<HisTask> hisTasks);
-
-    /**
-     * 根据instanceId和流程编码获取未退回的历史记录
-     *
-     * @param instanceId 流程实例id
-     * @param nodeCodes 流程编码集合
+     * @param nodeCodes 节点编码集合
      * @return  List<HisTask>
      */
     List<HisTask> getByInsAndNodeCodes(Long instanceId, List<String> nodeCodes);

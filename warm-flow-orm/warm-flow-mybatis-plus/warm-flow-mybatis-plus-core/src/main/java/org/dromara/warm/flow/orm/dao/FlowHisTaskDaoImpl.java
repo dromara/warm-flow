@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.dromara.warm.flow.core.orm.dao.FlowHisTaskDao;
 import org.dromara.warm.flow.core.enums.SkipType;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
+import org.dromara.warm.flow.core.utils.CollUtil;
 import org.dromara.warm.flow.orm.entity.FlowHisTask;
 import org.dromara.warm.flow.orm.mapper.FlowHisTaskMapper;
 
@@ -56,7 +57,7 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask> implements Flow
     public List<FlowHisTask> getByInsAndNodeCodes(Long instanceId, List<String> nodeCodes) {
         LambdaQueryWrapper<FlowHisTask> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(FlowHisTask::getInstanceId, instanceId)
-                .in(FlowHisTask::getNodeCode, nodeCodes)
+                .in(CollUtil.isNotEmpty(nodeCodes), FlowHisTask::getNodeCode, nodeCodes)
                 .orderByDesc(FlowHisTask::getCreateTime);
         return getMapper().selectList(queryWrapper);
     }

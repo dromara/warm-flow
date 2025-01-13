@@ -49,7 +49,7 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
     }
 
     @Override
-    public List<Node> getByFlowCode(String flowCode) {
+    public List<Node> getPublishByFlowCode(String flowCode) {
         Definition definition = FlowEngine.defService().getOne(FlowEngine.newDef()
                 .setFlowCode(flowCode).setIsPublish(PublishStatus.PUBLISHED.getKey()));
         if (ObjectUtil.isNotNull(definition)) {

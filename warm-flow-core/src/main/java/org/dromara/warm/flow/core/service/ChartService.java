@@ -31,7 +31,7 @@ public interface ChartService {
 
 
     /**
-     * 根据流程实例ID,获取流程图的图片流(渲染颜色)
+     * 根据流程实例ID,获取流程图的图片流(渲染状态)
      *
      * @param instanceId 流程实例id
      * @return base64编码的图片流字符串
@@ -39,14 +39,14 @@ public interface ChartService {
     String chartIns(Long instanceId);
 
     /**
-     * 根据流程定义ID,获取流程图的图片流(不渲染颜色)
+     * 根据流程定义ID,获取流程图的图片流(不渲染状态)
      * @param definitionId 流程定义id
      * @return base64编码的图片流字符串
      */
     String chartDef(Long definitionId);
 
     /**
-     * 根据流程实例ID,获取流程图的图片流(渲染颜色)
+     * 根据流程实例ID,获取流程图的图片流(渲染状态)
      *
      * @param instanceId 流程实例id
      * @param consumer 可获取流程图对象，可用于修改流程图样式或者新增内容
@@ -55,7 +55,7 @@ public interface ChartService {
     String chartIns(Long instanceId, Consumer<FlowChartChain> consumer);
 
     /**
-     * 根据流程定义ID,获取流程图的图片流(不渲染颜色)
+     * 根据流程定义ID,获取流程图的图片流(不渲染状态)
      * @param definitionId 流程定义id
      * @param consumer 可获取流程图对象，可用于修改流程图样式或者新增内容
      * @return base64编码的图片流字符串

@@ -59,24 +59,6 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
     }
 
     @Override
-    public List<HisTask> getNoReject(Long instanceId) {
-        return getDao().getNoReject(instanceId);
-    }
-
-    @Override
-    public HisTask getNoReject(String nodeCode, String targetNodeCode, List<HisTask> hisTasks) {
-        List<HisTask> hisTaskList = StreamUtils.filter(hisTasks, hisTask ->
-                (StringUtils.isEmpty(nodeCode) || nodeCode.equals(hisTask.getNodeCode()))
-                        && (StringUtils.isEmpty(targetNodeCode) || targetNodeCode.equals(hisTask.getTargetNodeCode())));
-        return CollUtil.getOne(hisTaskList);
-    }
-
-    public List<HisTask> beenProcessed(Long instanceId, String handler) {
-        List<HisTask> list = list(FlowEngine.newHisTask().setInstanceId(instanceId).setApprover(handler));
-        return null;
-    }
-
-    @Override
     public List<HisTask> getByInsAndNodeCodes(Long instanceId, List<String> nodeCodes) {
         return getDao().getByInsAndNodeCodes(instanceId, nodeCodes);
     }
