@@ -22,13 +22,10 @@ import org.dromara.warm.flow.core.constant.FlowConfigCons;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.json.JsonConvert;
 import org.dromara.warm.flow.core.utils.ObjectUtil;
-import org.dromara.warm.flow.core.utils.ReflectionUtil;
 import org.dromara.warm.flow.core.utils.ServiceLoaderUtil;
 import org.dromara.warm.flow.core.utils.StringUtils;
 
 import java.io.Serializable;
-import java.util.Map;
-import java.util.function.Supplier;
 
 /**
  * WarmFlow属性配置文件
@@ -146,19 +143,12 @@ public class WarmFlow implements Serializable {
         // 通过SPI机制
         spiLoad();
 
-        setEntitySupplier();
         return flowConfig;
     }
 
     public static void spiLoad() {
         // 通过SPI机制加载json转换策略实现类
         FlowEngine.jsonConvert(ServiceLoaderUtil.loadFirst(JsonConvert.class));
-    }
-
-    private static void setEntitySupplier() {
-        Map<Class<?>, Supplier<?>> suppliers = ReflectionUtil.scanAndSupplier("org.dromara.warm.flow.core.entity"
-                , "org.dromara.warm.flow.orm.entity");
-        suppliers.forEach(FlowEngine::setNewEntity);
     }
 
     private static void calLogicDelete(WarmFlow flowConfig) {

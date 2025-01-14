@@ -105,56 +105,68 @@ public class FlowEngine {
         return getObj(chartService, ChartService.class);
     }
 
+    public static void setNewDef(Supplier<Definition> supplier) {
+        FlowEngine.defSupplier = supplier;
+    }
+
     public static Definition newDef() {
         return defSupplier.get();
+    }
+
+    public static void setNewNode(Supplier<Node> supplier) {
+        FlowEngine.nodeSupplier = supplier;
     }
 
     public static Node newNode() {
         return nodeSupplier.get();
     }
 
+    public static void setNewSkip(Supplier<Skip> supplier) {
+        FlowEngine.skipSupplier = supplier;
+    }
+
     public static Skip newSkip() {
         return skipSupplier.get();
+    }
+
+    public static void setNewIns(Supplier<Instance> supplier) {
+        FlowEngine.insSupplier = supplier;
     }
 
     public static Instance newIns() {
         return insSupplier.get();
     }
 
+    public static void setNewTask(Supplier<Task> supplier) {
+        FlowEngine.taskSupplier = supplier;
+    }
+
     public static Task newTask() {
         return taskSupplier.get();
+    }
+
+    public static void setNewHisTask(Supplier<HisTask> supplier) {
+        FlowEngine.hisTaskSupplier = supplier;
     }
 
     public static HisTask newHisTask() {
         return hisTaskSupplier.get();
     }
 
+    public static void setNewUser(Supplier<User> supplier) {
+        FlowEngine.userSupplier = supplier;
+    }
+
     public static User newUser() {
         return userSupplier.get();
     }
 
-    public static Form newForm() {
-        return formSupplier.get();
+    public static void setNewForm(Supplier<Form> supplier) {
+        FlowEngine.formSupplier = supplier;
     }
 
-    public static void setNewEntity(Class<?> tClass, Supplier<?> supplier) {
-        if (Definition.class.equals(tClass)) {
-            FlowEngine.defSupplier = (Supplier<Definition>) supplier;
-        } else if (Node.class.equals(tClass)) {
-            FlowEngine.nodeSupplier = (Supplier<Node>) supplier;
-        } else if (Skip.class.equals(tClass)) {
-            FlowEngine.skipSupplier = (Supplier<Skip>) supplier;
-        } else if (Instance.class.equals(tClass)) {
-            FlowEngine.insSupplier = (Supplier<Instance>) supplier;
-        } else if (Task.class.equals(tClass)) {
-            FlowEngine.taskSupplier = (Supplier<Task>) supplier;
-        } else if (HisTask.class.equals(tClass)) {
-            FlowEngine.hisTaskSupplier = (Supplier<HisTask>) supplier;
-        } else if (User.class.equals(tClass)) {
-            FlowEngine.userSupplier =(Supplier<User>) supplier;
-        } else if (Form.class.equals(tClass)) {
-            FlowEngine.formSupplier = (Supplier<Form>) supplier;
-        }
+    public static Form newForm() {
+        return formSupplier.get();
     }
 
     public static WarmFlow getFlowConfig() {

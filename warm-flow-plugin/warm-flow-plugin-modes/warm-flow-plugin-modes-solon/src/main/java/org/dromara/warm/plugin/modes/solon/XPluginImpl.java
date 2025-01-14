@@ -15,13 +15,9 @@
  */
 package org.dromara.warm.plugin.modes.solon;
 
-import org.dromara.warm.flow.core.utils.ReflectionUtil;
 import org.dromara.warm.plugin.modes.solon.config.BeanConfig;
 import org.noear.solon.core.AppContext;
-import org.noear.solon.core.BeanWrap;
 import org.noear.solon.core.Plugin;
-
-import java.util.Map;
 
 /**
  * Warm-Flow工作流插件
@@ -33,14 +29,6 @@ public class XPluginImpl implements Plugin {
 
     @Override
     public void start(AppContext context) {
-        Map<Class<?>, Object> beans = ReflectionUtil.scanAndInstance("org.dromara.warm.flow.core.orm.dao"
-                , "org.dromara.warm.flow.orm.dao");
-        beans.forEach((clazz, bean) -> {
-            String simpleName = clazz.getSimpleName();
-            String beanName = Character.toLowerCase(simpleName.charAt(0)) + simpleName.substring(1);
-            BeanWrap beanWrap = context.wrap(beanName, bean);
-            context.putWrap(clazz, beanWrap);
-        });
         context.beanMake(BeanConfig.class);
 
     }

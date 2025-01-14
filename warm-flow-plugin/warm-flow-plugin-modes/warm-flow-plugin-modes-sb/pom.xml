@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.dromara.warm</groupId>
         <artifactId>warm-flow-plugin-modes</artifactId>
-        <version>1.6.0-m1</version>
+        <version>1.6.0-m2</version>
     </parent>
 
     <artifactId>warm-flow-plugin-modes-sb</artifactId>
@@ -17,6 +17,19 @@
             <groupId>org.dromara.warm</groupId>
             <artifactId>warm-flow-core</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.dromara.warm</groupId>
+            <artifactId>warm-flow-mybatis-core</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>org.dromara.warm</groupId>
+            <artifactId>warm-flow-mybatis-plus-core</artifactId>
+            <optional>true</optional>
+        </dependency>
+
 
         <dependency>
             <groupId>org.dromara.warm</groupId>
