@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.dromara.warm</groupId>
         <artifactId>warm-flow-plugin</artifactId>
-        <version>1.6.0-m2</version>
+        <version>1.6.0-m3</version>
     </parent>
 
     <artifactId>warm-flow-plugin-modes</artifactId>

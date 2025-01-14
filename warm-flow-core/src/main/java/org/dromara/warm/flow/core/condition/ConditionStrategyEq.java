@@ -18,7 +18,7 @@ package org.dromara.warm.flow.core.condition;
 import org.dromara.warm.flow.core.utils.MathUtil;
 
 /**
- * 条件表达式等于 eq|flag|4
+ * 条件表达式等于 eq@@flag|4
  *
  * @author warm
  */

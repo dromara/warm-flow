@@ -45,8 +45,8 @@ public abstract class ConditionStrategyAbstract implements ConditionStrategy {
     /**
      * 执行表达式
 
-     * @param expression 表达式：flag|5
-     *                   在{@link ExpressionUtil#evalCondition}中格式为，比如：eq|flag|5，
+     * @param expression 表达式：flag@@5
+     *                   在{@link ExpressionUtil#evalCondition}中格式为，比如：eq@@flag|5，
      *                   截取前缀进入此方法后为：flag|5
      * @param variable   流程变量
      * @return 执行结果
@@ -62,7 +62,7 @@ public abstract class ConditionStrategyAbstract implements ConditionStrategy {
     /**
      * 执行表达式后置方法
      *
-     * @param value 表达式最后一个参数，比如：eq|flag|5的[5]
+     * @param value 表达式最后一个参数，比如：eq@@flag|5的[5]
      * @param variableValue 流程变量值
      * @return 执行结果
      */

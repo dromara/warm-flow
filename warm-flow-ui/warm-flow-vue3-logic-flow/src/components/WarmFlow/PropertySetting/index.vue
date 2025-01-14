@@ -111,14 +111,15 @@ watch(() => props.node, n => {
       let skipCondition = n.properties.skipCondition
       let condition, conditionType, conditionValue = ''
       if (skipCondition) {
-        let conditionSpl = skipCondition.split('|')
+        let conditionSpl = skipCondition.split('@@')
         if (skipCondition && (/^spel/.test(skipCondition) || /^default/.test(skipCondition))) {
           conditionType = conditionSpl && conditionSpl.length > 0 ? conditionSpl[0] : ''
           conditionValue = conditionSpl && conditionSpl.length > 1 ? conditionSpl[1] : ''
         } else if (skipCondition) {
           conditionType = conditionSpl && conditionSpl.length > 0 ? conditionSpl[0] : ''
-          condition = conditionSpl && conditionSpl.length > 1 ? conditionSpl[1] : ''
-          conditionValue = conditionSpl && conditionSpl.length > 2 ? conditionSpl[2] : ''
+          let conditionOneSpl = conditionSpl[1].split("|")
+          condition = conditionOneSpl && conditionOneSpl.length > 0 ? conditionOneSpl[0] : ''
+          conditionValue = conditionOneSpl && conditionOneSpl.length > 1 ? conditionOneSpl[1] : ''
         }
       }
 

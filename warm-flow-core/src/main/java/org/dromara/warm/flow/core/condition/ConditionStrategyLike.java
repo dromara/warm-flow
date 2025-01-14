@@ -16,7 +16,7 @@
 package org.dromara.warm.flow.core.condition;
 
 /**
- * 条件表达式包含 like|flag|4
+ * 条件表达式包含 like@@flag|4
  *
  * @author warm
  */

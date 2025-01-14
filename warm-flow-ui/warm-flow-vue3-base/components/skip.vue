@@ -63,7 +63,7 @@ const { proxy } = getCurrentInstance();
 watch(() => form, n => {
   n = n.value;
   let skipCondition = '';
-  skipCondition = n.conditionType + "|";
+  skipCondition = n.conditionType + "@@";
   if (!/^spel/.test(n.conditionType) && !/^default/.test(n.conditionType)) {
     skipCondition = skipCondition
       + (n.condition ? n.condition : '') + "|";

@@ -16,8 +16,8 @@
 package org.dromara.warm.flow.core.condition;
 
 /**
- * 条件表达式不包含 notNike|flag|4
- * 条件表达式不包含 notNike|flag|4 and eq|flag|5 or lt|flag|6
+ * 条件表达式不包含 notNike@@flag|4
+ * 条件表达式不包含 notNike@@flag|4 and eq@@flag|5 or lt@@flag|6
  *
  * @author warm
  */

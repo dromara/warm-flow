@@ -15,12 +15,11 @@
  */
 package org.dromara.warm.flow.core.condition;
 
+import org.dromara.warm.flow.core.constant.FlowCons;
 import org.dromara.warm.flow.core.strategy.ExpressionStrategy;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 条件表达式接口
@@ -38,11 +37,7 @@ public interface ConditionStrategy extends ExpressionStrategy<Boolean> {
         expressionStrategyList.add(expressionStrategy);
     }
 
-    default Boolean isIntercept() {
-        return true;
-    }
-
     default String interceptStr() {
-        return "|";
+        return FlowCons.splitAt;
     }
 }

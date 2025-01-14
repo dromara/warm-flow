@@ -22,7 +22,7 @@ import org.dromara.warm.plugin.modes.sb.helper.SpelHelper;
 import java.util.Map;
 
 /**
- * 默认条件表达式 default|${flag == 5 && flag > 4}
+ * 默认条件表达式 default@@${flag == 5 && flag > 4}
  *
  * @author warm
  */

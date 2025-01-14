@@ -62,7 +62,7 @@ public class ExpressionUtil {
     /**
      * 条件表达式替换
      *
-     * @param expression 条件表达式，比如“eq|flag|4” ，或者自定义策略
+     * @param expression 条件表达式，比如“eq@@flag|4” ，或者自定义策略
      * @param variable   变量
      * @return boolean
      */
@@ -134,7 +134,7 @@ public class ExpressionUtil {
                     throw new FlowException(errMsg);
                 }
                 if (expression.startsWith(strategy.getType())) {
-                    if (strategy.isIntercept()) {
+                    if (StringUtils.isNotEmpty(strategy.interceptStr())) {
                         expression = expression.replace(strategy.getType() + strategy.interceptStr(), "");
                     }
                     return strategy.eval(expression, variable);
@@ -142,20 +142,5 @@ public class ExpressionUtil {
             }
         }
         return null;
-    }
-
-    public static List<String> splitAndPreserveKeywords(String input) {
-        // 使用正则表达式分割字符串，保留 and 和 or
-        String[] parts = input.split("(?=(and|or))|(?<=(and|or))");
-        List<String> resultList = new ArrayList<>();
-
-        for (String part : parts) {
-            String trimmedPart = part.trim();
-            if (!trimmedPart.isEmpty()) {
-                resultList.add(trimmedPart);
-            }
-        }
-
-        return resultList;
     }
 }

@@ -9,3 +9,22 @@ ALTER COLUMN target_node_code TYPE VARCHAR(200) USING target_node_code::VARCHAR(
     ALTER COLUMN target_node_name SET DEFAULT NULL;
 COMMENT ON COLUMN flow_his_task.target_node_code IS '目标节点编码';
 COMMENT ON COLUMN flow_his_task.target_node_name IS '结束节点名称';
+
+
+UPDATE flow_skip SET skip_condition = REPLACE(skip_condition, 'eq|', 'eq@@');
+
+UPDATE flow_skip SET skip_condition = REPLACE(skip_condition, 'ge|', 'ge@@');
+
+UPDATE flow_skip SET skip_condition = REPLACE(skip_condition, 'gt|', 'gt@@');
+
+UPDATE flow_skip SET skip_condition = REPLACE(skip_condition, 'le|', 'le@@');
+
+UPDATE flow_skip SET skip_condition = REPLACE(skip_condition, 'like|', 'like@@');
+
+UPDATE flow_skip SET skip_condition = REPLACE(skip_condition, 'lt|', 'lt@@');
+
+UPDATE flow_skip SET skip_condition = REPLACE(skip_condition, 'ne|', 'ne@@');
+
+UPDATE flow_skip SET skip_condition = REPLACE(skip_condition, 'notNike|', 'notNike@@');
+
+UPDATE flow_skip SET skip_condition = REPLACE(skip_condition, 'spel|', 'spel@@');

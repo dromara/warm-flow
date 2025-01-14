@@ -21,7 +21,7 @@ import org.dromara.warm.plugin.modes.sb.helper.SpelHelper;
 import java.util.Map;
 
 /**
- * spel条件表达式 #{@user.eval()}
+ * spel条件表达式 spel@@#{@user.eval()}
  *
  * @author warm
  */
