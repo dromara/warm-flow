@@ -13,28 +13,14 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.dromara.warm.flow.solon.config;
+package org.dromara.warm.plugin.modes.sb.config;
 
 import org.dromara.warm.flow.core.config.WarmFlow;
-import org.dromara.warm.flow.orm.utils.CommonUtil;
-import org.apache.ibatis.solon.annotation.Db;
-import org.noear.solon.annotation.Bean;
-import org.noear.solon.annotation.Condition;
-import org.noear.solon.annotation.Configuration;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * 工作流bean注册配置
- *
- * @author warm
- * @since 2023/6/5 23:01
+ * @author Lion Li
  */
-@Configuration
-@Condition(onProperty="${warm-flow.enabled:true} = true")
-public class FlowAutoConfig {
-
-    @Bean
-    public WarmFlow initFlow(@Db org.apache.ibatis.session.Configuration db1Cfg, WarmFlow flowConfig) {
-        CommonUtil.setDataSourceType(flowConfig, db1Cfg);
-        return flowConfig;
-    }
+@ConfigurationProperties("warm-flow")
+public class WarmFlowProperties extends WarmFlow {
 }

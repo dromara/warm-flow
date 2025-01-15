@@ -15,7 +15,9 @@
  */
 package org.dromara.warm.flow.orm.keygen;
 
+import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.keygen.KenGen;
 
 /**
@@ -32,6 +34,10 @@ public class MybatisPlusIdGen implements KenGen {
      */
     @Override
     public synchronized long nextId() {
+        IdentifierGenerator bean = FrameInvoker.getBean(IdentifierGenerator.class);
+        if (bean != null) {
+            return bean.nextId(null).longValue();
+        }
         return IdWorker.getId();
     }
 

@@ -23,6 +23,7 @@ import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.JdbcType;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Arrays;
@@ -35,6 +36,7 @@ import java.util.List;
  * @since 2023/6/5 23:01
  */
 @Configuration
+@ConditionalOnProperty(value = "warm-flow.enabled", havingValue = "true", matchIfMissing = true)
 @MapperScan("org.dromara.warm.flow.orm.mapper")
 public class FlowAutoConfig extends BeanConfig {
 

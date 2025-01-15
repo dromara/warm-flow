@@ -24,9 +24,7 @@ import org.dromara.warm.flow.core.service.impl.*;
 import org.dromara.warm.flow.orm.dao.*;
 import org.dromara.warm.flow.orm.entity.*;
 import org.noear.solon.Solon;
-import org.noear.solon.annotation.Bean;
-import org.noear.solon.annotation.Condition;
-import org.noear.solon.annotation.Configuration;
+import org.noear.solon.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +34,7 @@ import org.slf4j.LoggerFactory;
  * @author warm
  * @since 2023/6/5 23:01
  */
+@SuppressWarnings("rawtypes unchecked")
 @Configuration
 @Condition(onProperty="${warm-flow.enabled:true} = true")
 public class BeanConfig {
@@ -128,14 +127,14 @@ public class BeanConfig {
     }
 
     @Bean
-    public WarmFlow initFlow() {
+    public WarmFlow initFlow(@Inject("${warm-flow}") WarmFlow warmFlow) {
         setNewEntity();
         FrameInvoker.setCfgFunction((key) -> Solon.cfg().get(key));
         FrameInvoker.setBeanFunction(Solon.context()::getBean);
-        WarmFlow flowConfig = WarmFlow.init();
-        FlowEngine.setFlowConfig(flowConfig);
+        warmFlow.init();
+        FlowEngine.setFlowConfig(warmFlow);
         log.info("【warm-flow】，加载完成");
-        return FlowEngine.getFlowConfig();
+        return warmFlow;
     }
 
     public void setNewEntity() {

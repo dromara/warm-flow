@@ -18,12 +18,8 @@ package org.dromara.warm.flow.core.config;
 import lombok.Getter;
 import lombok.Setter;
 import org.dromara.warm.flow.core.FlowEngine;
-import org.dromara.warm.flow.core.constant.FlowConfigCons;
-import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.json.JsonConvert;
-import org.dromara.warm.flow.core.utils.ObjectUtil;
 import org.dromara.warm.flow.core.utils.ServiceLoaderUtil;
-import org.dromara.warm.flow.core.utils.StringUtils;
 
 import java.io.Serializable;
 
@@ -93,42 +89,12 @@ public class WarmFlow implements Serializable {
      */
     private String tokenName = "Authorization";
 
-    public static WarmFlow init() {
-        WarmFlow flowConfig = new WarmFlow();
-        // 设置banner
-        String banner = FrameInvoker.getCfg(FlowConfigCons.BANNER);
-        if (StringUtils.isNotEmpty(banner)) {
-            flowConfig.setBanner(ObjectUtil.isStrTrue(banner));
-        }
-
-        // 设置ui开关
-        String ui = FrameInvoker.getCfg(FlowConfigCons.UI);
-        if (StringUtils.isNotEmpty(ui)) {
-            flowConfig.setUi(ObjectUtil.isStrTrue(ui));
-        }
-
-        // 设置TOKEN_NAME开关
-        String tokenName = FrameInvoker.getCfg(FlowConfigCons.TOKEN_NAME);
-        if (StringUtils.isNotEmpty(tokenName)) {
-            flowConfig.setTokenName(tokenName);
-        }
-
-        // 设置id生成器类型
-        String keyType = FrameInvoker.getCfg(FlowConfigCons.KEY_TYPE);
-        if (StringUtils.isNotEmpty(keyType)) {
-            flowConfig.setKeyType(keyType);
-        }
-
-        // 设置逻辑删除
-        calLogicDelete(flowConfig);
-
+    public void init() {
         // 设置租户模式
-        flowConfig.setTenantHandlerPath(FrameInvoker.getCfg(FlowConfigCons.TENANT_HANDLER_PATH));
-        FlowEngine.initTenantHandler(flowConfig.getTenantHandlerPath());
+        FlowEngine.initTenantHandler(this.getTenantHandlerPath());
 
         // 设置数据填充处理类
-        flowConfig.setDataFillHandlerPath(FrameInvoker.getCfg(FlowConfigCons.DATA_FILL_HANDLE_PATH));
-        FlowEngine.initDataFillHandler(flowConfig.getDataFillHandlerPath());
+        FlowEngine.initDataFillHandler(this.getDataFillHandlerPath());
 
         // 设置办理人权限处理类
         FlowEngine.initPermissionHandler();
@@ -137,37 +103,20 @@ public class WarmFlow implements Serializable {
         FlowEngine.initGlobalListener();
 
         // 设置数据源类型
-        flowConfig.setDataSourceType(FrameInvoker.getCfg(FlowConfigCons.DATA_SOURCE_TYPE));
-        printBanner(flowConfig);
+        printBanner();
 
         // 通过SPI机制
         spiLoad();
 
-        return flowConfig;
     }
 
-    public static void spiLoad() {
+    public void spiLoad() {
         // 通过SPI机制加载json转换策略实现类
         FlowEngine.jsonConvert(ServiceLoaderUtil.loadFirst(JsonConvert.class));
     }
 
-    private static void calLogicDelete(WarmFlow flowConfig) {
-        String logicDelete = FrameInvoker.getCfg(FlowConfigCons.LOGIC_DELETE);
-        if (ObjectUtil.isStrTrue(logicDelete)) {
-            flowConfig.setLogicDelete(ObjectUtil.isStrTrue(logicDelete));
-            String logicDeleteValue = FrameInvoker.getCfg(FlowConfigCons.LOGIC_DELETE_VALUE);
-            if (StringUtils.isNotEmpty(logicDeleteValue)) {
-                flowConfig.setLogicDeleteValue(logicDeleteValue);
-            }
-            String logicNotDeleteValue = FrameInvoker.getCfg(FlowConfigCons.LOGIC_NOT_DELETE_VALUE);
-            if (StringUtils.isNotEmpty(logicNotDeleteValue)) {
-                flowConfig.setLogicNotDeleteValue(logicNotDeleteValue);
-            }
-        }
-    }
-
-    private static void printBanner(WarmFlow flowConfig) {
-        if (flowConfig.isBanner()) {
+    private void printBanner() {
+        if (this.isBanner()) {
             System.out.println("\n" +
                     "   ▄     ▄                      ▄▄▄▄▄▄   ▄                     \n" +
                     "   █  █  █  ▄▄▄    ▄ ▄▄  ▄▄▄▄▄  █        █     ▄▄▄  ▄     ▄    \n" +
