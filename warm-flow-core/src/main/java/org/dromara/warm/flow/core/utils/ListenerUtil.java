@@ -19,6 +19,7 @@ import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.constant.FlowCons;
 import org.dromara.warm.flow.core.entity.Definition;
 import org.dromara.warm.flow.core.entity.Node;
+import org.dromara.warm.flow.core.enums.NodeType;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.listener.GlobalListener;
 import org.dromara.warm.flow.core.listener.Listener;
@@ -49,7 +50,11 @@ public class ListenerUtil {
         // 执行任务完成监听器
         executeListener(listenerVariable, Listener.LISTENER_FINISH);
         // 执行任务创建监听器
-        listenerVariable.getNextNodes().forEach(node -> executeListener(listenerVariable, Listener.LISTENER_CREATE, node));
+        listenerVariable.getNextNodes().forEach(node -> {
+            if (!NodeType.isEnd(node.getNodeType())) {
+                executeListener(listenerVariable, Listener.LISTENER_CREATE, node);
+            }
+        });
     }
 
     public static void executeListener(ListenerVariable listenerVariable, String type) {

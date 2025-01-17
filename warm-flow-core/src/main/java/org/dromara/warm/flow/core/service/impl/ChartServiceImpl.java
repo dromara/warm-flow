@@ -19,6 +19,7 @@ import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.chart.*;
 import org.dromara.warm.flow.core.dto.*;
 import org.dromara.warm.flow.core.entity.Instance;
+import org.dromara.warm.flow.core.entity.Skip;
 import org.dromara.warm.flow.core.enums.ChartStatus;
 import org.dromara.warm.flow.core.enums.NodeType;
 import org.dromara.warm.flow.core.enums.SkipType;
@@ -96,12 +97,10 @@ public class ChartServiceImpl implements ChartService {
         Map<String, NodeJson> nodeMap = StreamUtils.toMap(nodeList, NodeJson::getNodeCode
                 , node -> node.setStatus(ChartStatus.NOT_DONE.getKey()));
         Map<String, SkipJson> skipMap = nodeList.stream().map(NodeJson::getSkipList).flatMap(List::stream)
-                .collect(Collectors.toMap(skip -> skip.getNowNodeCode() + ":" + skip.getSkipType() + ":" + skip.getNextNodeCode(),
-                        skip -> skip.setStatus(ChartStatus.NOT_DONE.getKey())));
+                .collect(Collectors.toMap(this::getSkipKey, skip -> skip.setStatus(ChartStatus.NOT_DONE.getKey())));
 
         pathWayData.getPathWayNodes().forEach(node -> nodeMap.get(node.getNodeCode()).setStatus(ChartStatus.DONE.getKey()));
-        pathWayData.getPathWaySkips().forEach(skip -> skipMap.get(skip.getNowNodeCode() + ":" + skip.getSkipType()
-                + ":" + skip.getNextNodeCode()).setStatus(ChartStatus.DONE.getKey()));
+        pathWayData.getPathWaySkips().forEach(skip -> skipMap.get(getSkipKey(skip)).setStatus(ChartStatus.DONE.getKey()));
         pathWayData.getTargetNodes().forEach(node -> nodeMap.get(node.getNodeCode()).setStatus(ChartStatus.TO_DO.getKey()));
 
         return FlowEngine.jsonConvert.objToStr(defJson);
@@ -117,8 +116,7 @@ public class ChartServiceImpl implements ChartService {
         List<SkipJson> skipList = nodeList.stream().map(NodeJson::getSkipList).flatMap(List::stream)
                 .collect(Collectors.toList());
         Map<String, NodeJson> nodeMap = StreamUtils.toMap(nodeList, NodeJson::getNodeCode, node -> node);
-        Map<String, SkipJson> skipMap = StreamUtils.toMap(skipList, skip -> skip.getNowNodeCode()
-                + ":" + skip.getSkipType() + ":" + skip.getNextNodeCode(), skip -> skip);
+        Map<String, SkipJson> skipMap = StreamUtils.toMap(skipList, this::getSkipKey, skip -> skip);
 
         pathWayData.getPathWayNodes().forEach(node -> {
             NodeJson nodeJson = nodeMap.get(node.getNodeCode());
@@ -129,7 +127,7 @@ public class ChartServiceImpl implements ChartService {
             }
         });
         pathWayData.getPathWaySkips().forEach(skip -> {
-            SkipJson skipJson = skipMap.get(skip.getNowNodeCode() + ":" + skip.getSkipType()+ ":" + skip.getNextNodeCode());
+            SkipJson skipJson = skipMap.get(getSkipKey(skip));
             if (SkipType.isPass(pathWayData.getSkipType())) {
                 skipJson.setStatus(ChartStatus.DONE.getKey());
             } else if (SkipType.isReject(pathWayData.getSkipType())){
@@ -163,6 +161,16 @@ public class ChartServiceImpl implements ChartService {
 
 
         return FlowEngine.jsonConvert.objToStr(defJson);
+    }
+
+    private String getSkipKey(SkipJson skip) {
+        return skip.getNowNodeCode() + ":" + skip.getSkipType() + ":" + skip.getSkipCondition()
+                + ":" + skip.getNextNodeCode();
+    }
+
+    private String getSkipKey(Skip skip) {
+        return skip.getNowNodeCode() + ":" + skip.getSkipType() + ":" + skip.getSkipCondition()
+                + ":" + skip.getNextNodeCode();
     }
 
     private void rejectReset(String nodeCode, Map<String, List<SkipJson>> skipNextMap, Map<String, NodeJson> nodeMap) {
