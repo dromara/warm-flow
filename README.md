@@ -9,7 +9,6 @@
     <a href='https://github.com/dromara/warm-flow.git'><img src='https://img.shields.io/github/forks/dromara/warm-flow.svg' alt='fork'></a>
     <a href='https://gitcode.com/dromara/warm-flow'><img src='https://gitcode.com/dromara/warm-flow/star/badge.svg' alt='fork'></a>
     <a href='https://gitee.com/dromara/warm-flow/blob/master/LICENSE'><img src='https://img.shields.io/github/license/dromara/warm-flow' alt='fork'></a>
-    <a href='https://repo1.maven.org/maven2/org/dromara/warm/'><img src='https://img.shields.io/badge/version-1.6.0--m5-blue' alt='fork'></a>
 </p>
 
 
