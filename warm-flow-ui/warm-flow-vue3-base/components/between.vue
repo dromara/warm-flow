@@ -252,9 +252,7 @@ function getDefinition() {
 /** 查询表单定义列表 */
 function getHandlerDict() {
   handlerDict().then(response => {
-    console.log('handlerDict', response)
     if (response.code === 200 && response.data) {
-      console.log('handlerDict', response)
       dictList.value = response.data;
     }
   });

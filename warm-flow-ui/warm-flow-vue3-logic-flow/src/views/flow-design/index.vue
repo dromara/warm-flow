@@ -14,6 +14,7 @@ import LogicFlow from "@logicflow/core";
 import "@logicflow/core/dist/style/index.css";
 import {Control, DndPanel, Menu, SelectionSelect} from '@logicflow/extension';
 import '@logicflow/extension/lib/style/index.css'
+import { ElLoading } from 'element-plus'
 import Start from "@/components/WarmFlow/js/start";
 import Between from "@/components/WarmFlow/js/between";
 import Serial from "@/components/WarmFlow/js/serial";
@@ -157,16 +158,21 @@ function initControl() {
       title: '',
       text: '保存',
       onClick: (lf, ev) => {
+        const loadingInstance = ElLoading.service(({ fullscreen: true , text: "保存中，请稍等"}))
         let graphData = lf.getGraphData()
         value.value['nodes'] = graphData['nodes']
         value.value['edges'] = graphData['edges']
         value.value['id'] = definitionId.value
         let jsonString = logicFlowJsonToWarmFlow(value.value);
-        console.log(JSON.stringify(jsonString))
         saveJson(jsonString).then(response => {
-          proxy.$modal.msgSuccess("保存成功");
+
           if (response.code === 200) {
+            nextTick(() => {
+              loadingInstance.close()
+            })
+            proxy.$modal.msgSuccess("保存成功");
             close();
+
           }
         });
       }

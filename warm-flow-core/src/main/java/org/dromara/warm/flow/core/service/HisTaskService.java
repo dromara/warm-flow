@@ -111,4 +111,8 @@ public interface HisTaskService extends IWarmService<HisTask> {
      * @since 2024/9/30 11:59
      */
     HisTask setSkipHisTask(Task task, Node nextNode, FlowParams flowParams);
+
+    List<HisTask> getNoReject(Long instanceId);
+
+    HisTask getNoReject(String nodeCode, String targetNodeCode, List<HisTask> hisTasks);
 }
