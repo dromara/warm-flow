@@ -215,4 +215,9 @@ public interface DefService extends IWarmService<Definition> {
      */
     boolean unActive(Long id);
 
+    /**
+     * 将流程实例数据转换为流程定义数据
+     * @param instanceId 指定某个流程实例，如果为空，则将所有流程实例数据转换为流程定义数据
+     */
+    void hisToDefJson(Long instanceId);
 }
