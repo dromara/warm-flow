@@ -167,13 +167,13 @@ function initControl() {
         saveJson(jsonString).then(response => {
 
           if (response.code === 200) {
-            nextTick(() => {
-              loadingInstance.close()
-            })
             proxy.$modal.msgSuccess("保存成功");
             close();
-
           }
+        }).finally(() => {
+          nextTick(() => {
+            loadingInstance.close();
+          });
         });
       }
     });
