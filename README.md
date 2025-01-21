@@ -63,25 +63,23 @@ https://warm-flow.dromara.org/
 > 测试代码[warm-flow-test](https://gitee.com/dromara/warm-flow-test)项目中，warm-flow-xxx-test模块的测类
 
 ## 支持数据库类型
+> 目前支持MySQL 、Oracle、PostgreSQL和SQL Server，其他数据库只需要转换表结构，使用Mybatis-Plus、Mybatis-Flex和Easy-Query即可兼容
 
-* [x] mysql
-* [x] oracle
-* [x] postgresql
-* [ ] 达梦
-* [ ] 人大金仓
-* [ ] GaussDB
-* [ ] oceanbase
-* [ ] sqlserver
+* [x] MySQL
+* [x] Oracle
+* [x] PostgreSQL
+* [x] SQL Server
 * [ ] ......
 
-## orm扩展包
 
+## 支持orm框架类型
 * [x] mybatis
 * [x] mybatis-plus
 * [x] jpa
-* [x] mybatis-flex
 * [x] easy-query
+* [x] mybatis-flex
 * [ ] ......
+
 
 
 
