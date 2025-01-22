@@ -64,6 +64,10 @@ public class NodeJson {
      */
     private String skipAnyNode;
     /**
+     * 任意结点跳转
+     */
+    private String anyNodeSkip;
+    /**
      * 监听器类型
      */
     private String listenerType;
