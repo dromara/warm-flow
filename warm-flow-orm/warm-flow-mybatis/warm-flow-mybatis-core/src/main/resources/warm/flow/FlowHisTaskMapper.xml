@@ -272,7 +272,7 @@
         <include refid="selectVo"/>
         where
         t.instance_id = #{instanceId}
-        <if test="nodeCodes != null and nodeCodes.length > 0">
+        <if test="nodeCodes != null and nodeCodes.size() > 0">
             AND t.node_code in
             <foreach item="nodeCode" collection="nodeCodes" open="(" separator="," close=")">
                 #{nodeCode}
