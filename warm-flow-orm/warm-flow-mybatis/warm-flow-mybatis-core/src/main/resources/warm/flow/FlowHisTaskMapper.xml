@@ -287,7 +287,7 @@
         <include refid="selectVo"/>
         <where>
             <if test="entity.taskId != null  and entity.taskId != ''">and t.task_id = #{entity.taskId}</if>
-            <if test="cooperateTypes != null and cooperateTypes.size() > 0">
+            <if test="cooperateTypes != null and cooperateTypes.length > 0">
                 AND cooperate_type in
                 <foreach item="item" collection="cooperateTypes" open="(" separator="," close=")">
                     #{item}
