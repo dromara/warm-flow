@@ -168,7 +168,7 @@
                     #{item}
                 </foreach>
             </if>
-            <if test="types != null and types.length > 0">
+            <if test="types != null and types.size() > 0">
                 <choose>
                     <when test="dataSourceType == 'postgresql'.toString() ">
                         and t."type" in
@@ -202,7 +202,7 @@
                     #{item}
                 </foreach>
             </if>
-            <if test="types != null and types.length > 0">
+            <if test="types != null and types.size() > 0">
                 <choose>
                     <when test="dataSourceType == 'postgresql'.toString() || dataSourceType == 'oracle'.toString()">
                         and t."type" in
