@@ -3,6 +3,7 @@
     <el-tabs type="border-card" class="Tabs" v-model="tabsValue">
       <el-tab-pane label="基础设置" name="1"></el-tab-pane>
       <el-tab-pane label="监听器" name="2"></el-tab-pane>
+      <el-tab-pane label="按钮权限" name="3"></el-tab-pane>
     </el-tabs>
     <el-form ref="formRef" class="betweenForm" :model="form" label-width="100px" size="small" :rules="rules"
              :disabled="disabled" label-position="left">
@@ -149,6 +150,17 @@
           </el-form-item>
         </slot>
       </template>
+      <template v-if="tabsValue === '3'">
+        <slot name="form-item-task-button" :model="form" field="buttonList">
+          <el-form-item label="按钮权限">
+              <el-row :gutter="20">
+                <el-col :span="8" v-for="item in buttonList" :key="item.value">
+                  <el-checkbox v-model="item.value" :key="item.value" :label="item.label"></el-checkbox>
+                </el-col>
+              </el-row>
+          </el-form-item>
+        </slot>
+      </template>
     </el-form>
 
     <!-- 权限标识：会签票签选择用户 -->
@@ -197,6 +209,40 @@ const props = defineProps({
 const tabsValue = ref("1");
 const form = ref(props.modelValue);
 const userVisible = ref(false);
+
+//按钮权限
+const buttonList = 
+[
+  {
+    key:'pop',
+    label: '是否弹窗选人',
+    value: true
+  },{
+    key:'trust',
+    label:'是否能委托',
+    value: true
+  },{
+    key:'transfer',
+    label:' 是否能转办',
+    value: true
+  },{
+    key:'copy',
+    label:'是否能抄送',
+    value: true
+  },{
+    key:'back',
+    label:'是否显示退回',
+    value: true
+  },{
+    key:'addSign',
+    label:'是否能加签',
+    value: false
+  },{
+    key:'subSign',
+    label:'是否能减签',
+    value: false
+  }
+]
 
 const rules = reactive({
   nodeRatio: [
