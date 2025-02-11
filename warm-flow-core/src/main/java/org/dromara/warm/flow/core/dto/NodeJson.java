@@ -63,10 +63,6 @@ public class NodeJson {
      */
     private String coordinate;
     /**
-     * 是否可以跳转任意节点（Y是 N否）
-     */
-    private String skipAnyNode;
-    /**
      * 任意结点跳转
      */
     private String anyNodeSkip;

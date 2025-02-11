@@ -50,7 +50,6 @@ export const json2LogicFlowJson = (definition) => {
       lfNode.text.value = node.nodeName
       lfNode.properties.nodeRatio = node.nodeRatio.toString()
       lfNode.properties.permissionFlag = node.permissionFlag
-      lfNode.properties.skipAnyNode = node.skipAnyNode
       lfNode.properties.anyNodeSkip = node.anyNodeSkip
       lfNode.properties.listenerType = node.listenerType
       lfNode.properties.listenerPath = node.listenerPath
@@ -177,7 +176,6 @@ export const logicFlowJsonToWarmFlow = (data) => {
     }
     node.permissionFlag = anyNode.properties.permissionFlag
     node.nodeRatio = anyNode.properties.nodeRatio
-    node.skipAnyNode = anyNode.properties.skipAnyNode
     node.anyNodeSkip = anyNode.properties.anyNodeSkip
     node.listenerType = anyNode.properties.listenerType
     node.listenerPath = anyNode.properties.listenerPath

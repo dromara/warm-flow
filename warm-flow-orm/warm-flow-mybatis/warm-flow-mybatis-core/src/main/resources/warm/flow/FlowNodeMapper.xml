@@ -13,7 +13,6 @@
         <result property="permissionFlag" column="permission_flag"/>
         <result property="nodeRatio" column="node_ratio"/>
         <result property="coordinate" column="coordinate"/>
-        <result property="skipAnyNode" column="skip_any_node"/>
         <result property="anyNodeSkip" column="any_node_skip"/>
         <result property="listenerType" column="listener_type"/>
         <result property="listenerPath" column="listener_path"/>
@@ -37,7 +36,6 @@
                t.permission_flag,
                t.node_ratio,
                t.coordinate,
-               t.skip_any_node,
                t.any_node_skip,
                t.listener_type,
                t.listener_path,
@@ -76,10 +74,7 @@
             <if test="entity.nodeRatio != null">and t.node_ratio = #{entity.nodeRatio}</if>
             <if test="entity.coordinate != null and entity.coordinate != ''">and t.coordinate = #{entity.coordinate}
             </if>
-            <if test="entity.skipAnyNode != null and entity.skipAnyNode != ''">and t.skip_any_node =
-                #{entity.skipAnyNode}
-            </if>
-             <if test="entity.anyNodeSkip != null and entity.anyNodeSkip != ''">and t.any_node_skip =
+            <if test="entity.anyNodeSkip != null and entity.anyNodeSkip != ''">and t.any_node_skip =
                 #{entity.anyNodeSkip}
             </if>
             <if test="entity.listenerType != null and entity.listenerType != ''">and t.listener_type =
@@ -110,7 +105,6 @@
         permission_flag,
         node_ratio,
         coordinate,
-        skip_any_node,
         any_node_skip,
         listener_type,
         listener_path,
@@ -135,7 +129,6 @@
             #{item.permissionFlag},
             #{item.nodeRatio},
             #{item.coordinate},
-            #{item.skipAnyNode},
             #{item.anyNodeSkip},
             #{item.listenerType},
             #{item.listenerPath},
@@ -164,7 +157,6 @@
         permission_flag,
         node_ratio,
         coordinate,
-        skip_any_node,
         any_node_skip,
         listener_type,
         listener_path,
@@ -188,7 +180,6 @@
             #{item.permissionFlag},
             #{item.nodeRatio},
             #{item.coordinate},
-            #{item.skipAnyNode},
             #{item.anyNodeSkip},
             #{item.listenerType},
             #{item.listenerPath},
@@ -276,7 +267,6 @@
             </if>
             <if test="nodeRatio != null">node_ratio,</if>
             <if test="coordinate != null and coordinate != ''">coordinate,</if>
-            <if test="skipAnyNode != null and skipAnyNode != ''">skip_any_node,</if>
             <if test="anyNodeSkip != null and anyNodeSkip != ''">any_node_skip,</if>
             <if test="listenerType != null and listenerType != ''">listener_type,</if>
             <if test="listenerPath != null and listenerPath != ''">listener_path,</if>
@@ -300,7 +290,6 @@
             </if>
             <if test="nodeRatio != null">#{nodeRatio},</if>
             <if test="coordinate != null and coordinate != ''">#{coordinate},</if>
-            <if test="skipAnyNode != null and skipAnyNode != ''">#{skipAnyNode},</if>
             <if test="anyNodeSkip != null and anyNodeSkip != ''">#{anyNodeSkip},</if>
             <if test="listenerType != null and listenerType != ''">#{listenerType},</if>
             <if test="listenerPath != null and listenerPath != ''">#{listenerPath},</if>
@@ -326,7 +315,6 @@
             <if test="permissionFlag != null and permissionFlag != ''">permission_flag = #{permissionFlag},</if>
             <if test="nodeRatio != null">node_ratio = #{nodeRatio},</if>
             <if test="coordinate != null and coordinate != ''">coordinate = #{coordinate},</if>
-            <if test="skipAnyNode != null and skipAnyNode != ''">skip_any_node = #{skipAnyNode},</if>
             <if test="anyNodeSkip != null and anyNodeSkip != ''">any_node_skip = #{anyNodeSkip},</if>
             <if test="listenerType != null and listenerType != ''">listener_type = #{listenerType},</if>
             <if test="listenerPath != null and listenerPath != ''">listener_path = #{listenerPath},</if>
@@ -390,7 +378,6 @@
             <if test="permissionFlag != null and permissionFlag != ''">and permission_flag = #{permissionFlag}</if>
             <if test="nodeRatio != null">and node_ratio = #{nodeRatio}</if>
             <if test="coordinate != null and coordinate != ''">and coordinate = #{coordinate}</if>
-            <if test="skipAnyNode != null and skipAnyNode != ''">and skip_any_node = #{skipAnyNode}</if>
             <if test="anyNodeSkip != null and anyNodeSkip != ''">and any_node_skip = #{anyNodeSkip}</if>
             <if test="listenerType != null and listenerType != ''">and listener_type = #{listenerType}</if>
             <if test="listenerPath != null and listenerPath != ''">and listener_path = #{listenerPath}</if>
@@ -419,9 +406,6 @@
             </if>
             <if test="entity.nodeRatio != null">and node_ratio = #{entity.nodeRatio}</if>
             <if test="entity.coordinate != null and entity.coordinate != ''">and coordinate = #{entity.coordinate}
-            </if>
-            <if test="entity.skipAnyNode != null and entity.skipAnyNode != ''">and skip_any_node =
-                #{entity.skipAnyNode}
             </if>
             <if test="entity.anyNodeSkip != null and entity.anyNodeSkip != ''">and any_node_skip =
                 #{entity.anyNodeSkip}

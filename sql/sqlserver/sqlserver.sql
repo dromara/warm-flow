@@ -149,7 +149,6 @@ CREATE TABLE flow_node (
     permission_flag nvarchar(200) NULL,
     node_ratio decimal(6,3)  NULL,
     coordinate nvarchar(100) NULL,
-    skip_any_node nvarchar(100) DEFAULT('N') NULL,
     any_node_skip nvarchar(100) NULL,
     listener_type nvarchar(100) NULL,
     listener_path nvarchar(400) NULL,
@@ -223,13 +222,6 @@ EXEC sp_addextendedproperty
 'SCHEMA', N'dbo',
 'TABLE', N'flow_node',
 'COLUMN', N'coordinate'
-GO
-
-EXEC sp_addextendedproperty
-'MS_Description', N'是否可以退回任意节点（Y是 N否）即将删除',
-'SCHEMA', N'dbo',
-'TABLE', N'flow_node',
-'COLUMN', N'skip_any_node'
 GO
 
 EXEC sp_addextendedproperty

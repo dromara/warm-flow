@@ -114,7 +114,6 @@ public class FlowConfigUtil {
             node.setNodeRatio(new BigDecimal("0"));
         }
         node.setCoordinate(nodeElement.attributeValue("coordinate"));
-        node.setSkipAnyNode(nodeElement.attributeValue("skipAnyNode"));
         node.setAnyNodeSkip(nodeElement.attributeValue("anyNodeSkip"));
         node.setListenerType(nodeElement.attributeValue("listenerType"));
         node.setListenerPath(nodeElement.attributeValue("listenerPath"));
@@ -172,7 +171,6 @@ public class FlowConfigUtil {
                 nodeElement.addAttribute("nodeRatio", node.getNodeRatio().toString());
             }
             nodeElement.addAttribute("coordinate", node.getCoordinate());
-            nodeElement.addAttribute("skipAnyNode", node.getSkipAnyNode());
             nodeElement.addAttribute("anyNodeSkip", node.getAnyNodeSkip());
             nodeElement.addAttribute("listenerType", node.getListenerType());
             nodeElement.addAttribute("listenerPath", node.getListenerPath());

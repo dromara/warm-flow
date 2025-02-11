@@ -77,12 +77,6 @@ public interface Node extends RootEntity {
 
     public Node setCoordinate(String coordinate);
 
-    @Deprecated
-    public String getSkipAnyNode();
-
-    @Deprecated
-    public Node setSkipAnyNode(String skipAnyNode);
-
     public String getAnyNodeSkip();
 
     public Node setAnyNodeSkip(String anyNodeSkip);
@@ -134,7 +128,6 @@ public interface Node extends RootEntity {
                 .setPermissionFlag(this.getPermissionFlag())
                 .setCoordinate(this.getCoordinate())
                 .setVersion(this.getVersion())
-                .setSkipAnyNode(this.getSkipAnyNode())
                 .setListenerType(this.getListenerType())
                 .setListenerPath(this.getListenerPath())
                 .setHandlerType(this.getHandlerType())
