@@ -15,9 +15,7 @@
  */
 package org.dromara.warm.flow.core.service;
 
-import org.dom4j.Document;
 import org.dromara.warm.flow.core.dto.DefJson;
-import org.dromara.warm.flow.core.dto.FlowCombine;
 import org.dromara.warm.flow.core.entity.Definition;
 import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.entity.Skip;
@@ -61,24 +59,6 @@ public interface DefService extends IWarmService<Definition> {
      */
     Definition insertFlow(Definition definition, List<Node> nodeList, List<Skip> skipList);
 
-    /**
-     * 导入流程定义、流程节点和流程跳转数据
-     *
-     * @param is 流程定义xml的输入流
-     * @deprecated 请使用 {@link #importDef(DefJson)}
-     */
-    @Deprecated
-    Definition importXml(InputStream is) throws Exception;
-
-    /**
-     * 读取流程配置文件
-     * @param is  流程配置文件输入流
-     * @return 流程数据集合
-     * @deprecated 请使用 {@link #importDef(DefJson)}
-     */
-    @Deprecated
-    FlowCombine readXml(InputStream is) throws Exception;
-
 
     /**
      * 新增流程定义，并初始化流程节点和流程跳转数据
@@ -104,49 +84,11 @@ public interface DefService extends IWarmService<Definition> {
     void saveDef(DefJson defJson) throws Exception;
 
     /**
-     * 保存流程节点和流程跳转数据
-     *
-     * @param def 流程定义对象
-     * @deprecated 请使用 {@link #saveDef(DefJson)}
-     */
-    @Deprecated
-    void saveXml(Definition def) throws Exception;
-
-    /**
-     * 保存流程节点和流程跳转数据
-     * @param id 流程定义id
-     * @param xmlString 流程定义xml字符串
-     * @deprecated 请使用 {@link #saveDef(DefJson)}
-     */
-    @Deprecated
-    void saveXml(Long id, String xmlString) throws Exception;
-
-    /**
-     * 导出流程定义(流程定义、流程节点和流程跳转数据)xml的Document对象
-     *
-     * @param id 流程定义id
-     * @return Document
-     * @deprecated 请使用 {@link #exportJson(Long)}
-     */
-    @Deprecated
-    Document exportXml(Long id);
-
-    /**
      * 导出流程定义(流程定义、流程节点和流程跳转数据)的json字符串
      * @param id 流程定义id
      * @return json字符串
      */
     String exportJson(Long id);
-
-    /**
-     * 获取流程定义xml(流程定义、流程节点和流程跳转数据)的字符串
-     *
-     * @param id 流程定义id
-     * @return xmlString
-     * @deprecated 请使用 {@link #queryDesign(Long)}
-     */
-    @Deprecated
-    String xmlString(Long id);
 
     /**
      * 获取流程定义全部数据(包含节点和跳转)

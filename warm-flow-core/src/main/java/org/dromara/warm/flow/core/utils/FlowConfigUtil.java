@@ -21,17 +21,9 @@ import org.dromara.warm.flow.core.dto.FlowCombine;
 import org.dromara.warm.flow.core.entity.Definition;
 import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.entity.Skip;
-import org.dromara.warm.flow.core.enums.ActivityStatus;
 import org.dromara.warm.flow.core.enums.NodeType;
 import org.dromara.warm.flow.core.enums.SkipType;
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -46,159 +38,6 @@ public class FlowConfigUtil {
      */
     private FlowConfigUtil() {
 
-    }
-
-    /**
-     * 读取配置
-     *
-     * @param is
-     * @throws Exception
-     */
-    public static FlowCombine readConfig(InputStream is) throws Exception {
-        Definition definition = readDocument(is);
-        return structureFlow(definition);
-    }
-
-    @SuppressWarnings("unchecked")
-    public static Definition readDocument(InputStream is) throws Exception {
-        AssertUtil.isNull(is, "文件不存在！");
-        // 获取流程节点
-        Element definitionElement = new SAXReader().read(is).getRootElement();
-        AssertUtil.isNull(definitionElement, "流程为空！");
-
-        // 读取流程定义
-        Definition definition = FlowEngine.newDef();
-        definition.setFlowCode(definitionElement.attributeValue("flowCode"));
-        definition.setFlowName(definitionElement.attributeValue("flowName"));
-        definition.setVersion(definitionElement.attributeValue("version"));
-        definition.setCategory(definitionElement.attributeValue("category"));
-        definition.setFormCustom(definitionElement.attributeValue("formCustom"));
-        definition.setFormPath(definitionElement.attributeValue("formPath"));
-        definition.setExt(definitionElement.attributeValue("ext"));
-        definition.setActivityStatus(ActivityStatus.ACTIVITY.getKey());
-        definition.setListenerType(definitionElement.attributeValue("listenerType"));
-        definition.setListenerPath(definitionElement.attributeValue("listenerPath"));
-
-        List<Element> nodesElement = definitionElement.elements();
-        // 遍历一个流程中的各个节点
-        List<Node> nodeList = definition.getNodeList();
-        for (Element nodeElement : nodesElement) {
-            Node node = initNodeAndCondition(nodeElement);
-            nodeList.add(node);
-        }
-        try {
-            if (is != null) {
-                is.close();
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-        return definition;
-    }
-
-    /**
-     * 读取工作节点和跳转条件
-     *
-     * @param nodeElement
-     * @return
-     */
-    private static Node initNodeAndCondition(Element nodeElement) {
-        Node node = FlowEngine.newNode();
-        node.setNodeType(NodeType.getKeyByValue(nodeElement.attributeValue("nodeType")));
-        node.setNodeCode(nodeElement.attributeValue("nodeCode"));
-        node.setNodeName(nodeElement.attributeValue("nodeName"));
-        node.setPermissionFlag(nodeElement.attributeValue("permissionFlag"));
-        if (StringUtils.isNotEmpty(nodeElement.attributeValue("nodeRatio"))) {
-            node.setNodeRatio(new BigDecimal(nodeElement.attributeValue("nodeRatio")));
-        } else {
-            node.setNodeRatio(new BigDecimal("0"));
-        }
-        node.setCoordinate(nodeElement.attributeValue("coordinate"));
-        node.setAnyNodeSkip(nodeElement.attributeValue("anyNodeSkip"));
-        node.setListenerType(nodeElement.attributeValue("listenerType"));
-        node.setListenerPath(nodeElement.attributeValue("listenerPath"));
-        node.setHandlerType(nodeElement.attributeValue("handlerType"));
-        node.setHandlerPath(nodeElement.attributeValue("handlerPath"));
-        node.setFormCustom(nodeElement.attributeValue("formCustom"));
-        node.setFormPath(nodeElement.attributeValue("formPath"));
-        FlowEngine.dataFillHandler().idFill(node);
-
-        List<Element> skipsElement = nodeElement.elements();
-        List<Skip> skips = node.getSkipList();
-        // 遍历节点下的跳转条件
-        for (Element skipElement : skipsElement) {
-            Skip skip = FlowEngine.newSkip();
-            if ("skip".equals(skipElement.getName())) {
-                skip.setNowNodeCode(node.getNodeCode());
-                skip.setNowNodeType(node.getNodeType());
-                skip.setNextNodeCode(skipElement.getText());
-                // 条件约束
-                skip.setSkipName(skipElement.attributeValue("skipName"));
-                skip.setSkipType(skipElement.attributeValue("skipType"));
-                skip.setCoordinate(skipElement.attributeValue("coordinate"));
-                skip.setSkipCondition(skipElement.attributeValue("skipCondition"));
-                skips.add(skip);
-            }
-        }
-        return node;
-    }
-
-    public static Document createDocument(Definition definition) {
-        // 创建document对象
-        Document document = DocumentHelper.createDocument();
-        // 创建根节点bookRoot
-        Element definitionElement = document.addElement("definition");
-        // 向子节点中添加属性
-        definitionElement.addAttribute("flowCode", definition.getFlowCode());
-        definitionElement.addAttribute("flowName", definition.getFlowName());
-        definitionElement.addAttribute("version", definition.getVersion());
-        definitionElement.addAttribute("category", definition.getCategory());
-        definitionElement.addAttribute("formCustom", definition.getFormCustom());
-        definitionElement.addAttribute("formPath", definition.getFormPath());
-        definitionElement.addAttribute("listenerType", definition.getListenerType());
-        definitionElement.addAttribute("listenerPath", definition.getListenerPath());
-        definitionElement.addAttribute("ext", definition.getExt());
-
-        List<Node> nodeList = definition.getNodeList();
-        for (Node node : nodeList) {
-            // 向节点中添加子节点
-            Element nodeElement = definitionElement.addElement("node");
-            nodeElement.addAttribute("nodeType", NodeType.getValueByKey(node.getNodeType()));
-            nodeElement.addAttribute("nodeCode", node.getNodeCode());
-            nodeElement.addAttribute("nodeName", node.getNodeName());
-            nodeElement.addAttribute("permissionFlag", node.getPermissionFlag());
-            if (Objects.nonNull(node.getNodeRatio())) {
-                nodeElement.addAttribute("nodeRatio", node.getNodeRatio().toString());
-            }
-            nodeElement.addAttribute("coordinate", node.getCoordinate());
-            nodeElement.addAttribute("anyNodeSkip", node.getAnyNodeSkip());
-            nodeElement.addAttribute("listenerType", node.getListenerType());
-            nodeElement.addAttribute("listenerPath", node.getListenerPath());
-            nodeElement.addAttribute("handlerType", node.getHandlerType());
-            nodeElement.addAttribute("handlerPath", node.getHandlerPath());
-            nodeElement.addAttribute("formCustom", node.getFormCustom());
-            nodeElement.addAttribute("formPath", node.getFormPath());
-
-            List<Skip> skipList = node.getSkipList();
-            if (CollUtil.isNotEmpty(skipList)) {
-                for (Skip skip : skipList) {
-                    Element skipElement = nodeElement.addElement("skip");
-                    skipElement.addAttribute("coordinate", skip.getCoordinate());
-                    if (StringUtils.isNotEmpty(skip.getSkipType())) {
-                        AssertUtil.isFalse(StringUtils.isNotEmpty(skip.getNextNodeCode()), "下一个流程节点编码为空");
-                        skipElement.addAttribute("skipType", skip.getSkipType());
-                    }
-                    if (StringUtils.isNotEmpty(skip.getSkipName())) {
-                        skipElement.addAttribute("skipName", skip.getSkipName());
-                    }
-                    if (StringUtils.isNotEmpty(skip.getSkipCondition())) {
-                        skipElement.addAttribute("skipCondition", skip.getSkipCondition());
-                    }
-                    skipElement.addText(skip.getNextNodeCode());
-                }
-            }
-        }
-        return document;
     }
 
     public static FlowCombine structureFlow(Definition definition) {
@@ -282,8 +121,8 @@ public class FlowConfigUtil {
      * @param nodeCodeSet
      */
     public static void validaIsExistDestNode(List<Skip> allSkips, Set<String> nodeCodeSet) {
-        for (int i = 0; i < allSkips.size(); i++) {
-            String nextNodeCode = allSkips.get(i).getNextNodeCode();
+        for (Skip allSkip : allSkips) {
+            String nextNodeCode = allSkip.getNextNodeCode();
             AssertUtil.isTrue(!nodeCodeSet.contains(nextNodeCode), "【" + nextNodeCode + "】" + ExceptionCons.NULL_NODE_CODE);
         }
     }

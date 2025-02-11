@@ -15,15 +15,18 @@
  */
 package org.dromara.warm.flow.core.service.impl;
 
-import org.dom4j.Document;
 import org.dromara.warm.flow.core.FlowEngine;
-import org.dromara.warm.flow.core.chart.*;
 import org.dromara.warm.flow.core.constant.ExceptionCons;
 import org.dromara.warm.flow.core.dto.DefJson;
 import org.dromara.warm.flow.core.dto.FlowCombine;
-import org.dromara.warm.flow.core.dto.SkipJson;
-import org.dromara.warm.flow.core.entity.*;
-import org.dromara.warm.flow.core.enums.*;
+import org.dromara.warm.flow.core.entity.Definition;
+import org.dromara.warm.flow.core.entity.Instance;
+import org.dromara.warm.flow.core.entity.Node;
+import org.dromara.warm.flow.core.entity.Skip;
+import org.dromara.warm.flow.core.enums.ActivityStatus;
+import org.dromara.warm.flow.core.enums.NodeType;
+import org.dromara.warm.flow.core.enums.PublishStatus;
+import org.dromara.warm.flow.core.enums.SkipType;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.orm.dao.FlowDefinitionDao;
 import org.dromara.warm.flow.core.orm.service.impl.WarmServiceImpl;
@@ -32,12 +35,12 @@ import org.dromara.warm.flow.core.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -93,20 +96,6 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         FlowEngine.nodeService().saveBatch(nodeList);
         FlowEngine.skipService().saveBatch(skipList);
         return definition;
-    }
-
-    @Override
-    public Definition importXml(InputStream is) throws Exception {
-        FlowCombine flowCombine = readXml(is);
-        return insertFlow(flowCombine.getDefinition(), flowCombine.getAllNodes(), flowCombine.getAllSkips());
-    }
-
-    @Override
-    public FlowCombine readXml(InputStream is) throws Exception {
-        if (ObjectUtil.isNull(is)) {
-            return null;
-        }
-        return FlowConfigUtil.readConfig(is);
     }
 
     @Override
@@ -206,37 +195,8 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     }
 
     @Override
-    public void saveXml(Definition def) throws Exception {
-        saveXml(def.getId(), def.getXmlString());
-    }
-
-    @Override
-    public void saveXml(Long id, String xmlString) throws Exception {
-        if (ObjectUtil.isNull(id) || StringUtils.isEmpty(xmlString)) {
-            return;
-        }
-        FlowCombine combine = FlowConfigUtil.readConfig(new ByteArrayInputStream
-                (xmlString.getBytes(StandardCharsets.UTF_8)));
-        // 所有的流程节点
-        saveNodeAndSkip(id, combine);
-    }
-
-    @Override
-    public Document exportXml(Long id) {
-        Definition definition = getAllDataDefinition(id);
-        return FlowConfigUtil.createDocument(definition);
-    }
-
-    @Override
     public String exportJson(Long id) {
         return FlowEngine.jsonConvert.objToStr(DefJson.copyDef(getAllDataDefinition(id)));
-    }
-
-    @Override
-    public String xmlString(Long id) {
-        Definition definition = getAllDataDefinition(id);
-        Document document = FlowConfigUtil.createDocument(definition);
-        return document.asXML();
     }
 
     @Override
