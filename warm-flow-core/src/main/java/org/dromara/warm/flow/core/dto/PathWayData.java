@@ -52,11 +52,6 @@ public class PathWayData {
     private String skipType;
 
     /**
-     * 最后一个网关节点
-     */
-    private Node lastGatWayNode;
-
-    /**
      * 目标结点集合
      */
     private List<Node> targetNodes = new ArrayList<>();

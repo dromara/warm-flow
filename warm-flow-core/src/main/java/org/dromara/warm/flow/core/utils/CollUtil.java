@@ -21,7 +21,7 @@ import java.util.stream.IntStream;
 
 /**
  * 集合工具类
- * 
+ *
  * @author warm
  * @since 2023/5/18 9:39
  */
@@ -161,13 +161,12 @@ public class CollUtil {
      * @author xiar
      * @since 2024/5/10 15:45
      */
+    @SafeVarargs
     public static <T> List<T> toList(T... paramArr) {
         if (ArrayUtil.isEmpty(paramArr)) {
             return new ArrayList<>();
         }
-        List<T> arrayList = new ArrayList<>(paramArr.length);
-        arrayList.addAll(Arrays.asList(paramArr));
-        return arrayList;
+        return Arrays.stream(paramArr).collect(Collectors.toList());
     }
 
     /**

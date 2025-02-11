@@ -222,13 +222,6 @@ public class FlowEngine {
     }
 
     /**
-     * 获取map和json字符串转换工具类
-     */
-    public static void jsonConvert(JsonConvert jsonConvert) {
-        FlowEngine.jsonConvert = jsonConvert;
-    }
-
-    /**
      * 获取数据库类型
      */
     public static String dataSourceType() {

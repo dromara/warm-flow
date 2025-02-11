@@ -112,17 +112,17 @@ public class WarmFlow implements Serializable {
 
     public void spiLoad() {
         // 通过SPI机制加载json转换策略实现类
-        FlowEngine.jsonConvert(ServiceLoaderUtil.loadFirst(JsonConvert.class));
+        FlowEngine.jsonConvert = ServiceLoaderUtil.loadFirst(JsonConvert.class);
     }
 
     private void printBanner() {
         if (this.isBanner()) {
             System.out.println("\n" +
-                    "   ▄     ▄                      ▄▄▄▄▄▄   ▄                     \n" +
-                    "   █  █  █  ▄▄▄    ▄ ▄▄  ▄▄▄▄▄  █        █     ▄▄▄  ▄     ▄    \n" +
-                    "   ▀ █▀█ █ ▀   █   █▀  ▀ █ █ █  █▄▄▄▄▄   █    █▀ ▀█ ▀▄ ▄ ▄▀    \n" +
-                    "    ██ ██▀ ▄▀▀▀█   █     █ █ █  █        █    █   █  █▄█▄█     \n" +
-                    "    █   █  ▀▄▄▀█   █     █ █ █  █        ▀▄▄  ▀█▄█▀   █ █      \n" +
+                    "   ▄     ▄                             ▄▄▄▄▄▄   ▄                     \n" +
+                    "   █  █  █  ▄▄▄    ▄ ▄▄  ▄▄▄▄▄         █        █     ▄▄▄  ▄     ▄    \n" +
+                    "   ▀ █▀█ █ ▀   █   █▀  ▀ █ █ █  ▄▄▄▄▄  █▄▄▄▄▄   █    █▀ ▀█ ▀▄ ▄ ▄▀    \n" +
+                    "    ██ ██▀ ▄▀▀▀█   █     █ █ █         █        █    █   █  █▄█▄█     \n" +
+                    "    █   █  ▀▄▄▀█   █     █ █ █         █        █▄▄  ▀█▄█▀   █ █      \n" +
                     "\n" +
                     "\033[32m   :: Warm-Flow ::     (v" + WarmFlow.class.getPackage()
                     .getImplementationVersion() + ")\033[0m\n");

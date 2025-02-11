@@ -95,6 +95,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 判断并行网关节点前置跳转线是否都完成，才能生成新的代办任务
         filterCanNewTask(flowParams.getSkipType(), r.instance, nextNodes);
         pathWayData.getTargetNodes().addAll(nextNodes);
+        // 设置流程图元数据
+        r.instance.setDefJson(FlowEngine.chartService().skipMetadata(pathWayData));
 
         // 构建增待办任务和设置结束任务历史记录
         List<Task> addTasks = StreamUtils.toList(nextNodes, node -> addTask(node, r.instance, r.definition, flowParams));
@@ -105,9 +107,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 执行分派监听器
         ListenerUtil.executeListener(new ListenerVariable(r.definition, r.instance, r.nowNode, flowParams.getVariable()
                 , task, nextNodes, addTasks).setFlowParams(flowParams), Listener.LISTENER_ASSIGNMENT);
-
-        // 设置流程图元数据
-        r.instance.setDefJson(FlowEngine.chartService().skipMetadata(pathWayData));
 
         // 更新流程信息
         updateFlowInfo(task, r.instance, addTasks, flowParams, nextNodes);
