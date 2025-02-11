@@ -30,14 +30,13 @@ import java.util.Arrays;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class SkipChart implements FlowChart {
-    private int n;
+public class SkipChart extends FlowChart {
+
+    public Color c;
 
     private int[] xPoints;
 
     private int[] yPoints;
-
-    private Color c;
 
     private TextChart textChart;
 
@@ -93,7 +92,7 @@ public class SkipChart implements FlowChart {
         }
     }
     @Override
-    public void offset(int offsetW, int offsetH) {
+    public void toOffset(int offsetW, int offsetH) {
         for (int i = 0; i < xPoints.length; i++) {
             xPoints[i] = xPoints[i] + offsetW;
         }

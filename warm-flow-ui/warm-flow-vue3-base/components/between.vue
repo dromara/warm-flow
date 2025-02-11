@@ -15,7 +15,7 @@
         </slot>
         <slot name="form-item-task-nodeName" :model="form" field="nodeName">
           <el-form-item label="节点名称：">
-            <el-input v-model="form.nodeName" ref="nodeInput" :disabled="disabled" @change="nodeNameChange"></el-input>
+            <el-input v-model="form.nodeName" type="textarea" ref="nodeInput" :disabled="disabled" @change="nodeNameChange"></el-input>
           </el-form-item>
         </slot>
         <slot name="form-item-task-collaborativeWay" :model="form" field="collaborativeWay">
@@ -34,7 +34,7 @@
               <el-radio label="2" v-if="form.collaborativeWay ==='2' || showWays">
                 <span class="flex-hc">
                   票签
-                  <el-tooltip class="box-item" effect="dark" content="部分办理人审批，只支持选择用户">
+                  <el-tooltip class="box-item" effect="dark" content="部分办理人审批，建议选择用户；如果选择角色或者部门等，需自行通过办理人变量表达式或者监听器，转成具体办理用户">
                     <el-icon :size="14" class="ml5">
                       <WarningFilled />
                     </el-icon>
@@ -44,7 +44,7 @@
               <el-radio label="3" v-if="form.collaborativeWay ==='3' || showWays">
                 <span class="flex-hc">
                   会签
-                  <el-tooltip class="box-item" effect="dark" content="所有办理都需要审批，只支持选择用户">
+                  <el-tooltip class="box-item" effect="dark" content="所有办理都需要审批，建议选择用户；如果选择角色或者部门等，需自行通过办理人变量表达式或者监听器，转成具体办理用户">
                     <el-icon :size="14" class="ml5">
                       <WarningFilled />
                     </el-icon>
@@ -211,7 +211,7 @@ const form = ref(props.modelValue);
 const userVisible = ref(false);
 
 //按钮权限
-const buttonList = 
+const buttonList =
 [
   {
     key:'pop',

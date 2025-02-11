@@ -18,8 +18,10 @@ package org.dromara.warm.flow.core.chart;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.dromara.warm.flow.core.dto.NodeJson;
 
 import java.awt.*;
+import java.util.List;
 
 /**
  * 流程图互斥网关
@@ -27,19 +29,23 @@ import java.awt.*;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class SerialChart implements FlowChart {
-    private int n;
+public class SerialChart extends FlowChart {
+
+    public Color c;
 
     private int x;
 
     private int y;
 
-    private Color c;
+    private List<TextChart> textCharts;
 
-    public SerialChart(int x, int y, Color c) {
+    private NodeJson nodeJson;
+
+    public SerialChart(int x, int y, Color c, NodeJson nodeJson) {
         this.x = x;
         this.y = y;
         this.c = c;
+        this.nodeJson = nodeJson;
     }
 
     @Override
@@ -63,7 +69,7 @@ public class SerialChart implements FlowChart {
     }
 
     @Override
-    public void offset(int offsetW, int offsetH) {
+    public void toOffset(int offsetW, int offsetH) {
         this.x += offsetW;
         this.y += offsetH;
     }

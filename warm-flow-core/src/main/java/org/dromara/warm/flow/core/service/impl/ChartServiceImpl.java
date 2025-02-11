@@ -26,6 +26,7 @@ import org.dromara.warm.flow.core.enums.SkipType;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.service.ChartService;
 import org.dromara.warm.flow.core.utils.Base64;
+import org.dromara.warm.flow.core.utils.CollUtil;
 import org.dromara.warm.flow.core.utils.StreamUtils;
 import org.dromara.warm.flow.core.utils.StringUtils;
 import org.slf4j.Logger;
@@ -251,9 +252,10 @@ public class ChartServiceImpl implements ChartService {
             graphics.setColor(Color.WHITE);
             graphics.fillRect(0, 0, width, height);
 
-            flowChartChain.draw(width, height, offsetW, offsetH, graphics, n);
             // 提供外部扩展
             consumer.accept(flowChartChain);
+            flowChartChain.draw(width, height, offsetW, offsetH, graphics, n);
+
             graphics.setPaintMode();
             graphics.dispose();// 释放此图形的上下文并释放它所使用的所有系统资源
 
@@ -289,19 +291,23 @@ public class ChartServiceImpl implements ChartService {
                     String[] textSplit = coordinateSplit[1].split(",");
                     int textX = Integer.parseInt(textSplit[0].split("\\.")[0]);
                     int textY = Integer.parseInt(textSplit[1].split("\\.")[0]);
-                    textChart = new TextChart(textX, textY, nodeJson.getNodeName());
+                    if (NodeType.isBetween(nodeJson.getNodeType())) {
+                        textChart = new TextChart(nodeJson.getNodeName());
+                    } else {
+                        textChart = new TextChart(textX, textY, nodeJson.getNodeName());
+                    }
                 }
                 Color c = ChartStatus.getColorByKey(nodeJson.getStatus());
                 if (NodeType.isStart(nodeJson.getNodeType())) {
-                    flowChartChain.addFlowChart(new OvalChart(nodeX, nodeY, c, textChart));
+                    flowChartChain.addFlowChart(new OvalChart(nodeX, nodeY, c, CollUtil.toList(textChart), nodeJson));
                 } else if (NodeType.isBetween(nodeJson.getNodeType())) {
-                    flowChartChain.addFlowChart(new BetweenChart(nodeX, nodeY, c, textChart));
+                    flowChartChain.addFlowChart(new BetweenChart(nodeX, nodeY, c, CollUtil.toList(textChart), nodeJson));
                 } else if (NodeType.isGateWaySerial(nodeJson.getNodeType())) {
-                    flowChartChain.addFlowChart(new SerialChart(nodeX, nodeY, c));
+                    flowChartChain.addFlowChart(new SerialChart(nodeX, nodeY, c, nodeJson));
                 } else if (NodeType.isGateWayParallel(nodeJson.getNodeType())) {
-                    flowChartChain.addFlowChart(new ParallelChart(nodeX, nodeY, c));
+                    flowChartChain.addFlowChart(new ParallelChart(nodeX, nodeY, c, nodeJson));
                 } else if (NodeType.isEnd(nodeJson.getNodeType())) {
-                    flowChartChain.addFlowChart(new OvalChart(nodeX, nodeY, c, textChart));
+                    flowChartChain.addFlowChart(new OvalChart(nodeX, nodeY, c, CollUtil.toList(textChart), nodeJson));
                 }
             }
         }

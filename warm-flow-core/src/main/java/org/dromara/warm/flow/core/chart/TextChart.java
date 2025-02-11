@@ -16,6 +16,7 @@
 package org.dromara.warm.flow.core.chart;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.dromara.warm.flow.core.utils.StringUtils;
@@ -28,12 +29,19 @@ import java.awt.*;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class TextChart implements FlowChart {
-    private int n;
+public class TextChart extends FlowChart {
 
-    private int x;
+    public Color c;
 
-    private int y;
+    /**
+     * 字符串第一个字符的基线起点的 x 坐标
+     */
+    private Integer x;
+
+    /**
+     * 字符串第一个字符的基线起点的 y 坐标
+     */
+    private Integer y;
 
     private String title;
 
@@ -41,13 +49,21 @@ public class TextChart implements FlowChart {
 
     private float alpha = 1.0f;
 
-    private Color c;
+    public TextChart(String title) {
+        this.title = title;
+    }
 
     public TextChart(int x, int y, String title) {
         this.x = x;
         this.y = y;
         this.title = title;
     }
+
+    public TextChart(String title, Font font) {
+        this.title = title;
+        this.font = font;
+    }
+
 
     public TextChart(int x, int y, String title, Font font) {
         this.x = x;
@@ -62,14 +78,9 @@ public class TextChart implements FlowChart {
         if (font != null) {
             graphics.setFont(font);
         }
-        this.setX(this.getX() - stringWidth(graphics, this.getTitle()) / 2);
         graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
-        graphics.drawString(StringUtils.isEmpty(title) ? "" : title, x * n, y * n);
+        this.setX(this.getX() - graphics.getFontMetrics().stringWidth(title) / (2 * n));
+        graphics.drawString(title, x * n, y * n);
     }
 
-    @Override
-    public void offset(int offsetW, int offsetH) {
-        this.x += offsetW;
-        this.y += offsetH;
-    }
 }

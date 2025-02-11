@@ -18,8 +18,13 @@ package org.dromara.warm.flow.core.chart;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.dromara.warm.flow.core.dto.NodeJson;
+import org.dromara.warm.flow.core.utils.CollUtil;
+import org.dromara.warm.flow.core.utils.ObjectUtil;
+import org.dromara.warm.flow.core.utils.StringUtils;
 
 import java.awt.*;
+import java.util.List;
 
 /**
  * 流程图并行网关
@@ -27,19 +32,21 @@ import java.awt.*;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class ParallelChart implements FlowChart {
-    private int n;
+public class ParallelChart extends FlowChart {
+
+    public Color c;
 
     private int x;
 
     private int y;
 
-    private Color c;
+    private NodeJson nodeJson;
 
-    public ParallelChart(int x, int y, Color c) {
+    public ParallelChart(int x, int y, Color c, NodeJson nodeJson) {
         this.x = x;
         this.y = y;
         this.c = c;
+        this.nodeJson = nodeJson;
     }
 
 
@@ -62,10 +69,10 @@ public class ParallelChart implements FlowChart {
         int[] yPoints2 = {(y - 8) * n, (y + 8) * n};
         graphics.drawPolyline(xPoints2, yPoints2, xPoints2.length);
     }
+
     @Override
-    public void offset(int offsetW, int offsetH) {
+    public void toOffset(int offsetW, int offsetH) {
         this.x += offsetW;
         this.y += offsetH;
-
     }
 }

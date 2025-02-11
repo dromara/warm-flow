@@ -18,9 +18,12 @@ package org.dromara.warm.flow.core.dto;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.dromara.warm.flow.core.utils.MapUtil;
+import org.dromara.warm.flow.core.utils.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -109,4 +112,10 @@ public class NodeJson {
      */
     private List<SkipJson> skipList = new ArrayList<>();
 
+    public Map<String, Object> getExtMap() {
+        if (MapUtil.isEmpty(extMap)) {
+            extMap = new HashMap<>();
+        }
+        return extMap;
+    }
 }

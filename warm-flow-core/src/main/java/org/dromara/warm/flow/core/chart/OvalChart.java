@@ -18,10 +18,13 @@ package org.dromara.warm.flow.core.chart;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.dromara.warm.flow.core.dto.NodeJson;
+import org.dromara.warm.flow.core.utils.CollUtil;
 import org.dromara.warm.flow.core.utils.ObjectUtil;
 import org.dromara.warm.flow.core.utils.StringUtils;
 
 import java.awt.*;
+import java.util.List;
 
 /**
  * 流程图开始或者结束节点
@@ -29,22 +32,24 @@ import java.awt.*;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class OvalChart implements FlowChart {
-    private int n;
+public class OvalChart extends FlowChart {
+
+    public Color c;
 
     private int x;
 
     private int y;
 
-    private Color c;
+    private java.util.List<TextChart> textCharts;
 
-    private TextChart textChart;
+    private NodeJson nodeJson;
 
-    public OvalChart(int x, int y, Color c, TextChart textChart) {
+    public OvalChart(int x, int y, Color c, List<TextChart> textCharts, NodeJson nodeJson) {
         this.x = x;
         this.y = y;
         this.c = c;
-        this.textChart = textChart;
+        this.textCharts = textCharts;
+        this.nodeJson = nodeJson;
     }
 
     @Override
@@ -55,19 +60,27 @@ public class OvalChart implements FlowChart {
         graphics.fillOval((x - 20) * n, (y - 20) * n, 40 * n, 40 * n);
         graphics.setColor(c);
         graphics.drawOval((x - 20) * n, (y - 20) * n, 40 * n, 40 * n);
-        if (ObjectUtil.isNotNull(textChart) && StringUtils.isNotEmpty(textChart.getTitle())) {
-            textChart.setY(textChart.getY() + 5);
-            // 填充文字说明
-            textChart.setN(n).draw(graphics);
+        if (CollUtil.isNotEmpty(textCharts)) {
+            textCharts.forEach(textChart -> {
+                if (ObjectUtil.isNotNull(textChart) && StringUtils.isNotEmpty(textChart.getTitle())) {
+                    textChart.setY(textChart.getY() + 5);
+                    // 填充文字说明
+                    textChart.setN(n).draw(graphics);
+                }
+            });
         }
     }
 
     @Override
-    public void offset(int offsetW, int offsetH) {
+    public void toOffset(int offsetW, int offsetH) {
         this.x += offsetW;
         this.y += offsetH;
-        if (ObjectUtil.isNotNull(textChart) && StringUtils.isNotEmpty(textChart.getTitle())) {
-            textChart.offset(offsetW, offsetH);
+        if (CollUtil.isNotEmpty(textCharts)) {
+            textCharts.forEach(textChart -> {
+                if (ObjectUtil.isNotNull(textChart) && StringUtils.isNotEmpty(textChart.getTitle())) {
+                    textChart.offset(offsetW, offsetH);
+                }
+            });
         }
     }
 }

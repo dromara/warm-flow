@@ -15,6 +15,10 @@
  */
 package org.dromara.warm.flow.core.chart;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
 import java.awt.*;
 
 /**
@@ -22,18 +26,23 @@ import java.awt.*;
  *
  * @author warm
  */
-public interface FlowChart {
+@Getter
+@Setter
+@Accessors(chain = true)
+public abstract class FlowChart {
 
-    public FlowChart setN(int n);
+    public int n;
+
+    public boolean offsetEnable = true;
 
     /**
      * 绘制流程图
      *
      * @param graphics 画笔
      */
-    void draw(Graphics2D graphics);
+    abstract void draw(Graphics2D graphics);
 
-    default Color lightColor(Color c) {
+    public Color lightColor(Color c) {
         if (Color.BLACK.equals(c)) {
             return Color.WHITE;
         }
@@ -45,18 +54,14 @@ public interface FlowChart {
         // 创建带有透明度的颜色
         return new Color(red, green, blue, alpha);
     }
-    /**
-     * 获取文字的宽度
-     *
-     * @param graphics Graphics2D
-     * @param str 文字
-     */
-    default int stringWidth(Graphics2D graphics, String str) {
-        FontMetrics fm = graphics.getFontMetrics(new Font("宋体", Font.PLAIN, 12));
-        return fm.stringWidth(str);
+
+    public void offset(int offsetW, int offsetH) {
+        if (offsetEnable) {
+            toOffset(offsetW, offsetH);
+        }
     }
 
-    default void offset(int offsetW, int offsetH) {
+    public void toOffset(int offsetW, int offsetH) {
 
     }
 }

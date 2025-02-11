@@ -18,6 +18,7 @@ package org.dromara.warm.flow.core.chart;
 import lombok.Getter;
 import lombok.Setter;
 import org.dromara.warm.flow.core.enums.ChartStatus;
+import org.dromara.warm.flow.core.utils.CollUtil;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -48,11 +49,6 @@ public class FlowChartChain {
     private int n;
 
     /**
-     * 画笔
-     */
-    private Graphics2D graphics;
-
-    /**
      * 所有图形
      */
     private final List<FlowChart> flowChartList = new ArrayList<>();
@@ -65,7 +61,6 @@ public class FlowChartChain {
         this.width = width;
         this.height = height;
         this.n = n;
-        this.graphics = graphics;
 
         // 右上角流程图状态示例
         setExample(width, n);
@@ -77,9 +72,9 @@ public class FlowChartChain {
             flowChart.offset(offsetW, offsetH);
         }
 
-        this.graphics.setStroke(new BasicStroke(2.5f));
+        graphics.setStroke(new BasicStroke(2.5f));
         for (FlowChart flowChart : flowChartList) {
-            flowChart.setN(n).draw(this.graphics);
+            flowChart.setN(n).draw(graphics);
         }
     }
 
@@ -96,12 +91,13 @@ public class FlowChartChain {
     private void setExample(int width, int n) {
         int tmp = width - 600;
         for (ChartStatus value : ChartStatus.values()) {
-            int nodeX = tmp / n;
-            int nodeY = 0;
-            int textX = nodeX + 30;
-            int textY = nodeY + 15;
+            int nodeX = tmp / n + 50;
+            int nodeY = 40;
+            int textX = nodeX - 20;
+            int textY = nodeY - 25;
             TextChart textChart = new TextChart(textX, textY, value.getValue());
-            addFlowChart(new ExampleChart(nodeX, nodeY, value.getColor(), textChart));
+            addFlowChart(new BetweenChart(nodeX, nodeY, value.getColor(), CollUtil.toList(textChart), null)
+                    .setWidth(60).setHeight(20).setArcWidth(5).setOffsetEnable(false));
             tmp += 140;
         }
     }
