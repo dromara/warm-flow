@@ -79,7 +79,7 @@ public class WarmFlowController {
      */
     @Get
     @Mapping("/query-def/{id}")
-    public ApiResult<DefJson> queryDef(Long id) {
+    public ApiResult<DefJson> queryDef(@Path("id") Long id) {
         try {
             return ApiResult.ok(FlowEngine.defService().queryDesign(id));
         } catch (Exception e) {
@@ -249,7 +249,9 @@ public class WarmFlowController {
     @Tran
     @Post
     @Mapping(value = "/execute/handle/{taskId}")
-    public ApiResult<Instance> handle(Map<String, Object> formData, @Param("taskId") Long taskId, String skipType, String message
+    public ApiResult<Instance> handle(Map<String, Object> formData,
+                                      @Path("taskId") Long taskId,
+                                      String skipType, String message
             , String nodeCode) {
         FlowParams flowParams = FlowParams.build()
                 .skipType(skipType)
