@@ -34,7 +34,7 @@ import java.util.Map;
  */
 public class JsonConvertGson implements JsonConvert {
 
-    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     /**
      * 将字符串转为map
@@ -45,7 +45,7 @@ public class JsonConvertGson implements JsonConvert {
     public Map<String, Object> strToMap(String jsonStr) {
         if (StringUtils.isNotEmpty(jsonStr)) {
             Type type = new TypeToken<Map<String, Object>>(){}.getType();
-            return gson.fromJson(jsonStr, type);
+            return GSON.fromJson(jsonStr, type);
         }
         return new HashMap<>();
     }
@@ -59,7 +59,7 @@ public class JsonConvertGson implements JsonConvert {
     @Override
     public <T> T strToBean(String jsonStr, Class<T> clazz) {
         if (StringUtils.isNotEmpty(jsonStr)) {
-            return gson.fromJson(jsonStr, clazz);
+            return GSON.fromJson(jsonStr, clazz);
         }
         return null;
     }
@@ -73,7 +73,7 @@ public class JsonConvertGson implements JsonConvert {
     public <T> List<T> strToList(String jsonStr) {
         if (StringUtils.isNotEmpty(jsonStr)) {
             Type listType = new TypeToken<List<T>>() {}.getType();
-            return gson.fromJson(jsonStr, listType);
+            return GSON.fromJson(jsonStr, listType);
         }
         return null;
     }
@@ -86,7 +86,7 @@ public class JsonConvertGson implements JsonConvert {
     @Override
     public String objToStr(Object variable) {
         if (ObjectUtil.isNotNull(variable)) {
-            return gson.toJson(variable);
+            return GSON.toJson(variable);
         }
         return null;
     }
