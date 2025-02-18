@@ -11,24 +11,34 @@ import java.util.Date;
  * @since 2024/8/19 9:59
  */
 public interface Form extends RootEntity {
+    @Override
     public Long getId();
 
+    @Override
     public Form setId(Long id);
 
+    @Override
     public Date getCreateTime();
 
+    @Override
     public Form setCreateTime(Date createTime);
 
+    @Override
     public Date getUpdateTime();
 
+    @Override
     public Form setUpdateTime(Date updateTime);
 
+    @Override
     public String getTenantId();
 
+    @Override
     public Form setTenantId(String tenantId);
 
+    @Override
     public String getDelFlag();
 
+    @Override
     public Form setDelFlag(String delFlag);
 
 

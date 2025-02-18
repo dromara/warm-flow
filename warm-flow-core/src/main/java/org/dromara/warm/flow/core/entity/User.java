@@ -25,29 +25,39 @@ import java.util.Date;
  */
 public interface User extends RootEntity {
 
+    @Override
     public Long getId();
 
+    @Override
     public User setId(Long id);
 
+    @Override
     public Date getCreateTime();
 
+    @Override
     public User setCreateTime(Date createTime);
+
+    @Override
+    public Date getUpdateTime();
+
+    @Override
+    public User setUpdateTime(Date updateTime);
+
+    @Override
+    public String getTenantId();
+
+    @Override
+    public User setTenantId(String tenantId);
+
+    @Override
+    public String getDelFlag();
+
+    @Override
+    public User setDelFlag(String delFlag);
 
     public String getCreateBy();
 
     public User setCreateBy(String createBy);
-
-    public Date getUpdateTime();
-
-    public User setUpdateTime(Date updateTime);
-
-    public String getTenantId();
-
-    public User setTenantId(String tenantId);
-
-    public String getDelFlag();
-
-    public User setDelFlag(String delFlag);
 
     public String getType();
 

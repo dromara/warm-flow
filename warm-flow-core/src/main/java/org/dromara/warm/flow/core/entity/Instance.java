@@ -28,24 +28,34 @@ import java.util.Map;
  */
 public interface Instance extends RootEntity {
 
+    @Override
     public Long getId();
 
+    @Override
     public Instance setId(Long id);
 
+    @Override
     public Date getCreateTime();
 
+    @Override
     public Instance setCreateTime(Date createTime);
 
+    @Override
     public Date getUpdateTime();
 
+    @Override
     public Instance setUpdateTime(Date updateTime);
 
+    @Override
     public String getTenantId();
 
+    @Override
     public Instance setTenantId(String tenantId);
 
+    @Override
     public String getDelFlag();
 
+    @Override
     public Instance setDelFlag(String delFlag);
 
     public Long getDefinitionId();

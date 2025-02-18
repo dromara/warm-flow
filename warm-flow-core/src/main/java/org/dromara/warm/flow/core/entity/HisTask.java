@@ -29,24 +29,34 @@ import java.util.Map;
  */
 public interface HisTask extends RootEntity {
 
+    @Override
     public Long getId();
 
+    @Override
     public HisTask setId(Long id);
 
+    @Override
     public Date getCreateTime();
 
+    @Override
     public HisTask setCreateTime(Date createTime);
 
+    @Override
     public Date getUpdateTime();
 
+    @Override
     public HisTask setUpdateTime(Date updateTime);
 
+    @Override
     public String getTenantId();
 
+    @Override
     public HisTask setTenantId(String tenantId);
 
+    @Override
     public String getDelFlag();
 
+    @Override
     public HisTask setDelFlag(String delFlag);
 
     public Long getDefinitionId();

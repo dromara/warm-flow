@@ -101,7 +101,9 @@ public class FlowNode implements Node {
     private String coordinate;
     /**
      * 版本
+     * @deprecated 下个版本废弃
      */
+    @Deprecated
     private String version;
     /**
      * 任意结点跳转
@@ -130,8 +132,13 @@ public class FlowNode implements Node {
     private String formCustom;
 
     /**
-     * 审批表单是否自定义（Y是 2否）
+     * 审批表单路径
      */
     private String formPath;
+
+    /**
+     * 扩展属性
+     */
+    private String ext;
 
 }

@@ -57,6 +57,7 @@ CREATE TABLE flow_node
     "version"       varchar(20)   NOT NULL,                             -- 版本
     create_time     timestamp     NULL,                                 -- 创建时间
     update_time     timestamp     NULL,                                 -- 更新时间
+    ext             text         NULL,                                  -- 扩展属性
     del_flag        bpchar(1)     NULL DEFAULT '0':: character varying, -- 删除标志
     tenant_id       varchar(40)   NULL,                                 -- 租户id
     CONSTRAINT flow_node_pkey PRIMARY KEY (id)
@@ -81,6 +82,7 @@ COMMENT ON COLUMN flow_node.form_path IS '审批表单路径';
 COMMENT ON COLUMN flow_node."version" IS '版本';
 COMMENT ON COLUMN flow_node.create_time IS '创建时间';
 COMMENT ON COLUMN flow_node.update_time IS '更新时间';
+COMMENT ON COLUMN flow_node.ext IS '扩展属性';
 COMMENT ON COLUMN flow_node.del_flag IS '删除标志';
 COMMENT ON COLUMN flow_node.tenant_id IS '租户id';
 

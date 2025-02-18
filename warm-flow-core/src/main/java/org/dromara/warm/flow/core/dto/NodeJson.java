@@ -19,7 +19,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.dromara.warm.flow.core.utils.MapUtil;
-import org.dromara.warm.flow.core.utils.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -92,6 +91,11 @@ public class NodeJson {
      * 审批表单是否自定义（Y是 2否）
      */
     private String formPath;
+
+    /**
+     * 扩展属性
+     */
+    private String ext;
 
     /**
      * 办理状态: 0未办理 1待办理 2已办理

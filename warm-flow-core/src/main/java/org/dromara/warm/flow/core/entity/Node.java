@@ -29,24 +29,34 @@ import java.util.List;
  */
 public interface Node extends RootEntity {
 
+    @Override
     public Long getId();
 
+    @Override
     public Node setId(Long id);
 
+    @Override
     public Date getCreateTime();
 
+    @Override
     public Node setCreateTime(Date createTime);
 
+    @Override
     public Date getUpdateTime();
 
+    @Override
     public Node setUpdateTime(Date updateTime);
 
+    @Override
     public String getTenantId();
 
+    @Override
     public Node setTenantId(String tenantId);
 
+    @Override
     public String getDelFlag();
 
+    @Override
     public Node setDelFlag(String delFlag);
 
     public Integer getNodeType();
@@ -105,8 +115,20 @@ public interface Node extends RootEntity {
 
     public Node setFormPath(String formPath);
 
+    public String getExt();
+
+    public Node setExt(String ext);
+
+    /**
+     * @deprecated 下个版本废弃
+     */
+    @Deprecated
     public String getVersion();
 
+    /**
+     * @deprecated 下个版本废弃
+     */
+    @Deprecated
     public Node setVersion(String version);
 
     public List<Skip> getSkipList();
@@ -133,6 +155,7 @@ public interface Node extends RootEntity {
                 .setHandlerType(this.getHandlerType())
                 .setHandlerPath(this.getHandlerPath())
                 .setFormCustom(this.getFormCustom())
-                .setFormPath(this.getFormPath());
+                .setFormPath(this.getFormPath())
+                .setExt(this.getExt());
     }
 }

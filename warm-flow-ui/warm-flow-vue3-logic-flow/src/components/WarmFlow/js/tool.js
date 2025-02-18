@@ -55,6 +55,7 @@ export const json2LogicFlowJson = (definition) => {
       lfNode.properties.listenerPath = node.listenerPath
       lfNode.properties.formCustom = node.formCustom
       lfNode.properties.formPath = node.formPath
+      lfNode.properties.ext = node.ext
       graphData.nodes.push(lfNode)
     }
   }
@@ -181,6 +182,7 @@ export const logicFlowJsonToWarmFlow = (data) => {
     node.listenerPath = anyNode.properties.listenerPath
     node.formCustom = anyNode.properties.formCustom
     node.formPath = anyNode.properties.formPath
+    node.ext = anyNode.properties.ext
     node.coordinate = anyNode.x + ',' + anyNode.y
     if (anyNode.text && anyNode.text.x && anyNode.text.y) {
       node.coordinate = node.coordinate + '|' + anyNode.text.x + ',' + anyNode.text.y

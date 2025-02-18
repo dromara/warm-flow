@@ -1,6 +1,6 @@
 CREATE TABLE `flow_definition`
 (
-    `id`              bigint unsigned NOT NULL COMMENT '主键id',
+    `id`              bigint          NOT NULL COMMENT '主键id',
     `flow_code`       varchar(40)     NOT NULL COMMENT '流程编码',
     `flow_name`       varchar(100)    NOT NULL COMMENT '流程名称',
     `category`        varchar(100)             DEFAULT NULL COMMENT '流程类别',
@@ -21,7 +21,7 @@ CREATE TABLE `flow_definition`
 
 CREATE TABLE `flow_node`
 (
-    `id`              bigint unsigned NOT NULL COMMENT '主键id',
+    `id`              bigint        NOT NULL COMMENT '主键id',
     `node_type`       tinyint(1)      NOT NULL COMMENT '节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）',
     `definition_id`   bigint          NOT NULL COMMENT '流程定义id',
     `node_code`       varchar(100)    NOT NULL COMMENT '流程节点编码',
@@ -39,6 +39,7 @@ CREATE TABLE `flow_node`
     `version`         varchar(20)     NOT NULL COMMENT '版本',
     `create_time`     datetime      DEFAULT NULL COMMENT '创建时间',
     `update_time`     datetime      DEFAULT NULL COMMENT '更新时间',
+    `ext`             text          COMMENT '扩展属性',
     `del_flag`        char(1)       DEFAULT '0' COMMENT '删除标志',
     `tenant_id`       varchar(40)   DEFAULT NULL COMMENT '租户id',
     PRIMARY KEY (`id`) USING BTREE
@@ -46,7 +47,7 @@ CREATE TABLE `flow_node`
 
 CREATE TABLE `flow_skip`
 (
-    `id`             bigint unsigned NOT NULL COMMENT '主键id',
+    `id`             bigint       NOT NULL COMMENT '主键id',
     `definition_id`  bigint          NOT NULL COMMENT '流程定义id',
     `now_node_code`  varchar(100)    NOT NULL COMMENT '当前流程节点的编码',
     `now_node_type`  tinyint(1)   DEFAULT NULL COMMENT '当前节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）',
@@ -103,7 +104,7 @@ CREATE TABLE `flow_task`
 
 CREATE TABLE `flow_his_task`
 (
-    `id`               bigint(20) unsigned NOT NULL COMMENT '主键id',
+    `id`               bigint(20)          NOT NULL COMMENT '主键id',
     `definition_id`    bigint(20)          NOT NULL COMMENT '对应flow_definition表的id',
     `instance_id`      bigint(20)          NOT NULL COMMENT '对应flow_instance表的id',
     `task_id`          bigint(20)          NOT NULL COMMENT '对应flow_task表的id',
@@ -132,7 +133,7 @@ CREATE TABLE `flow_his_task`
 
 CREATE TABLE `flow_user`
 (
-    `id`           bigint unsigned NOT NULL COMMENT '主键id',
+    `id`           bigint      NOT NULL COMMENT '主键id',
     `type`         char(1)         NOT NULL COMMENT '人员类型（1待办任务的审批人权限 2待办任务的转办人权限 3待办任务的委托人权限）',
     `processed_by` varchar(80) DEFAULT NULL COMMENT '权限人',
     `associated`   bigint          NOT NULL COMMENT '任务表id',

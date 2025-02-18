@@ -27,24 +27,34 @@ import java.util.Date;
  */
 public interface Skip extends RootEntity {
 
+    @Override
     public Long getId();
 
+    @Override
     public Skip setId(Long id);
 
+    @Override
     public Date getCreateTime();
 
+    @Override
     public Skip setCreateTime(Date createTime);
 
+    @Override
     public Date getUpdateTime();
 
+    @Override
     public Skip setUpdateTime(Date updateTime);
 
+    @Override
     public String getTenantId();
 
+    @Override
     public Skip setTenantId(String tenantId);
 
+    @Override
     public String getDelFlag();
 
+    @Override
     public Skip setDelFlag(String delFlag);
 
     public Long getDefinitionId();

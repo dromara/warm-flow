@@ -27,24 +27,34 @@ import java.util.List;
  * @since 2023-03-29
  */
 public interface Definition extends RootEntity {
+    @Override
     public Long getId();
 
+    @Override
     public Definition setId(Long id);
 
+    @Override
     public Date getCreateTime();
 
+    @Override
     public Definition setCreateTime(Date createTime);
 
+    @Override
     public Date getUpdateTime();
 
+    @Override
     public Definition setUpdateTime(Date updateTime);
 
+    @Override
     public String getTenantId();
 
+    @Override
     public Definition setTenantId(String tenantId);
 
+    @Override
     public String getDelFlag();
 
+    @Override
     public Definition setDelFlag(String delFlag);
 
     public String getFlowCode();

@@ -26,24 +26,34 @@ import java.util.List;
  */
 public interface Task extends RootEntity {
 
+    @Override
     public Long getId();
 
+    @Override
     public Task setId(Long id);
 
+    @Override
     public Date getCreateTime();
 
+    @Override
     public Task setCreateTime(Date createTime);
 
+    @Override
     public Date getUpdateTime();
 
+    @Override
     public Task setUpdateTime(Date updateTime);
 
+    @Override
     public String getTenantId();
 
+    @Override
     public Task setTenantId(String tenantId);
 
+    @Override
     public String getDelFlag();
 
+    @Override
     public Task setDelFlag(String delFlag);
 
     public Long getDefinitionId();

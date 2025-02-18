@@ -127,7 +127,8 @@ public class DefJson {
                     .setHandlerType(node.getHandlerType())
                     .setHandlerPath(node.getHandlerPath())
                     .setFormCustom(node.getFormCustom())
-                    .setFormPath(node.getFormPath());
+                    .setFormPath(node.getFormPath())
+                    .setExt(node.getExt());
             nodeList.add(nodeJson);
 
             List<SkipJson> skipList = new ArrayList<>();
@@ -178,7 +179,8 @@ public class DefJson {
                     .setHandlerType(nodeJson.getHandlerType())
                     .setHandlerPath(nodeJson.getHandlerPath())
                     .setFormCustom(nodeJson.getFormCustom())
-                    .setFormPath(nodeJson.getFormPath());
+                    .setFormPath(nodeJson.getFormPath())
+                    .setExt(nodeJson.getExt());
             nodeList.add(node);
 
             List<Skip> skipList = new ArrayList<>();
@@ -231,7 +233,6 @@ public class DefJson {
                 .collect(Collectors.toList());
 
         flowCombine.setAllSkips(skipList);
-
         return flowCombine;
     }
 
