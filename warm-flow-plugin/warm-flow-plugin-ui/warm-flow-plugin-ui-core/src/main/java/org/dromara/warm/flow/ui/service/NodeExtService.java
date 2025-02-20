@@ -13,31 +13,22 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.dromara.warm.flow.ui.vo;
+package org.dromara.warm.flow.ui.service;
 
-import lombok.Getter;
-import lombok.Setter;
+import org.dromara.warm.flow.ui.vo.NodeExt;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
- * 字典
+ * 流程设计器-节点扩展属性
  *
  * @author warm
  */
-@Getter
-@Setter
-public class Dict implements Serializable
-{
-    private static final long serialVersionUID = 1L;
+public interface NodeExtService {
 
-    /** 字典标签 */
-    private String label;
-
-    /** 字典值 */
-    private String value;
-
-    private List<Dict> childList;
-
+    /**
+     * 获取节点扩展属性
+     * @return 结果
+     */
+    List<NodeExt> getNodeExt();
 }

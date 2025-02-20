@@ -173,7 +173,7 @@
 <script setup name="Between">
 import selectUser from "./selectUser";
 import { Delete } from '../../warm-flow-vue3-logic-flow/node_modules/@element-plus/icons-vue'
-import { publishedList, handlerDict } from "../api/flow/definition";
+import {publishedList, handlerDict, nodeExt} from "../api/flow/definition";
 const { proxy } = getCurrentInstance();
 
 const props = defineProps({
@@ -304,6 +304,15 @@ function getHandlerDict() {
   });
 }
 
+/** 查询节点扩展属性 */
+function getNodeExt() {
+  nodeExt().then(response => {
+    if (response.code === 200 && response.data) {
+      console.log("查询节点扩展属性", response.data)
+    }
+  });
+}
+
 // 打开用户选择弹窗
 function initUser() {
   userVisible.value = true;
@@ -350,6 +359,8 @@ getPermissionFlag();
 // getDefinition();
 
 // getHandlerDict();
+
+getNodeExt();
 </script>
 
 <style scoped lang="scss">

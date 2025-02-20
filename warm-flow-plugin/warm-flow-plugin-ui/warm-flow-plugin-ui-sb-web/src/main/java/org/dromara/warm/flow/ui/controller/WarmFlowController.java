@@ -28,8 +28,10 @@ import org.dromara.warm.flow.core.utils.ExceptionUtil;
 import org.dromara.warm.flow.ui.dto.HandlerQuery;
 import org.dromara.warm.flow.ui.service.HandlerDictService;
 import org.dromara.warm.flow.ui.service.HandlerSelectService;
+import org.dromara.warm.flow.ui.service.NodeExtService;
 import org.dromara.warm.flow.ui.vo.Dict;
 import org.dromara.warm.flow.ui.vo.HandlerSelectVo;
+import org.dromara.warm.flow.ui.vo.NodeExt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -248,6 +250,26 @@ public class WarmFlowController {
         flowParams.formData(formData);
 
         return ApiResult.ok(FlowEngine.taskService().skip(taskId, flowParams));
+    }
+
+    /**
+     * 获取节点扩展属性
+     * @return List<NodeExt>
+     */
+    @GetMapping("/node-ext")
+    public ApiResult<List<NodeExt>> nodeExt() {
+        try {
+            // 需要业务系统实现该接口
+            NodeExtService nodeExtService = FrameInvoker.getBean(NodeExtService.class);
+            if (nodeExtService == null) {
+                return ApiResult.ok(Collections.emptyList());
+            }
+            List<NodeExt> nodeExts = nodeExtService.getNodeExt();
+            return ApiResult.ok(nodeExts);
+        } catch (Exception e) {
+            log.error("获取节点扩展属性", e);
+            throw new FlowException(ExceptionUtil.handleMsg("获取节点扩展属性失败", e));
+        }
     }
 
 }

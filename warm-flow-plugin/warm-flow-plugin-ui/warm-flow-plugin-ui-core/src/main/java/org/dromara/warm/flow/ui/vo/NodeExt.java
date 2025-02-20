@@ -15,29 +15,48 @@
  */
 package org.dromara.warm.flow.ui.vo;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.List;
-
 /**
- * 字典
+ * 节点扩展属性
  *
  * @author warm
+ * @since 2025/2/18
  */
 @Getter
 @Setter
-public class Dict implements Serializable
+public class NodeExt implements Serializable
 {
     private static final long serialVersionUID = 1L;
+    private String code;
+    private String name;
+    private String desc;
+    private int type;
+    private List<ChildNode> childs;
 
-    /** 字典标签 */
-    private String label;
+    @Getter
+    @Setter
+    public static class ChildNode {
+        private String code;
+        private String desc;
+        private String label;
+        private int type;
+        private boolean must;
+        private List<DictItem> dict;
 
-    /** 字典值 */
-    private String value;
+    }
 
-    private List<Dict> childList;
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    public static class DictItem {
+        private String label;
+        private String value;
+
+    }
 
 }

@@ -51,3 +51,11 @@ export function publishedList() {
     method: 'get'
   })
 }
+
+// 办理人选择项
+export function nodeExt() {
+  return request({
+    url: urlPrefix + 'warm-flow/node-ext',
+    method: 'get'
+  })
+}

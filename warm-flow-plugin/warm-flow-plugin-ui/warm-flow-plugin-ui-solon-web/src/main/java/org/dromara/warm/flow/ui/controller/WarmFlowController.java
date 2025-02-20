@@ -22,15 +22,16 @@ import org.dromara.warm.flow.core.dto.FlowDto;
 import org.dromara.warm.flow.core.dto.FlowParams;
 import org.dromara.warm.flow.core.entity.Form;
 import org.dromara.warm.flow.core.entity.Instance;
-import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.utils.ExceptionUtil;
 import org.dromara.warm.flow.ui.dto.HandlerQuery;
 import org.dromara.warm.flow.ui.service.HandlerDictService;
 import org.dromara.warm.flow.ui.service.HandlerSelectService;
+import org.dromara.warm.flow.ui.service.NodeExtService;
 import org.dromara.warm.flow.ui.vo.Dict;
 import org.dromara.warm.flow.ui.vo.HandlerSelectVo;
+import org.dromara.warm.flow.ui.vo.NodeExt;
 import org.noear.solon.annotation.*;
 import org.noear.solon.data.annotation.Tran;
 import org.slf4j.Logger;
@@ -263,4 +264,25 @@ public class WarmFlowController {
         return ApiResult.ok(FlowEngine.taskService().skip(taskId, flowParams));
     }
 
+    /**
+     * 获取节点扩展属性
+     * @return List<NodeExt>
+     */
+    @Tran
+    @Get
+    @Mapping("/node-ext")
+    public ApiResult<List<NodeExt>> nodeExt() {
+        try {
+            // 需要业务系统实现该接口
+            NodeExtService nodeExtService = FrameInvoker.getBean(NodeExtService.class);
+            if (nodeExtService == null) {
+                return ApiResult.ok(Collections.emptyList());
+            }
+            List<NodeExt> nodeExts = nodeExtService.getNodeExt();
+            return ApiResult.ok(nodeExts);
+        } catch (Exception e) {
+            log.error("获取节点扩展属性", e);
+            throw new FlowException(ExceptionUtil.handleMsg("获取节点扩展属性失败", e));
+        }
+    }
 }
