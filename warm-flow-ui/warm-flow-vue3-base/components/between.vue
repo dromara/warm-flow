@@ -148,7 +148,6 @@
             </slot>
           </div>
           <div v-else-if="tabsValue === item.name">
-            <div>{{ `nodeExtList_${item.name}` }}</div>
             <nodeExtList v-if="buttonList[item.name].length > 0" :ref="`nodeExtList_${item.name}`" v-model="form.ext" :formList="buttonList[item.name]" :disabled="disabled"></nodeExtList>
           </div>
         </el-tab-pane>
