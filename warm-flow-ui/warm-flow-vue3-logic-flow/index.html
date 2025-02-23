@@ -33,60 +33,70 @@
       height: 100%;
       z-index: 999999;
     }
-
     #loader {
       display: block;
       position: relative;
       left: 50%;
-      top: 50%;
-      width: 150px;
-      height: 150px;
-      margin: -75px 0 0 -75px;
+      top: 43%;
+      width: 40px;
+      height: 40px;
+      margin: -25px 0 0 -25px;
       border-radius: 50%;
-      border: 3px solid transparent;
-      border-top-color: #FFF;
-      -webkit-animation: spin 2s linear infinite;
-      -ms-animation: spin 2s linear infinite;
-      -moz-animation: spin 2s linear infinite;
-      -o-animation: spin 2s linear infinite;
-      animation: spin 2s linear infinite;
       z-index: 1001;
+      color: #666;
+      font-size: 40px;
+      overflow: hidden;
+      transform: translateZ(0);
+      /* animation：规定完成动画所花费的时间，该属性必须规定，否则动画时长为0，无法播放 */
+      animation: loadBox 1.7s infinite ease, round 1.7s infinite ease;
     }
 
-    #loader:before {
-      content: "";
-      position: absolute;
-      top: 5px;
-      left: 5px;
-      right: 5px;
-      bottom: 5px;
-      border-radius: 50%;
-      border: 3px solid transparent;
-      border-top-color: #FFF;
-      -webkit-animation: spin 3s linear infinite;
-      -moz-animation: spin 3s linear infinite;
-      -o-animation: spin 3s linear infinite;
-      -ms-animation: spin 3s linear infinite;
-      animation: spin 3s linear infinite;
+    @keyframes loadBox {
+      0% {
+        box-shadow: 0 -0.83em 0 -0.4em, 0 -0.83em 0 -0.42em, 0 -0.83em 0 -0.44em,
+          0 -0.83em 0 -0.46em, 0 -0.83em 0 -0.477em;
+      }
+
+      5%,
+      95% {
+        box-shadow: 0 -0.83em 0 -0.4em, 0 -0.83em 0 -0.42em, 0 -0.83em 0 -0.44em,
+          0 -0.83em 0 -0.46em, 0 -0.83em 0 -0.477em;
+      }
+
+      10%,
+      59% {
+        box-shadow: 0 -0.83em 0 -0.4em, -0.087em -0.825em 0 -0.42em,
+          -0.173em -0.812em 0 -0.44em, -0.256em -0.789em 0 -0.46em,
+          -0.297em -0.775em 0 -0.477em;
+      }
+
+      20% {
+        box-shadow: 0 -0.83em 0 -0.4em, -0.338em -0.758em 0 -0.42em,
+          -0.555em -0.617em 0 -0.44em, -0.671em -0.488em 0 -0.46em,
+          -0.749em -0.34em 0 -0.477em;
+      }
+
+      38% {
+        box-shadow: 0 -0.83em 0 -0.4em, -0.377em -0.74em 0 -0.42em,
+          -0.645em -0.522em 0 -0.44em, -0.775em -0.297em 0 -0.46em,
+          -0.82em -0.09em 0 -0.477em;
+      }
+
+      100% {
+        box-shadow: 0 -0.83em 0 -0.4em, 0 -0.83em 0 -0.42em, 0 -0.83em 0 -0.44em,
+          0 -0.83em 0 -0.46em, 0 -0.83em 0 -0.477em;
+      }
     }
 
-    #loader:after {
-      content: "";
-      position: absolute;
-      top: 15px;
-      left: 15px;
-      right: 15px;
-      bottom: 15px;
-      border-radius: 50%;
-      border: 3px solid transparent;
-      border-top-color: #FFF;
-      -moz-animation: spin 1.5s linear infinite;
-      -o-animation: spin 1.5s linear infinite;
-      -ms-animation: spin 1.5s linear infinite;
-      -webkit-animation: spin 1.5s linear infinite;
-      animation: spin 1.5s linear infinite;
-    }
+    @keyframes round {
+      0% {
+        transform: rotate(0deg); /* 开始旋转 div 元素 */
+      }
 
+      100% {
+        transform: rotate(360deg); /* 结束旋转 div 元素 */
+      }
+    }
 
     @-webkit-keyframes spin {
       0% {
@@ -122,7 +132,7 @@
       top: 0;
       width: 51%;
       height: 100%;
-      background: #7171C6;
+      background: #e5e4e4;
       z-index: 1000;
       -webkit-transform: translateX(0);
       -ms-transform: translateX(0);
@@ -179,13 +189,13 @@
 
     #loader-wrapper .load_title {
       font-family: 'Open Sans';
-      color: #FFF;
+      color: #666;
       font-size: 19px;
       width: 100%;
       text-align: center;
       z-index: 9999999999999;
       position: absolute;
-      top: 60%;
+      top: 50%;
       opacity: 1;
       line-height: 30px;
     }
@@ -194,7 +204,7 @@
       font-weight: normal;
       font-style: italic;
       font-size: 13px;
-      color: #FFF;
+      color: #666;
       opacity: 0.5;
     }
   </style>
@@ -206,7 +216,7 @@
       <div id="loader"></div>
       <div class="loader-section section-left"></div>
       <div class="loader-section section-right"></div>
-      <div class="load_title">正在加载系统资源，请耐心等待</div>
+      <div class="load_title">正在加载设计器呀</div>
     </div>
   </div>
   <script type="module" src="/src/main.js"></script>

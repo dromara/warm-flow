@@ -9,7 +9,7 @@
       size="37%"
       :append-to-body="true"
       :before-close="handleClose">
-      <component :is="componentType" v-model="form" :disabled="disabled" :skipConditionShow="skipConditionShow"
+      <component :ref="componentType.name" :is="componentType" v-model="form" :disabled="disabled" :skipConditionShow="skipConditionShow"
                  :nodes="nodes" :skips="skips">
         <template v-slot:[key]="data" v-for="(item, key) in $slots">
           <slot :name="key" v-bind="data || {}"></slot>
@@ -252,12 +252,29 @@ watch(() => form.value.skipCondition, (n) => {
 
 });
 
+watch(() => form.value.ext, (n) => {
+  // 监听节点属性变化并更新
+  props.lf.setProperties(objId.value, {
+    ext: n
+  })
+}, { deep: true });
 
 function show () {
   drawer.value = true
 }
 
-function handleClose () {
+async function handleClose () {
+  if (typeof proxy.$refs[componentType.value.name].validate === "function") {
+    // 校验表单必填项
+    await proxy.$refs[componentType.value.name].validate().then(() => {
+      handleDrawer();
+    }).catch(err => {
+      return;
+    });
+  } else handleDrawer();
+}
+
+function handleDrawer () {
   if (nodeCode.value && objId.value) {
     if (['skip'].includes(props.node?.type)) {
       if (!props.lf.getEdgeModelById(nodeCode.value)) {

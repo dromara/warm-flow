@@ -55,7 +55,12 @@ export const json2LogicFlowJson = (definition) => {
       lfNode.properties.listenerPath = node.listenerPath
       lfNode.properties.formCustom = node.formCustom
       lfNode.properties.formPath = node.formPath
-      lfNode.properties.ext = node.ext
+      lfNode.properties.ext = {};
+      if (node.ext) {
+        node.ext.forEach(e => {
+          lfNode.properties.ext[e.code] = e.value.includes(",") ? e.value.split(",") : e.value;
+        });
+      }
       graphData.nodes.push(lfNode)
     }
   }
@@ -182,7 +187,13 @@ export const logicFlowJsonToWarmFlow = (data) => {
     node.listenerPath = anyNode.properties.listenerPath
     node.formCustom = anyNode.properties.formCustom
     node.formPath = anyNode.properties.formPath
-    node.ext = anyNode.properties.ext
+    node.ext = [];
+    for (const key in anyNode.properties.ext) {
+      if (Object.prototype.hasOwnProperty.call(anyNode.properties.ext, key)) {
+        let e = anyNode.properties.ext[key];
+        node.ext.push({ code: key, value: Array.isArray(e) ? e.join(",") : e });
+      }
+    }
     node.coordinate = anyNode.x + ',' + anyNode.y
     if (anyNode.text && anyNode.text.x && anyNode.text.y) {
       node.coordinate = node.coordinate + '|' + anyNode.text.x + ',' + anyNode.text.y

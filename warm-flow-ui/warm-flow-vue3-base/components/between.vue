@@ -1,166 +1,158 @@
 <template>
   <div class="between">
-    <el-tabs type="border-card" class="Tabs" v-model="tabsValue">
-      <el-tab-pane label="基础设置" name="1"></el-tab-pane>
-      <el-tab-pane label="监听器" name="2"></el-tab-pane>
-      <el-tab-pane label="按钮权限" name="3"></el-tab-pane>
-    </el-tabs>
-    <el-form ref="formRef" class="betweenForm" :model="form" label-width="100px" size="small" :rules="rules"
-             :disabled="disabled" label-position="left">
-      <template v-if="tabsValue === '1'">
-        <slot name="form-item-task-nodeCode" :model="form" field="nodeCode">
-          <el-form-item label="节点编码：">
-            <el-input v-model="form.nodeCode" :disabled="disabled"></el-input>
-          </el-form-item>
-        </slot>
-        <slot name="form-item-task-nodeName" :model="form" field="nodeName">
-          <el-form-item label="节点名称：">
-            <el-input v-model="form.nodeName" type="textarea" ref="nodeInput" :disabled="disabled" @change="nodeNameChange"></el-input>
-          </el-form-item>
-        </slot>
-        <slot name="form-item-task-collaborativeWay" :model="form" field="collaborativeWay">
-          <el-form-item label="协作方式：">
-            <el-radio-group v-model="form.collaborativeWay">
-              <el-radio label="1" v-if="form.collaborativeWay ==='1' || showWays">
-                <span class="flex-hc">
-                  或签
-                  <el-tooltip class="box-item" effect="dark" content="只需一个人审批">
-                    <el-icon :size="14" class="ml5">
-                      <WarningFilled />
-                    </el-icon>
-                  </el-tooltip>
-                </span>
-              </el-radio>
-              <el-radio label="2" v-if="form.collaborativeWay ==='2' || showWays">
-                <span class="flex-hc">
-                  票签
-                  <el-tooltip class="box-item" effect="dark" content="部分办理人审批，建议选择用户；如果选择角色或者部门等，需自行通过办理人变量表达式或者监听器，转成具体办理用户">
-                    <el-icon :size="14" class="ml5">
-                      <WarningFilled />
-                    </el-icon>
-                  </el-tooltip>
-                </span>
-              </el-radio>
-              <el-radio label="3" v-if="form.collaborativeWay ==='3' || showWays">
-                <span class="flex-hc">
-                  会签
-                  <el-tooltip class="box-item" effect="dark" content="所有办理都需要审批，建议选择用户；如果选择角色或者部门等，需自行通过办理人变量表达式或者监听器，转成具体办理用户">
-                    <el-icon :size="14" class="ml5">
-                      <WarningFilled />
-                    </el-icon>
-                  </el-tooltip>
-                </span>
-              </el-radio>
-            </el-radio-group>
-          </el-form-item>
-        </slot>
-        <slot name="form-item-task-nodeRatio" :model="form" field="nodeRatio" v-if="form.collaborativeWay === '2'">
-          <el-form-item label="票签占比：" prop="nodeRatio">
-            <el-input v-model="form.nodeRatio" type="number" placeholder="请输入"></el-input>
-            <div class="placeholder mt5">票签比例范围：(0-100)的值</div>
-          </el-form-item>
-        </slot>
-        <slot name="form-item-task-permissionFlag" :model="form" field="permissionFlag">
-          <el-form-item label="办理人输入：" class="permissionItem">
-            <div v-for="(tag, index) in form.permissionFlag" :key="index" class="inputGroup">
-<!--              <el-select v-if="dictList" v-model="form.permissionFlag[index]" placeholder="请选择">-->
-<!--                <el-option-->
-<!--                    v-for="dict in dictList"-->
-<!--                    :key="dict.value"-->
-<!--                    :label="dict.label"-->
-<!--                    :value="parseInt(dict.value)"-->
-<!--                ></el-option>-->
-<!--              </el-select>-->
+    <el-form ref="formRef" class="betweenForm" :model="form" label-width="100px" size="small" :rules="rules" :disabled="disabled" label-position="left">
+      <el-tabs type="border-card" class="Tabs" v-model="tabsValue">
+        <el-tab-pane v-for="item in tabsList" :key="item.name" :label="item.label" :name="item.name">
+          <div v-if="tabsValue === '1'">
+            <slot name="form-item-task-nodeCode" :model="form" field="nodeCode">
+              <el-form-item label="节点编码：">
+                <el-input v-model="form.nodeCode" :disabled="disabled"></el-input>
+              </el-form-item>
+            </slot>
+            <slot name="form-item-task-nodeName" :model="form" field="nodeName">
+              <el-form-item label="节点名称：">
+                <el-input v-model="form.nodeName" type="textarea" ref="nodeInput" :disabled="disabled" @change="nodeNameChange"></el-input>
+              </el-form-item>
+            </slot>
+            <slot name="form-item-task-collaborativeWay" :model="form" field="collaborativeWay">
+              <el-form-item label="协作方式：">
+                <el-radio-group v-model="form.collaborativeWay">
+                  <el-radio label="1" v-if="form.collaborativeWay ==='1' || showWays">
+                    <span class="flex-hc">
+                      或签
+                      <el-tooltip class="box-item" effect="dark" content="只需一个人审批">
+                        <el-icon :size="14" class="ml5">
+                          <WarningFilled />
+                        </el-icon>
+                      </el-tooltip>
+                    </span>
+                  </el-radio>
+                  <el-radio label="2" v-if="form.collaborativeWay ==='2' || showWays">
+                    <span class="flex-hc">
+                      票签
+                      <el-tooltip class="box-item" effect="dark" content="部分办理人审批，建议选择用户；如果选择角色或者部门等，需自行通过办理人变量表达式或者监听器，转成具体办理用户">
+                        <el-icon :size="14" class="ml5">
+                          <WarningFilled />
+                        </el-icon>
+                      </el-tooltip>
+                    </span>
+                  </el-radio>
+                  <el-radio label="3" v-if="form.collaborativeWay ==='3' || showWays">
+                    <span class="flex-hc">
+                      会签
+                      <el-tooltip class="box-item" effect="dark" content="所有办理都需要审批，建议选择用户；如果选择角色或者部门等，需自行通过办理人变量表达式或者监听器，转成具体办理用户">
+                        <el-icon :size="14" class="ml5">
+                          <WarningFilled />
+                        </el-icon>
+                      </el-tooltip>
+                    </span>
+                  </el-radio>
+                </el-radio-group>
+              </el-form-item>
+            </slot>
+            <slot name="form-item-task-nodeRatio" :model="form" field="nodeRatio" v-if="form.collaborativeWay === '2'">
+              <el-form-item label="票签占比：" prop="nodeRatio">
+                <el-input v-model="form.nodeRatio" type="number" placeholder="请输入"></el-input>
+                <div class="placeholder mt5">票签比例范围：(0-100)的值</div>
+              </el-form-item>
+            </slot>
+            <slot name="form-item-task-permissionFlag" :model="form" field="permissionFlag">
+              <el-form-item label="办理人输入：" class="permissionItem">
+                <div v-for="(tag, index) in form.permissionFlag" :key="index" class="inputGroup">
+    <!--              <el-select v-if="dictList" v-model="form.permissionFlag[index]" placeholder="请选择">-->
+    <!--                <el-option-->
+    <!--                    v-for="dict in dictList"-->
+    <!--                    :key="dict.value"-->
+    <!--                    :label="dict.label"-->
+    <!--                    :value="parseInt(dict.value)"-->
+    <!--                ></el-option>-->
+    <!--              </el-select>-->
 
-              <el-input v-model="form.permissionFlag[index]" style="width: 200px;"></el-input>
-              <Close class="Icon" v-if="form.permissionFlag.length !== 1 && !disabled" @click="delPermission(index)" />
-              <Plus class="Icon" v-if="(index === form.permissionFlag.length - 1) && !disabled" @click="addPermission" />
-              <el-button class="btn" v-if="(index === form.permissionFlag.length - 1) && !disabled" @click="initUser">选择</el-button>
-            </div>
-          </el-form-item>
-        </slot>
-        <slot name="form-item-task-formCustom" :model="form" field="formCustom">
-          <el-form-item label="驳回到指定节点">
-            <template #label>
-              <span v-if="form.collaborativeWay === '2'"  class="mr5" style="color: red;">*</span>驳回到指定节点
-            </template>
-            <el-select v-model="form.anyNodeSkip" style="width: 80%" clearable>
-              <el-option
-                  v-for="dict in filteredNodes"
-                  :key="dict.id"
-                  :label="dict.text.value"
-                  :value="dict.id"
-              />
-            </el-select>
-            <div class="placeholder mt5">【票签】必须选择驳到指定节点！</div>
-          </el-form-item>
-        </slot>
-        <slot name="form-item-task-formCustom" :model="form" field="formCustom">
-          <el-form-item label="审批表单：" prop="formCustom">
-            <el-select v-model="form.formCustom" clearable>
-              <el-option label="表单路径" value="N"></el-option>
-              <!--TODO form 开发中-->
-<!--              <el-option label="动态表单" value="Y"></el-option>-->
-            </el-select>
-          </el-form-item>
-        </slot>
-        <slot name="form-item-task-formPath" :model="form" field="formPath" v-if="form.formCustom === 'N'">
-          <el-form-item label="审批表单路径：">
-            <el-input v-model="form.formPath"></el-input>
-          </el-form-item>
-        </slot>
-        <slot name="form-item-task-formPath" :model="form" field="formPath" v-else-if="form.formCustom === 'Y'">
-          <el-form-item label="审批流程表单：">
-            <el-select v-model="form.formPath">
-              <el-option v-for="item in definitionList" :key="id" :label="`${item.formName} - v${item.version}`" :value="item.id"></el-option>
-            </el-select>
-          </el-form-item>
-        </slot>
-      </template>
-      <template v-if="tabsValue === '2'">
-        <slot name="form-item-task-listenerType" :model="form" field="listenerType">
-          <el-form-item prop="listenerRows" class="listenerItem">
-            <el-table :data="form.listenerRows" style="width: 100%">
-              <el-table-column prop="listenerType" label="类型" width="90">
-                <template #default="scope">
-                  <el-form-item :prop="'listenerRows.' + scope.$index + '.listenerType'" :rules="rules.listenerType">
-                    <el-select v-model="scope.row.listenerType" placeholder="请选择">
-                      <el-option label="开始" value="start"></el-option>
-                      <el-option label="分派" value="assignment"></el-option>
-                      <el-option label="完成" value="finish"></el-option>
-                      <el-option label="创建" value="create"></el-option>
-                    </el-select>
-                  </el-form-item>
+                  <el-input v-model="form.permissionFlag[index]" style="width: 200px;"></el-input>
+                  <Close class="Icon" v-if="form.permissionFlag.length !== 1 && !disabled" @click="delPermission(index)" />
+                  <Plus class="Icon" v-if="(index === form.permissionFlag.length - 1) && !disabled" @click="addPermission" />
+                  <el-button class="btn" v-if="(index === form.permissionFlag.length - 1) && !disabled" @click="initUser">选择</el-button>
+                </div>
+              </el-form-item>
+            </slot>
+            <slot name="form-item-task-formCustom" :model="form" field="formCustom">
+              <el-form-item label="驳回到指定节点">
+                <template #label>
+                  <span v-if="form.collaborativeWay === '2'"  class="mr5" style="color: red;">*</span>驳回到指定节点
                 </template>
-              </el-table-column>
-              <el-table-column prop="listenerPath" label="路径">
-                <template #default="scope">
-                  <el-form-item :prop="'listenerRows.' + scope.$index + '.listenerPath'" :rules="rules.listenerPath">
-                    <el-input v-model="scope.row.listenerPath" placeholder="请输入"></el-input>
-                  </el-form-item>
-                </template>
-              </el-table-column>
-              <el-table-column label="操作" width="55" v-if="!disabled">
-                <template #default="scope">
-                  <el-button type="danger" :icon="Delete" @click="handleDeleteRow(scope.$index)"/>
-                </template>
-              </el-table-column>
-            </el-table>
-            <el-button v-if="!disabled" type="primary" style="margin-top: 10px;" @click="handleAddRow">增加行</el-button>
-          </el-form-item>
-        </slot>
-      </template>
-      <template v-if="tabsValue === '3'">
-        <slot name="form-item-task-button" :model="form" field="buttonList">
-          <el-form-item label="按钮权限">
-              <el-row :gutter="20">
-                <el-col :span="8" v-for="item in buttonList" :key="item.value">
-                  <el-checkbox v-model="item.value" :key="item.value" :label="item.label"></el-checkbox>
-                </el-col>
-              </el-row>
-          </el-form-item>
-        </slot>
-      </template>
+                <el-select v-model="form.anyNodeSkip" style="width: 80%" clearable>
+                  <el-option
+                      v-for="dict in filteredNodes"
+                      :key="dict.id"
+                      :label="dict.text.value"
+                      :value="dict.id"
+                  />
+                </el-select>
+                <div class="placeholder mt5">【票签】必须选择驳到指定节点！</div>
+              </el-form-item>
+            </slot>
+            <slot name="form-item-task-formCustom" :model="form" field="formCustom">
+              <el-form-item label="审批表单：" prop="formCustom">
+                <el-select v-model="form.formCustom" clearable>
+                  <el-option label="表单路径" value="N"></el-option>
+                  <!--TODO form 开发中-->
+    <!--              <el-option label="动态表单" value="Y"></el-option>-->
+                </el-select>
+              </el-form-item>
+            </slot>
+            <slot name="form-item-task-formPath" :model="form" field="formPath" v-if="form.formCustom === 'N'">
+              <el-form-item label="审批表单路径：">
+                <el-input v-model="form.formPath"></el-input>
+              </el-form-item>
+            </slot>
+            <slot name="form-item-task-formPath" :model="form" field="formPath" v-else-if="form.formCustom === 'Y'">
+              <el-form-item label="审批流程表单：">
+                <el-select v-model="form.formPath">
+                  <el-option v-for="item in definitionList" :key="id" :label="`${item.formName} - v${item.version}`" :value="item.id"></el-option>
+                </el-select>
+              </el-form-item>
+            </slot>
+            <nodeExtList v-if="baseList.length > 0" ref="nodeBase" v-model="form.ext" :formList="baseList" :disabled="disabled"></nodeExtList>
+          </div>
+          <div v-else-if="tabsValue === '2'">
+            <slot name="form-item-task-listenerType" :model="form" field="listenerType">
+              <el-form-item prop="listenerRows" class="listenerItem">
+                <el-table :data="form.listenerRows" style="width: 100%">
+                  <el-table-column prop="listenerType" label="类型" width="90">
+                    <template #default="scope">
+                      <el-form-item :prop="'listenerRows.' + scope.$index + '.listenerType'" :rules="rules.listenerType">
+                        <el-select v-model="scope.row.listenerType" placeholder="请选择">
+                          <el-option label="开始" value="start"></el-option>
+                          <el-option label="分派" value="assignment"></el-option>
+                          <el-option label="完成" value="finish"></el-option>
+                          <el-option label="创建" value="create"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="listenerPath" label="路径">
+                    <template #default="scope">
+                      <el-form-item :prop="'listenerRows.' + scope.$index + '.listenerPath'" :rules="rules.listenerPath">
+                        <el-input v-model="scope.row.listenerPath" placeholder="请输入"></el-input>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="操作" width="55" v-if="!disabled">
+                    <template #default="scope">
+                      <el-button type="danger" :icon="Delete" @click="handleDeleteRow(scope.$index)"/>
+                    </template>
+                  </el-table-column>
+                </el-table>
+                <el-button v-if="!disabled" type="primary" style="margin-top: 10px;" @click="handleAddRow">增加行</el-button>
+              </el-form-item>
+            </slot>
+          </div>
+          <div v-else-if="tabsValue === item.name">
+            <div>{{ `nodeExtList_${item.name}` }}</div>
+            <nodeExtList v-if="buttonList[item.name].length > 0" :ref="`nodeExtList_${item.name}`" v-model="form.ext" :formList="buttonList[item.name]" :disabled="disabled"></nodeExtList>
+          </div>
+        </el-tab-pane>
+      </el-tabs>
     </el-form>
 
     <!-- 权限标识：会签票签选择用户 -->
@@ -174,6 +166,7 @@
 import selectUser from "./selectUser";
 import { Delete } from '../../warm-flow-vue3-logic-flow/node_modules/@element-plus/icons-vue'
 import {publishedList, handlerDict, nodeExt} from "../api/flow/definition";
+import nodeExtList from "./nodeExtList";
 const { proxy } = getCurrentInstance();
 
 const props = defineProps({
@@ -207,42 +200,17 @@ const props = defineProps({
 });
 
 const tabsValue = ref("1");
+const tabsList = ref([
+  { label: "基础设置", name: "1" },
+  { label: "监听器", name: "2" }
+]);
 const form = ref(props.modelValue);
 const userVisible = ref(false);
 
+//基础设置扩展属性
+const baseList = ref([]);
 //按钮权限
-const buttonList =
-[
-  {
-    key:'pop',
-    label: '是否弹窗选人',
-    value: true
-  },{
-    key:'trust',
-    label:'是否能委托',
-    value: true
-  },{
-    key:'transfer',
-    label:' 是否能转办',
-    value: true
-  },{
-    key:'copy',
-    label:'是否能抄送',
-    value: true
-  },{
-    key:'back',
-    label:'是否显示退回',
-    value: true
-  },{
-    key:'addSign',
-    label:'是否能加签',
-    value: false
-  },{
-    key:'subSign',
-    label:'是否能减签',
-    value: false
-  }
-]
+const buttonList = ref({});
 
 const rules = reactive({
   nodeRatio: [
@@ -308,7 +276,13 @@ function getHandlerDict() {
 function getNodeExt() {
   nodeExt().then(response => {
     if (response.code === 200 && response.data) {
-      console.log("查询节点扩展属性", response.data)
+      response.data.forEach(e => {
+        if (e.type === 1) baseList.value.push(...e?.childs);
+        else if (e.type === 2) {
+          tabsList.value.push({ label: e.name, name: e.code })
+          buttonList.value[e.code] = e?.childs;
+        }
+      });
     }
   });
 }
@@ -361,6 +335,42 @@ getPermissionFlag();
 // getHandlerDict();
 
 getNodeExt();
+
+// 表单必填校验
+function validate() {
+  return new Promise((resolve, reject) => {
+    tabsValue.value = "1";
+    proxy.$nextTick(async () => {
+      proxy.$refs.formRef.validate((valid) => {
+        if (!valid) {
+          reject(false);
+        }
+      });
+      await proxy.$refs.nodeBase[0].validate().then(async () => {
+        let addTabsList = tabsList.value.slice(2);
+        if (addTabsList.length === 0) resolve(true);
+        for (const e of addTabsList) {
+          tabsValue.value = e.name;
+          await proxy.$nextTick();
+          let hasValite = null;
+          await proxy.$refs[`nodeExtList_${e.name}`][0].validate().then(() => {
+            hasValite = true;
+          }).catch(() => {
+            hasValite = false;
+          });
+          if (!hasValite) break;
+          else if (e.name === addTabsList[addTabsList.length - 1].name) resolve(true);
+        }
+      }).catch(err => {
+        reject(false);
+      });
+    });
+  });
+}
+
+defineExpose({
+  validate
+})
 </script>
 
 <style scoped lang="scss">
@@ -386,9 +396,6 @@ getNodeExt();
 :deep(.Tabs) {
   border: 0;
   margin-top: -20px;
-  .el-tabs__content {
-    display: none;
-  }
   .el-tabs__item.is-active {
     margin-left: 0;
     border-top: 1px solid var(--el-border-color);
