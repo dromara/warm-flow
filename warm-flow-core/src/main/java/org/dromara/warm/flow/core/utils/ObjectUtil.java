@@ -56,14 +56,27 @@ public class ObjectUtil {
     }
 
     /**
-     * 如果被检查对象为 {@code null}， 返回默认值（由 defaultValueSupplier 提供）；否则直接返回
+     * 如果被检查对象为null， 返回默认值defaultValue；否则直接返回
+     *
+     * @param source               被检查对象
+     * @param defaultValue         默认值
+     * @param <T>                  对象类型
+     * @throws NullPointerException {@code defaultValueSupplier == null} 时，抛出
+     */
+    public static <T> T defaultNull(T source, T defaultValue) {
+        if (isNull(source)) {
+            return defaultValue;
+        }
+        return source;
+    }
+
+    /**
+     * 如果被检查对象为null， 返回默认值（由 defaultValueSupplier 提供）；否则直接返回
      *
      * @param source               被检查对象
      * @param defaultValueSupplier 默认值提供者
      * @param <T>                  对象类型
-     * @return 被检查对象为{@code null}返回默认值，否则返回自定义handle处理后的返回值
      * @throws NullPointerException {@code defaultValueSupplier == null} 时，抛出
-     * @since 5.7.20
      */
     public static <T> T defaultIfNull(T source, Supplier<? extends T> defaultValueSupplier) {
         if (isNull(source)) {

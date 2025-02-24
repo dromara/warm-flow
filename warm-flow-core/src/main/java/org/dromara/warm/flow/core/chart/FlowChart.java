@@ -18,6 +18,7 @@ package org.dromara.warm.flow.core.chart;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.dromara.warm.flow.core.enums.ChartStatus;
 
 import java.awt.*;
 
@@ -43,7 +44,7 @@ public abstract class FlowChart {
     abstract void draw(Graphics2D graphics);
 
     public Color lightColor(Color c) {
-        if (Color.BLACK.equals(c)) {
+        if (ChartStatus.getNotDone().equals(c)) {
             return Color.WHITE;
         }
         float red = c.getRed() / 255.0f;

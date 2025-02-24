@@ -40,7 +40,7 @@ public class OvalChart extends FlowChart {
 
     private int y;
 
-    private java.util.List<TextChart> textCharts;
+    private List<TextChart> textCharts;
 
     private NodeJson nodeJson;
 

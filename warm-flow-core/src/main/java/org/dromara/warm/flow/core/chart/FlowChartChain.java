@@ -96,7 +96,7 @@ public class FlowChartChain {
             int textX = nodeX - 20;
             int textY = nodeY - 25;
             TextChart textChart = new TextChart(textX, textY, value.getValue());
-            addFlowChart(new BetweenChart(nodeX, nodeY, value.getColor(), CollUtil.toList(textChart), null)
+            addFlowChart(new BetweenChart(nodeX, nodeY, ChartStatus.getColorByKey(value), CollUtil.toList(textChart), null)
                     .setWidth(60).setHeight(20).setArcWidth(5).setOffsetEnable(false));
             tmp += 140;
         }

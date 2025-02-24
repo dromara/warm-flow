@@ -80,7 +80,7 @@ public class BetweenChart extends FlowChart {
         // 保存当前的画笔样式
         Stroke originalStroke = graphics.getStroke();
         // 设置虚线样式，例如 [10, 5] 表示 10 像素的线段和 5 像素的间隔
-        if (ChartStatus.TO_DO.getColor().equals(c)) {
+        if (ChartStatus.getToDo().equals(c)) {
             float[] dashPattern = {10f, 5f};
             BasicStroke dashedStroke = new BasicStroke(2.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10f, dashPattern, 0f);
             graphics.setStroke(dashedStroke);

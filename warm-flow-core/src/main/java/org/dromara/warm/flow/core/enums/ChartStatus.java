@@ -17,9 +17,14 @@ package org.dromara.warm.flow.core.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.dromara.warm.flow.core.utils.CollUtil;
 import org.dromara.warm.flow.core.utils.ObjectUtil;
+import org.dromara.warm.flow.core.utils.StringUtils;
 
 import java.awt.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 流程图状态
@@ -40,28 +45,45 @@ public enum ChartStatus {
     private final String value;
     private final Color color;
 
-    public static Integer getKeyByValue(String value) {
-        for (ChartStatus item : ChartStatus.values()) {
-            if (item.getValue().equals(value)) {
-                return item.getKey();
+    private static final Map<Integer, Color> CUSTOM_COLOR = new HashMap<>();
+
+
+    public static void initCustomColor(List<String> chartStatusColor) {
+        if (CollUtil.isNotEmpty(chartStatusColor) && chartStatusColor.size() == 3) {
+            for (int i = 0; i < chartStatusColor.size(); i++) {
+                String statusColor = chartStatusColor.get(i);
+                if (StringUtils.isNotEmpty(statusColor)) {
+                    String[] colorArr = statusColor.split(",");
+                    if (colorArr.length == 3) {
+                        ChartStatus.CUSTOM_COLOR.put(i, new Color(Integer.parseInt(colorArr[0]), Integer.parseInt(colorArr[1]), Integer.parseInt(colorArr[2])));
+                    }
+                }
             }
         }
-        return null;
+    }
+
+    public static Color getNotDone() {
+        return getColorByKey(ChartStatus.NOT_DONE);
+    }
+
+    public static Color getToDo() {
+        return getColorByKey(ChartStatus.TO_DO);
+    }
+
+    public static Color getDone() {
+        return getColorByKey(ChartStatus.DONE);
+    }
+
+    public static Color getColorByKey(ChartStatus chartStatus) {
+        Color color = ChartStatus.CUSTOM_COLOR.get(chartStatus.getKey());
+        return ObjectUtil.defaultNull(color, chartStatus.getColor());
     }
 
     public static Color getColorByKey(Integer key) {
         for (ChartStatus item : ChartStatus.values()) {
             if (item.getKey().equals(key)) {
-                return item.getColor();
-            }
-        }
-        return null;
-    }
-
-    public static ChartStatus getByKey(Integer key) {
-        for (ChartStatus item : ChartStatus.values()) {
-            if (item.getKey().equals(key)) {
-                return item;
+                Color color = ChartStatus.CUSTOM_COLOR.get(key);
+                return ObjectUtil.defaultNull(color, item.getColor());
             }
         }
         return null;
@@ -70,28 +92,28 @@ public enum ChartStatus {
     /**
      * 判断是否未办理
      *
-     * @param Key 状态
+     * @param key 状态
      */
-    public static Boolean isNotDone(Integer Key) {
-        return ObjectUtil.isNotNull(Key) && (ChartStatus.NOT_DONE.getKey().equals(Key));
+    public static Boolean isNotDone(Integer key) {
+        return ObjectUtil.isNotNull(key) && (ChartStatus.NOT_DONE.getKey().equals(key));
     }
 
     /**
      * 判断是否待办理
      *
-     * @param Key 状态
+     * @param key 状态
      */
-    public static Boolean isToDo(Integer Key) {
-        return ObjectUtil.isNotNull(Key) && (ChartStatus.TO_DO.getKey().equals(Key));
+    public static Boolean isToDo(Integer key) {
+        return ObjectUtil.isNotNull(key) && (ChartStatus.TO_DO.getKey().equals(key));
     }
 
     /**
      * 判断是否已办理
      *
-     * @param Key 状态
+     * @param key 状态
      */
-    public static Boolean isDone(Integer Key) {
-        return ObjectUtil.isNotNull(Key) && (ChartStatus.DONE.getKey().equals(Key));
+    public static Boolean isDone(Integer key) {
+        return ObjectUtil.isNotNull(key) && (ChartStatus.DONE.getKey().equals(key));
     }
 
 }

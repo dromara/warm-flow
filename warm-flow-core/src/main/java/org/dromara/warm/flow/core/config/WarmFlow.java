@@ -18,10 +18,12 @@ package org.dromara.warm.flow.core.config;
 import lombok.Getter;
 import lombok.Setter;
 import org.dromara.warm.flow.core.FlowEngine;
+import org.dromara.warm.flow.core.enums.ChartStatus;
 import org.dromara.warm.flow.core.json.JsonConvert;
 import org.dromara.warm.flow.core.utils.ServiceLoaderUtil;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * WarmFlow属性配置文件
@@ -89,6 +91,11 @@ public class WarmFlow implements Serializable {
      */
     private String tokenName = "Authorization";
 
+    /**
+     * 流程状态对应的三原色
+     */
+    private List<String> chartStatusColor;
+
     public void init() {
         // 设置租户模式
         FlowEngine.initTenantHandler(this.getTenantHandlerPath());
@@ -104,6 +111,9 @@ public class WarmFlow implements Serializable {
 
         // 设置数据源类型
         printBanner();
+
+        // 初始化流程状态对应的自定义三原色
+        ChartStatus.initCustomColor(this.getChartStatusColor());
 
         // 通过SPI机制
         spiLoad();
