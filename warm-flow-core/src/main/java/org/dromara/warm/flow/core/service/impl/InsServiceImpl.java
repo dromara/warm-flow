@@ -213,7 +213,9 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
                         .map(Task::getId)
                         .collect(Collectors.toList())));
 
-        FlowEngine.userService().deleteByTaskIds(taskIds);
+        if (CollUtil.isNotEmpty(taskIds)) {
+            FlowEngine.userService().deleteByTaskIds(taskIds);
+        }
 
         boolean success = FlowEngine.taskService().deleteByInsIds(instanceIds);
         if (success) {
