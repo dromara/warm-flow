@@ -15,7 +15,6 @@
  */
 package org.dromara.warm.flow.ui.vo;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -52,11 +51,21 @@ public class NodeExt implements Serializable
 
     @Getter
     @Setter
-    @AllArgsConstructor
     public static class DictItem {
         private String label;
         private String value;
+        private boolean isSelect;
 
+        public DictItem(String label, String value) {
+            this.label = label;
+            this.value = value;
+        }
+
+        public DictItem(String label, String value, boolean isSelect) {
+            this.label = label;
+            this.value = value;
+            this.isSelect = isSelect;
+        }
     }
 
 }
