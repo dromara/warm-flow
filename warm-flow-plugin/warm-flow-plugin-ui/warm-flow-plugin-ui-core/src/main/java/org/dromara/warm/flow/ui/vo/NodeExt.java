@@ -45,6 +45,7 @@ public class NodeExt implements Serializable
         private String label;
         private int type;
         private boolean must;
+        private boolean multiple;
         private List<DictItem> dict;
 
     }
@@ -54,17 +55,17 @@ public class NodeExt implements Serializable
     public static class DictItem {
         private String label;
         private String value;
-        private boolean isSelect;
+        private boolean selected;
 
         public DictItem(String label, String value) {
             this.label = label;
             this.value = value;
         }
 
-        public DictItem(String label, String value, boolean isSelect) {
+        public DictItem(String label, String value, boolean selected) {
             this.label = label;
             this.value = value;
-            this.isSelect = isSelect;
+            this.selected = selected;
         }
     }
 
