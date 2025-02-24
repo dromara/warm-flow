@@ -42,16 +42,12 @@ const props = defineProps({
 const form = ref(props.modelValue);
 
 // 表单必填校验
-function validate() {
-  return new Promise((resolve, reject) => {
-    proxy.$refs.nodeExtRef.validate((valid) => {
-      if (valid) {
-        resolve(form.value);
-      } else {
-        reject(false);
-      }
-    });
+async function validate() {
+  let isValid = null;
+  await proxy.$refs.nodeExtRef.validate((valid) => {
+    isValid = valid;
   });
+  return isValid;
 };
 
 defineExpose({

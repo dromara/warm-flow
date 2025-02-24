@@ -148,7 +148,6 @@
             </slot>
           </div>
           <div v-else-if="tabsValue === item.name">
-            <div>{{ `nodeExtList_${item.name}` }}</div>
             <nodeExtList v-if="buttonList[item.name].length > 0" :ref="`nodeExtList_${item.name}`" v-model="form.ext" :formList="buttonList[item.name]" :disabled="disabled"></nodeExtList>
           </div>
         </el-tab-pane>
@@ -338,33 +337,23 @@ getNodeExt();
 
 // 表单必填校验
 function validate() {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     tabsValue.value = "1";
-    proxy.$nextTick(async () => {
-      proxy.$refs.formRef.validate((valid) => {
-        if (!valid) {
-          reject(false);
-        }
-      });
-      await proxy.$refs.nodeBase[0].validate().then(async () => {
-        let addTabsList = tabsList.value.slice(2);
-        if (addTabsList.length === 0) resolve(true);
-        for (const e of addTabsList) {
-          tabsValue.value = e.name;
-          await proxy.$nextTick();
-          let hasValite = null;
-          await proxy.$refs[`nodeExtList_${e.name}`][0].validate().then(() => {
-            hasValite = true;
-          }).catch(() => {
-            hasValite = false;
-          });
-          if (!hasValite) break;
-          else if (e.name === addTabsList[addTabsList.length - 1].name) resolve(true);
-        }
-      }).catch(err => {
-        reject(false);
-      });
+    await proxy.$nextTick();
+    proxy.$refs.formRef.validate((valid) => {
+      if (!valid) reject(false);
     });
+    if (await proxy.$refs.nodeBase[0].validate()) {
+      let addTabsList = tabsList.value.slice(2);
+      if (addTabsList.length === 0) resolve(true);
+      // 切换页签做校验
+      for (const e of addTabsList) {
+        tabsValue.value = e.name;
+        await proxy.$nextTick();
+        if (!await proxy.$refs[`nodeExtList_${e.name}`][0].validate()) break;
+        else if (e.name === addTabsList[addTabsList.length - 1].name) resolve(true);
+      }
+    } else reject(false);
   });
 }
 
@@ -396,6 +385,10 @@ defineExpose({
 :deep(.Tabs) {
   border: 0;
   margin-top: -20px;
+  .el-tabs__content {
+    border: 1px solid #e4e7ed;
+    border-top: 0;
+  }
   .el-tabs__item.is-active {
     margin-left: 0;
     border-top: 1px solid var(--el-border-color);
@@ -403,9 +396,7 @@ defineExpose({
   }
 }
 .betweenForm {
-  border: 1px solid #e4e7ed;
   border-top: 0;
-  padding: 15px;
 }
 :deep(.permissionItem) {
   .el-form-item__content {
