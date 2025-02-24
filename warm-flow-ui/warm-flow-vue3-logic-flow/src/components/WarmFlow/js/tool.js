@@ -60,7 +60,7 @@ export const json2LogicFlowJson = (definition) => {
         try {
           node.ext = JSON.parse(node.ext);
           node.ext.forEach(e => {
-            lfNode.properties.ext[e.code] = e.value.includes(",") ? e.value.split(",") : e.value;
+            lfNode.properties.ext[e.code] = String(e.value).includes(",") ? e.value.split(",") : String(e.value);
           });
         } catch (error) {
           console.error("Error parsing JSON:", error);

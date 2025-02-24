@@ -276,6 +276,24 @@ function getNodeExt() {
   nodeExt().then(response => {
     if (response.code === 200 && response.data) {
       response.data.forEach(e => {
+        // 设置默认值
+        e.childs.forEach(cItem => {
+          if ([3, 4].includes(cItem.type)) {
+            if (cItem?.dict) {
+              if (form.value.ext?.[cItem.code] === undefined) {
+                if (cItem.multiple) {
+                  form.value.ext = Object.assign({}, form.value.ext, { [cItem.code]: [] });
+                  cItem.dict.forEach(e => {
+                    if (e.selected) form.value.ext[cItem.code].push(String(e.value));
+                  });
+                } else {
+                  let value = cItem.dict.find(e => e.selected)?.value;
+                  form.value.ext = Object.assign({}, form.value.ext, { [cItem.code]: value ? String(value) : null });
+                }
+              }
+            }
+          }
+        });
         if (e.type === 1) baseList.value.push(...e?.childs);
         else if (e.type === 2) {
           tabsList.value.push({ label: e.name, name: e.code })
