@@ -73,7 +73,6 @@ function handleBtn(skipType) {
 }
 // 设计表单反显
 async function formInit(data) {
-  debugger
   let response;
   let formContent;
   taskId.value = data.taskId;

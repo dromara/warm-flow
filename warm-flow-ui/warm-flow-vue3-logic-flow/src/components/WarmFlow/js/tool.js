@@ -56,10 +56,15 @@ export const json2LogicFlowJson = (definition) => {
       lfNode.properties.formCustom = node.formCustom
       lfNode.properties.formPath = node.formPath
       lfNode.properties.ext = {};
-      if (node.ext) {
-        node.ext.forEach(e => {
-          lfNode.properties.ext[e.code] = e.value.includes(",") ? e.value.split(",") : e.value;
-        });
+      if (node.ext && typeof node.ext === "string") {
+        try {
+          node.ext = JSON.parse(node.ext);
+          node.ext.forEach(e => {
+            lfNode.properties.ext[e.code] = e.value.includes(",") ? e.value.split(",") : e.value;
+          });
+        } catch (error) {
+          console.error("Error parsing JSON:", error);
+        }
       }
       graphData.nodes.push(lfNode)
     }
@@ -194,6 +199,7 @@ export const logicFlowJsonToWarmFlow = (data) => {
         node.ext.push({ code: key, value: Array.isArray(e) ? e.join(",") : e });
       }
     }
+    node.ext = JSON.stringify(node.ext);
     node.coordinate = anyNode.x + ',' + anyNode.y
     if (anyNode.text && anyNode.text.x && anyNode.text.y) {
       node.coordinate = node.coordinate + '|' + anyNode.text.x + ',' + anyNode.text.y
