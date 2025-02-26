@@ -63,7 +63,7 @@ public class OvalChart extends FlowChart {
         if (CollUtil.isNotEmpty(textCharts)) {
             textCharts.forEach(textChart -> {
                 if (ObjectUtil.isNotNull(textChart) && StringUtils.isNotEmpty(textChart.getTitle())) {
-                    textChart.setY(textChart.getY() + 5);
+                    textChart.setY(y + 5);
                     // 填充文字说明
                     textChart.setN(n).draw(graphics);
                 }
