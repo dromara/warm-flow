@@ -93,6 +93,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
                 , null, nextNodes, addTasks).setFlowParams(flowParams), Listener.LISTENER_ASSIGNMENT);
 
         // 设置流程图元数据
+        pathWayData.getTargetNodes().addAll(nextNodes);
         instance.setDefJson(FlowEngine.chartService().startMetadata(pathWayData));
 
         // 开启流程，保存流程信息
