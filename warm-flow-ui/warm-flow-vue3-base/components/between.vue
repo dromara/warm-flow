@@ -361,18 +361,24 @@ function validate() {
     proxy.$refs.formRef.validate((valid) => {
       if (!valid) reject(false);
     });
-    if (await proxy.$refs.nodeBase[0].validate()) {
-      let addTabsList = tabsList.value.slice(2);
-      if (addTabsList.length === 0) resolve(true);
-      // 切换页签做校验
-      for (const e of addTabsList) {
-        tabsValue.value = e.name;
-        await proxy.$nextTick();
-        if (!await proxy.$refs[`nodeExtList_${e.name}`][0].validate()) break;
-        else if (e.name === addTabsList[addTabsList.length - 1].name) resolve(true);
-      }
-    } else reject(false);
+    if (proxy.$refs.nodeBase) {
+      if (await proxy.$refs.nodeBase[0].validate()) {
+        tabsValidate(resolve, reject);
+      } else reject(false);
+    } else tabsValidate(resolve, reject);
   });
+}
+
+async function tabsValidate(resolve, reject) {
+  let addTabsList = tabsList.value.slice(2);
+  if (addTabsList.length === 0) resolve(true);
+  // 切换页签做校验
+  for (const e of addTabsList) {
+    tabsValue.value = e.name;
+    await proxy.$nextTick();
+    if (!await proxy.$refs[`nodeExtList_${e.name}`][0].validate()) break;
+    else if (e.name === addTabsList[addTabsList.length - 1].name) resolve(true);
+  }
 }
 
 defineExpose({
