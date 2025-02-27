@@ -264,7 +264,7 @@ function show () {
 }
 
 async function handleClose () {
-  if (!props.disabled && typeof proxy.$refs[componentType.value.name].validate === "function") {
+  if (!props.disabled && typeof proxy.$refs[componentType.value?.name]?.validate === "function") {
     // 校验表单必填项
     await proxy.$refs[componentType.value.name].validate().then(() => {
       handleDrawer();
