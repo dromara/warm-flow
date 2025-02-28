@@ -9,14 +9,14 @@
       <div v-else-if="item.type === 4">
         <el-radio-group v-if="!item.multiple" v-model="form[item.code]">
           <el-row :gutter="20">
-            <el-col :span="8" v-for="(dItem, dIndex) in item.dict" :key="dIndex">
+            <el-col :span="item.dict.length < 3 ? null :8" v-for="(dItem, dIndex) in item.dict" :key="dIndex">
               <el-radio :label="String(dItem.value)">{{ dItem.label }}</el-radio>
             </el-col>
           </el-row>
         </el-radio-group>
         <el-checkbox-group v-else v-model="form[item.code]">
           <el-row :gutter="20">
-            <el-col :span="8" v-for="(dItem, dIndex) in item.dict" :key="dIndex">
+            <el-col :span="item.dict.length < 3 ? null :8" v-for="(dItem, dIndex) in item.dict" :key="dIndex">
               <el-checkbox :label="String(dItem.value)">{{ dItem.label }}</el-checkbox>
             </el-col>
           </el-row>
