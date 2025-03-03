@@ -45,7 +45,7 @@ public interface TaskService extends IWarmService<Task> {
      *                               - handler: 办理人唯一标识 [建议传]
      *                               - variable: 流程变量 [按需传输,跳转条件放入流程变量<互斥网关必传>]
      *                               - flowStatus: 流程状态，自定义流程状态 [按需传输]
-     *                               - ignore   转办忽略权限校验，默认不忽略（true：忽略，false：不忽略）[按需传输]
+     *                               - ignore   忽略权限校验（比如管理员不校验），默认不忽略 [按需传输]
      */
     Instance skip(Long taskId, FlowParams flowParams);
 
@@ -59,7 +59,7 @@ public interface TaskService extends IWarmService<Task> {
      *                               - handler: 办理人唯一标识 [建议传]
      *                               - variable: 流程变量 [按需传输,跳转条件放入流程变量<互斥网关必传>]
      *                               - flowStatus: 流程状态，自定义流程状态 [按需传输]
-     *                               - ignore   转办忽略权限校验，默认不忽略（true：忽略，false：不忽略）[按需传输]
+     *                               - ignore   忽略权限校验（比如管理员不校验），默认不忽略 [按需传输]
      * @param task:流程任务[必传]
      */
     Instance skip(FlowParams flowParams, Task task);
@@ -71,7 +71,7 @@ public interface TaskService extends IWarmService<Task> {
      * @param flowParams:包含流程相关参数的对象 - message: 审批意见 [按需传输]
      *                               - handler: 办理人唯一标识 [建议传]
      *                               - flowStatus: 流程状态，自定义流程状态 [按需传输]
-     *                               - ignore   转办忽略权限校验，默认不忽略（true：忽略，false：不忽略）[按需传输]
+     *                               - ignore   忽略权限校验（比如管理员不校验），默认不忽略 [按需传输]
      */
     Instance termination(Long taskId, FlowParams flowParams);
 
@@ -82,7 +82,7 @@ public interface TaskService extends IWarmService<Task> {
      * @param flowParams:包含流程相关参数的对象 - message: 审批意见  [按需传输]
      *                               - handler: 办理人唯一标识 [建议传]
      *                               - flowStatus: 流程状态，自定义流程状态 [按需传输]
-     *                               - ignore   转办忽略权限校验，默认不忽略（true：忽略，false：不忽略）[按需传输]
+     *                               - ignore   忽略权限校验（比如管理员不校验），默认不忽略 [按需传输]
      */
     Instance termination(Task task, FlowParams flowParams);
 
@@ -102,7 +102,7 @@ public interface TaskService extends IWarmService<Task> {
      *                                     - permissionFlag 用户所拥有的权限标识[按需传输，ignore为false，则必传]
      *                                     - addHandlers    转办对象 [必传]
      *                                     - message        审批意见 [按需传输]
-     *                                     - ignore   转办忽略权限校验，默认不忽略（true：忽略，false：不忽略）[按需传输]
+     *                                     - ignore   忽略权限校验（比如管理员不校验），默认不忽略 [按需传输]
      */
     boolean transfer(Long taskId, FlowParams flowParams);
 
@@ -114,7 +114,7 @@ public interface TaskService extends IWarmService<Task> {
      *                                     - permissionFlag 用户权限标识集合 [必传]
      *                                     - addHandlers    委托对象 [必传]
      *                                     - message        审批意见 [按需传输]
-     *                                     - ignore   转办忽略权限校验，默认不忽略（true：忽略，false：不忽略）[按需传输]
+     *                                     - ignore   忽略权限校验（比如管理员不校验），默认不忽略 [按需传输]
      */
     boolean depute(Long taskId, FlowParams flowParams);
 
@@ -126,7 +126,7 @@ public interface TaskService extends IWarmService<Task> {
      *                                     - permissionFlag 用户权限标识集合 [必传]
      *                                     - addHandlers    加签对象 [必传]
      *                                     - message        审批意见 [按需传输]
-     *                                     - ignore   转办忽略权限校验，默认不忽略（true：忽略，false：不忽略）[按需传输]
+     *                                     - ignore   忽略权限校验（比如管理员不校验），默认不忽略 [按需传输]
      */
     boolean addSignature(Long taskId, FlowParams flowParams);
 
@@ -138,7 +138,7 @@ public interface TaskService extends IWarmService<Task> {
      *                                     - permissionFlag 用户权限标识集合 [必传]
      *                                     - reductionHandlers 减签对象 [必传]
      *                                     - message        审批意见 [按需传输]
-     *                                     - ignore   转办忽略权限校验，默认不忽略（true：忽略，false：不忽略）[按需传输]
+     *                                     - ignore   忽略权限校验（比如管理员不校验），默认不忽略 [按需传输]
      */
     boolean reductionSignature(Long taskId, FlowParams flowParams);
 

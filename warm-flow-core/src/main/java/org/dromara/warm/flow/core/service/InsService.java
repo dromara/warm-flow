@@ -55,7 +55,7 @@ public interface InsService extends IWarmService<Instance> {
      *                               - handler: 办理人唯一标识[建议传]
      *                               - variable: 流程变量[按需传输,跳转条件放入流程变量<互斥网关必传>]
      *                               - flowStatus: 流程状态，自定义流程状态[按需传输]
-     *                               - ignore   转办忽略权限校验，默认不忽略（true：忽略，false：不忽略）[按需传输]
+     *                               - ignore   忽略权限校验（比如管理员不校验），默认不忽略 [按需传输]
      * @return 流程实例
      */
     Instance skipByInsId(Long instanceId, FlowParams flowParams);
@@ -67,7 +67,7 @@ public interface InsService extends IWarmService<Instance> {
      * @param flowParams:包含流程相关参数的对象 - message: 审批意见  [按需传输]
      *                               - handler: 办理人唯一标识[建议传]
      *                               - flowStatus: 流程状态，自定义流程状态[按需传输]
-     *                               - ignore   转办忽略权限校验，默认不忽略（true：忽略，false：不忽略）[按需传输]
+     *                               - ignore   忽略权限校验（比如管理员不校验），默认不忽略 [按需传输]
      */
     Instance termination(Long instanceId, FlowParams flowParams);
 
