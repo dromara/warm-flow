@@ -25,10 +25,7 @@ import org.dromara.warm.flow.core.enums.NodeType;
 import org.dromara.warm.flow.core.enums.SkipType;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.service.ChartService;
-import org.dromara.warm.flow.core.utils.Base64;
-import org.dromara.warm.flow.core.utils.CollUtil;
-import org.dromara.warm.flow.core.utils.StreamUtils;
-import org.dromara.warm.flow.core.utils.StringUtils;
+import org.dromara.warm.flow.core.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -176,15 +173,17 @@ public class ChartServiceImpl implements ChartService {
 
     private void rejectReset(String nodeCode, Map<String, List<SkipJson>> skipNextMap, Map<String, NodeJson> nodeMap) {
         List<SkipJson> oneNextSkips = skipNextMap.get(nodeCode);
-        for (SkipJson oneNextSkip : oneNextSkips) {
-            if (!ChartStatus.isNotDone(oneNextSkip.getStatus())) {
-                oneNextSkip.setStatus(ChartStatus.NOT_DONE.getKey());
-                NodeJson nodeJson = nodeMap.get(oneNextSkip.getNextNodeCode());
-                if (!ChartStatus.isNotDone(nodeJson.getStatus())) {
-                    nodeJson.setStatus(ChartStatus.NOT_DONE.getKey());
-                    rejectReset(nodeJson.getNodeCode(), skipNextMap, nodeMap);
+        if (CollUtil.isNotEmpty(oneNextSkips)) {
+            oneNextSkips.forEach(oneNextSkip -> {
+                if (ObjectUtil.isNotNull(oneNextSkip) &&  !ChartStatus.isNotDone(oneNextSkip.getStatus())) {
+                    oneNextSkip.setStatus(ChartStatus.NOT_DONE.getKey());
+                    NodeJson nodeJson = nodeMap.get(oneNextSkip.getNextNodeCode());
+                    if (ObjectUtil.isNotNull(nodeJson) && !ChartStatus.isNotDone(nodeJson.getStatus())) {
+                        nodeJson.setStatus(ChartStatus.NOT_DONE.getKey());
+                        rejectReset(nodeJson.getNodeCode(), skipNextMap, nodeMap);
+                    }
                 }
-            }
+            });
         }
     }
 
