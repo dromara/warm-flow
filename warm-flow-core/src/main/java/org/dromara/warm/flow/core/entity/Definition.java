@@ -97,10 +97,6 @@ public interface Definition extends RootEntity {
 
     public Definition setUserList(List<User> userList);
 
-    public String getXmlString();
-
-    public Definition setXmlString(String xmsString);
-
     public Integer getActivityStatus();
 
     public Definition setActivityStatus(Integer activityStatus);

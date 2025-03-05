@@ -115,11 +115,6 @@ public class FlowDefinition implements Definition {
      */
     private String ext;
 
-    /**
-     * 审批表单是否自定义（Y是 2否）
-     */
-    private String xmlString;
-
     private List<Node> nodeList = new ArrayList<>();
 
     /**

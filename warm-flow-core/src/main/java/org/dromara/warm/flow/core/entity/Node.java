@@ -150,6 +150,7 @@ public interface Node extends RootEntity {
                 .setPermissionFlag(this.getPermissionFlag())
                 .setCoordinate(this.getCoordinate())
                 .setVersion(this.getVersion())
+                .setAnyNodeSkip(this.getAnyNodeSkip())
                 .setListenerType(this.getListenerType())
                 .setListenerPath(this.getListenerPath())
                 .setHandlerType(this.getHandlerType())
