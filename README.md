@@ -51,6 +51,9 @@ Warm-Flow国产工作流引擎🎉，其特点简洁轻量，五脏俱全，灵�
 
 https://warm-flow.dromara.org/
 
+## 学习视频：
+https://space.bilibili.com/2091313088/lists/4638206?type=series
+
 ## 组件所需脚本
 
 - 首次导入，先创建数据库，找到对应数据库的全量脚本[warm-flow-all.sql](https://gitee.com/dromara/warm-flow/tree/master/sql/mysql)，执行
