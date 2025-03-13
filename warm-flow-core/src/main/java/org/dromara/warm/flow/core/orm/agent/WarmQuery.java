@@ -39,7 +39,7 @@ public class WarmQuery<T> implements OrderBy {
     /**
      * 排序的方向desc或者asc
      */
-    private String isAsc = "desc";
+    private String isAsc = "ASC";
 
     private IWarmService<T> warmService;
 
@@ -117,7 +117,7 @@ public class WarmQuery<T> implements OrderBy {
      * @return 集合
      */
     public WarmQuery<T> desc() {
-        this.isAsc = "desc";
+        this.isAsc = "DESC";
         return this;
     }
 
@@ -129,7 +129,7 @@ public class WarmQuery<T> implements OrderBy {
      */
     public WarmQuery<T> orderByAsc(String orderByField) {
         this.orderBy = orderByField;
-        this.isAsc = "asc";
+        this.isAsc = "ASC";
         return this;
     }
 
@@ -141,7 +141,7 @@ public class WarmQuery<T> implements OrderBy {
      */
     public WarmQuery<T> orderByDesc(String orderByField) {
         this.orderBy = orderByField;
-        this.isAsc = "desc";
+        this.isAsc = "DESC";
         return this;
     }
 
