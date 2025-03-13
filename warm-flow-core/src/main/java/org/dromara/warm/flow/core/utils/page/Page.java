@@ -54,7 +54,7 @@ public class Page<T> implements OrderBy {
     /**
      * 排序的方向desc或者asc
      */
-    private String isAsc = "desc";
+    private String isAsc = "ASC";
 
     public Page() {
         this.pageNum = 1;
