@@ -57,6 +57,9 @@ public class NodeExt implements Serializable
         private String value;
         private boolean selected;
 
+        public DictItem() {
+        }
+
         public DictItem(String label, String value) {
             this.label = label;
             this.value = value;
