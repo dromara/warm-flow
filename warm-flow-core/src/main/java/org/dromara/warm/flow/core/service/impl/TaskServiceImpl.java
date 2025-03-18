@@ -31,7 +31,6 @@ import org.dromara.warm.flow.core.utils.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * 待办任务Service业务层处理
@@ -93,7 +92,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 , nextNode, pathWayData);
 
         // 判断并行网关节点前置跳转线是否都完成，才能生成新的代办任务
-        filterCanNewTask(flowParams.getSkipType(), r.instance, nextNodes);
+        filterCanNewTask(pathWayData, r.instance, nextNodes);
         pathWayData.getTargetNodes().addAll(nextNodes);
         // 设置流程图元数据
         r.instance.setDefJson(FlowEngine.chartService().skipMetadata(pathWayData));
@@ -592,51 +591,44 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     /**
      * 判断并行网关节点前置跳转线是否都完成，才能生成新的代办任务
      *
-     * @param skipType  跳转类型（PASS审批通过 REJECT退回）
+     * @param pathWayData  办理过程中途径数据
      * @param instance  实例
      * @param nextNodes 目标节点集合
      */
-    private void filterCanNewTask(String skipType, Instance instance, List<Node> nextNodes) {
-        if (SkipType.isReject(skipType)) {
+    private void filterCanNewTask(PathWayData pathWayData, Instance instance, List<Node> nextNodes) {
+        if (SkipType.isReject(pathWayData.getSkipType())) {
             return;
         }
 
+        Map<String, List<Skip>> skipLastMap = StreamUtils.groupByKey(pathWayData.getPathWaySkips(), Skip::getNextNodeCode);
         DefJson defJson = FlowEngine.jsonConvert.strToBean(instance.getDefJson(), DefJson.class);
         List<NodeJson> nodeList = defJson.getNodeList();
-        List<SkipJson> skipList = nodeList.stream().map(NodeJson::getSkipList).flatMap(List::stream)
-                .collect(Collectors.toList());
-        Map<String, NodeJson> nodeMap = StreamUtils.toMap(nodeList, NodeJson::getNodeCode, node -> node);
-        Map<String, List<SkipJson>> skipLastMap = StreamUtils.groupByKey(skipList, SkipJson::getNextNodeCode);
+        Map<String, NodeJson> nodeJsonMap = StreamUtils.toMap(nodeList, NodeJson::getNodeCode, node -> node);
+        List<SkipJson> skipList = StreamUtils.toListAll(nodeList, NodeJson::getSkipList);
+        Map<String, List<SkipJson>> skipJsonLastMap = StreamUtils.groupByKey(skipList, SkipJson::getNextNodeCode);
+
         nextNodes.removeIf(targetNode -> {
-            NodeJson lastGateWayParallel = lastGateWayParallel(targetNode.getNodeCode(), nodeMap, skipLastMap);
+            List<Skip> skips = skipLastMap.get(targetNode.getNodeCode());
+            // 如果没有跳转线，说明没有并行网关，直接生成新任务
+            if (CollUtil.isEmpty(skips)) {
+                return false;
+            }
+            // 获取目标节点途径最近的并行网关集合
+            if (!NodeType.isGateWayParallel(skips.get(0).getNowNodeType())) {
+                return false;
+            }
+            NodeJson lastGateWayParallel = nodeJsonMap.get(skips.get(0).getNowNodeCode());
             // 如果是空说明中间没有并行网关，直接生成新任务
             if (lastGateWayParallel == null) {
                 return false;
             }
-            List<NodeJson> noGateWayParallelNodes = noGateWayParallel(lastGateWayParallel.getNodeCode(), nodeMap, skipLastMap);
+            List<NodeJson> noGateWayParallelNodes = noGateWayParallel(lastGateWayParallel.getNodeCode(), nodeJsonMap, skipJsonLastMap);
             // 如果已办数量=总数量-1，说明可以生成新任务
             long statusTwoCount = noGateWayParallelNodes.stream()
                     .filter(node -> node.getStatus() == 2)
                     .count();
             return !(statusTwoCount == noGateWayParallelNodes.size() - 1);
         });
-    }
-
-    /**
-     * 获取目标节点最近的并行网关集合，或者直到不是网关为止
-     */
-    private NodeJson lastGateWayParallel(String nodeCode, Map<String, NodeJson> nodeMap
-            , Map<String, List<SkipJson>> skipLastMap) {
-        List<SkipJson> skipJsonList = skipLastMap.get(nodeCode);
-        for (SkipJson skipJson : skipJsonList) {
-            NodeJson nextNodeJson = nodeMap.get(skipJson.getNowNodeCode());
-            if (NodeType.isGateWayParallel(nextNodeJson.getNodeType())) {
-                return nextNodeJson;
-            } else if (NodeType.isGateWay(nextNodeJson.getNodeType())) {
-                return lastGateWayParallel(nextNodeJson.getNodeCode(), nodeMap, skipLastMap);
-            }
-        }
-        return null;
     }
 
     /**
