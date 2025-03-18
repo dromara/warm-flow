@@ -52,7 +52,7 @@ Warm-Flow国产工作流引擎🎉，其特点简洁轻量，五脏俱全，灵�
 https://warm-flow.dromara.org/
 
 ## 学习视频：
-https://space.bilibili.com/2091313088/lists/4638206?type=series
+[Warm-Flow初体验](https://www.bilibili.com/video/BV1pWRGY7EEM/?spm_id_from=333.788.recommend_more_video.0)
 
 ## 组件所需脚本
 
