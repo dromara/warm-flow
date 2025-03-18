@@ -224,6 +224,24 @@ public class StreamUtils {
     }
 
     /**
+     * 将collection转化为List集合，但是两者的泛型不同<br>
+     * <B>{@code Collection<E>  ------>  List<T> } </B>
+     *
+     * @param collection 需要转化的集合
+     * @param function   collection中的泛型转化为list泛型的lambda表达式
+     * @param <E>        collection中的泛型
+     * @param <T>        List中的泛型
+     * @return 转化后的list
+     */
+    public static <E, T> List<T> toListAll(Collection<E> collection, Function<E, List<T>> function) {
+        if (CollUtil.isEmpty(collection)) {
+            return new ArrayList<>();
+        }
+        return collection.stream().map(function).flatMap(List::stream)
+                .collect(Collectors.toList());
+    }
+
+    /**
      * 将collection转化为Set集合，但是两者的泛型不同<br>
      * <B>{@code Collection<E>  ------>  Set<T> } </B>
      *

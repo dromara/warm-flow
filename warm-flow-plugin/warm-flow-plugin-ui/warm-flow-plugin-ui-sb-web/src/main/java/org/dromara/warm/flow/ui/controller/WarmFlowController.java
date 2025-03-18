@@ -240,8 +240,8 @@ public class WarmFlowController {
     @Transactional
     @PostMapping(value = "/execute/handle")
     public ApiResult<Instance> handle(@RequestBody Map<String, Object> formData, @RequestParam("taskId") Long taskId
-            , @RequestParam("taskId") String skipType,  @RequestParam("taskId") String message
-            , @RequestParam("taskId") String nodeCode) {
+            , @RequestParam("skipType") String skipType,  @RequestParam("message") String message
+            , @RequestParam(value = "nodeCode", required = false) String nodeCode) {
         FlowParams flowParams = FlowParams.build()
                 .skipType(skipType)
                 .nodeCode(nodeCode)

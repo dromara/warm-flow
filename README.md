@@ -58,7 +58,9 @@ https://warm-flow.dromara.org/
 
 ## 官网流程定义案例xml
 
-[官网流程定义案例xml](https://gitee.com/dromara/warm-flow-test/tree/master/warm-flow-core-test/src/main/resources)
+[官网流程定义案例xml](https://gitee.com/dromara/warm-flow-test/tree/master/warm-flow-core-test/src/main/resources)  
+
+<span style="color: red;padding: 8px;">有典型的流程案例，可以发给我json文件</span>
 
 ## 测试代码
 
