@@ -919,6 +919,8 @@ GO
 
 CREATE NONCLUSTERED INDEX user_processed_type ON flow_user (processed_by ASC, type ASC)
 GO
+CREATE NONCLUSTERED INDEX user_associated_idx ON flow_user (associated ASC)
+GO
 
 EXEC sp_addextendedproperty
 'MS_Description', N'主键id',
