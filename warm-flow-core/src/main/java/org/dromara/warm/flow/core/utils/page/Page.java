@@ -15,6 +15,7 @@
  */
 package org.dromara.warm.flow.core.utils.page;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +25,8 @@ import java.util.List;
  * @author warm
  * @since 2023/5/17 1:28
  */
-public class Page<T> implements OrderBy {
+public class Page<T> implements OrderBy, Serializable {
+    private static final long serialVersionUID = -1615974051898019272L;
 
     /**
      * 当前记录起始索引
