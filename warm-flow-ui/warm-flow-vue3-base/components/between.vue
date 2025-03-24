@@ -491,6 +491,14 @@ function getNodeExt() {
                   let value = cItem.dict.find(e => e.selected)?.value;
                   form.value.ext = Object.assign({}, form.value.ext, { [cItem.code]: value ? String(value) : null });
                 }
+              } else {
+                if (cItem.multiple) {
+                  // 处理为空、只选择一项的多选
+                  let value = form.value.ext[cItem.code];
+                  form.value.ext[cItem.code] = value 
+                    ? Array.isArray(value) ? value : value.split(",")
+                    : [];
+                }
               }
             }
           }
