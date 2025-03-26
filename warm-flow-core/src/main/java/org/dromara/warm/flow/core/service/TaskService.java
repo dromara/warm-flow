@@ -98,7 +98,7 @@ public interface TaskService extends IWarmService<Task> {
      * 转办, 默认删除当然办理用户权限，转办后，当前办理不可办理
      *
      * @param taskId         修改的任务id [必传]
-     * @param flowParams:包含流程相关参数的对象 - handler     当前办理人唯一标识，代替老版本的curUser  [必传]
+     * @param flowParams:包含流程相关参数的对象 - handler     当前办理人唯一标识 [必传]
      *                                     - permissionFlag 用户所拥有的权限标识[按需传输，ignore为false，则必传]
      *                                     - addHandlers    转办对象 [必传]
      *                                     - message        审批意见 [按需传输]
@@ -110,7 +110,7 @@ public interface TaskService extends IWarmService<Task> {
      * 委派, 默认删除当然办理用户权限，委派后，当前办理不可办理
      *
      * @param taskId         修改的任务id [必传]
-     * @param flowParams:包含流程相关参数的对象 - handler     当前办理人唯一标识，代替老版本的curUser  [必传]
+     * @param flowParams:包含流程相关参数的对象 - handler     当前办理人唯一标识 [必传]
      *                                     - permissionFlag 用户权限标识集合 [必传]
      *                                     - addHandlers    委托对象 [必传]
      *                                     - message        审批意见 [按需传输]
@@ -122,7 +122,7 @@ public interface TaskService extends IWarmService<Task> {
      * 加签，增加办理人
      *
      * @param taskId         修改的任务id [必传]
-     * @param flowParams:包含流程相关参数的对象 - handler     当前办理人唯一标识，代替老版本的curUser  [必传]
+     * @param flowParams:包含流程相关参数的对象 - handler     当前办理人唯一标识 [必传]
      *                                     - permissionFlag 用户权限标识集合 [必传]
      *                                     - addHandlers    加签对象 [必传]
      *                                     - message        审批意见 [按需传输]
@@ -134,7 +134,7 @@ public interface TaskService extends IWarmService<Task> {
      * 减签，减少办理人
      *
      * @param taskId         修改的任务id [必传]
-     * @param flowParams:包含流程相关参数的对象 - handler     当前办理人唯一标识，代替老版本的curUser  [必传]
+     * @param flowParams:包含流程相关参数的对象 - handler     当前办理人唯一标识 [必传]
      *                                     - permissionFlag 用户权限标识集合 [必传]
      *                                     - reductionHandlers 减签对象 [必传]
      *                                     - message        审批意见 [按需传输]
@@ -146,7 +146,7 @@ public interface TaskService extends IWarmService<Task> {
      * 修改办理人
      *
      * @param taskId         修改的任务id [必传]
-     * @param flowParams:包含流程相关参数的对象 - handler     当前办理人唯一标识，代替老版本的curUser  [必传]
+     * @param flowParams:包含流程相关参数的对象 - handler     当前办理人唯一标识 [必传]
      *                                      - permissionFlag: 用户所拥有的权限标识[按需传输，ignore为false，则必传]
      *                                      - addHandlers: 增加办理人：加签，转办，委托[按需传输]
      *                                      - reductionHandlers: 减签对象：减签，委托[按需传输]
