@@ -12,9 +12,9 @@
 </p>
 
 
-<div><span style="color: red; background-color: #f0f0f0; padding: 2px 8px;">项目代码、文档 均开源免费可商用 遵循开源协议即可</span></div>
+**项目代码、文档 均开源免费可商用 遵循开源协议即可**
 
-<div><span style="color: red; background-color: #f0f0f0; padding: 2px 8px;">过去、现在和未来都不会有商业版！！！</span></div>
+**过去、现在和未来都不会有商业版！！！**
 
 
 **开发完成请务必登记使用项目列表，[登记地址](https://gitee.com/dromara/warm-flow/issues/I7Y57D)**
