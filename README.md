@@ -12,7 +12,11 @@
 </p>
 
 
-**项目代码、文档 均开源免费可商用 遵循开源协议即可**  
+**项目代码、文档 均开源免费可商用 遵循开源协议即可**
+
+**过去、现在和未来都不会有商业版！！！**
+
+
 **开发完成请务必登记使用项目列表，[登记地址](https://gitee.com/dromara/warm-flow/issues/I7Y57D)**
 
 ## 介绍
@@ -50,6 +54,9 @@ Warm-Flow国产工作流引擎🎉，其特点简洁轻量，五脏俱全，灵�
 ## 使用文档与联系方式
 
 https://warm-flow.dromara.org/
+
+## 学习视频：
+[Warm-Flow初体验](https://www.bilibili.com/video/BV1pWRGY7EEM/?spm_id_from=333.788.recommend_more_video.0)
 
 ## 组件所需脚本
 
