@@ -69,6 +69,7 @@ public interface TaskService extends IWarmService<Task> {
      *
      * @param taskId: 流程任务id [必传]
      * @param flowParams:包含流程相关参数的对象 - message: 审批意见 [按需传输]
+     *                               - permissionFlag: 办理人权限标识，比如用户，角色，部门等, 流程设计时未设置办理人或者ignore为true可不传 [按需传输]
      *                               - handler: 办理人唯一标识 [建议传]
      *                               - flowStatus: 流程状态，自定义流程状态 [按需传输]
      *                               - ignore   忽略权限校验（比如管理员不校验），默认不忽略 [按需传输]
@@ -80,6 +81,7 @@ public interface TaskService extends IWarmService<Task> {
      *
      * @param task:流程任务
      * @param flowParams:包含流程相关参数的对象 - message: 审批意见  [按需传输]
+     *                               - permissionFlag: 办理人权限标识，比如用户，角色，部门等, 流程设计时未设置办理人或者ignore为true可不传 [按需传输]
      *                               - handler: 办理人唯一标识 [建议传]
      *                               - flowStatus: 流程状态，自定义流程状态 [按需传输]
      *                               - ignore   忽略权限校验（比如管理员不校验），默认不忽略 [按需传输]

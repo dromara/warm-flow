@@ -60,15 +60,16 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         // 获取开始节点
         Node startNode = nodes.stream().filter(t -> NodeType.isStart(t.getNodeType())).findFirst().orElse(null);
         AssertUtil.isNull(startNode, ExceptionCons.LOST_START_NODE);
-        // 获取下一个节点，如果是网关节点，则重新获取后续节点
-        PathWayData pathWayData = new PathWayData().setDefId(startNode.getDefinitionId());
-        List<Node> nextNodes = FlowEngine.nodeService().getNextNodeList(startNode.getDefinitionId(), startNode
-                , null, SkipType.PASS.getKey(), flowParams.getVariable(), pathWayData);
 
         // 判断流程定义是否激活状态
         Definition definition = FlowEngine.defService().getById(startNode.getDefinitionId());
         AssertUtil.isTrue(definition.getActivityStatus().equals(ActivityStatus.SUSPENDED.getKey())
                 , ExceptionCons.NOT_DEFINITION_ACTIVITY);
+
+        // 获取下一个节点，如果是网关节点，则重新获取后续节点
+        PathWayData pathWayData = new PathWayData().setDefId(startNode.getDefinitionId());
+        List<Node> nextNodes = FlowEngine.nodeService().getNextNodeList(startNode.getDefinitionId(), startNode
+                , null, SkipType.PASS.getKey(), flowParams.getVariable(), pathWayData);
 
         // 执行开始监听器
         ListenerUtil.executeListener(new ListenerVariable(definition, null, startNode, flowParams.getVariable())
