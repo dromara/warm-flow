@@ -18,7 +18,7 @@ package org.dromara.warm.flow.core.variable;
 import java.util.Map;
 
 /**
- * 默认办理人变量表达式策略： @@default@@|${flag}
+ * 默认办理人表达式策略： @@default@@|${flag}
  *
  * @author warm
  */

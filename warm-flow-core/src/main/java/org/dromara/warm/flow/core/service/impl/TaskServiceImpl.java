@@ -158,8 +158,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         r.instance.setNodeType(endNode.getNodeType())
                 .setNodeCode(endNode.getNodeCode())
                 .setNodeName(endNode.getNodeName())
-                .setFlowStatus(ObjectUtil.isNotNull(flowParams.getFlowStatus()) ? flowParams.getFlowStatus()
-                        : FlowStatus.TERMINATE.getKey());
+                .setFlowStatus(StringUtils.emptyDefault(flowParams.getFlowStatus(),FlowStatus.TERMINATE.getKey()));
 
         // 待办任务转历史
         flowParams.flowStatus(r.instance.getFlowStatus());
@@ -542,7 +541,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
         List<HisTask> doneList = FlowEngine.hisTaskService().listByTaskIdAndCooperateTypes(task.getId()
                 , CooperateType.isCountersign(nodeRatio) ? CooperateType.COUNTERSIGN.getKey() : CooperateType.VOTE.getKey());
-        doneList = CollUtil.emptyDefault(doneList, Collections.emptyList());
+        doneList = CollUtil.emptyDefault(doneList);
 
         // TODO 这里处理 cooperation handler 获取下面的 passRatio rejectRatio all 值，能获取使用 handler的值，不能获取使用以下全自动计算代码
 
@@ -677,8 +676,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                     instance.setNodeType(addTask.getNodeType())
                             .setNodeCode(addTask.getNodeCode())
                             .setNodeName(addTask.getNodeName())
-                            .setFlowStatus(ObjectUtil.isNotNull(flowParams.getFlowStatus())
-                                    ? flowParams.getFlowStatus() : FlowStatus.FINISHED.getKey());
+                            .setFlowStatus(StringUtils.emptyDefault(flowParams.getFlowStatus()
+                                    , FlowStatus.FINISHED.getKey()));
                     return true;
                 }
                 return false;

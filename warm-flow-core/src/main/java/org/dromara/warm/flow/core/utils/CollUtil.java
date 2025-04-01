@@ -56,6 +56,16 @@ public class CollUtil {
     }
 
     /**
+     * 如果集合是空，则返回空集合
+     *
+     * @param list        集合
+     * @return 结果
+     */
+    public static <T> List<T> emptyDefault(List<T> list) {
+        return isEmpty(list) ? Collections.emptyList() : list;
+    }
+
+    /**
      * 如果集合是空，则返回默认值
      *
      * @param list        集合

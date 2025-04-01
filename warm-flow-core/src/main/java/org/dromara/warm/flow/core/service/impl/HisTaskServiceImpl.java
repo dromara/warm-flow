@@ -218,8 +218,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
     }
 
     private static String getFlowStatus(FlowParams flowParams) {
-        return StringUtils.isNotEmpty(flowParams.getHisStatus())
-                ? flowParams.getHisStatus() : flowParams.getFlowStatus();
+        return StringUtils.emptyDefault(flowParams.getHisStatus(), flowParams.getFlowStatus());
     }
     @Override
     public List<HisTask> getNoReject(Long instanceId) {

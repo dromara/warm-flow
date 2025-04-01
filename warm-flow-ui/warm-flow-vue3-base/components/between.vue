@@ -30,7 +30,7 @@
                   <el-radio label="2" v-if="form.collaborativeWay ==='2' || showWays">
                     <span class="flex-hc">
                       票签
-                      <el-tooltip class="box-item" effect="dark" content="部分办理人审批，建议选择用户；如果选择角色或者部门等，需自行通过办理人变量表达式或者监听器，转成具体办理用户">
+                      <el-tooltip class="box-item" effect="dark" content="部分办理人审批，建议选择用户；如果选择角色或者部门等，需自行通过办理人表达式或者监听器，转成具体办理用户">
                         <el-icon :size="14" class="ml5">
                           <WarningFilled />
                         </el-icon>
@@ -40,7 +40,7 @@
                   <el-radio label="3" v-if="form.collaborativeWay ==='3' || showWays">
                     <span class="flex-hc">
                       会签
-                      <el-tooltip class="box-item" effect="dark" content="所有办理都需要审批，建议选择用户；如果选择角色或者部门等，需自行通过办理人变量表达式或者监听器，转成具体办理用户">
+                      <el-tooltip class="box-item" effect="dark" content="所有办理都需要审批，建议选择用户；如果选择角色或者部门等，需自行通过办理人表达式或者监听器，转成具体办理用户">
                         <el-icon :size="14" class="ml5">
                           <WarningFilled />
                         </el-icon>
@@ -495,7 +495,7 @@ function getNodeExt() {
                 if (cItem.multiple) {
                   // 处理为空、只选择一项的多选
                   let value = form.value.ext[cItem.code];
-                  form.value.ext[cItem.code] = value 
+                  form.value.ext[cItem.code] = value
                     ? Array.isArray(value) ? value : value.split(",")
                     : [];
                 }

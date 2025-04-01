@@ -45,7 +45,7 @@ public class ExpressionUtil {
         setExpression(new ConditionStrategyNe());
         setExpression(new ConditionStrategyNotLike());
 
-        // 注册办理人变量表达式
+        // 注册办理人表达式
         setExpression(new DefaultVariableStrategy());
     }
 
@@ -72,7 +72,7 @@ public class ExpressionUtil {
     }
 
     /**
-     * 办理人变量表达式替换
+     * 办理人表达式替换
      *
      * @param addTasks 任务列表
      * @param variable 流程变量
@@ -94,7 +94,7 @@ public class ExpressionUtil {
     }
 
     /**
-     * 办理人变量表达式替换
+     * 办理人表达式替换
      *
      * @param expression 表达式，比如“${flag}或者#{@user.notify(#listenerVariable)}” ，或者自定义策略
      * @param variable   流程变量

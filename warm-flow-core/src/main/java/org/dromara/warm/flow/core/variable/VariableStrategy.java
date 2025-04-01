@@ -21,14 +21,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 办理人变量表达式策略接口
+ * 办理人表达式策略接口
  *
  * @author warm
  */
 public interface VariableStrategy extends ExpressionStrategy<List<String>> {
 
     /**
-     * 办理人变量表达式策略实现类集合
+     * 办理人表达式策略实现类集合
      */
     List<ExpressionStrategy<List<String>>> expressionStrategyList = new ArrayList<>();
 

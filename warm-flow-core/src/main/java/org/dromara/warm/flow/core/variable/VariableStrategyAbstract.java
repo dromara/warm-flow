@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * 办理人变量表达式策略抽象类
+ * 办理人表达式策略抽象类
  *
  * @author warm
  */
