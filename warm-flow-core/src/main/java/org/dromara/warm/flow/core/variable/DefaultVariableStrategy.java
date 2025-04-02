@@ -22,7 +22,7 @@ import java.util.Map;
  *
  * @author warm
  */
-public class DefaultVariableStrategy extends VariableStrategyAbstract {
+public class DefaultVariableStrategy implements VariableStrategy {
 
     @Override
     public String getType() {

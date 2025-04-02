@@ -16,9 +16,11 @@
 package org.dromara.warm.flow.core.variable;
 
 import org.dromara.warm.flow.core.strategy.ExpressionStrategy;
+import org.dromara.warm.flow.core.utils.ObjectUtil;
+import org.dromara.warm.flow.core.utils.StreamUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 办理人表达式策略接口
@@ -36,4 +38,23 @@ public interface VariableStrategy extends ExpressionStrategy<List<String>> {
         expressionStrategyList.add(expressionStrategy);
     }
 
+    Object preEval(String expression, Map<String, Object> variable);
+
+    @Override
+    default List<String> eval(String expression, Map<String, Object> variable) {
+        return afterEval(preEval(expression, variable));
+    }
+
+    default List<String> afterEval(Object o) {
+        if (ObjectUtil.isNotNull(o)) {
+            if (o instanceof List) {
+                return StreamUtils.toList((List<?>) o, Object::toString);
+            }
+            if (o instanceof Object[]) {
+                return Arrays.stream((Object[]) o).map(Object::toString).collect(Collectors.toList());
+            }
+            return Collections.singletonList(o.toString());
+        }
+        return null;
+    }
 }

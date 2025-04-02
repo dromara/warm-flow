@@ -15,7 +15,7 @@
  */
 package org.dromara.warm.plugin.modes.sb.expression;
 
-import org.dromara.warm.flow.core.variable.VariableStrategyAbstract;
+import org.dromara.warm.flow.core.variable.VariableStrategy;
 import org.dromara.warm.plugin.modes.sb.helper.SpelHelper;
 
 import java.util.Map;
@@ -25,7 +25,7 @@ import java.util.Map;
  *
  * @author warm
  */
-public class VariableStrategySpel extends VariableStrategyAbstract {
+public class VariableStrategySpel implements VariableStrategy {
 
     @Override
     public String getType() {
