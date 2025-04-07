@@ -209,7 +209,7 @@ watch(() => form.value.anyNodeSkip, (n) => {
 watch(() => form.value.listenerRows?.map(e => e.listenerType), (n) => {
   // 监听监听器类型变化并更新
   props.lf.setProperties(objId.value, {
-    listenerType: n.join(",")
+    listenerType: Array.isArray(n) ? n.join(",") : n
   })
 });
 
@@ -217,7 +217,7 @@ watch(() => form.value.listenerRows?.map(e => e.listenerType), (n) => {
 watch(() => form.value.listenerRows?.map(e => e.listenerPath), (n) => {
   // 监听监听器类型变化并更新
   props.lf.setProperties(objId.value, {
-    listenerPath: n.join("@@")
+    listenerPath: Array.isArray(n) ? n.join("@@") : n
   })
 });
 
