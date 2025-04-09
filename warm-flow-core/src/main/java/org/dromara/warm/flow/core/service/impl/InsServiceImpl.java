@@ -66,14 +66,15 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         AssertUtil.isTrue(definition.getActivityStatus().equals(ActivityStatus.SUSPENDED.getKey())
                 , ExceptionCons.NOT_DEFINITION_ACTIVITY);
 
+        // 执行开始监听器
+        ListenerUtil.executeListener(new ListenerVariable(definition, null, startNode, flowParams.getVariable())
+                .setFlowParams(flowParams), Listener.LISTENER_START);
+
+
         // 获取下一个节点，如果是网关节点，则重新获取后续节点
         PathWayData pathWayData = new PathWayData().setDefId(startNode.getDefinitionId());
         List<Node> nextNodes = FlowEngine.nodeService().getNextNodeList(startNode.getDefinitionId(), startNode
                 , null, SkipType.PASS.getKey(), flowParams.getVariable(), pathWayData);
-
-        // 执行开始监听器
-        ListenerUtil.executeListener(new ListenerVariable(definition, null, startNode, flowParams.getVariable())
-                .setFlowParams(flowParams), Listener.LISTENER_START);
 
         // 设置流程实例对象
         Instance instance = setStartInstance(nextNodes.get(0), businessId, flowParams);

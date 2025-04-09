@@ -65,9 +65,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         if (!NodeType.isStart(task.getNodeType())) {
             AssertUtil.isFalse(StringUtils.isNotEmpty(flowParams.getSkipType()), ExceptionCons.NULL_CONDITION_VALUE);
         }
+        task.setUserList(FlowEngine.userService().listByAssociatedAndTypes(task.getId()));
 
         // 执行开始监听器
-        task.setUserList(FlowEngine.userService().listByAssociatedAndTypes(task.getId()));
         ListenerUtil.executeListener(new ListenerVariable(r.definition, r.instance, r.nowNode, flowParams.getVariable()
                 , task).setFlowParams(flowParams), Listener.LISTENER_START);
 
