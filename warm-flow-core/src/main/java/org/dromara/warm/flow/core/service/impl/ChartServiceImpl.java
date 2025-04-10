@@ -298,15 +298,15 @@ public class ChartServiceImpl implements ChartService {
                 }
                 Color c = ChartStatus.getColorByKey(nodeJson.getStatus());
                 if (NodeType.isStart(nodeJson.getNodeType())) {
-                    flowChartChain.addFlowChart(new OvalChart(nodeX, nodeY, c, CollUtil.toList(textChart), nodeJson));
+                    flowChartChain.addFlowChart(new OvalChart(nodeX, nodeY, c, textChart, nodeJson));
                 } else if (NodeType.isBetween(nodeJson.getNodeType())) {
                     flowChartChain.addFlowChart(new BetweenChart(nodeX, nodeY, c, CollUtil.toList(textChart), nodeJson));
                 } else if (NodeType.isGateWaySerial(nodeJson.getNodeType())) {
-                    flowChartChain.addFlowChart(new SerialChart(nodeX, nodeY, c, nodeJson));
+                    flowChartChain.addFlowChart(new SerialChart(nodeX, nodeY, c, textChart, nodeJson));
                 } else if (NodeType.isGateWayParallel(nodeJson.getNodeType())) {
                     flowChartChain.addFlowChart(new ParallelChart(nodeX, nodeY, c, nodeJson));
                 } else if (NodeType.isEnd(nodeJson.getNodeType())) {
-                    flowChartChain.addFlowChart(new OvalChart(nodeX, nodeY, c, CollUtil.toList(textChart), nodeJson));
+                    flowChartChain.addFlowChart(new OvalChart(nodeX, nodeY, c, textChart, nodeJson));
                 }
             }
         }

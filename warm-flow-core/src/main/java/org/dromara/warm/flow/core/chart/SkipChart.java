@@ -86,7 +86,7 @@ public class SkipChart extends FlowChart {
         }
         graphics.fillPolygon(xArrow, yArrow, 3);
         if (ObjectUtil.isNotNull(textChart) && StringUtils.isNotEmpty(textChart.getTitle())) {
-            textChart.setY(textChart.getY() - 10);
+            textChart.setY(textChart.getY() - 5);
             // 填充文字说明
             textChart.setN(n).draw(graphics);
         }

@@ -85,6 +85,7 @@ public class FlowChartChain {
         String title = "Warm-Flow";
         TextChart textChart = new TextChart(textX, textY, title, font)
                 .setAlpha(0.80f);
+        textChart.setOffsetEnable(false);
         addFlowChart(textChart);
     }
 

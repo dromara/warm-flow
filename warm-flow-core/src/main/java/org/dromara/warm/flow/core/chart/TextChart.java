@@ -16,10 +16,8 @@
 package org.dromara.warm.flow.core.chart;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.dromara.warm.flow.core.utils.StringUtils;
 
 import java.awt.*;
 
@@ -83,4 +81,9 @@ public class TextChart extends FlowChart {
         graphics.drawString(title, x * n, y * n);
     }
 
+    @Override
+    public void toOffset(int offsetW, int offsetH) {
+        this.x += offsetW;
+        this.y += offsetH;
+    }
 }

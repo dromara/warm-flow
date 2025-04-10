@@ -19,12 +19,10 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.dromara.warm.flow.core.dto.NodeJson;
-import org.dromara.warm.flow.core.utils.CollUtil;
 import org.dromara.warm.flow.core.utils.ObjectUtil;
 import org.dromara.warm.flow.core.utils.StringUtils;
 
 import java.awt.*;
-import java.util.List;
 
 /**
  * 流程图开始或者结束节点
@@ -40,15 +38,15 @@ public class OvalChart extends FlowChart {
 
     private int y;
 
-    private List<TextChart> textCharts;
+    private TextChart textChart;
 
     private NodeJson nodeJson;
 
-    public OvalChart(int x, int y, Color c, List<TextChart> textCharts, NodeJson nodeJson) {
+    public OvalChart(int x, int y, Color c, TextChart textChart, NodeJson nodeJson) {
         this.x = x;
         this.y = y;
         this.c = c;
-        this.textCharts = textCharts;
+        this.textChart = textChart;
         this.nodeJson = nodeJson;
     }
 
@@ -60,14 +58,11 @@ public class OvalChart extends FlowChart {
         graphics.fillOval((x - 20) * n, (y - 20) * n, 40 * n, 40 * n);
         graphics.setColor(c);
         graphics.drawOval((x - 20) * n, (y - 20) * n, 40 * n, 40 * n);
-        if (CollUtil.isNotEmpty(textCharts)) {
-            textCharts.forEach(textChart -> {
-                if (ObjectUtil.isNotNull(textChart) && StringUtils.isNotEmpty(textChart.getTitle())) {
-                    textChart.setY(y + 5);
-                    // 填充文字说明
-                    textChart.setN(n).draw(graphics);
-                }
-            });
+
+        if (ObjectUtil.isNotNull(textChart) && StringUtils.isNotEmpty(textChart.getTitle())) {
+            textChart.setY(y + 5);
+            // 填充文字说明
+            textChart.setN(n).draw(graphics);
         }
     }
 
@@ -75,12 +70,9 @@ public class OvalChart extends FlowChart {
     public void toOffset(int offsetW, int offsetH) {
         this.x += offsetW;
         this.y += offsetH;
-        if (CollUtil.isNotEmpty(textCharts)) {
-            textCharts.forEach(textChart -> {
-                if (ObjectUtil.isNotNull(textChart) && StringUtils.isNotEmpty(textChart.getTitle())) {
-                    textChart.offset(offsetW, offsetH);
-                }
-            });
+
+        if (ObjectUtil.isNotNull(textChart) && StringUtils.isNotEmpty(textChart.getTitle())) {
+            textChart.offset(offsetW, offsetH);
         }
     }
 }

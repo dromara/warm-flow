@@ -19,9 +19,10 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.dromara.warm.flow.core.dto.NodeJson;
+import org.dromara.warm.flow.core.utils.ObjectUtil;
+import org.dromara.warm.flow.core.utils.StringUtils;
 
 import java.awt.*;
-import java.util.List;
 
 /**
  * 流程图互斥网关
@@ -37,14 +38,15 @@ public class SerialChart extends FlowChart {
 
     private int y;
 
-    private List<TextChart> textCharts;
+    private TextChart textChart;
 
     private NodeJson nodeJson;
 
-    public SerialChart(int x, int y, Color c, NodeJson nodeJson) {
+    public SerialChart(int x, int y, Color c, TextChart textChart, NodeJson nodeJson) {
         this.x = x;
         this.y = y;
         this.c = c;
+        this.textChart = textChart;
         this.nodeJson = nodeJson;
     }
 
@@ -66,11 +68,19 @@ public class SerialChart extends FlowChart {
         int[] xPoints2 = {(x - 6) * n, (x + 6) * n};
         int[] yPoints2 = {(y + 6) * n, (y - 6) * n};
         graphics.drawPolyline(xPoints2, yPoints2, xPoints2.length);
+        if (ObjectUtil.isNotNull(textChart) && StringUtils.isNotEmpty(textChart.getTitle())) {
+            textChart.setY(textChart.getY() - 5);
+            // 填充文字说明
+            textChart.setN(n).draw(graphics);
+        }
     }
 
     @Override
     public void toOffset(int offsetW, int offsetH) {
         this.x += offsetW;
         this.y += offsetH;
+        if (ObjectUtil.isNotNull(textChart) && StringUtils.isNotEmpty(textChart.getTitle())) {
+            textChart.offset(offsetW, offsetH);
+        }
     }
 }

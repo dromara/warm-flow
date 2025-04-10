@@ -129,13 +129,6 @@ public class BetweenChart extends FlowChart {
     public void toOffset(int offsetW, int offsetH) {
         this.x += offsetW;
         this.y += offsetH;
-        if (CollUtil.isNotEmpty(textCharts)) {
-            textCharts.forEach(textChart -> {
-                if (ObjectUtil.isNotNull(textChart) && StringUtils.isNotEmpty(textChart.getTitle())) {
-                    textChart.offset(offsetW, offsetH);
-                }
-            });
-        }
     }
 
     public TextChart copyText(String title, TextChart orgText) {
