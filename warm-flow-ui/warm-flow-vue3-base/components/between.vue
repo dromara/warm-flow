@@ -539,7 +539,7 @@ const filteredNodes = computed(() => {
   let skipList = props.skips.filter(skip => skip.properties.skipType === "PASS");
 
   let previousCode = getPreviousCode(skipList, form.value.nodeCode)
-  return props.nodes.filter(node => !["serial", "parallel"].includes(node.type)
+  return props.nodes.filter(node => !["start", "serial", "parallel"].includes(node.type)
       && previousCode.includes(node.id)).reverse();
 });
 
