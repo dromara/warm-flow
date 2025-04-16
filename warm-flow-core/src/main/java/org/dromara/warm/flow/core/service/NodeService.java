@@ -81,6 +81,41 @@ public interface NodeService extends IWarmService<Node> {
     List<Node> suffixNodeList(Long definitionId, String nowNodeCode);
 
     /**
+     * 根据流程定义id获取流程节点集合
+     * @param definitionId 流程定义id
+     * @return 所有的节点集合
+     */
+    List<Node> getByDefId(Long definitionId);
+
+    /**
+     * 根据流程定义id和节点编码获取流程节点
+     * @param definitionId 流程定义id
+     * @return 节点
+     */
+    Node getByDefIdAndNodeCode(Long definitionId, String nodeCode);
+
+    /**
+     * 根据流程定义id获取开始节点
+     * @param definitionId 流程定义id
+     * @return Node
+     */
+    Node getStartNode(Long definitionId);
+
+    /**
+     * 根据流程定义id获取中间节点集合
+     * @param definitionId 流程定义id
+     * @return List<Node>
+     */
+    List<Node> getBetweenNode(Long definitionId);
+
+    /**
+     * 根据流程定义id获取结束节点
+     * @param definitionId 流程定义id
+     * @return Node
+     */
+    Node getEndNode(Long definitionId);
+
+    /**
      * 根据流程定义和当前节点code获取下一节点,如是网关跳过取下一节点,并行网关返回多个节点
      * anyNodeCode不为空，则可跳转anyNodeCode节点
      *
@@ -156,4 +191,5 @@ public interface NodeService extends IWarmService<Node> {
      * @return 结果
      */
     int deleteNodeByDefIds(Collection<? extends Serializable> defIds);
+
 }

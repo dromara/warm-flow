@@ -31,6 +31,7 @@ import org.dromara.warm.flow.core.service.HisTaskService;
 import org.dromara.warm.flow.core.utils.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -71,32 +72,26 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
     @Override
     public HisTask setSkipInsHis(Task task, List<Node> nextNodes, FlowParams flowParams) {
         String flowStatus = getFlowStatus(flowParams);
-        HisTask hisTask = FlowEngine.newHisTask()
-                .setTaskId(task.getId())
-                .setInstanceId(task.getInstanceId())
-                .setCooperateType(ObjectUtil.isNotNull(flowParams.getCooperateType())
-                        ? flowParams.getCooperateType() : CooperateType.APPROVAL.getKey())
-                .setNodeCode(task.getNodeCode())
-                .setNodeName(task.getNodeName())
-                .setNodeType(task.getNodeType())
-                .setDefinitionId(task.getDefinitionId())
-                .setTargetNodeCode(StreamUtils.join(nextNodes, Node::getNodeCode))
-                .setTargetNodeName(StreamUtils.join(nextNodes, Node::getNodeName))
-                .setApprover(flowParams.getHandler())
-                .setSkipType(NodeType.isStart(task.getNodeType()) ? SkipType.PASS.getKey() : flowParams.getSkipType())
-                .setFlowStatus(StringUtils.isNotEmpty(flowStatus)
-                        ? flowStatus : SkipType.isReject(flowParams.getSkipType())
-                        ? FlowStatus.REJECT.getKey() : FlowStatus.PASS.getKey())
-                .setFormCustom(task.getFormCustom())
-                .setFormPath(task.getFormPath())
-                .setMessage(flowParams.getMessage())
-                .setVariable(flowParams.getVariableStr())
-                //业务详情添加至历史记录
-                .setExt(flowParams.getHisTaskExt())
-                .setCreateTime(task.getCreateTime());
-        FlowEngine.dataFillHandler().idFill(hisTask);
-        return hisTask;
+        return setSkipHis(task, nextNodes, flowParams, flowStatus);
     }
+
+    @Override
+    public List<HisTask> setSkipHisList(List<Task> taskList, List<Node> nextNodes, FlowParams flowParams) {
+        String flowStatus = getFlowStatus(flowParams);
+        List<HisTask> hisTasks = new ArrayList<>();
+        for (Task task : taskList) {
+            HisTask hisTask = setSkipHis(task, nextNodes, flowParams, flowStatus);
+            hisTasks.add(hisTask);
+        }
+        return hisTasks;
+    }
+
+    @Override
+    public HisTask setSkipHisTask(Task task, Node nextNode, FlowParams flowParams) {
+        String flowStatus = getFlowStatus(flowParams);
+        return setSkipHis(task, CollUtil.toList(nextNode), flowParams, flowStatus);
+    }
+
 
     @Override
     public HisTask setCooperateHis(Task task, Node node, FlowParams flowParams
@@ -189,8 +184,24 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
     }
 
     @Override
-    public HisTask setSkipHisTask(Task task, Node nextNode, FlowParams flowParams) {
-        String flowStatus = getFlowStatus(flowParams);
+    public List<HisTask> getByInsId(Long instanceId) {
+        return FlowEngine.hisTaskService().list(FlowEngine.newHisTask().setInstanceId(instanceId));
+    }
+
+    @Override
+    public List<HisTask> getNoReject(Long instanceId) {
+        return getDao().getNoReject(instanceId);
+    }
+
+    @Override
+    public HisTask getNoReject(String nodeCode, String targetNodeCode, List<HisTask> hisTasks) {
+        List<HisTask> hisTaskList = StreamUtils.filter(hisTasks, hisTask ->
+                (StringUtils.isEmpty(nodeCode) || nodeCode.equals(hisTask.getNodeCode()))
+                        && (StringUtils.isEmpty(targetNodeCode) || targetNodeCode.equals(hisTask.getTargetNodeCode())));
+        return CollUtil.getOne(hisTaskList);
+    }
+
+    private static HisTask setSkipHis(Task task, List<Node> nextNodes, FlowParams flowParams, String flowStatus) {
         HisTask hisTask = FlowEngine.newHisTask()
                 .setTaskId(task.getId())
                 .setInstanceId(task.getInstanceId())
@@ -200,12 +211,13 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
                 .setNodeName(task.getNodeName())
                 .setNodeType(task.getNodeType())
                 .setDefinitionId(task.getDefinitionId())
-                .setTargetNodeCode(nextNode.getNodeCode())
-                .setTargetNodeName(nextNode.getNodeName())
+                .setTargetNodeCode(StreamUtils.join(nextNodes, Node::getNodeCode))
+                .setTargetNodeName(StreamUtils.join(nextNodes, Node::getNodeName))
                 .setApprover(flowParams.getHandler())
-                .setSkipType(flowParams.getSkipType())
+                .setSkipType(NodeType.isStart(task.getNodeType()) ? SkipType.PASS.getKey() : flowParams.getSkipType())
                 .setFlowStatus(StringUtils.isNotEmpty(flowStatus)
-                        ? flowStatus : FlowStatus.APPROVAL.getKey())
+                        ? flowStatus : SkipType.isReject(flowParams.getSkipType())
+                        ? FlowStatus.REJECT.getKey() : FlowStatus.PASS.getKey())
                 .setFormCustom(task.getFormCustom())
                 .setFormPath(task.getFormPath())
                 .setMessage(flowParams.getMessage())
@@ -220,17 +232,4 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
     private static String getFlowStatus(FlowParams flowParams) {
         return StringUtils.emptyDefault(flowParams.getHisStatus(), flowParams.getFlowStatus());
     }
-    @Override
-    public List<HisTask> getNoReject(Long instanceId) {
-        return getDao().getNoReject(instanceId);
-    }
-
-    @Override
-    public HisTask getNoReject(String nodeCode, String targetNodeCode, List<HisTask> hisTasks) {
-        List<HisTask> hisTaskList = StreamUtils.filter(hisTasks, hisTask ->
-                (StringUtils.isEmpty(nodeCode) || nodeCode.equals(hisTask.getNodeCode()))
-                        && (StringUtils.isEmpty(targetNodeCode) || targetNodeCode.equals(hisTask.getTargetNodeCode())));
-        return CollUtil.getOne(hisTaskList);
-    }
-
 }

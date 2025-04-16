@@ -56,7 +56,7 @@ public class SerialChart extends FlowChart {
         int[] ySerials = {y * n, (y - 20) * n, y * n, (y + 20) * n};
         // 设置填充颜色
         graphics.setColor(lightColor(c));
-        // 填充圆角矩形
+        // 填充菱形矩形
         graphics.fillPolygon(xSerials, ySerials, 4);
         graphics.setColor(c);
         graphics.drawPolygon(xSerials, ySerials, 4);

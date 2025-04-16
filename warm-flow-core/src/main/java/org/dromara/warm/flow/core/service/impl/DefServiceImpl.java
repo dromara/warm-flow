@@ -202,9 +202,9 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     @Override
     public Definition getAllDataDefinition(Long id) {
         Definition definition = getDao().selectById(id);
-        List<Node> nodeList = FlowEngine.nodeService().list(FlowEngine.newNode().setDefinitionId(id));
+        List<Node> nodeList = FlowEngine.nodeService().getByDefId(id);
         definition.setNodeList(nodeList);
-        List<Skip> skips = FlowEngine.skipService().list(FlowEngine.newSkip().setDefinitionId(id));
+        List<Skip> skips = FlowEngine.skipService().getByDefId(id);
         Map<String, List<Skip>> flowSkipMap = skips.stream()
                 .collect(Collectors.groupingBy(Skip::getNowNodeCode));
         nodeList.forEach(flowNode -> flowNode.setSkipList(flowSkipMap.get(flowNode.getNodeCode())));
@@ -234,7 +234,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     @Override
     public boolean removeDef(List<Long> ids) {
         ids.forEach(id -> {
-            List<Instance> instances = FlowEngine.insService().list(FlowEngine.newIns().setDefinitionId(id));
+            List<Instance> instances = FlowEngine.insService().getByDefId(id);
             AssertUtil.isNotEmpty(instances, ExceptionCons.EXIST_START_TASK);
         });
         FlowEngine.nodeService().deleteNodeByDefIds(ids);
@@ -245,7 +245,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     @Override
     public boolean publish(Long id) {
         Definition definition = getById(id);
-        List<Definition> definitions = list(FlowEngine.newDef().setFlowCode(definition.getFlowCode()));
+        List<Definition> definitions = getByFlowCode(definition.getFlowCode());
         // 已发布流程定义，改为已失效或者未发布状态
         List<Long> otherDefIds = definitions.stream()
                 .filter(item -> !Objects.equals(definition.getId(), item.getId())
@@ -280,7 +280,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
 
     @Override
     public boolean unPublish(Long id) {
-        List<Instance> instances = FlowEngine.insService().list(FlowEngine.newIns().setDefinitionId(id));
+        List<Instance> instances = FlowEngine.insService().getByDefId(id);
         AssertUtil.isNotEmpty(instances, ExceptionCons.EXIST_START_TASK);
         Definition definition = FlowEngine.newDef().setId(id);
         definition.setIsPublish(PublishStatus.UNPUBLISHED.getKey());
@@ -293,10 +293,8 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         definition.setVersion(getNewVersion(definition));
         AssertUtil.isNull(definition, ExceptionCons.NOT_FOUNT_DEF);
 
-        List<Node> nodeList = FlowEngine.nodeService().list(FlowEngine.newNode().setDefinitionId(id))
-                .stream().map(Node::copy).collect(Collectors.toList());
-        List<Skip> skipList = FlowEngine.skipService().list(FlowEngine.newSkip().setDefinitionId(id))
-                .stream().map(Skip::copy).collect(Collectors.toList());
+        List<Node> nodeList = FlowEngine.nodeService().getByDefId(id).stream().map(Node::copy).collect(Collectors.toList());
+        List<Skip> skipList = FlowEngine.skipService().getByDefId(id).stream().map(Skip::copy).collect(Collectors.toList());
         FlowEngine.dataFillHandler().idFill(definition.setId(null));
         definition.setIsPublish(PublishStatus.UNPUBLISHED.getKey())
                 .setCreateTime(null)
@@ -333,9 +331,14 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         return updateById(definition);
     }
 
+    @Override
+    public List<Definition> getByFlowCode(String flowCode) {
+        return list(FlowEngine.newDef().setFlowCode(flowCode));
+    }
+
     private String getNewVersion(Definition definition) {
         List<String> flowCodeList = Collections.singletonList(definition.getFlowCode());
-        List<Definition> definitions = getDao().queryByCodeList(flowCodeList);
+        List<Definition> definitions = queryByCodeList(flowCodeList);
         int highestVersion = 0;
         String latestNonPositiveVersion = null;
         long latestTimestamp = Long.MIN_VALUE;

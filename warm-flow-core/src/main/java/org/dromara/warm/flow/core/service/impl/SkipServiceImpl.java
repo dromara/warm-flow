@@ -15,6 +15,7 @@
  */
 package org.dromara.warm.flow.core.service.impl;
 
+import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.orm.dao.FlowSkipDao;
 import org.dromara.warm.flow.core.entity.Skip;
 import org.dromara.warm.flow.core.orm.service.impl.WarmServiceImpl;
@@ -22,6 +23,7 @@ import org.dromara.warm.flow.core.service.SkipService;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * 节点跳转关联Service业务层处理
@@ -40,5 +42,15 @@ public class SkipServiceImpl extends WarmServiceImpl<FlowSkipDao<Skip>, Skip> im
     @Override
     public int deleteSkipByDefIds(Collection<? extends Serializable> defIds) {
         return getDao().deleteSkipByDefIds(defIds);
+    }
+
+    @Override
+    public List<Skip> getByDefId(Long definitionId) {
+        return list(FlowEngine.newSkip().setDefinitionId(definitionId));
+    }
+
+    @Override
+    public List<Skip> getByDefIdAndNowNodeCode(Long definitionId, String nodeCode) {
+        return list(FlowEngine.newSkip().setDefinitionId(definitionId).setNowNodeCode(nodeCode));
     }
 }

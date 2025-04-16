@@ -101,7 +101,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         // 开启流程，保存流程信息
         saveFlowInfo(instance, addTasks, hisTask);
 
-        // 执行完成监听器和下一节点的节点开始监听器
+        // 执行完成和创建监听器
         ListenerUtil.endCreateListener(new ListenerVariable(definition, instance, startNode, flowParams.getVariable()
                 , null, nextNodes, addTasks).setFlowParams(flowParams));
 
@@ -110,14 +110,10 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
 
     @Override
     public Instance skipByInsId(Long instanceId, FlowParams flowParams) {
-        AssertUtil.isTrue(StringUtils.isNotEmpty(flowParams.getMessage())
-                && flowParams.getMessage().length() > 500, ExceptionCons.MSG_OVER_LENGTH);
-        // 获取待办任务
-        List<Task> taskList = FlowEngine.taskService().list(FlowEngine.newTask().setInstanceId(instanceId));
+        List<Task> taskList = FlowEngine.taskService().getByInsId(instanceId);
         AssertUtil.isEmpty(taskList, ExceptionCons.NOT_FOUNT_TASK);
         AssertUtil.isTrue(taskList.size() > 1, ExceptionCons.TASK_NOT_ONE);
-        Task task = taskList.get(0);
-        return FlowEngine.taskService().skip(flowParams, task);
+        return FlowEngine.taskService().skip(flowParams, taskList.get(0));
     }
 
     @Override
@@ -128,7 +124,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
     @Override
     public Instance termination(Long instanceId, FlowParams flowParams) {
         // 获取待办任务
-        List<Task> taskList = FlowEngine.taskService().list(FlowEngine.newTask().setInstanceId(instanceId));
+        List<Task> taskList = FlowEngine.taskService().getByInsId(instanceId);
         AssertUtil.isEmpty(taskList, ExceptionCons.NOT_FOUNT_TASK);
         Task task = taskList.get(0);
         return FlowEngine.taskService().termination(task, flowParams);
@@ -139,6 +135,10 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         return toRemoveTask(instanceIds);
     }
 
+    @Override
+    public List<Instance> getByDefId(Long definitionId) {
+        return list(FlowEngine.newIns().setDefinitionId(definitionId));
+    }
 
     /**
      * 设置历史任务

@@ -54,13 +54,6 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
     }
 
     @Override
-    public List<User> setSkipUser(List<Task> addTasks, Long taskId) {
-        // 删除已执行的待办任务的权限人
-        deleteByTaskIds(CollUtil.toList(taskId));
-        return taskAddUsers(addTasks);
-    }
-
-    @Override
     public List<User> taskAddUser(Task task) {
         // 遍历权限集合，生成流程节点的权限
         List<User> userList = StreamUtils.toList(task.getPermissionList()

@@ -48,10 +48,48 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     @Override
     public Instance skip(Long taskId, FlowParams flowParams) {
-        AssertUtil.isTrue(StringUtils.isNotEmpty(flowParams.getMessage())
-                && flowParams.getMessage().length() > 500, ExceptionCons.MSG_OVER_LENGTH);
         // 获取待办任务
         Task task = getById(taskId);
+        return skip(flowParams, task);
+    }
+
+    @Override
+    public Instance skipByInsId(Long instanceId, FlowParams flowParams) {
+        return skip(flowParams, getTask(instanceId));
+    }
+
+    @Override
+    public Instance rejectLastByInsId(Long instanceId, FlowParams flowParams) {
+        return rejectLast(getTask(instanceId), flowParams);
+    }
+
+    @Override
+    public Instance rejectLast(Long taskId, FlowParams flowParams) {
+        return rejectLast(getById(taskId), flowParams);
+    }
+
+    @Override
+    public Instance rejectLast(Task task, FlowParams flowParams) {
+        flowParams.skipType(SkipType.REJECT.getKey());
+        // 获取当前任务的前置任务
+        List<HisTask> hisTaskList = FlowEngine.hisTaskService().getByInsId(task.getInstanceId());
+        // 获取hisTaskList中TargetNodeCod等于task.getNodeCode()的，并且id最大的
+        HisTask lastHisTask = hisTaskList.stream()
+                .filter(hisTask -> StringUtils.isNotEmpty(hisTask.getTargetNodeCode()))
+                .filter(hisTask -> SkipType.isPass(hisTask.getSkipType()))
+                .filter(hisTask -> {
+                    String targetCode = hisTask.getTargetNodeCode();
+                    if (targetCode.contains(",")) {
+                        return Arrays.asList(targetCode.split(",")).contains(task.getNodeCode());
+                    } else {
+                        return targetCode.equals(task.getNodeCode());
+                    }
+                })
+                .max(Comparator.comparingLong(HisTask::getId))
+                .orElse(null);
+
+        AssertUtil.isNull(lastHisTask, ExceptionCons.NOT_FOUNT_LAST_TASK);
+        flowParams.nodeCode(lastHisTask.getNodeCode());
         return skip(flowParams, task);
     }
 
@@ -118,11 +156,88 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 处理未完成的任务，当流程完成，还存在待办任务未完成，转历史任务，状态完成。
         handUndoneTask(r.instance);
 
-        // 最后判断是否存在节点监听器，存在执行节点监听器
+        // 执行完成和创建监听器
         ListenerUtil.endCreateListener(new ListenerVariable(r.definition, r.instance, r.nowNode
                 , flowParams.getVariable(), task, nextNodes, addTasks).setFlowParams(flowParams));
 
         return r.instance;
+    }
+
+    @Override
+    public Instance revoke(Long instanceId, FlowParams flowParams) {
+        flowParams.skipType(SkipType.REJECT.getKey());
+        // 删除待办任务，保存历史，删除所有代办任务的权限人
+        if (StringUtils.isEmpty(flowParams.getFlowStatus())) {
+            flowParams.flowStatus(FlowStatus.CANCEL.getKey());
+        }
+
+        Instance instance = FlowEngine.insService().getById(instanceId);
+        flowParams.variable(MapUtil.mergeAll(instance.getVariableMap(), flowParams.getVariable()));
+        AssertUtil.isNull(instance, ExceptionCons.NOT_FOUNT_INSTANCE);
+        Definition definition = FlowEngine.defService().getById(instance.getDefinitionId());
+        AssertUtil.isFalse(judgeActivityStatus(definition, instance), ExceptionCons.NOT_ACTIVITY);
+        AssertUtil.isTrue(NodeType.isEnd(instance.getNodeType()), ExceptionCons.FLOW_FINISH);
+        flowParams.variable(MapUtil.mergeAll(instance.getVariableMap(), flowParams.getVariable()));
+
+        List<Task> taskList = getByInsId(instanceId);
+        List<Node> nodeList = FlowEngine.nodeService().getByDefId(instance.getDefinitionId());
+        Map<String, Node> nodeMap = StreamUtils.toMap(nodeList, Node::getNodeCode, node -> node);
+        // 执行开始监听器
+        taskList.forEach(task -> ListenerUtil.executeListener(new ListenerVariable(definition, instance
+                , nodeMap.get(task.getNodeCode()), flowParams.getVariable(), task).setFlowParams(flowParams)
+                , Listener.LISTENER_START));
+
+        // 验证权限是不是当前任务的发起人
+        if (flowParams.isIgnore()) {
+            AssertUtil.isFalse(instance.getCreateBy().equals(flowParams.getHandler())
+                    , ExceptionCons.NOT_DEF_PROMOTER_NOT_RETRIEVE);
+        }
+
+        // 获取开始节点
+        Node startNode = FlowEngine.nodeService().getStartNode(instance.getDefinitionId());
+        // 获取下一个节点，如果是网关节点，则重新获取后续节点
+        PathWayData pathWayData = new PathWayData().setInsId(instanceId).setSkipType(flowParams.getSkipType());
+        List<Node> nextNodes = FlowEngine.nodeService().getNextNodeList(startNode.getDefinitionId(), startNode
+                , null, SkipType.PASS.getKey(), flowParams.getVariable(), pathWayData);
+        pathWayData.getTargetNodes().addAll(nextNodes);
+        // 设置流程图元数据
+        instance.setDefJson(FlowEngine.chartService().skipMetadata(pathWayData));
+
+        // 查询任务,如果前一个节点是并行网关，可能任务表有多个任务,增加查询和判断
+        List<Task> curTaskList = list(FlowEngine.newTask().setInstanceId(instance.getId()));
+        AssertUtil.isEmpty(curTaskList, ExceptionCons.NOT_FOUND_FLOW_TASK);
+
+        // 给回退到的那个节点赋权限-给当前处理人权限
+        List<Task> addTasks = StreamUtils.toList(nextNodes, node -> addTask(node, instance, definition, flowParams));
+
+        // 办理人变量替换
+        ExpressionUtil.evalVariable(addTasks, MapUtil.mergeAll(instance.getVariableMap(), flowParams.getVariable()));
+
+        // 执行分派监听器
+        taskList.forEach(task -> ListenerUtil.executeListener(new ListenerVariable(definition, instance,
+                nodeMap.get(task.getNodeCode()), flowParams.getVariable(), task, nextNodes, addTasks)
+                .setFlowParams(flowParams), Listener.LISTENER_ASSIGNMENT));
+
+        // 设置流程历史任务信息
+        List<HisTask> insHisList = FlowEngine.hisTaskService().setSkipHisList(curTaskList, nextNodes, flowParams);
+        FlowEngine.hisTaskService().saveBatch(insHisList);
+        // 待办任务和处理人
+        removeAndUser(curTaskList);
+        List<User> users = FlowEngine.userService().taskAddUsers(addTasks);
+
+        // 设置任务完成后的实例相关信息
+        setInsFinishInfo(instance, addTasks, flowParams);
+        if (CollUtil.isNotEmpty(addTasks)) {
+            saveBatch(addTasks);
+        }
+        FlowEngine.insService().updateById(instance);
+        // 保存下一个待办任务的权限人
+        FlowEngine.userService().saveBatch(users);
+
+        // 执行完成和创建监听器
+        taskList.forEach(task -> ListenerUtil.endCreateListener(new ListenerVariable(definition, instance,
+                nodeMap.get(task.getNodeCode()), flowParams.getVariable(), task, nextNodes, addTasks).setFlowParams(flowParams)));
+        return instance;
     }
 
     @Override
@@ -143,8 +258,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         checkAuth(task, flowParams);
 
         // 所有待办转历史
-        Node endNode = FlowEngine.nodeService().getOne(FlowEngine.newNode()
-                .setDefinitionId(r.instance.getDefinitionId()).setNodeType(NodeType.END.getKey()));
+        Node endNode = FlowEngine.nodeService().getEndNode(r.instance.getDefinitionId());
 
         // 设置流程图元数据
         PathWayData pathWayData = new PathWayData()
@@ -298,62 +412,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     @Override
-    public Instance retrieve(Long instanceId, FlowParams flowParams) {
-        Instance instance = FlowEngine.insService().getById(instanceId);
-        flowParams.variable(MapUtil.mergeAll(instance.getVariableMap(), flowParams.getVariable()));
-        AssertUtil.isNull(instance, ExceptionCons.NOT_FOUNT_INSTANCE);
-        // 验证权限是不是当前任务的发起人
-        AssertUtil.isFalse(instance.getCreateBy().equals(flowParams.getHandler())
-                , ExceptionCons.NOT_DEF_PROMOTER_NOT_RETRIEVE);
-        // 如果没传nodeCode，则默认跳转开始节点
-        if (StringUtils.isEmpty(flowParams.getNodeCode())) {
-            flowParams.nodeCode(FlowEngine.nodeService().getOne(FlowEngine.newNode()
-                    .setDefinitionId(instance.getDefinitionId())
-                    .setNodeType(NodeType.START.getKey())).getNodeCode());
-        }
-        // TODO warm 监听器
-        Definition definition = FlowEngine.defService().getById(instance.getDefinitionId());
-        AssertUtil.isFalse(judgeActivityStatus(definition, instance), ExceptionCons.NOT_ACTIVITY);
-        AssertUtil.isTrue(NodeType.isEnd(instance.getNodeType()), ExceptionCons.FLOW_FINISH);
-
-        AssertUtil.isTrue(StringUtils.isNotEmpty(flowParams.getMessage())
-                && flowParams.getMessage().length() > 500, ExceptionCons.MSG_OVER_LENGTH);
-        // 查询目标节点信息
-        Node nextNode = FlowEngine.nodeService().getOne(FlowEngine.newNode()
-                .setNodeCode(flowParams.getNodeCode()).setDefinitionId(instance.getDefinitionId()));
-        AssertUtil.isNull(nextNode, ExceptionCons.LOST_DEST_NODE);
-        // 回退到的节点是否为结束节点，结束节点是不能回退
-        AssertUtil.isTrue(NodeType.isEnd(nextNode.getNodeType()), ExceptionCons.NODE_IS_END);
-
-        // 查询任务,如果前一个节点是并行网关，可能任务表有多个任务,增加查询和判断
-        List<Task> curTaskList = list(FlowEngine.newTask().setInstanceId(instance.getId()));
-        AssertUtil.isEmpty(curTaskList, ExceptionCons.NOT_FOUND_FLOW_TASK);
-
-        // 给回退到的那个节点赋权限-给当前处理人权限
-        Task nextTask = addTask(nextNode, instance, definition, flowParams);
-        // 流程参数
-        flowParams.skipType(SkipType.REJECT.getKey());
-        // 删除待办任务，保存历史，删除所有代办任务的权限人
-        if (StringUtils.isNotEmpty(flowParams.getFlowStatus())) {
-            flowParams.flowStatus(FlowStatus.RETRIEVE.getKey());
-        }
-        removeByIds(StreamUtils.toList(curTaskList, Task::getId));
-        // 删除所有待办任务的权限人,处理人保存
-        FlowEngine.userService().deleteByTaskIds(StreamUtils.toList(curTaskList, Task::getId));
-        FlowEngine.hisTaskService().saveBatch(StreamUtils.toList(curTaskList,
-                task -> FlowEngine.hisTaskService().setSkipHisTask(task, nextNode, flowParams)));
-
-        // 设置任务完成后的实例相关信息
-        setInsFinishInfo(instance, CollUtil.toList(nextTask), flowParams);
-        FlowEngine.insService().updateById(instance);
-        // 保存待办任务
-        List<User> users = FlowEngine.userService().taskAddUsers(CollUtil.toList(nextTask));
-        FlowEngine.userService().saveBatch(users);
-        save(nextTask);
-        return instance;
-    }
-
-    @Override
     public Task addTask(Node node, Instance instance, Definition definition, FlowParams flowParams) {
         Task addTask = FlowEngine.newTask();
         FlowEngine.dataFillHandler().idFill(addTask);
@@ -376,7 +434,23 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     @Override
-    public String setFlowStatus(Integer nodeType, String skipType) {
+    public List<Task> getByInsId(Long instanceId) {
+        return FlowEngine.taskService().list(FlowEngine.newTask().setInstanceId(instanceId));
+    }
+
+    /**
+     * 获取待办任务
+     * @param instanceId 实例id
+     * @return 待办任务
+     */
+    private Task getTask(Long instanceId) {
+        List<Task> taskList = FlowEngine.taskService().getByInsId(instanceId);
+        AssertUtil.isEmpty(taskList, ExceptionCons.NOT_FOUNT_TASK);
+        AssertUtil.isTrue(taskList.size() > 1, ExceptionCons.TASK_NOT_ONE);
+        return taskList.get(0);
+    }
+
+    private String setFlowStatus(Integer nodeType, String skipType) {
         // 根据审批动作确定流程状态
         if (NodeType.isStart(nodeType)) {
             return FlowStatus.TOBESUBMIT.getKey();
@@ -389,8 +463,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         }
     }
 
-    @Override
-    public Task getNextTask(List<Task> tasks) {
+    private Task getNextTask(List<Task> tasks) {
         if (tasks.size() == 1) {
             return tasks.get(0);
         }
@@ -402,43 +475,18 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         return tasks.stream().max(Comparator.comparingLong(Task::getId)).orElse(null);
     }
 
-    @Override
-    public void mergeVariable(Instance instance, Map<String, Object> variable) {
+    private void removeAndUser(List<Task> taskList) {
+        removeByIds(StreamUtils.toList(taskList, Task::getId));
+        FlowEngine.userService().deleteByTaskIds(StreamUtils.toList(taskList, Task::getId));
+    }
+
+    private void mergeVariable(Instance instance, Map<String, Object> variable) {
         if (MapUtil.isNotEmpty(variable)) {
             String variableStr = instance.getVariable();
             Map<String, Object> deserialize = FlowEngine.jsonConvert.strToMap(variableStr);
             deserialize.putAll(variable);
             instance.setVariable(FlowEngine.jsonConvert.objToStr(deserialize));
         }
-    }
-
-    @Override
-    public boolean checkAuth(Long instanceId, Long taskId, String... permissionList) {
-//        AssertUtil.isTrue(instanceId == null && taskId == null, ExceptionCons.TASKID_INSTANCEID_NULL);
-//        if (instanceId != null) {
-//            Instance instance = FlowEngine.insService().getById(instanceId);
-//            AssertUtil.isNull(instance, ExceptionCons.NOT_FOUNT_INSTANCE);
-//        }
-//        if (permissionList == null) {
-//            String[] array = FlowEngine.permissionHandler().permissions();
-//            AssertUtil.isTrue(array.length < 1, ExceptionCons.NOT_AUTHORITY);
-//            permissionList = array;
-//        }
-//        Task flowTask = FlowEngine.newTask();
-//        flowTask.setInstanceId(instanceId);
-//        flowTask.setId(taskId);
-//        List<Task> taskList = FlowEngine.taskService().list(flowTask);
-//        AssertUtil.isEmpty(taskList, ExceptionCons.NOT_FOUND_FLOW_TASK);
-//        return Arrays.stream(permissionList)
-//                .anyMatch(permission -> taskList.stream()
-//                        .anyMatch(task -> {
-//                            User flowUser = FlowEngine.newUser();
-//                            flowUser.setAssociated(task.getId());
-//                            flowUser.setProcessedBy(permission);
-//                            return FlowEngine.userService().selectCount(flowUser) > 0;
-//                        })
-//                );
-        return true;
     }
 
     private R getAndCheck(Long taskId) {
@@ -453,8 +501,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         Definition definition = FlowEngine.defService().getById(instance.getDefinitionId());
         AssertUtil.isFalse(judgeActivityStatus(definition, instance), ExceptionCons.NOT_ACTIVITY);
         AssertUtil.isTrue(NodeType.isEnd(instance.getNodeType()), ExceptionCons.FLOW_FINISH);
-        Node nowNode = FlowEngine.nodeService().getOne(FlowEngine.newNode().setNodeCode(task.getNodeCode())
-                .setDefinitionId(task.getDefinitionId()));
+        Node nowNode = FlowEngine.nodeService().getByDefIdAndNodeCode(task.getDefinitionId(), task.getNodeCode());
         AssertUtil.isNull(nowNode, ExceptionCons.LOST_CUR_NODE);
         return new R(instance, definition, nowNode, task);
     }
@@ -475,13 +522,15 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     private boolean handleDepute(Task task, FlowParams flowParams) {
         // 获取受托人
-        User entrustedUser = FlowEngine.userService().getOne(FlowEngine.newUser().setAssociated(task.getId())
-                .setProcessedBy(flowParams.getHandler()).setType(UserType.DEPUTE.getKey()));
-        if (ObjectUtil.isNull(entrustedUser)) {
+        List<User> entrustedUserList = StreamUtils.filter(task.getUserList(),
+                user -> UserType.DEPUTE.getKey().equals(user.getType())
+                && Objects.equals(flowParams.getHandler(), user.getProcessedBy()));
+        if (CollUtil.isEmpty(entrustedUserList)) {
             return false;
         }
 
         // 记录受托人处理任务记录
+        User entrustedUser = entrustedUserList.get(0);
         HisTask hisTask = FlowEngine.hisTaskService().setDeputeHisTask(task, flowParams, entrustedUser);
         FlowEngine.hisTaskService().save(hisTask);
         FlowEngine.userService().removeById(entrustedUser.getId());
@@ -704,8 +753,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 一票否决（谨慎使用），如果退回，退回指向节点后还存在其他正在执行的待办任务，转历史任务，状态失效,重走流程。
         if (SkipType.isReject(flowParams.getSkipType())) {
             List<Task> tasks = list(FlowEngine.newTask().setInstanceId(task.getInstanceId()));
-            List<Skip> allSkips = FlowEngine.skipService().list(FlowEngine.newSkip()
-                    .setDefinitionId(task.getDefinitionId()));
             // 属于退回指向节点的后置未完成的任务
             List<Task> noDoneTasks = new ArrayList<>();
             List<Node> suffixNodeList = FlowEngine.nodeService().suffixNodeList(task.getDefinitionId(), nextNodeCode);
@@ -716,7 +763,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 }
             }
             if (CollUtil.isNotEmpty(noDoneTasks)) {
-                removeInvalidTask(noDoneTasks);
+                removeAndUser(noDoneTasks);
             }
         }
     }
@@ -731,20 +778,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         if (NodeType.isEnd(instance.getNodeType())) {
             List<Task> taskList = list(FlowEngine.newTask().setInstanceId(instance.getId()));
             if (CollUtil.isNotEmpty(taskList)) {
-                removeInvalidTask(taskList);
+                removeAndUser(taskList);
             }
         }
-    }
-
-    /**
-     * 待办任务转历史任务。
-     */
-    private void removeInvalidTask(List<Task> taskList) {
-        List<HisTask> insHisList = new ArrayList<>();
-        removeByIds(StreamUtils.toList(taskList, Task::getId));
-        FlowEngine.hisTaskService().saveBatch(insHisList);
-        // 删除所有待办任务的权限人
-        FlowEngine.userService().deleteByTaskIds(StreamUtils.toList(taskList, Task::getId));
     }
 
     /**
@@ -761,9 +797,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 设置流程历史任务信息
         HisTask insHis = FlowEngine.hisTaskService().setSkipInsHis(task, nextNodes, flowParams);
         FlowEngine.hisTaskService().save(insHis);
+        removeAndUser(Collections.singletonList(task));
         // 待办任务设置处理人
-        List<User> users = FlowEngine.userService().setSkipUser(addTasks, task.getId());
-        removeById(task.getId());
+        List<User> users = FlowEngine.userService().taskAddUsers(addTasks);
 
         // 设置任务完成后的实例相关信息
         setInsFinishInfo(instance, addTasks, flowParams);
@@ -771,7 +807,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             saveBatch(addTasks);
         }
         FlowEngine.insService().updateById(instance);
-        // 保存下一个待办任务的权限人和历史任务的处理人
+        // 保存下一个待办任务的权限人
         FlowEngine.userService().saveBatch(users);
     }
 

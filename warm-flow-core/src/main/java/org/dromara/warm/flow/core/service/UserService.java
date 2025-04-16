@@ -40,17 +40,6 @@ public interface UserService extends IWarmService<User> {
     List<User> taskAddUsers(List<Task> addTasks);
 
     /**
-     * 设置流程用户
-     *
-     * @param addTasks 待办任务
-     * @param taskId   任务id
-     * @return List<User>
-     * @author xiarg
-     * @since 2024/5/10 13:59
-     */
-    List<User> setSkipUser(List<Task> addTasks, Long taskId);
-
-    /**
      * 待办任务增加流程人员
      *
      * @param task 待办任务任务信息
@@ -98,7 +87,7 @@ public interface UserService extends IWarmService<User> {
     List<User> getByAssociateds(List<Long> associateds, String... types);
 
     /**
-     * 根据办理人查询
+     * 根据办理人查询, 返回集合
      *
      * @param associated  待办任务id
      * @param processedBy 办理人

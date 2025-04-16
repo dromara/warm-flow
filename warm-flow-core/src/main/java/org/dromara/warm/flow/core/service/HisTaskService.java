@@ -69,6 +69,15 @@ public interface HisTaskService extends IWarmService<HisTask> {
     HisTask setSkipInsHis(Task task, List<Node> nextNodes, FlowParams flowParams);
 
     /**
+     * 设置流程历史任务信息
+     *
+     * @param taskList   当前任务集合
+     * @param nextNodes  后续任务
+     * @param flowParams 参数
+     */
+    List<HisTask> setSkipHisList(List<Task> taskList, List<Node> nextNodes, FlowParams flowParams);
+
+    /**
      * 设置协作历史记录
      *
      * @param task          当前任务
@@ -112,7 +121,17 @@ public interface HisTaskService extends IWarmService<HisTask> {
      */
     HisTask setSkipHisTask(Task task, Node nextNode, FlowParams flowParams);
 
+    /**
+     * 根据流程实例id查询历史任务
+     * @param instanceId 流程实例id
+     * @return 历史记录集合
+     */
+    List<HisTask> getByInsId(Long instanceId);
+
+    @Deprecated
     List<HisTask> getNoReject(Long instanceId);
 
+    @Deprecated
     HisTask getNoReject(String nodeCode, String targetNodeCode, List<HisTask> hisTasks);
+
 }

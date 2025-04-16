@@ -6,7 +6,7 @@
 
     <groupId>org.dromara.warm</groupId>
     <artifactId>warm-flow</artifactId>
-    <version>1.6.10</version>
+    <version>1.7.0-m1</version>
     <packaging>pom</packaging>
 
     <name>warm-flow</name>

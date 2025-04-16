@@ -157,4 +157,10 @@ public interface DefService extends IWarmService<Definition> {
      */
     boolean unActive(Long id);
 
+    /**
+     * 根据流程定义code查询流程定义
+     * @param flowCode 流程定义code
+     * @return List<Definition>
+     */
+    List<Definition> getByFlowCode(String flowCode);
 }

@@ -93,8 +93,6 @@ public class ExceptionCons {
 
     public static final String EXIST_START_TASK = "流程定义已开启过审批任务，不可操作!";
 
-    public static final String MSG_OVER_LENGTH = "意见长度过长!";
-
     public static final String FLOW_FINISH = "流程已完成！";
 
     public static final String NOT_AUTHORITY = "请检查当前用户是否有权限!";
@@ -156,5 +154,7 @@ public class ExceptionCons {
     public static final String READ_IS_ERROR = "读取is流失败";
 
     public static final String EXIST_USE_FORM = "流程表单已使用，不可操作!";
+
+    public static final String NOT_FOUNT_LAST_TASK = "未找到前置任务!";
 
 }

@@ -24,7 +24,6 @@ import org.dromara.warm.flow.core.entity.Task;
 import org.dromara.warm.flow.core.orm.service.IWarmService;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 待办任务Service接口
@@ -50,6 +49,58 @@ public interface TaskService extends IWarmService<Task> {
     Instance skip(Long taskId, FlowParams flowParams);
 
     /**
+     * 根据实例id，流程跳转，一般是开始节点后第一个节点，用来提交申请，此时不可有同时两个待办任务
+     *
+     * @param instanceId:流程实例id[必传]
+     * @param flowParams:包含流程相关参数的对象 - skipType:跳转类型(PASS审批通过 REJECT退回) [必传]
+     *                               - nodeCode: 如果指定节点,可任意跳转到对应节点，严禁任意退回选择后置节点 [按需传输]
+     *      *                        - permissionFlag: 办理人权限标识，比如用户，角色，部门等, 流程设计时未设置办理人或者ignore为true可不传 [按需传输]
+     *                               - message: 审批意见[按需传输]
+     *                               - handler: 办理人唯一标识[建议传]
+     *                               - variable: 流程变量[按需传输,跳转条件放入流程变量<互斥网关必传>]
+     *                               - flowStatus: 流程状态，自定义流程状态[按需传输]
+     *                               - ignore   忽略权限校验（比如管理员不校验），默认不忽略 [按需传输]
+     * @return 流程实例
+     */
+    Instance skipByInsId(Long instanceId, FlowParams flowParams);
+
+    /**
+     * 驳回上一个任务
+     * @param instanceId:流程实例id[必传]
+     * @param flowParams:包含流程相关参数的对象 - permissionFlag: 办理人权限标识，比如用户，角色，部门等, 流程设计时未设置办理人或者ignore为true可不传 [按需传输]
+     *                               - message: 审批意见  [按需传输]
+     *                               - handler: 办理人唯一标识 [建议传]
+     *                               - variable: 流程变量 [按需传输,跳转条件放入流程变量<互斥网关必传>]
+     *                               - flowStatus: 流程状态，自定义流程状态 [按需传输]
+     *                               - ignore   忽略权限校验（比如管理员不校验），默认不忽略 [按需传输]
+     */
+    Instance rejectLastByInsId(Long instanceId, FlowParams flowParams);
+
+    /**
+     * 驳回上一个任务
+     * @param taskId:流程任务id[必传]
+     * @param flowParams:包含流程相关参数的对象 - permissionFlag: 办理人权限标识，比如用户，角色，部门等, 流程设计时未设置办理人或者ignore为true可不传 [按需传输]
+     *                               - message: 审批意见  [按需传输]
+     *                               - handler: 办理人唯一标识 [建议传]
+     *                               - variable: 流程变量 [按需传输,跳转条件放入流程变量<互斥网关必传>]
+     *                               - flowStatus: 流程状态，自定义流程状态 [按需传输]
+     *                               - ignore   忽略权限校验（比如管理员不校验），默认不忽略 [按需传输]
+     */
+    Instance rejectLast(Long taskId, FlowParams flowParams);
+
+    /**
+     * 驳回上一个任务
+     * @param task:流程任务[必传]
+     * @param flowParams:包含流程相关参数的对象 - permissionFlag: 办理人权限标识，比如用户，角色，部门等, 流程设计时未设置办理人或者ignore为true可不传 [按需传输]
+     *                               - message: 审批意见  [按需传输]
+     *                               - handler: 办理人唯一标识 [建议传]
+     *                               - variable: 流程变量 [按需传输,跳转条件放入流程变量<互斥网关必传>]
+     *                               - flowStatus: 流程状态，自定义流程状态 [按需传输]
+     *                               - ignore   忽略权限校验（比如管理员不校验），默认不忽略 [按需传输]
+     */
+    Instance rejectLast(Task task, FlowParams flowParams);
+
+    /**
      * 流程跳转
      *
      * @param flowParams:包含流程相关参数的对象 - skipType: 跳转类型(PASS审批通过 REJECT退回) [必传]
@@ -63,6 +114,18 @@ public interface TaskService extends IWarmService<Task> {
      * @param task:流程任务[必传]
      */
     Instance skip(FlowParams flowParams, Task task);
+
+    /**
+     * 撤销
+     *
+     * @param instanceId        实例id [必传]
+     * @param flowParams:包含流程相关参数的对象 - message: 审批意见  [按需传输]
+     *                               - handler: 办理人唯一标识 [必传]
+     *                               - variable: 流程变量 [按需传输,跳转条件放入流程变量<互斥网关必传>]
+     *                               - flowStatus: 流程状态，自定义流程状态 [按需传输]
+     *                               - ignore   忽略权限校验（比如管理员不校验），默认不忽略 [按需传输]
+     */
+    Instance revoke(Long instanceId, FlowParams flowParams);
 
     /**
      * 终止流程，提前结束流程，将所有待办任务转历史
@@ -159,22 +222,6 @@ public interface TaskService extends IWarmService<Task> {
     boolean updateHandler(Long taskId, FlowParams flowParams);
 
     /**
-     * 取回
-     *
-     * @param instanceId        实例id [必传]
-     * @param flowParams        handler: 当前处理人 [必传]
-     *                          nodeCode: 取回到的节点编码，如果为空，则默认取回到开始节点 [按需传输]
-     *                          flowStatus: 自定义流程状态 [按需传输]
-     *                          hisStatus: 自定义历史任务状态 [按需传输]
-     *                          hisTaskExt: 业务详情扩展字段 [按需传输]
-     *                          message: 审批意见 [按需传输]
-     * @return Instance         流程实例
-     * @author xiarg
-     * @since 2024/9/22 13:59
-     */
-    Instance retrieve(Long instanceId, FlowParams flowParams);
-
-    /**
      * 设置流程待办任务对象
      *
      * @param node 节点
@@ -185,38 +232,11 @@ public interface TaskService extends IWarmService<Task> {
     Task addTask(Node node, Instance instance, Definition definition, FlowParams flowParams);
 
     /**
-     * 设置流程实例和代码任务流程状态
-     *
-     * @param nodeType 节点类型（开始节点、中间节点、结束节点）
-     * @param skipType 流程条件
+     * 根据流程实例id获取流程任务集合
+     * @param instanceId 流程实例id
+     * @return 任务集合
      */
-    String setFlowStatus(Integer nodeType, String skipType);
-
-    /**
-     * 并行网关，取结束节点类型，否则随便取id最大的
-     *
-     * @param tasks 任务列表
-     * @return Task
-     */
-    Task getNextTask(List<Task> tasks);
-
-
-    /**
-     * 合并流程变量到实例对象
-     * @param instance 流程实例
-     * @param variable 流程变量
-     */
-    void mergeVariable(Instance instance, Map<String, Object> variable);
-
-    /**
-     * 审批流程id 或 审批任务id 必须传一个
-     *
-     * @param instanceId     审批流程id
-     * @param taskId         审批任务id
-     * @param permissionList 当前登录用户权限集合
-     */
-    boolean checkAuth(Long instanceId, Long taskId, String... permissionList);
-
+    List<Task> getByInsId(Long instanceId);
 
     /**
      * 获取表单及数据(使用表单场景)

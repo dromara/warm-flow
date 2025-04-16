@@ -85,6 +85,31 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
         return prefixOrSuffixNodes(definitionId, nowNodeCode, "suffix");
     }
 
+    @Override
+    public List<Node> getByDefId(Long definitionId) {
+        return list(FlowEngine.newNode().setDefinitionId(definitionId));
+    }
+
+    @Override
+    public Node getByDefIdAndNodeCode(Long definitionId, String nodeCode) {
+        return getOne(FlowEngine.newNode().setDefinitionId(definitionId).setNodeCode(nodeCode));
+    }
+
+    @Override
+    public Node getStartNode(Long definitionId) {
+        return getOne(FlowEngine.newNode().setDefinitionId(definitionId).setNodeType(NodeType.START.getKey()));
+    }
+
+    @Override
+    public List<Node> getBetweenNode(Long definitionId) {
+        return list(FlowEngine.newNode().setDefinitionId(definitionId).setNodeType(NodeType.END.getKey()));
+    }
+
+    @Override
+    public Node getEndNode(Long definitionId) {
+        return getOne(FlowEngine.newNode().setDefinitionId(definitionId).setNodeType(NodeType.END.getKey()));
+    }
+
     public List<Node> prefixOrSuffixNodes(Long definitionId, String nowNodeCode, String type) {
         List<Node> nodeList = list(FlowEngine.newNode().setDefinitionId(definitionId));
         Map<String, Node> nodeMap = StreamUtils.toMap(nodeList, Node::getNodeCode, node -> node);
@@ -144,12 +169,12 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
         Node nextNode = null;
         // 如果指定了跳转节点，直接获取节点
         if (StringUtils.isNotEmpty(anyNodeCode)) {
-            nextNode = getOne(FlowEngine.newNode().setNodeCode(anyNodeCode).setDefinitionId(definitionId));
+            nextNode = getByDefIdAndNodeCode(definitionId, anyNodeCode);
         }
 
         // 如果配置了任意跳转节点，直接获取节点
         if (StringUtils.isNotEmpty(nowNode.getAnyNodeSkip()) && SkipType.isReject(skipType)) {
-            nextNode = getOne(FlowEngine.newNode().setNodeCode(nowNode.getAnyNodeSkip()).setDefinitionId(definitionId));
+            nextNode = getByDefIdAndNodeCode(definitionId, nowNode.getAnyNodeSkip());
         }
 
         if (ObjectUtil.isNotNull(nextNode)) {
@@ -158,15 +183,14 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
         }
 
         // 获取跳转关系
-        List<Skip> skips = FlowEngine.skipService().list(FlowEngine.newSkip().setDefinitionId(definitionId)
-                .setNowNodeCode(nowNode.getNodeCode()));
+        List<Skip> skips = FlowEngine.skipService().getByDefIdAndNowNodeCode(definitionId, nowNode.getNodeCode());
         AssertUtil.isNull(skips, ExceptionCons.NULL_SKIP_TYPE);
 
         Skip nextSkip = getSkipByCheck(skips, skipType);
         AssertUtil.isNull(nextSkip, ExceptionCons.NULL_SKIP_TYPE);
 
         // 根据跳转查询出跳转到的那个节点
-        nextNode = getOne(FlowEngine.newNode().setNodeCode(nextSkip.getNextNodeCode()).setDefinitionId(definitionId));
+        nextNode = getByDefIdAndNodeCode(definitionId, nextSkip.getNextNodeCode());
         AssertUtil.isNull(nextNode, ExceptionCons.NULL_NODE_CODE);
         AssertUtil.isTrue(NodeType.isStart(nextNode.getNodeType()), ExceptionCons.FIRST_FORBID_BACK);
         if (pathWayData != null) {
@@ -180,7 +204,7 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
     public Node getNextNode(Long definitionId, String nowNodeCode, String anyNodeCode, String skipType) {
         AssertUtil.isEmpty(nowNodeCode, ExceptionCons.LOST_NODE_CODE);
         // 查询当前节点
-        Node nowNode = getOne(FlowEngine.newNode().setNodeCode(nowNodeCode).setDefinitionId(definitionId));
+        Node nowNode = getByDefIdAndNodeCode(definitionId, nowNodeCode);
         return getNextNode(definitionId, nowNode, anyNodeCode, skipType, null);
     }
 
@@ -188,8 +212,8 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
     public List<Node> getNextByCheckGateway(Map<String, Object> variable, Node nextNode, PathWayData pathWayData) {
         // 网关节点处理
         if (NodeType.isGateWay(nextNode.getNodeType())) {
-            List<Skip> skipsGateway = FlowEngine.skipService().list(FlowEngine.newSkip()
-                    .setDefinitionId(nextNode.getDefinitionId()).setNowNodeCode(nextNode.getNodeCode()));
+            List<Skip> skipsGateway = FlowEngine.skipService().getByDefIdAndNowNodeCode(nextNode.getDefinitionId()
+                    , nextNode.getNodeCode());
             if (CollUtil.isEmpty(skipsGateway)) {
                 return null;
             }
@@ -211,7 +235,7 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
             }
             AssertUtil.isEmpty(skipsGateway, ExceptionCons.NULL_CONDITION_VALUE_NODE);
             List<String> nextNodeCodes = StreamUtils.toList(skipsGateway, Skip::getNextNodeCode);
-            List<Node> nextNodes = FlowEngine.nodeService().getByNodeCodes(nextNodeCodes, nextNode.getDefinitionId());
+            List<Node> nextNodes = getByNodeCodes(nextNodeCodes, nextNode.getDefinitionId());
             AssertUtil.isEmpty(nextNodes, ExceptionCons.NOT_NODE_DATA);
             if (pathWayData != null) {
                 pathWayData.getPathWayNodes().addAll(nextNodes);

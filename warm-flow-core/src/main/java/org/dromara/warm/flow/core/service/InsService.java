@@ -56,8 +56,9 @@ public interface InsService extends IWarmService<Instance> {
      *                               - variable: 流程变量[按需传输,跳转条件放入流程变量<互斥网关必传>]
      *                               - flowStatus: 流程状态，自定义流程状态[按需传输]
      *                               - ignore   忽略权限校验（比如管理员不校验），默认不忽略 [按需传输]
-     * @return 流程实例
+     * @deprecated 请使用 {@link TaskService#skipByInsId(Long, FlowParams)}
      */
+    @Deprecated
     Instance skipByInsId(Long instanceId, FlowParams flowParams);
 
     /**
@@ -75,19 +76,26 @@ public interface InsService extends IWarmService<Instance> {
     /**
      * 根据实例ids，删除流程
      *
-     * @param instanceIds: 流程实例集合[必传]
+     * @param instanceIds: 流程实例集合
      */
     boolean remove(List<Long> instanceIds);
 
     /**
+     * 根据流程定义id，查询流程实例集合
+     * @param definitionId 流程定义id
+     * @return List<Instance>
+     */
+    List<Instance> getByDefId(Long definitionId);
+
+    /**
      * 激活实例
-     * @param id 流程实例id: [必传]
+     * @param id 流程实例id
      */
     boolean active(Long id);
 
     /**
      * 挂起实例，流程实例挂起后，该流程实例无法继续流转
-     * @param id 流程实例id: [必传]
+     * @param id 流程实例id
      */
     boolean unActive(Long id);
 

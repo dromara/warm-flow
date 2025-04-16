@@ -20,6 +20,7 @@ import org.dromara.warm.flow.core.orm.service.IWarmService;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * 节点跳转关联Service接口
@@ -36,4 +37,19 @@ public interface SkipService extends IWarmService<Skip> {
      * @return 结果
      */
     public int deleteSkipByDefIds(Collection<? extends Serializable> defIds);
+
+    /**
+     * 根据流程定义id查询节点跳转线
+     * @param definitionId  流程定义id
+     * @return List<Skip>
+     */
+    List<Skip> getByDefId(Long definitionId);
+
+    /**
+     * 根据流程定义id和节点编码查询节点跳转线
+     * @param definitionId  流程定义id
+     * @param nowNodeCode 其实节点编码
+     * @return List<Skip>
+     */
+    List<Skip> getByDefIdAndNowNodeCode(Long definitionId, String nowNodeCode);
 }
