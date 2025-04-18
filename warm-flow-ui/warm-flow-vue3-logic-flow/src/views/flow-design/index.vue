@@ -11,7 +11,7 @@
 
 <script setup name="Design">
 import LogicFlow from "@logicflow/core";
-import "@logicflow/core/dist/style/index.css";
+import "@logicflow/core/lib/style/index.css";
 import {Control, DndPanel, Menu, SelectionSelect} from '@logicflow/extension';
 import '@logicflow/extension/lib/style/index.css'
 import { ElLoading } from 'element-plus'
@@ -57,6 +57,17 @@ onMounted(async () => {
     grid: true,
     keyboard: {
       enabled: true,
+      shortcuts: [
+        {
+          keys: ["delete"],
+          callback: () => {
+            const elements = lf.value.getSelectElements(true);
+            lf.value.clearSelectElements();
+            elements.edges.forEach((edge) => lf.value.deleteEdge(edge.id));
+            elements.nodes.forEach((node) => lf.value.deleteNode(node.id));
+          },
+        },
+      ],
     },
   });
   register();
