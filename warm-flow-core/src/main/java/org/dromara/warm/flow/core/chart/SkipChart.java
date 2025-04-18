@@ -26,6 +26,7 @@ import java.util.Arrays;
 
 /**
  * 流程图开始或者结束节点
+ * @see <a href="https://warm-flow.dromara.org/master/advanced/chart_manage.html">文档地址</a>
  */
 @Getter
 @Setter

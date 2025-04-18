@@ -178,6 +178,17 @@
         <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
     </select>
 
+    <select id="getByInsIdAndNodeCodes" resultMap="FlowTaskResult">
+        <include refid="selectVo"/>
+        where t.instance_id = #{instanceId}
+        AND t.node_code in
+        <foreach item="nodeCode" collection="nodeCodes" open="(" separator="," close=")">
+            #{nodeCode}
+        </foreach>
+        <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+    </select>
+
     <insert id="insert" parameterType="org.dromara.warm.flow.orm.entity.FlowTask">
         insert into flow_task
         <trim prefix="(" suffix=")" suffixOverrides=",">

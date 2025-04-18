@@ -28,6 +28,7 @@ import java.util.Map;
  * 监听器变量
  *
  * @author warm
+ * @see <a href="https://warm-flow.dromara.org/master/advanced/listener.html">文档地址</a>
  */
 public class ListenerVariable {
 

@@ -104,6 +104,11 @@ public interface DefService extends IWarmService<Definition> {
      */
     DefJson queryDesign(Long id);
 
+    /**
+     * 根据流程定义code列表查询流程定义
+     * @param flowCodeList 流程定义code列表
+     * @return List<Definition>
+     */
     List<Definition> queryByCodeList(List<String> flowCodeList);
 
     /**

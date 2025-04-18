@@ -20,6 +20,7 @@ package org.dromara.warm.flow.core.condition;
  * 条件表达式不包含 notNike@@flag|4 and eq@@flag|5 or lt@@flag|6
  *
  * @author warm
+ * @see <a href="https://warm-flow.dromara.org/master/primary/condition.html">文档地址</a>
  */
 public class ConditionStrategyNotLike extends ConditionStrategyAbstract {
 

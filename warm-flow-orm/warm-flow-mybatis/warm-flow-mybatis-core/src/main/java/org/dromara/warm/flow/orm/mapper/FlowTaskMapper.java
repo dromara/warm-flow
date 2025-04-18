@@ -20,6 +20,7 @@ import org.apache.ibatis.annotations.Param;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * 待办任务Mapper接口
@@ -48,4 +49,16 @@ public interface FlowTaskMapper extends WarmMapper<FlowTask> {
             , @Param("entity") FlowTask entity
             , @Param("logicDeleteValue") String logicDeleteValue
             , @Param("logicNotDeleteValue") String logicNotDeleteValue);
+
+    /**
+     * 根据实例id和节点code查询
+     *
+     * @param instanceId  实例id
+     * @param nodeCodes    节点code
+     * @param entity 实体
+     * @return 结果
+     */
+    List<FlowTask> getByInsIdAndNodeCodes(@Param("instanceId") Long instanceId,
+                                          @Param("nodeCodes") List<String> nodeCodes,
+                                          @Param("entity") FlowTask entity);
 }

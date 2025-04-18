@@ -137,7 +137,7 @@ public class ExpressionUtil {
                     if (StringUtils.isNotEmpty(strategy.interceptStr())) {
                         expression = expression.replace(strategy.getType() + strategy.interceptStr(), "");
                     }
-                    return strategy.eval(expression, variable);
+                    return strategy.eval(expression, MapUtil.isEmpty(variable) ? new HashMap<>() : variable);
                 }
             }
         }

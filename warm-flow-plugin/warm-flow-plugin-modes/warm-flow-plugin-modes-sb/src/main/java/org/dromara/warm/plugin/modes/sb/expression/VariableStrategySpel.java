@@ -24,6 +24,7 @@ import java.util.Map;
  * 条件表达式spel: @@spel@@|#{@user.evalVar()}
  *
  * @author warm
+ * @see <a href="https://warm-flow.dromara.org/master/advanced/variableStategy.html">文档地址</a>
  */
 public class VariableStrategySpel implements VariableStrategy {
 

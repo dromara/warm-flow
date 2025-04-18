@@ -34,4 +34,6 @@ public interface FlowTaskDao<T extends Task> extends WarmDao<T> {
      * @return 结果
      */
     int deleteByInsIds(List<Long> instanceIds);
+
+    List<T> getByInsIdAndNodeCodes(Long instanceId, List<String> nodeCodes);
 }

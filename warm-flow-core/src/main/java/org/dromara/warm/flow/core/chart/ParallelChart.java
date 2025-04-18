@@ -19,15 +19,13 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.dromara.warm.flow.core.dto.NodeJson;
-import org.dromara.warm.flow.core.utils.CollUtil;
-import org.dromara.warm.flow.core.utils.ObjectUtil;
-import org.dromara.warm.flow.core.utils.StringUtils;
 
 import java.awt.*;
-import java.util.List;
 
 /**
  * 流程图并行网关
+ *
+ * @see <a href="https://warm-flow.dromara.org/master/advanced/chart_manage.html">文档地址</a>
  */
 @Getter
 @Setter

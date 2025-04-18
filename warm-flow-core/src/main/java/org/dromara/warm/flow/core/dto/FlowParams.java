@@ -110,9 +110,54 @@ public class FlowParams implements Serializable {
     private List<String> reductionHandlers;
 
     /**
-     * 转办忽略权限校验（true：忽略，false：不忽略）
+     * 忽略-办理权限校验（true：忽略，false：不忽略）
      */
     private boolean ignore;
+
+    /**
+     * 忽略-委派处理（true：忽略，false：不忽略）
+     */
+    private boolean ignoreDepute;
+
+    /**
+     * 忽略-会签票签处理（true：忽略，false：不忽略）
+     */
+    private boolean ignoreCooperate;
+
+    public FlowParams() {
+    }
+
+    public FlowParams(String skipType, String message, Map<String, Object> variable) {
+        this.skipType = skipType;
+        this.message = message;
+        this.variable = variable;
+    }
+
+    public FlowParams(String nodeCode, String skipType, String message, Map<String, Object> variable) {
+        this.nodeCode = nodeCode;
+        this.skipType = skipType;
+        this.message = message;
+        this.variable = variable;
+    }
+
+    public FlowParams(String skipType, String message, Map<String, Object> variable
+            , String flowStatus, String hisStatus) {
+        this.skipType = skipType;
+        this.message = message;
+        this.variable = variable;
+        this.flowStatus = flowStatus;
+        this.hisStatus = hisStatus;
+    }
+
+    public FlowParams(String nodeCode, String skipType, String message, Map<String, Object> variable
+            , String flowStatus, String hisStatus) {
+        this.nodeCode = nodeCode;
+        this.skipType = skipType;
+        this.message = message;
+        this.variable = variable;
+        this.flowStatus = flowStatus;
+        this.hisStatus = hisStatus;
+    }
 
     public static FlowParams build() {
         return new FlowParams();
@@ -275,6 +320,24 @@ public class FlowParams implements Serializable {
 
     public FlowParams ignore(boolean ignore) {
         this.ignore = ignore;
+        return this;
+    }
+
+    public boolean isIgnoreDepute() {
+        return ignoreDepute;
+    }
+
+    public FlowParams ignoreDepute(boolean ignoreDepute) {
+        this.ignoreDepute = ignoreDepute;
+        return this;
+    }
+
+    public boolean isIgnoreCooperate() {
+        return ignoreCooperate;
+    }
+
+    public FlowParams ignoreCooperate(boolean ignoreCooperate) {
+        this.ignoreCooperate = ignoreCooperate;
         return this;
     }
 

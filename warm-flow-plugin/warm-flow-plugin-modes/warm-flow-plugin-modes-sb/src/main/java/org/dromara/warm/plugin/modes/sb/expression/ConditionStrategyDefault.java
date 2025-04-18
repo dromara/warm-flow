@@ -25,6 +25,7 @@ import java.util.Map;
  * 默认条件表达式 default@@${flag == 5 && flag > 4}
  *
  * @author warm
+ * @see <a href="https://warm-flow.dromara.org/master/primary/condition.html">文档地址</a>
  */
 public class ConditionStrategyDefault implements ConditionStrategy {
 
@@ -37,7 +38,9 @@ public class ConditionStrategyDefault implements ConditionStrategy {
     public Boolean eval(String expression, Map<String, Object> variable) {
         expression = expression.replace("$", "#");
         for (Map.Entry<String, Object> entry: variable.entrySet()) {
-            expression = expression.replace(entry.getKey(), entry.getValue().toString());
+            if (expression.contains(entry.getKey())) {
+                expression = expression.replace(entry.getKey(), "#" + entry.getKey());
+            }
         }
         return Boolean.TRUE.equals(SpelHelper.parseExpression(expression, variable));
     }

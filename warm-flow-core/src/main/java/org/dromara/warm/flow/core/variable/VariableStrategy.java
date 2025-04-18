@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
  * 办理人表达式策略接口
  *
  * @author warm
+ * @see <a href="https://warm-flow.dromara.org/master/advanced/variableStategy.html">文档地址</a>
  */
 public interface VariableStrategy extends ExpressionStrategy<List<String>> {
 

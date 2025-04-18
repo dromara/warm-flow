@@ -19,6 +19,8 @@ import java.io.Serializable;
 
 /**
  * 监听器
+ *
+ * @see <a href="https://warm-flow.dromara.org/master/advanced/listener.html">文档地址</a>
  */
 public interface Listener extends Serializable {
 

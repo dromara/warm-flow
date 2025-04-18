@@ -49,7 +49,7 @@ public interface NodeService extends IWarmService<Node> {
     List<Node> getByNodeCodes(List<String> nodeCodes, Long definitionId);
 
     /**
-     * 根据节点id获取下所有的前置节点集合
+     * 根据节点id获取所有的前置节点集合
      * @param nodeId 节点id
      * @return 所有的前置节点集合
      */
@@ -65,7 +65,7 @@ public interface NodeService extends IWarmService<Node> {
     List<Node> previousNodeList(Long definitionId, String nowNodeCode);
 
     /**
-     * 根据节点id获取下所有的后置节点集合
+     * 根据节点id获取所有的后置节点集合
      * @param nodeId 节点id
      * @return 所有的后置节点集合
      */

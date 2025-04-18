@@ -47,6 +47,50 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     @Override
+    public Instance pass(Long taskId, String message, Map<String, Object> variable) {
+        return skip(taskId, new FlowParams(SkipType.PASS.getKey(), message, variable));
+    }
+
+    @Override
+    public Instance passAtWill(Long taskId, String nodeCode, String message, Map<String, Object> variable) {
+        return skip(taskId, new FlowParams(nodeCode, SkipType.PASS.getKey(), message, variable));
+    }
+
+    @Override
+    public Instance pass(Long taskId, String message, Map<String, Object> variable, String flowStatus, String hisStatus) {
+        return skip(taskId, new FlowParams(SkipType.PASS.getKey(), message, variable, flowStatus, hisStatus));
+    }
+
+    @Override
+    public Instance passAtWill(Long taskId, String nodeCode, String message, Map<String, Object> variable
+            , String flowStatus, String hisStatus) {
+        return skip(taskId, new FlowParams(nodeCode, SkipType.PASS.getKey(), message, variable, flowStatus, hisStatus));
+    }
+
+
+    @Override
+    public Instance reject(Long taskId, String message, Map<String, Object> variable) {
+        return skip(taskId, new FlowParams(SkipType.REJECT.getKey(), message, variable));
+    }
+
+    @Override
+    public Instance rejectAtWill(Long taskId, String nodeCode, String message, Map<String, Object> variable) {
+        return skip(taskId, new FlowParams(nodeCode, SkipType.REJECT.getKey(), message, variable));
+    }
+
+    @Override
+    public Instance reject(Long taskId, String message, Map<String, Object> variable, String flowStatus, String hisStatus) {
+        return skip(taskId, new FlowParams(SkipType.REJECT.getKey(), message, variable, flowStatus, hisStatus));
+    }
+
+    @Override
+    public Instance rejectAtWill(Long taskId, String nodeCode, String message, Map<String, Object> variable
+            , String flowStatus, String hisStatus) {
+        return skip(taskId, new FlowParams(nodeCode, SkipType.REJECT.getKey(), message, variable, flowStatus, hisStatus));
+    }
+
+
+    @Override
     public Instance skip(Long taskId, FlowParams flowParams) {
         // 获取待办任务
         Task task = getById(taskId);
@@ -71,6 +115,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     @Override
     public Instance rejectLast(Task task, FlowParams flowParams) {
         flowParams.skipType(SkipType.REJECT.getKey());
+        AssertUtil.isNull(task, ExceptionCons.NOT_FOUNT_TASK);
         // 获取当前任务的前置任务
         List<HisTask> hisTaskList = FlowEngine.hisTaskService().getByInsId(task.getInstanceId());
         // 获取hisTaskList中TargetNodeCod等于task.getNodeCode()的，并且id最大的
@@ -94,6 +139,27 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     @Override
+    public Instance taskBackByInsId(Long instanceId, FlowParams flowParams) {
+        // 获取当前任务的前置任务
+        HisTask lastHisTask = taskBack(flowParams, instanceId);
+        List<Node> suffixNodeList = FlowEngine.nodeService().suffixNodeList(lastHisTask.getDefinitionId()
+                , lastHisTask.getNodeCode());
+
+        List<String> suffixNodeCodes = StreamUtils.toList(suffixNodeList, Node::getNodeCode);
+        List<Task> taskList = FlowEngine.taskService().getByInsIdAndNodeCodes(instanceId, suffixNodeCodes);
+        AssertUtil.isEmpty(taskList, ExceptionCons.NOT_FOUNT_HANDLED_TASK_HANDLER);
+        return skip(flowParams, taskList.get(0));
+    }
+
+    @Override
+    public Instance taskBack(Long taskId, FlowParams flowParams) {
+        Task task = getById(taskId);
+        AssertUtil.isNull(task, ExceptionCons.NOT_FOUNT_TASK);
+        taskBack(flowParams, task.getInstanceId());
+        return skip(flowParams, task);
+    }
+
+    @Override
     public Instance skip(FlowParams flowParams, Task task) {
         // TODO min 后续考虑并发问题，待办任务和实例表不同步，可给待办任务id加锁，抽取所接口，方便后续兼容分布式锁
         // 流程开启前正确性校验
@@ -110,7 +176,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 , task).setFlowParams(flowParams), Listener.LISTENER_START);
 
         // 如果是受托人在处理任务，需要处理一条委派记录，并且更新委托人，回到计划审批人,然后直接返回流程实例
-        if (handleDepute(task, flowParams)) {
+        if (!flowParams.isIgnoreDepute() && handleDepute(task, flowParams)) {
             return r.instance;
         }
 
@@ -118,7 +184,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         checkAuth(task, flowParams);
 
         //或签、会签、票签逻辑处理
-        if (cooperate(r.nowNode, task, flowParams)) {
+        if (!flowParams.isIgnoreCooperate() && cooperate(r.nowNode, task, flowParams)) {
             return r.instance;
         }
 
@@ -197,8 +263,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         Node startNode = FlowEngine.nodeService().getStartNode(instance.getDefinitionId());
         // 获取下一个节点，如果是网关节点，则重新获取后续节点
         PathWayData pathWayData = new PathWayData().setInsId(instanceId).setSkipType(flowParams.getSkipType());
-        List<Node> nextNodes = FlowEngine.nodeService().getNextNodeList(startNode.getDefinitionId(), startNode
-                , null, SkipType.PASS.getKey(), flowParams.getVariable(), pathWayData);
+        Node nextNode = FlowEngine.nodeService().getNextNode(startNode.getDefinitionId(), startNode, null
+                , SkipType.PASS.getKey(), null);
+        List<Node> nextNodes = FlowEngine.nodeService().getNextByCheckGateway(flowParams.getVariable(), nextNode, pathWayData);
         pathWayData.getTargetNodes().addAll(nextNodes);
         // 设置流程图元数据
         instance.setDefJson(FlowEngine.chartService().skipMetadata(pathWayData));
@@ -238,6 +305,15 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         taskList.forEach(task -> ListenerUtil.endCreateListener(new ListenerVariable(definition, instance,
                 nodeMap.get(task.getNodeCode()), flowParams.getVariable(), task, nextNodes, addTasks).setFlowParams(flowParams)));
         return instance;
+    }
+
+    @Override
+    public Instance terminationByInsId(Long instanceId, FlowParams flowParams) {
+        // 获取待办任务
+        List<Task> taskList = FlowEngine.taskService().getByInsId(instanceId);
+        AssertUtil.isEmpty(taskList, ExceptionCons.NOT_FOUNT_TASK);
+        Task task = taskList.get(0);
+        return termination(task, flowParams);
     }
 
     @Override
@@ -435,7 +511,40 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     @Override
     public List<Task> getByInsId(Long instanceId) {
-        return FlowEngine.taskService().list(FlowEngine.newTask().setInstanceId(instanceId));
+        return list(FlowEngine.newTask().setInstanceId(instanceId));
+    }
+
+    @Override
+    public List<Task> getByInsIdAndNodeCodes(Long instanceId, List<String> nodeCodes) {
+        return getDao().getByInsIdAndNodeCodes(instanceId, nodeCodes);
+    }
+
+    /**
+     * 根据流程实例id获取操作人最近的已办历史任务
+     * @param flowParams 包含流程相关参数的对象
+     * @param instanceId 流程实例id
+     * @return 最近的已办历史任务
+     */
+    private HisTask taskBack(FlowParams flowParams, Long instanceId) {
+        flowParams.skipType(SkipType.REJECT.getKey());
+        flowParams.ignore(true);
+        flowParams.ignoreDepute(true);
+        flowParams.ignoreCooperate(true);
+        if (StringUtils.isEmpty(flowParams.getFlowStatus())) {
+            flowParams.flowStatus(FlowStatus.TASK_BACK.getKey());
+        }
+        // 获取当前任务的前置任务
+        List<HisTask> hisTaskList = FlowEngine.hisTaskService().getByInsId(instanceId);
+        // 获取hisTaskList中TargetNodeCod等于task.getNodeCode()的，并且id最大的
+        HisTask lastHisTask = hisTaskList.stream()
+                .filter(hisTask -> StringUtils.isNotEmpty(hisTask.getApprover()))
+                .filter(hisTask -> SkipType.isPass(hisTask.getSkipType()))
+                .filter(hisTask -> hisTask.getApprover().equals(flowParams.getHandler()))
+                .max(Comparator.comparingLong(HisTask::getId))
+                .orElse(null);
+        AssertUtil.isNull(lastHisTask, ExceptionCons.NOT_FOUNT_HANDLED_TASK);
+        flowParams.nodeCode(lastHisTask.getNodeCode());
+        return lastHisTask;
     }
 
     /**
@@ -444,7 +553,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
      * @return 待办任务
      */
     private Task getTask(Long instanceId) {
-        List<Task> taskList = FlowEngine.taskService().getByInsId(instanceId);
+        List<Task> taskList = getByInsId(instanceId);
         AssertUtil.isEmpty(taskList, ExceptionCons.NOT_FOUNT_TASK);
         AssertUtil.isTrue(taskList.size() > 1, ExceptionCons.TASK_NOT_ONE);
         return taskList.get(0);

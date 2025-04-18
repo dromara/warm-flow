@@ -217,21 +217,20 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
             if (CollUtil.isEmpty(skipsGateway)) {
                 return null;
             }
-            // 过滤跳转
-            if (!NodeType.isStart(nextNode.getNodeType())) {
-                if (MapUtil.isEmpty(variable)) {
-                    variable = new HashMap<>();
-                }
-                Map<String, Object> finalVariable = variable;
-                skipsGateway = skipsGateway.stream().filter(t -> {
-                    if (NodeType.isGateWaySerial(nextNode.getNodeType())) {
-                        if (StringUtils.isNotEmpty(t.getSkipCondition())) {
-                            return ExpressionUtil.evalCondition(t.getSkipCondition(), finalVariable);
+            if (!NodeType.isStart(nextNode.getNodeType()) && NodeType.isGateWaySerial(nextNode.getNodeType())) {
+                //  如果满足跳转条件，则取任意一条，否则取跳转条件为空的任意一条
+                Skip skipOne = null;
+                for (Skip skip : skipsGateway) {
+                    if (StringUtils.isNotEmpty(skip.getSkipCondition())) {
+                        if (ExpressionUtil.evalCondition(skip.getSkipCondition(), variable)) {
+                            skipOne = skip;
+                            break;
                         }
+                    } else {
+                        skipOne = skip;
                     }
-                    // 并行网关返回多个跳转
-                    return true;
-                }).collect(Collectors.toList());
+                }
+                skipsGateway = skipOne == null ? null : CollUtil.toList(skipOne);
             }
             AssertUtil.isEmpty(skipsGateway, ExceptionCons.NULL_CONDITION_VALUE_NODE);
             List<String> nextNodeCodes = StreamUtils.toList(skipsGateway, Skip::getNextNodeCode);
@@ -252,6 +251,7 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
         if (pathWayData != null) {
             pathWayData.getPathWayNodes().remove(nextNode);
         }
+        AssertUtil.isTrue(NodeType.isStart(nextNode.getNodeType()), ExceptionCons.START_NODE_NOT_ALLOW_JUMP);
         return CollUtil.toList(nextNode);
     }
 

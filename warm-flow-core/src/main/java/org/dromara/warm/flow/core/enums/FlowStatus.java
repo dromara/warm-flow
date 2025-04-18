@@ -48,7 +48,9 @@ public enum FlowStatus {
 
     REJECT("9", "已退回"),
 
-    INVALID("10", "失效");
+    INVALID("10", "失效"),
+
+    TASK_BACK("11", "拿回");
 
     private final String key;
     private final String value;

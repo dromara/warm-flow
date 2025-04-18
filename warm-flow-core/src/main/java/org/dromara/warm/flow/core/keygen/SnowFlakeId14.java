@@ -19,6 +19,7 @@ package org.dromara.warm.flow.core.keygen;
  * warm 生成14位有序id
  *
  * @author warm
+ * @see <a href="https://warm-flow.dromara.org/master/primary/idGen.html">文档地址</a>
  */
 public class SnowFlakeId14 implements KenGen {
     /**

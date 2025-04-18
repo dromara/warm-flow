@@ -21,6 +21,7 @@ import java.util.Map;
  * 默认办理人表达式策略： @@default@@|${flag}
  *
  * @author warm
+ * @see <a href="https://warm-flow.dromara.org/master/advanced/variableStategy.html">文档地址</a>
  */
 public class DefaultVariableStrategy implements VariableStrategy {
 

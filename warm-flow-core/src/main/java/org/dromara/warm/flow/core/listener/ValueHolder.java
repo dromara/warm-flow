@@ -15,6 +15,9 @@
  */
 package org.dromara.warm.flow.core.listener;
 
+/**
+ * @see <a href="https://warm-flow.dromara.org/master/advanced/listener.html">文档地址</a>
+ */
 public class ValueHolder {
     private String path;
     private Listener listener;

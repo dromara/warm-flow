@@ -16,8 +16,8 @@
 package org.dromara.warm.flow.orm.dao;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import org.dromara.warm.flow.core.orm.dao.FlowTaskDao;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
+import org.dromara.warm.flow.core.orm.dao.FlowTaskDao;
 import org.dromara.warm.flow.orm.entity.FlowTask;
 import org.dromara.warm.flow.orm.mapper.FlowTaskMapper;
 
@@ -50,5 +50,13 @@ public class FlowTaskDaoImpl extends WarmDaoImpl<FlowTask> implements FlowTaskDa
     @Override
     public int deleteByInsIds(List<Long> instanceIds) {
         return getMapper().delete(new LambdaQueryWrapper<FlowTask>().in(FlowTask::getInstanceId, instanceIds));
+    }
+
+    @Override
+    public List<FlowTask> getByInsIdAndNodeCodes(Long instanceId, List<String> nodeCodes) {
+        LambdaQueryWrapper<FlowTask> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(FlowTask::getInstanceId, instanceId);
+        queryWrapper.in(FlowTask::getNodeCode, nodeCodes);
+        return getMapper().selectList(queryWrapper);
     }
 }
