@@ -49,6 +49,25 @@ public class StreamUtils {
     }
 
     /**
+     * 将collection过滤
+     *
+     * @param collection 需要转化的集合
+     * @param function   过滤方法
+     * @return 过滤后的list
+     */
+    public static <E> E filterOne(Collection<E> collection, Predicate<E> function) {
+        if (CollUtil.isEmpty(collection)) {
+            return null;
+        }
+        // 注意此处不要使用 .toList() 新语法 因为返回的是不可变List 会导致序列化问题
+        List<E> collect = collection.stream().filter(function).collect(Collectors.toList());
+        if (collect.isEmpty()) {
+            return null;
+        }
+        return CollUtil.getOne(collect);
+    }
+
+    /**
      * 将collection拼接
      *
      * @param collection 需要转化的集合

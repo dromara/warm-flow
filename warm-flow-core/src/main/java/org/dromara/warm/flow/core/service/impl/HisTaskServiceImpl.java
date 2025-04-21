@@ -23,7 +23,6 @@ import org.dromara.warm.flow.core.entity.Task;
 import org.dromara.warm.flow.core.entity.User;
 import org.dromara.warm.flow.core.enums.CooperateType;
 import org.dromara.warm.flow.core.enums.FlowStatus;
-import org.dromara.warm.flow.core.enums.NodeType;
 import org.dromara.warm.flow.core.enums.SkipType;
 import org.dromara.warm.flow.core.orm.dao.FlowHisTaskDao;
 import org.dromara.warm.flow.core.orm.service.impl.WarmServiceImpl;
@@ -201,7 +200,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
         return CollUtil.getOne(hisTaskList);
     }
 
-    private static HisTask setSkipHis(Task task, List<Node> nextNodes, FlowParams flowParams, String flowStatus) {
+    private HisTask setSkipHis(Task task, List<Node> nextNodes, FlowParams flowParams, String flowStatus) {
         HisTask hisTask = FlowEngine.newHisTask()
                 .setTaskId(task.getId())
                 .setInstanceId(task.getInstanceId())
@@ -214,7 +213,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
                 .setTargetNodeCode(StreamUtils.join(nextNodes, Node::getNodeCode))
                 .setTargetNodeName(StreamUtils.join(nextNodes, Node::getNodeName))
                 .setApprover(flowParams.getHandler())
-                .setSkipType(NodeType.isStart(task.getNodeType()) ? SkipType.PASS.getKey() : flowParams.getSkipType())
+                .setSkipType(flowParams.getSkipType())
                 .setFlowStatus(StringUtils.isNotEmpty(flowStatus)
                         ? flowStatus : SkipType.isReject(flowParams.getSkipType())
                         ? FlowStatus.REJECT.getKey() : FlowStatus.PASS.getKey())
@@ -229,7 +228,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
         return hisTask;
     }
 
-    private static String getFlowStatus(FlowParams flowParams) {
+    private String getFlowStatus(FlowParams flowParams) {
         return StringUtils.emptyDefault(flowParams.getHisStatus(), flowParams.getFlowStatus());
     }
 }

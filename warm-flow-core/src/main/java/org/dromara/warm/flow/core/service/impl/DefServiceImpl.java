@@ -212,6 +212,26 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     }
 
     @Override
+    public FlowCombine getFlowCombine(Long id) {
+        return getFlowCombine(getDao().selectById(id));
+    }
+
+    @Override
+    public FlowCombine getFlowCombineNoDef(Long id) {
+        FlowCombine flowCombine = new FlowCombine();
+        flowCombine.setAllNodes(FlowEngine.nodeService().getByDefId(id));
+        flowCombine.setAllSkips(FlowEngine.skipService().getByDefId(id));
+        return flowCombine;
+    }
+
+    @Override
+    public FlowCombine getFlowCombine(Definition definition) {
+        FlowCombine flowCombine = getFlowCombineNoDef(definition.getId());
+        flowCombine.setDefinition(definition);
+        return flowCombine;
+    }
+
+    @Override
     public DefJson queryDesign(Long id) {
         return DefJson.copyDef(getAllDataDefinition(id));
     }
@@ -334,6 +354,12 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     @Override
     public List<Definition> getByFlowCode(String flowCode) {
         return list(FlowEngine.newDef().setFlowCode(flowCode));
+    }
+
+    @Override
+    public Definition getPublishByFlowCode(String flowCode) {
+        return FlowEngine.defService().getOne(FlowEngine.newDef()
+                .setFlowCode(flowCode).setIsPublish(PublishStatus.PUBLISHED.getKey()));
     }
 
     private String getNewVersion(Definition definition) {

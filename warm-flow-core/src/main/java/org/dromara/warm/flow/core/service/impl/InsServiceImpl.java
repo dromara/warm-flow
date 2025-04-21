@@ -17,13 +17,11 @@ package org.dromara.warm.flow.core.service.impl;
 
 import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.constant.ExceptionCons;
+import org.dromara.warm.flow.core.dto.FlowCombine;
 import org.dromara.warm.flow.core.dto.FlowParams;
 import org.dromara.warm.flow.core.dto.PathWayData;
 import org.dromara.warm.flow.core.entity.*;
-import org.dromara.warm.flow.core.enums.ActivityStatus;
-import org.dromara.warm.flow.core.enums.FlowStatus;
-import org.dromara.warm.flow.core.enums.NodeType;
-import org.dromara.warm.flow.core.enums.SkipType;
+import org.dromara.warm.flow.core.enums.*;
 import org.dromara.warm.flow.core.listener.Listener;
 import org.dromara.warm.flow.core.listener.ListenerVariable;
 import org.dromara.warm.flow.core.orm.dao.FlowInstanceDao;
@@ -55,16 +53,16 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         AssertUtil.isNull(flowParams.getFlowCode(), ExceptionCons.NULL_FLOW_CODE);
         AssertUtil.isEmpty(businessId, ExceptionCons.NULL_BUSINESS_ID);
         // 获取已发布的流程节点
-        List<Node> nodes = FlowEngine.nodeService().getPublishByFlowCode(flowParams.getFlowCode());
-        AssertUtil.isEmpty(nodes, String.format(ExceptionCons.NOT_PUBLISH_NODE, flowParams.getFlowCode()));
+        Definition definition = FlowEngine.defService().getPublishByFlowCode(flowParams.getFlowCode());
+        FlowCombine flowCombine = FlowEngine.defService().getFlowCombine(definition);
         // 获取开始节点
-        Node startNode = nodes.stream().filter(t -> NodeType.isStart(t.getNodeType())).findFirst().orElse(null);
+        Node startNode = StreamUtils.filterOne(flowCombine.getAllNodes(), t -> NodeType.isStart(t.getNodeType()));
         AssertUtil.isNull(startNode, ExceptionCons.LOST_START_NODE);
 
         // 判断流程定义是否激活状态
-        Definition definition = FlowEngine.defService().getById(startNode.getDefinitionId());
         AssertUtil.isTrue(definition.getActivityStatus().equals(ActivityStatus.SUSPENDED.getKey())
                 , ExceptionCons.NOT_DEFINITION_ACTIVITY);
+        flowParams.skipType(SkipType.PASS.getKey());
 
         // 执行开始监听器
         ListenerUtil.executeListener(new ListenerVariable(definition, null, startNode, flowParams.getVariable())
@@ -72,9 +70,9 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
 
 
         // 获取下一个节点，如果是网关节点，则重新获取后续节点
-        PathWayData pathWayData = new PathWayData().setDefId(startNode.getDefinitionId());
-        List<Node> nextNodes = FlowEngine.nodeService().getNextNodeList(startNode.getDefinitionId(), startNode
-                , null, SkipType.PASS.getKey(), flowParams.getVariable(), pathWayData);
+        PathWayData pathWayData = new PathWayData().setDefId(startNode.getDefinitionId()).setSkipType(flowParams.getSkipType());
+        List<Node> nextNodes = FlowEngine.nodeService().getNextNodeList(startNode, null, flowParams.getSkipType(),
+                flowParams.getVariable(), pathWayData, flowCombine);
 
         // 设置流程实例对象
         Instance instance = setStartInstance(nextNodes.get(0), businessId, flowParams);
@@ -99,7 +97,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         instance.setDefJson(FlowEngine.chartService().startMetadata(pathWayData));
 
         // 开启流程，保存流程信息
-        saveFlowInfo(instance, addTasks, hisTask);
+        saveFlowInfo(instance, addTasks, hisTask, flowParams);
 
         // 执行完成和创建监听器
         ListenerUtil.endCreateListener(new ListenerVariable(definition, instance, startNode, flowParams.getVariable()
@@ -167,12 +165,15 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
      * @param addTasks 新增任务
      * @param hisTask 历史任务
      */
-    private void saveFlowInfo(Instance instance, List<Task> addTasks, HisTask hisTask) {
+    private void saveFlowInfo(Instance instance, List<Task> addTasks, HisTask hisTask, FlowParams flowParams) {
+        FlowEngine.taskService().setInsFinishInfo(instance, addTasks, flowParams);
         // 待办任务设置处理人
-        List<User> users = FlowEngine.userService().taskAddUsers(addTasks);
+        if (CollUtil.isNotEmpty(addTasks)) {
+            List<User> users = FlowEngine.userService().taskAddUsers(addTasks);
+            FlowEngine.taskService().saveBatch(addTasks);
+            FlowEngine.userService().saveBatch(users);
+        }
         FlowEngine.hisTaskService().save(hisTask);
-        FlowEngine.taskService().saveBatch(addTasks);
-        FlowEngine.userService().saveBatch(users);
         save(instance);
     }
 

@@ -96,6 +96,9 @@ public class DefJson {
      */
     private Map<String, Object> extMap;
 
+    /**
+     * 所有节点结合
+     */
     private List<NodeJson> nodeList = new ArrayList<>();
 
     public static DefJson copyDef(Definition definition) {

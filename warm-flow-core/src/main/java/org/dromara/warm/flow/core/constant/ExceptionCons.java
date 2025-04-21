@@ -129,7 +129,7 @@ public class ExceptionCons {
 
     public static final String ID_EMPTY = "ID不能为空";
 
-    public static final String NOT_DEF_PROMOTER_NOT_RETRIEVE = "不是当前流程的发起人，无法取回";
+    public static final String NOT_DEF_PROMOTER_NOT_CANCEL = "不是当前流程的发起人，无法撤销";
 
     public static final String HANDLER_NOT_EMPTY = "办理人不能为空";
 

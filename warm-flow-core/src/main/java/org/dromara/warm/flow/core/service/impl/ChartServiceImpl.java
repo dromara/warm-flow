@@ -99,7 +99,9 @@ public class ChartServiceImpl implements ChartService {
 
         pathWayData.getPathWayNodes().forEach(node -> nodeMap.get(node.getNodeCode()).setStatus(ChartStatus.DONE.getKey()));
         pathWayData.getPathWaySkips().forEach(skip -> skipMap.get(getSkipKey(skip)).setStatus(ChartStatus.DONE.getKey()));
-        pathWayData.getTargetNodes().forEach(node -> nodeMap.get(node.getNodeCode()).setStatus(ChartStatus.TO_DO.getKey()));
+        pathWayData.getTargetNodes().forEach(node -> nodeMap.get(node.getNodeCode()).setStatus(
+                NodeType.isEnd(node.getNodeType()) ? ChartStatus.DONE.getKey() : ChartStatus.TO_DO.getKey()
+        ));
 
         return FlowEngine.jsonConvert.objToStr(defJson);
     }
@@ -107,12 +109,10 @@ public class ChartServiceImpl implements ChartService {
     @Override
     public String skipMetadata(PathWayData pathWayData) {
         Instance instance = FlowEngine.insService().getById(pathWayData.getInsId());
-        String defJsonStr = instance.getDefJson();
-        DefJson defJson = FlowEngine.jsonConvert.strToBean(defJsonStr, DefJson.class);
+        DefJson defJson = FlowEngine.jsonConvert.strToBean(instance.getDefJson(), DefJson.class);
 
         List<NodeJson> nodeList = defJson.getNodeList();
-        List<SkipJson> skipList = nodeList.stream().map(NodeJson::getSkipList).flatMap(List::stream)
-                .collect(Collectors.toList());
+        List<SkipJson> skipList = StreamUtils.toListAll(defJson.getNodeList(), NodeJson::getSkipList);
         Map<String, NodeJson> nodeMap = StreamUtils.toMap(nodeList, NodeJson::getNodeCode, node -> node);
         Map<String, SkipJson> skipMap = StreamUtils.toMap(skipList, this::getSkipKey, skip -> skip);
 

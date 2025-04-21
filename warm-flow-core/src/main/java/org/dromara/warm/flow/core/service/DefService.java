@@ -16,6 +16,7 @@
 package org.dromara.warm.flow.core.service;
 
 import org.dromara.warm.flow.core.dto.DefJson;
+import org.dromara.warm.flow.core.dto.FlowCombine;
 import org.dromara.warm.flow.core.entity.Definition;
 import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.entity.Skip;
@@ -98,6 +99,27 @@ public interface DefService extends IWarmService<Definition> {
     Definition getAllDataDefinition(Long id);
 
     /**
+     * 流程数据集合
+     * @param id 流程定义id
+     * @return FlowCombine
+     */
+    FlowCombine getFlowCombine(Long id);
+
+    /**
+     * 流程数据集合不包含流程定义
+     * @param id 流程定义id
+     * @return FlowCombine
+     */
+    FlowCombine getFlowCombineNoDef(Long id);
+
+    /**
+     * 流程数据集合
+     * @param definition 流程定义
+     * @return FlowCombine
+     */
+    FlowCombine getFlowCombine(Definition definition);
+
+    /**
      * 查询流程设计所需的数据，比如流程图渲染
      * @param id 流程定义id
      * @return 流程定义json对象
@@ -168,4 +190,11 @@ public interface DefService extends IWarmService<Definition> {
      * @return List<Definition>
      */
     List<Definition> getByFlowCode(String flowCode);
+
+    /**
+     * 根据流程定义code查询已发布的流程定义
+     * @param flowCode 流程定义code
+     * @return Definition
+     */
+    Definition getPublishByFlowCode(String flowCode);
 }

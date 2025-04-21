@@ -170,6 +170,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             AssertUtil.isFalse(StringUtils.isNotEmpty(flowParams.getSkipType()), ExceptionCons.NULL_CONDITION_VALUE);
         }
         task.setUserList(FlowEngine.userService().listByAssociatedAndTypes(task.getId()));
+        FlowCombine flowCombine = FlowEngine.defService().getFlowCombineNoDef(r.definition.getId());
 
         // 执行开始监听器
         ListenerUtil.executeListener(new ListenerVariable(r.definition, r.instance, r.nowNode, flowParams.getVariable()
@@ -190,10 +191,10 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
         // 获取后续任务节点结合
         PathWayData pathWayData = new PathWayData().setInsId(task.getInstanceId()).setSkipType(flowParams.getSkipType());
-        Node nextNode = FlowEngine.nodeService().getNextNode(task.getDefinitionId(), r.nowNode
-                , flowParams.getNodeCode(), flowParams.getSkipType(), pathWayData);
+        Node nextNode = FlowEngine.nodeService().getNextNode(r.nowNode, flowParams.getNodeCode()
+                , flowParams.getSkipType(), pathWayData, flowCombine);
         List<Node> nextNodes = FlowEngine.nodeService().getNextByCheckGateway(flowParams.getVariable()
-                , nextNode, pathWayData);
+                , nextNode, pathWayData, flowCombine);
 
         // 判断并行网关节点前置跳转线是否都完成，才能生成新的代办任务
         filterCanNewTask(pathWayData, r.instance, nextNodes);
@@ -215,8 +216,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         updateFlowInfo(task, r.instance, addTasks, flowParams, nextNodes);
 
         // 一票否决（谨慎使用），如果退回，退回指向节点后还存在其他正在执行的待办任务，转历史任务，状态都为失效,重走流程。
-        if (CollUtil.isNotEmpty(nextNodes)) {
-            oneVoteVeto(task, flowParams, nextNodes.get(0).getNodeCode());
+        if (CollUtil.isNotEmpty(nextNodes) && SkipType.isReject(flowParams.getSkipType())) {
+            oneVoteVeto(task, nextNodes.get(0).getNodeCode(), flowCombine);
         }
 
         // 处理未完成的任务，当流程完成，还存在待办任务未完成，转历史任务，状态完成。
@@ -246,8 +247,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         flowParams.variable(MapUtil.mergeAll(instance.getVariableMap(), flowParams.getVariable()));
 
         List<Task> taskList = getByInsId(instanceId);
-        List<Node> nodeList = FlowEngine.nodeService().getByDefId(instance.getDefinitionId());
-        Map<String, Node> nodeMap = StreamUtils.toMap(nodeList, Node::getNodeCode, node -> node);
+        FlowCombine flowCombine = FlowEngine.defService().getFlowCombine(definition);
+        Map<String, Node> nodeMap = StreamUtils.toMap(flowCombine.getAllNodes(), Node::getNodeCode, node -> node);
         // 执行开始监听器
         taskList.forEach(task -> ListenerUtil.executeListener(new ListenerVariable(definition, instance
                 , nodeMap.get(task.getNodeCode()), flowParams.getVariable(), task).setFlowParams(flowParams)
@@ -256,16 +257,17 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 验证权限是不是当前任务的发起人
         if (flowParams.isIgnore()) {
             AssertUtil.isFalse(instance.getCreateBy().equals(flowParams.getHandler())
-                    , ExceptionCons.NOT_DEF_PROMOTER_NOT_RETRIEVE);
+                    , ExceptionCons.NOT_DEF_PROMOTER_NOT_CANCEL);
         }
 
         // 获取开始节点
-        Node startNode = FlowEngine.nodeService().getStartNode(instance.getDefinitionId());
+        Node startNode = StreamUtils.filterOne(flowCombine.getAllNodes(), node -> NodeType.isStart(node.getNodeType()));
         // 获取下一个节点，如果是网关节点，则重新获取后续节点
         PathWayData pathWayData = new PathWayData().setInsId(instanceId).setSkipType(flowParams.getSkipType());
-        Node nextNode = FlowEngine.nodeService().getNextNode(startNode.getDefinitionId(), startNode, null
-                , SkipType.PASS.getKey(), null);
-        List<Node> nextNodes = FlowEngine.nodeService().getNextByCheckGateway(flowParams.getVariable(), nextNode, pathWayData);
+        Node nextNode = FlowEngine.nodeService().getNextNode(startNode, null, SkipType.PASS.getKey()
+                , null, flowCombine);
+        List<Node> nextNodes = FlowEngine.nodeService().getNextByCheckGateway(flowParams.getVariable(), nextNode
+                , pathWayData, flowCombine);
         pathWayData.getTargetNodes().addAll(nextNodes);
         // 设置流程图元数据
         instance.setDefJson(FlowEngine.chartService().skipMetadata(pathWayData));
@@ -519,6 +521,34 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         return getDao().getByInsIdAndNodeCodes(instanceId, nodeCodes);
     }
 
+    @Override
+    public void setInsFinishInfo(Instance instance, List<Task> addTasks, FlowParams flowParams) {
+        instance.setUpdateTime(new Date());
+        // 合并流程变量到实例对象
+        mergeVariable(instance, flowParams.getVariable());
+        if (CollUtil.isNotEmpty(addTasks)) {
+            addTasks.removeIf(addTask -> {
+                if (NodeType.isEnd(addTask.getNodeType())) {
+                    instance.setNodeType(addTask.getNodeType())
+                            .setNodeCode(addTask.getNodeCode())
+                            .setNodeName(addTask.getNodeName())
+                            .setFlowStatus(StringUtils.emptyDefault(flowParams.getFlowStatus()
+                                    , FlowStatus.FINISHED.getKey()));
+                    return true;
+                }
+                return false;
+            });
+        }
+        if (CollUtil.isNotEmpty(addTasks) && !NodeType.isEnd(instance.getNodeType())) {
+            Task nextTask = getNextTask(addTasks);
+            instance.setNodeType(nextTask.getNodeType())
+                    .setNodeCode(nextTask.getNodeCode())
+                    .setNodeName(nextTask.getNodeName())
+                    .setFlowStatus(ObjectUtil.isNotNull(flowParams.getFlowStatus()) ? flowParams.getFlowStatus()
+                            : setFlowStatus(nextTask.getNodeType(), flowParams.getSkipType()));
+        }
+    }
+
     /**
      * 根据流程实例id获取操作人最近的已办历史任务
      * @param flowParams 包含流程相关参数的对象
@@ -526,13 +556,11 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
      * @return 最近的已办历史任务
      */
     private HisTask taskBack(FlowParams flowParams, Long instanceId) {
-        flowParams.skipType(SkipType.REJECT.getKey());
-        flowParams.ignore(true);
-        flowParams.ignoreDepute(true);
-        flowParams.ignoreCooperate(true);
-        if (StringUtils.isEmpty(flowParams.getFlowStatus())) {
-            flowParams.flowStatus(FlowStatus.TASK_BACK.getKey());
-        }
+        flowParams.skipType(SkipType.REJECT.getKey())
+                .ignore(true)
+                .ignoreDepute(true)
+                .ignoreCooperate(true)
+                .flowStatus(StringUtils.emptyDefault(flowParams.getFlowStatus(), FlowStatus.TASK_BACK.getKey()));
         // 获取当前任务的前置任务
         List<HisTask> hisTaskList = FlowEngine.hisTaskService().getByInsId(instanceId);
         // 获取hisTaskList中TargetNodeCod等于task.getNodeCode()的，并且id最大的
@@ -759,9 +787,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
         Map<String, List<Skip>> skipLastMap = StreamUtils.groupByKey(pathWayData.getPathWaySkips(), Skip::getNextNodeCode);
         DefJson defJson = FlowEngine.jsonConvert.strToBean(instance.getDefJson(), DefJson.class);
-        List<NodeJson> nodeList = defJson.getNodeList();
-        Map<String, NodeJson> nodeJsonMap = StreamUtils.toMap(nodeList, NodeJson::getNodeCode, node -> node);
-        List<SkipJson> skipList = StreamUtils.toListAll(nodeList, NodeJson::getSkipList);
+        Map<String, NodeJson> nodeJsonMap = StreamUtils.toMap(defJson.getNodeList(), NodeJson::getNodeCode, node -> node);
+        List<SkipJson> skipList = StreamUtils.toListAll(defJson.getNodeList(), NodeJson::getSkipList);
         Map<String, List<SkipJson>> skipJsonLastMap = StreamUtils.groupByKey(skipList, SkipJson::getNextNodeCode);
 
         nextNodes.removeIf(targetNode -> {
@@ -823,57 +850,28 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 || CollUtil.notContainsAny(flowParams.getPermissionFlag(), permissions)), ExceptionCons.NULL_ROLE_NODE);
     }
 
-    // 设置任务完成后的实例相关信息
-    private void setInsFinishInfo(Instance instance, List<Task> addTasks, FlowParams flowParams) {
-        instance.setUpdateTime(new Date());
-        // 合并流程变量到实例对象
-        mergeVariable(instance, flowParams.getVariable());
-        if (CollUtil.isNotEmpty(addTasks)) {
-            addTasks.removeIf(addTask -> {
-                if (NodeType.isEnd(addTask.getNodeType())) {
-                    instance.setNodeType(addTask.getNodeType())
-                            .setNodeCode(addTask.getNodeCode())
-                            .setNodeName(addTask.getNodeName())
-                            .setFlowStatus(StringUtils.emptyDefault(flowParams.getFlowStatus()
-                                    , FlowStatus.FINISHED.getKey()));
-                    return true;
-                }
-                return false;
-            });
-        }
-        if (CollUtil.isNotEmpty(addTasks) && !NodeType.isEnd(instance.getNodeType())) {
-            Task nextTask = getNextTask(addTasks);
-            instance.setNodeType(nextTask.getNodeType())
-                    .setNodeCode(nextTask.getNodeCode())
-                    .setNodeName(nextTask.getNodeName())
-                    .setFlowStatus(ObjectUtil.isNotNull(flowParams.getFlowStatus()) ? flowParams.getFlowStatus()
-                            : setFlowStatus(nextTask.getNodeType(), flowParams.getSkipType()));
-        }
-    }
 
     /**
      * 一票否决（谨慎使用），如果退回，退回指向节点后还存在其他正在执行的待办任务，转历史任务，状态都为退回,重走流程。
      *
      * @param task         当前任务
-     * @param flowParams   包含流程相关参数的对象
      * @param nextNodeCode 下一个节点编码
+     * @param flowCombine 流程数据集合
      */
-    private void oneVoteVeto(Task task, FlowParams flowParams, String nextNodeCode) {
+    private void oneVoteVeto(Task task, String nextNodeCode, FlowCombine flowCombine) {
         // 一票否决（谨慎使用），如果退回，退回指向节点后还存在其他正在执行的待办任务，转历史任务，状态失效,重走流程。
-        if (SkipType.isReject(flowParams.getSkipType())) {
-            List<Task> tasks = list(FlowEngine.newTask().setInstanceId(task.getInstanceId()));
-            // 属于退回指向节点的后置未完成的任务
-            List<Task> noDoneTasks = new ArrayList<>();
-            List<Node> suffixNodeList = FlowEngine.nodeService().suffixNodeList(task.getDefinitionId(), nextNodeCode);
-            List<String> suffixCodes = StreamUtils.toList(suffixNodeList, Node::getNodeCode);
-            for (Task flowTask : tasks) {
-                if (suffixCodes.contains(flowTask.getNodeCode())) {
-                    noDoneTasks.add(flowTask);
-                }
+        List<Task> tasks = list(FlowEngine.newTask().setInstanceId(task.getInstanceId()));
+        // 属于退回指向节点的后置未完成的任务
+        List<Task> noDoneTasks = new ArrayList<>();
+        List<Node> suffixNodeList = FlowEngine.nodeService().suffixNodeList(nextNodeCode, flowCombine);
+        List<String> suffixCodes = StreamUtils.toList(suffixNodeList, Node::getNodeCode);
+        for (Task flowTask : tasks) {
+            if (suffixCodes.contains(flowTask.getNodeCode())) {
+                noDoneTasks.add(flowTask);
             }
-            if (CollUtil.isNotEmpty(noDoneTasks)) {
-                removeAndUser(noDoneTasks);
-            }
+        }
+        if (CollUtil.isNotEmpty(noDoneTasks)) {
+            removeAndUser(noDoneTasks);
         }
     }
 

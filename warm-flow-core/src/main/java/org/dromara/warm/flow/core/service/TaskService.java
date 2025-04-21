@@ -427,6 +427,14 @@ public interface TaskService extends IWarmService<Task> {
     List<Task> getByInsIdAndNodeCodes(Long instanceId, List<String> nodeCodes);
 
     /**
+     * 设置任务完成后的实例相关信息
+     * @param instance 实例对象
+     * @param addTasks 新增待办任务
+     * @param flowParams 流程参数对象
+     */
+    void setInsFinishInfo(Instance instance, List<Task> addTasks, FlowParams flowParams);
+
+    /**
      * 获取表单及数据(使用表单场景)
      *
      * @param taskId
