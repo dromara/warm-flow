@@ -9,6 +9,7 @@
         <result property="nodeCode" column="node_code"/>
         <result property="nodeName" column="node_name"/>
         <result property="nodeType" column="node_type"/>
+        <result property="flowStatus" column="flow_status"/>
         <result property="definitionId" column="definition_id"/>
         <result property="instanceId" column="instance_id"/>
         <result property="createTime" column="create_time"/>
@@ -27,6 +28,7 @@
                t.node_code,
                t.node_name,
                t.node_type,
+               t.flow_status,
                t.definition_id,
                t.instance_id,
                t.form_custom,
@@ -54,6 +56,7 @@
             <if test="entity.nodeCode != null  and entity.nodeCode != ''">and t.node_code = #{entity.nodeCode}</if>
             <if test="entity.nodeName != null  and entity.nodeName != ''">and t.node_name = #{entity.nodeName}</if>
             <if test="entity.nodeType != null">and t.node_type = #{entity.nodeCode}</if>
+            <if test="entity.flowStatus != null and entity.flowStatus != ''">and t.flow_status = #{entity.flowStatus}</if>
             <if test="entity.definitionId != null ">and t.definition_id = #{entity.definitionId}</if>
             <if test="entity.instanceId != null ">and t.instance_id = #{entity.instanceId}</if>
             <if test="entity.formCustom != null  and entity.formCustom != ''">and t.form_custom = #{entity.formCustom}</if>
@@ -71,6 +74,7 @@
         node_code,
         node_name,
         node_type,
+        flow_status,
         definition_id,
         instance_id,
         form_custom,
@@ -87,6 +91,7 @@
             #{item.nodeCode},
             #{item.nodeName},
             #{item.nodeType},
+            #{item.flowStatus},
             #{item.definitionId},
             #{item.instanceId},
             #{item.formCustom},
@@ -105,6 +110,7 @@
         node_code,
         node_name,
         node_type,
+        flow_status,
         definition_id,
         instance_id,
         form_custom,
@@ -120,6 +126,7 @@
             #{item.nodeCode},
             #{item.nodeName},
             #{item.nodeType},
+            #{item.flowStatus},
             #{item.definitionId},
             #{item.instanceId},
             #{item.formCustom},
@@ -196,6 +203,7 @@
             <if test="nodeCode != null and nodeCode != ''">node_code,</if>
             <if test="nodeName != null and nodeName != ''">node_name,</if>
             <if test="nodeType != null">node_type,</if>
+            <if test="flowStatus != null and flowStatus != ''">flow_status,</if>
             <if test="definitionId != null">definition_id,</if>
             <if test="instanceId != null">instance_id,</if>
             <if test="formCustom != null and formCustom != ''">form_custom,</if>
@@ -227,6 +235,7 @@
             <if test="nodeCode != null and nodeCode != ''">node_code = #{nodeCode},</if>
             <if test="nodeName != null and nodeName != ''">node_name = #{nodeName},</if>
             <if test="nodeType != null">node_type = #{nodeType},</if>
+            <if test="flowStatus != null and flowStatus != ''">#{flowStatus},</if>
             <if test="definitionId != null">definition_id = #{definitionId},</if>
             <if test="instanceId != null">instance_id = #{instanceId},</if>
             <if test="formCustom != null and formCustom != ''">form_custom = #{formCustom},</if>
@@ -302,6 +311,7 @@
             <if test="nodeCode != null and nodeCode != ''">and node_code = #{nodeCode}</if>
             <if test="nodeName != null and nodeName != ''">and node_name = #{nodeName}</if>
             <if test="nodeType != null">and node_type = #{nodeType}</if>
+            <if test="flowStatus != null and flowStatus != ''">and flow_status = #{flowStatus}</if>
             <if test="definitionId != null">and definition_id = #{definitionId}</if>
             <if test="instanceId != null">and instance_id = #{instanceId}</if>
             <if test="formCustom != null and formCustom != ''">and form_custom = #{formCustom}</if>
@@ -320,6 +330,7 @@
             <if test="entity.nodeCode != null and entity.nodeCode != ''">and node_code = #{entity.nodeCode}</if>
             <if test="entity.nodeName != null and entity.nodeName != ''">and node_name = #{entity.nodeName}</if>
             <if test="entity.nodeType != null">and node_type = #{entity.nodeType}</if>
+            <if test="entity.flowStatus != null and entity.flowStatus != ''">and flow_status = #{entity.flowStatus}</if>
             <if test="entity.definitionId != null">and definition_id = #{entity.definitionId}</if>
             <if test="entity.instanceId != null">and instance_id = #{entity.instanceId}</if>
             <if test="entity.formCustom != null and entity.formCustom != ''">and form_custom = #{entity.formCustom}</if>

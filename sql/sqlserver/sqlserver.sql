@@ -524,7 +524,7 @@ EXEC sp_addextendedproperty
 GO
 
 EXEC sp_addextendedproperty
-'MS_Description', N'流程状态（0待提交 1审批中 2 审批通过 3自动通过 4终止 5作废 6撤销 7取回  8已完成 9已退回 10失效）',
+'MS_Description', N'流程状态（0待提交 1审批中 2审批通过 4终止 5作废 6撤销 8已完成 9已退回 10失效 11拿回）',
 'SCHEMA', N'dbo',
 'TABLE', N'flow_instance',
 'COLUMN', N'flow_status'
@@ -599,6 +599,7 @@ CREATE TABLE flow_task (
     node_code nvarchar(100) NOT NULL,
     node_name nvarchar(100) NULL,
     node_type tinyint NOT NULL,
+    flow_status nvarchar(20) NOT NULL,
     form_custom nchar(1) DEFAULT('N') NULL,
     form_path nvarchar(100) NULL,
     create_time datetime2(7)  NULL,
@@ -652,6 +653,13 @@ EXEC sp_addextendedproperty
 'SCHEMA', N'dbo',
 'TABLE', N'flow_task',
 'COLUMN', N'node_type'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'流程状态（0待提交 1审批中 2审批通过 4终止 5作废 6撤销 8已完成 9已退回 10失效 11拿回）',
+'SCHEMA', N'dbo',
+'TABLE', N'flow_task',
+'COLUMN', N'flow_status'
 GO
 
 EXEC sp_addextendedproperty
@@ -825,7 +833,7 @@ EXEC sp_addextendedproperty
 GO
 
 EXEC sp_addextendedproperty
-'MS_Description', N'流程状态（1审批中 2 审批通过 9已退回 10失效）',
+'MS_Description', N'流程状态（0待提交 1审批中 2审批通过 4终止 5作废 6撤销 8已完成 9已退回 10失效 11拿回）',
 'SCHEMA', N'dbo',
 'TABLE', N'flow_his_task',
 'COLUMN', N'flow_status'

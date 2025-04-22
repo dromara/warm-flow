@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.dromara.warm</groupId>
         <artifactId>warm-flow-plugin-ui</artifactId>
-        <version>1.7.0-m2</version>
+        <version>1.7.0-m4</version>
     </parent>
 
     <artifactId>warm-flow-plugin-vue3-ui</artifactId>

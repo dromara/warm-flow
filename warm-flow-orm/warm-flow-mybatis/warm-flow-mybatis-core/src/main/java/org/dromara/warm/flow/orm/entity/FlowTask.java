@@ -31,7 +31,7 @@ import java.util.List;
  */
 @Data
 @Accessors(chain = true)
-public class FlowTask implements Task {
+public  class FlowTask implements Task {
 
     /**
      * 主键
@@ -92,6 +92,11 @@ public class FlowTask implements Task {
      * 节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）
      */
     private Integer nodeType;
+
+    /**
+     * 流程状态（0待提交 1审批中 2审批通过 4终止 5作废 6撤销 8已完成 9已退回 10失效 11拿回）
+     */
+    private String flowStatus;
 
     /**
      * 权限标识 permissionFlag的list形式

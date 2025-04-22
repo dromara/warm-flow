@@ -133,7 +133,7 @@ public class FlowHisTask implements HisTask {
     private String skipType;
 
     /**
-     * 流程状态（1审批中 2 审批通过 9已退回 10失效）
+     * 流程状态（0待提交 1审批中 2审批通过 4终止 5作废 6撤销 8已完成 9已退回 10失效 11拿回）
      */
     private String flowStatus;
 

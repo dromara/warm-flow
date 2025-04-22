@@ -31,6 +31,7 @@ import org.dromara.warm.flow.core.utils.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * 待办任务Service业务层处理
@@ -498,6 +499,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 .setNodeCode(node.getNodeCode())
                 .setNodeName(node.getNodeName())
                 .setNodeType(node.getNodeType())
+                .setFlowStatus(StringUtils.emptyDefault(flowParams.getFlowStatus(),
+                                setFlowStatus(node.getNodeType(), flowParams.getSkipType())))
                 .setCreateTime(new Date())
                 .setPermissionList(StringUtils.str2List(node.getPermissionFlag(), FlowCons.splitAt));
 
@@ -527,25 +530,21 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 合并流程变量到实例对象
         mergeVariable(instance, flowParams.getVariable());
         if (CollUtil.isNotEmpty(addTasks)) {
+            AtomicReference<Task> finallyTask = new AtomicReference<>();
             addTasks.removeIf(addTask -> {
                 if (NodeType.isEnd(addTask.getNodeType())) {
-                    instance.setNodeType(addTask.getNodeType())
-                            .setNodeCode(addTask.getNodeCode())
-                            .setNodeName(addTask.getNodeName())
-                            .setFlowStatus(StringUtils.emptyDefault(flowParams.getFlowStatus()
-                                    , FlowStatus.FINISHED.getKey()));
+                    finallyTask.set(addTask);
                     return true;
                 }
                 return false;
             });
-        }
-        if (CollUtil.isNotEmpty(addTasks) && !NodeType.isEnd(instance.getNodeType())) {
-            Task nextTask = getNextTask(addTasks);
-            instance.setNodeType(nextTask.getNodeType())
-                    .setNodeCode(nextTask.getNodeCode())
-                    .setNodeName(nextTask.getNodeName())
-                    .setFlowStatus(ObjectUtil.isNotNull(flowParams.getFlowStatus()) ? flowParams.getFlowStatus()
-                            : setFlowStatus(nextTask.getNodeType(), flowParams.getSkipType()));
+            if (ObjectUtil.isNull(finallyTask.get())) {
+                finallyTask.set(getNextTask(addTasks));
+            }
+            instance.setNodeType(finallyTask.get().getNodeType())
+                    .setNodeCode(finallyTask.get().getNodeCode())
+                    .setNodeName(finallyTask.get().getNodeName())
+                    .setFlowStatus(finallyTask.get().getFlowStatus());
         }
     }
 
