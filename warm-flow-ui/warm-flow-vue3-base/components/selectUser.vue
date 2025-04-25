@@ -113,6 +113,10 @@ const props = defineProps({
     type: Array,
     default: () => []
   },
+  permissionRows: {
+    type: Array,
+    default: () => []
+  }
 });
 const tabsValue = ref("用户");
 const tableList = ref([]);
@@ -170,7 +174,7 @@ watch(() => props.selectUser, (val, oldVal) => {
         return index !== -1;
       });
     });
-  } else checkedItemList.value = val ? val.map(e => { return { storageId: e } }).filter(n => n.storageId) : [];
+  } else checkedItemList.value = val ? props.permissionRows.filter(n => n.storageId) : [];
 },{ deep: true, immediate: true });
 
 /** 获取tabs列表 */
@@ -250,7 +254,7 @@ function handleCheckAll() {
     tableList.value = tableList.value.map(item => {
       item.isChecked = true;
       if (checkedItemList.value.findIndex(e => e.storageId === item.storageId) === -1) {
-        checkedArr.push({ storageId: item.storageId });
+        checkedArr.push({ storageId: item.storageId, handlerName: item.handlerName });
       }
       return item;
     });
@@ -271,7 +275,7 @@ function handleCheck(row) {
   });
   const checkedArr = [...checkedItemList.value];
   if (row.isChecked) {
-    if (checkedArr.findIndex(e => e.storageId === row.storageId) === -1) checkedArr.push({ storageId: row.storageId });
+    if (checkedArr.findIndex(e => e.storageId === row.storageId) === -1) checkedArr.push({ storageId: row.storageId, handlerName: row.handlerName });
   } else {
     const index = checkedArr.findIndex(n => n.storageId === row.storageId);
     if (index !== -1) checkedArr.splice(index, 1);

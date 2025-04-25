@@ -58,7 +58,7 @@
             </slot>
             <slot name="form-item-task-permissionFlag" :model="form" field="permissionFlag">
               <el-form-item label="办理人列表：" class="permissionItem">
-                <el-table :data="permissionRows" style="width: 100%" class="inputGroup">
+                <el-table :data="permissionRows" style="width: 100%;margin-top: 10px;" class="inputGroup">
                   <el-table-column prop="storageId" label="入库主键" width="250">
                     <template #default="scope">
                       <el-form-item prop="storageId">
@@ -158,7 +158,7 @@
 
     <!-- 权限标识：会签票签选择用户 -->
     <el-dialog title="办理人选择" v-if="userVisible" v-model="userVisible" width="80%" append-to-body>
-      <selectUser v-model:selectUser="form.permissionFlag" v-model:userVisible="userVisible" @handleUserSelect="handleUserSelect"></selectUser>
+      <selectUser v-model:selectUser="form.permissionFlag" v-model:userVisible="userVisible" :permissionRows="permissionRows" @handleUserSelect="handleUserSelect"></selectUser>
     </el-dialog>
   </div>
 </template>
@@ -224,7 +224,6 @@ const rules = reactive({
 const definitionList = ref([]); // 流程表单列表
 const dictList = ref(); // 办理人选项
 const permissionRows = ref([]); // 办理人表格
-const authsList = ref([]); // 所有办理人集合
 const emit = defineEmits(["change"]);
 
 watch(() => form, n => {
@@ -250,12 +249,6 @@ function addPermission() {
 // 办理人手动输入，失焦获取权限名称
 function inputBlur(event, index) {
   form.value.permissionFlag[index] = event.target.value;
-  permissionRows.value.map(e => {
-    if (e.storageId === event.target.value) {
-      let obj = authsList.value.find(n => n.storageId === e.storageId);
-      e.handlerName = obj?.handlerName;
-    }
-  })
 }
 
 /** 选择角色权限范围触发 */
@@ -352,16 +345,7 @@ function handleUserSelect(checkedItemList) {
   }).filter(n => n);
 
   // 办理人表格展示
-  if (checkedItemList.length > 0) {
-      permissionRows.value = [];
-      checkedItemList.forEach(e => {
-        let obj = authsList.value.find(n => n.storageId === e.storageId);
-        permissionRows.value.push({
-          storageId: obj?.storageId || e.storageId,
-          handlerName: obj?.handlerName || ""
-        });
-      });
-    }
+  permissionRows.value = checkedItemList;
 }
 
 // 增加行
@@ -473,6 +457,8 @@ defineExpose({
   border-top: 0;
 }
 :deep(.permissionItem) {
+  display: inline-block;
+  width: 100%;
   .el-form-item__content {
     display: block;
   }
