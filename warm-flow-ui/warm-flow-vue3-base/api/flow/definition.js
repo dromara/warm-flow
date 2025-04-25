@@ -36,6 +36,14 @@ export function handlerResult(query) {
   })
 }
 
+// 办理人权限名称回显
+export function handlerFeedback(storageIds) {
+  return request({
+    url: urlPrefix + 'warm-flow/handler-feedback?storageIds=' + storageIds,
+    method: 'get',
+  })
+}
+
 // 办理人选择项
 export function handlerDict() {
   return request({

@@ -18,9 +18,13 @@ package org.dromara.warm.flow.ui.service;
 import org.dromara.warm.flow.core.dto.FlowPage;
 import org.dromara.warm.flow.core.utils.HttpStatus;
 import org.dromara.warm.flow.core.utils.StreamUtils;
-import org.dromara.warm.flow.ui.dto.*;
+import org.dromara.warm.flow.ui.dto.HandlerFunDto;
+import org.dromara.warm.flow.ui.dto.HandlerQuery;
+import org.dromara.warm.flow.ui.dto.Tree;
+import org.dromara.warm.flow.ui.dto.TreeFunDto;
 import org.dromara.warm.flow.ui.utils.TreeUtil;
 import org.dromara.warm.flow.ui.vo.HandlerAuth;
+import org.dromara.warm.flow.ui.vo.HandlerFeedBackVo;
 import org.dromara.warm.flow.ui.vo.HandlerSelectVo;
 
 import java.util.ArrayList;
@@ -47,6 +51,14 @@ public interface HandlerSelectService {
      * @return 结果
      */
     HandlerSelectVo getHandlerSelect(HandlerQuery query);
+
+    /**
+     * 办理人权限名称回显
+     *
+     * @param storageIds 入库主键集合
+     * @return 结果
+     */
+    List<HandlerFeedBackVo> handlerFeedback(List<String> storageIds);
 
     default <T> HandlerSelectVo getHandlerSelectVo(HandlerFunDto<T> handlerFunDto) {
         List<HandlerAuth> handlerAuths = new ArrayList<>();

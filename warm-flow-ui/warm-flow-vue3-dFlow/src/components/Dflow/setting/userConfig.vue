@@ -45,7 +45,7 @@
             </el-icon>
           </el-tooltip>
         </el-form-item>
-        <el-form-item label="办理人输入" class="permissionItem">
+        <el-form-item label="办理人列表" class="permissionItem">
           <div v-for="(tag, index) in nodeConfig.permissionFlag" :key="index" class="inputGroup">
             <el-input v-model="nodeConfig.permissionFlag[index]"></el-input>
             <Close class="Icon" v-if="nodeConfig.permissionFlag.length !== 1 && !disabled"
@@ -201,7 +201,7 @@ const { data, backNodeList } = toRefs(props);
 Object.assign(nodeConfig, data.value.properties);
 
 
-// 关闭页面时的验证和处理。 
+// 关闭页面时的验证和处理。
 const formConfig = async () => {
   return new Promise((resolve, reject) => {
     showValue();

@@ -57,7 +57,7 @@
               </el-form-item>
             </slot>
             <slot name="form-item-task-permissionFlag" :model="form" field="permissionFlag">
-              <el-form-item label="办理人输入：" class="permissionItem">
+              <el-form-item label="办理人列表：" class="permissionItem">
                 <el-table :data="permissionRows" style="width: 100%" class="inputGroup">
                   <el-table-column prop="storageId" label="入库主键" width="150">
                     <template #default="scope">
@@ -166,7 +166,7 @@
 <script setup name="Between">
 import selectUser from "./selectUser";
 import { Delete } from '../../warm-flow-vue3-logic-flow/node_modules/@element-plus/icons-vue'
-import { publishedList, handlerDict, nodeExt, handlerResult, handlerType } from "../api/flow/definition";
+import {publishedList, handlerDict, nodeExt, handlerFeedback} from "../api/flow/definition";
 import nodeExtList from "./nodeExtList";
 const { proxy } = getCurrentInstance();
 
@@ -287,246 +287,22 @@ function getHandlerDict() {
   });
 }
 
-/** 查询办理人列表 */
-async function getList() {
-  // 获取tabs列表
-  authsList.value = [];
-  let typeRes = await handlerType();
-  let promises = typeRes.data.map(e => getResultList(e));
-  Promise.all(promises).then(res => {
-    res.forEach(e => {
-      authsList.value.push(...e.data.handlerAuths.rows);
-    });
-    if (form.value.permissionFlag) {
-      // 办理人表格展示
-      permissionRows.value = [];
-      form.value.permissionFlag.forEach(e => {
-        let obj = authsList.value.find(n => n.storageId === e);
-        permissionRows.value.push({
-          storageId: obj?.storageId || e,
-          handlerName: obj?.handlerName || ""
-        });
-      });
-    }
-  });
-};
 
-// 获取办理人列表
-function getResultList(handlerType) {
-  let query = {
-    pageNum: 1,
-    pageSize: 9999,
-    status: "0",
-    handlerType
-  };
-  return handlerResult(query);
+/** 办理人权限名称回显 */
+async function getHandlerFeedback() {
+  if (form.value.permissionFlag) {
+    handlerFeedback(form.value.permissionFlag).then(response => {
+      if (response.code === 200 && response.data) {
+        permissionRows.value = response.data;
+      }
+    });
+  }
 }
 
 /** 查询节点扩展属性 */
 function getNodeExt() {
   nodeExt().then(response => {
     if (response.code === 200 && response.data) {
-//       response.data = [
-// 	// {
-// 	// 	"code": "base",
-// 	// 	"desc": "基础设置扩展属性",
-// 	// 	"type": 1,
-// 	// 	"childs": [
-// 	// 		{
-// 	// 			"code": "base1",
-// 	// 			"label": "输入框",
-// 	// 			"desc": "基础设置扩展属性1",
-// 	// 			"type": 1,
-// 	// 			"must": true,
-// 	// 			"value": ""
-// 	// 		},
-// 	// 		{
-// 	// 			"code": "base2",
-// 	// 			"label": "文本域",
-// 	// 			"desc": "基础设置扩展属性2",
-// 	// 			"type": 2,
-// 	// 			"must": false,
-// 	// 			"value": ""
-// 	// 		},
-// 	// 		{
-// 	// 			"code": "base3",
-// 	// 			"label": "下拉框-多选",
-// 	// 			"desc": "基础设置扩展属性3",
-// 	// 			"type": 3,
-// 	// 			"must": true,
-//   //       "multiple": true,
-// 	// 			"value": "",
-// 	// 			"dict": [
-// 	// 				{
-// 	// 					"label": "选项A",
-// 	// 					"value": "1"
-// 	// 				},
-// 	// 				{
-// 	// 					"label": "选项B",
-//   //           "selected": false,
-// 	// 					"value": "2"
-// 	// 				},
-// 	// 				{
-// 	// 					"label": "选项C",
-//   //           "selected": false,
-// 	// 					"value": "3"
-// 	// 				}
-// 	// 			]
-// 	// 		},
-// 	// 		{
-// 	// 			"code": "base4",
-// 	// 			"label": "下拉框-单选",
-// 	// 			"desc": "基础设置扩展属性4",
-// 	// 			"type": 3,
-// 	// 			"must": true,
-//   //       "multiple": false,
-// 	// 			"value": "",
-// 	// 			"dict": [
-// 	// 				{
-// 	// 					"label": "选项A",
-// 	// 					"value": "1"
-// 	// 				},
-// 	// 				{
-// 	// 					"label": "选项B",
-// 	// 					"value": "2"
-// 	// 				},
-// 	// 				{
-// 	// 					"label": "选项C",
-//   //           "selected": true,
-// 	// 					"value": "3"
-// 	// 				}
-// 	// 			]
-// 	// 		},
-// 	// 		{
-// 	// 			"code": "base5",
-// 	// 			"label": "复选框",
-// 	// 			"desc": "基础设置扩展属性5",
-// 	// 			"type": 4,
-// 	// 			"must": true,
-// 	// 			"value": "",
-//   //       "multiple": true,
-// 	// 			"dict": [
-// 	// 				{
-// 	// 					"label": "是否弹窗选人",
-//   //           "selected": true,
-// 	// 					"value": 1
-// 	// 				},
-// 	// 				{
-// 	// 					"label": "是否能委托",
-//   //           "selected": true,
-// 	// 					"value": 2
-// 	// 				},
-// 	// 				{
-// 	// 					"label": "是否能转办",
-// 	// 					"value": 3
-// 	// 				},
-// 	// 				{
-// 	// 					"label": "是否能抄送",
-//   //           "selected": true,
-// 	// 					"value": 4
-// 	// 				},
-// 	// 				{
-// 	// 					"label": "是否显示退回",
-// 	// 					"value": 5
-// 	// 				},
-// 	// 				{
-// 	// 					"label": "是否能加签",
-// 	// 					"value": 6
-// 	// 				},
-// 	// 				{
-// 	// 					"label": "是否能减签",
-// 	// 					"value": 7
-// 	// 				}
-// 	// 			]
-// 	// 		},
-// 	// 		{
-// 	// 			"code": "base6",
-// 	// 			"label": "单选框",
-// 	// 			"desc": "基础设置扩展属性6",
-// 	// 			"type": 4,
-// 	// 			"must": true,
-// 	// 			"value": "",
-//   //       "multiple": false,
-// 	// 			"dict": [
-// 	// 				{
-// 	// 					"label": "是否弹窗选人",
-// 	// 					"value": 1
-// 	// 				},
-// 	// 				{
-// 	// 					"label": "是否能委托",
-// 	// 					"value": 2
-// 	// 				},
-// 	// 				{
-// 	// 					"label": "是否能转办",
-// 	// 					"value": 3
-// 	// 				},
-// 	// 				{
-// 	// 					"label": "是否能抄送",
-// 	// 					"value": 4
-// 	// 				},
-// 	// 				{
-// 	// 					"label": "是否显示退回",
-// 	// 					"value": 5
-// 	// 				},
-// 	// 				{
-// 	// 					"label": "是否能加签",
-// 	// 					"value": 6
-// 	// 				},
-// 	// 				{
-// 	// 					"label": "是否能减签",
-// 	// 					"value": 7
-// 	// 				}
-// 	// 			]
-// 	// 		}
-// 	// 	]
-// 	// },
-// 	{
-// 		"code": "btn_auth2",
-// 		"name": "按钮权限2",
-// 		"desc": "按钮权限设置",
-// 		"type": 2,
-// 		"childs": [
-// 			{
-// 				"code": "btn_aut2",
-// 				"label": "复选框2",
-// 				"desc": "按钮权限1",
-// 				"type": 4,
-// 				"must": true,
-// 				"value": "",
-// 				"dict": [
-// 					{
-// 						"label": "是否弹窗选人",
-// 						"value": 1
-// 					},
-// 					{
-// 						"label": "是否能委托",
-// 						"value": 2
-// 					},
-// 					{
-// 						"label": "是否能转办",
-// 						"value": 3
-// 					},
-// 					{
-// 						"label": "是否能抄送",
-// 						"value": 4
-// 					},
-// 					{
-// 						"label": "是否显示退回",
-// 						"value": 5
-// 					},
-// 					{
-// 						"label": "是否能加签",
-// 						"value": 6
-// 					},
-// 					{
-// 						"label": "是否能减签",
-// 						"value": 7
-// 					}
-// 				]
-// 			}
-// 		]
-// 	},
-// ]
       response.data.forEach(e => {
         // 设置默认值
         e.childs.forEach(cItem => {
@@ -625,7 +401,7 @@ getPermissionFlag();
 
 getNodeExt();
 
-getList();
+getHandlerFeedback();
 
 // 表单必填校验
 function validate() {

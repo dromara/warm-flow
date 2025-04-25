@@ -42,7 +42,7 @@ public class HandlerFunDto<T> {
     private long total;
 
     /**
-     * 获取入库权限主键Function
+     * 获取入库主键集合Function
      */
     private Function<T, String> storageId;
 
