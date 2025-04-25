@@ -58,21 +58,23 @@
             </slot>
             <slot name="form-item-task-permissionFlag" :model="form" field="permissionFlag">
               <el-form-item label="办理人输入：" class="permissionItem">
-                <div v-for="(tag, index) in form.permissionFlag" :key="index" class="inputGroup">
-    <!--              <el-select v-if="dictList" v-model="form.permissionFlag[index]" placeholder="请选择">-->
-    <!--                <el-option-->
-    <!--                    v-for="dict in dictList"-->
-    <!--                    :key="dict.value"-->
-    <!--                    :label="dict.label"-->
-    <!--                    :value="parseInt(dict.value)"-->
-    <!--                ></el-option>-->
-    <!--              </el-select>-->
-
-                  <el-input v-model="form.permissionFlag[index]" style="width: 200px;"></el-input>
-                  <Close class="Icon" v-if="form.permissionFlag.length !== 1 && !disabled" @click="delPermission(index)" />
-                  <Plus class="Icon" v-if="(index === form.permissionFlag.length - 1) && !disabled" @click="addPermission" />
-                  <el-button class="btn" v-if="(index === form.permissionFlag.length - 1) && !disabled" @click="initUser">选择</el-button>
-                </div>
+                <el-table :data="permissionRows" style="width: 100%" class="inputGroup">
+                  <el-table-column prop="storageId" label="入库主键" width="150">
+                    <template #default="scope">
+                      <el-form-item prop="storageId">
+                        <el-input v-model="scope.row.storageId" style="width: 100%;" @blur="event => inputBlur(event, scope.$index)"></el-input>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="handlerName" label="权限名称"></el-table-column>
+                  <el-table-column label="操作" width="55" v-if="!disabled">
+                    <template #default="scope">
+                      <el-button type="danger" v-if="form.permissionFlag.length !== 1 && !disabled" :icon="Delete" @click="delPermission(scope.$index)"/>
+                    </template>
+                  </el-table-column>
+                </el-table>
+                <el-button type="primary" v-if="!disabled" @click="addPermission">添加行</el-button>
+                <el-button type="primary" v-if="!disabled" @click="initUser">选择</el-button>
               </el-form-item>
             </slot>
             <slot name="form-item-task-formCustom" :model="form" field="formCustom">
@@ -164,7 +166,7 @@
 <script setup name="Between">
 import selectUser from "./selectUser";
 import { Delete } from '../../warm-flow-vue3-logic-flow/node_modules/@element-plus/icons-vue'
-import {publishedList, handlerDict, nodeExt} from "../api/flow/definition";
+import { publishedList, handlerDict, nodeExt, handlerResult, handlerType } from "../api/flow/definition";
 import nodeExtList from "./nodeExtList";
 const { proxy } = getCurrentInstance();
 
@@ -221,6 +223,8 @@ const rules = reactive({
 });
 const definitionList = ref([]); // 流程表单列表
 const dictList = ref(); // 办理人选项
+const permissionRows = ref([]); // 办理人表格
+const authsList = ref([]); // 所有办理人集合
 const emit = defineEmits(["change"]);
 
 watch(() => form, n => {
@@ -236,10 +240,22 @@ function nodeNameChange() {
 // 删除办理人
 function delPermission(index) {
   form.value.permissionFlag.splice(index, 1);
+  permissionRows.value.splice(index, 1);
 }
 // 添加办理人
 function addPermission() {
   form.value.permissionFlag.push("");
+  permissionRows.value.push({ storageId: "", handlerName: "" });
+}
+// 办理人手动输入，失焦获取权限名称
+function inputBlur(event, index) {
+  form.value.permissionFlag[index] = event.target.value;
+  permissionRows.value.map(e => {
+    if (e.storageId === event.target.value) {
+      let obj = authsList.value.find(n => n.storageId === e.storageId);
+      e.handlerName = obj?.handlerName;
+    }
+  })
 }
 
 /** 选择角色权限范围触发 */
@@ -269,6 +285,41 @@ function getHandlerDict() {
       dictList.value = response.data;
     }
   });
+}
+
+/** 查询办理人列表 */
+async function getList() {
+  // 获取tabs列表
+  authsList.value = [];
+  let typeRes = await handlerType();
+  let promises = typeRes.data.map(e => getResultList(e));
+  Promise.all(promises).then(res => {
+    res.forEach(e => {
+      authsList.value.push(...e.data.handlerAuths.rows);
+    });
+    if (form.value.permissionFlag) {
+      // 办理人表格展示
+      permissionRows.value = [];
+      form.value.permissionFlag.forEach(e => {
+        let obj = authsList.value.find(n => n.storageId === e);
+        permissionRows.value.push({
+          storageId: obj?.storageId || e,
+          handlerName: obj?.handlerName || ""
+        });
+      });
+    }
+  });
+};
+
+// 获取办理人列表
+function getResultList(handlerType) {
+  let query = {
+    pageNum: 1,
+    pageSize: 9999,
+    status: "0",
+    handlerType
+  };
+  return handlerResult(query);
 }
 
 /** 查询节点扩展属性 */
@@ -523,6 +574,18 @@ function handleUserSelect(checkedItemList) {
   form.value.permissionFlag = checkedItemList.map(e => {
     return e.storageId;
   }).filter(n => n);
+
+  // 办理人表格展示
+  if (checkedItemList.length > 0) {
+      permissionRows.value = [];
+      checkedItemList.forEach(e => {
+        let obj = authsList.value.find(n => n.storageId === e.storageId);
+        permissionRows.value.push({
+          storageId: obj?.storageId || e.storageId,
+          handlerName: obj?.handlerName || ""
+        });
+      });
+    }
 }
 
 // 增加行
@@ -561,6 +624,8 @@ getPermissionFlag();
 // getHandlerDict();
 
 getNodeExt();
+
+getList();
 
 // 表单必填校验
 function validate() {
@@ -639,9 +704,6 @@ defineExpose({
     display: flex;
     align-items: center;
     margin-bottom: 10px;
-    .el-input {
-      width: 120px;
-    }
     .Icon {
       width: 14px;
       height: 14px;
