@@ -25,11 +25,13 @@ import org.dromara.warm.flow.core.entity.Instance;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.utils.ExceptionUtil;
+import org.dromara.warm.flow.ui.dto.HandlerFeedBackDto;
 import org.dromara.warm.flow.ui.dto.HandlerQuery;
 import org.dromara.warm.flow.ui.service.HandlerDictService;
 import org.dromara.warm.flow.ui.service.HandlerSelectService;
 import org.dromara.warm.flow.ui.service.NodeExtService;
 import org.dromara.warm.flow.ui.vo.Dict;
+import org.dromara.warm.flow.ui.vo.HandlerFeedBackVo;
 import org.dromara.warm.flow.ui.vo.HandlerSelectVo;
 import org.dromara.warm.flow.ui.vo.NodeExt;
 import org.noear.solon.annotation.*;
@@ -129,6 +131,27 @@ public class WarmFlowController {
         } catch (Exception e) {
             log.error("办理人权限设置列表结果异常", e);
             throw new FlowException(ExceptionUtil.handleMsg("办理人权限设置列表结果失败", e));
+        }
+    }
+
+    /**
+     * 办理人权限名称回显
+     * @return HandlerSelectVo
+     */
+    @Get
+    @Mapping("/handler-feedback")
+    public ApiResult<List<HandlerFeedBackVo>> handlerFeedback(HandlerFeedBackDto handlerFeedBackDto) {
+        try {
+            // 需要业务系统实现该接口
+            HandlerSelectService handlerSelectService = FrameInvoker.getBean(HandlerSelectService.class);
+            if (handlerSelectService == null) {
+                return ApiResult.ok(new ArrayList<>());
+            }
+            List<HandlerFeedBackVo> handlerFeedBackVos = handlerSelectService.handlerFeedback(handlerFeedBackDto.getStorageIds());
+            return ApiResult.ok(handlerFeedBackVos);
+        } catch (Exception e) {
+            log.error("办理人权限名称回显", e);
+            throw new FlowException(ExceptionUtil.handleMsg("办理人权限名称回显", e));
         }
     }
 

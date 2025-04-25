@@ -30,7 +30,7 @@ import lombok.experimental.Accessors;
 public class HandlerFeedBackVo {
 
     /**
-     * 入库主键集合，比如怕角色和用户id重复，可拼接为role:id
+     * 入库主键，比如怕角色和用户id重复，可拼接为role:id
      */
     private String storageId;
 

@@ -37,10 +37,11 @@ export function handlerResult(query) {
 }
 
 // 办理人权限名称回显
-export function handlerFeedback(storageIds) {
+export function handlerFeedback(query) {
   return request({
-    url: urlPrefix + 'warm-flow/handler-feedback?storageIds=' + storageIds,
+    url: urlPrefix + 'warm-flow/handler-feedback',
     method: 'get',
+    params: query
   })
 }
 

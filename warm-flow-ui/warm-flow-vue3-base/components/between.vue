@@ -59,7 +59,7 @@
             <slot name="form-item-task-permissionFlag" :model="form" field="permissionFlag">
               <el-form-item label="办理人列表：" class="permissionItem">
                 <el-table :data="permissionRows" style="width: 100%" class="inputGroup">
-                  <el-table-column prop="storageId" label="入库主键" width="150">
+                  <el-table-column prop="storageId" label="入库主键" width="250">
                     <template #default="scope">
                       <el-form-item prop="storageId">
                         <el-input v-model="scope.row.storageId" style="width: 100%;" @blur="event => inputBlur(event, scope.$index)"></el-input>
@@ -291,7 +291,7 @@ function getHandlerDict() {
 /** 办理人权限名称回显 */
 async function getHandlerFeedback() {
   if (form.value.permissionFlag) {
-    handlerFeedback(form.value.permissionFlag).then(response => {
+    handlerFeedback({storageIds: form.value.permissionFlag}).then(response => {
       if (response.code === 200 && response.data) {
         permissionRows.value = response.data;
       }
