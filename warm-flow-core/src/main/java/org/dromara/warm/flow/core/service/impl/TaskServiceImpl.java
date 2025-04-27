@@ -425,8 +425,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         AssertUtil.isNotNull(taskId, ExceptionCons.NULL_TASK_ID);
         AssertUtil.isNotNull(flowParams.getHandler(), ExceptionCons.HANDLER_NOT_EMPTY);
         AssertUtil.isNotNull(flowParams.getReductionHandlers(), ExceptionCons.NUll_REDUCTION_SIGNATURE_HANDLER);
-        List<User> users = FlowEngine.userService().list(FlowEngine.newUser().setAssociated(taskId)
-                .setType(UserType.APPROVAL.getKey()));
+        List<User> users = FlowEngine.userService().listByAssociatedAndTypes(taskId
+                , UserType.APPROVAL.getKey(), UserType.TRANSFER.getKey());
         AssertUtil.isTrue(CollUtil.isEmpty(users) || users.size() == 1, ExceptionCons.REDUCTION_SIGN_ONE_ERROR);
         flowParams.cooperateType(CooperateType.REDUCTION_SIGNATURE.getKey());
 

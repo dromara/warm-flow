@@ -16,8 +16,7 @@
 package org.dromara.warm.flow.ui.service;
 
 import org.dromara.warm.flow.core.dto.FlowPage;
-import org.dromara.warm.flow.core.utils.HttpStatus;
-import org.dromara.warm.flow.core.utils.StreamUtils;
+import org.dromara.warm.flow.core.utils.*;
 import org.dromara.warm.flow.ui.dto.HandlerFunDto;
 import org.dromara.warm.flow.ui.dto.HandlerQuery;
 import org.dromara.warm.flow.ui.dto.Tree;
@@ -28,7 +27,9 @@ import org.dromara.warm.flow.ui.vo.HandlerFeedBackVo;
 import org.dromara.warm.flow.ui.vo.HandlerSelectVo;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 流程设计器-获取办理人权限设置列表接口
@@ -53,12 +54,36 @@ public interface HandlerSelectService {
     HandlerSelectVo getHandlerSelect(HandlerQuery query);
 
     /**
-     * 办理人权限名称回显
+     * 办理人权限名称回显，兼容老项目，新项目重写提高性能
      *
      * @param storageIds 入库主键集合
      * @return 结果
      */
-    List<HandlerFeedBackVo> handlerFeedback(List<String> storageIds);
+    default List<HandlerFeedBackVo> handlerFeedback(List<String> storageIds) {
+        List<HandlerFeedBackVo> handlerFeedBackVos = new ArrayList<>();
+        Map<String, String> authMap = new HashMap<>();
+        List<String> handlerTypes = getHandlerType();
+        for (String handlerType : handlerTypes) {
+            HandlerQuery handlerQuery = new HandlerQuery();
+            handlerQuery.setHandlerType(handlerType);
+            HandlerSelectVo handlerSelectVo = getHandlerSelect(handlerQuery);
+            if (ObjectUtil.isNotNull(handlerSelectVo)) {
+                FlowPage<HandlerAuth> handlerAuths = handlerSelectVo.getHandlerAuths();
+                List<HandlerAuth> rows = handlerAuths.getRows();
+                if (CollUtil.isNotEmpty(rows)) {
+                    authMap.putAll(StreamUtils.toMap(rows, HandlerAuth::getStorageId, HandlerAuth::getHandlerName));
+                }
+            }
+        }
+
+        // 遍历storageIds，按照原本的顺序回显名称
+        for (String storageId : storageIds) {
+            handlerFeedBackVos.add(new HandlerFeedBackVo()
+                    .setStorageId(storageId)
+                    .setHandlerName(MapUtil.isEmpty(authMap) ? "": authMap.get(storageId)));
+        }
+        return handlerFeedBackVos;
+    }
 
     default <T> HandlerSelectVo getHandlerSelectVo(HandlerFunDto<T> handlerFunDto) {
         List<HandlerAuth> handlerAuths = new ArrayList<>();

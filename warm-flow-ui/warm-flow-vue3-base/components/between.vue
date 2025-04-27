@@ -114,6 +114,7 @@
                 </el-select>
               </el-form-item>
             </slot>
+            <el-divider content-position="center"/>
             <nodeExtList v-if="baseList.length > 0" ref="nodeBase" v-model="form.ext" :formList="baseList" :disabled="disabled"></nodeExtList>
           </div>
           <div v-else-if="tabsValue === '2'">
