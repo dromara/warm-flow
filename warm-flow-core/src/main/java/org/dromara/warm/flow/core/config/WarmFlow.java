@@ -110,7 +110,7 @@ public class WarmFlow implements Serializable {
         // 设置全局监听器
         FlowEngine.initGlobalListener();
 
-        // 设置数据源类型
+        // 打印banner图
         printBanner();
 
         // 初始化流程状态对应的自定义三原色
