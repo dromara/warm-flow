@@ -223,7 +223,7 @@ create table FLOW_HIS_TASK
     FORM_PATH        VARCHAR2(100),
     MESSAGE          VARCHAR2(500),
     VARIABLE         CLOB,
-    EXT              VARCHAR2(500),
+    EXT              CLOB,
     CREATE_TIME      DATE,
     UPDATE_TIME      DATE,
     DEL_FLAG         VARCHAR2(1) default '0',

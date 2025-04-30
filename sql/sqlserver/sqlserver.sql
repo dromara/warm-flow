@@ -729,7 +729,7 @@ CREATE TABLE flow_his_task (
     form_path nvarchar(100) NULL,
     message nvarchar(500) NULL,
     variable nvarchar(max) NULL,
-    ext nvarchar(500) NULL,
+    ext nvarchar(max) NULL,
     create_time datetime2(7)  NULL,
     update_time datetime2(7)  NULL,
     del_flag nchar(1) DEFAULT('0') NULL,

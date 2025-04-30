@@ -212,7 +212,7 @@ CREATE TABLE flow_his_task
     flow_status      varchar(20)  NOT NULL,                                 -- 流程状态（0待提交 1审批中 2 审批通过 8已完成 9已退回 10失效）
     form_custom      bpchar(1)    NULL     DEFAULT 'N':: character varying, -- 审批表单是否自定义（Y是 N否）
     form_path        varchar(100) NULL,                                     -- 审批表单路径
-    ext              varchar(500) NULL,                                     -- 扩展字段，预留给业务系统使用
+    ext              text         NULL,                                     -- 扩展字段，预留给业务系统使用
     message          varchar(500) NULL,                                     -- 审批意见
     variable         text         NULL,                                     -- 任务变量
     create_time      timestamp    NULL,                                     -- 创建时间
