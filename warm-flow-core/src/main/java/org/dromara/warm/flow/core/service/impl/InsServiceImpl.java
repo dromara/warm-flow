@@ -54,6 +54,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         AssertUtil.isEmpty(businessId, ExceptionCons.NULL_BUSINESS_ID);
         // 获取已发布的流程节点
         Definition definition = FlowEngine.defService().getPublishByFlowCode(flowParams.getFlowCode());
+        AssertUtil.isNull(definition, ExceptionCons.NOT_FOUNT_DEF);
         FlowCombine flowCombine = FlowEngine.defService().getFlowCombine(definition);
         // 获取开始节点
         Node startNode = StreamUtils.filterOne(flowCombine.getAllNodes(), t -> NodeType.isStart(t.getNodeType()));

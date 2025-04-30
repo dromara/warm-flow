@@ -73,7 +73,7 @@ public class ExceptionCons {
 
     public static final String NULL_FLOW_CODE = "流程编码缺失!";
 
-    public static final String NOT_FOUNT_DEF = "流程流程定义不存在!";
+    public static final String NOT_FOUNT_DEF = "流程定义不存在!";
 
     public static final String NOT_FOUNT_INSTANCE = "流程实例获取失败!";
 

@@ -61,18 +61,21 @@ const emit = defineEmits(["change"]);
 const { proxy } = getCurrentInstance();
 
 watch(() => form, n => {
-  n = n.value;
-  let skipCondition = '';
-  skipCondition = n.conditionType + "@@";
-  if (!/^spel/.test(n.conditionType) && !/^default/.test(n.conditionType)) {
-    skipCondition = skipCondition
-      + (n.condition ? n.condition : '') + "|";
+  if (n.conditionType) {
+    n = n.value;
+    let skipCondition;
+    skipCondition = n.conditionType + "@@";
+    if (!/^spel/.test(n.conditionType) && !/^default/.test(n.conditionType)) {
+      skipCondition = skipCondition
+          + (n.condition ? n.condition : '') + "|";
+    }
+    n.skipCondition = skipCondition
+        + (n.conditionValue ? n.conditionValue : '')
+    if (n) {
+      emit('change', n)
+    }
   }
-  n.skipCondition = skipCondition
-    + (n.conditionValue ? n.conditionValue : '')
-  if (n) {
-    emit('change', n)
-  }
+
 }, {deep: true});
 
 function skipNameChange() {
