@@ -548,6 +548,16 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         }
     }
 
+    @Override
+    public void mergeVariable(Instance instance, Map<String, Object> variable) {
+        if (MapUtil.isNotEmpty(variable)) {
+            String variableStr = instance.getVariable();
+            Map<String, Object> deserialize = FlowEngine.jsonConvert.strToMap(variableStr);
+            deserialize.putAll(variable);
+            instance.setVariable(FlowEngine.jsonConvert.objToStr(deserialize));
+        }
+    }
+
     /**
      * 根据流程实例id获取操作人最近的已办历史任务
      * @param flowParams 包含流程相关参数的对象
@@ -614,15 +624,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     private void removeAndUser(List<Task> taskList) {
         removeByIds(StreamUtils.toList(taskList, Task::getId));
         FlowEngine.userService().deleteByTaskIds(StreamUtils.toList(taskList, Task::getId));
-    }
-
-    private void mergeVariable(Instance instance, Map<String, Object> variable) {
-        if (MapUtil.isNotEmpty(variable)) {
-            String variableStr = instance.getVariable();
-            Map<String, Object> deserialize = FlowEngine.jsonConvert.strToMap(variableStr);
-            deserialize.putAll(variable);
-            instance.setVariable(FlowEngine.jsonConvert.objToStr(deserialize));
-        }
     }
 
     private R getAndCheck(Long taskId) {

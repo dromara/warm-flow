@@ -435,6 +435,13 @@ public interface TaskService extends IWarmService<Task> {
     void setInsFinishInfo(Instance instance, List<Task> addTasks, FlowParams flowParams);
 
     /**
+     * 合并流程变量到实例对象
+     * @param instance 流程实例
+     * @param variable 流程变量
+     */
+    void mergeVariable(Instance instance, Map<String, Object> variable);
+
+    /**
      * 获取表单及数据(使用表单场景)
      *
      * @param taskId
