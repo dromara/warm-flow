@@ -59,7 +59,7 @@ public class FlowInstance implements Instance {
     /**
      * 删除标记
      */
-    @TableLogic
+    @TableLogic(value = "0", delval = "1")
     private String delFlag;
 
     /**
