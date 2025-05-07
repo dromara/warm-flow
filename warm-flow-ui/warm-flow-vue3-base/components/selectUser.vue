@@ -183,14 +183,18 @@ function getTabsType() {
     tabsList.value = res.data;
     if(res.data && res.data.length > 0) {
         tabsValue.value = res.data[0]
-        getList();
     }
+    getList();
   });
 }
 
 /** 查询用户列表 */
 function getList() {
   loading.value = true;
+  if (!tabsValue.value) {
+    loading.value = false;
+    return;
+  }
   queryParams.value.handlerType = tabsValue.value;
   dateRange.value = Array.isArray(dateRange.value) ? dateRange.value : [];
   queryParams.value.beginTime = dateRange.value[0]
