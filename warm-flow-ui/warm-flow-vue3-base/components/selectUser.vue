@@ -118,7 +118,7 @@ const props = defineProps({
     default: () => []
   }
 });
-const tabsValue = ref("用户");
+const tabsValue = ref("");
 const tableList = ref([]);
 const loading = ref(true);
 const showSearch = ref(true);
@@ -181,6 +181,10 @@ watch(() => props.selectUser, (val, oldVal) => {
 function getTabsType() {
   handlerType().then(res => {
     tabsList.value = res.data;
+    if(res.data && res.data.length > 0) {
+        tabsValue.value = res.data[0]
+        getList();
+    }
   });
 }
 
@@ -306,7 +310,6 @@ function submitForm() {
   cancel();
 }
 
-getList();
 getTabsType();
 </script>
 
