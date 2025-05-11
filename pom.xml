@@ -95,6 +95,7 @@
         <!-- 工具库版本 -->
         <junit.version>4.13.2</junit.version>
         <slf4j-api.version>1.7.36</slf4j-api.version>
+        <commons-lang3.version>3.12.0</commons-lang3.version>
     </properties>
 
     <dependencyManagement>
@@ -312,6 +313,11 @@
                 <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-plugin-ui-solon-web</artifactId>
                 <version>${warm-flow}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

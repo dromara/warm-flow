@@ -15,6 +15,7 @@
  */
 package org.dromara.warm.flow.core.service.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.chart.*;
 import org.dromara.warm.flow.core.dto.*;
@@ -25,7 +26,11 @@ import org.dromara.warm.flow.core.enums.NodeType;
 import org.dromara.warm.flow.core.enums.SkipType;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.service.ChartService;
-import org.dromara.warm.flow.core.utils.*;
+
+import org.dromara.warm.flow.core.utils.Base64;
+import org.dromara.warm.flow.core.utils.CollUtil;
+import org.dromara.warm.flow.core.utils.ObjectUtil;
+import org.dromara.warm.flow.core.utils.StreamUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,12 +57,14 @@ public class ChartServiceImpl implements ChartService {
 
     @Override
     public String chartIns(Long instanceId) {
-        return chartIns(instanceId, chartChain -> {});
+        return chartIns(instanceId, chartChain -> {
+        });
     }
 
     @Override
     public String chartDef(Long definitionId) {
-        return chartDef(definitionId, chartChain -> {});
+        return chartDef(definitionId, chartChain -> {
+        });
     }
 
     @Override
@@ -120,7 +127,7 @@ public class ChartServiceImpl implements ChartService {
             NodeJson nodeJson = nodeMap.get(node.getNodeCode());
             if (SkipType.isPass(pathWayData.getSkipType())) {
                 nodeJson.setStatus(ChartStatus.DONE.getKey());
-            } else if (SkipType.isReject(pathWayData.getSkipType())){
+            } else if (SkipType.isReject(pathWayData.getSkipType())) {
                 nodeJson.setStatus(ChartStatus.NOT_DONE.getKey());
             }
         });
@@ -128,7 +135,7 @@ public class ChartServiceImpl implements ChartService {
             SkipJson skipJson = skipMap.get(getSkipKey(skip));
             if (SkipType.isPass(pathWayData.getSkipType())) {
                 skipJson.setStatus(ChartStatus.DONE.getKey());
-            } else if (SkipType.isReject(pathWayData.getSkipType())){
+            } else if (SkipType.isReject(pathWayData.getSkipType())) {
                 skipJson.setStatus(ChartStatus.NOT_DONE.getKey());
             }
         });
@@ -162,20 +169,23 @@ public class ChartServiceImpl implements ChartService {
     }
 
     private String getSkipKey(SkipJson skip) {
-        return skip.getNowNodeCode() + ":" + skip.getSkipType() + ":" + skip.getSkipCondition()
-                + ":" + skip.getNextNodeCode();
+        return StringUtils.join(skip.getNowNodeCode(), ":"
+                , skip.getSkipType(), ":"
+                , skip.getSkipCondition(), ":"
+                , skip.getNextNodeCode());
     }
 
     private String getSkipKey(Skip skip) {
-        return skip.getNowNodeCode() + ":" + skip.getSkipType() + ":" + skip.getSkipCondition()
-                + ":" + skip.getNextNodeCode();
+        return StringUtils.join(skip.getNowNodeCode(), ":"
+                , skip.getSkipType(), ":"
+                , skip.getSkipCondition(), ":"
+                , skip.getNextNodeCode());
     }
-
     private void rejectReset(String nodeCode, Map<String, List<SkipJson>> skipNextMap, Map<String, NodeJson> nodeMap) {
         List<SkipJson> oneNextSkips = skipNextMap.get(nodeCode);
         if (CollUtil.isNotEmpty(oneNextSkips)) {
             oneNextSkips.forEach(oneNextSkip -> {
-                if (ObjectUtil.isNotNull(oneNextSkip) &&  !ChartStatus.isNotDone(oneNextSkip.getStatus())) {
+                if (ObjectUtil.isNotNull(oneNextSkip) && !ChartStatus.isNotDone(oneNextSkip.getStatus())) {
                     oneNextSkip.setStatus(ChartStatus.NOT_DONE.getKey());
                     NodeJson nodeJson = nodeMap.get(oneNextSkip.getNextNodeCode());
                     if (ObjectUtil.isNotNull(nodeJson) && !ChartStatus.isNotDone(nodeJson.getStatus())) {
@@ -200,7 +210,7 @@ public class ChartServiceImpl implements ChartService {
      *
      * @param nodeJsonList 流程节点对象Vo
      * @param skipJsonList 节点跳转关联对象Vo
-     * @param consumer 可获取流程图对象，可用于修改流程图样式或者新增内容
+     * @param consumer     可获取流程图对象，可用于修改流程图样式或者新增内容
      * @return 流程图base64字符串
      */
     private String basicFlowChart(List<NodeJson> nodeJsonList, List<SkipJson> skipJsonList, Consumer<FlowChartChain> consumer) {
@@ -223,17 +233,18 @@ public class ChartServiceImpl implements ChartService {
             int offsetW = 0;
             int offsetH = 0;
             // 如果有坐标小于0，则设置偏移量
-            if (chartXY.get("minX") <0) {
+            if (chartXY.get("minX") < 0) {
                 offsetW = offset - chartXY.get("minX");
                 chartXY.put("maxX", chartXY.get("maxX") + offsetW);
                 chartXY.put("minX", 0);
             }
-            if (chartXY.get("minY") <0) {
+            if (chartXY.get("minY") < 0) {
                 offsetH = offset - chartXY.get("minY");
                 chartXY.put("maxY", chartXY.get("maxY") + offsetH);
                 chartXY.put("minY", 0);
             }
-            int width = (chartXY.get("maxX") + chartXY.get("minX")) * n + offset;;
+            int width = (chartXY.get("maxX") + chartXY.get("minX")) * n + offset;
+            ;
             int height = (chartXY.get("maxY") + chartXY.get("minY")) * n + offset;
 
             BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -272,8 +283,8 @@ public class ChartServiceImpl implements ChartService {
     /**
      * 添加节点流程图
      *
-     * @param chartXY       流程图坐标边界
-     * @param nodeJsonList 流程节点对象Vo
+     * @param chartXY        流程图坐标边界
+     * @param nodeJsonList   流程节点对象Vo
      * @param flowChartChain 流程图链
      */
     private void addNodeChart(Map<String, Integer> chartXY, List<NodeJson> nodeJsonList
@@ -330,7 +341,7 @@ public class ChartServiceImpl implements ChartService {
     /**
      * 添加跳转流程图
      *
-     * @param chartXY       流程图坐标边界
+     * @param chartXY        流程图坐标边界
      * @param skipJsonList   节点跳转关联对象Vo
      * @param flowChartChain 流程图链
      */
