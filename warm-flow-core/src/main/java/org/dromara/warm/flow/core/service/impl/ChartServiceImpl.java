@@ -165,18 +165,21 @@ public class ChartServiceImpl implements ChartService {
     }
 
     private String getSkipKey(SkipJson skip) {
-        return StringUtils.join(skip.getNowNodeCode(), ":"
-                , skip.getSkipType(), ":"
-                , skip.getSkipCondition(), ":"
-                , skip.getNextNodeCode());
+        return StringUtils.join(new String[]{
+                skip.getNowNodeCode(),
+                skip.getSkipType(),
+                skip.getSkipCondition(),
+                skip.getNextNodeCode()}, ":");
     }
 
     private String getSkipKey(Skip skip) {
-        return StringUtils.join(skip.getNowNodeCode(), ":"
-                , skip.getSkipType(), ":"
-                , skip.getSkipCondition(), ":"
-                , skip.getNextNodeCode());
+        return StringUtils.join(new String[]{
+                skip.getNowNodeCode(),
+                skip.getSkipType(),
+                skip.getSkipCondition(),
+                skip.getNextNodeCode()}, ":");
     }
+
     private void rejectReset(String nodeCode, Map<String, List<SkipJson>> skipNextMap, Map<String, NodeJson> nodeMap) {
         List<SkipJson> oneNextSkips = skipNextMap.get(nodeCode);
         if (CollUtil.isNotEmpty(oneNextSkips)) {

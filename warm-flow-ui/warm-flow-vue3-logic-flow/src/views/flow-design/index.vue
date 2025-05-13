@@ -54,7 +54,15 @@ onMounted(async () => {
   use();
   lf.value = new LogicFlow({
     container: proxy.$refs.container,
-    grid: true,
+    grid: {
+      size: 20,
+      visible: true,
+      type: 'dot',
+      config: {
+        color: '#ababab',
+        thickness: 1,
+      },
+    },
     keyboard: {
       enabled: true,
       shortcuts: [

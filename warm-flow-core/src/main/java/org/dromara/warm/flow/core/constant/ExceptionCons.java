@@ -35,10 +35,6 @@ public class ExceptionCons {
 
     public static final String MUL_START_SKIP = "节点流转条件不能超过1个!";
 
-    public static final String MUST_CONDITION_VALUE_NODE = "互斥网关必须传递条件!";
-
-    public static final String ALREADY_EXIST = "流程已经存在,请通过创建新版本的流程对该流程进行更新!";
-
     public static final String LOST_START_NODE = "流程缺少开始节点!";
 
     public static final String LOST_NODE_CODE = "节点编码缺失";
@@ -89,8 +85,6 @@ public class ExceptionCons {
 
     public static final String NOT_NODE_DATA = "流程节点数据缺失!";
 
-    public static final String NOT_PUBLISH_NODE = "此流程编码[%s]的流程节点未发布!";
-
     public static final String EXIST_START_TASK = "流程定义已开启过审批任务，不可操作!";
 
     public static final String FLOW_FINISH = "流程已完成！";
@@ -106,8 +100,6 @@ public class ExceptionCons {
     public static final String IS_ALREADY_TRANSFER = "已经是转办人，不可转办";
 
     public static final String IS_ALREADY_DEPUTE = "已经是受托人，不可委托";
-
-    public static final String BACK_TASK_NOT_EXECUTED = "未完成过任务, 不能退回";
 
     public static final String NOT_ACTIVITY = "当前流程定义或者实例已经挂起，请先激活";
 
@@ -133,15 +125,11 @@ public class ExceptionCons {
 
     public static final String HANDLER_NOT_EMPTY = "办理人不能为空";
 
-    public static final String NODE_IS_END = "目标节点是结束节点，不可跳转";
-
     public static final String TAR_NOT_GATEWAY = "目标节点不能是网关节点!";
 
     public static final String NOT_FOUND_FLOW_TASK = "未获取到流程任务";
 
     public static final String FLOW_HAVE_USELESS_SKIP = "存在无用的跳转";
-
-    public static final String TASKID_INSTANCEID_NULL = "流程ID和任务ID不能都为空";
 
     public static final String NUll_TRANSFER_HANDLER = "转办对象不能为空";
 

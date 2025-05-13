@@ -61,8 +61,14 @@ public interface HandlerSelectService {
      */
     default List<HandlerFeedBackVo> handlerFeedback(List<String> storageIds) {
         List<HandlerFeedBackVo> handlerFeedBackVos = new ArrayList<>();
+        if (CollUtil.isEmpty(storageIds)) {
+            return handlerFeedBackVos;
+        }
         Map<String, String> authMap = new HashMap<>();
         List<String> handlerTypes = getHandlerType();
+        if (CollUtil.isEmpty(handlerTypes)) {
+            return handlerFeedBackVos;
+        }
         for (String handlerType : handlerTypes) {
             HandlerQuery handlerQuery = new HandlerQuery();
             handlerQuery.setHandlerType(handlerType);
@@ -78,9 +84,8 @@ public interface HandlerSelectService {
 
         // 遍历storageIds，按照原本的顺序回显名称
         for (String storageId : storageIds) {
-            handlerFeedBackVos.add(new HandlerFeedBackVo()
-                    .setStorageId(storageId)
-                    .setHandlerName(MapUtil.isEmpty(authMap) ? "": authMap.get(storageId)));
+            handlerFeedBackVos.add(new HandlerFeedBackVo(storageId
+                    , MapUtil.isEmpty(authMap) ? "": authMap.get(storageId)));
         }
         return handlerFeedBackVos;
     }
