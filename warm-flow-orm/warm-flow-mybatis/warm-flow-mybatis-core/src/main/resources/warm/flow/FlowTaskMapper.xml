@@ -269,7 +269,7 @@
         <foreach item="instanceId" collection="instanceIds" open="(" separator="," close=")">
             #{instanceId}
         </foreach>
-        <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+        <if test="entity.tenantId != null  and entity.tenantId != ''">and tenant_id = #{entity.tenantId}</if>
     </delete>
 
     <update id="updateByInsIdsLogic">
