@@ -88,7 +88,7 @@ comment on column FLOW_NODE.UPDATE_TIME is '更新时间';
 comment on column FLOW_NODE.EXT is '扩展属性';
 comment on column FLOW_NODE.DEL_FLAG is '删除标志';
 comment on column FLOW_NODE.TENANT_ID is '租户id';
-comment on column FLOW_NODE.PERMISSION_FLAG is '权限标识（权限类型:权限标识，可以多个，用逗号隔开)';
+comment on column FLOW_NODE.PERMISSION_FLAG is '权限标识（权限类型:权限标识，可以多个，用@@隔开)';
 
 create table FLOW_SKIP
 (

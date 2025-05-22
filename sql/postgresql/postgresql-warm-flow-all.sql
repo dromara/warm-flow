@@ -44,7 +44,7 @@ CREATE TABLE flow_node
     definition_id   int8          NOT NULL,                             -- 流程定义id
     node_code       varchar(100)  NOT NULL,                             -- 流程节点编码
     node_name       varchar(100)  NULL,                                 -- 流程节点名称
-    permission_flag varchar(200)  NULL,                                 -- 权限标识（权限类型:权限标识，可以多个，用逗号隔开)
+    permission_flag varchar(200)  NULL,                                 -- 权限标识（权限类型:权限标识，可以多个，用@@隔开)
     node_ratio      numeric(6, 3) NULL,                                 -- 流程签署比例值
     coordinate      varchar(100)  NULL,                                 -- 坐标
     any_node_skip   varchar(100)  NULL,                                 -- 任意结点跳转
@@ -69,7 +69,7 @@ COMMENT ON COLUMN flow_node.node_type IS '节点类型（0开始节点 1中间�
 COMMENT ON COLUMN flow_node.definition_id IS '流程定义id';
 COMMENT ON COLUMN flow_node.node_code IS '流程节点编码';
 COMMENT ON COLUMN flow_node.node_name IS '流程节点名称';
-COMMENT ON COLUMN flow_node.permission_flag IS '权限标识（权限类型:权限标识，可以多个，用逗号隔开)';
+COMMENT ON COLUMN flow_node.permission_flag IS '权限标识（权限类型:权限标识，可以多个，用@@隔开)';
 COMMENT ON COLUMN flow_node.node_ratio IS '流程签署比例值';
 COMMENT ON COLUMN flow_node.coordinate IS '坐标';
 COMMENT ON COLUMN flow_node.any_node_skip IS '任意结点跳转';

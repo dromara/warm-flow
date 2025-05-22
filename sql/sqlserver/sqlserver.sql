@@ -205,7 +205,7 @@ EXEC sp_addextendedproperty
 GO
 
 EXEC sp_addextendedproperty
-'MS_Description', N'权限标识（权限类型:权限标识，可以多个，用逗号隔开)',
+'MS_Description', N'权限标识（权限类型:权限标识，可以多个，用@@隔开)',
 'SCHEMA', N'dbo',
 'TABLE', N'flow_node',
 'COLUMN', N'permission_flag'

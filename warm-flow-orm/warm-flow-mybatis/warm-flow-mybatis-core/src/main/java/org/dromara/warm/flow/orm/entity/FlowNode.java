@@ -79,7 +79,7 @@ public class FlowNode implements Node {
      */
     private String nodeName;
     /**
-     * 权限标识（权限类型:权限标识，可以多个，用逗号隔开)
+     * 权限标识（权限类型:权限标识，可以多个，用@@隔开)
      */
     private String permissionFlag;
     /**
