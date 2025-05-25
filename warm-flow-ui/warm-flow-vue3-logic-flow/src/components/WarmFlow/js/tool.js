@@ -66,6 +66,15 @@ export const json2LogicFlowJson = (definition) => {
           console.error("Error parsing JSON:", error);
         }
       }
+      lfNode.properties.style = {};
+      if (node.status === 2) {
+        lfNode.properties.style.fill = '#F0FFD9';
+        lfNode.properties.style.stroke = '#9DFF00';
+      }
+      if (node.status === 1) {
+        lfNode.properties.style.fill = '#FFF8DC';
+        lfNode.properties.style.stroke = '#FFCD17';
+      }
       graphData.nodes.push(lfNode)
     }
   }
