@@ -32,6 +32,7 @@ import org.dromara.warm.flow.core.utils.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -164,7 +165,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
      *
      * @param instance 流程实例
      * @param addTasks 新增任务
-     * @param hisTask 历史任务
+     * @param hisTask  历史任务
      */
     private void saveFlowInfo(Instance instance, List<Task> addTasks, HisTask hisTask, FlowParams flowParams) {
         FlowEngine.taskService().setInsFinishInfo(instance, addTasks, flowParams);
@@ -243,5 +244,18 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         AssertUtil.isTrue(instance.getActivityStatus().equals(ActivityStatus.SUSPENDED.getKey()), ExceptionCons.INSTANCE_ALREADY_SUSPENDED);
         instance.setActivityStatus(ActivityStatus.SUSPENDED.getKey());
         return updateById(instance);
+    }
+
+    @Override
+    public void removeVariables(Long instanceId, String... keys) {
+        Instance instance = FlowEngine.insService().getById(instanceId);
+        if (instance != null) {
+            Map<String, Object> variableMap = instance.getVariableMap();
+            for (String key : keys) {
+                variableMap.remove(key);
+            }
+            instance.setVariable(FlowEngine.jsonConvert.objToStr(variableMap));
+            FlowEngine.insService().updateById(instance);
+        }
     }
 }

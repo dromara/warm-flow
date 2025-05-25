@@ -50,7 +50,7 @@ public interface InsService extends IWarmService<Instance> {
      * @param instanceId:流程实例id[必传]
      * @param flowParams:包含流程相关参数的对象 - skipType:跳转类型(PASS审批通过 REJECT退回) [必传]
      *                               - nodeCode: 如果指定节点,可任意跳转到对应节点，严禁任意退回选择后置节点 [按需传输]
-     *      *                        - permissionFlag: 办理人权限标识，比如用户，角色，部门等，用于校验是否有权限办理；流程设计时未设置办理人或者ignore为true可不传 [按需传输]
+     *                               - permissionFlag: 办理人权限标识，比如用户，角色，部门等，用于校验是否有权限办理；流程设计时未设置办理人或者ignore为true可不传 [按需传输]
      *                               - message: 审批意见[按需传输]
      *                               - handler: 办理人唯一标识[建议传]
      *                               - variable: 流程变量[按需传输,跳转条件放入流程变量<互斥网关必传>]
@@ -84,6 +84,7 @@ public interface InsService extends IWarmService<Instance> {
 
     /**
      * 根据流程定义id，查询流程实例集合
+     *
      * @param definitionId 流程定义id
      * @return List<Instance>
      */
@@ -91,12 +92,14 @@ public interface InsService extends IWarmService<Instance> {
 
     /**
      * 激活实例
+     *
      * @param id 流程实例id
      */
     boolean active(Long id);
 
     /**
      * 挂起实例，流程实例挂起后，该流程实例无法继续流转
+     *
      * @param id 流程实例id
      */
     boolean unActive(Long id);
@@ -108,4 +111,13 @@ public interface InsService extends IWarmService<Instance> {
      * @return 流程实例集合
      */
     List<Instance> listByDefIds(List<Long> defIds);
+
+
+    /**
+     * 按照流程变量key删除流程变量
+     *
+     * @param instanceId 流程实例id
+     * @param keys       流程变量key
+     */
+    void removeVariables(Long instanceId, String... keys);
 }
