@@ -1,4 +1,5 @@
 import { h, PolygonNode, PolygonNodeModel } from '@logicflow/core'
+import {getStatusStyle} from "@/components/WarmFlow/js/tool.js";
 
 class SerialModel extends PolygonNodeModel {
   static extendKey = 'SerialModel';
@@ -22,6 +23,9 @@ class SerialModel extends PolygonNodeModel {
     ]
   }
 
+  getNodeStyle() {
+    return getStatusStyle(super.getNodeStyle(), this.properties);
+  }
 }
 
 class SerialView extends PolygonNode {

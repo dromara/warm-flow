@@ -1,4 +1,5 @@
 import { PolylineEdge, PolylineEdgeModel } from "@logicflow/core";
+import {getStatusStyle} from "@/components/WarmFlow/js/tool.js";
 
 class SkipModel extends PolylineEdgeModel {
   setAttributes() {
@@ -7,9 +8,12 @@ class SkipModel extends PolylineEdgeModel {
 
   getEdgeStyle() {
     const style = super.getEdgeStyle();
-    const { properties } = this;
-    if (properties.isActived) {
-      style.strokeDasharray = "4 4";
+    const properties = this.properties;
+    if (properties.status === 2) {
+      style.stroke = '#9DFF00';
+    }
+    if (properties.status === 1) {
+      style.stroke = '#FFCD17';
     }
     return style;
   }

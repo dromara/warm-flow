@@ -19,6 +19,14 @@ export function queryDef(id) {
   })
 }
 
+// 获取流程图
+export function queryFlowChart(id) {
+  return request({
+    url: urlPrefix + 'warm-flow/query-flow-chart/' + id,
+    method: 'get'
+  })
+}
+
 // 办理人权限设置列表tabs页签
 export function handlerType() {
   return request({

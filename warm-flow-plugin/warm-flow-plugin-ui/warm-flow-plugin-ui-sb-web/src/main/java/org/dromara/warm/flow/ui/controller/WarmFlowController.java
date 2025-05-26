@@ -27,6 +27,7 @@ import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.utils.ExceptionUtil;
 import org.dromara.warm.flow.ui.dto.HandlerFeedBackDto;
 import org.dromara.warm.flow.ui.dto.HandlerQuery;
+import org.dromara.warm.flow.ui.service.ChartExtService;
 import org.dromara.warm.flow.ui.service.HandlerDictService;
 import org.dromara.warm.flow.ui.service.HandlerSelectService;
 import org.dromara.warm.flow.ui.service.NodeExtService;
@@ -87,6 +88,29 @@ public class WarmFlowController {
         } catch (Exception e) {
             log.error("获取流程json字符串", e);
             throw new FlowException(ExceptionUtil.handleMsg("获取流程json字符串失败", e));
+        }
+    }
+
+    /**
+     * 获取流程图
+     *
+     * @param id 流程实例id
+     * @return ApiResult<DefJson>
+     */
+    @GetMapping("/query-flow-chart/{id}")
+    public ApiResult<DefJson> queryFlowChart(@PathVariable("id") Long id) {
+        try {
+            String defJsonStr = FlowEngine.insService().getById(id).getDefJson();
+            DefJson defJson = FlowEngine.jsonConvert.strToBean(defJsonStr, DefJson.class);
+            // 需要业务系统实现该接口
+            ChartExtService chartExtService = FrameInvoker.getBean(ChartExtService.class);
+            if (chartExtService != null) {
+                chartExtService.execute(defJson);
+            }
+            return ApiResult.ok(defJson);
+        } catch (Exception e) {
+            log.error("获取流程图", e);
+            throw new FlowException(ExceptionUtil.handleMsg("获取流程图失败", e));
         }
     }
 

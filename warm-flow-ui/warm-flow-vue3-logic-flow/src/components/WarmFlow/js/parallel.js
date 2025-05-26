@@ -1,4 +1,5 @@
 import { h, PolygonNode, PolygonNodeModel } from '@logicflow/core'
+import {getStatusStyle} from "@/components/WarmFlow/js/tool.js";
 
 class ParallelModel extends PolygonNodeModel {
   static extendKey = 'ParallelModel';
@@ -20,6 +21,10 @@ class ParallelModel extends PolygonNodeModel {
       [25, 50],
       [0, 25]
     ]
+  }
+
+  getNodeStyle() {
+    return getStatusStyle(super.getNodeStyle(), this.properties);
   }
 
 }

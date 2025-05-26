@@ -55,6 +55,7 @@ export const json2LogicFlowJson = (definition) => {
       lfNode.properties.listenerPath = node.listenerPath
       lfNode.properties.formCustom = node.formCustom
       lfNode.properties.formPath = node.formPath
+      lfNode.properties.status = node.status
       lfNode.properties.ext = {};
       if (node.ext && typeof node.ext === "string") {
         try {
@@ -65,15 +66,6 @@ export const json2LogicFlowJson = (definition) => {
         } catch (error) {
           console.error("Error parsing JSON:", error);
         }
-      }
-      lfNode.properties.style = {};
-      if (node.status === 2) {
-        lfNode.properties.style.fill = '#F0FFD9';
-        lfNode.properties.style.stroke = '#9DFF00';
-      }
-      if (node.status === 1) {
-        lfNode.properties.style.fill = '#FFF8DC';
-        lfNode.properties.style.stroke = '#FFCD17';
       }
       graphData.nodes.push(lfNode)
     }
@@ -96,6 +88,7 @@ export const json2LogicFlowJson = (definition) => {
       edge.properties.skipCondition = skipEle.skipCondition
       edge.properties.skipName = skipEle.skipName
       edge.properties.skipType = skipEle.skipType
+      edge.properties.status = skipEle.status
       const expr = skipEle.expr
       if (expr) {
         edge.properties.expr = skipEle.expr
@@ -234,4 +227,16 @@ export const logicFlowJsonToWarmFlow = (data) => {
     definition.nodeList.push(node)
   })
   return JSON.stringify(definition)
+}
+
+export const getStatusStyle = (style, properties) => {
+  if (properties.status === 2) {
+    style.fill = '#F0FFD9';
+    style.stroke = '#9DFF00';
+  }
+  if (properties.status === 1) {
+    style.fill = '#FFF8DC';
+    style.stroke = '#FFCD17';
+  }
+  return style;
 }

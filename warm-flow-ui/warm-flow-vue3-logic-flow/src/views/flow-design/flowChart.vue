@@ -34,162 +34,14 @@ import Serial from "@/components/WarmFlow/js/serial";
 import Parallel from "@/components/WarmFlow/js/parallel";
 import End from "@/components/WarmFlow/js/end";
 import Skip from "@/components/WarmFlow/js/skip";
+import useAppStore from "@/store/app";
 import { json2LogicFlowJson } from "@/components/WarmFlow/js/tool";
+import { queryFlowChart } from "&/api/flow/definition";
 
-const defJson = ref({ 
-    "id": null, 
-    "flowCode": "leave1", 
-    "flowName": "请假申请-普通", 
-    "category": "100", 
-    "version": "1", 
-    "formCustom": "N", 
-    "formPath": "/workflow/leaveEdit/index", 
-    "listenerType": null, 
-    "listenerPath": null, 
-    "ext": null, 
-    "extMap": null, 
-    "nodeList": [ 
-        { 
-            "nodeType": 0, 
-            "nodeCode": "d5ee3ddf-3968-4379-a86f-9ceabde5faac", 
-            "nodeName": "开始", 
-            "permissionFlag": null, 
-            "nodeRatio": "0.000", 
-            "coordinate": "200,200|200,200", 
-            "anyNodeSkip": null, 
-            "listenerType": null, 
-            "listenerPath": null, 
-            "handlerType": null, 
-            "handlerPath": null, 
-            "formCustom": "N", 
-            "formPath": null, 
-            "ext": "[]", 
-            "status": 2, 
-            "extMap": {}, 
-            "skipList": [ 
-                { 
-                    "nowNodeCode": "d5ee3ddf-3968-4379-a86f-9ceabde5faac", 
-                    "nextNodeCode": "dd515cdd-59f6-446f-94ca-25ca062afb42", 
-                    "skipName": null, 
-                    "skipType": "PASS", 
-                    "skipCondition": null, 
-                    "coordinate": "220,200;310,200", 
-                    "status": 2, 
-                    "extMap": null 
-                } 
-            ] 
-        }, 
-        { 
-            "nodeType": 1, 
-            "nodeCode": "dd515cdd-59f6-446f-94ca-25ca062afb42", 
-            "nodeName": "申请人", 
-            "permissionFlag": null, 
-            "nodeRatio": "0.000", 
-            "coordinate": "360,200|360,200", 
-            "anyNodeSkip": null, 
-            "listenerType": null, 
-            "listenerPath": null, 
-            "handlerType": null, 
-            "handlerPath": null, 
-            "formCustom": "N", 
-            "formPath": null, 
-            "ext": "[]", 
-            "status": 2, 
-            "extMap": {}, 
-            "skipList": [ 
-                { 
-                    "nowNodeCode": "dd515cdd-59f6-446f-94ca-25ca062afb42", 
-                    "nextNodeCode": "78fa8e5b-e809-44ed-978a-41092409ebcf", 
-                    "skipName": null, 
-                    "skipType": "PASS", 
-                    "skipCondition": null, 
-                    "coordinate": "410,200;490,200", 
-                    "status": 2, 
-                    "extMap": null 
-                } 
-            ] 
-        }, 
-        { 
-            "nodeType": 1, 
-            "nodeCode": "78fa8e5b-e809-44ed-978a-41092409ebcf", 
-            "nodeName": "组长", 
-            "permissionFlag": "role:1", 
-            "nodeRatio": "0.000", 
-            "coordinate": "540,200|540,200", 
-            "anyNodeSkip": null, 
-            "listenerType": null, 
-            "listenerPath": null, 
-            "handlerType": null, 
-            "handlerPath": null, 
-            "formCustom": "N", 
-            "formPath": null, 
-            "ext": "[{\"code\":\"ButtonPermissionEnum\",\"value\":\"back,termination\"}]", 
-            "status": 1, 
-            "extMap": {}, 
-            "skipList": [ 
-                { 
-                    "nowNodeCode": "78fa8e5b-e809-44ed-978a-41092409ebcf", 
-                    "nextNodeCode": "a8abf15f-b83e-428a-86cc-033555ea9bbe", 
-                    "skipName": null, 
-                    "skipType": "PASS", 
-                    "skipCondition": null, 
-                    "coordinate": "590,200;670,200", 
-                    "status": 0, 
-                    "extMap": null 
-                } 
-            ] 
-        }, 
-        { 
-            "nodeType": 1, 
-            "nodeCode": "a8abf15f-b83e-428a-86cc-033555ea9bbe", 
-            "nodeName": "部门主管", 
-            "permissionFlag": "role:3@@role:4", 
-            "nodeRatio": "0.000", 
-            "coordinate": "720,200|720,200", 
-            "anyNodeSkip": null, 
-            "listenerType": null, 
-            "listenerPath": null, 
-            "handlerType": null, 
-            "handlerPath": null, 
-            "formCustom": "N", 
-            "formPath": null, 
-            "ext": "[{\"code\":\"ButtonPermissionEnum\",\"value\":\"back,termination\"}]", 
-            "status": 0, 
-            "extMap": {}, 
-            "skipList": [ 
-                { 
-                    "nowNodeCode": "a8abf15f-b83e-428a-86cc-033555ea9bbe", 
-                    "nextNodeCode": "8b82b7d7-8660-455e-b880-d6d22ea3eb6d", 
-                    "skipName": null, 
-                    "skipType": "PASS", 
-                    "skipCondition": null, 
-                    "coordinate": "770,200;880,200", 
-                    "status": 0, 
-                    "extMap": null 
-                } 
-            ] 
-        }, 
-        { 
-            "nodeType": 2, 
-            "nodeCode": "8b82b7d7-8660-455e-b880-d6d22ea3eb6d", 
-            "nodeName": "结束", 
-            "permissionFlag": null, 
-            "nodeRatio": "0.000", 
-            "coordinate": "900,200|900,200", 
-            "anyNodeSkip": null, 
-            "listenerType": null, 
-            "listenerPath": null, 
-            "handlerType": null, 
-            "handlerPath": null, 
-            "formCustom": "N", 
-            "formPath": null, 
-            "ext": "[]", 
-            "status": 0, 
-            "extMap": {}, 
-            "skipList": [] 
-        } 
-    ] 
-}); 
+const appStore = useAppStore();
+const appParams = computed(() => useAppStore().appParams);
+const definitionId = ref(null);
+const defJson = ref({});
 const containerRef = ref(null);
 const lf = ref(null);
 const register = () => {
@@ -207,19 +59,29 @@ const zoomViewport = async (zoom) => {
 };
 
 onMounted(async () => {
-  console.log(defJson.value)
-  if (defJson.value) {
-    const data = json2LogicFlowJson(defJson.value);
-    lf.value = new LogicFlow({
-      container: containerRef.value,
-      grid: false,
-      isSilentMode: true,
-      textEdit: false
+  if (!appParams.value) await appStore.fetchTokenName();
+  definitionId.value = appParams.value.id;
+
+  if (definitionId.value) {
+    queryFlowChart(definitionId.value).then(res => {
+      defJson.value = res.data;
+      if (defJson.value) {
+        const data = json2LogicFlowJson(defJson.value);
+        lf.value = new LogicFlow({
+          container: containerRef.value,
+          grid: false,
+          isSilentMode: true,
+          textEdit: false
+        });
+        register();
+        lf.value.render(data);
+        lf.value.translateCenter();
+      }
+    }).catch(() => {
+      lf.value.render({});
     });
-    register();
-    lf.value.render(data);
-    lf.value.translateCenter();
   }
+
 });
 </script>
 
