@@ -207,9 +207,8 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
 
         // 获取跳转关系
         List<Skip> skips = StreamUtils.filter(flowCombine.getAllSkips(), skip -> nowNode.getNodeCode().equals(skip.getNowNodeCode()));
-        AssertUtil.isNull(skips, ExceptionCons.NULL_SKIP_TYPE);
+        AssertUtil.isNull(skips, ExceptionCons.NULL_DEST_NODE);
         Skip nextSkip = getSkipByCheck(skips, skipType);
-        AssertUtil.isNull(nextSkip, ExceptionCons.NULL_SKIP_TYPE);
 
         // 根据跳转查询出跳转到的那个节点
         nextNode = StreamUtils.filterOne(flowCombine.getAllNodes(), node -> nextSkip.getNextNodeCode().equals(node.getNodeCode()));
