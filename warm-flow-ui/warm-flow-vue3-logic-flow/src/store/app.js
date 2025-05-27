@@ -1,7 +1,6 @@
 import Cookies from 'js-cookie'
 import {TokenPrefix, TokenName} from "@/utils/auth.js";
-import {tokenName} from "&/api/anony.js";
-import {getTokenName} from "../utils/auth.js";
+import {config} from "&/api/anony.js";
 
 const useAppStore = defineStore(
   'app',
@@ -14,9 +13,9 @@ const useAppStore = defineStore(
         const urlParams = new URLSearchParams(window.location.search);
         const params = {};
         let tokenNames = []
-        await tokenName().then(res => {
+        await config().then(res => {
             if (res.code === 200 && res.data && res.data.length > 0) {
-                tokenNames = res.data
+                tokenNames = res.data.tokenNameList
                 Cookies.set(TokenName, res.data)
             }
         }).catch(() => {});

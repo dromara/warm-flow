@@ -38,30 +38,13 @@ import java.util.stream.Collectors;
 public class WarmFlowUiController {
 
     /**
-     * 保存流程xml字符串
-     * @return ApiResult<String>
-     * @throws Exception 异常
-     */
-    @GetMapping("/token-name")
-    public ApiResult<List<String>> tokenName() {
-        String tokenName = FlowEngine.getFlowConfig().getTokenName();
-        if (StringUtils.isEmpty(tokenName)) {
-            return ApiResult.fail("未配置tokenName");
-        }
-        String[] tokenNames = tokenName.split(",");
-        List<String> tokenNameList = Arrays.stream(tokenNames).filter(StringUtils::isNotEmpty)
-                .map(String::trim).collect(Collectors.toList());
-        return ApiResult.ok(tokenNameList);
-    }
-
-    /**
-     * 保存流程xml字符串
-     * @return ApiResult<String>
-     * @throws Exception 异常
+     * 返回流程定义的配置
+     * @return ApiResult<WarmFlowVo>
      */
     @GetMapping("/config")
     public ApiResult<WarmFlowVo> config() {
         WarmFlowVo warmFlowVo = new WarmFlowVo();
+        // 获取tokenName
         String tokenName = FlowEngine.getFlowConfig().getTokenName();
         if (StringUtils.isEmpty(tokenName)) {
             return ApiResult.fail("未配置tokenName");
@@ -69,8 +52,8 @@ public class WarmFlowUiController {
         String[] tokenNames = tokenName.split(",");
         List<String> tokenNameList = Arrays.stream(tokenNames).filter(StringUtils::isNotEmpty)
                 .map(String::trim).collect(Collectors.toList());
-
         warmFlowVo.setTokenNameList(tokenNameList);
+
         return ApiResult.ok(warmFlowVo);
     }
 

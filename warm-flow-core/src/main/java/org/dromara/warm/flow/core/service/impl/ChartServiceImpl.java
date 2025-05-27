@@ -35,6 +35,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -162,6 +163,18 @@ public class ChartServiceImpl implements ChartService {
 
 
         return FlowEngine.jsonConvert.objToStr(defJson);
+    }
+
+    @Override
+    public List<String> getChartRgb() {
+        List<String> chartStatusColor = new ArrayList<>();
+        Color done = ChartStatus.getDone();
+        chartStatusColor.add(done.getRed() + "," + done.getGreen() + "," + done.getBlue());
+        Color toDo = ChartStatus.getToDo();
+        chartStatusColor.add(toDo.getRed() + "," + toDo.getGreen() + "," + toDo.getBlue());
+        Color notDone = ChartStatus.getNotDone();
+        chartStatusColor.add(notDone.getRed() + "," + notDone.getGreen() + "," + notDone.getBlue());
+        return chartStatusColor;
     }
 
     private String getSkipKey(SkipJson skip) {

@@ -9,7 +9,7 @@ class StartModel extends CircleNodeModel {
   }
 
   getNodeStyle() {
-    return getStatusStyle(super.getNodeStyle(), this.properties);
+    return getStatusStyle(super.getNodeStyle(), this.properties, "node");
   }
 }
 

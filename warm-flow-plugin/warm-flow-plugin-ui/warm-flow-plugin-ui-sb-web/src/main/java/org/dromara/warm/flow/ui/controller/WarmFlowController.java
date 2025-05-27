@@ -102,6 +102,10 @@ public class WarmFlowController {
         try {
             String defJsonStr = FlowEngine.insService().getById(id).getDefJson();
             DefJson defJson = FlowEngine.jsonConvert.strToBean(defJsonStr, DefJson.class);
+
+            // 获取流程图三原色
+            defJson.setChartStatusColor(FlowEngine.chartService().getChartRgb());
+
             // 需要业务系统实现该接口
             ChartExtService chartExtService = FrameInvoker.getBean(ChartExtService.class);
             if (chartExtService != null) {

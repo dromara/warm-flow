@@ -37,7 +37,7 @@ import java.util.Map;
 public enum ChartStatus {
     NOT_DONE(0, "未办理", new Color(0, 0, 0)),
 
-    TO_DO(1, "待办理", new Color(255, 200, 0)),
+    TO_DO(1, "待办理", new Color(255, 205, 23)),
 
     DONE(2, "已办理", new Color(157, 255, 0));
 

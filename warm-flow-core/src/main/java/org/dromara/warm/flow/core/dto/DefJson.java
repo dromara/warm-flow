@@ -101,6 +101,11 @@ public class DefJson {
      */
     private List<NodeJson> nodeList = new ArrayList<>();
 
+    /**
+     * 流程状态对应的三原色
+     */
+    private List<String> chartStatusColor;
+
     public static DefJson copyDef(Definition definition) {
         DefJson defJson = new DefJson()
                 .setFlowCode(definition.getFlowCode())

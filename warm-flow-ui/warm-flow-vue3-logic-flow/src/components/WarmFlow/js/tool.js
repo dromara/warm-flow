@@ -56,6 +56,7 @@ export const json2LogicFlowJson = (definition) => {
       lfNode.properties.formCustom = node.formCustom
       lfNode.properties.formPath = node.formPath
       lfNode.properties.status = node.status
+      lfNode.properties.chartStatusColor = definition.chartStatusColor
       lfNode.properties.ext = {};
       if (node.ext && typeof node.ext === "string") {
         try {
@@ -89,6 +90,7 @@ export const json2LogicFlowJson = (definition) => {
       edge.properties.skipName = skipEle.skipName
       edge.properties.skipType = skipEle.skipType
       edge.properties.status = skipEle.status
+      edge.properties.chartStatusColor = definition.chartStatusColor
       const expr = skipEle.expr
       if (expr) {
         edge.properties.expr = skipEle.expr
@@ -229,14 +231,30 @@ export const logicFlowJsonToWarmFlow = (data) => {
   return JSON.stringify(definition)
 }
 
-export const getStatusStyle = (style, properties) => {
+export const getStatusStyle = (style, properties, type) => {
+  // 从 chartStatusColor 数组中提取颜色值
+  const [doneColor, todoColor, notDoneColor] = properties.chartStatusColor
+  || ["157,255,0", "255,205,23", "0,0,0"]; // 提供默认值
+
   if (properties.status === 2) {
-    style.fill = '#F0FFD9';
-    style.stroke = '#9DFF00';
+    // 使用活跃状态的 RGB 颜色
+    if (type === 'node') {
+      style.fill = `rgba(${doneColor}, 0.15)`;  // 带透明度
+    }
+    style.stroke = `rgb(${doneColor})`;      // 纯色
+  } else if (properties.status === 1) {
+    // 使用非活跃状态的 RGB 颜色
+    if (type === 'node') {
+      style.fill = `rgba(${todoColor}, 0.15)`;
+    }
+    style.stroke = `rgb(${todoColor})`;
+  } else {
+    // 默认状态
+    if (type === 'node') {
+      style.fill = `rgba(255, 255, 255)`;
+    }
+    style.stroke = `rgb(${notDoneColor})`;
   }
-  if (properties.status === 1) {
-    style.fill = '#FFF8DC';
-    style.stroke = '#FFCD17';
-  }
+
   return style;
 }

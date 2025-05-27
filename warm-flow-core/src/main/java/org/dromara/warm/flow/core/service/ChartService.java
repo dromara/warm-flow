@@ -19,6 +19,7 @@ import org.dromara.warm.flow.core.chart.FlowChartChain;
 import org.dromara.warm.flow.core.dto.DefChart;
 import org.dromara.warm.flow.core.dto.PathWayData;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -90,4 +91,9 @@ public interface ChartService {
      * @return 流程图元数据json
      */
     String skipMetadata(PathWayData pathWayData);
+
+    /**
+     * 获取流程图三原色
+     */
+    List<String> getChartRgb();
 }

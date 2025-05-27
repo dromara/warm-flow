@@ -10,7 +10,7 @@ class BetweenModel extends RectNodeModel {
     this.radius = 5;
   }
   getNodeStyle() {
-    return getStatusStyle(super.getNodeStyle(), this.properties);
+    return getStatusStyle(super.getNodeStyle(), this.properties, "node");
   }
 }
 

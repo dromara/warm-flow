@@ -24,11 +24,11 @@ import org.dromara.warm.flow.core.dto.DefJson;
  */
 public interface ChartExtService {
 
+
     /**
-     *
+     * 扩展流程图
      * @param defJson 流程定义json对象
      */
-    void execute(DefJson defJson);
-
+     void execute(DefJson defJson);
 
 }

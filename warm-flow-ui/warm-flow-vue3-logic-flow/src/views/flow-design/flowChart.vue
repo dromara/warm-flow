@@ -14,9 +14,9 @@
           </el-tooltip>
         </div>
         <div>
-          <el-button size="small" style="border: 1px solid #000">未完成</el-button>
-          <el-button size="small" style="background-color: #fff8dc; border: 1px solid #ffcd17">进行中</el-button>
-          <el-button size="small" style="background-color: #f0ffd9; border: 1px solid #9dff00">已完成</el-button>
+          <el-button size="small" :style="`border: 1px solid rgb(${statusColors.notDone})`">未完成</el-button>
+          <el-button size="small" :style="`background-color: rgb(${statusColors.todo}, 0.15); border: 1px solid rgb(${statusColors.todo})`">进行中</el-button>
+          <el-button size="small" :style="`background-color: rgb(${statusColors.done}, 0.15); border: 1px solid rgb(${statusColors.done})`">已完成</el-button>
         </div>
       </div>
     </el-header>
@@ -43,6 +43,11 @@ const appParams = computed(() => useAppStore().appParams);
 const definitionId = ref(null);
 const defJson = ref({});
 const containerRef = ref(null);
+const statusColors = ref({
+  done: '',
+  todo: '',
+  notDone: ''
+});
 const lf = ref(null);
 const register = () => {
   lf.value.register(Start);
@@ -66,6 +71,9 @@ onMounted(async () => {
     queryFlowChart(definitionId.value).then(res => {
       defJson.value = res.data;
       if (defJson.value) {
+        [statusColors.value.done, statusColors.value.todo, statusColors.value.notDone] = res.data.chartStatusColor
+        || ["157,255,0", "255,205,23", "0,0,0"];
+
         const data = json2LogicFlowJson(defJson.value);
         lf.value = new LogicFlow({
           container: containerRef.value,

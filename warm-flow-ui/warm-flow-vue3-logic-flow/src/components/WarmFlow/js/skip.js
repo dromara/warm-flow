@@ -7,15 +7,8 @@ class SkipModel extends PolylineEdgeModel {
   }
 
   getEdgeStyle() {
-    const style = super.getEdgeStyle();
-    const properties = this.properties;
-    if (properties.status === 2) {
-      style.stroke = '#9DFF00';
-    }
-    if (properties.status === 1) {
-      style.stroke = '#FFCD17';
-    }
-    return style;
+    return getStatusStyle(super.getEdgeStyle(), this.properties, "skip");
+
   }
 
   /**
