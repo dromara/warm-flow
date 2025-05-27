@@ -36,14 +36,18 @@ public interface ChartService {
      *
      * @param instanceId 流程实例id
      * @return base64编码的图片流字符串
+     * @deprecated 请使用前端渲染流程图
      */
+    @Deprecated
     String chartIns(Long instanceId);
 
     /**
      * 根据流程定义ID,获取流程图的图片流(不渲染状态)
      * @param definitionId 流程定义id
      * @return base64编码的图片流字符串
+     * @deprecated 请使用前端渲染流程图
      */
+    @Deprecated
     String chartDef(Long definitionId);
 
     /**
@@ -52,7 +56,9 @@ public interface ChartService {
      * @param instanceId 流程实例id
      * @param consumer 可获取流程图对象，可用于修改流程图样式或者新增内容
      * @return base64编码的图片流字符串
+     * @deprecated 请使用前端渲染流程图
      */
+    @Deprecated
     String chartIns(Long instanceId, Consumer<FlowChartChain> consumer);
 
     /**
@@ -60,7 +66,9 @@ public interface ChartService {
      * @param definitionId 流程定义id
      * @param consumer 可获取流程图对象，可用于修改流程图样式或者新增内容
      * @return base64编码的图片流字符串
+     * @deprecated 请使用前端渲染流程图
      */
+    @Deprecated
     String chartDef(Long definitionId, Consumer<FlowChartChain> consumer);
 
     /**
@@ -68,14 +76,18 @@ public interface ChartService {
      *
      * @param instanceId 流程实例id
      * @return DefChart 流程图对象
+     * @deprecated 请使用前端渲染流程图
      */
+    @Deprecated
     DefChart chartInsObj(Long instanceId);
 
     /**
      * 根据流程定义ID,获取流程图对象
      * @param definitionId 流程定义id
      * @return DefChart 流程图对象
+     * @deprecated 请使用前端渲染流程图
      */
+    @Deprecated
     DefChart chartDefObj(Long definitionId);
 
     /**
