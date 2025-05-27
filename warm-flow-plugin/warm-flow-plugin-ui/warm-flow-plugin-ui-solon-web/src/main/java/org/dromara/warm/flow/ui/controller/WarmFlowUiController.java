@@ -38,12 +38,11 @@ import java.util.stream.Collectors;
 public class WarmFlowUiController {
 
     /**
-     * 保存流程xml字符串
-     * @return ApiResult<String>
-     * @throws Exception 异常
+     * 返回流程定义的配置
+     * @return ApiResult<WarmFlowVo>
      */
     @Get
-    @Mapping("/token-name")
+    @Mapping("/config")
     @Tran
     public ApiResult<List<String>> tokenName() {
         String tokenName = FlowEngine.getFlowConfig().getTokenName();

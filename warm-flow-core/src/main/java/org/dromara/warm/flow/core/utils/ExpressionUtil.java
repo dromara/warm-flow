@@ -15,10 +15,12 @@
  */
 package org.dromara.warm.flow.core.utils;
 
+import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.condition.*;
 import org.dromara.warm.flow.core.constant.ExceptionCons;
 import org.dromara.warm.flow.core.entity.Task;
 import org.dromara.warm.flow.core.exception.FlowException;
+import org.dromara.warm.flow.core.handler.PermissionHandler;
 import org.dromara.warm.flow.core.listener.ListenerStrategy;
 import org.dromara.warm.flow.core.strategy.ExpressionStrategy;
 import org.dromara.warm.flow.core.variable.DefaultVariableStrategy;
@@ -81,7 +83,8 @@ public class ExpressionUtil {
         if (CollUtil.isEmpty(addTasks)) {
             return;
         }
-        addTasks.forEach(addTask -> addTask.setPermissionList(addTask.getPermissionList().stream()
+        addTasks.forEach(addTask -> {
+            List<String> permissions = addTask.getPermissionList().stream()
                 .map(s -> {
                     List<String> result = evalVariable(s, variable);
                     if (CollUtil.isNotEmpty(result)) {
@@ -90,7 +93,15 @@ public class ExpressionUtil {
                     return Collections.singletonList(s);
                 }).filter(Objects::nonNull)
                 .flatMap(List::stream)
-                .collect(Collectors.toList())));
+                .collect(Collectors.toList());
+
+            // 转换办理人，比如设计器中预设了能办理的人，如果其中包含角色或者部门id等，可以通过此接口进行转换成用户id
+            PermissionHandler permissionHandler = FlowEngine.permissionHandler();
+            if (permissionHandler != null) {
+                permissions = permissionHandler.convertPermissions(permissions);
+            }
+            addTask.setPermissionList(permissions);
+        });
     }
 
     /**

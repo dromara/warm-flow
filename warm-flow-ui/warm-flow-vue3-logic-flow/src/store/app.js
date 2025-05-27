@@ -14,9 +14,9 @@ const useAppStore = defineStore(
         const params = {};
         let tokenNames = []
         await config().then(res => {
-            if (res.code === 200 && res.data && res.data.length > 0) {
+            if (res.code === 200 && res.data && res.data.tokenNameList && res.data.tokenNameList.length > 0) {
                 tokenNames = res.data.tokenNameList
-                Cookies.set(TokenName, res.data)
+                Cookies.set(TokenName, res.data.tokenNameList)
             }
         }).catch(() => {});
         this.appParams= null

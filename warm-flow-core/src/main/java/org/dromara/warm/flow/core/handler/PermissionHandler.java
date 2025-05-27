@@ -30,4 +30,9 @@ public interface PermissionHandler {
      */
     String getHandler();
 
+    /**
+     * 转换办理人，比如设计器中预设了能办理的人，如果其中包含角色或者部门id等，可以通过此接口进行转换成用户id
+     */
+    List<String> convertPermissions(List<String> permissions);
+
 }
