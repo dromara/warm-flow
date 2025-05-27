@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="width: 100%; height: 100%">
     <el-header style="border-bottom: 1px solid rgb(218 218 218); height: auto">
       <div style="display: flex; padding: 10px 0px; justify-content: space-between">
         <div>
@@ -89,6 +89,6 @@ onMounted(async () => {
 /* 样式部分保持不变 */
 .containerView {
   width: 100%;
-  height: 500px;
+  height: 100%;
 }
 </style>
