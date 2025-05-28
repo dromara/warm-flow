@@ -110,6 +110,12 @@ onMounted(async () => {
   });
   register();
   initDndPanel();
+  lf.value.setTheme({
+    snapline: {
+      stroke: '#1E90FF', // 对齐线颜色
+      strokeWidth: 2, // 对齐线宽度
+    },
+  })
   initMenu();
   initEvent();
   if (definitionId.value) {
