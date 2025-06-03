@@ -27,7 +27,7 @@ import java.util.Map;
  *
  * @author warm
  */
-public abstract class ConditionStrategyAbstract implements ConditionStrategy {
+public abstract class AbstractConditionStrategy implements ConditionStrategy {
 
 
     /**

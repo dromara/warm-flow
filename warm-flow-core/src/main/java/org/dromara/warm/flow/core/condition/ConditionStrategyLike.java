@@ -15,16 +15,18 @@
  */
 package org.dromara.warm.flow.core.condition;
 
+import org.dromara.warm.flow.core.enums.ConditionType;
+
 /**
  * 条件表达式包含 like@@flag|4
  *
  * @author warm
  */
-public class ConditionStrategyLike extends ConditionStrategyAbstract {
+public class ConditionStrategyLike extends AbstractConditionStrategy {
 
     @Override
     public String getType() {
-        return "like";
+        return ConditionType.LIKE.getKey();
     }
 
     @Override
