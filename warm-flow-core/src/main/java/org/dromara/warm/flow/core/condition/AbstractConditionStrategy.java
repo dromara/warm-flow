@@ -28,7 +28,7 @@ import java.util.Map;
  * @author warm
  * @see <a href="https://warm-flow.dromara.org/master/primary/condition.html">文档地址</a>
  */
-public abstract class ConditionStrategyAbstract implements ConditionStrategy {
+public abstract class AbstractConditionStrategy implements ConditionStrategy {
 
 
     /**

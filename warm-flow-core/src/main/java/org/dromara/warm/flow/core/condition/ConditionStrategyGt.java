@@ -15,6 +15,7 @@
  */
 package org.dromara.warm.flow.core.condition;
 
+import org.dromara.warm.flow.core.enums.ConditionType;
 import org.dromara.warm.flow.core.utils.MathUtil;
 
 /**
@@ -23,11 +24,11 @@ import org.dromara.warm.flow.core.utils.MathUtil;
  * @author warm
  * @see <a href="https://warm-flow.dromara.org/master/primary/condition.html">文档地址</a>
  */
-public class ConditionStrategyGt extends ConditionStrategyAbstract {
+public class ConditionStrategyGt extends AbstractConditionStrategy {
 
     @Override
     public String getType() {
-        return "gt";
+        return ConditionType.GT.getKey();
     }
 
     @Override
