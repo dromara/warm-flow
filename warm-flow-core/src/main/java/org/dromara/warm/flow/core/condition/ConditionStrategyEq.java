@@ -15,6 +15,7 @@
  */
 package org.dromara.warm.flow.core.condition;
 
+import org.dromara.warm.flow.core.enums.ConditionType;
 import org.dromara.warm.flow.core.utils.MathUtil;
 
 /**
@@ -22,11 +23,11 @@ import org.dromara.warm.flow.core.utils.MathUtil;
  *
  * @author warm
  */
-public class ConditionStrategyEq extends ConditionStrategyAbstract {
+public class ConditionStrategyEq extends AbstractConditionStrategy {
 
     @Override
     public String getType() {
-        return "eq";
+        return ConditionType.EQ.getKey();
     }
 
     @Override
