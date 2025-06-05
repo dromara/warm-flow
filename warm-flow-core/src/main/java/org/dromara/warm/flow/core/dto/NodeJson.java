@@ -112,6 +112,11 @@ public class NodeJson {
     private Map<String, Object> extMap;
 
     /**
+     * 流程图节点提示内容
+     */
+    private List<String> promptContent;
+
+    /**
      * 跳转条件
      */
     private List<SkipJson> skipList = new ArrayList<>();
