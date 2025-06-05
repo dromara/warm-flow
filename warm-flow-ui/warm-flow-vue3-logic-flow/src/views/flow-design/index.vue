@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-header style="border-bottom: 1px solid rgb(218 218 218); height: auto" v-if="!disabled">
+    <el-header :style="headerStyle">
       <div style="padding: 10px 0px; text-align: right;">
         <div>
           <el-tooltip effect="dark" content="缩小" placement="bottom">
@@ -12,17 +12,20 @@
           <el-tooltip effect="dark" content="自适应屏幕" placement="bottom">
             <el-button size="small" icon="Rank" @click="zoomViewport(1)">自适应屏幕</el-button>
           </el-tooltip>
-          <el-tooltip effect="dark" content="上一步" placement="bottom">
+          <el-tooltip effect="dark" content="上一步" placement="bottom" v-if="!disabled">
             <el-button size="small" icon="DArrowLeft" @click="undoOrRedo(true)">上一步</el-button>
           </el-tooltip>
-          <el-tooltip effect="dark" content="下一步" placement="bottom">
+          <el-tooltip effect="dark" content="下一步" placement="bottom" v-if="!disabled">
             <el-button size="small" icon="DArrowRight" @click="undoOrRedo(false)">下一步</el-button>
           </el-tooltip>
-          <el-tooltip effect="dark" content="清空" placement="bottom">
+          <el-tooltip effect="dark" content="清空" placement="bottom" v-if="!disabled">
             <el-button size="small" icon="Delete" @click="clear()">清空</el-button>
           </el-tooltip>
-          <el-tooltip effect="dark" content="保存" placement="bottom">
+          <el-tooltip effect="dark" content="保存" placement="bottom" v-if="!disabled">
             <el-button size="small" icon="DocumentAdd" @click="saveJsonModel">保存</el-button>
+          </el-tooltip>
+          <el-tooltip effect="dark" content="下载流程图" placement="bottom">
+            <el-button size="small" icon="Download" @click="downLoad">下载流程图</el-button>
           </el-tooltip>
         </div>
       </div>
@@ -41,7 +44,7 @@
 <script setup name="Design">
 import LogicFlow from "@logicflow/core";
 import "@logicflow/core/lib/style/index.css";
-import {Control, DndPanel, Menu, SelectionSelect } from '@logicflow/extension';
+import {Control, DndPanel, Menu, SelectionSelect, Snapshot} from '@logicflow/extension';
 import '@logicflow/extension/lib/style/index.css'
 import { ElLoading } from 'element-plus'
 import Start from "@/components/WarmFlow/js/start";
@@ -57,6 +60,7 @@ import {
   logicFlowJsonToWarmFlow
 } from "@/components/WarmFlow/js/tool";
 import useAppStore from "@/store/app";
+import {computed, onMounted, onUnmounted, ref, watch} from "vue";
 const appStore = useAppStore();
 const appParams = computed(() => useAppStore().appParams);
 
@@ -73,6 +77,16 @@ const jsonString = ref('');
 const skipConditionShow = ref(true);
 const nodes = ref([]);
 const skips = ref([]);
+const isDark = ref(false);
+
+const headerStyle = computed(() => {
+  return {
+    borderBottom: "1px solid rgb(218 218 218)",
+    height: "auto",
+    backgroundColor: isDark.value ? "#333" : "#fff",
+  };
+});
+
 
 onMounted(async () => {
   if (!appParams.value) await appStore.fetchTokenName();
@@ -86,11 +100,14 @@ onMounted(async () => {
     snapline: true,
     grid: {
       size: 20,
-      visible: false,
-      type: 'mesh',
+      visible: 'true' === appParams.value.showGrid,
+      type: 'dot',
       config: {
-        color: '#ababab',
+        color: '#ccc',
         thickness: 1,
+      },
+      background: {
+        backgroundColor: "#fff",
       },
     },
     keyboard: {
@@ -134,6 +151,40 @@ onMounted(async () => {
     lf.value.render({});
   }
 })
+
+watch(isDark, (v) => {
+  if (!lf.value) {
+    return;
+  }
+  lf.value.graphModel.background = {
+    background: v ? "#333" : "#fff",
+  };
+});
+
+/**
+ * data为 {type: string, data?: any}
+ * @param e
+ */
+function listeningMessage(e) {
+  const { data } = e;
+  switch (data.type) {
+    case "theme-dark": {
+      isDark.value = true;
+      return;
+    }
+    case "theme-light": {
+      isDark.value = false;
+      return;
+    }
+  }
+}
+
+onMounted(() => {
+  window.addEventListener("message", listeningMessage);
+});
+onUnmounted(() => {
+  window.removeEventListener("message", listeningMessage);
+});
 
 /**
  * 初始化拖拽面板
@@ -211,47 +262,7 @@ function saveJsonModel() {
     });
   });
 }
-/**
- * 初始化控制面板
- */
-function initControl() {
-  if (!disabled.value) {
-    // 控制面板-清空画布
-    lf.value.extension.control.addItem({
-      iconClass: 'lf-control-clear',
-      title: 'clear',
-      text: '清空',
-      onClick: (lf, ev) => {
-        lf.clearData()
-      }
-    })
-    // 控制面板-清空画布
-    lf.value.extension.control.addItem({
-      iconClass: 'lf-control-save',
-      title: '',
-      text: '保存',
-      onClick: (lf, ev) => {
-        const loadingInstance = ElLoading.service(({ fullscreen: true , text: "保存中，请稍等"}))
-        let graphData = lf.getGraphData()
-        value.value['nodes'] = graphData['nodes']
-        value.value['edges'] = graphData['edges']
-        value.value['id'] = definitionId.value
-        let jsonString = logicFlowJsonToWarmFlow(value.value);
-        saveJson(jsonString).then(response => {
 
-          if (response.code === 200) {
-            proxy.$modal.msgSuccess("保存成功");
-            close();
-          }
-        }).finally(() => {
-          nextTick(() => {
-            loadingInstance.close();
-          });
-        });
-      }
-    });
-  }
-}
 /**
  * 初始化菜单
  */
@@ -306,6 +317,7 @@ function use() {
   LogicFlow.use(SelectionSelect);
   LogicFlow.use(Control);
   LogicFlow.use(Menu);
+  LogicFlow.use(Snapshot);
 }
 function initEvent() {
   const { eventCenter } = lf.value.graphModel
@@ -365,6 +377,19 @@ const undoOrRedo = async (undo) => {
 //清空
 const clear = async () => {
   lf.value.clearData()
+}
+
+/**
+ * 下载流程图
+ */
+function downLoad() {
+  lf.value.getSnapshot(value.value.flowName, {
+    fileType: 'png',        // 可选：'png'、'webp'、'jpeg'、'svg'
+    backgroundColor: '#f5f5f5',
+    padding: 30,           // 内边距，单位为像素
+    partial: false,        // false: 导出所有元素，true: 只导出可见区域
+    quality: 0.92          // 对jpeg和webp格式有效，取值范围0-1
+  })
 }
 </script>
 
