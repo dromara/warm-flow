@@ -25,6 +25,31 @@
       </div>
     </el-header>
     <div class="containerView" ref="containerRef"></div>
+
+    <!-- 添加手动控制的 tooltip -->
+    <el-tooltip
+        placement="top"
+        :visible="visible"
+        manual-mode
+        :popper-options="{
+        modifiers: [
+          {
+            name: 'offset',
+            options: {
+              offset: [500, 300]
+            }
+          }
+        ]
+      }"
+        popper-class="custom-tooltip"
+        ref="tooltipRef"
+    >
+      <template #content>
+        <div v-html="promptContent"></div>
+      </template>
+      <!-- 占位元素，实际不渲染任何内容 -->
+      <div class="tooltip-anchor" style="position: absolute; left: 0; top: 0; width: 0; height: 0;"></div>
+    </el-tooltip>
   </div>
 </template>
 
@@ -53,6 +78,9 @@ const statusColors = ref({
   todo: "",
   notDone: "",
 });
+const visible = ref(false)
+const promptContent = ref('')
+const tooltipRef = ref(null);
 const isDark = ref(false);
 const headerStyle = computed(() => {
   return {
@@ -63,6 +91,11 @@ const headerStyle = computed(() => {
 });
 
 const lf = ref(null);
+
+const use = () => {
+  LogicFlow.use(Snapshot);
+};
+
 const register = () => {
   lf.value.register(Start);
   lf.value.register(Between);
@@ -72,11 +105,57 @@ const register = () => {
   lf.value.register(Skip);
 };
 
+const initEvent = () => {
+  const { eventCenter } = lf.value.graphModel
+  eventCenter.on('node:mouseenter', (data) => {
+    const promptArr = data.data.properties?.promptContent || [];
+    if (Array.isArray(promptArr) && promptArr.length > 0) {
+      visible.value = true;
+
+      // 构建 HTML 内容
+      promptContent.value = promptArr.join('<br>');
+
+      // 获取节点位置
+      const { clientX, clientY } = data.e;
+
+      // 更新 tooltip 锚点位置
+      updateTooltipPosition(clientX, clientY);
+    }
+  })
+  eventCenter.on('node:mouseleave', () => {
+    visible.value = false
+    promptContent.value = ''
+  })
+  eventCenter.on('edge:mouseenter  ', (data) => {
+    const promptArr = data.data.properties.promptContent;
+    if (Array.isArray(promptArr) && promptArr.length > 0) {
+      visible.value = true
+      // 假设数据在 properties 中
+      promptContent.value = `    <div class="verlays">
+      ${promptArr.map(item => `<p>${item}</p>`).join('')}
+      </div>`;
+    }
+  })
+  eventCenter.on('edge:mouseleave', () => {
+    visible.value = false
+    promptContent.value = ''
+  })
+}
+
 const zoomViewport = async (zoom) => {
   lf.value.zoom(zoom);
   // 将内容平移至画布中心
   lf.value.translateCenter();
 };
+
+// 更新 tooltip 锚点位置
+function updateTooltipPosition(x, y) {
+  const anchorElement = document.querySelector('.tooltip-anchor');
+  if (anchorElement) {
+    anchorElement.style.left = `${x}px`;
+    anchorElement.style.top = `${y}px`;
+  }
+}
 
 onMounted(async () => {
   if (!appParams.value) await appStore.fetchTokenName();
@@ -114,6 +193,7 @@ onMounted(async () => {
               },
             });
             register();
+            initEvent()
             lf.value.render(data);
             lf.value.translateCenter();
           }
@@ -132,13 +212,6 @@ watch(isDark, (v) => {
     background: v ? "#333" : "#fff",
   };
 });
-
-/**
- * 添加扩展
- */
-function use() {
-  LogicFlow.use(Snapshot);
-}
 
 /**
  * 下载流程图
