@@ -18,6 +18,8 @@ package org.dromara.warm.flow.ui.controller;
 import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.dto.ApiResult;
 import org.dromara.warm.flow.core.utils.StringUtils;
+import org.dromara.warm.flow.ui.service.WarmFlowService;
+import org.dromara.warm.flow.ui.vo.WarmFlowVo;
 import org.noear.solon.annotation.Controller;
 import org.noear.solon.annotation.Get;
 import org.noear.solon.annotation.Mapping;
@@ -43,16 +45,8 @@ public class WarmFlowUiController {
      */
     @Get
     @Mapping("/config")
-    @Tran
-    public ApiResult<List<String>> tokenName() {
-        String tokenName = FlowEngine.getFlowConfig().getTokenName();
-        if (StringUtils.isEmpty(tokenName)) {
-            return ApiResult.fail("未配置tokenName");
-        }
-        String[] tokenNames = tokenName.split(",");
-        List<String> tokenNameList = Arrays.stream(tokenNames).filter(StringUtils::isNotEmpty)
-                .map(String::trim).collect(Collectors.toList());
-        return ApiResult.ok(tokenNameList);
+    public ApiResult<WarmFlowVo> config() {
+        return WarmFlowService.config();
     }
 
 }

@@ -39,7 +39,7 @@ CREATE TABLE `flow_node`
     `version`         varchar(20)     NOT NULL COMMENT '版本',
     `create_time`     datetime      DEFAULT NULL COMMENT '创建时间',
     `update_time`     datetime      DEFAULT NULL COMMENT '更新时间',
-    `ext`             text          COMMENT '扩展属性',
+    `ext`             text          COMMENT '节点扩展属性',
     `del_flag`        char(1)       DEFAULT '0' COMMENT '删除标志',
     `tenant_id`       varchar(40)   DEFAULT NULL COMMENT '租户id',
     PRIMARY KEY (`id`) USING BTREE

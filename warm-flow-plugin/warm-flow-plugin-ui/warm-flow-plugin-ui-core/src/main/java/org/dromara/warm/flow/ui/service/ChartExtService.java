@@ -16,9 +16,14 @@
 package org.dromara.warm.flow.ui.service;
 
 import org.dromara.warm.flow.core.dto.DefJson;
+import org.dromara.warm.flow.core.dto.PromptContent;
+import org.dromara.warm.flow.core.utils.MapUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * 流程图扩展
+ * 流程图提示信息
  *
  * @author warm
  */
@@ -26,9 +31,56 @@ public interface ChartExtService {
 
 
     /**
-     * 扩展流程图
+     * 设置流程图提示信息
      * @param defJson 流程定义json对象
      */
      void execute(DefJson defJson);
 
+    /**
+     * 初始化流程图提示信息
+     * @param defJson 流程定义json对象
+     */
+    default void initPromptContent(DefJson defJson) {
+        defJson.getNodeList().forEach(nodeJson -> {
+            // 提示信息主对象
+            PromptContent promptContent = new PromptContent();
+
+            // 设置 dialogStyle 样式
+            promptContent.setDialogStyle(MapUtil.mergeAll(
+                    "position", "absolute",
+                    "backgroundColor", "#fff",
+                    "border", "1px solid #ccc",
+                    "borderRadius", "4px",
+                    "boxShadow", "0 2px 8px rgba(0, 0, 0, 0.15)",
+                    "padding", "8px 12px",
+                    "fontSize", "14px",
+                    "zIndex", 1000,
+                    "maxWidth", "500px",
+                    "pointerEvents", "none",
+                    "color", "#333"
+            ));
+
+            // 创建 info 列表
+            List<PromptContent.InfoItem> infoList = new ArrayList<>();
+
+            // 添加第一个条目: 任务名称
+            PromptContent.InfoItem item = new PromptContent.InfoItem()
+                    .setPrefix("任务名称: ")
+                    .setContent(nodeJson.getNodeName())
+                    .setContentStyle(MapUtil.mergeAll("border", "1px solid #d1e9ff",
+                            "backgroundColor", "#e8f4ff",
+                            "padding", "4px 8px",
+                            "borderRadius", "4px"
+                    ))
+                    .setRowStyle(MapUtil.mergeAll("fontWeight", "bold",
+                            "margin", "0 0 6px 0",
+                            "padding", "0 0 8px 0",
+                            "borderBottom", "1px solid #ccc"
+                    ));
+            infoList.add(item);
+            promptContent.setInfo(infoList);
+
+            nodeJson.setPromptContent(promptContent);
+        });
+    }
 }

@@ -15,17 +15,12 @@
  */
 package org.dromara.warm.flow.ui.controller;
 
-import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.dto.ApiResult;
-import org.dromara.warm.flow.core.utils.StringUtils;
+import org.dromara.warm.flow.ui.service.WarmFlowService;
 import org.dromara.warm.flow.ui.vo.WarmFlowVo;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 设计器Controller 匿名访问
@@ -43,18 +38,7 @@ public class WarmFlowUiController {
      */
     @GetMapping("/config")
     public ApiResult<WarmFlowVo> config() {
-        WarmFlowVo warmFlowVo = new WarmFlowVo();
-        // 获取tokenName
-        String tokenName = FlowEngine.getFlowConfig().getTokenName();
-        if (StringUtils.isEmpty(tokenName)) {
-            return ApiResult.fail("未配置tokenName");
-        }
-        String[] tokenNames = tokenName.split(",");
-        List<String> tokenNameList = Arrays.stream(tokenNames).filter(StringUtils::isNotEmpty)
-                .map(String::trim).collect(Collectors.toList());
-        warmFlowVo.setTokenNameList(tokenNameList);
-
-        return ApiResult.ok(warmFlowVo);
+        return WarmFlowService.config();
     }
 
 }

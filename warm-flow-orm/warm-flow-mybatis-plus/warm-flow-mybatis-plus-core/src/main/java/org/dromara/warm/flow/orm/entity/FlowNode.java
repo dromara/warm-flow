@@ -137,7 +137,7 @@ public class FlowNode implements Node {
     private String formPath;
 
     /**
-     * 扩展属性
+     * 节点扩展属性
      */
     private String ext;
 
