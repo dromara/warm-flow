@@ -57,7 +57,7 @@ export const json2LogicFlowJson = (definition) => {
       lfNode.properties.formPath = node.formPath
       lfNode.properties.status = node.status
       lfNode.properties.chartStatusColor = definition.chartStatusColor
-      lfNode.properties.promptContent = node.promptContent ? node.promptContent : []
+      lfNode.properties.promptContent = node.promptContent
       lfNode.properties.ext = {};
       if (node.ext && typeof node.ext === "string") {
         try {
@@ -92,7 +92,6 @@ export const json2LogicFlowJson = (definition) => {
       edge.properties.skipType = skipEle.skipType
       edge.properties.status = skipEle.status
       edge.properties.chartStatusColor = definition.chartStatusColor
-      edge.properties.promptContent = skipEle.promptContent ? node.promptContent : []
       const expr = skipEle.expr
       if (expr) {
         edge.properties.expr = skipEle.expr

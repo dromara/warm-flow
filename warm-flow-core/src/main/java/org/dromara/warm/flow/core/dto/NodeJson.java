@@ -97,7 +97,7 @@ public class NodeJson {
     private String formPath;
 
     /**
-     * 扩展属性
+     * 节点扩展属性
      */
     private String ext;
 
@@ -114,7 +114,7 @@ public class NodeJson {
     /**
      * 流程图节点提示内容
      */
-    private List<String> promptContent;
+    private PromptContent promptContent;
 
     /**
      * 跳转条件

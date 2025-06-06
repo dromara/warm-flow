@@ -26,35 +26,17 @@
     </el-header>
     <div class="containerView" ref="containerRef"></div>
 
-    <!-- 添加手动控制的 tooltip -->
-    <el-tooltip
-        placement="top"
-        :visible="visible"
-        manual-mode
-        :popper-options="{
-        modifiers: [
-          {
-            name: 'offset',
-            options: {
-              offset: [500, 300]
-            }
-          }
-        ]
-      }"
-        popper-class="custom-tooltip"
-        ref="tooltipRef"
-    >
-      <template #content>
-        <div v-html="promptContent"></div>
-      </template>
-      <!-- 占位元素，实际不渲染任何内容 -->
-      <div class="tooltip-anchor" style="position: absolute; left: 0; top: 0; width: 0; height: 0;"></div>
-    </el-tooltip>
+    <div
+        v-if="visible"
+        class="custom-tooltip"
+        :style="{ left: tooltipPosition.x + 'px', top: tooltipPosition.y + 'px' }"
+        ref="tooltipContainerRef">
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch, computed } from "vue";
+import {ref, onMounted, onUnmounted, watch, computed, render, h, nextTick} from "vue";
 import LogicFlow from "@logicflow/core";
 import { Snapshot } from "@logicflow/extension";
 import "@logicflow/core/lib/style/index.css";
@@ -73,14 +55,31 @@ const appParams = computed(() => useAppStore().appParams);
 const definitionId = ref(null);
 const defJson = ref({});
 const containerRef = ref(null);
+const tooltipPosition = ref({ x: 0, y: 0 }); // 弹框位置
+const tooltipContainerRef = ref<HTMLDivElement | null>(null);
+const visible = ref(false)
+interface TooltipItem {
+  prefix: string;
+  prefixStyle?: Record<string, string | number>;
+  content: string;
+  contentStyle?: Record<string, string | number>;
+  rowStyle?: Record<string, string | number>;
+}
+
+interface TooltipData {
+  dialogStyle: Record<string, string | number>;
+  info: TooltipItem[];
+}
+
+const promptContent = ref<TooltipData>({
+  dialogStyle: {},
+  info: []
+});
 const statusColors = ref({
   done: "",
   todo: "",
   notDone: "",
 });
-const visible = ref(false)
-const promptContent = ref('')
-const tooltipRef = ref(null);
 const isDark = ref(false);
 const headerStyle = computed(() => {
   return {
@@ -108,54 +107,117 @@ const register = () => {
 const initEvent = () => {
   const { eventCenter } = lf.value.graphModel
   eventCenter.on('node:mouseenter', (data) => {
-    const promptArr = data.data.properties?.promptContent || [];
-    if (Array.isArray(promptArr) && promptArr.length > 0) {
+    const promptArr = data.data.properties.promptContent
+    if (promptArr) {
       visible.value = true;
 
-      // 构建 HTML 内容
-      promptContent.value = promptArr.join('<br>');
-
-      // 获取节点位置
-      const { clientX, clientY } = data.e;
-
-      // 更新 tooltip 锚点位置
-      updateTooltipPosition(clientX, clientY);
+      // 确保 tooltipContainerRef 已渲染
+      nextTick(() => {
+        if (tooltipContainerRef.value) {
+          // // 构建 HTML 内容
+          promptContent.value = data.data.properties.promptContent
+          // promptContent.value = {
+          //   dialogStyle: {
+          //     position: 'absolute', /* 绝对定位，基于最近的定位祖先元素（如 container） */
+          //     backgroundColor: "#fff", /* 背景色为白色 */
+          //     border: "1px solid #ccc", /* 灰色边框 */
+          //     borderRadius: "4px", /* 添加圆角 */
+          //     boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)", /* 阴影效果（轻微立体感） */
+          //     padding: "8px 12px", /* 内边距（内容与边框的间距） */
+          //     fontSize: "14px", /* 字体大小 */
+          //     zIndex: 1000, /* 层级高于其他元素，确保提示框可见 */
+          //     maxWidth: "500px", /* 最大宽度限制，防止内容过长 */
+          //     pointerEvents: 'none', /* ❗️关键点：提示框不响应任何鼠标事件 */
+          //     color: "#333" /* 深色文字 */
+          //   },
+          //   info: [
+          //     {
+          //       prefix: "任务名称: ",
+          //       prefixStyle: {},
+          //       content: "组长审批",
+          //       contentStyle: {
+          //         border: '1px solid #d1e9ff',
+          //         backgroundColor: "#e8f4ff",
+          //         padding: "4px 8px",
+          //         borderRadius: "4px"
+          //       },
+          //       rowStyle: {
+          //         fontWeight: "bold",
+          //         margin: "0 0 6px 0",
+          //         padding: "0 0 8px 0",
+          //         borderBottom: "1px solid #ccc"
+          //       }
+          //     },
+          //     {
+          //       prefix: "负责人: ",
+          //       prefixStyle: { fontWeight: "bold" },
+          //       content: "李四",
+          //       contentStyle: {},
+          //       rowStyle: {}
+          //     },
+          //     {
+          //       prefix: "状态: ",
+          //       prefixStyle: { fontWeight: "bold" },
+          //       content: "进行中",
+          //       contentStyle: {},
+          //       rowStyle: {}
+          //     }
+          //   ]
+          // };
+          // 获取节点位置
+          tooltipPosition.value = { x: data.e.clientX, y: data.e.clientY - 80 };
+        }
+      });
     }
   })
   eventCenter.on('node:mouseleave', () => {
     visible.value = false
-    promptContent.value = ''
-  })
-  eventCenter.on('edge:mouseenter  ', (data) => {
-    const promptArr = data.data.properties.promptContent;
-    if (Array.isArray(promptArr) && promptArr.length > 0) {
-      visible.value = true
-      // 假设数据在 properties 中
-      promptContent.value = `    <div class="verlays">
-      ${promptArr.map(item => `<p>${item}</p>`).join('')}
-      </div>`;
-    }
-  })
-  eventCenter.on('edge:mouseleave', () => {
-    visible.value = false
-    promptContent.value = ''
   })
 }
+
+// 监听 promptContent 变化并动态渲染
+watch(
+    () => promptContent.value,
+    (contentData) => {
+      if (!tooltipContainerRef.value) return;
+
+      if (!contentData) {
+        return;
+      }
+
+      // 更新 tooltipContainerRef 的样式
+      Object.entries(contentData.dialogStyle || {}).forEach(([key, value]) => {
+        tooltipContainerRef.value.style[key] = value;
+      });
+
+      // 生成 <p> 元素数组
+      const children = contentData.info.map((item, index) =>
+          h("p", {
+            style: item.rowStyle || {},
+          }, [
+            h("span", {
+              style: item.prefixStyle || {}
+            }, item.prefix),
+            h("span", {
+              style: item.contentStyle || {}
+            }, item.content)
+          ])
+      );
+
+      // 直接将 <p> 元素渲染到 tooltipContainerRef
+      const wrapper = h("div", children);
+
+      // 调用 render 方法
+      render(wrapper, tooltipContainerRef.value);
+    },
+    { deep: true, immediate: true }
+);
 
 const zoomViewport = async (zoom) => {
   lf.value.zoom(zoom);
   // 将内容平移至画布中心
   lf.value.translateCenter();
 };
-
-// 更新 tooltip 锚点位置
-function updateTooltipPosition(x, y) {
-  const anchorElement = document.querySelector('.tooltip-anchor');
-  if (anchorElement) {
-    anchorElement.style.left = `${x}px`;
-    anchorElement.style.top = `${y}px`;
-  }
-}
 
 onMounted(async () => {
   if (!appParams.value) await appStore.fetchTokenName();
