@@ -117,7 +117,7 @@ const initEvent = () => {
           // // 构建 HTML 内容
           promptContent.value = data.data.properties.promptContent
           // promptContent.value = {
-          //   dialogStyle: {
+          //   dialogStyle: { /* 弹框样式 */
           //     position: 'absolute', /* 绝对定位，基于最近的定位祖先元素（如 container） */
           //     backgroundColor: "#fff", /* 背景色为白色 */
           //     border: "1px solid #ccc", /* 灰色边框 */
@@ -171,7 +171,7 @@ const initEvent = () => {
     }
   })
   eventCenter.on('node:mouseleave', () => {
-    visible.value = false
+    // visible.value = false
   })
 }
 
