@@ -19,6 +19,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -71,5 +72,10 @@ public class SkipJson {
      * 扩展map，保存业务自定义扩展属性
      */
     private Map<String, Object> extMap;
+
+    /**
+     * 流程图节点提示内容
+     */
+    private List<String> promptContent;
 
 }

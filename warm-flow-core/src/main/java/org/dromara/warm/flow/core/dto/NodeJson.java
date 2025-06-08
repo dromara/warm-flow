@@ -97,7 +97,7 @@ public class NodeJson {
     private String formPath;
 
     /**
-     * 扩展属性
+     * 节点扩展属性
      */
     private String ext;
 
@@ -110,6 +110,11 @@ public class NodeJson {
      * 扩展map，保存业务自定义扩展属性
      */
     private Map<String, Object> extMap;
+
+    /**
+     * 流程图节点提示内容
+     */
+    private PromptContent promptContent;
 
     /**
      * 跳转条件

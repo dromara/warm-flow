@@ -72,6 +72,23 @@ public class MapUtil {
         return map;
     }
 
+    /**
+     * 合并多个参数为 Map，每两个参数为一组 key-value
+     * @param values 参数
+     */
+    @SuppressWarnings("unchecked")
+    public static <K, V> Map<K, V> mergeAll(Object... values) {
+        Map<K, V> map = new HashMap<>();
+        if (ArrayUtil.isNotEmpty(values)) {
+            for (int i = 0; i < values.length - 1; i += 2) {
+                K key = (K) values[i];
+                V value = (V) values[i + 1];
+                map.put(key, value);
+            }
+        }
+        return map;
+    }
+
     public static <K, V> Map<K, V> newAndPut(K k, V v) {
         Map<K, V> map = new HashMap<>();
         map.put(k, v);
