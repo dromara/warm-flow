@@ -28,15 +28,16 @@ public class AddCopyrightHeader {
     /**
      * 取出所有的文件及文件夹
      * @param f 文件夹对象
-     * @throws Exception
      */
     public static void fileTree(File f,String content) throws Exception{
         File [] t = f.listFiles();
-        for (int i = 0; i < t.length; i++) {
-            if(t[i].isDirectory()){
-                fileTree(t[i],content);
-            }else{
-                insert(t[i],content);
+        if (t != null) {
+            for (File file : t) {
+                if (file.isDirectory()) {
+                    fileTree(file, content);
+                } else {
+                    insert(file, content);
+                }
             }
         }
     }
@@ -45,7 +46,6 @@ public class AddCopyrightHeader {
      * 开始插入内容（仅在没有版权信息时插入）
      * @param f 文件对象
      * @param content 要插入的版权内容
-     * @throws IOException
      */
     public static void insert(File f, String content) throws IOException {
         // 只处理 .java 文件
