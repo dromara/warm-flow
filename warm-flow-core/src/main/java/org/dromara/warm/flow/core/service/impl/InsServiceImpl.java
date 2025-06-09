@@ -90,13 +90,13 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
             ExpressionUtil.evalVariable(addTasks, flowParams.getVariable());
         }
 
-        // 执行分派监听器
-        ListenerUtil.executeListener(new ListenerVariable(definition, instance, startNode, flowParams.getVariable()
-                , null, nextNodes, addTasks).setFlowParams(flowParams), Listener.LISTENER_ASSIGNMENT);
-
         // 设置流程图元数据
         pathWayData.getTargetNodes().addAll(nextNodes);
         instance.setDefJson(FlowEngine.chartService().startMetadata(pathWayData));
+
+        // 执行分派监听器
+        ListenerUtil.executeListener(new ListenerVariable(definition, instance, startNode, flowParams.getVariable()
+                , null, nextNodes, addTasks).setFlowParams(flowParams), Listener.LISTENER_ASSIGNMENT);
 
         // 开启流程，保存流程信息
         saveFlowInfo(instance, addTasks, hisTask, flowParams);
