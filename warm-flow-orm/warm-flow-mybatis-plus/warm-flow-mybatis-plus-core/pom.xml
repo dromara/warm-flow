@@ -9,6 +9,7 @@
         <version>1.7.4-m1</version>
     </parent>
 
+    <name>warm-flow-mybatis-plus-core</name>
     <artifactId>warm-flow-mybatis-plus-core</artifactId>
     <url>https://github.com/dromara/warm-flow</url>
 

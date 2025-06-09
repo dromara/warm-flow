@@ -9,6 +9,7 @@
         <version>1.7.4-m1</version>
     </parent>
 
+    <name>warm-flow-mybatis-sb3-starter</name>
     <artifactId>warm-flow-mybatis-sb3-starter</artifactId>
     <description>warm-flow orm为mybatis的springboot3 starter</description>
     <url>https://github.com/dromara/warm-flow</url>
