@@ -1,5 +1,6 @@
 <template>
   <div style="width: 100%; height: 100%">
+    <div class="top-text">撒范德萨范德萨范德萨范德萨范德萨范德萨范德萨范德萨范德萨范德萨范德萨范德萨发撒旦范德萨范德萨范德萨范德萨范德萨</div>
     <el-header :style="headerStyle">
       <div style="padding: 5px 0; display: flex; align-items: center;">
         <!-- 左侧按钮组 -->
@@ -26,6 +27,8 @@
         :style="{ left: tooltipPosition.x + 'px', top: tooltipPosition.y + 'px' }"
         ref="tooltipContainerRef">
     </div>
+
+    <div class="log-text">Warm-Flow</div>
   </div>
 </template>
 
@@ -316,5 +319,30 @@ onUnmounted(() => {
 .containerView {
   width: 100%;
   height: 100%;
+}
+
+.top-text {
+  position: absolute;
+  font-weight: bold;
+  left: 500px;
+  top: 10px;
+  border: 1px solid #d1e9ff;
+  background-color: #e8f4ff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  max-width: 300px;
+  font-size: 15px; /* 可以根据需要调整字体大小 */
+  color: #333; /* 可以根据需要调整颜色 */
+  z-index: 1; /* 确保文本在其他内容之上显示 */
+}
+
+.log-text {
+  position: absolute;
+  font-weight: bold;
+  right: 10px;
+  bottom: 10px;
+  font-size: 15px; /* 可以根据需要调整字体大小 */
+  color: #333; /* 可以根据需要调整颜色 */
+  z-index: 1; /* 确保文本在其他内容之上显示 */
 }
 </style>

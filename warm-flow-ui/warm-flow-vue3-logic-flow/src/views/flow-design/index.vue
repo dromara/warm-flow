@@ -1,6 +1,9 @@
 <template>
   <div>
+    <div class="top-text">流程名称: {{value.flowName}}</div>
+
     <el-header :style="headerStyle">
+      <div class="log-text">Warm-Flow</div>
       <div style="padding: 5px 0; text-align: right;">
         <div>
           <el-button size="small" icon="ZoomOut" @click="zoomViewport(false)">缩小</el-button>
@@ -8,7 +11,7 @@
           <el-button size="small" icon="Rank" @click="zoomViewport(1)">自适应屏幕</el-button>
           <el-button size="small" icon="DArrowLeft" @click="undoOrRedo(true)">上一步</el-button>
           <el-button size="small" icon="DArrowRight" @click="undoOrRedo(false)">下一步</el-button>
-          <el-button size="small" icon="DArrowRight" @click="undoOrRedo(false)">下一步</el-button>
+          <el-button size="small" icon="Delete" @click="clear()">清空</el-button>
           <el-button size="small" icon="DocumentAdd" @click="saveJsonModel">保存</el-button>
           <el-button size="small" icon="Download" @click="downLoad">下载流程图</el-button>
         </div>
@@ -22,6 +25,7 @@
         </template>
       </PropertySetting>
     </div>
+    <div class="log-text">Warm-Flow</div>
   </div>
 </template>
 
@@ -386,8 +390,29 @@ function downLoad() {
   width: 100%;
   height: 800px;
 }
-/* 隐藏顶部工具栏 */
-.lf-control {
-  display: none !important;
+
+.top-text {
+  position: absolute;
+  font-weight: bold;
+  left: 500px;
+  top: 10px;
+  border: 1px solid #d1e9ff;
+  background-color: #e8f4ff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  max-width: 300px;
+  font-size: 15px; /* 可以根据需要调整字体大小 */
+  color: #333; /* 可以根据需要调整颜色 */
+  z-index: 1; /* 确保文本在其他内容之上显示 */
+}
+
+.log-text {
+  position: absolute;
+  font-weight: bold;
+  right: 10px;
+  bottom: 10px;
+  font-size: 15px; /* 可以根据需要调整字体大小 */
+  color: #333; /* 可以根据需要调整颜色 */
+  z-index: 1; /* 确保文本在其他内容之上显示 */
 }
 </style>

@@ -106,6 +106,11 @@ public class DefJson {
      */
     private List<String> chartStatusColor;
 
+    /**
+     * 顶部信息: 比如流程名称等
+     */
+    private String topText;
+
     public static DefJson copyDef(Definition definition) {
         DefJson defJson = new DefJson()
                 .setFlowCode(definition.getFlowCode())
