@@ -19,7 +19,6 @@ package org.dromara.warm.flow.core.keygen;
  * warm 生成15位有序id
  *
  * @author HUANGJIANSHISHENG
- * @see <a href="https://warm-flow.dromara.org/master/primary/idGen.html">文档地址</a>
  */
 public class SnowFlakeId15 implements KenGen {
     // 开始时间戳 (任意设置，建议为项目的开始时间)

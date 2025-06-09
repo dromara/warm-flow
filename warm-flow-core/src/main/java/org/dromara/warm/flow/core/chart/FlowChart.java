@@ -26,7 +26,6 @@ import java.awt.*;
  * 流程图接口
  *
  * @author warm
- * @see <a href="https://warm-flow.dromara.org/master/advanced/chart_manage.html">文档地址</a>
  */
 @Getter
 @Setter

@@ -11,7 +11,6 @@ import java.util.List;
  * handler: 办理人唯一标识，如用户id，用于记录历史表
  *
  * @author shadow
- * @see <a href="https://warm-flow.dromara.org/master/advanced/permission_handler.html">文档地址</a>
  */
 public interface PermissionHandler {
 

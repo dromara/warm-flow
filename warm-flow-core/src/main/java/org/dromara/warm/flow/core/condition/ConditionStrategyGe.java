@@ -21,7 +21,6 @@ import org.dromara.warm.flow.core.utils.MathUtil;
  * 条件表达式大于等于 ge@@flag|4
  *
  * @author warm
- * @see <a href="https://warm-flow.dromara.org/master/primary/condition.html">文档地址</a>
  */
 public class ConditionStrategyGe extends ConditionStrategyAbstract {
 

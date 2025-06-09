@@ -39,7 +39,6 @@ import java.util.stream.Collectors;
  * 设计器Controller 可选择是否放行，放行可与业务系统共享权限，主要是用来访问业务系统数据
  *
  * @author warm
- * @see <a href="https://warm-flow.dromara.org/master/primary/designerIntroduced.htm">文档地址</a>
  */
 @Slf4j
 public class WarmFlowService {

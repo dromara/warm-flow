@@ -19,7 +19,6 @@ package org.dromara.warm.flow.core.keygen;
  * 注解生成接口
  *
  * @author warm
- * @see <a href="https://warm-flow.dromara.org/master/primary/idGen.html">文档地址</a>
  */
 public interface KenGen {
 

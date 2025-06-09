@@ -5,7 +5,7 @@ import java.io.*;
 public class AddCopyrightHeader {
     public static void main(String[] args) throws Exception{
         //项目的绝对路径，也就是想修改的文件路径
-        String filePath = "/Users/minliuhua/Desktop/mdata/file/IdeaProjects/min/RuoYi-Vue-Warm-Flow/warm-flow";
+        String filePath = "D:\\IdeaProjects\\min\\RuoYi-Vue-Warm-Flow\\warm-flow";
         File f = new File(filePath);
         String content = "/*\n" +
                 " *    Copyright 2024-2025, Warm-Flow (290631660@qq.com).\n" +

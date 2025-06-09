@@ -29,7 +29,6 @@ import java.util.List;
  * WarmFlow属性配置文件
  *
  * @author warm
- * @see <a href="https://warm-flow.dromara.org/master/primary/config.html">文档地址</a>
  */
 @Getter
 @Setter
