@@ -24,7 +24,6 @@ import java.util.Map;
  * spel条件表达式 spel@@#{@user.eval()}
  *
  * @author warm
- * @see <a href="https://warm-flow.dromara.org/master/primary/condition.html">文档地址</a>
  */
 public class ConditionStrategySpel implements ConditionStrategy {
 

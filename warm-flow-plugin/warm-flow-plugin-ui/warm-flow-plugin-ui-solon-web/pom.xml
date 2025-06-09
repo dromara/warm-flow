@@ -9,6 +9,7 @@
         <version>1.7.4-m1</version>
     </parent>
 
+    <name>warm-flow-plugin-ui-solon-web</name>
     <artifactId>warm-flow-plugin-ui-solon-web</artifactId>
     <url>https://github.com/dromara/warm-flow</url>
 

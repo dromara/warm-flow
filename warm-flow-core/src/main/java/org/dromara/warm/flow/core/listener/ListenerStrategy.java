@@ -24,7 +24,6 @@ import java.util.List;
  * 监听器表达式策略接口
  *
  * @author warm
- * @see <a href="https://warm-flow.dromara.org/master/advanced/listener.html">文档地址</a>
  */
 public interface ListenerStrategy extends ExpressionStrategy<Boolean> {
 
