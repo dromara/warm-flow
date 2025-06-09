@@ -1,6 +1,6 @@
 <template>
   <div style="width: 100%; height: 100%">
-    <div class="top-text">撒范德萨范德萨范德萨范德萨范德萨范德萨范德萨范德萨范德萨范德萨范德萨范德萨发撒旦范德萨范德萨范德萨范德萨范德萨</div>
+    <div class="top-text">{{defJson.topText}}</div>
     <el-header :style="headerStyle">
       <div style="padding: 5px 0; display: flex; align-items: center;">
         <!-- 左侧按钮组 -->
