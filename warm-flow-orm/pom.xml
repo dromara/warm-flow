@@ -9,6 +9,7 @@
         <version>1.7.4-m1</version>
     </parent>
 
+    <name>warm-flow-orm</name>
     <artifactId>warm-flow-orm</artifactId>
     <packaging>pom</packaging>
     <url>https://github.com/dromara/warm-flow</url>

@@ -9,6 +9,7 @@
         <version>1.7.4-m1</version>
     </parent>
 
+    <name>warm-flow-plugin-modes-solon</name>
     <artifactId>warm-flow-plugin-modes-solon</artifactId>
     <url>https://github.com/dromara/warm-flow</url>
 

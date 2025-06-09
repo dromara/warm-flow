@@ -9,6 +9,7 @@
         <version>1.7.4-m1</version>
     </parent>
 
+    <name>warm-flow-mybatis-solon-plugin</name>
     <artifactId>warm-flow-mybatis-solon-plugin</artifactId>
     <description>warm-flow orm为mybatis的solon plugin</description>
     <url>https://github.com/dromara/warm-flow</url>
