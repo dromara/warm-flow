@@ -9,6 +9,7 @@
         <version>1.7.4-m1</version>
     </parent>
 
+    <name>warm-flow-plugin-json</name>
     <artifactId>warm-flow-plugin-json</artifactId>
     <url>https://github.com/dromara/warm-flow</url>
 

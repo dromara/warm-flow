@@ -1,32 +1,19 @@
 <template>
   <div>
+    <div class="top-text">流程名称: {{value.flowName}}</div>
+
     <el-header :style="headerStyle">
-      <div style="padding: 10px 0px; text-align: right;">
+      <div class="log-text">Warm-Flow</div>
+      <div style="padding: 5px 0; text-align: right;">
         <div>
-          <el-tooltip effect="dark" content="缩小" placement="bottom">
-            <el-button size="small" icon="ZoomOut" @click="zoomViewport(false)">缩小</el-button>
-          </el-tooltip>
-          <el-tooltip effect="dark" content="放大" placement="bottom">
-            <el-button size="small" icon="ZoomIn" @click="zoomViewport(true)">放大</el-button>
-          </el-tooltip>
-          <el-tooltip effect="dark" content="自适应屏幕" placement="bottom">
-            <el-button size="small" icon="Rank" @click="zoomViewport(1)">自适应屏幕</el-button>
-          </el-tooltip>
-          <el-tooltip effect="dark" content="上一步" placement="bottom" v-if="!disabled">
-            <el-button size="small" icon="DArrowLeft" @click="undoOrRedo(true)">上一步</el-button>
-          </el-tooltip>
-          <el-tooltip effect="dark" content="下一步" placement="bottom" v-if="!disabled">
-            <el-button size="small" icon="DArrowRight" @click="undoOrRedo(false)">下一步</el-button>
-          </el-tooltip>
-          <el-tooltip effect="dark" content="清空" placement="bottom" v-if="!disabled">
-            <el-button size="small" icon="Delete" @click="clear()">清空</el-button>
-          </el-tooltip>
-          <el-tooltip effect="dark" content="保存" placement="bottom" v-if="!disabled">
-            <el-button size="small" icon="DocumentAdd" @click="saveJsonModel">保存</el-button>
-          </el-tooltip>
-          <el-tooltip effect="dark" content="下载流程图" placement="bottom">
-            <el-button size="small" icon="Download" @click="downLoad">下载流程图</el-button>
-          </el-tooltip>
+          <el-button size="small" icon="ZoomOut" @click="zoomViewport(false)">缩小</el-button>
+          <el-button size="small" icon="ZoomIn" @click="zoomViewport(true)">放大</el-button>
+          <el-button size="small" icon="Rank" @click="zoomViewport(1)">自适应屏幕</el-button>
+          <el-button size="small" icon="DArrowLeft" @click="undoOrRedo(true)">上一步</el-button>
+          <el-button size="small" icon="DArrowRight" @click="undoOrRedo(false)">下一步</el-button>
+          <el-button size="small" icon="Delete" @click="clear()">清空</el-button>
+          <el-button size="small" icon="DocumentAdd" @click="saveJsonModel">保存</el-button>
+          <el-button size="small" icon="Download" @click="downLoad">下载流程图</el-button>
         </div>
       </div>
     </el-header>
@@ -38,13 +25,14 @@
         </template>
       </PropertySetting>
     </div>
+    <div class="log-text">Warm-Flow</div>
   </div>
 </template>
 
 <script setup name="Design">
 import LogicFlow from "@logicflow/core";
 import "@logicflow/core/lib/style/index.css";
-import {Control, DndPanel, Menu, SelectionSelect, Snapshot} from '@logicflow/extension';
+import {DndPanel, Menu, SelectionSelect, Snapshot} from '@logicflow/extension';
 import '@logicflow/extension/lib/style/index.css'
 import { ElLoading } from 'element-plus'
 import Start from "@/components/WarmFlow/js/start";
@@ -81,7 +69,10 @@ const isDark = ref(false);
 
 const headerStyle = computed(() => {
   return {
-    borderBottom: "1px solid rgb(218 218 218)",
+    top: "5px",
+    right: "50px",
+    zIndex: "2",
+    marginTop: "10px",
     height: "auto",
     backgroundColor: isDark.value ? "#333" : "#fff",
   };
@@ -315,13 +306,12 @@ function register() {
 function use() {
   LogicFlow.use(DndPanel);
   LogicFlow.use(SelectionSelect);
-  LogicFlow.use(Control);
   LogicFlow.use(Menu);
   LogicFlow.use(Snapshot);
 }
 function initEvent() {
   const { eventCenter } = lf.value.graphModel
-  eventCenter.on('node:dbclick', (args) => {
+  eventCenter.on('node:click', (args) => {
     nodeClick.value = args.data
     let graphData = lf.value.getGraphData()
     nodes.value = graphData['nodes']
@@ -331,7 +321,7 @@ function initEvent() {
     })
   })
 
-  eventCenter.on('edge:dbclick  ', (args) => {
+  eventCenter.on('edge:click  ', (args) => {
     nodeClick.value = args.data
     const nodeModel = lf.value.getNodeModelById(nodeClick.value.sourceNodeId);
     skipConditionShow.value = nodeModel['type'] === 'serial'
@@ -400,8 +390,29 @@ function downLoad() {
   width: 100%;
   height: 800px;
 }
-/* 隐藏顶部工具栏 */
-.lf-control {
-  display: none !important;
+
+.top-text {
+  position: absolute;
+  font-weight: bold;
+  left: 500px;
+  top: 10px;
+  border: 1px solid #d1e9ff;
+  background-color: #e8f4ff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  max-width: 300px;
+  font-size: 15px; /* 可以根据需要调整字体大小 */
+  color: #333; /* 可以根据需要调整颜色 */
+  z-index: 1; /* 确保文本在其他内容之上显示 */
+}
+
+.log-text {
+  position: absolute;
+  font-weight: bold;
+  right: 10px;
+  bottom: 10px;
+  font-size: 15px; /* 可以根据需要调整字体大小 */
+  color: #333; /* 可以根据需要调整颜色 */
+  z-index: 1; /* 确保文本在其他内容之上显示 */
 }
 </style>

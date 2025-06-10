@@ -26,7 +26,6 @@ import java.util.Map;
  * 条件表达式抽象类，复用部分代码
  *
  * @author warm
- * @see <a href="https://warm-flow.dromara.org/master/primary/condition.html">文档地址</a>
  */
 public abstract class AbstractConditionStrategy implements ConditionStrategy {
 

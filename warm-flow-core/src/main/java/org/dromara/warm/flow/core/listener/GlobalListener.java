@@ -22,7 +22,6 @@ import java.io.Serializable;
  *
  * @author warm
  * @since 2024/11/17
- * @see <a href="https://warm-flow.dromara.org/master/advanced/listener.html">文档地址</a>
  */
 public interface GlobalListener extends Serializable {
 

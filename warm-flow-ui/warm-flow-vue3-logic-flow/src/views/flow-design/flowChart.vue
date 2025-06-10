@@ -1,26 +1,21 @@
 <template>
   <div style="width: 100%; height: 100%">
+    <div class="top-text">{{defJson.topText}}</div>
     <el-header :style="headerStyle">
-      <div style="display: flex; padding: 10px 0px; justify-content: space-between">
-        <div>
-          <el-tooltip effect="dark" content="自适应屏幕" placement="bottom">
-            <el-button size="small" icon="Rank" @click="zoomViewport(1)">自适应屏幕</el-button>
-          </el-tooltip>
-          <el-tooltip effect="dark" content="放大" placement="bottom">
-            <el-button size="small" icon="ZoomIn" @click="zoomViewport(true)">放大</el-button>
-          </el-tooltip>
-          <el-tooltip effect="dark" content="缩小" placement="bottom">
-            <el-button size="small" icon="ZoomOut" @click="zoomViewport(false)">缩小</el-button>
-          </el-tooltip>
-          <el-tooltip effect="dark" content="下载流程图" placement="bottom">
-            <el-button size="small" icon="Download" @click="downLoad">下载流程图</el-button>
-          </el-tooltip>
-        </div>
-        <div>
+      <div style="padding: 5px 0; display: flex; align-items: center;">
+        <!-- 左侧按钮组 -->
+        <div style="display: flex; align-items: center; margin-left: 50px;">
           <el-button size="small" :style="`border: 1px solid rgb(${statusColors.notDone})`">未完成</el-button>
           <el-button size="small" :style="`background-color: rgb(${statusColors.todo}, 0.15); border: 1px solid rgb(${statusColors.todo})`">进行中</el-button>
-          <el-button size="small" :style="`background-color: rgb(${statusColors.done}, 0.15); border: 1px solid rgb(${statusColors.done})`">已完成</el-button
-          >
+          <el-button size="small" :style="`background-color: rgb(${statusColors.done}, 0.15); border: 1px solid rgb(${statusColors.done})`">已完成</el-button>
+        </div>
+
+        <!-- 右侧状态按钮组 -->
+        <div style="margin-left: auto; display: flex; align-items: center;">
+          <el-button size="small" icon="Rank" @click="zoomViewport(1)">自适应屏幕</el-button>
+          <el-button size="small" icon="ZoomIn" @click="zoomViewport(true)">放大</el-button>
+          <el-button size="small" icon="ZoomOut" @click="zoomViewport(false)">缩小</el-button>
+          <el-button size="small" icon="Download" @click="downLoad">下载流程图</el-button>
         </div>
       </div>
     </el-header>
@@ -32,6 +27,8 @@
         :style="{ left: tooltipPosition.x + 'px', top: tooltipPosition.y + 'px' }"
         ref="tooltipContainerRef">
     </div>
+
+    <div class="log-text">Warm-Flow</div>
   </div>
 </template>
 
@@ -83,7 +80,10 @@ const statusColors = ref({
 const isDark = ref(false);
 const headerStyle = computed(() => {
   return {
-    borderBottom: "1px solid rgb(218 218 218)",
+    top: "5px",
+    right: "50px",
+    zIndex: "2",
+    marginTop: "10px",
     height: "auto",
     backgroundColor: isDark.value ? "#333" : "#fff",
   };
@@ -171,7 +171,7 @@ const initEvent = () => {
     }
   })
   eventCenter.on('node:mouseleave', () => {
-    // visible.value = false
+    visible.value = false
   })
 }
 
@@ -319,5 +319,30 @@ onUnmounted(() => {
 .containerView {
   width: 100%;
   height: 100%;
+}
+
+.top-text {
+  position: absolute;
+  font-weight: bold;
+  left: 500px;
+  top: 10px;
+  border: 1px solid #d1e9ff;
+  background-color: #e8f4ff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  max-width: 300px;
+  font-size: 15px; /* 可以根据需要调整字体大小 */
+  color: #333; /* 可以根据需要调整颜色 */
+  z-index: 1; /* 确保文本在其他内容之上显示 */
+}
+
+.log-text {
+  position: absolute;
+  font-weight: bold;
+  right: 10px;
+  bottom: 10px;
+  font-size: 15px; /* 可以根据需要调整字体大小 */
+  color: #333; /* 可以根据需要调整颜色 */
+  z-index: 1; /* 确保文本在其他内容之上显示 */
 }
 </style>

@@ -25,7 +25,6 @@ import java.util.Map;
  * 默认条件表达式 default@@${flag == 5 && flag > 4}
  *
  * @author warm
- * @see <a href="https://warm-flow.dromara.org/master/primary/condition.html">文档地址</a>
  */
 public class ConditionStrategyDefault implements ConditionStrategy {
 

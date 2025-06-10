@@ -5,7 +5,7 @@ import java.io.*;
 public class AddCopyrightHeader {
     public static void main(String[] args) throws Exception{
         //项目的绝对路径，也就是想修改的文件路径
-        String filePath = "/Users/minliuhua/Desktop/mdata/file/IdeaProjects/min/RuoYi-Vue-Warm-Flow/warm-flow";
+        String filePath = "D:\\IdeaProjects\\min\\RuoYi-Vue-Warm-Flow\\warm-flow";
         File f = new File(filePath);
         String content = "/*\n" +
                 " *    Copyright 2024-2025, Warm-Flow (290631660@qq.com).\n" +
@@ -28,47 +28,73 @@ public class AddCopyrightHeader {
     /**
      * 取出所有的文件及文件夹
      * @param f 文件夹对象
-     * @throws Exception
      */
     public static void fileTree(File f,String content) throws Exception{
         File [] t = f.listFiles();
-        for (int i = 0; i < t.length; i++) {
-            if(t[i].isDirectory()){
-                fileTree(t[i],content);
-            }else{
-                insert(t[i],content);
+        if (t != null) {
+            for (File file : t) {
+                if (file.isDirectory()) {
+                    fileTree(file, content);
+                } else {
+                    insert(file, content);
+                }
             }
         }
     }
 
     /**
-     * 开始插入内容
+     * 开始插入内容（仅在没有版权信息时插入）
      * @param f 文件对象
-     * @throws IOException
+     * @param content 要插入的版权内容
      */
-    public static void insert(File f,String content) throws IOException{
-        File temp = File.createTempFile("temp", null);
-        if (f.getName().endsWith(".java")) {
-            temp.deleteOnExit();
-            RandomAccessFile raf = new RandomAccessFile(f, "rw");
-            FileOutputStream tempOut = new FileOutputStream(temp);
-            FileInputStream tempInput = new FileInputStream(temp);
-            raf.seek(0);
-            byte[] buf = new byte[64];
-            int hasRead = 0;
-            while ((hasRead = raf.read(buf))>0) {
-                tempOut.write(buf, 0, hasRead);
-            }
-            raf.seek(0);
-
-            raf.write(content.getBytes());
-            while ((hasRead = tempInput.read(buf))>0) {
-                raf.write(buf,0,hasRead);
-            }
-            raf.close();
-            tempOut.close();
-            tempInput.close();
+    public static void insert(File f, String content) throws IOException {
+        // 只处理 .java 文件
+        if (!f.getName().endsWith(".java")) {
+            return;
         }
 
+        // 创建临时文件用于内容备份
+        File temp = File.createTempFile("temp", null);
+        temp.deleteOnExit();
+
+        try (
+                RandomAccessFile raf = new RandomAccessFile(f, "rw");
+                FileOutputStream tempOut = new FileOutputStream(temp);
+                FileInputStream tempInput = new FileInputStream(temp);
+        ) {
+            // 检查是否已经包含版权信息
+            String copyrightLine = "Copyright 2024-2025, Warm-Flow";
+            boolean hasCopyright = false;
+
+            // 读取文件前 1024 字节，用于判断是否已包含版权信息
+            byte[] buffer = new byte[1024];
+            int bytesRead = raf.read(buffer);
+            if (bytesRead > 0) {
+                String fileStart = new String(buffer, 0, bytesRead);
+                if (fileStart.contains(copyrightLine)) {
+                    hasCopyright = true;
+                }
+            }
+
+            if (hasCopyright) {
+                System.out.println("跳过插入版权信息：" + f.getAbsolutePath());
+                return;
+            }
+
+            // 如果没有版权信息，则进行插入操作
+            raf.seek(0);
+            while ((bytesRead = raf.read(buffer)) > 0) {
+                tempOut.write(buffer, 0, bytesRead);
+            }
+
+            raf.seek(0);
+            raf.write(content.getBytes());
+
+            byte[] tempBuffer = new byte[64];
+            int hasRead;
+            while ((hasRead = tempInput.read(tempBuffer)) > 0) {
+                raf.write(tempBuffer, 0, hasRead);
+            }
+        }
     }
 }

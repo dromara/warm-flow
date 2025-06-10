@@ -41,6 +41,7 @@ public interface ChartExtService {
      * @param defJson 流程定义json对象
      */
     default void initPromptContent(DefJson defJson) {
+        defJson.setTopText("流程名称: " + defJson.getFlowName());
         defJson.getNodeList().forEach(nodeJson -> {
             // 提示信息主对象
             PromptContent promptContent = new PromptContent();

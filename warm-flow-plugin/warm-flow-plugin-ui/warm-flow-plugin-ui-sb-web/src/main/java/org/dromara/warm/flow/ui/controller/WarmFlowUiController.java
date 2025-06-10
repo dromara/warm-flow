@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
  * 设计器Controller 匿名访问
  *
  * @author warm
- * @see <a href="https://warm-flow.dromara.org/master/primary/designerIntroduced.htm">文档地址</a>
  */
 @RestController
 @RequestMapping("/warm-flow-ui")
