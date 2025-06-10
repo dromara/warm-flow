@@ -30,8 +30,6 @@ import org.dromara.warm.flow.core.variable.VariableStrategy;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.dromara.warm.flow.core.enums.NextHandlerConfigType.nextHandle;
-
 /**
  * 表达式工具类
  *
@@ -105,10 +103,31 @@ public class ExpressionUtil {
                 permissions = permissionHandler.convertPermissions(permissions);
             }
             // 自定义下个任务的处理人 下个任务处理人配置类型 和 执行的下个任务的办理人
-            permissions = nextHandle(flowParams.getNextHandlerConfigType(), flowParams.getNextHandlerList(), permissions);
+            permissions = nextHandle(flowParams.isNextHandlerAppend(), flowParams.getNextHandler(), permissions);
 
             addTask.setPermissionList(permissions);
         });
+    }
+
+    /**
+     * 处理下个任务的处理人
+     *
+     * @param nextHandlerAppend     下个任务处理人配置类型
+     * @param nextHandler           下个任务的处理人
+     * @param permissions           节点配置的原下个任务的处理人
+     * @author xiarg
+     * @since 2025/06/03 15:33:38
+     */
+    public static List<String> nextHandle(boolean nextHandlerAppend, List<String> nextHandler, List<String> permissions) {
+        if (CollUtil.isEmpty(nextHandler)) {
+            return permissions;
+        }
+        if (nextHandlerAppend) {
+            permissions.addAll(nextHandler);
+        } else {
+            permissions = nextHandler;
+        }
+        return permissions;
     }
 
     /**

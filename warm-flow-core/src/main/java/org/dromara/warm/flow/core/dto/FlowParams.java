@@ -17,7 +17,6 @@ package org.dromara.warm.flow.core.dto;
 
 import lombok.Getter;
 import org.dromara.warm.flow.core.FlowEngine;
-import org.dromara.warm.flow.core.enums.NextHandlerConfigType;
 import org.dromara.warm.flow.core.handler.PermissionHandler;
 import org.dromara.warm.flow.core.utils.CollUtil;
 import org.dromara.warm.flow.core.utils.StringUtils;
@@ -146,13 +145,13 @@ public class FlowParams implements Serializable {
      * 执行的下个任务的办理人
      */
     @Getter
-    private List<String> nextHandlerList;
+    private List<String> nextHandler;
 
     /**
-     * 下个任务处理人配置类型（1：覆盖，2：追加）
+     * 下个任务处理人配置类型（true-追加，false-覆盖，默认false）
      */
     @Getter
-    private NextHandlerConfigType nextHandlerConfigType;
+    private boolean nextHandlerAppend;
 
     public FlowParams() {
     }
@@ -253,13 +252,8 @@ public class FlowParams implements Serializable {
         return this;
     }
 
-    public FlowParams nextHandlerList(List<String> nextHandlerList) {
-        this.nextHandlerList = nextHandlerList;
-        return this;
-    }
-
-    public FlowParams nextHandlerConfigType(NextHandlerConfigType nextHandlerConfigType) {
-        this.nextHandlerConfigType = nextHandlerConfigType;
+    public FlowParams nextHandler(List<String> nextHandler) {
+        this.nextHandler = nextHandler;
         return this;
     }
 
@@ -314,6 +308,11 @@ public class FlowParams implements Serializable {
 
     public FlowParams ignoreCooperate(boolean ignoreCooperate) {
         this.ignoreCooperate = ignoreCooperate;
+        return this;
+    }
+
+    public FlowParams nextHandlerAppend(boolean nextHandlerAppend) {
+        this.nextHandlerAppend = nextHandlerAppend;
         return this;
     }
 
