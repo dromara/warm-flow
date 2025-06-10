@@ -23,7 +23,7 @@ import java.util.List;
  * 办理人权限处理器
  * 用户获取工作流中用到的permissionFlag和handler
  * permissionFlag: 办理人权限标识，比如用户，角色，部门等，用于校验是否有权限办理任务
- * handler: 办理人唯一标识，如用户id，用于记录历史表
+ * handler: 当前办理人唯一标识，如用户id，用于记录历史表
  *
  * @author shadow
  */

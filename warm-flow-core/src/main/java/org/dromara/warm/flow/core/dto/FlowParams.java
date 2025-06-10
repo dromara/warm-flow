@@ -40,7 +40,7 @@ public class FlowParams implements Serializable {
     private String flowCode;
 
     /**
-     * 办理人唯一标识
+     * 当前办理人唯一标识
      */
     private String handler;
 
