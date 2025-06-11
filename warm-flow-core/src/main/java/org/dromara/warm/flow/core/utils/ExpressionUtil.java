@@ -18,6 +18,7 @@ package org.dromara.warm.flow.core.utils;
 import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.condition.*;
 import org.dromara.warm.flow.core.constant.ExceptionCons;
+import org.dromara.warm.flow.core.dto.FlowParams;
 import org.dromara.warm.flow.core.entity.Task;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.handler.PermissionHandler;
@@ -76,13 +77,14 @@ public class ExpressionUtil {
     /**
      * 办理人表达式替换
      *
-     * @param addTasks 任务列表
-     * @param variable 流程变量
+     * @param addTasks      任务列表
+     * @param flowParams    流程变量
      */
-    public static void evalVariable(List<Task> addTasks, Map<String, Object> variable) {
+    public static void evalVariable(List<Task> addTasks, FlowParams flowParams) {
         if (CollUtil.isEmpty(addTasks)) {
             return;
         }
+        Map<String, Object> variable = flowParams.getVariable();
         addTasks.forEach(addTask -> {
             List<String> permissions = addTask.getPermissionList().stream()
                 .map(s -> {
@@ -100,14 +102,38 @@ public class ExpressionUtil {
             if (permissionHandler != null) {
                 permissions = permissionHandler.convertPermissions(permissions);
             }
+            // 自定义下个任务的处理人 下个任务处理人配置类型 和 执行的下个任务的办理人
+            permissions = nextHandle(flowParams.isNextHandlerAppend(), flowParams.getNextHandler(), permissions);
+
             addTask.setPermissionList(permissions);
         });
     }
 
     /**
+     * 处理下个任务的处理人
+     *
+     * @param nextHandlerAppend     下个任务处理人配置类型
+     * @param nextHandler           下个任务的处理人
+     * @param permissions           节点配置的原下个任务的处理人
+     * @author xiarg
+     * @since 2025/06/03 15:33:38
+     */
+    public static List<String> nextHandle(boolean nextHandlerAppend, List<String> nextHandler, List<String> permissions) {
+        if (CollUtil.isEmpty(nextHandler)) {
+            return permissions;
+        }
+        if (nextHandlerAppend) {
+            permissions.addAll(nextHandler);
+        } else {
+            permissions = nextHandler;
+        }
+        return permissions;
+    }
+
+    /**
      * 办理人表达式替换
      *
-     * @param expression 表达式，比如“${flag}或者#{@user.notify(#listenerVariable)}” ，或者自定义策略
+     * @param expression 表达式，比如“${flag}或者# { &#064;user.notify(#listenerVariable) } ” ，或者自定义策略
      * @param variable   流程变量
      * @return List<String>
      */
@@ -119,7 +145,7 @@ public class ExpressionUtil {
     /**
      * 监听器表达式替换
      *
-     * @param expression 条件表达式，比如“#{@user.notify(#listenerVariable)}” ，或者自定义策略
+     * @param expression 条件表达式，比如“# { &#064;user.notify(#listenerVariable) } ” ，或者自定义策略
      * @param variable   变量
      */
     public static boolean evalListener(String expression, Map<String, Object> variable) {
@@ -131,8 +157,8 @@ public class ExpressionUtil {
      * 获取表达式对应的值
      *
      * @param strategyList  表达式策略列表
-     * @param expression 变量表达式
-     * @param variable   流程变量
+     * @param expression    变量表达式
+     * @param variable      流程变量
      * @return 执行结果
      */
     private static <T> T getValue(List<ExpressionStrategy<T>> strategyList, String expression

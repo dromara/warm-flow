@@ -15,6 +15,7 @@
  */
 package org.dromara.warm.flow.core.dto;
 
+import lombok.Getter;
 import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.handler.PermissionHandler;
 import org.dromara.warm.flow.core.utils.CollUtil;
@@ -37,6 +38,7 @@ public class FlowParams implements Serializable {
     /**
      * 流程编码
      */
+    @Getter
     private String flowCode;
 
     /**
@@ -47,6 +49,7 @@ public class FlowParams implements Serializable {
     /**
      * 节点编码（如果要指定跳转节点，传入）
      */
+    @Getter
     private String nodeCode;
 
     /**
@@ -57,72 +60,98 @@ public class FlowParams implements Serializable {
     /**
      * 跳转类型（PASS审批通过 REJECT退回）
      */
+    @Getter
     private String skipType;
 
     /**
      * 审批意见
      */
+    @Getter
     private String message;
 
     /**
      * 流程变量
      */
+    @Getter
     private Map<String, Object> variable;
 
     /**
      * 流程实例状态
      */
+    @Getter
     private String flowStatus;
 
     /**
      * 历史任务表状态
      */
+    @Getter
     private String hisStatus;
 
     /**
      * 流程激活状态（0挂起 1激活）
      */
+    @Getter
     private Integer activityStatus;
 
     /**
      * 协作方式(1审批 2转办 3委派 4会签 5票签 6加签 7减签)
      */
+    @Getter
     private Integer cooperateType;
 
     /**
      * 扩展字段，预留给业务系统使用
      */
+    @Getter
     private String ext;
 
     /**
      * 扩展字段，预留给业务系统使用
      */
+    @Getter
     private String hisTaskExt;
 
     /**
      * 增加办理人：加签，转办，委托
      */
+    @Getter
     private List<String> addHandlers;
 
     /**
      * 减少办理人：减签，委托
      */
+    @Getter
     private List<String> reductionHandlers;
 
     /**
      * 忽略-办理权限校验（true：忽略，false：不忽略）
      */
+    @Getter
     private boolean ignore;
 
     /**
      * 忽略-委派处理（true：忽略，false：不忽略）
      */
+    @Getter
     private boolean ignoreDepute;
 
     /**
      * 忽略-会签票签处理（true：忽略，false：不忽略）
      */
+    @Getter
     private boolean ignoreCooperate;
+
+    /**
+     * 执行的下个任务的办理人
+     */
+    @Getter
+    private List<String> nextHandler;
+
+    /**
+     * 下个任务处理人配置类型（true-追加，false-覆盖，默认false）
+     */
+    @Getter
+    private boolean nextHandlerAppend;
 
     public FlowParams() {
     }
@@ -223,20 +252,13 @@ public class FlowParams implements Serializable {
         return this;
     }
 
-    public Map<String, Object> getVariable() {
-        return variable;
+    public FlowParams nextHandler(List<String> nextHandler) {
+        this.nextHandler = nextHandler;
+        return this;
     }
 
     public String getVariableStr() {
         return FlowEngine.jsonConvert.objToStr(variable);
-    }
-
-    public String getNodeCode() {
-        return nodeCode;
-    }
-
-    public String getFlowCode() {
-        return flowCode;
     }
 
     public String getHandler() {
@@ -259,45 +281,9 @@ public class FlowParams implements Serializable {
         return permissionFlag;
     }
 
-    public String getSkipType() {
-        return skipType;
-    }
-
     public FlowParams skipType(String skipType) {
         this.skipType = skipType;
         return this;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public String getExt() {
-        return ext;
-    }
-
-    public String getHisTaskExt() {
-        return hisTaskExt;
-    }
-
-    public String getFlowStatus() {
-        return flowStatus;
-    }
-
-    public String getHisStatus() {
-        return hisStatus;
-    }
-
-    public Integer getActivityStatus() {
-        return activityStatus;
-    }
-
-    public Integer getCooperateType() {
-        return cooperateType;
-    }
-
-    public List<String> getAddHandlers() {
-        return addHandlers;
     }
 
     public FlowParams addHandlers(List<String> addHandlers) {
@@ -305,17 +291,9 @@ public class FlowParams implements Serializable {
         return this;
     }
 
-    public List<String> getReductionHandlers() {
-        return reductionHandlers;
-    }
-
     public FlowParams reductionHandlers(List<String> reductionHandlers) {
         this.reductionHandlers = reductionHandlers;
         return this;
-    }
-
-    public boolean isIgnore() {
-        return ignore;
     }
 
     public FlowParams ignore(boolean ignore) {
@@ -323,21 +301,18 @@ public class FlowParams implements Serializable {
         return this;
     }
 
-    public boolean isIgnoreDepute() {
-        return ignoreDepute;
-    }
-
     public FlowParams ignoreDepute(boolean ignoreDepute) {
         this.ignoreDepute = ignoreDepute;
         return this;
     }
 
-    public boolean isIgnoreCooperate() {
-        return ignoreCooperate;
-    }
-
     public FlowParams ignoreCooperate(boolean ignoreCooperate) {
         this.ignoreCooperate = ignoreCooperate;
+        return this;
+    }
+
+    public FlowParams nextHandlerAppend(boolean nextHandlerAppend) {
+        this.nextHandlerAppend = nextHandlerAppend;
         return this;
     }
 
@@ -348,4 +323,5 @@ public class FlowParams implements Serializable {
         this.variable.put("formData", formData);
         return this;
     }
+
 }

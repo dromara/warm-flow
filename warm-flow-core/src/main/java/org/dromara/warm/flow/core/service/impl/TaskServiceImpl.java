@@ -207,7 +207,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         List<Task> addTasks = StreamUtils.toList(nextNodes, node -> addTask(node, r.instance, r.definition, flowParams));
 
         // 办理人变量替换
-        ExpressionUtil.evalVariable(addTasks, MapUtil.mergeAll(r.instance.getVariableMap(), flowParams.getVariable()));
+        ExpressionUtil.evalVariable(addTasks, flowParams.variable(MapUtil.mergeAll(r.instance.getVariableMap(), flowParams.getVariable())));
 
         // 执行分派监听器
         ListenerUtil.executeListener(new ListenerVariable(r.definition, r.instance, r.nowNode, flowParams.getVariable()
@@ -281,7 +281,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         List<Task> addTasks = StreamUtils.toList(nextNodes, node -> addTask(node, instance, definition, flowParams));
 
         // 办理人变量替换
-        ExpressionUtil.evalVariable(addTasks, MapUtil.mergeAll(instance.getVariableMap(), flowParams.getVariable()));
+        ExpressionUtil.evalVariable(addTasks, flowParams.variable(MapUtil.mergeAll(instance.getVariableMap(), flowParams.getVariable())));
 
         // 执行分派监听器
         taskList.forEach(task -> ListenerUtil.executeListener(new ListenerVariable(definition, instance,
