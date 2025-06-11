@@ -330,7 +330,7 @@ public interface TaskService extends IWarmService<Task> {
     boolean deleteByInsIds(List<Long> instanceIds);
 
     /**
-     * 转办, 默认删除当然办理用户权限，转办后，当前办理不可办理
+     * 转办, 默认删除当前办理用户权限，转办后，当前办理不可办理
      *
      * @param taskId         修改的任务id [必传]
      * @param flowParams 包含流程相关参数的对象
@@ -344,7 +344,7 @@ public interface TaskService extends IWarmService<Task> {
     boolean transfer(Long taskId, FlowParams flowParams);
 
     /**
-     * 委派, 默认删除当然办理用户权限，委派后，当前办理不可办理
+     * 委派, 默认删除当前办理用户权限，委派后审批完, 重新回到当前办理人
      *
      * @param taskId         修改的任务id [必传]
      * @param flowParams 包含流程相关参数的对象
