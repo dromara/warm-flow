@@ -145,7 +145,7 @@ public class FlowParams implements Serializable {
      * 执行的下个任务的办理人
      */
     @Getter
-    private List<String> nextHandler;
+    private String[] nextHandler;
 
     /**
      * 下个任务处理人配置类型（true-追加，false-覆盖，默认false）
@@ -252,7 +252,7 @@ public class FlowParams implements Serializable {
         return this;
     }
 
-    public FlowParams nextHandler(List<String> nextHandler) {
+    public FlowParams nextHandler(String... nextHandler) {
         this.nextHandler = nextHandler;
         return this;
     }

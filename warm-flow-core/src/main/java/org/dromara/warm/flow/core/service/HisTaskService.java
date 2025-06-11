@@ -128,10 +128,4 @@ public interface HisTaskService extends IWarmService<HisTask> {
      */
     List<HisTask> getByInsId(Long instanceId);
 
-    @Deprecated
-    List<HisTask> getNoReject(Long instanceId);
-
-    @Deprecated
-    HisTask getNoReject(String nodeCode, String targetNodeCode, List<HisTask> hisTasks);
-
 }
