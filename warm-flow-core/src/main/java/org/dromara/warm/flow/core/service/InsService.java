@@ -37,43 +37,13 @@ public interface InsService extends IWarmService<Instance> {
      *                    - flowCode: 流程编码 [必传]
      *                    - handler: 当前办理人唯一标识[必传]
      *                    - variable: 流程变量[按需传输]
+     *                    - nextHandler: 执行的下个任务的办理人[按需传输]
+     *                    - nextHandlerAppend: 个任务处理人配置类型（true-追加，false-覆盖，默认false）[按需传输]
      *                    - flowStatus: 流程状态，自定义流程状态[按需传输]
      *                    - ext: 扩展字段，预留给业务系统使用[按需传输]
      * @return 流程实例
      */
     Instance start(String businessId, FlowParams flowParams);
-
-
-    /**
-     * 根据实例id，流程跳转，一般是开始节点后第一个节点，用来提交申请，此时不可有同时两个待办任务
-     *
-     * @param instanceId:流程实例id[必传]
-     * @param flowParams:包含流程相关参数的对象 - skipType:跳转类型(PASS审批通过 REJECT退回) [必传]
-     *                               - nodeCode: 如果指定节点,可任意跳转到对应节点，严禁任意退回选择后置节点 [按需传输]
-     *                               - permissionFlag: 办理人权限标识，比如用户，角色，部门等，用于校验是否有权限办理；流程设计时未设置办理人或者ignore为true可不传 [按需传输]
-     *                               - message: 审批意见[按需传输]
-     *                               - handler: 当前办理人唯一标识[建议传]
-     *                               - variable: 流程变量[按需传输,跳转条件放入流程变量<互斥网关必传>]
-     *                               - flowStatus: 流程状态，自定义流程状态[按需传输]
-     *                               - ignore   忽略权限校验（比如管理员不校验），默认不忽略 [按需传输]
-     * @deprecated 请使用 {@link TaskService#skipByInsId(Long, FlowParams)}
-     */
-    @Deprecated
-    Instance skipByInsId(Long instanceId, FlowParams flowParams);
-
-    /**
-     * 终止流程，提前结束流程，将所有待办任务转历史
-     *
-     * @param instanceId:流程实例id[必传]
-     * @param flowParams:包含流程相关参数的对象 - message: 审批意见  [按需传输]
-     *                               - permissionFlag: 办理人权限标识，比如用户，角色，部门等，用于校验是否有权限办理；流程设计时未设置办理人或者ignore为true可不传 [按需传输]
-     *                               - handler: 当前办理人唯一标识[建议传]
-     *                               - flowStatus: 流程状态，自定义流程状态[按需传输]
-     *                               - ignore   忽略权限校验（比如管理员不校验），默认不忽略 [按需传输]
-     * @deprecated 请使用 {@link TaskService#terminationByInsId(Long, FlowParams)}
-     */
-    @Deprecated
-    Instance termination(Long instanceId, FlowParams flowParams);
 
     /**
      * 根据实例ids，删除流程

@@ -15,12 +15,9 @@
  */
 package org.dromara.warm.flow.core.service;
 
-import org.dromara.warm.flow.core.chart.FlowChartChain;
-import org.dromara.warm.flow.core.dto.DefChart;
 import org.dromara.warm.flow.core.dto.PathWayData;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * 流程图绘制Service接口
@@ -30,65 +27,6 @@ import java.util.function.Consumer;
  */
 public interface ChartService {
 
-
-    /**
-     * 根据流程实例ID,获取流程图的图片流(渲染状态)
-     *
-     * @param instanceId 流程实例id
-     * @return base64编码的图片流字符串
-     * @deprecated 请使用前端渲染流程图
-     */
-    @Deprecated
-    String chartIns(Long instanceId);
-
-    /**
-     * 根据流程定义ID,获取流程图的图片流(不渲染状态)
-     * @param definitionId 流程定义id
-     * @return base64编码的图片流字符串
-     * @deprecated 请使用前端渲染流程图
-     */
-    @Deprecated
-    String chartDef(Long definitionId);
-
-    /**
-     * 根据流程实例ID,获取流程图的图片流(渲染状态)
-     *
-     * @param instanceId 流程实例id
-     * @param consumer 可获取流程图对象，可用于修改流程图样式或者新增内容
-     * @return base64编码的图片流字符串
-     * @deprecated 请使用前端渲染流程图
-     */
-    @Deprecated
-    String chartIns(Long instanceId, Consumer<FlowChartChain> consumer);
-
-    /**
-     * 根据流程定义ID,获取流程图的图片流(不渲染状态)
-     * @param definitionId 流程定义id
-     * @param consumer 可获取流程图对象，可用于修改流程图样式或者新增内容
-     * @return base64编码的图片流字符串
-     * @deprecated 请使用前端渲染流程图
-     */
-    @Deprecated
-    String chartDef(Long definitionId, Consumer<FlowChartChain> consumer);
-
-    /**
-     * 根据流程实例ID,获取流程图对象
-     *
-     * @param instanceId 流程实例id
-     * @return DefChart 流程图对象
-     * @deprecated 请使用前端渲染流程图
-     */
-    @Deprecated
-    DefChart chartInsObj(Long instanceId);
-
-    /**
-     * 根据流程定义ID,获取流程图对象
-     * @param definitionId 流程定义id
-     * @return DefChart 流程图对象
-     * @deprecated 请使用前端渲染流程图
-     */
-    @Deprecated
-    DefChart chartDefObj(Long definitionId);
 
     /**
      * 获取流程开启时的流程图元数据

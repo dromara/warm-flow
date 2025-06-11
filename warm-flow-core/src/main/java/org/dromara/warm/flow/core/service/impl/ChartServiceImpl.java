@@ -53,44 +53,6 @@ public class ChartServiceImpl implements ChartService {
     private static final Logger log = LoggerFactory.getLogger(ChartServiceImpl.class);
 
     @Override
-    public String chartIns(Long instanceId) {
-        return chartIns(instanceId, chartChain -> {
-        });
-    }
-
-    @Override
-    public String chartDef(Long definitionId) {
-        return chartDef(definitionId, chartChain -> {
-        });
-    }
-
-    @Override
-    public String chartIns(Long instanceId, Consumer<FlowChartChain> consumer) {
-        DefChart flowChart = chartInsObj(instanceId);
-        return basicFlowChart(flowChart.getNodeJsonList(), flowChart.getSkipJsonList(), consumer);
-    }
-
-    @Override
-    public String chartDef(Long definitionId, Consumer<FlowChartChain> consumer) {
-        DefChart flowChart = chartDefObj(definitionId);
-        return basicFlowChart(flowChart.getNodeJsonList(), flowChart.getSkipJsonList(), consumer);
-    }
-
-    @Override
-    public DefChart chartInsObj(Long instanceId) {
-        String defJsonStr = FlowEngine.insService().getById(instanceId).getDefJson();
-        DefJson defJson = FlowEngine.jsonConvert.strToBean(defJsonStr, DefJson.class);
-        return DefJson.copyChart(defJson);
-    }
-
-    @Override
-    public DefChart chartDefObj(Long definitionId) {
-        DefJson defJson = FlowEngine.defService().queryDesign(definitionId);
-        initStatus(defJson);
-        return DefJson.copyChart(defJson);
-    }
-
-    @Override
     public String startMetadata(PathWayData pathWayData) {
 
         DefJson defJson = FlowEngine.defService().queryDesign(pathWayData.getDefId());

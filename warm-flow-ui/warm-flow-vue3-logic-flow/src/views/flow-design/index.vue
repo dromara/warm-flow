@@ -132,6 +132,8 @@ onMounted(async () => {
       if (jsonString.value) {
         value.value = json2LogicFlowJson(jsonString.value);
         lf.value.render(value.value);
+        // 将内容平移至画布中心
+        lf.value.translateCenter()
       }
     }).catch(() => {
       lf.value.render({});
