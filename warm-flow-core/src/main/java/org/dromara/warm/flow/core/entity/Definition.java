@@ -117,7 +117,6 @@ public interface Definition extends RootEntity {
                 .setFlowName(this.getFlowName())
                 .setCategory(this.getCategory())
                 .setVersion(this.getVersion())
-                .setIsPublish(this.getIsPublish())
                 .setFormCustom(this.getFormCustom())
                 .setFormPath(this.getFormPath())
                 .setActivityStatus(this.getActivityStatus())
