@@ -45,7 +45,7 @@ import End from "@/components/WarmFlow/js/end";
 import Skip from "@/components/WarmFlow/js/skip";
 import useAppStore from "@/store/app";
 import { json2LogicFlowJson } from "@/components/WarmFlow/js/tool";
-import { queryFlowChart } from "&/api/flow/definition";
+import { queryFlowChart } from "@/api/flow/definition";
 
 const appStore = useAppStore();
 const appParams = computed(() => useAppStore().appParams);

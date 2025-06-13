@@ -3,5 +3,5 @@
 </template>
 
 <script setup>
-import FormDesign from '&/form/design.vue'
+import FormDesign from '@/components/form/design.vue'
 </script>

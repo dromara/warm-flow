@@ -42,7 +42,7 @@ import Parallel from "@/components/WarmFlow/js/parallel";
 import End from "@/components/WarmFlow/js/end";
 import Skip from "@/components/WarmFlow/js/skip";
 import PropertySetting from '@/components/WarmFlow/PropertySetting/index.vue'
-import { queryDef, saveJson } from "&/api/flow/definition";
+import { queryDef, saveJson } from "@/api/flow/definition";
 import {
   json2LogicFlowJson,
   logicFlowJsonToWarmFlow
