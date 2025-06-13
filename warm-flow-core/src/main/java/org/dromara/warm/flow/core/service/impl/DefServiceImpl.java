@@ -316,7 +316,6 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         List<Node> nodeList = FlowEngine.nodeService().getByDefId(id).stream().map(Node::copy).collect(Collectors.toList());
         List<Skip> skipList = FlowEngine.skipService().getByDefId(id).stream().map(Skip::copy).collect(Collectors.toList());
         FlowEngine.dataFillHandler().idFill(definition);
-        definition.setIsPublish(PublishStatus.UNPUBLISHED.getKey());
 
         nodeList.forEach(node -> node.setDefinitionId(definition.getId()).setVersion(definition.getVersion()));
         FlowEngine.nodeService().saveBatch(nodeList);
