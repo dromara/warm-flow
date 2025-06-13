@@ -137,9 +137,6 @@ public interface Node extends RootEntity {
 
     default Node copy() {
         return FlowEngine.newNode()
-                .setId(this.getId())
-                .setCreateTime(this.getCreateTime())
-                .setUpdateTime(this.getUpdateTime())
                 .setTenantId(this.getTenantId())
                 .setDelFlag(this.getDelFlag())
                 .setNodeType(this.getNodeType())

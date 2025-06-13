@@ -111,9 +111,6 @@ public interface Definition extends RootEntity {
 
     default Definition copy() {
         return FlowEngine.newDef()
-                .setId(this.getId())
-                .setCreateTime(this.getCreateTime())
-                .setUpdateTime(this.getUpdateTime())
                 .setTenantId(this.getTenantId())
                 .setDelFlag(this.getDelFlag())
                 .setFlowCode(this.getFlowCode())
