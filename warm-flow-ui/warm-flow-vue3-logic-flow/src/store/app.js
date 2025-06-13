@@ -1,6 +1,6 @@
 import Cookies from 'js-cookie'
 import {TokenPrefix, TokenName} from "@/utils/auth.js";
-import {config} from "&/api/anony.js";
+import {config} from "@/api/anony.js";
 
 const useAppStore = defineStore(
   'app',

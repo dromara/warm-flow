@@ -20,12 +20,12 @@
 </template>
 
 <script setup name="Definition">
-import start from '&/components/start.vue'
-import between from '&/components/between.vue'
+import start from './start.vue'
+import between from './between.vue'
 import serial from './serial.vue'
 import parallel from './parallel.vue'
 import end from './end.vue'
-import skip from '&/components/skip.vue'
+import skip from './skip.vue'
 
 const { proxy } = getCurrentInstance();
 

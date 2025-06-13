@@ -3,5 +3,5 @@
 </template>
 
 <script setup>
-import FCreate from '&/form/formCreate.vue'
+import FCreate from '@/components/form/formCreate.vue'
 </script>
