@@ -75,7 +75,7 @@
         <!-- 生态版本 -->
         <spring.boot.version>2.7.18</spring.boot.version>
         <springboot3.version>3.0.1</springboot3.version>
-        <solon.version>2.8.4</solon.version>
+        <solon.version>2.9.4</solon.version>
 
         <mysql.version>8.0.33</mysql.version>
         <oracle.version>11.2.0.4</oracle.version>
@@ -136,6 +136,11 @@
             <dependency>
                 <groupId>org.noear</groupId>
                 <artifactId>solon.logging.logback</artifactId>
+                <version>${solon.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.noear</groupId>
+                <artifactId>solon-serialization-properties</artifactId>
                 <version>${solon.version}</version>
             </dependency>
 
