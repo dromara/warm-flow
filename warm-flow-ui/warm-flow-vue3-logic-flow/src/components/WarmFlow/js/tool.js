@@ -175,6 +175,7 @@ export const logicFlowJsonToWarmFlow = (data) => {
     }
     return coordinate
   }
+
   // 流程定义
   definition.id = data.id
   definition.flowCode = data.flowCode
@@ -232,7 +233,7 @@ export const logicFlowJsonToWarmFlow = (data) => {
   return JSON.stringify(definition)
 }
 
-export const getStatusStyle = (style, properties, type) => {
+export const setCommonStyle = (style, properties, type) => {
   // 从 chartStatusColor 数组中提取颜色值
   const [doneColor, todoColor, notDoneColor] = properties.chartStatusColor
   || ["157,255,0", "255,205,23", "0,0,0"]; // 提供默认值
@@ -257,5 +258,294 @@ export const getStatusStyle = (style, properties, type) => {
     style.stroke = `rgb(${notDoneColor})`;
   }
 
+  style.strokeWidth = 1
   return style;
+}
+
+function addNode(lf, nodeType, x, y, textFlag) {
+  return lf.addNode({
+    type: nodeType,
+    x: x,
+    y: y,
+    text: textFlag ? {
+      value: "中间节点",
+      x: x,
+      y: y,
+    } : null,
+  });
+}
+
+function addEdge(lf, nodeType, sourceNodeId, targetNodeId, pointsList) {
+  return lf.addEdge({
+    type: nodeType,
+    sourceNodeId: sourceNodeId,
+    targetNodeId: targetNodeId,
+    pointsList: pointsList,
+  });
+}
+
+function addEdgeAll(lf, nodeType, sourceNodeId, targetNodeId, properties, text, pointsList) {
+  return lf.addEdge({
+    type: nodeType,
+    sourceNodeId: sourceNodeId,
+    targetNodeId: targetNodeId,
+    properties: properties,
+    text: text,
+    pointsList: pointsList,
+    startPoint: pointsList ? pointsList[0]: null,
+    endPoint: pointsList ? pointsList[pointsList.length - 1]: null,
+  });
+}
+
+function deleteAndAddEdge(sourceNode, nodes, edges, lf, nodeMap) {
+  const nextEdges = findNextEdges(sourceNode.id, edges)
+  if (!nextEdges || nextEdges.length === 0) {
+    return
+  }
+  if (nextEdges.length > 1) {
+    for (let i = 0; i < nextEdges.length; i++) {
+      const edge = nextEdges[i]
+      lf.deleteEdge(edge.id)
+      const targetNode = nodeMap.get(edge.targetNodeId)
+      if (targetNode.x > sourceNode.x) {
+        addEdgeAll(lf, "skip", sourceNode.id, edge.targetNodeId, edge.properties, edge.text, [
+          {x: sourceNode.x + sourceNode.properties.width / 2, y: sourceNode.y},
+          {x: targetNode.x, y: sourceNode.y},
+          {x: targetNode.x, y: targetNode.y - targetNode.properties.height / 2},
+        ])
+      } else {
+        addEdgeAll(lf, "skip", sourceNode.id, edge.targetNodeId, edge.properties, edge.text, [
+          {x: sourceNode.x - sourceNode.properties.width / 2, y: sourceNode.y},
+          {x: targetNode.x, y: sourceNode.y},
+          {x: targetNode.x, y: targetNode.y - targetNode.properties.height / 2},
+        ])
+      }
+      deleteAndAddEdge(targetNode, nodes, edges, lf, nodeMap)
+    }
+  } else {
+    const edge = nextEdges[0]
+    lf.deleteEdge(edge.id)
+    const targetNode = nodeMap.get(edge.targetNodeId)
+    const lastEdges = findLastEdges(targetNode.id, edges)
+    if (lastEdges.length > 1) {
+      if (targetNode.x > sourceNode.x) {
+        addEdgeAll(lf, "skip", sourceNode.id, edge.targetNodeId, edge.properties, edge.text, [
+          {x: sourceNode.x, y: sourceNode.y + sourceNode.properties.height / 2},
+          {x: sourceNode.x, y: targetNode.y},
+          {x: targetNode.x + targetNode.properties.width / 2, y: targetNode.y}
+        ])
+      } else {
+        addEdgeAll(lf, "skip", sourceNode.id, edge.targetNodeId, edge.properties, edge.text, [
+          {x: sourceNode.x, y: sourceNode.y + sourceNode.properties.height / 2},
+          {x: sourceNode.x, y: targetNode.y},
+          {x: targetNode.x - targetNode.properties.width / 2, y: targetNode.y}
+        ])
+      }
+    } else {
+      addEdgeAll(lf, "skip", sourceNode.id, edge.targetNodeId, edge.properties, edge.text, [
+        {x: sourceNode.x, y: sourceNode.y + sourceNode.properties.height / 2},
+        {x: targetNode.x, y: targetNode.y - targetNode.properties.height / 2}
+      ])
+    }
+
+    deleteAndAddEdge(targetNode, nodes, edges, lf, nodeMap)
+  }
+}
+
+// 更新边
+function updateEdges(lf) {
+  const nodes = lf.getGraphData().nodes;
+  const startNode = nodes.find(node => node.type === "start")
+  const nodeMap = new Map()
+  nodes.forEach((node) => nodeMap.set(node.id, node));
+  const edges = lf.getGraphData().edges;
+  // 获取源节点的后置节点
+  deleteAndAddEdge(startNode, nodes, edges, lf, nodeMap);
+  console.log(lf.getGraphData().edges)
+  const edgeAll = lf.getGraphData().edges;
+  // 如果存在重复的边，则删除
+  const edgeMap = new Map()
+  edgeAll.forEach(edge => {
+      if (!edgeMap.has(edge.sourceNodeId + edge.targetNodeId)) {
+        edgeMap.set(edge.sourceNodeId + edge.targetNodeId, edge)
+      } else {
+        lf.deleteEdge(edge.id)
+      }
+  })
+
+  console.log(lf.getGraphData().edges)
+}
+
+export const addBetweenNode = (lf, edge, nodeType) => {
+  const nodes = lf.getGraphData().nodes;
+  const edges = lf.getGraphData().edges;
+  const sourceNode = nodes.find(node => node.id === edge.sourceNodeId);
+  const targetNode = nodes.find(node => node.id === edge.targetNodeId);
+
+  // 偏移距离
+  const offsetY = 120;
+
+  // 添加中间节点
+  const betweenNode = addNode(lf, nodeType, sourceNode.x, sourceNode.y + offsetY, true)
+  addEdge(lf, "skip", sourceNode.id, betweenNode.id)
+
+  // 找到并删除开始节点和结束节点之间的直接连接
+  lf.deleteEdge(edge.id);
+
+  const allNextNodes = findAllNextNodes(sourceNode.id, nodes, edges);
+  allNextNodes.forEach(node => {
+    if (node) {
+      lf.graphModel.moveNode(node.id, 0, offsetY, true);
+    }
+  });
+  addEdgeAll(lf, "skip", betweenNode.id, targetNode.id, edge.properties, edge.text)
+  updateEdges(lf)
+  // 自动调整画布大小
+  // adjustCanvasSize();
+}
+
+export const addGatewayNode = (lf, edge, nodeType) => {
+  const nodes = lf.getGraphData().nodes;
+  const edges = lf.getGraphData().edges;
+  const sourceNode = nodes.find(node => node.id === edge.sourceNodeId);
+  const targetNode = nodes.find(node => node.id === edge.targetNodeId);
+
+  // 偏移距离
+  const offsetX = 100;
+  const offsetY = 100;
+
+  // 添加互斥网关开始节点
+  const gatewayNode = addNode(lf, nodeType, sourceNode.x, sourceNode.y + offsetY)
+  // 连接父节点与互斥网关开始节点
+  addEdge(lf, "skip", sourceNode.id, gatewayNode.id)
+
+  // 添加两个中间节点
+  const between1Node = addNode(lf, "between", sourceNode.x - offsetX, sourceNode.y + offsetY * 2, true)
+  const between2Node = addNode(lf, "between", sourceNode.x + offsetX, sourceNode.y + offsetY * 2, true)
+  addEdge(lf, "skip", gatewayNode.id, between1Node.id)
+  addEdge(lf, "skip", gatewayNode.id, between2Node.id)
+
+  // 添加互斥网关结束节点
+  const gatewayNode2 = addNode(lf, nodeType, sourceNode.x, sourceNode.y + offsetY * 3)
+  // 连接两个中间节点与互斥网关结束节点
+  addEdge(lf, "skip", between1Node.id, gatewayNode2.id)
+  addEdge(lf, "skip", between2Node.id, gatewayNode2.id)
+
+  // 找到并删除开始节点和目标节点之间的直接连接
+  lf.deleteEdge(edge.id);
+  const allNextNodes = findAllNextNodes(sourceNode.id, nodes, edges);
+  allNextNodes.forEach(node => lf.graphModel.moveNode(node.id, 0, offsetY * 3, true));
+
+  // 连接互斥网关结束节点到目标节点
+  addEdge(lf, "skip", gatewayNode2.id, targetNode.id)
+  updateEdges(lf)
+
+  // 自动调整画布大小
+  // adjustCanvasSize();
+}
+
+export const gatewayAddNode = (lf, gatewayNode) => {
+  const nodes = lf.getGraphData().nodes;
+  const edges = lf.getGraphData().edges;
+
+  // 新中间节点的位置（在互斥网关开始节点的正右边）
+  const offsetX = 150; // 偏移量
+
+  // 获取网关节点的所有直接子节点
+  const directChildren = findNextNodes(gatewayNode.id, nodes, edges);
+
+  // 在直接子节点中找到最右边的节点
+  const rightmostChild = getRightmostNode(directChildren);
+
+  // 连接互斥网关开始节点到新的中间节点
+  const betweenNode = addNode(lf, "between", rightmostChild.x + offsetX, rightmostChild.y, true)
+
+  // 连接网关开始节点到新的中间节点
+  addEdge(lf, "skip", gatewayNode.id, betweenNode.id)
+
+  // 找到互斥网关结束节点
+  const gatewayEndNode = nodes.find(node => ['serial', 'parallel'].includes(node.type) && node.id !== gatewayNode.id);
+
+  if (gatewayEndNode) {
+    // 连接新的中间节点到互斥网关结束节点
+    addEdge(lf, "skip", betweenNode.id, gatewayEndNode.id)
+  }
+  updateEdges(lf)
+};
+
+function findAllNextNodes(nodeId, nodes, edges, visited = new Set()) {
+  if (visited.has(nodeId)) {
+    return [];
+  }
+  visited.add(nodeId);
+
+  const targetNode = nodes.find(node => node.id === nodeId);
+  if (!targetNode) {
+    return [];
+  }
+
+  const directChildren = edges
+      .filter(edge => edge.sourceNodeId === nodeId)
+      .map(edge => nodes.find(node => node.id === edge.targetNodeId))
+      .filter(Boolean);
+
+  let allNextNodes = [];
+
+  for (const child of directChildren) {
+    // 先添加当前子节点
+    allNextNodes.push(child);
+    // 再递归添加子节点的后继节点
+    const childNextNodes = findAllNextNodes(child.id, nodes, edges, visited);
+    allNextNodes = [...allNextNodes, ...childNextNodes];
+  }
+
+  // 不再返回 targetNode 本身，只返回其所有后继节点
+  return allNextNodes;
+}
+
+function findNextEdges(nodeId, edges) {
+  return edges.filter(edge => edge.sourceNodeId === nodeId);
+}
+
+function findLastEdges(nodeId, edges) {
+  return edges.filter(edge => edge.targetNodeId === nodeId);
+}
+
+function findNextNodes(nodeId, nodes, edges) {
+  return edges
+      .filter(edge => edge.sourceNodeId === nodeId)
+      .map(edge => nodes.find(node => node.id === edge.targetNodeId))
+      .filter(Boolean);
+}
+
+function adjustCanvasSize() {
+  const nodes = lf.getGraphData().nodes;
+  let maxX = 0;
+  let maxY = 0;
+
+  nodes.forEach((node) => {
+    if (node.x > maxX) maxX = node.x;
+    if (node.y > maxY) maxY = node.y;
+  });
+
+  // 扩展画布边界
+  const padding = 200;
+  const containerWidth = maxX + padding;
+  const containerHeight = maxY + padding;
+
+  // 动态修改容器大小
+  proxy.$refs.container.style.width = `${containerWidth}px`;
+  proxy.$refs.container.style.height = `${containerHeight}px`;
+
+  // 可选：重置视图为合适的位置和缩放比例
+  lf.translateCenter(); // 居中显示
+  lf.zoomToFit();       // 自动缩放以适应画布
+}
+
+function getRightmostNode(nodes) {
+  if (nodes.length === 0) return null;
+
+  return nodes.reduce((rightmost, current) => {
+    return (current.x > rightmost.x ? current : rightmost);
+  }, nodes[0]);
 }

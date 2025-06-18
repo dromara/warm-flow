@@ -1,5 +1,5 @@
 import {RectNode, RectNodeModel} from "@logicflow/core";
-import {getStatusStyle} from "@/components/WarmFlow/js/tool.js";
+import {setCommonStyle} from "@/components/WarmFlow/js/tool.js";
 
 class BetweenModel extends RectNodeModel {
 
@@ -10,7 +10,7 @@ class BetweenModel extends RectNodeModel {
     this.radius = 5;
   }
   getNodeStyle() {
-    return getStatusStyle(super.getNodeStyle(), this.properties, "node");
+    return setCommonStyle(super.getNodeStyle(), this.properties, "node");
   }
 }
 
