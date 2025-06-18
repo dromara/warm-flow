@@ -1,5 +1,5 @@
 import { CircleNode, CircleNodeModel } from "@logicflow/core";
-import {getStatusStyle} from "@/components/WarmFlow/js/tool.js";
+import {setCommonStyle} from "@/components/WarmFlow/js/tool.js";
 
 class StartModel extends CircleNodeModel {
 
@@ -9,7 +9,7 @@ class StartModel extends CircleNodeModel {
   }
 
   getNodeStyle() {
-    return getStatusStyle(super.getNodeStyle(), this.properties, "node");
+    return setCommonStyle(super.getNodeStyle(), this.properties, "node");
   }
 }
 

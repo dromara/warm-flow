@@ -1,5 +1,5 @@
 import { PolylineEdge, PolylineEdgeModel } from "@logicflow/core";
-import {getStatusStyle} from "@/components/WarmFlow/js/tool.js";
+import {setCommonStyle} from "@/components/WarmFlow/js/tool.js";
 
 class SkipModel extends PolylineEdgeModel {
   setAttributes() {
@@ -7,7 +7,7 @@ class SkipModel extends PolylineEdgeModel {
   }
 
   getEdgeStyle() {
-    return getStatusStyle(super.getEdgeStyle(), this.properties, "skip");
+    return setCommonStyle(super.getEdgeStyle(), this.properties, "skip");
 
   }
 

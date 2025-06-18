@@ -83,7 +83,6 @@ const headerStyle = computed(() => {
     top: "5px",
     right: "50px",
     zIndex: "2",
-    marginTop: "10px",
     height: "auto",
     backgroundColor: isDark.value ? "#333" : "#fff",
   };
@@ -235,6 +234,8 @@ onMounted(async () => {
             ] = res.data.chartStatusColor || ["157,255,0", "255,205,23", "0,0,0"];
 
             const data = json2LogicFlowJson(defJson.value);
+            // 隐藏滚动条
+            document.body.style.overflow = 'hidden';
             use();
             lf.value = new LogicFlow({
               container: containerRef.value,
@@ -325,7 +326,7 @@ onUnmounted(() => {
   position: absolute;
   font-weight: bold;
   left: 500px;
-  top: 10px;
+  top: 2px;
   border: 1px solid #d1e9ff;
   background-color: #e8f4ff;
   padding: 4px 8px;
