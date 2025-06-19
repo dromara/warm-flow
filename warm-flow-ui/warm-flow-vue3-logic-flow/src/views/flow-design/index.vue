@@ -125,7 +125,7 @@ onMounted(async () => {
       strokeWidth: 2, // 对齐线宽度
     },
   })
-  // initMenu();
+  initMenu();
   initEvent();
   // 隐藏滚动条
   document.body.style.overflow = 'hidden';
