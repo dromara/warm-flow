@@ -44,7 +44,7 @@ import End from "@/components/design/classics/js/end";
 import Skip from "@/components/design/classics/js/skip";
 import PropertySetting from '@/components/design/classics/PropertySetting/index.vue'
 import { queryDef, saveJson } from "@/api/flow/definition";
-import { json2LogicFlowJson, logicFlowJsonToWarmFlow } from "@/components/design/tool";
+import { json2LogicFlowJson, logicFlowJsonToWarmFlow } from "@/components/design/common/js/tool";
 import useAppStore from "@/store/app";
 import {computed, onMounted, onUnmounted, ref, watch} from "vue";
 import request from "@/utils/request.js";

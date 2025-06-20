@@ -1,5 +1,5 @@
 import { h, PolygonNode, PolygonNodeModel } from '@logicflow/core'
-import {setCommonStyle} from "@/components/design/tool.js";
+import {setCommonStyle} from "@/components/design/common/js/tool.js";
 
 class SerialModel extends PolygonNodeModel {
   static extendKey = 'SerialModel';

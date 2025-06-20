@@ -30,7 +30,7 @@
   </div>
 </template>
 
-<script setup name="mimicDing">
+<script setup name="mimic">
 import LogicFlow from "@logicflow/core";
 import "@logicflow/core/lib/style/index.css";
 import { Menu, Snapshot } from '@logicflow/extension';
@@ -44,7 +44,7 @@ import End from "@/components/design/mimic/js/end";
 import Skip from "@/components/design/mimic/js/skip";
 import PropertySetting from '@/components/design/mimic/PropertySetting/index.vue'
 import { queryDef, saveJson } from "@/api/flow/definition";
-import { json2LogicFlowJson, logicFlowJsonToWarmFlow } from "@/components/design/tool";
+import { json2LogicFlowJson, logicFlowJsonToWarmFlow } from "@/components/design/common/js/tool";
 import { addBetweenNode, addGatewayNode, gatewayAddNode } from "@/components/design/mimic/js/mimic";
 import useAppStore from "@/store/app";
 import {computed, onMounted, onUnmounted, ref, watch} from "vue";

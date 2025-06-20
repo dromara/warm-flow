@@ -44,7 +44,7 @@ import Parallel from "@/components/design/classics/js/parallel";
 import End from "@/components/design/classics/js/end";
 import Skip from "@/components/design/classics/js/skip";
 import useAppStore from "@/store/app";
-import { json2LogicFlowJson } from "@/components/design/tool";
+import { json2LogicFlowJson } from "@/components/design/common/js/tool";
 import { queryFlowChart } from "@/api/flow/definition";
 
 const appStore = useAppStore();

@@ -1,5 +1,5 @@
 import { PolylineEdge, PolylineEdgeModel } from "@logicflow/core";
-import {setCommonStyle} from "@/components/design/tool.js";
+import {setCommonStyle} from "@/components/design/common/js/tool.js";
 
 class SkipModel extends PolylineEdgeModel {
   setAttributes() {

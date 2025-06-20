@@ -1,5 +1,5 @@
 import { CircleNode, CircleNodeModel } from "@logicflow/core";
-import {setCommonStyle} from "@/components/design/tool.js";
+import {setCommonStyle} from "@/components/design/common/js/tool.js";
 
 class StartModel extends CircleNodeModel {
 

@@ -19,13 +19,13 @@
   </div>
 </template>
 
-<script setup name="Definition">
-import start from './start.vue'
-import between from './between.vue'
-import serial from './serial.vue'
-import parallel from './parallel.vue'
-import end from './end.vue'
-import skip from './skip.vue'
+<script setup name="PropertySetting">
+import start from '@/components/design/common/vue/start.vue'
+import between from '@/components/design/common/vue/between.vue'
+import serial from '@/components/design/common/vue/serial.vue'
+import parallel from '@/components/design/common/vue/parallel.vue'
+import end from '@/components/design/common/vue/end.vue'
+import skip from '@/components/design/common/vue/skip.vue'
 
 const { proxy } = getCurrentInstance();
 
