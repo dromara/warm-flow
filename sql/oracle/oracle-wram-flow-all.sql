@@ -1,6 +1,7 @@
 create table FLOW_DEFINITION
 (
     ID              NUMBER(20)            not null,
+    MODE            VARCHAR2(40) default 'classics' not null,
     FLOW_CODE       VARCHAR2(40)          not null,
     FLOW_NAME       VARCHAR2(100)         not null,
     CATEGORY        VARCHAR2(100),
@@ -23,6 +24,7 @@ alter table FLOW_DEFINITION
 
 comment on table FLOW_DEFINITION is '流程定义表';
 comment on column FLOW_DEFINITION.ID is '主键id';
+comment on column FLOW_DEFINITION.MODE is '设计器模式（classics经典模式 mimic仿钉钉模式）';
 comment on column FLOW_DEFINITION.FLOW_CODE is '流程编码';
 comment on column FLOW_DEFINITION.FLOW_NAME is '流程名称';
 comment on column FLOW_DEFINITION.CATEGORY is '流程类别';

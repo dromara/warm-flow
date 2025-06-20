@@ -1,5 +1,6 @@
 CREATE TABLE flow_definition (
     id bigint NOT NULL,
+    mode nvarchar(40) DEFAULT('classics') NOT NULL,
     flow_code nvarchar(40) NOT NULL,
     flow_name nvarchar(100) NOT NULL,
     category nvarchar(100) NULL,
@@ -27,6 +28,13 @@ EXEC sp_addextendedproperty
 'SCHEMA', N'dbo',
 'TABLE', N'flow_definition',
 'COLUMN', N'id'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'设计器模式（classics经典模式 mimic仿钉钉模式）',
+'SCHEMA', N'dbo',
+'TABLE', N'flow_definition',
+'COLUMN', N'mode'
 GO
 
 EXEC sp_addextendedproperty

@@ -1,6 +1,7 @@
 CREATE TABLE `flow_definition`
 (
     `id`              bigint          NOT NULL COMMENT '主键id',
+    `mode`            varchar(40)     NOT NULL DEFAULT 'classics' COMMENT '设计器模式（classics经典模式 mimic仿钉钉模式）',
     `flow_code`       varchar(40)     NOT NULL COMMENT '流程编码',
     `flow_name`       varchar(100)    NOT NULL COMMENT '流程名称',
     `category`        varchar(100)             DEFAULT NULL COMMENT '流程类别',
