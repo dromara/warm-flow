@@ -102,8 +102,10 @@ public class WarmFlowService {
      */
     public static ApiResult<DefJson> queryFlowChart(Long id) {
         try {
-            String defJsonStr = FlowEngine.insService().getById(id).getDefJson();
+            Instance instance = FlowEngine.insService().getById(id);
+            String defJsonStr = instance.getDefJson();
             DefJson defJson = FlowEngine.jsonConvert.strToBean(defJsonStr, DefJson.class);
+            defJson.setInstance(instance);
 
             // 获取流程图三原色
             defJson.setChartStatusColor(FlowEngine.chartService().getChartRgb());

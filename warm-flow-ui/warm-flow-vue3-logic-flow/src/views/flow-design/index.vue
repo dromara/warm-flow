@@ -7,13 +7,14 @@
       <div style="padding: 5px 0; text-align: right;">
         <div>
           <el-button size="small" icon="ZoomOut" @click="zoomViewport(false)">缩小</el-button>
+          <el-button size="small" icon="Rank" @click="zoomViewport(1)">自适应</el-button>
           <el-button size="small" icon="ZoomIn" @click="zoomViewport(true)">放大</el-button>
-          <el-button size="small" icon="Rank" @click="zoomViewport(1)">自适应屏幕</el-button>
           <el-button size="small" icon="DArrowLeft" @click="undoOrRedo(true)">上一步</el-button>
           <el-button size="small" icon="DArrowRight" @click="undoOrRedo(false)">下一步</el-button>
           <el-button size="small" icon="Delete" @click="clear()">清空</el-button>
           <el-button size="small" icon="DocumentAdd" @click="saveJsonModel">保存</el-button>
           <el-button size="small" icon="Download" @click="downLoad">下载流程图</el-button>
+          <el-button size="small" icon="Download" @click="downJson">下载json</el-button>
         </div>
       </div>
     </el-header>
@@ -51,6 +52,8 @@ import {
 } from "@/components/WarmFlow/js/tool";
 import useAppStore from "@/store/app";
 import {computed, onMounted, onUnmounted, ref, watch} from "vue";
+import request from "@/utils/request.js";
+const urlPrefix = import.meta.env.VITE_URL_PREFIX
 const appStore = useAppStore();
 const appParams = computed(() => useAppStore().appParams);
 
@@ -392,6 +395,33 @@ function downLoad() {
     quality: 0.92          // 对jpeg和webp格式有效，取值范围0-1
   })
 }
+
+async function downJson() {
+  const url = urlPrefix + `warm-flow/down-json/${definitionId.value}`;
+  const filename = `${value.value.flowName}_${value.value.version}.json`;
+
+  try {
+    // 确保请求返回 Blob 数据
+    const response = await request({
+      url: url,
+      method: 'get'
+    });
+
+    // 创建 Blob 并触发下载
+    const blob = new Blob([response.data]);
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(downloadUrl);
+  } catch (error) {
+    console.error('下载失败:', error);
+  }
+}
+
 </script>
 
 <style>

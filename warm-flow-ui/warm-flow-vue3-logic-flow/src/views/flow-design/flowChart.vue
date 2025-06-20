@@ -12,8 +12,8 @@
 
         <!-- 右侧状态按钮组 -->
         <div style="margin-left: auto; display: flex; align-items: center;">
-          <el-button size="small" icon="Rank" @click="zoomViewport(1)">自适应屏幕</el-button>
           <el-button size="small" icon="ZoomIn" @click="zoomViewport(true)">放大</el-button>
+          <el-button size="small" icon="Rank" @click="zoomViewport(1)">自适应</el-button>
           <el-button size="small" icon="ZoomOut" @click="zoomViewport(false)">缩小</el-button>
           <el-button size="small" icon="Download" @click="downLoad">下载流程图</el-button>
         </div>

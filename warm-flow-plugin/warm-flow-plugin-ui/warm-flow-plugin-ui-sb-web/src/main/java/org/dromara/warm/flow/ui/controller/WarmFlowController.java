@@ -15,6 +15,7 @@
  */
 package org.dromara.warm.flow.ui.controller;
 
+import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.dto.ApiResult;
 import org.dromara.warm.flow.core.dto.DefJson;
 import org.dromara.warm.flow.core.dto.FlowDto;
@@ -79,6 +80,15 @@ public class WarmFlowController {
     @GetMapping("/query-flow-chart/{id}")
     public ApiResult<DefJson> queryFlowChart(@PathVariable("id") Long id) {
         return WarmFlowService.queryFlowChart(id);
+    }
+
+    @GetMapping("/down-json/{id}")
+    public ApiResult<String> downJson(@PathVariable("id") Long id) {
+        // 要导出的字符串
+
+
+        // 返回响应
+        return ApiResult.ok(FlowEngine.defService().exportJson(id));
     }
 
     /**

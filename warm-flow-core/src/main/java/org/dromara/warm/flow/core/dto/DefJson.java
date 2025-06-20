@@ -21,6 +21,7 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.entity.Definition;
+import org.dromara.warm.flow.core.entity.Instance;
 import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.entity.Skip;
 import org.dromara.warm.flow.core.utils.CollUtil;
@@ -85,6 +86,11 @@ public class DefJson {
      * 监听器路径
      */
     private String listenerPath;
+
+    /**
+     * 实例对象
+     */
+    private Instance instance;
 
     /**
      * 扩展字段，预留给业务系统使用
