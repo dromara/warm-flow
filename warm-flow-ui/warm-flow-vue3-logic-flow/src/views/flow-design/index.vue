@@ -33,23 +33,18 @@
 <script setup name="Design">
 import LogicFlow from "@logicflow/core";
 import "@logicflow/core/lib/style/index.css";
-import {DndPanel, Menu, SelectionSelect, Snapshot, InsertNodeInPolyline } from '@logicflow/extension';
+import { DndPanel, Menu, Snapshot } from '@logicflow/extension';
 import '@logicflow/extension/lib/style/index.css'
 import { ElLoading } from 'element-plus'
-import Start from "@/components/WarmFlow/js/start";
-import Between from "@/components/WarmFlow/js/between";
-import Serial from "@/components/WarmFlow/js/serial";
-import Parallel from "@/components/WarmFlow/js/parallel";
-import End from "@/components/WarmFlow/js/end";
-import Skip from "@/components/WarmFlow/js/skip";
-import PropertySetting from '@/components/WarmFlow/PropertySetting/index.vue'
+import Start from "@/components/design/classics/js/start";
+import Between from "@/components/design/classics/js/between";
+import Serial from "@/components/design/classics/js/serial";
+import Parallel from "@/components/design/classics/js/parallel";
+import End from "@/components/design/classics/js/end";
+import Skip from "@/components/design/classics/js/skip";
+import PropertySetting from '@/components/design/classics/PropertySetting/index.vue'
 import { queryDef, saveJson } from "@/api/flow/definition";
-import {
-  json2LogicFlowJson,
-  logicFlowJsonToWarmFlow,
-  addBetweenNode,
-  addGatewayNode, gatewayAddNode
-} from "@/components/WarmFlow/js/tool";
+import { json2LogicFlowJson, logicFlowJsonToWarmFlow } from "@/components/design/tool";
 import useAppStore from "@/store/app";
 import {computed, onMounted, onUnmounted, ref, watch} from "vue";
 import request from "@/utils/request.js";
@@ -128,7 +123,6 @@ onMounted(async () => {
       strokeWidth: 2, // 对齐线宽度
     },
   })
-  initMenu();
   initEvent();
   // 隐藏滚动条
   document.body.style.overflow = 'hidden';
@@ -201,7 +195,6 @@ function initDndPanel() {
       text: '中间节点',
       label: '中间节点',
       icon: 'data:image/svg+xml;charset=utf-8;base64,PHN2ZyB0PSIxNzQ4MTc1Mzc1ODI3IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjgzMTkiIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiI+PHBhdGggZD0iTTMzNS43NTE4MDQgMjQ0Ljc4MzE0N0MyODMuNjA3MDI5IDI0NC43ODMxNDcgMjQ2LjMwMzg5OSAyODQuODY5MDYgMjQ2LjE5OTI3IDMzMC41Mjk2NDJsMCAwLjAxMzIwNyAwIDAuMDEyNjQ4YzAuMDAzMjk0IDEzLjgwODQ2NSAzLjczOTc0MyAyOC4zODE3NDcgOS41Nzc0MzEgNDEuNTI2MzQyIDQuMjE1MTMyIDkuNDkxMTE1IDkuNDU1Nzk4IDE4LjIxNjY3NiAxNS44NDE3NDQgMjUuMjA2NjE0QzIzMy42NjU1ODggNDEwLjI3Mjg1MyAxODkuMjAxOTQ5IDQzMS42NDI4ODMgMTY2LjcyOCA0NzMuNzgxNTNMMTY1LjUxNjk2IDQ3Ni4wNTI1MTRsMCAxMzYuNDA4NDgyIDM0MC40Njk2ODkgMCAwLTEzNi40MDg0ODItMS4yMTEwNDMtMi4yNzA5ODRjLTIyLjE1MDcwOC00MS41MzI1NjYtNjUuNjUyMjA0LTYyLjg3Mjg0OC0xMDMuMjM4MjA0LTc1LjkxMTExNiAxOC4zNDg0MTktMTguNjU4MjE4IDIzLjc2MTA0OS00Mi43NDA1NzMgMjMuNzY2OTMyLTY3LjMxNDkybDAtMC4wMTI2NDggMC0wLjAxMzIwN0M0MjUuMTk5NzA3IDI4NC44NjkwNjMgMzg3Ljg5NjU4MyAyNDQuNzgzMTQ3IDMzNS43NTE4MDQgMjQ0Ljc4MzE0N1pNMzAwLjE0ODUyMyAyOTMuNDA0NTIxYzIuNDEwMzI4IDAuMDA2MDU5IDUuMDU2NjUgMC4wODY1NzIgNy45NzQwMTUgMC4yNTg1MjIgMjMuMjQ0MDI5IDEuMzcwMDI5IDMxLjA2Njk5NiA1LjU1NDA1OSAzNy4wODAzMjMgOS41MjIyODMgNi4wMTMyOTggMy45NjgyMjMgMTAuMjUyNDE3IDcuNzQ1Njk5IDI2LjE0NDE4OSA4LjIwODk4MmwwLjAwNDcwNiAwIDAuMDA1Mjk1IDBjMTIuMzgzODktMC40NjMyMTUgMTguMzM5NTA2LTIuNjcxMTM1IDIyLjYxMDQ1Mi01LjE3MjE5MiAxLjczMDY0NS0xLjAxMzQ1MyAzLjE4MzgyNS0yLjA2NzAwMyA0LjY3Mjk1LTMuMDcyOTg0IDMuOTM2MDM2IDguNDM2NjY4IDYuMDQ5NjU0IDE3Ljc2MjkzOCA2LjA3MzU5NyAyNy40MTQ5ODEtMC4wMDgyMzYgMjcuNDg0NjUyLTQuNzMzMzA4IDQ2LjczMjMwMi0yOS45MzQxNTQgNjIuNDgyODNsMi40NjUxNzcgMTguNTgwOTQ0YzUuMjQ1MzUxIDEuNTkyODg5IDEwLjY2NzMwNSAzLjM0MDY3MSAxNi4xNzAzNTQgNS4yNTcyMiAwLjc2ODUzNSAzLjIwNjE4MyAxLjY1NjQ5MiA3LjQxMTMwNiAyLjI1Mzc0OCAxMS44ODE3MzkgMC42MjU2NyA0LjY4MzQ1NCAwLjg3MTc0OSA5LjU1NjMzMyAwLjQ4NjAxMSAxMy4yMTUxMzktMC4zODU3MzggMy42NTg4MDYtMS41MjE3MTYgNS42MzM5NzItMS43MjExNzQgNS44MzM0NTktMTIuODA4OTg0IDEyLjgwODk1NS0zNS41NDYwMzYgMjAuMjc5MTM5LTU4LjYwODQzOCAyMC4yNzkxMzktMjMuMDYyMzkzIDAtNDUuNzk5NDQ0LTcuNDcwMTg0LTU4LjYwODQyMy0yMC4yNzkxMzktMC4xOTk0NjEtMC4xOTk0ODctMS4zMzU0NTYtMi4xNzQ2NTMtMS43MjExOTQtNS44MzM0NTktMC4zODU3MzUtMy42NTg4MDYtMC4xMzk2NjItOC41MzE2ODUgMC40ODYwMjYtMTMuMjE1MTM5IDAuNjAwNTI3LTQuNDk1MTE1IDEuNDk1NTUyLTguNzI1MDI4IDIuMjY2OTYzLTExLjkzNzQ2NyA1LjQ0ODA4Ni0xLjg5NDYwNiAxMC44MTU1NDctMy42MjQwNDIgMTYuMDEwMDczLTUuMjAxNDkxbDEuNDY5NTYxLTE5LjkwOTc1NmMtMS4xOTY1NzEtMS41MzQ1NjQtMi40MTU3ODItMi41NTExNjctMy44NzA5NTktMy42NDI4ODQtNS42MjQzNzctNC4yMTk1NjUtMTIuNDQ1MTQyLTEzLjUwMjI0NS0xNy4yNjMwNDktMjQuMzUwNjEzLTQuODE2MTg5LTEwLjg0NDQ5OS03LjgwMDAzOC0yMy4yNDAwMjMtNy44MDQ1MzYtMzMuMTYyODE4IDAuMDI5OTI2LTExLjg5NjM4MiAzLjIzMTM3OS0yMy4yOTkzMDQgOS4xMTE1MTYtMzMuMTQ5MDMyIDEuMDUyMTE1LTAuMzkxNjE4IDIuMTYxNTY2LTAuODA1NTE3IDMuNDA4NDg4LTEuMjE1NjM0IDQuMzg1MDE3LTEuNDQyMjUgMTAuMzkzOTczLTIuODE4ODg5IDIwLjgzODcxNi0yLjc5MjYyOHpNMjU1LjYzMDc4IDQyNS42MzgxMzZjLTAuMDE4NTAyIDAuMTM0OTYxLTAuMDM5MzUzIDAuMjY2NjgxLTAuMDU3NDQ5IDAuNDAyMTQ4LTAuNzYwOTE0IDUuNjk1NjM2LTEuMjA4MDMxIDExLjg5NTI3My0wLjU1MzgxNyAxOC4xMDA2NzUgMC42NTQyMTQgNi4yMDU0MDIgMi4yOTE1NjggMTIuODg2NDMyIDcuNjM4NTA3IDE4LjIzMzM1IDE4LjI1MDg2MSAxOC4yNTA4ODEgNDUuODcxNzU5IDI2LjMxMDIzMyA3My4xNjczMTggMjYuMzEwMjMzIDI3LjI5NTU1MSAwIDU0LjkxNjQ1Mi04LjA1OTM1MSA3My4xNjczMDQtMjYuMzEwMjMzIDUuMzQ2OTQ4LTUuMzQ2OTE4IDYuOTg0MzItMTIuMDI3OTQ4IDcuNjM4NTIyLTE4LjIzMzM1IDAuNjU0MjAyLTYuMjA1NDMxIDAuMjA3MTA2LTEyLjQwNTAzOS0wLjU1MzgxMS0xOC4xMDA2NzUtMC4wMTUwMDEtMC4xMTIyNDgtMC4wMzI0MTQtMC4yMjEzMDctMC4wNDc2OC0wLjMzMzIxIDI3Ljc0NzUzIDEyLjE2ODM2IDU0LjU2Nzc0NiAyOS41OTUyNjEgNjkuMzY3MDE1IDU1LjYxNDczNGwwIDExMC41NDkyMjgtNDkuMjY4ODMyIDAgMC03Ny45NDc3MDQtMjAuNTg5OTYgMCAwIDc3Ljk0NzcwNC0xNjAuMDEzNCAwIDAtNzcuOTQ3NzA0LTIwLjU4OTk2IDAgMCA3Ny45NDc3MDQtNDguODI3NjE4IDAgMC0xMTAuNTQ5MjI4YzE0LjgyNzE1Ni0yNi4wNjg1MzYgNDEuNzIwNTQ3LTQzLjUxMjIzMiA2OS41MjM4Ni01NS42ODM2NzJ6TTIxOS45ODEgMTA3LjUxOTU3NWMtMTA5LjkzNDgyNCAwLTE5OS41MDEgODkuMTg4MzQ1LTE5OS41MDEgMTk4LjkxMTk5OWwwIDQxMS4xMzU5ODljMCAxMDkuNzIzNjU5IDg5LjU2NjE3NiAxOTguOTEyMDExIDE5OS41MDEgMTk4LjkxMjAxMWw1ODQuMDM3OTg5IDBjMTA5LjkzNDg1MyAwIDE5OS41MDEwMDEtODkuMTg4MzUxIDE5OS41MDEwMDEtMTk4LjkxMjAxMWwwLTQxMS4xMzU5ODljMC0xMDkuNzIzNjUzLTg5LjU2NjE0OC0xOTguOTExOTk5LTE5OS41MDEwMDEtMTk4LjkxMTk5OWwtNTg0LjAzNzk4OSAwem0wIDYxLjQ0MDAwMWw1ODQuMDM3OTg5IDBjNzcuMDc0OTU1IDAgMTM4LjA2MTAwMyA2MC44Mzg5MTUgMTM4LjA2MTAwMyAxMzcuNDcxOTk4bDAgNDExLjEzNTk4OWMwIDc2LjYzMzA5NC02MC45ODYwNDggMTM3LjQ3MjAxMi0xMzguMDYxMDAzIDEzNy40NzIwMTJsLTU4NC4wMzc5ODkgMGMtNzcuMDc0OTYgMC0xMzguMDYxLTYwLjgzODkxOC0xMzguMDYxLTEzNy40NzIwMTJsMC00MTEuMTM1OTg5YzAtNzYuNjMzMDgyIDYwLjk4NjA0LTEzNy40NzE5OTggMTM4LjA2MS0xMzcuNDcxOTk4eiIgcC1pZD0iODMyMCI+PC9wYXRoPjwvc3ZnPg==',
-      className: 'important-node',
       properties: {collaborativeWay: '1'},
     },
     {
@@ -222,10 +215,11 @@ function initDndPanel() {
       type: 'end',
       text: '结束',
       label: '结束节点',
-      icon: 'data:image/svg+xml;charset=utf-8;base64,PHN2ZyB0PSIxNzQ4MTc1ODQ2ODU1IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjE5NDMyIiB3aWR0aD0iMzYiIGhlaWdodD0iMzYiPjxwYXRoIGQ9Ik01MTIgMGE1MTIgNTEyIDAgMSAxIDAgMTAyNEE1MTIgNTEyIDAgMCAxIDUxMiAweiBtMCA2NGE0NDggNDQ4IDAgMSAwIDAgODk2QTQ0OCA0NDggMCAwIDAgNTEyIDY0eiIgZmlsbD0iIzAwMDAwMCIgcC1pZD0iMTk0MzMiPjwvcGF0aD48cGF0aCBkPSJNNTEyIDEyOGEzODQgMzg0IDAgMSAxIDAgNzY4QTM4NCAzODQgMCAwIDEgNTEyIDEyOHogbTAgNjRhMzIwIDMyMCAwIDEgMCAwIDY0MEEzMjAgMzIwIDAgMCAwIDUxMiAxOTJ6IiBmaWxsPSIjMDAwMDAwIiBwLWlkPSIxOTQzNCI+PC9wYXRoPjwvc3ZnPg==',
+      icon: "data:image/svg+xml;charset=utf-8;base64,PHN2ZyB0PSIxNzUwMzg4OTY4OTA4IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIg0KICAgICB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjY5MTciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIg0KICAgICB3aWR0aD0iMzYiIGhlaWdodD0iMzYiPg0KICA8cGF0aCBkPSJNNTEyLjAwNTExNyA5NTguNzA4OTcxQzI2NS42ODMwMzUgOTU4LjcwODk3MSA2NS4yOTAwMDUgNzU4LjMxNjk2NSA2NS4yOTAwMDUgNTExLjk5Mzg2YzAtMjQ2LjMxMDgyNSAyMDAuMzkzMDMtNDQ2LjcwMzg1NSA0NDYuNzE1MTExLTQ0Ni43MDM4NTUgMjQ2LjMxMDgyNSAwIDQ0Ni43MDM4NTUgMjAwLjM5MzAzIDQ0Ni43MDM4NTUgNDQ2LjcwMzg1NUM5NTguNzA4OTcxIDc1OC4zMTY5NjUgNzU4LjMxNjk2NSA5NTguNzA4OTcxIDUxMi4wMDUxMTcgOTU4LjcwODk3MXpNNTEyLjAwNTExNyAxNjkuNzE2MzU2Yy0xODguNzM4NTk1IDAtMzQyLjI4OTc4NCAxNTMuNTQ1MDQ4LTM0Mi4yODk3ODQgMzQyLjI3NzUwNCAwIDE4OC43Mzg1OTUgMTUzLjU1MTE4OCAzNDIuMjg5Nzg0IDM0Mi4yODk3ODQgMzQyLjI4OTc4NCAxODguNzMzNDc5IDAgMzQyLjI3ODUyNy0xNTMuNTUxMTg4IDM0Mi4yNzg1MjctMzQyLjI4OTc4NEM4NTQuMjgzNjQ0IDMyMy4yNjE0MDUgNzAwLjczODU5NSAxNjkuNzE2MzU2IDUxMi4wMDUxMTcgMTY5LjcxNjM1NnoiIHAtaWQ9IjY5MTgiPjwvcGF0aD4NCjwvc3ZnPg=="
     },
   ]);
 }
+
 function saveJsonModel() {
   const loadingInstance = ElLoading.service(({ fullscreen: true , text: "保存中，请稍等"}))
   let graphData = lf.value.getGraphData()
@@ -234,7 +228,6 @@ function saveJsonModel() {
   value.value['id'] = definitionId.value
   let jsonString = logicFlowJsonToWarmFlow(value.value);
   saveJson(jsonString).then(response => {
-
     if (response.code === 200) {
       proxy.$modal.msgSuccess("保存成功");
       close();
@@ -243,60 +236,6 @@ function saveJsonModel() {
     nextTick(() => {
       loadingInstance.close();
     });
-  });
-}
-
-/**
- * 初始化菜单
- */
-function initMenu() {
-  // 指定类型元素配置菜单
-  lf.value.extension.menu.setMenuByType({
-    type: "serial",
-    menu: [
-      {
-        text: "添加中间节点",
-        callback(node) {
-          gatewayAddNode(lf.value, node);
-        },
-      },
-    ],
-  });
-
-  lf.value.extension.menu.setMenuByType({
-    type: "parallel",
-    menu: [
-      {
-        text: "添加中间节点",
-        callback(node) {
-          gatewayAddNode(lf.value, node, "between");
-        },
-      },
-    ],
-  });
-
-  // 为菜单追加选项（必须在 lf.render() 之前设置）
-  lf.value.extension.menu.addMenuConfig({
-    edgeMenu: [
-      {
-        text: "添加中间节点",
-        callback(edge) {
-          addBetweenNode(lf.value, edge, "between");
-        },
-      },
-      {
-        text: "添加互斥网关",
-        callback(edge) {
-          addGatewayNode(lf.value, edge, "serial");
-        },
-      },
-      {
-        text: "添加并行网关",
-        callback(edge) {
-          addGatewayNode(lf.value, edge, "parallel");
-        },
-      },
-    ],
   });
 }
 
@@ -318,23 +257,25 @@ function register() {
  */
 function use() {
   LogicFlow.use(DndPanel);
-  LogicFlow.use(SelectionSelect);
   LogicFlow.use(Menu);
   LogicFlow.use(Snapshot);
-  LogicFlow.use(InsertNodeInPolyline);
 }
 function initEvent() {
   const { eventCenter } = lf.value.graphModel
+  // 中间节点双击事件
   eventCenter.on('node:dbclick', (args) => {
-    nodeClick.value = args.data
-    let graphData = lf.value.getGraphData()
-    nodes.value = graphData['nodes']
-    skips.value = graphData['edges']
-    proxy.$nextTick(() => {
-      propertySettingRef.value.show()
-    })
+    if ('between' === args.data.type) {
+      nodeClick.value = args.data
+      let graphData = lf.value.getGraphData()
+      nodes.value = graphData['nodes']
+      skips.value = graphData['edges']
+      proxy.$nextTick(() => {
+        propertySettingRef.value.show()
+      })
+    }
   })
 
+  // 边双击事件
   eventCenter.on('edge:dbclick  ', (args) => {
     nodeClick.value = args.data
     const nodeModel = lf.value.getNodeModelById(nodeClick.value.sourceNodeId);

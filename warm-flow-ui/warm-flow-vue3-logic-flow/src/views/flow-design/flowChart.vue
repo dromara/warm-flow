@@ -37,14 +37,14 @@ import {ref, onMounted, onUnmounted, watch, computed, render, h, nextTick} from 
 import LogicFlow from "@logicflow/core";
 import { Snapshot } from "@logicflow/extension";
 import "@logicflow/core/lib/style/index.css";
-import Start from "@/components/WarmFlow/js/start";
-import Between from "@/components/WarmFlow/js/between";
-import Serial from "@/components/WarmFlow/js/serial";
-import Parallel from "@/components/WarmFlow/js/parallel";
-import End from "@/components/WarmFlow/js/end";
-import Skip from "@/components/WarmFlow/js/skip";
+import Start from "@/components/design/classics/js/start";
+import Between from "@/components/design/classics/js/between";
+import Serial from "@/components/design/classics/js/serial";
+import Parallel from "@/components/design/classics/js/parallel";
+import End from "@/components/design/classics/js/end";
+import Skip from "@/components/design/classics/js/skip";
 import useAppStore from "@/store/app";
-import { json2LogicFlowJson } from "@/components/WarmFlow/js/tool";
+import { json2LogicFlowJson } from "@/components/design/tool";
 import { queryFlowChart } from "@/api/flow/definition";
 
 const appStore = useAppStore();
