@@ -6,7 +6,7 @@
       </el-form-item>
 
       <el-form-item label="流程名称" prop="flowName">
-        <el-input v-model="form.flowName" placeholder="请输入流程名称" maxlength="100" show-word-limit />
+        <el-input v-model="form.flowName" placeholder="请输入流程名称" maxlength="100" show-word-limit @input="nameChange" />
       </el-form-item>
 
       <el-form-item label="设计器模式" prop="mode">
@@ -190,6 +190,12 @@ function validate() {
       });
     });
   });
+}
+
+function nameChange(flowName) {
+  // 可以在这里添加额外的逻辑，比如验证或格式化
+  props.logicJson.flowName = flowName; // 更新 logicJson 中的流程名称
+  proxy.$emit('update:flow-name', flowName); // 如果需要通知父组件
 }
 
 function getFormData() {

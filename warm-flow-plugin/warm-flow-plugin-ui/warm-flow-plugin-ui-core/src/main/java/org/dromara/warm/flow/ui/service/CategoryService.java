@@ -20,7 +20,7 @@ import org.dromara.warm.flow.core.dto.Tree;
 import java.util.List;
 
 /**
- * 分类服务
+ * 分类接口
  *
  * @author warm
  * @since 2025/6/24

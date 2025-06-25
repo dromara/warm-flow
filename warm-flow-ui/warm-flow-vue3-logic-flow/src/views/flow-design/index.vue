@@ -3,7 +3,12 @@
     <!-- 流程名称和步骤条容器 -->
     <div :style="headerContainer">
       <!-- 流程名称 -->
-      <div class="flow-name"><svg-icon icon-class="flowName" style="margin-right: 5px"/> {{logicJson.flowName}}</div>
+      <el-tooltip :content="logicJson.flowName" placement="top">
+        <div class="flow-name">
+          <svg-icon icon-class="flowName" style="margin-right: 5px"/>
+          {{ logicJson.flowName }}
+        </div>
+      </el-tooltip>
       <!-- 自定义步骤按钮 -->
       <div class="steps-container">
         <div class="steps">
@@ -25,7 +30,8 @@
     </div>
 
     <BaseInfo class="baseInfo" ref="baseInfoRef" v-show="activeStep === 0" :logic-json="logicJson"
-              :category-list="categoryList" :definition-id="definitionId" :disabled="disabled" />
+              :category-list="categoryList" :definition-id="definitionId" :disabled="disabled"
+              @update:flow-name="handleFlowNameUpdate"/>
 
     <el-header :style="headerStyle" v-show="activeStep === 1">
       <div style="padding: 5px 0; text-align: right;">
@@ -332,6 +338,10 @@ function getBaseInfo() {
   };
 }
 
+function handleFlowNameUpdate(newName) {
+  logicJson.value.flowName = newName; // 更新父组件中的流程名称
+}
+
 async function saveJsonModel() {
   const loadingInstance = ElLoading.service(({fullscreen: true, text: "保存中，请稍等"}))
   let validate = await proxy.$refs.baseInfoRef.validate();
@@ -580,6 +590,10 @@ async function downJson() {
   padding-left: 40px;
   margin-right: 10px; /* 右侧间距 */
   width: 500px;
+  max-width: 500px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   color: #333; /* 可以根据需要调整颜色 */
 }
 

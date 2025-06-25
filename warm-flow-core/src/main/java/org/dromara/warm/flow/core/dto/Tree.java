@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 页面左侧树列表
+ * 页面树列表
  *
  * @author ruoyi
  */
