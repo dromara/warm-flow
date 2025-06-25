@@ -103,165 +103,56 @@ const initEvent = () => {
       nextTick(() => {
         if (tooltipContainerRef.value) {
           // // 构建 HTML 内容
-          // promptContent.value = data.data.properties.promptContent
-          promptContent.value = {
-            dialogStyle: { /* 弹框样式 */
-              position: 'absolute', /* 绝对定位，基于最近的定位祖先元素（如 container） */
-              backgroundColor: "#fff", /* 背景色为白色 */
-              maxHeight: "300px",
-              overflowY: "auto",
-              border: "1px solid #ccc", /* 灰色边框 */
-              borderRadius: "4px", /* 添加圆角 */
-              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)", /* 阴影效果（轻微立体感） */
-              padding: "8px 12px", /* 内边距（内容与边框的间距） */
-              fontSize: "14px", /* 字体大小 */
-              zIndex: 1000, /* 层级高于其他元素，确保提示框可见 */
-              maxWidth: "500px", /* 最大宽度限制，防止内容过长 */
-              color: "#333" /* 深色文字 */
-            },
-            info: [
-              {
-                prefix: "任务名称: ",
-                prefixStyle: {},
-                content: "组长审批",
-                contentStyle: {
-                  border: '1px solid #d1e9ff',
-                  backgroundColor: "#e8f4ff",
-                  padding: "4px 8px",
-                  borderRadius: "4px"
-                },
-                rowStyle: {
-                  fontWeight: "bold",
-                  margin: "0 0 6px 0",
-                  padding: "0 0 8px 0",
-                  borderBottom: "1px solid #ccc"
-                }
-              },
-              {
-                prefix: "负责人: ",
-                prefixStyle: { fontWeight: "bold" },
-                content: "李四",
-                contentStyle: {},
-                rowStyle: {}
-              },
-              {
-                prefix: "负责人: ",
-                prefixStyle: { fontWeight: "bold" },
-                content: "李四",
-                contentStyle: {},
-                rowStyle: {}
-              },{
-                prefix: "负责人: ",
-                prefixStyle: { fontWeight: "bold" },
-                content: "李四",
-                contentStyle: {},
-                rowStyle: {}
-              },{
-                prefix: "负责人: ",
-                prefixStyle: { fontWeight: "bold" },
-                content: "李四",
-                contentStyle: {},
-                rowStyle: {}
-              },{
-                prefix: "负责人: ",
-                prefixStyle: { fontWeight: "bold" },
-                content: "李四",
-                contentStyle: {},
-                rowStyle: {}
-              },{
-                prefix: "负责人: ",
-                prefixStyle: { fontWeight: "bold" },
-                content: "李四",
-                contentStyle: {},
-                rowStyle: {}
-              },{
-                prefix: "负责人: ",
-                prefixStyle: { fontWeight: "bold" },
-                content: "李四",
-                contentStyle: {},
-                rowStyle: {}
-              },{
-                prefix: "负责人: ",
-                prefixStyle: { fontWeight: "bold" },
-                content: "李四",
-                contentStyle: {},
-                rowStyle: {}
-              },{
-                prefix: "负责人: ",
-                prefixStyle: { fontWeight: "bold" },
-                content: "李四",
-                contentStyle: {},
-                rowStyle: {}
-              },{
-                prefix: "负责人: ",
-                prefixStyle: { fontWeight: "bold" },
-                content: "李四",
-                contentStyle: {},
-                rowStyle: {}
-              },{
-                prefix: "负责人: ",
-                prefixStyle: { fontWeight: "bold" },
-                content: "李四",
-                contentStyle: {},
-                rowStyle: {}
-              },{
-                prefix: "负责人: ",
-                prefixStyle: { fontWeight: "bold" },
-                content: "李四",
-                contentStyle: {},
-                rowStyle: {}
-              },{
-                prefix: "负责人: ",
-                prefixStyle: { fontWeight: "bold" },
-                content: "李四",
-                contentStyle: {},
-                rowStyle: {}
-              },{
-                prefix: "负责人: ",
-                prefixStyle: { fontWeight: "bold" },
-                content: "李四",
-                contentStyle: {},
-                rowStyle: {}
-              },{
-                prefix: "负责人: ",
-                prefixStyle: { fontWeight: "bold" },
-                content: "李四",
-                contentStyle: {},
-                rowStyle: {}
-              },{
-                prefix: "负责人: ",
-                prefixStyle: { fontWeight: "bold" },
-                content: "李四",
-                contentStyle: {},
-                rowStyle: {}
-              },{
-                prefix: "负责人: ",
-                prefixStyle: { fontWeight: "bold" },
-                content: "李四",
-                contentStyle: {},
-                rowStyle: {}
-              },{
-                prefix: "负责人: ",
-                prefixStyle: { fontWeight: "bold" },
-                content: "李四",
-                contentStyle: {},
-                rowStyle: {}
-              },{
-                prefix: "负责人: ",
-                prefixStyle: { fontWeight: "bold" },
-                content: "李四",
-                contentStyle: {},
-                rowStyle: {}
-              },
-              {
-                prefix: "状态: ",
-                prefixStyle: { fontWeight: "bold" },
-                content: "进行中",
-                contentStyle: {},
-                rowStyle: {}
-              }
-            ]
-          };
+          promptContent.value = data.data.properties.promptContent
+          // promptContent.value = {
+          //   dialogStyle: { /* 弹框样式 */
+          //     position: 'absolute', /* 绝对定位，基于最近的定位祖先元素（如 container） */
+          //     backgroundColor: "#fff", /* 背景色为白色 */
+          //     maxHeight: "300px",
+          //     overflowY: "auto",
+          //     border: "1px solid #ccc", /* 灰色边框 */
+          //     borderRadius: "4px", /* 添加圆角 */
+          //     boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)", /* 阴影效果（轻微立体感） */
+          //     padding: "8px 12px", /* 内边距（内容与边框的间距） */
+          //     fontSize: "14px", /* 字体大小 */
+          //     zIndex: 1000, /* 层级高于其他元素，确保提示框可见 */
+          //     maxWidth: "500px", /* 最大宽度限制，防止内容过长 */
+          //     color: "#333" /* 深色文字 */
+          //   },
+          //   info: [
+          //     {
+          //       prefix: "任务名称: ",
+          //       prefixStyle: {},
+          //       content: "组长审批",
+          //       contentStyle: {
+          //         border: '1px solid #d1e9ff',
+          //         backgroundColor: "#e8f4ff",
+          //         padding: "4px 8px",
+          //         borderRadius: "4px"
+          //       },
+          //       rowStyle: {
+          //         fontWeight: "bold",
+          //         margin: "0 0 6px 0",
+          //         padding: "0 0 8px 0",
+          //         borderBottom: "1px solid #ccc"
+          //       }
+          //     },
+          //     {
+          //       prefix: "负责人: ",
+          //       prefixStyle: { fontWeight: "bold" },
+          //       content: "李四",
+          //       contentStyle: {},
+          //       rowStyle: {}
+          //     },
+          //     {
+          //       prefix: "状态: ",
+          //       prefixStyle: { fontWeight: "bold" },
+          //       content: "进行中",
+          //       contentStyle: {},
+          //       rowStyle: {}
+          //     }
+          //   ]
+          // };
           // 获取节点位置
           tooltipPosition.value = { x: data.e.clientX, y: data.e.clientY - 80 };
         }

@@ -3,7 +3,7 @@
     <!-- 流程名称和步骤条容器 -->
     <div :style="headerContainer">
       <!-- 流程名称 -->
-      <div class="flow-name">流程名称: {{logicJson.flowName}}</div>
+      <div class="flow-name"><svg-icon icon-class="flowName" style="margin-right: 5px"/> {{logicJson.flowName}}</div>
       <!-- 自定义步骤按钮 -->
       <div class="steps-container">
         <div class="steps">
@@ -20,7 +20,7 @@
         </div>
       </div>
       <div class="topButton">
-        <el-button size="small" @click="saveJsonModel" v-if="!disabled">保存</el-button>
+        <el-button size="small" @click="saveJsonModel" v-if="!disabled"><svg-icon icon-class="save" style="margin-right: 5px"/>保存</el-button>
       </div>
     </div>
 
@@ -99,8 +99,6 @@ const skips = ref([]);
 const categoryList = ref([]);
 const isDark = ref(false);
 const activeStep = ref(0); // 初始化当前步骤为0（开始）
-// 组件类型
-const propertySettingIs = ref(null);
 
 const headerStyle = computed(() => {
   return {
@@ -334,8 +332,13 @@ function getBaseInfo() {
   };
 }
 
-function saveJsonModel() {
-  const loadingInstance = ElLoading.service(({ fullscreen: true , text: "保存中，请稍等"}))
+async function saveJsonModel() {
+  const loadingInstance = ElLoading.service(({fullscreen: true, text: "保存中，请稍等"}))
+  let validate = await proxy.$refs.baseInfoRef.validate();
+  if (!validate) {
+    loadingInstance.close();
+    return;
+  }
   getBaseInfo();
   if (lf.value) {
     let graphData = lf.value.getGraphData()
@@ -591,7 +594,7 @@ async function downJson() {
   display: flex;
   align-items: center; /* 垂直居中对齐 */
   margin-left: auto; /* 确保按钮始终位于最右边 */
-  margin-right: 10px; /* 添加此行，设置与右边的距离 */
+  margin-right: 50px; /* 添加此行，设置与右边的距离 */
   button {
     background-color: #1890ff;
     color: #FFF;

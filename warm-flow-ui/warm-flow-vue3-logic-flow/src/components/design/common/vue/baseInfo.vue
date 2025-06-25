@@ -12,9 +12,9 @@
       <el-form-item label="设计器模式" prop="mode">
         <el-radio-group v-model="form.mode" :disabled="!!definitionId">
           <el-radio label="CLASSICS">经典模式</el-radio>
-<!--          <el-radio label="MIMIC">仿钉钉模式-->
-<!--            <span style="color: red; margin-left: 5px;">（保存后不支持修改）</span>-->
-<!--          </el-radio>-->
+          <el-radio label="MIMIC">仿钉钉模式
+            <span style="color: #ff4949; margin-left: 50px;">切换后重置节点，保存后不支持修改！</span>
+          </el-radio>
         </el-radio-group>
       </el-form-item>
 
@@ -129,6 +129,9 @@ watch(() => props.logicJson, newValue => {
 
 const definitionList = ref([]);
 const rules = {
+  mode: [
+    { required: true, message: "设计器模式不能为空", trigger: "blur" }
+  ],
   flowCode: [
     { required: true, message: "流程编码不能为空", trigger: "blur" }
   ],
