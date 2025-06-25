@@ -17,6 +17,7 @@ package org.dromara.warm.flow.core.service;
 
 import org.dromara.warm.flow.core.dto.DefJson;
 import org.dromara.warm.flow.core.dto.FlowCombine;
+import org.dromara.warm.flow.core.dto.FlowParams;
 import org.dromara.warm.flow.core.entity.Definition;
 import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.entity.Skip;
@@ -65,7 +66,9 @@ public interface DefService extends IWarmService<Definition> {
      * 新增流程定义，并初始化流程节点和流程跳转数据
      * @param definition 流程定义对象
      * @return boolean
+     * @deprecated 下个版本废弃，请改用{@link #checkAndSave(Definition)}
      */
+    @Deprecated
     boolean saveAndInitNode(Definition definition);
 
     /**

@@ -1,0 +1,146 @@
+{
+  "nodes": [
+    {
+      "id": "start",
+      "type": "start",
+      "x": 260,
+      "y": 200,
+      "properties": {
+        "nodeRatio": "0",
+        "permissionFlag": null,
+        "anyNodeSkip": null,
+        "listenerType": null,
+        "listenerPath": null,
+        "formCustom": null,
+        "formPath": null,
+        "status": null,
+        "chartStatusColor": null,
+        "promptContent": null,
+        "ext": {},
+        "width": 40,
+        "height": 40
+      },
+      "text": {
+        "x": 260,
+        "y": 200,
+        "value": "开始"
+      }
+    },
+    {
+      "id": "submit",
+      "type": "between",
+      "x": 420,
+      "y": 200,
+      "properties": {
+        "nodeRatio": "0",
+        "permissionFlag": null,
+        "anyNodeSkip": null,
+        "listenerType": null,
+        "listenerPath": null,
+        "formCustom": null,
+        "formPath": null,
+        "status": null,
+        "chartStatusColor": null,
+        "promptContent": null,
+        "ext": {},
+        "width": 100,
+        "height": 80
+      },
+      "text": {
+        "x": 420,
+        "y": 200,
+        "value": "中间节点"
+      }
+    },
+    {
+      "id": "end",
+      "type": "end",
+      "x": 597,
+      "y": 200,
+      "properties": {
+        "nodeRatio": "0",
+        "permissionFlag": null,
+        "anyNodeSkip": null,
+        "listenerType": null,
+        "listenerPath": null,
+        "formCustom": null,
+        "formPath": null,
+        "status": null,
+        "chartStatusColor": null,
+        "promptContent": null,
+        "ext": {},
+        "width": 40,
+        "height": 40
+      },
+      "text": {
+        "x": 597,
+        "y": 200,
+        "value": "结束"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "90fdf94f-a37f-4920-ac97-350a3dccff4d",
+      "type": "skip",
+      "properties": {
+        "skipCondition": null,
+        "skipName": null,
+        "skipType": "PASS",
+        "status": null,
+        "chartStatusColor": null
+      },
+      "sourceNodeId": "start",
+      "targetNodeId": "submit",
+      "sourceAnchorId": "start_1",
+      "targetAnchorId": "submit_3",
+      "startPoint": {
+        "x": 280,
+        "y": 200
+      },
+      "endPoint": {
+        "x": 370,
+        "y": 200
+      },
+      "pointsList": [
+        {
+          "x": 280,
+          "y": 200
+        },
+        {
+          "x": 370,
+          "y": 200
+        }
+      ]
+    },
+    {
+      "id": "dc40f6b7-6a81-4f15-8626-ceb54e50e13c",
+      "type": "skip",
+      "properties": {
+        "skipType": "PASS"
+      },
+      "sourceNodeId": "submit",
+      "targetNodeId": "end",
+      "sourceAnchorId": "submit_1",
+      "targetAnchorId": "end_3",
+      "startPoint": {
+        "x": 470,
+        "y": 200
+      },
+      "endPoint": {
+        "x": 577,
+        "y": 200
+      },
+      "pointsList": [
+        {
+          "x": 470,
+          "y": 200
+        },
+        {
+          "x": 577,
+          "y": 200
+        }
+      ]
+    }
+  ]
+}

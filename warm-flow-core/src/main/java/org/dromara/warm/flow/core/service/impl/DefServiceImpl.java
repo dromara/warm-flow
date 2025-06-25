@@ -187,11 +187,33 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
             return;
         }
         FlowCombine flowCombine = DefJson.copyCombine(defJson);
+        Definition definition = flowCombine.getDefinition();
+        Long id = definition.getId();
+        if (ObjectUtil.isNull(id)) {
+            definition.setVersion(getNewVersion(definition));
+            FlowEngine.dataFillHandler().idFill(definition);
+        }
 
         // 校验流程定义合法性
         checkFlowLegal(flowCombine);
+
+        if (ObjectUtil.isNull(id)) {
+            FlowEngine.defService().save(definition);
+        } else {
+            FlowEngine.defService().updateById(definition);
+            // 删除所有节点和连线
+            FlowEngine.nodeService().remove(FlowEngine.newNode().setDefinitionId(id));
+            FlowEngine.skipService().remove(FlowEngine.newSkip().setDefinitionId(id));
+        }
+
         // 保存流程节点和跳转
-        saveNodeAndSkip(flowCombine.getDefinition().getId(), flowCombine);
+        List<Node> allNodes = flowCombine.getAllNodes();
+        // 所有的流程连线
+        List<Skip> allSkips = flowCombine.getAllSkips();
+
+        // 保存节点，流程连线，权利人
+        FlowEngine.nodeService().saveBatch(allNodes);
+        FlowEngine.skipService().saveBatch(allSkips);
     }
 
     @Override
@@ -328,7 +350,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     @Override
     public boolean active(Long id) {
         Definition definition = getById(id);
-        AssertUtil.isTrue(definition.getActivityStatus().equals(ActivityStatus.ACTIVITY.getKey()), ExceptionCons.DEFINITION_ALREADY_ACTIVITY);
+        AssertUtil.isTrue(ActivityStatus.isActivity(definition.getActivityStatus()), ExceptionCons.DEFINITION_ALREADY_ACTIVITY);
         definition.setActivityStatus(ActivityStatus.ACTIVITY.getKey());
         return updateById(definition);
     }
@@ -336,7 +358,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     @Override
     public boolean unActive(Long id) {
         Definition definition = getById(id);
-        AssertUtil.isTrue(definition.getActivityStatus().equals(ActivityStatus.SUSPENDED.getKey()), ExceptionCons.DEFINITION_ALREADY_SUSPENDED);
+        AssertUtil.isTrue(ActivityStatus.isSuspended(definition.getActivityStatus()), ExceptionCons.DEFINITION_ALREADY_SUSPENDED);
         definition.setActivityStatus(ActivityStatus.SUSPENDED.getKey());
         return updateById(definition);
     }
@@ -412,30 +434,6 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         FlowConfigUtil.checkSkipNode(allSkips);
         // 校验所有目标节点是否都存在
         FlowConfigUtil.validaIsExistDestNode(allSkips, nodeCodeSet);
-    }
-
-    private void saveNodeAndSkip(Long defId, FlowCombine flowCombine) {
-        // 所有的流程节点
-        List<Node> allNodes = flowCombine.getAllNodes();
-        // 所有的流程连线
-        List<Skip> allSkips = flowCombine.getAllSkips();
-        // 删除所有节点和连线
-        FlowEngine.nodeService().remove(FlowEngine.newNode().setDefinitionId(defId));
-        FlowEngine.skipService().remove(FlowEngine.newSkip().setDefinitionId(defId));
-
-        allNodes.forEach(node -> node.setId(null)
-                .setDefinitionId(defId)
-                .setCreateTime(null)
-                .setUpdateTime(null));
-
-        allSkips.forEach(skip -> skip.setId(null)
-                .setDefinitionId(defId)
-                .setCreateTime(null)
-                .setUpdateTime(null));
-
-        // 保存节点，流程连线，权利人
-        FlowEngine.nodeService().saveBatch(allNodes);
-        FlowEngine.skipService().saveBatch(allSkips);
     }
 
 }

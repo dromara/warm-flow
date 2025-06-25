@@ -21,10 +21,12 @@ const useAppStore = defineStore(
         }).catch(() => {});
         this.appParams= null
         for (const [key, value] of urlParams.entries()) {
-            if (tokenNames && tokenNames.length > 0 && tokenNames.includes(key)) {
-                Cookies.set(TokenPrefix + key, value);
+            if (value && 'undefined' !== value) {
+                if (tokenNames && tokenNames.length > 0 && tokenNames.includes(key)) {
+                    Cookies.set(TokenPrefix + key, value);
+                }
+                params[key] = value;
             }
-            params[key] = value;
         }
         this.appParams = params;
       }

@@ -97,6 +97,7 @@ const title = computed(() => {
   }
   return '设置中间属性'
 });
+
 // 组件类型
 const componentType = computed(() => {
   if (!props.node || !props.node.type) return
@@ -289,9 +290,10 @@ function handleDrawer () {
   drawer.value = false
 }
 
+
 defineExpose({
   show,
-  handleClose
+  handleClose,
 })
 </script>
 

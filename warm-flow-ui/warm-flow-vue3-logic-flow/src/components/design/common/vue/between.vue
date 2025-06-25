@@ -11,7 +11,7 @@
             </slot>
             <slot name="form-item-task-nodeName" :model="form" field="nodeName">
               <el-form-item label="节点名称：">
-                <el-input v-model="form.nodeName" type="textarea" ref="nodeInput" :disabled="disabled" @change="nodeNameChange"></el-input>
+                <el-input v-model="form.nodeName" type="textarea" :disabled="disabled"></el-input>
               </el-form-item>
             </slot>
             <slot name="form-item-task-collaborativeWay" :model="form" field="collaborativeWay">
@@ -232,10 +232,6 @@ watch(() => form, n => {
     emit('change', n)
   }
 },{ deep: true });
-
-function nodeNameChange() {
-  proxy.$refs.nodeInput.focus();
-}
 
 // 删除办理人
 function delPermission(index) {

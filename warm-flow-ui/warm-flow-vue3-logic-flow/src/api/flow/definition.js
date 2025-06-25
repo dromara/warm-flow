@@ -13,8 +13,13 @@ export function saveJson(data) {
 
 // 获取流程定义
 export function queryDef(id) {
+  if (id) {
+    id = '/' + id
+  } else {
+    id = ''
+  }
   return request({
-    url: urlPrefix + 'warm-flow/query-def/' + id,
+    url: urlPrefix + 'warm-flow/query-def' + id,
     method: 'get'
   })
 }

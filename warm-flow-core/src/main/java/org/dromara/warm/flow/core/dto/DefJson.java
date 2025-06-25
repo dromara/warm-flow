@@ -58,6 +58,11 @@ public class DefJson {
     private String flowName;
 
     /**
+     * 设计器模式（CLASSICS经典模式 MIMIC仿钉钉模式）
+     */
+    private String mode;
+
+    /**
      * 流程类别
      */
     private String category;
@@ -117,10 +122,16 @@ public class DefJson {
      */
     private String topText;
 
+    /**
+     * 流程类别
+     */
+    private List<Tree> categoryList;
+
     public static DefJson copyDef(Definition definition) {
         DefJson defJson = new DefJson()
                 .setFlowCode(definition.getFlowCode())
                 .setFlowName(definition.getFlowName())
+                .setMode(definition.getMode())
                 .setVersion(definition.getVersion())
                 .setCategory(definition.getCategory())
                 .setFormCustom(definition.getFormCustom())
@@ -173,6 +184,7 @@ public class DefJson {
                 .setId(defJson.getId())
                 .setFlowCode(defJson.getFlowCode())
                 .setFlowName(defJson.getFlowName())
+                .setMode(defJson.getMode())
                 .setVersion(defJson.getVersion())
                 .setCategory(defJson.getCategory())
                 .setFormCustom(defJson.getFormCustom())
@@ -219,22 +231,6 @@ public class DefJson {
 
         }
         return definition;
-    }
-
-    public static DefChart copyChart(DefJson defJson) {
-        DefChart defChart = new DefChart();
-        defChart.setDefJson(defJson);
-        defChart.setNodeJsonList(defJson.getNodeList());
-        defChart.setSkipJsonList(Optional.of(defJson)
-                .map(DefJson::getNodeList)
-                .orElse(Collections.emptyList())
-                .stream()
-                .map(NodeJson::getSkipList)
-                .filter(Objects::nonNull)
-                .flatMap(List::stream)
-                .collect(Collectors.toList()));
-
-        return defChart;
     }
 
     public static FlowCombine copyCombine(DefJson defJson) {

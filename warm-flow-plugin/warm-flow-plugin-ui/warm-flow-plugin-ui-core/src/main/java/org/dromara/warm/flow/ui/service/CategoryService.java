@@ -13,30 +13,24 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.dromara.warm.flow.ui.vo;
+package org.dromara.warm.flow.ui.service;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
-import org.dromara.warm.flow.core.dto.FlowPage;
 import org.dromara.warm.flow.core.dto.Tree;
 
 import java.util.List;
 
 /**
- * 流程设计器-办理人选择
+ * 分类服务
  *
  * @author warm
+ * @since 2025/6/24
  */
-@Getter
-@Setter
-@Accessors(chain = true)
-public class HandlerSelectVo {
+public interface CategoryService {
 
-    /** 办理人选择，分页列表，有具体办理对象 比如：部门、角色和用户等情况 */
-    private FlowPage<HandlerAuth> handlerAuths;
-
-    /** 左侧树状选择，配合{@link #handlerAuths}使用，比如用户先选择部门，然后选择用户 */
-    private List<Tree> treeSelections;
-
+    /**
+     * 查询分类
+     *
+     * @return 分类
+     */
+    List<Tree> queryCategory();
 }

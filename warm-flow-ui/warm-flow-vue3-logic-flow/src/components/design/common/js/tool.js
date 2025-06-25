@@ -13,9 +13,14 @@ export const json2LogicFlowJson = (definition) => {
   // 解析definition属性
   graphData.flowCode = definition.flowCode
   graphData.flowName = definition.flowName
+  graphData.mode = definition.mode
+  graphData.category = definition.category
   graphData.version = definition.version
   graphData.fromCustom = definition.fromCustom
   graphData.fromPath = definition.fromPath
+  if (!definition.nodeList) {
+    return graphData;
+  }
   // 解析节点
   const allSkips = definition.nodeList.reduce((acc, node) => {
     if (node.skipList && Array.isArray(node.skipList)) {
@@ -180,6 +185,8 @@ export const logicFlowJsonToWarmFlow = (data) => {
   definition.id = data.id
   definition.flowCode = data.flowCode
   definition.flowName = data.flowName
+  definition.mode = data.mode
+  definition.category = data.category
   definition.version = data.version
   definition.fromCustom = data.fromCustom
   definition.fromPath = data.fromPath

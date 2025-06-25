@@ -13,46 +13,24 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.dromara.warm.flow.ui.dto;
+package org.dromara.warm.flow.core.enums;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- * 页面左侧树列表
+ * 设计器模式（CLASSICS经典模式 MIMIC仿钉钉模式）
  *
- * @author ruoyi
+ * @author warm
+ * @since 2025/6/25
  */
 @Getter
-@Setter
-@Accessors(chain = true)
-public class Tree implements Serializable {
+@AllArgsConstructor
+public enum ModeEnum {
 
-    private static final long serialVersionUID = 1L;
+    // 经典模式
+    CLASSICS,
 
-    /**
-     * ID
-     */
-    private String id;
-
-    /**
-     * 名称
-     */
-    private String name;
-
-    /**
-     * 父ID
-     */
-    private String parentId;
-
-    /**
-     * 子
-     */
-    private List<Tree> children = new ArrayList<>();
-
+    // 经典模式
+    MIMIC
 }

@@ -1,32 +1,55 @@
 <template>
-  <div>
-    <div class="top-text">流程名称: {{value.flowName}}</div>
+  <div style="background-color: #e5e7eb">
+    <!-- 流程名称和步骤条容器 -->
+    <div :style="headerContainer">
+      <!-- 流程名称 -->
+      <div class="flow-name">流程名称: {{logicJson.flowName}}</div>
+      <!-- 自定义步骤按钮 -->
+      <div class="steps-container">
+        <div class="steps">
+          <div
+              v-for="(step, index) in steps"
+              :key="index"
+              class="step-item"
+              :class="{ 'active': activeStep === index }"
+              @click="handleStepClick(index)"
+          >
+            <svg-icon :icon-class="step.icon" style="margin-right: 5px"/>
+            <span>{{ step.title }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="topButton">
+        <el-button size="small" @click="saveJsonModel" v-if="!disabled">保存</el-button>
+      </div>
+    </div>
 
-    <el-header :style="headerStyle">
-      <div class="log-text">Warm-Flow</div>
+    <BaseInfo class="baseInfo" ref="baseInfoRef" v-show="activeStep === 0" :logic-json="logicJson"
+              :category-list="categoryList" :definition-id="definitionId" :disabled="disabled" />
+
+    <el-header :style="headerStyle" v-show="activeStep === 1">
       <div style="padding: 5px 0; text-align: right;">
         <div>
           <el-button size="small" icon="ZoomOut" @click="zoomViewport(false)">缩小</el-button>
           <el-button size="small" icon="Rank" @click="zoomViewport(1)">自适应</el-button>
           <el-button size="small" icon="ZoomIn" @click="zoomViewport(true)">放大</el-button>
-          <el-button size="small" icon="DArrowLeft" @click="undoOrRedo(true)">上一步</el-button>
-          <el-button size="small" icon="DArrowRight" @click="undoOrRedo(false)">下一步</el-button>
-          <el-button size="small" icon="Delete" @click="clear()">清空</el-button>
-          <el-button size="small" icon="DocumentAdd" @click="saveJsonModel">保存</el-button>
+          <el-button size="small" icon="DArrowLeft" @click="undoOrRedo(true)" v-if="!disabled">上一步</el-button>
+          <el-button size="small" icon="DArrowRight" @click="undoOrRedo(false)" v-if="!disabled">下一步</el-button>
+          <el-button size="small" icon="Delete" @click="clear()" v-if="!disabled">清空</el-button>
           <el-button size="small" icon="Download" @click="downLoad">下载流程图</el-button>
           <el-button size="small" icon="Download" @click="downJson">下载json</el-button>
         </div>
       </div>
+      <div class="container" ref="containerRef">
+        <PropertySetting ref="propertySettingRef" :node="nodeClick" :lf="lf" :disabled="disabled"
+                         :skipConditionShow="skipConditionShow" :nodes="nodes" :skips="skips">
+          <template v-slot:[key]="data" v-for="(item, key) in $slots">
+            <slot :name="key" v-bind="data || {}"></slot>
+          </template>
+        </PropertySetting>
+        <div class="logo-text">Warm-Flow</div>
+      </div>
     </el-header>
-    <div class="container" ref="container">
-      <PropertySetting ref="propertySettingRef" :node="nodeClick" v-model="processForm" :lf="lf" :disabled="disabled"
-                       :skipConditionShow="skipConditionShow" :nodes="nodes" :skips="skips">
-        <template v-slot:[key]="data" v-for="(item, key) in $slots">
-          <slot :name="key" v-bind="data || {}"></slot>
-        </template>
-      </PropertySetting>
-    </div>
-    <div class="log-text">Warm-Flow</div>
   </div>
 </template>
 
@@ -36,36 +59,48 @@ import "@logicflow/core/lib/style/index.css";
 import { DndPanel, Menu, Snapshot } from '@logicflow/extension';
 import '@logicflow/extension/lib/style/index.css'
 import { ElLoading } from 'element-plus'
-import Start from "@/components/design/classics/js/start";
-import Between from "@/components/design/classics/js/between";
-import Serial from "@/components/design/classics/js/serial";
-import Parallel from "@/components/design/classics/js/parallel";
-import End from "@/components/design/classics/js/end";
-import Skip from "@/components/design/classics/js/skip";
-import PropertySetting from '@/components/design/classics/PropertySetting/index.vue'
+import PropertySetting from '@/components/design/common/vue/propertySetting.vue'
 import { queryDef, saveJson } from "@/api/flow/definition";
 import { json2LogicFlowJson, logicFlowJsonToWarmFlow } from "@/components/design/common/js/tool";
+import StartC from "@/components/design/classics/js/start";
+import BetweenC from "@/components/design/classics/js/between";
+import SerialC from "@/components/design/classics/js/serial";
+import ParallelC from "@/components/design/classics/js/parallel";
+import EndC from "@/components/design/classics/js/end";
+import SkipC from "@/components/design/classics/js/skip";
+import StartM from "@/components/design/mimic/js/start";
+import BetweenM from "@/components/design/mimic/js/between";
+import SerialM from "@/components/design/mimic/js/serial";
+import ParallelM from "@/components/design/mimic/js/parallel";
+import EndM from "@/components/design/mimic/js/end";
+import SkipM from "@/components/design/mimic/js/skip";
 import useAppStore from "@/store/app";
 import {computed, onMounted, onUnmounted, ref, watch} from "vue";
-import request from "@/utils/request.js";
-const urlPrefix = import.meta.env.VITE_URL_PREFIX
+import BaseInfo from "@/components/design/common/vue/baseInfo.vue";
+import initClassicsData from "@/components/design/common/initClassicsData.json";
+import initMimicData from "@/components/design/common/initMimicData.json";
+import {addBetweenNode, addGatewayNode, gatewayAddNode} from "@/components/design/mimic/js/mimic.js";
+
 const appStore = useAppStore();
 const appParams = computed(() => useAppStore().appParams);
 
 const { proxy } = getCurrentInstance();
 
 const lf = ref(null);
-const definitionId = ref(null);
+const definitionId = ref();
 const nodeClick = ref(null);
 const disabled = ref(false);
-const processForm = ref({});
 const propertySettingRef = ref({});
-const value = ref({});
+const logicJson = ref({});
 const jsonString = ref('');
 const skipConditionShow = ref(true);
 const nodes = ref([]);
 const skips = ref([]);
+const categoryList = ref([]);
 const isDark = ref(false);
+const activeStep = ref(0); // 初始化当前步骤为0（开始）
+// 组件类型
+const propertySettingIs = ref(null);
 
 const headerStyle = computed(() => {
   return {
@@ -74,76 +109,148 @@ const headerStyle = computed(() => {
     zIndex: "2",
     height: "auto",
     backgroundColor: isDark.value ? "#333" : "#fff",
+    border: "1px solid #ddd", /* 添加边框 */
+    borderRadius: "6px", /* 添加圆角 */
+    margin: "5px",
   };
 });
 
+const headerContainer = computed(() => {
+  return {
+    display: "flex",
+    alignItems: "center", /* 垂直居中对齐 */
+    border: "1px solid #ddd", /* 添加边框 */
+    borderRadius: "6px", /* 添加圆角 */
+    height: "100%", /* 占满父容器高度 */
+    backgroundColor: "#fff",
+    top: "5px",
+    margin: "0px 5px",
+  };
+});
 
-onMounted(async () => {
-  if (!appParams.value) await appStore.fetchTokenName();
-  definitionId.value = appParams.value.id;
+// 步骤数据
+const steps = [
+  { title: '基础信息', icon: 'baseInfo' },
+  { title: '流程设计', icon: 'flowDesign' },
+  // { title: '表单设计', icon: 'formDesign' }
+];
+
+async function handleStepClick(index) {
+  if (activeStep.value === 0) {
+    let validate = await proxy.$refs.baseInfoRef.validate();
+    if (!validate) return;
+  }
+  activeStep.value = index;
+
+  if (index === 1) {
+    // 原设计器模式
+    const modeOrg =logicJson.value.mode;
+    // 获取基础信息
+    getBaseInfo();
+    const modeNew =logicJson.value.mode;
+    if (!lf.value) {
+      await nextTick(() => {
+        initLogicFlow();
+      });
+    } else {
+      if (modeOrg !== modeNew) {
+        // 只有切换到设计页且未初始化时才初始化
+        await nextTick(() => {
+          // 读取本地文件/initData.json文件，并将数据转换json对象
+          let initData = ("CLASSICS" === logicJson.value.mode) ? initClassicsData: initMimicData
+          logicJson.value = {
+            ...logicJson.value,
+            ...initData
+          };
+          initLogicFlow();
+        });
+      }
+    }
+  }
+}
+
+
+onMounted(() => {
+  if (!appParams.value) appStore.fetchTokenName();
+  if (appParams.value.id) {
+    definitionId.value = appParams.value.id;
+  }
   if (appParams.value.disabled === 'true') {
     disabled.value = true
   }
-  use();
-  lf.value = new LogicFlow({
-    container: proxy.$refs.container,
-    snapline: true,
-    grid: {
-      size: 20,
-      visible: 'true' === appParams.value.showGrid,
-      type: 'dot',
-      config: {
-        color: '#ccc',
-        thickness: 1,
-      },
-      background: {
-        backgroundColor: "#fff",
-      },
-    },
-    keyboard: {
-      enabled: true,
-      shortcuts: [
-        {
-          keys: ["delete"],
-          callback: () => {
-            const elements = lf.value.getSelectElements(true);
-            lf.value.clearSelectElements();
-            elements.edges.forEach((edge) => lf.value.deleteEdge(edge.id));
-            elements.nodes.forEach((node) => lf.value.deleteNode(node.id));
-          },
-        },
-      ],
-    },
-  });
-  register();
-  initDndPanel();
-  lf.value.setTheme({
-    snapline: {
-      stroke: '#1E90FF', // 对齐线颜色
-      strokeWidth: 2, // 对齐线宽度
-    },
-  })
-  initEvent();
-  // 隐藏滚动条
-  document.body.style.overflow = 'hidden';
-  if (definitionId.value) {
-    queryDef(definitionId.value).then(res => {
-      jsonString.value = res.data;
-      if (jsonString.value) {
-        value.value = json2LogicFlowJson(jsonString.value);
-        lf.value.render(value.value);
-        // 将内容平移至画布中心
-        lf.value.translateCenter()
+  queryDef(definitionId.value).then(res => {
+    jsonString.value = res.data;
+    categoryList.value = res.data.categoryList;
+    if (jsonString.value) {
+      logicJson.value = json2LogicFlowJson(jsonString.value);
+      if (!logicJson.value.nodes || logicJson.value.nodes.length === 0) {
+        // 读取本地文件/initClassicsData.json文件，并将数据转换json对象
+        logicJson.value = {
+          ...logicJson.value,
+          ...initClassicsData
+        };
       }
-    }).catch(() => {
-      lf.value.render({});
-    });
-  }
-  if (!definitionId.value) {
-    proxy.$modal.notifyError("流程id不能为空！");
-    lf.value.render({});
-  }
+    }
+  });
 })
+
+
+// 提取初始化逻辑到单独的函数
+function initLogicFlow() {
+  if (proxy.$refs.containerRef) {
+    use();
+    lf.value = new LogicFlow({
+      container: proxy.$refs.containerRef,
+      grid: {
+        size: 20,
+        visible: 'true' === appParams.value.showGrid,
+        type: 'dot',
+        config: {
+          color: '#ccc',
+          thickness: 1,
+        },
+        background: {
+          backgroundColor: "#fff",
+        },
+      },
+      keyboard: {
+        enabled: true,
+        shortcuts: [
+          {
+            keys: ["delete"],
+            callback: () => {
+              const elements = lf.value.getSelectElements(true);
+              lf.value.clearSelectElements();
+              elements.edges.forEach((edge) => lf.value.deleteEdge(edge.id));
+              elements.nodes.forEach((node) => lf.value.deleteNode(node.id));
+            },
+          },
+        ],
+      },
+    });
+    lf.value.setTheme({
+      snapline: {
+        stroke: '#1E90FF',
+        strokeWidth: 2,
+      },
+    });
+
+    // 只有经典模式才有拖拽面板
+    if ("CLASSICS" === logicJson.value.mode) {
+      initDndPanel();
+    }
+    register();
+    // 只有经典模式才初始化菜单
+    if ("MIMIC" === logicJson.value.mode) {
+      initMenu()
+    }
+    initEvent();
+    if (logicJson.value) {
+      lf.value.render(logicJson.value);
+      zoomViewport(1); // 在可见状态下调用自适应
+    }
+  }
+}
 
 watch(isDark, (v) => {
   if (!lf.value) {
@@ -159,8 +266,7 @@ watch(isDark, (v) => {
  * @param e
  */
 function listeningMessage(e) {
-  const { data } = e;
-  switch (data.type) {
+  switch (e.type) {
     case "theme-dark": {
       isDark.value = true;
       return;
@@ -220,13 +326,25 @@ function initDndPanel() {
   ]);
 }
 
+function getBaseInfo() {
+  const baseInfoData = proxy.$refs.baseInfoRef.getFormData();
+  logicJson.value = {
+    ...logicJson.value,
+    ...baseInfoData
+  };
+}
+
 function saveJsonModel() {
   const loadingInstance = ElLoading.service(({ fullscreen: true , text: "保存中，请稍等"}))
-  let graphData = lf.value.getGraphData()
-  value.value['nodes'] = graphData['nodes']
-  value.value['edges'] = graphData['edges']
-  value.value['id'] = definitionId.value
-  let jsonString = logicFlowJsonToWarmFlow(value.value);
+  getBaseInfo();
+  if (lf.value) {
+    let graphData = lf.value.getGraphData()
+    logicJson.value['nodes'] = graphData['nodes']
+    logicJson.value['edges'] = graphData['edges']
+  }
+  logicJson.value['id'] = definitionId.value
+
+  let jsonString = logicFlowJsonToWarmFlow(logicJson.value);
   saveJson(jsonString).then(response => {
     if (response.code === 200) {
       proxy.$modal.msgSuccess("保存成功");
@@ -239,24 +357,91 @@ function saveJsonModel() {
   });
 }
 
+/**
+ * 初始化菜单
+ */
+function initMenu() {
+  // 为菜单追加选项（必须在 lf.render() 之前设置）
+  lf.value.extension.menu.setMenuConfig({
+    nodeMenu: [],
+    edgeMenu: [
+      {
+        text: "添加中间节点",
+        callback(edge) {
+          addBetweenNode(lf.value, edge, "between");
+        },
+      },
+      {
+        text: "添加互斥网关",
+        callback(edge) {
+          addGatewayNode(lf.value, edge, "serial");
+        },
+      },
+      {
+        text: "添加并行网关",
+        callback(edge) {
+          addGatewayNode(lf.value, edge, "parallel");
+        },
+      },
+    ],
+  });
+
+  // 指定类型元素配置菜单
+  lf.value.extension.menu.setMenuByType({
+    type: "serial",
+    menu: [
+      {
+        text: "添加中间节点",
+        callback(node) {
+          gatewayAddNode(lf.value, node);
+        },
+      },
+    ],
+  });
+
+  lf.value.extension.menu.setMenuByType({
+    type: "parallel",
+    menu: [
+      {
+        text: "添加中间节点",
+        callback(node) {
+          gatewayAddNode(lf.value, node);
+        },
+      },
+    ],
+  });
+}
 
 /**
  * 注册自定义节点和边
  */
 function register() {
-  lf.value.register(Start);
-  lf.value.register(Between);
-  lf.value.register(Serial);
-  lf.value.register(Parallel);
-  lf.value.register(End);
-  lf.value.register(Skip);
+  if ("CLASSICS" === logicJson.value.mode) {
+    lf.value.register(StartC);
+    lf.value.register(BetweenC);
+    lf.value.register(SerialC);
+    lf.value.register(ParallelC);
+    lf.value.register(EndC);
+    lf.value.register(SkipC);
+  } else {
+    lf.value.register(StartM);
+    lf.value.register(BetweenM);
+    lf.value.register(SerialM);
+    lf.value.register(ParallelM);
+    lf.value.register(EndM);
+    lf.value.register(SkipM);
+  }
+
 }
 
 /**
  * 添加扩展
  */
 function use() {
-  LogicFlow.use(DndPanel);
+  // 只有经典模式才有拖拽面板
+  if ("CLASSICS" === logicJson.value.mode) {
+    LogicFlow.use(DndPanel);
+  }
   LogicFlow.use(Menu);
   LogicFlow.use(Snapshot);
 }
@@ -303,15 +488,18 @@ function initEvent() {
     })
   })
 }
+
 /** 关闭按钮 */
 function close() {
   window.parent.postMessage({ method: "close" }, "*");
 }
+
 const zoomViewport = async (zoom) => {
   lf.value.zoom(zoom);
   // 将内容平移至画布中心
   lf.value.translateCenter();
 };
+
 const undoOrRedo = async (undo) => {
   if(undo){
     lf.value.undo(undo)
@@ -328,7 +516,7 @@ const clear = async () => {
  * 下载流程图
  */
 function downLoad() {
-  lf.value.getSnapshot(value.value.flowName, {
+  lf.value.getSnapshot(logicJson.value.flowName, {
     fileType: 'png',        // 可选：'png'、'webp'、'jpeg'、'svg'
     backgroundColor: '#f5f5f5',
     padding: 30,           // 内边距，单位为像素
@@ -338,18 +526,20 @@ function downLoad() {
 }
 
 async function downJson() {
-  const url = urlPrefix + `warm-flow/down-json/${definitionId.value}`;
-  const filename = `${value.value.flowName}_${value.value.version}.json`;
-
   try {
-    // 确保请求返回 Blob 数据
-    const response = await request({
-      url: url,
-      method: 'get'
-    });
+    getBaseInfo();
+    if (lf.value) {
+      let graphData = lf.value.getGraphData()
+      logicJson.value['nodes'] = graphData['nodes']
+      logicJson.value['edges'] = graphData['edges']
+    }
+    let jsonString = logicFlowJsonToWarmFlow(logicJson.value);
 
     // 创建 Blob 并触发下载
-    const blob = new Blob([response.data]);
+    const filename = `${logicJson.value.flowName}_${logicJson.value.version}.json`;
+    // 格式化用于下载
+    const jsonPretty = JSON.stringify(JSON.parse(jsonString), null, 2); // 先 parse 成对象再 stringify
+    const blob = new Blob([jsonPretty], { type: 'application/json' });
     const downloadUrl = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = downloadUrl;
@@ -366,29 +556,13 @@ async function downJson() {
 </script>
 
 <style>
-
 .container {
   flex: 1;
   width: 100%;
-  height: 800px;
+  height: 800px; /* 根据实际需求调整高度 */
 }
 
-.top-text {
-  position: absolute;
-  font-weight: bold;
-  left: 500px;
-  top: 2px;
-  border: 1px solid #d1e9ff;
-  background-color: #e8f4ff;
-  padding: 4px 8px;
-  border-radius: 4px;
-  max-width: 300px;
-  font-size: 15px; /* 可以根据需要调整字体大小 */
-  color: #333; /* 可以根据需要调整颜色 */
-  z-index: 1; /* 确保文本在其他内容之上显示 */
-}
-
-.log-text {
+.logo-text {
   position: absolute;
   font-weight: bold;
   right: 10px;
@@ -397,4 +571,58 @@ async function downJson() {
   color: #333; /* 可以根据需要调整颜色 */
   z-index: 1; /* 确保文本在其他内容之上显示 */
 }
+
+.flow-name {
+  font-weight: bold;
+  padding-left: 40px;
+  margin-right: 10px; /* 右侧间距 */
+  width: 500px;
+  color: #333; /* 可以根据需要调整颜色 */
+}
+
+.steps-container {
+  display: flex;
+  align-items: center;
+  height: 35px;
+  justify-content: space-between; /* 确保内容在水平方向上两端对齐 */
+}
+
+.topButton {
+  display: flex;
+  align-items: center; /* 垂直居中对齐 */
+  margin-left: auto; /* 确保按钮始终位于最右边 */
+  margin-right: 10px; /* 添加此行，设置与右边的距离 */
+  button {
+    background-color: #1890ff;
+    color: #FFF;
+    font-size: 15px;
+  }
+}
+
+.baseInfo {
+  background-color: #fff;
+  border: 1px solid #ddd; /* 添加边框 */
+  border-radius: 6px; /* 添加圆角 */
+  margin: 5px;
+}
+
+.steps {
+  display: flex;
+}
+
+.step-item {
+  display: flex;
+  align-items: center;
+  margin-right: 100px;
+  cursor: pointer;
+}
+
+.step-item i {
+  margin-right: 5px;
+}
+
+.step-item.active {
+  color: #409eff; /* 选中时为深色 */
+}
+
 </style>

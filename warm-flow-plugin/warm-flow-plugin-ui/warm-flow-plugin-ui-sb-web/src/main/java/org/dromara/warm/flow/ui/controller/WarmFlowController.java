@@ -66,8 +66,8 @@ public class WarmFlowController {
      * @author xiarg
      * @since 2024/10/29 16:31
      */
-    @GetMapping("/query-def/{id}")
-    public ApiResult<DefJson> queryDef(@PathVariable("id") Long id) {
+    @GetMapping(value = {"/query-def", "/query-def/{id}"})
+    public ApiResult<DefJson> queryDef(@PathVariable(value = "id", required = false) Long id) {
         return WarmFlowService.queryDef(id);
     }
 
@@ -80,15 +80,6 @@ public class WarmFlowController {
     @GetMapping("/query-flow-chart/{id}")
     public ApiResult<DefJson> queryFlowChart(@PathVariable("id") Long id) {
         return WarmFlowService.queryFlowChart(id);
-    }
-
-    @GetMapping("/down-json/{id}")
-    public ApiResult<String> downJson(@PathVariable("id") Long id) {
-        // 要导出的字符串
-
-
-        // 返回响应
-        return ApiResult.ok(FlowEngine.defService().exportJson(id));
     }
 
     /**

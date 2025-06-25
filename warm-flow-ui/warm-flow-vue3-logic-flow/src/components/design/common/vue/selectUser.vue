@@ -18,7 +18,7 @@
           <div class="head-container">
             <el-tree
                 :data="groupOptions"
-                :props="{ label: 'label', children: 'children' }"
+                :props="{ label: 'name', children: 'children' }"
                 :expand-on-click-node="false"
                 :filter-node-method="filterNode"
                 ref="groupTreeRef"

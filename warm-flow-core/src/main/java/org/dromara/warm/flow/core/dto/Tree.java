@@ -13,46 +13,50 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.dromara.warm.flow.ui.vo;
+package org.dromara.warm.flow.core.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.dromara.warm.flow.ui.dto.Tree;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
- * TreeSelection树结构实体类
+ * 页面左侧树列表
  *
- * @author warm
+ * @author ruoyi
  */
 @Getter
 @Setter
-public class TreeSelection implements Serializable {
+@Accessors(chain = true)
+@AllArgsConstructor
+@NoArgsConstructor
+public class Tree implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     /**
-     * 节点ID
+     * ID
      */
     private String id;
 
     /**
-     * 节点名称
+     * 名称
      */
-    private String label;
+    private String name;
 
     /**
-     * 子节点
+     * 父ID
      */
-    private List<TreeSelection> children;
+    private String parentId;
 
-    public TreeSelection(Tree tree) {
-        this.id = tree.getId();
-        this.label = tree.getName();
-        this.children = tree.getChildren().stream().map(TreeSelection::new).collect(Collectors.toList());
-    }
-
+    /**
+     * 子
+     */
+    private List<Tree> children = new ArrayList<>();
 
 }
