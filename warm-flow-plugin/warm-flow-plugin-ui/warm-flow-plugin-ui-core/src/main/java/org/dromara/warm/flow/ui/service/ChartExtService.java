@@ -57,7 +57,6 @@ public interface ChartExtService {
                     "fontSize", "14px",
                     "zIndex", 1000,
                     "maxWidth", "500px",
-                    "pointerEvents", "none",
                     "color", "#333"
             ));
 

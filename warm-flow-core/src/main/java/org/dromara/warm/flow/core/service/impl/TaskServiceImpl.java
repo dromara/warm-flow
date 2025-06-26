@@ -919,8 +919,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     private boolean judgeActivityStatus(Definition definition, Instance instance) {
-        return Objects.equals(definition.getActivityStatus(), ActivityStatus.ACTIVITY.getKey())
-                && Objects.equals(instance.getActivityStatus(), ActivityStatus.ACTIVITY.getKey());
+        return ActivityStatus.isActivity(definition.getActivityStatus())
+                && ActivityStatus.isActivity(instance.getActivityStatus());
     }
 
 

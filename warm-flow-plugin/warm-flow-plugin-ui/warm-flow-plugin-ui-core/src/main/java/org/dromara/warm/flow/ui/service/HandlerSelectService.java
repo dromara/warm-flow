@@ -19,7 +19,7 @@ import org.dromara.warm.flow.core.dto.FlowPage;
 import org.dromara.warm.flow.core.utils.*;
 import org.dromara.warm.flow.ui.dto.HandlerFunDto;
 import org.dromara.warm.flow.ui.dto.HandlerQuery;
-import org.dromara.warm.flow.ui.dto.Tree;
+import org.dromara.warm.flow.core.dto.Tree;
 import org.dromara.warm.flow.ui.dto.TreeFunDto;
 import org.dromara.warm.flow.ui.utils.TreeUtil;
 import org.dromara.warm.flow.ui.vo.HandlerAuth;

@@ -3,6 +3,7 @@ CREATE TABLE `flow_definition`
     `id`              bigint          NOT NULL COMMENT '主键id',
     `flow_code`       varchar(40)     NOT NULL COMMENT '流程编码',
     `flow_name`       varchar(100)    NOT NULL COMMENT '流程名称',
+    `mode`            varchar(40)     NOT NULL DEFAULT 'CLASSICS' COMMENT '设计器模式（CLASSICS经典模式 MIMIC仿钉钉模式）',
     `category`        varchar(100)             DEFAULT NULL COMMENT '流程类别',
     `version`         varchar(20)     NOT NULL COMMENT '流程版本',
     `is_publish`      tinyint(1)      NOT NULL DEFAULT '0' COMMENT '是否发布（0未发布 1已发布 9失效）',

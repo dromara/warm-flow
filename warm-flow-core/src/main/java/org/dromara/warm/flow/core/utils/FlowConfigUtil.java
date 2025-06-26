@@ -147,7 +147,6 @@ public class FlowConfigUtil {
 
         node.setVersion(version);
         node.setDefinitionId(definitionId);
-        node.setUpdateTime(new Date());
 
         // 中间节点的集合， 跳转类型和目标节点不能重复
         Set<String> betweenSet = new HashSet<>();
@@ -162,7 +161,6 @@ public class FlowConfigUtil {
                     AssertUtil.isTrue(skipNum > 1, "[" + node.getNodeName() + "]" + ExceptionCons.MUL_START_SKIP);
                 }
                 AssertUtil.isEmpty(skip.getNextNodeCode(), "【" + nodeName + "】" + ExceptionCons.LOST_DEST_NODE);
-                FlowEngine.dataFillHandler().idFill(skip);
                 // 流程id
                 skip.setDefinitionId(definitionId);
                 skip.setNowNodeType(node.getNodeType());

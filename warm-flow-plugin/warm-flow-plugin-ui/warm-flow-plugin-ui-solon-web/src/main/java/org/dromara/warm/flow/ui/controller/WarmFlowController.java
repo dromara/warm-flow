@@ -73,6 +73,20 @@ public class WarmFlowController {
     }
 
     /**
+     * 获取流程定义全部数据(包含节点和跳转)
+     *
+     * @return ApiResult<Definition>
+     * @author xiarg
+     * @since 2024/10/29 16:31
+     */
+    @Get
+    @Mapping("/query-def")
+    public ApiResult<DefJson> queryDef1() {
+        return WarmFlowService.queryDef(null);
+    }
+
+
+    /**
      * 获取流程图
      *
      * @param id 流程实例id

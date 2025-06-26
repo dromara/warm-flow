@@ -148,9 +148,11 @@ public interface TaskService extends IWarmService<Task> {
      *        - permissionFlag 办理人权限标识，比如用户，角色，部门等，用于校验是否有权限办理 [按需传输]；满足以下任一情况可以不传
      *                  流程设计时未设置办理人、ignore为true、实现了办理人权限处理器{@link PermissionHandler#permissions()}
      *        - message 审批意见  [按需传输]
-     *        - handler 办理人唯一标识，如用户id，用于记录历史表 [按需传输]；满足以下情况可以不传
+     *        - handler 当前办理人唯一标识，如用户id，用于记录历史表 [按需传输]；满足以下情况可以不传
      *                  实现了办理人权限处理器{@link PermissionHandler#getHandler()}
      *        - variable 流程变量 [按需传输,跳转条件放入流程变量<互斥网关必传>]
+     *        - nextHandler: 执行的下个任务的办理人[按需传输]
+     *        - nextHandlerAppend: 个任务处理人配置类型（true-追加，false-覆盖，默认false）[按需传输]
      *        - flowStatus 流程状态，自定义流程状态 [按需传输]
      *        - ignore 忽略权限校验（比如管理员不校验），默认不忽略 [按需传输]
      */
@@ -166,9 +168,11 @@ public interface TaskService extends IWarmService<Task> {
      *        - permissionFlag 办理人权限标识，比如用户，角色，部门等，用于校验是否有权限办理 [按需传输]；满足以下任一情况可以不传
      *                  流程设计时未设置办理人、ignore为true、实现了办理人权限处理器{@link PermissionHandler#permissions()}
      *        - message 审批意见[按需传输]
-     *        - handler 办理人唯一标识，如用户id，用于记录历史表 [按需传输]；满足以下情况可以不传
+     *        - handler 当前办理人唯一标识，如用户id，用于记录历史表 [按需传输]；满足以下情况可以不传
      *                  实现了办理人权限处理器{@link PermissionHandler#getHandler()}
      *        - variable 流程变量[按需传输,跳转条件放入流程变量<互斥网关必传>]
+     *        - nextHandler: 执行的下个任务的办理人[按需传输]
+     *        - nextHandlerAppend: 个任务处理人配置类型（true-追加，false-覆盖，默认false）[按需传输]
      *        - flowStatus 流程状态，自定义流程状态[按需传输]
      *        - ignore 忽略权限校验（比如管理员不校验），默认不忽略 [按需传输]
      * @return 流程实例
@@ -182,9 +186,11 @@ public interface TaskService extends IWarmService<Task> {
      *        - permissionFlag 办理人权限标识，比如用户，角色，部门等，用于校验是否有权限办理 [按需传输]；满足以下任一情况可以不传
      *                  流程设计时未设置办理人、ignore为true、实现了办理人权限处理器{@link PermissionHandler#permissions()}
      *        - message 审批意见 [按需传输]
-     *        - handler 办理人唯一标识，如用户id，用于记录历史表 [按需传输]；满足以下情况可以不传
+     *        - handler 当前办理人唯一标识，如用户id，用于记录历史表 [按需传输]；满足以下情况可以不传
      *                  实现了办理人权限处理器{@link PermissionHandler#getHandler()}
      *        - variable 流程变量 [按需传输,跳转条件放入流程变量<互斥网关必传>]
+     *        - nextHandler: 执行的下个任务的办理人[按需传输]
+     *        - nextHandlerAppend: 个任务处理人配置类型（true-追加，false-覆盖，默认false）[按需传输]
      *        - flowStatus 流程状态，自定义流程状态 [按需传输]
      *        - ignore 忽略权限校验（比如管理员不校验），默认不忽略 [按需传输]
      */
@@ -197,9 +203,11 @@ public interface TaskService extends IWarmService<Task> {
      *        - permissionFlag 办理人权限标识，比如用户，角色，部门等，用于校验是否有权限办理 [按需传输]；满足以下任一情况可以不传
      *                  流程设计时未设置办理人、ignore为true、实现了办理人权限处理器{@link PermissionHandler#permissions()}
      *        - message 审批意见 [按需传输]
-     *        - handler 办理人唯一标识，如用户id，用于记录历史表 [按需传输]；满足以下情况可以不传
+     *        - handler 当前办理人唯一标识，如用户id，用于记录历史表 [按需传输]；满足以下情况可以不传
      *                  实现了办理人权限处理器{@link PermissionHandler#getHandler()}
      *        - variable 流程变量 [按需传输,跳转条件放入流程变量<互斥网关必传>]
+     *        - nextHandler: 执行的下个任务的办理人[按需传输]
+     *        - nextHandlerAppend: 个任务处理人配置类型（true-追加，false-覆盖，默认false）[按需传输]
      *        - flowStatus 流程状态，自定义流程状态 [按需传输]
      *        - ignore 忽略权限校验（比如管理员不校验），默认不忽略 [按需传输]
      */
@@ -212,9 +220,11 @@ public interface TaskService extends IWarmService<Task> {
      *        - permissionFlag 办理人权限标识，比如用户，角色，部门等，用于校验是否有权限办理 [按需传输]；满足以下任一情况可以不传
      *                  流程设计时未设置办理人、ignore为true、实现了办理人权限处理器{@link PermissionHandler#permissions()}
      *        - message 审批意见 [按需传输]
-     *        - handler 办理人唯一标识，如用户id，用于记录历史表 [按需传输]；满足以下情况可以不传
+     *        - handler 当前办理人唯一标识，如用户id，用于记录历史表 [按需传输]；满足以下情况可以不传
      *                  实现了办理人权限处理器{@link PermissionHandler#getHandler()}
      *        - variable 流程变量 [按需传输,跳转条件放入流程变量<互斥网关必传>]
+     *        - nextHandler: 执行的下个任务的办理人[按需传输]
+     *        - nextHandlerAppend: 个任务处理人配置类型（true-追加，false-覆盖，默认false）[按需传输]
      *        - flowStatus 流程状态，自定义流程状态 [按需传输]
      *        - ignore 忽略权限校验（比如管理员不校验），默认不忽略 [按需传输]
      */
@@ -225,9 +235,11 @@ public interface TaskService extends IWarmService<Task> {
      * @param instanceId 流程实例id[必传]
      * @param flowParams 包含流程相关参数的对象
      *        - message 审批意见 [按需传输]
-     *        - handler 办理人唯一标识，如用户id，用于记录历史表 [按需传输]；满足以下情况可以不传
+     *        - handler 当前办理人唯一标识，如用户id，用于记录历史表 [按需传输]；满足以下情况可以不传
      *                  实现了办理人权限处理器{@link PermissionHandler#getHandler()}
      *        - variable 流程变量 [按需传输,跳转条件放入流程变量<互斥网关必传>]
+     *        - nextHandler: 执行的下个任务的办理人[按需传输]
+     *        - nextHandlerAppend: 个任务处理人配置类型（true-追加，false-覆盖，默认false）[按需传输]
      *        - flowStatus 流程状态，自定义流程状态 [按需传输]
      */
     Instance taskBackByInsId(Long instanceId, FlowParams flowParams);
@@ -237,9 +249,11 @@ public interface TaskService extends IWarmService<Task> {
      * @param taskId 流程任务id[必传]
      * @param flowParams 包含流程相关参数的对象
      *        - message 审批意见 [按需传输]
-     *        - handler 办理人唯一标识，如用户id，用于记录历史表 [按需传输]；满足以下情况可以不传
+     *        - handler 当前办理人唯一标识，如用户id，用于记录历史表 [按需传输]；满足以下情况可以不传
      *                  实现了办理人权限处理器{@link PermissionHandler#getHandler()}
      *        - variable 流程变量 [按需传输,跳转条件放入流程变量<互斥网关必传>]
+     *        - nextHandler: 执行的下个任务的办理人[按需传输]
+     *        - nextHandlerAppend: 个任务处理人配置类型（true-追加，false-覆盖，默认false）[按需传输]
      *        - flowStatus 流程状态，自定义流程状态 [按需传输]
      */
     Instance taskBack(Long taskId, FlowParams flowParams);
@@ -253,9 +267,11 @@ public interface TaskService extends IWarmService<Task> {
      *        - permissionFlag 办理人权限标识，比如用户，角色，部门等，用于校验是否有权限办理 [按需传输]；满足以下任一情况可以不传
      *                  流程设计时未设置办理人、ignore为true、实现了办理人权限处理器{@link PermissionHandler#permissions()}
      *        - message 审批意见 [按需传输]
-     *        - handler 办理人唯一标识，如用户id，用于记录历史表 [按需传输]；满足以下情况可以不传
+     *        - handler 当前办理人唯一标识，如用户id，用于记录历史表 [按需传输]；满足以下情况可以不传
      *                  实现了办理人权限处理器{@link PermissionHandler#getHandler()}
      *        - variable 流程变量 [按需传输,跳转条件放入流程变量<互斥网关必传>]
+     *        - nextHandler: 执行的下个任务的办理人[按需传输]
+     *        - nextHandlerAppend: 个任务处理人配置类型（true-追加，false-覆盖，默认false）[按需传输]
      *        - flowStatus 流程状态，自定义流程状态 [按需传输]
      *        - ignore 忽略权限校验（比如管理员不校验），默认不忽略 [按需传输]
      * @param task:流程任务[必传]
@@ -268,9 +284,11 @@ public interface TaskService extends IWarmService<Task> {
      * @param instanceId        实例id [必传]
      * @param flowParams 包含流程相关参数的对象
      *        - message 审批意见 [按需传输]
-     *        - handler 办理人唯一标识，如用户id，用于记录历史表 [按需传输]；满足以下情况可以不传
+     *        - handler 当前办理人唯一标识，如用户id，用于记录历史表 [按需传输]；满足以下情况可以不传
      *                  实现了办理人权限处理器{@link PermissionHandler#getHandler()}
      *        - variable 流程变量 [按需传输,跳转条件放入流程变量<互斥网关必传>]
+     *        - nextHandler: 执行的下个任务的办理人[按需传输]
+     *        - nextHandlerAppend: 个任务处理人配置类型（true-追加，false-覆盖，默认false）[按需传输]
      *        - flowStatus 流程状态，自定义流程状态 [按需传输]
      *        - ignore 忽略权限校验（比如管理员不校验），默认不忽略 [按需传输]
      */
@@ -284,7 +302,7 @@ public interface TaskService extends IWarmService<Task> {
      *        - message 审批意见 [按需传输]
      *        - permissionFlag 办理人权限标识，比如用户，角色，部门等，用于校验是否有权限办理 [按需传输]；满足以下任一情况可以不传
      *                  流程设计时未设置办理人、ignore为true、实现了办理人权限处理器{@link PermissionHandler#permissions()}
-     *        - handler 办理人唯一标识，如用户id，用于记录历史表 [按需传输]；满足以下情况可以不传
+     *        - handler 当前办理人唯一标识，如用户id，用于记录历史表 [按需传输]；满足以下情况可以不传
      *                  实现了办理人权限处理器{@link PermissionHandler#getHandler()}
      *        - flowStatus 流程状态，自定义流程状态[按需传输]
      *        - ignore 忽略权限校验（比如管理员不校验），默认不忽略 [按需传输]
@@ -299,7 +317,7 @@ public interface TaskService extends IWarmService<Task> {
      *        - message 审批意见 [按需传输]
      *        - permissionFlag 办理人权限标识，比如用户，角色，部门等，用于校验是否有权限办理 [按需传输]；满足以下任一情况可以不传
      *                  流程设计时未设置办理人、ignore为true、实现了办理人权限处理器{@link PermissionHandler#permissions()}
-     *        - handler 办理人唯一标识，如用户id，用于记录历史表 [按需传输]；满足以下情况可以不传
+     *        - handler 当前办理人唯一标识，如用户id，用于记录历史表 [按需传输]；满足以下情况可以不传
      *                  实现了办理人权限处理器{@link PermissionHandler#getHandler()}
      *        - flowStatus 流程状态，自定义流程状态 [按需传输]
      *        - ignore 忽略权限校验（比如管理员不校验），默认不忽略 [按需传输]
@@ -314,7 +332,7 @@ public interface TaskService extends IWarmService<Task> {
      *        - message 审批意见 [按需传输]
      *        - permissionFlag 办理人权限标识，比如用户，角色，部门等，用于校验是否有权限办理 [按需传输]；满足以下任一情况可以不传
      *                  流程设计时未设置办理人、ignore为true、实现了办理人权限处理器{@link PermissionHandler#permissions()}
-     *        - handler 办理人唯一标识，如用户id，用于记录历史表 [按需传输]；满足以下情况可以不传
+     *        - handler 当前办理人唯一标识，如用户id，用于记录历史表 [按需传输]；满足以下情况可以不传
      *                  实现了办理人权限处理器{@link PermissionHandler#getHandler()}
      *        - flowStatus 流程状态，自定义流程状态 [按需传输]
      *        - ignore 忽略权限校验（比如管理员不校验），默认不忽略 [按需传输]
@@ -330,7 +348,7 @@ public interface TaskService extends IWarmService<Task> {
     boolean deleteByInsIds(List<Long> instanceIds);
 
     /**
-     * 转办, 默认删除当然办理用户权限，转办后，当前办理不可办理
+     * 转办, 默认删除当前办理用户权限，转办后，当前办理不可办理
      *
      * @param taskId         修改的任务id [必传]
      * @param flowParams 包含流程相关参数的对象
@@ -344,7 +362,7 @@ public interface TaskService extends IWarmService<Task> {
     boolean transfer(Long taskId, FlowParams flowParams);
 
     /**
-     * 委派, 默认删除当然办理用户权限，委派后，当前办理不可办理
+     * 委派, 默认删除当前办理用户权限，委派后审批完, 重新回到当前办理人
      *
      * @param taskId         修改的任务id [必传]
      * @param flowParams 包含流程相关参数的对象

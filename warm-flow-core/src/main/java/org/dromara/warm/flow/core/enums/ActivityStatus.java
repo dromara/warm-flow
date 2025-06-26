@@ -19,6 +19,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.dromara.warm.flow.core.utils.ObjectUtil;
 
+/**
+ * 激活状态
+ *
+ * @author warm
+ * @since 2025/6/25
+ */
 @Getter
 @AllArgsConstructor
 public enum ActivityStatus {
@@ -30,39 +36,17 @@ public enum ActivityStatus {
     private final Integer key;
     private final String value;
 
-    public static Integer getKeyByValue(String value) {
-        for (ActivityStatus item : ActivityStatus.values()) {
-            if (item.getValue().equals(value)) {
-                return item.getKey();
-            }
-        }
-        return null;
-    }
-
-    public static String getValueByKey(Integer Key) {
-        for (ActivityStatus item : ActivityStatus.values()) {
-            if (item.getKey().equals(Key)) {
-                return item.getValue();
-            }
-        }
-        return null;
-    }
-
-    public static ActivityStatus getByKey(Integer key) {
-        for (ActivityStatus item : ActivityStatus.values()) {
-            if (item.getKey().equals(key)) {
-                return item;
-            }
-        }
-        return null;
+    /**
+     * 判断流程是否激活
+     */
+    public static Boolean isActivity(Integer key) {
+        return ObjectUtil.isNotNull(key) && (ActivityStatus.ACTIVITY.getKey().equals(key));
     }
 
     /**
-     * 判断流程是否激活
-     * @param Key
-     * @return
+     * 判断流程是否挂起
      */
-    public static Boolean isActivity(Integer Key) {
-        return ObjectUtil.isNotNull(Key) && (ActivityStatus.ACTIVITY.getKey().equals(Key));
+    public static Boolean isSuspended(Integer key) {
+        return ObjectUtil.isNotNull(key) && (ActivityStatus.SUSPENDED.getKey().equals(key));
     }
 }

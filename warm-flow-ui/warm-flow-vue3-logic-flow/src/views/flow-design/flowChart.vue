@@ -12,8 +12,8 @@
 
         <!-- 右侧状态按钮组 -->
         <div style="margin-left: auto; display: flex; align-items: center;">
-          <el-button size="small" icon="Rank" @click="zoomViewport(1)">自适应屏幕</el-button>
           <el-button size="small" icon="ZoomIn" @click="zoomViewport(true)">放大</el-button>
+          <el-button size="small" icon="Rank" @click="zoomViewport(1)">自适应</el-button>
           <el-button size="small" icon="ZoomOut" @click="zoomViewport(false)">缩小</el-button>
           <el-button size="small" icon="Download" @click="downLoad">下载流程图</el-button>
         </div>
@@ -32,60 +32,49 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import {ref, onMounted, onUnmounted, watch, computed, render, h, nextTick} from "vue";
+<script setup>
+import { ref, onMounted, onUnmounted, watch, computed, render, h, nextTick } from "vue";
 import LogicFlow from "@logicflow/core";
 import { Snapshot } from "@logicflow/extension";
 import "@logicflow/core/lib/style/index.css";
-import Start from "@/components/WarmFlow/js/start";
-import Between from "@/components/WarmFlow/js/between";
-import Serial from "@/components/WarmFlow/js/serial";
-import Parallel from "@/components/WarmFlow/js/parallel";
-import End from "@/components/WarmFlow/js/end";
-import Skip from "@/components/WarmFlow/js/skip";
+import Start from "@/components/design/classics/js/start";
+import Between from "@/components/design/classics/js/between";
+import Serial from "@/components/design/classics/js/serial";
+import Parallel from "@/components/design/classics/js/parallel";
+import End from "@/components/design/classics/js/end";
+import Skip from "@/components/design/classics/js/skip";
 import useAppStore from "@/store/app";
-import { json2LogicFlowJson } from "@/components/WarmFlow/js/tool";
-import { queryFlowChart } from "&/api/flow/definition";
+import { json2LogicFlowJson } from "@/components/design/common/js/tool";
+import { queryFlowChart } from "@/api/flow/definition";
 
 const appStore = useAppStore();
 const appParams = computed(() => useAppStore().appParams);
 const definitionId = ref(null);
 const defJson = ref({});
 const containerRef = ref(null);
-const tooltipPosition = ref({ x: 0, y: 0 }); // 弹框位置
-const tooltipContainerRef = ref<HTMLDivElement | null>(null);
-const visible = ref(false)
-interface TooltipItem {
-  prefix: string;
-  prefixStyle?: Record<string, string | number>;
-  content: string;
-  contentStyle?: Record<string, string | number>;
-  rowStyle?: Record<string, string | number>;
-}
+const tooltipPosition = ref({ x: 0, y: 0 });
+const tooltipContainerRef = ref(null);
+const visible = ref(false);
 
-interface TooltipData {
-  dialogStyle: Record<string, string | number>;
-  info: TooltipItem[];
-}
-
-const promptContent = ref<TooltipData>({
+const promptContent = ref({
   dialogStyle: {},
   info: []
 });
+
 const statusColors = ref({
   done: "",
   todo: "",
-  notDone: "",
+  notDone: ""
 });
+
 const isDark = ref(false);
 const headerStyle = computed(() => {
   return {
     top: "5px",
     right: "50px",
     zIndex: "2",
-    marginTop: "10px",
     height: "auto",
-    backgroundColor: isDark.value ? "#333" : "#fff",
+    backgroundColor: isDark.value ? "#333" : "#fff"
   };
 });
 
@@ -105,13 +94,12 @@ const register = () => {
 };
 
 const initEvent = () => {
-  const { eventCenter } = lf.value.graphModel
-  eventCenter.on('node:mouseenter', (data) => {
-    const promptArr = data.data.properties.promptContent
+  const { eventCenter } = lf.value.graphModel;
+  eventCenter.on('node:click', (data) => {
+    const promptArr = data.data.properties.promptContent;
     if (promptArr) {
       visible.value = true;
 
-      // 确保 tooltipContainerRef 已渲染
       nextTick(() => {
         if (tooltipContainerRef.value) {
           // // 构建 HTML 内容
@@ -120,6 +108,8 @@ const initEvent = () => {
           //   dialogStyle: { /* 弹框样式 */
           //     position: 'absolute', /* 绝对定位，基于最近的定位祖先元素（如 container） */
           //     backgroundColor: "#fff", /* 背景色为白色 */
+          //     maxHeight: "300px",
+          //     overflowY: "auto",
           //     border: "1px solid #ccc", /* 灰色边框 */
           //     borderRadius: "4px", /* 添加圆角 */
           //     boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)", /* 阴影效果（轻微立体感） */
@@ -127,7 +117,6 @@ const initEvent = () => {
           //     fontSize: "14px", /* 字体大小 */
           //     zIndex: 1000, /* 层级高于其他元素，确保提示框可见 */
           //     maxWidth: "500px", /* 最大宽度限制，防止内容过长 */
-          //     pointerEvents: 'none', /* ❗️关键点：提示框不响应任何鼠标事件 */
           //     color: "#333" /* 深色文字 */
           //   },
           //   info: [
@@ -169,21 +158,19 @@ const initEvent = () => {
         }
       });
     }
-  })
-  eventCenter.on('node:mouseleave', () => {
-    visible.value = false
-  })
-}
+  });
+
+  eventCenter.on('blank:click', () => {
+    visible.value = false;
+  });
+};
 
 // 监听 promptContent 变化并动态渲染
 watch(
     () => promptContent.value,
     (contentData) => {
       if (!tooltipContainerRef.value) return;
-
-      if (!contentData) {
-        return;
-      }
+      if (!contentData) return;
 
       // 更新 tooltipContainerRef 的样式
       Object.entries(contentData.dialogStyle || {}).forEach(([key, value]) => {
@@ -191,7 +178,7 @@ watch(
       });
 
       // 生成 <p> 元素数组
-      const children = contentData.info.map((item, index) =>
+      const children = contentData.info.map((item) =>
           h("p", {
             style: item.rowStyle || {},
           }, [
@@ -204,10 +191,8 @@ watch(
           ])
       );
 
-      // 直接将 <p> 元素渲染到 tooltipContainerRef
-      const wrapper = h("div", children);
-
       // 调用 render 方法
+      const wrapper = h("div", children);
       render(wrapper, tooltipContainerRef.value);
     },
     { deep: true, immediate: true }
@@ -215,7 +200,6 @@ watch(
 
 const zoomViewport = async (zoom) => {
   lf.value.zoom(zoom);
-  // 将内容平移至画布中心
   lf.value.translateCenter();
 };
 
@@ -235,6 +219,7 @@ onMounted(async () => {
             ] = res.data.chartStatusColor || ["157,255,0", "255,205,23", "0,0,0"];
 
             const data = json2LogicFlowJson(defJson.value);
+            document.body.style.overflow = 'hidden';
             use();
             lf.value = new LogicFlow({
               container: containerRef.value,
@@ -255,7 +240,7 @@ onMounted(async () => {
               },
             });
             register();
-            initEvent()
+            initEvent();
             lf.value.render(data);
             lf.value.translateCenter();
           }
@@ -267,11 +252,9 @@ onMounted(async () => {
 });
 
 watch(isDark, (v) => {
-  if (!lf.value) {
-    return;
-  }
+  if (!lf.value) return;
   lf.value.graphModel.background = {
-    background: v ? "#333" : "#fff",
+    background: v ? "#333" : "#fff"
   };
 });
 
@@ -280,17 +263,16 @@ watch(isDark, (v) => {
  */
 function downLoad() {
   lf.value.getSnapshot(defJson.value.flowName, {
-    fileType: 'png',        // 可选：'png'、'webp'、'jpeg'、'svg'
+    fileType: 'png',
     backgroundColor: '#f5f5f5',
-    padding: 30,           // 内边距，单位为像素
-    partial: false,        // false: 导出所有元素，true: 只导出可见区域
-    quality: 0.92          // 对jpeg和webp格式有效，取值范围0-1
-  })
+    padding: 30,
+    partial: false,
+    quality: 0.92
+  });
 }
 
 /**
- * data为 {type: string, data?: any}
- * @param e
+ * 监听消息
  */
 function listeningMessage(e) {
   const { data } = e;
@@ -315,7 +297,6 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* 样式部分保持不变 */
 .containerView {
   width: 100%;
   height: 100%;
@@ -325,15 +306,15 @@ onUnmounted(() => {
   position: absolute;
   font-weight: bold;
   left: 500px;
-  top: 10px;
+  top: 2px;
   border: 1px solid #d1e9ff;
   background-color: #e8f4ff;
   padding: 4px 8px;
   border-radius: 4px;
   max-width: 300px;
-  font-size: 15px; /* 可以根据需要调整字体大小 */
-  color: #333; /* 可以根据需要调整颜色 */
-  z-index: 1; /* 确保文本在其他内容之上显示 */
+  font-size: 15px;
+  color: #333;
+  z-index: 1;
 }
 
 .log-text {
@@ -341,8 +322,8 @@ onUnmounted(() => {
   font-weight: bold;
   right: 10px;
   bottom: 10px;
-  font-size: 15px; /* 可以根据需要调整字体大小 */
-  color: #333; /* 可以根据需要调整颜色 */
-  z-index: 1; /* 确保文本在其他内容之上显示 */
+  font-size: 15px;
+  color: #333;
+  z-index: 1;
 }
 </style>

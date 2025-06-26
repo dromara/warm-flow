@@ -3,6 +3,7 @@ create table FLOW_DEFINITION
     ID              NUMBER(20)            not null,
     FLOW_CODE       VARCHAR2(40)          not null,
     FLOW_NAME       VARCHAR2(100)         not null,
+    MODE            VARCHAR2(40) default 'CLASSICS' not null,
     CATEGORY        VARCHAR2(100),
     VERSION         VARCHAR2(20)          not null,
     IS_PUBLISH      NUMBER(1)   default 0 not null,
@@ -25,6 +26,7 @@ comment on table FLOW_DEFINITION is '流程定义表';
 comment on column FLOW_DEFINITION.ID is '主键id';
 comment on column FLOW_DEFINITION.FLOW_CODE is '流程编码';
 comment on column FLOW_DEFINITION.FLOW_NAME is '流程名称';
+comment on column FLOW_DEFINITION.MODE is '设计器模式（CLASSICS经典模式 MIMIC仿钉钉模式）';
 comment on column FLOW_DEFINITION.CATEGORY is '流程类别';
 comment on column FLOW_DEFINITION.VERSION is '流程版本';
 comment on column FLOW_DEFINITION.IS_PUBLISH is '是否发布 (0未发布 1已发布 9失效)';

@@ -15,6 +15,7 @@
  */
 package org.dromara.warm.flow.ui.controller;
 
+import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.dto.ApiResult;
 import org.dromara.warm.flow.core.dto.DefJson;
 import org.dromara.warm.flow.core.dto.FlowDto;
@@ -65,8 +66,8 @@ public class WarmFlowController {
      * @author xiarg
      * @since 2024/10/29 16:31
      */
-    @GetMapping("/query-def/{id}")
-    public ApiResult<DefJson> queryDef(@PathVariable("id") Long id) {
+    @GetMapping(value = {"/query-def", "/query-def/{id}"})
+    public ApiResult<DefJson> queryDef(@PathVariable(value = "id", required = false) Long id) {
         return WarmFlowService.queryDef(id);
     }
 

@@ -98,9 +98,6 @@ public interface Skip extends RootEntity {
     public Skip setCoordinate(String coordinate);
     default Skip copy() {
         return FlowEngine.newSkip()
-                .setId(getId())
-                .setCreateTime(getCreateTime())
-                .setUpdateTime(getUpdateTime())
                 .setTenantId(getTenantId())
                 .setDelFlag(getDelFlag())
                 .setDefinitionId(getDefinitionId())

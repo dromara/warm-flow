@@ -118,14 +118,14 @@ public class ExpressionUtil {
      * @author xiarg
      * @since 2025/06/03 15:33:38
      */
-    public static List<String> nextHandle(boolean nextHandlerAppend, List<String> nextHandler, List<String> permissions) {
-        if (CollUtil.isEmpty(nextHandler)) {
+    public static List<String> nextHandle(boolean nextHandlerAppend, String[] nextHandler, List<String> permissions) {
+        if (ArrayUtil.isEmpty(nextHandler)) {
             return permissions;
         }
         if (nextHandlerAppend) {
-            permissions.addAll(nextHandler);
+            permissions.addAll(new ArrayList<>(Arrays.asList(nextHandler)));
         } else {
-            permissions = nextHandler;
+            permissions = new ArrayList<>(Arrays.asList(nextHandler));
         }
         return permissions;
     }

@@ -1,147 +1,260 @@
 <template>
-  <div>
-    <div class="top-text">流程名称: {{value.flowName}}</div>
+  <div style="background-color: #e5e7eb">
+    <!-- 流程名称和步骤条容器 -->
+    <div :style="headerContainer">
+      <!-- 流程名称 -->
+      <el-tooltip :content="logicJson.flowName" placement="top">
+        <div class="flow-name">
+          <svg-icon icon-class="flowName" style="margin-right: 5px"/>
+          {{ logicJson.flowName }}
+        </div>
+      </el-tooltip>
+      <!-- 自定义步骤按钮 -->
+      <div class="steps-container">
+        <div class="steps">
+          <div
+              v-for="(step, index) in steps"
+              :key="index"
+              class="step-item"
+              :class="{ 'active': activeStep === index }"
+              @click="handleStepClick(index)"
+          >
+            <svg-icon :icon-class="step.icon" style="margin-right: 5px"/>
+            <span>{{ step.title }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="topButton">
+        <el-button size="small" @click="saveJsonModel" v-if="!disabled"><svg-icon icon-class="save" style="margin-right: 5px"/>保存</el-button>
+      </div>
+    </div>
 
-    <el-header :style="headerStyle">
-      <div class="log-text">Warm-Flow</div>
+    <BaseInfo class="baseInfo" ref="baseInfoRef" v-show="activeStep === 0" :logic-json="logicJson"
+              :category-list="categoryList" :definition-id="definitionId" :disabled="disabled"
+              @update:flow-name="handleFlowNameUpdate"/>
+
+    <el-header :style="headerStyle" v-show="activeStep === 1">
       <div style="padding: 5px 0; text-align: right;">
         <div>
           <el-button size="small" icon="ZoomOut" @click="zoomViewport(false)">缩小</el-button>
+          <el-button size="small" icon="Rank" @click="zoomViewport(1)">自适应</el-button>
           <el-button size="small" icon="ZoomIn" @click="zoomViewport(true)">放大</el-button>
-          <el-button size="small" icon="Rank" @click="zoomViewport(1)">自适应屏幕</el-button>
-          <el-button size="small" icon="DArrowLeft" @click="undoOrRedo(true)">上一步</el-button>
-          <el-button size="small" icon="DArrowRight" @click="undoOrRedo(false)">下一步</el-button>
-          <el-button size="small" icon="Delete" @click="clear()">清空</el-button>
-          <el-button size="small" icon="DocumentAdd" @click="saveJsonModel">保存</el-button>
+          <el-button size="small" icon="DArrowLeft" @click="undoOrRedo(true)" v-if="!disabled">上一步</el-button>
+          <el-button size="small" icon="DArrowRight" @click="undoOrRedo(false)" v-if="!disabled">下一步</el-button>
+          <el-button size="small" icon="Delete" @click="clear()" v-if="!disabled">清空</el-button>
           <el-button size="small" icon="Download" @click="downLoad">下载流程图</el-button>
+          <el-button size="small" icon="Download" @click="downJson">下载json</el-button>
         </div>
       </div>
+      <div class="container" ref="containerRef">
+        <PropertySetting ref="propertySettingRef" :node="nodeClick" :lf="lf" :disabled="disabled"
+                         :skipConditionShow="skipConditionShow" :nodes="nodes" :skips="skips">
+          <template v-slot:[key]="data" v-for="(item, key) in $slots">
+            <slot :name="key" v-bind="data || {}"></slot>
+          </template>
+        </PropertySetting>
+        <div class="logo-text">Warm-Flow</div>
+      </div>
     </el-header>
-    <div class="container" ref="container">
-      <PropertySetting ref="propertySettingRef" :node="nodeClick" v-model="processForm" :lf="lf" :disabled="disabled"
-                       :skipConditionShow="skipConditionShow" :nodes="nodes" :skips="skips">
-        <template v-slot:[key]="data" v-for="(item, key) in $slots">
-          <slot :name="key" v-bind="data || {}"></slot>
-        </template>
-      </PropertySetting>
-    </div>
-    <div class="log-text">Warm-Flow</div>
   </div>
 </template>
 
 <script setup name="Design">
 import LogicFlow from "@logicflow/core";
 import "@logicflow/core/lib/style/index.css";
-import {DndPanel, Menu, SelectionSelect, Snapshot} from '@logicflow/extension';
+import { DndPanel, Menu, Snapshot } from '@logicflow/extension';
 import '@logicflow/extension/lib/style/index.css'
 import { ElLoading } from 'element-plus'
-import Start from "@/components/WarmFlow/js/start";
-import Between from "@/components/WarmFlow/js/between";
-import Serial from "@/components/WarmFlow/js/serial";
-import Parallel from "@/components/WarmFlow/js/parallel";
-import End from "@/components/WarmFlow/js/end";
-import Skip from "@/components/WarmFlow/js/skip";
-import PropertySetting from '@/components/WarmFlow/PropertySetting/index.vue'
-import { queryDef, saveJson } from "&/api/flow/definition";
-import {
-  json2LogicFlowJson,
-  logicFlowJsonToWarmFlow
-} from "@/components/WarmFlow/js/tool";
+import PropertySetting from '@/components/design/common/vue/propertySetting.vue'
+import { queryDef, saveJson } from "@/api/flow/definition";
+import { json2LogicFlowJson, logicFlowJsonToWarmFlow } from "@/components/design/common/js/tool";
+import StartC from "@/components/design/classics/js/start";
+import BetweenC from "@/components/design/classics/js/between";
+import SerialC from "@/components/design/classics/js/serial";
+import ParallelC from "@/components/design/classics/js/parallel";
+import EndC from "@/components/design/classics/js/end";
+import SkipC from "@/components/design/classics/js/skip";
+import StartM from "@/components/design/mimic/js/start";
+import BetweenM from "@/components/design/mimic/js/between";
+import SerialM from "@/components/design/mimic/js/serial";
+import ParallelM from "@/components/design/mimic/js/parallel";
+import EndM from "@/components/design/mimic/js/end";
+import SkipM from "@/components/design/mimic/js/skip";
 import useAppStore from "@/store/app";
 import {computed, onMounted, onUnmounted, ref, watch} from "vue";
+import BaseInfo from "@/components/design/common/vue/baseInfo.vue";
+import initClassicsData from "@/components/design/common/initClassicsData.json";
+import initMimicData from "@/components/design/common/initMimicData.json";
+import {addBetweenNode, addGatewayNode, gatewayAddNode} from "@/components/design/mimic/js/mimic.js";
+
 const appStore = useAppStore();
 const appParams = computed(() => useAppStore().appParams);
 
 const { proxy } = getCurrentInstance();
 
 const lf = ref(null);
-const definitionId = ref(null);
+const definitionId = ref();
 const nodeClick = ref(null);
 const disabled = ref(false);
-const processForm = ref({});
 const propertySettingRef = ref({});
-const value = ref({});
+const logicJson = ref({});
 const jsonString = ref('');
 const skipConditionShow = ref(true);
 const nodes = ref([]);
 const skips = ref([]);
+const categoryList = ref([]);
 const isDark = ref(false);
+const activeStep = ref(0); // 初始化当前步骤为0（开始）
 
 const headerStyle = computed(() => {
   return {
     top: "5px",
     right: "50px",
     zIndex: "2",
-    marginTop: "10px",
     height: "auto",
     backgroundColor: isDark.value ? "#333" : "#fff",
+    border: "1px solid #ddd", /* 添加边框 */
+    borderRadius: "6px", /* 添加圆角 */
+    margin: "5px",
   };
 });
 
+const headerContainer = computed(() => {
+  return {
+    display: "flex",
+    alignItems: "center", /* 垂直居中对齐 */
+    border: "1px solid #ddd", /* 添加边框 */
+    borderRadius: "6px", /* 添加圆角 */
+    height: "100%", /* 占满父容器高度 */
+    backgroundColor: "#fff",
+    top: "5px",
+    margin: "0px 5px",
+  };
+});
 
-onMounted(async () => {
-  if (!appParams.value) await appStore.fetchTokenName();
-  definitionId.value = appParams.value.id;
+// 步骤数据
+const steps = [
+  { title: '基础信息', icon: 'baseInfo' },
+  { title: '流程设计', icon: 'flowDesign' },
+  // { title: '表单设计', icon: 'formDesign' }
+];
+
+async function handleStepClick(index) {
+  if (activeStep.value === 0) {
+    let validate = await proxy.$refs.baseInfoRef.validate();
+    if (!validate) return;
+  }
+  activeStep.value = index;
+
+  if (index === 1) {
+    // 原设计器模式
+    const modeOrg =logicJson.value.mode;
+    // 获取基础信息
+    getBaseInfo();
+    const modeNew =logicJson.value.mode;
+    if (!lf.value) {
+      await nextTick(() => {
+        initLogicFlow();
+      });
+    } else {
+      if (modeOrg !== modeNew) {
+        // 只有切换到设计页且未初始化时才初始化
+        await nextTick(() => {
+          // 读取本地文件/initData.json文件，并将数据转换json对象
+          let initData = ("CLASSICS" === logicJson.value.mode) ? initClassicsData: initMimicData
+          logicJson.value = {
+            ...logicJson.value,
+            ...initData
+          };
+          initLogicFlow();
+        });
+      }
+    }
+  }
+}
+
+
+onMounted(() => {
+  if (!appParams.value) appStore.fetchTokenName();
+  if (appParams.value.id) {
+    definitionId.value = appParams.value.id;
+  }
   if (appParams.value.disabled === 'true') {
     disabled.value = true
   }
-  use();
-  lf.value = new LogicFlow({
-    container: proxy.$refs.container,
-    snapline: true,
-    grid: {
-      size: 20,
-      visible: 'true' === appParams.value.showGrid,
-      type: 'dot',
-      config: {
-        color: '#ccc',
-        thickness: 1,
-      },
-      background: {
-        backgroundColor: "#fff",
-      },
-    },
-    keyboard: {
-      enabled: true,
-      shortcuts: [
-        {
-          keys: ["delete"],
-          callback: () => {
-            const elements = lf.value.getSelectElements(true);
-            lf.value.clearSelectElements();
-            elements.edges.forEach((edge) => lf.value.deleteEdge(edge.id));
-            elements.nodes.forEach((node) => lf.value.deleteNode(node.id));
-          },
-        },
-      ],
-    },
-  });
-  register();
-  initDndPanel();
-  lf.value.setTheme({
-    snapline: {
-      stroke: '#1E90FF', // 对齐线颜色
-      strokeWidth: 2, // 对齐线宽度
-    },
-  })
-  initMenu();
-  initEvent();
-  if (definitionId.value) {
-    queryDef(definitionId.value).then(res => {
-      jsonString.value = res.data;
-      if (jsonString.value) {
-        value.value = json2LogicFlowJson(jsonString.value);
-        lf.value.render(value.value);
+  queryDef(definitionId.value).then(res => {
+    jsonString.value = res.data;
+    categoryList.value = res.data.categoryList;
+    if (jsonString.value) {
+      logicJson.value = json2LogicFlowJson(jsonString.value);
+      if (!logicJson.value.nodes || logicJson.value.nodes.length === 0) {
+        // 读取本地文件/initClassicsData.json文件，并将数据转换json对象
+        logicJson.value = {
+          ...logicJson.value,
+          ...initClassicsData
+        };
       }
-    }).catch(() => {
-      lf.value.render({});
-    });
-  }
-  if (!definitionId.value) {
-    proxy.$modal.notifyError("流程id不能为空！");
-    lf.value.render({});
-  }
+    }
+  });
 })
+
+
+// 提取初始化逻辑到单独的函数
+function initLogicFlow() {
+  if (proxy.$refs.containerRef) {
+    use();
+    lf.value = new LogicFlow({
+      container: proxy.$refs.containerRef,
+      grid: {
+        size: 20,
+        visible: 'true' === appParams.value.showGrid,
+        type: 'dot',
+        config: {
+          color: '#ccc',
+          thickness: 1,
+        },
+        background: {
+          backgroundColor: "#fff",
+        },
+      },
+      keyboard: {
+        enabled: true,
+        shortcuts: [
+          {
+            keys: ["delete"],
+            callback: () => {
+              const elements = lf.value.getSelectElements(true);
+              lf.value.clearSelectElements();
+              elements.edges.forEach((edge) => lf.value.deleteEdge(edge.id));
+              elements.nodes.forEach((node) => lf.value.deleteNode(node.id));
+            },
+          },
+        ],
+      },
+    });
+    lf.value.setTheme({
+      snapline: {
+        stroke: '#1E90FF',
+        strokeWidth: 2,
+      },
+    });
+
+    // 只有经典模式才有拖拽面板
+    if ("CLASSICS" === logicJson.value.mode) {
+      initDndPanel();
+    }
+    register();
+    // 只有经典模式才初始化菜单
+    if ("MIMIC" === logicJson.value.mode) {
+      initMenu()
+    }
+    initEvent();
+    if (logicJson.value) {
+      lf.value.render(logicJson.value);
+      zoomViewport(1); // 在可见状态下调用自适应
+    }
+  }
+}
 
 watch(isDark, (v) => {
   if (!lf.value) {
@@ -157,8 +270,7 @@ watch(isDark, (v) => {
  * @param e
  */
 function listeningMessage(e) {
-  const { data } = e;
-  switch (data.type) {
+  switch (e.type) {
     case "theme-dark": {
       isDark.value = true;
       return;
@@ -190,27 +302,10 @@ function initDndPanel() {
     },
     {
       type: 'between',
-      text: '中间节点-或签',
-      label: '中间节点-或签',
+      text: '中间节点',
+      label: '中间节点',
       icon: 'data:image/svg+xml;charset=utf-8;base64,PHN2ZyB0PSIxNzQ4MTc1Mzc1ODI3IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjgzMTkiIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiI+PHBhdGggZD0iTTMzNS43NTE4MDQgMjQ0Ljc4MzE0N0MyODMuNjA3MDI5IDI0NC43ODMxNDcgMjQ2LjMwMzg5OSAyODQuODY5MDYgMjQ2LjE5OTI3IDMzMC41Mjk2NDJsMCAwLjAxMzIwNyAwIDAuMDEyNjQ4YzAuMDAzMjk0IDEzLjgwODQ2NSAzLjczOTc0MyAyOC4zODE3NDcgOS41Nzc0MzEgNDEuNTI2MzQyIDQuMjE1MTMyIDkuNDkxMTE1IDkuNDU1Nzk4IDE4LjIxNjY3NiAxNS44NDE3NDQgMjUuMjA2NjE0QzIzMy42NjU1ODggNDEwLjI3Mjg1MyAxODkuMjAxOTQ5IDQzMS42NDI4ODMgMTY2LjcyOCA0NzMuNzgxNTNMMTY1LjUxNjk2IDQ3Ni4wNTI1MTRsMCAxMzYuNDA4NDgyIDM0MC40Njk2ODkgMCAwLTEzNi40MDg0ODItMS4yMTEwNDMtMi4yNzA5ODRjLTIyLjE1MDcwOC00MS41MzI1NjYtNjUuNjUyMjA0LTYyLjg3Mjg0OC0xMDMuMjM4MjA0LTc1LjkxMTExNiAxOC4zNDg0MTktMTguNjU4MjE4IDIzLjc2MTA0OS00Mi43NDA1NzMgMjMuNzY2OTMyLTY3LjMxNDkybDAtMC4wMTI2NDggMC0wLjAxMzIwN0M0MjUuMTk5NzA3IDI4NC44NjkwNjMgMzg3Ljg5NjU4MyAyNDQuNzgzMTQ3IDMzNS43NTE4MDQgMjQ0Ljc4MzE0N1pNMzAwLjE0ODUyMyAyOTMuNDA0NTIxYzIuNDEwMzI4IDAuMDA2MDU5IDUuMDU2NjUgMC4wODY1NzIgNy45NzQwMTUgMC4yNTg1MjIgMjMuMjQ0MDI5IDEuMzcwMDI5IDMxLjA2Njk5NiA1LjU1NDA1OSAzNy4wODAzMjMgOS41MjIyODMgNi4wMTMyOTggMy45NjgyMjMgMTAuMjUyNDE3IDcuNzQ1Njk5IDI2LjE0NDE4OSA4LjIwODk4MmwwLjAwNDcwNiAwIDAuMDA1Mjk1IDBjMTIuMzgzODktMC40NjMyMTUgMTguMzM5NTA2LTIuNjcxMTM1IDIyLjYxMDQ1Mi01LjE3MjE5MiAxLjczMDY0NS0xLjAxMzQ1MyAzLjE4MzgyNS0yLjA2NzAwMyA0LjY3Mjk1LTMuMDcyOTg0IDMuOTM2MDM2IDguNDM2NjY4IDYuMDQ5NjU0IDE3Ljc2MjkzOCA2LjA3MzU5NyAyNy40MTQ5ODEtMC4wMDgyMzYgMjcuNDg0NjUyLTQuNzMzMzA4IDQ2LjczMjMwMi0yOS45MzQxNTQgNjIuNDgyODNsMi40NjUxNzcgMTguNTgwOTQ0YzUuMjQ1MzUxIDEuNTkyODg5IDEwLjY2NzMwNSAzLjM0MDY3MSAxNi4xNzAzNTQgNS4yNTcyMiAwLjc2ODUzNSAzLjIwNjE4MyAxLjY1NjQ5MiA3LjQxMTMwNiAyLjI1Mzc0OCAxMS44ODE3MzkgMC42MjU2NyA0LjY4MzQ1NCAwLjg3MTc0OSA5LjU1NjMzMyAwLjQ4NjAxMSAxMy4yMTUxMzktMC4zODU3MzggMy42NTg4MDYtMS41MjE3MTYgNS42MzM5NzItMS43MjExNzQgNS44MzM0NTktMTIuODA4OTg0IDEyLjgwODk1NS0zNS41NDYwMzYgMjAuMjc5MTM5LTU4LjYwODQzOCAyMC4yNzkxMzktMjMuMDYyMzkzIDAtNDUuNzk5NDQ0LTcuNDcwMTg0LTU4LjYwODQyMy0yMC4yNzkxMzktMC4xOTk0NjEtMC4xOTk0ODctMS4zMzU0NTYtMi4xNzQ2NTMtMS43MjExOTQtNS44MzM0NTktMC4zODU3MzUtMy42NTg4MDYtMC4xMzk2NjItOC41MzE2ODUgMC40ODYwMjYtMTMuMjE1MTM5IDAuNjAwNTI3LTQuNDk1MTE1IDEuNDk1NTUyLTguNzI1MDI4IDIuMjY2OTYzLTExLjkzNzQ2NyA1LjQ0ODA4Ni0xLjg5NDYwNiAxMC44MTU1NDctMy42MjQwNDIgMTYuMDEwMDczLTUuMjAxNDkxbDEuNDY5NTYxLTE5LjkwOTc1NmMtMS4xOTY1NzEtMS41MzQ1NjQtMi40MTU3ODItMi41NTExNjctMy44NzA5NTktMy42NDI4ODQtNS42MjQzNzctNC4yMTk1NjUtMTIuNDQ1MTQyLTEzLjUwMjI0NS0xNy4yNjMwNDktMjQuMzUwNjEzLTQuODE2MTg5LTEwLjg0NDQ5OS03LjgwMDAzOC0yMy4yNDAwMjMtNy44MDQ1MzYtMzMuMTYyODE4IDAuMDI5OTI2LTExLjg5NjM4MiAzLjIzMTM3OS0yMy4yOTkzMDQgOS4xMTE1MTYtMzMuMTQ5MDMyIDEuMDUyMTE1LTAuMzkxNjE4IDIuMTYxNTY2LTAuODA1NTE3IDMuNDA4NDg4LTEuMjE1NjM0IDQuMzg1MDE3LTEuNDQyMjUgMTAuMzkzOTczLTIuODE4ODg5IDIwLjgzODcxNi0yLjc5MjYyOHpNMjU1LjYzMDc4IDQyNS42MzgxMzZjLTAuMDE4NTAyIDAuMTM0OTYxLTAuMDM5MzUzIDAuMjY2NjgxLTAuMDU3NDQ5IDAuNDAyMTQ4LTAuNzYwOTE0IDUuNjk1NjM2LTEuMjA4MDMxIDExLjg5NTI3My0wLjU1MzgxNyAxOC4xMDA2NzUgMC42NTQyMTQgNi4yMDU0MDIgMi4yOTE1NjggMTIuODg2NDMyIDcuNjM4NTA3IDE4LjIzMzM1IDE4LjI1MDg2MSAxOC4yNTA4ODEgNDUuODcxNzU5IDI2LjMxMDIzMyA3My4xNjczMTggMjYuMzEwMjMzIDI3LjI5NTU1MSAwIDU0LjkxNjQ1Mi04LjA1OTM1MSA3My4xNjczMDQtMjYuMzEwMjMzIDUuMzQ2OTQ4LTUuMzQ2OTE4IDYuOTg0MzItMTIuMDI3OTQ4IDcuNjM4NTIyLTE4LjIzMzM1IDAuNjU0MjAyLTYuMjA1NDMxIDAuMjA3MTA2LTEyLjQwNTAzOS0wLjU1MzgxMS0xOC4xMDA2NzUtMC4wMTUwMDEtMC4xMTIyNDgtMC4wMzI0MTQtMC4yMjEzMDctMC4wNDc2OC0wLjMzMzIxIDI3Ljc0NzUzIDEyLjE2ODM2IDU0LjU2Nzc0NiAyOS41OTUyNjEgNjkuMzY3MDE1IDU1LjYxNDczNGwwIDExMC41NDkyMjgtNDkuMjY4ODMyIDAgMC03Ny45NDc3MDQtMjAuNTg5OTYgMCAwIDc3Ljk0NzcwNC0xNjAuMDEzNCAwIDAtNzcuOTQ3NzA0LTIwLjU4OTk2IDAgMCA3Ny45NDc3MDQtNDguODI3NjE4IDAgMC0xMTAuNTQ5MjI4YzE0LjgyNzE1Ni0yNi4wNjg1MzYgNDEuNzIwNTQ3LTQzLjUxMjIzMiA2OS41MjM4Ni01NS42ODM2NzJ6TTIxOS45ODEgMTA3LjUxOTU3NWMtMTA5LjkzNDgyNCAwLTE5OS41MDEgODkuMTg4MzQ1LTE5OS41MDEgMTk4LjkxMTk5OWwwIDQxMS4xMzU5ODljMCAxMDkuNzIzNjU5IDg5LjU2NjE3NiAxOTguOTEyMDExIDE5OS41MDEgMTk4LjkxMjAxMWw1ODQuMDM3OTg5IDBjMTA5LjkzNDg1MyAwIDE5OS41MDEwMDEtODkuMTg4MzUxIDE5OS41MDEwMDEtMTk4LjkxMjAxMWwwLTQxMS4xMzU5ODljMC0xMDkuNzIzNjUzLTg5LjU2NjE0OC0xOTguOTExOTk5LTE5OS41MDEwMDEtMTk4LjkxMTk5OWwtNTg0LjAzNzk4OSAwem0wIDYxLjQ0MDAwMWw1ODQuMDM3OTg5IDBjNzcuMDc0OTU1IDAgMTM4LjA2MTAwMyA2MC44Mzg5MTUgMTM4LjA2MTAwMyAxMzcuNDcxOTk4bDAgNDExLjEzNTk4OWMwIDc2LjYzMzA5NC02MC45ODYwNDggMTM3LjQ3MjAxMi0xMzguMDYxMDAzIDEzNy40NzIwMTJsLTU4NC4wMzc5ODkgMGMtNzcuMDc0OTYgMC0xMzguMDYxLTYwLjgzODkxOC0xMzguMDYxLTEzNy40NzIwMTJsMC00MTEuMTM1OTg5YzAtNzYuNjMzMDgyIDYwLjk4NjA0LTEzNy40NzE5OTggMTM4LjA2MS0xMzcuNDcxOTk4eiIgcC1pZD0iODMyMCI+PC9wYXRoPjwvc3ZnPg==',
-      className: 'important-node',
       properties: {collaborativeWay: '1'},
-    },
-    {
-      type: 'between',
-      text: '中间节点-票签',
-      label: '中间节点-票签',
-      icon: 'data:image/svg+xml;charset=utf-8;base64,PHN2ZyB0PSIxNzQ4MTc1Mzc1ODI3IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjgzMTkiIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiI+PHBhdGggZD0iTTMzNS43NTE4MDQgMjQ0Ljc4MzE0N0MyODMuNjA3MDI5IDI0NC43ODMxNDcgMjQ2LjMwMzg5OSAyODQuODY5MDYgMjQ2LjE5OTI3IDMzMC41Mjk2NDJsMCAwLjAxMzIwNyAwIDAuMDEyNjQ4YzAuMDAzMjk0IDEzLjgwODQ2NSAzLjczOTc0MyAyOC4zODE3NDcgOS41Nzc0MzEgNDEuNTI2MzQyIDQuMjE1MTMyIDkuNDkxMTE1IDkuNDU1Nzk4IDE4LjIxNjY3NiAxNS44NDE3NDQgMjUuMjA2NjE0QzIzMy42NjU1ODggNDEwLjI3Mjg1MyAxODkuMjAxOTQ5IDQzMS42NDI4ODMgMTY2LjcyOCA0NzMuNzgxNTNMMTY1LjUxNjk2IDQ3Ni4wNTI1MTRsMCAxMzYuNDA4NDgyIDM0MC40Njk2ODkgMCAwLTEzNi40MDg0ODItMS4yMTEwNDMtMi4yNzA5ODRjLTIyLjE1MDcwOC00MS41MzI1NjYtNjUuNjUyMjA0LTYyLjg3Mjg0OC0xMDMuMjM4MjA0LTc1LjkxMTExNiAxOC4zNDg0MTktMTguNjU4MjE4IDIzLjc2MTA0OS00Mi43NDA1NzMgMjMuNzY2OTMyLTY3LjMxNDkybDAtMC4wMTI2NDggMC0wLjAxMzIwN0M0MjUuMTk5NzA3IDI4NC44NjkwNjMgMzg3Ljg5NjU4MyAyNDQuNzgzMTQ3IDMzNS43NTE4MDQgMjQ0Ljc4MzE0N1pNMzAwLjE0ODUyMyAyOTMuNDA0NTIxYzIuNDEwMzI4IDAuMDA2MDU5IDUuMDU2NjUgMC4wODY1NzIgNy45NzQwMTUgMC4yNTg1MjIgMjMuMjQ0MDI5IDEuMzcwMDI5IDMxLjA2Njk5NiA1LjU1NDA1OSAzNy4wODAzMjMgOS41MjIyODMgNi4wMTMyOTggMy45NjgyMjMgMTAuMjUyNDE3IDcuNzQ1Njk5IDI2LjE0NDE4OSA4LjIwODk4MmwwLjAwNDcwNiAwIDAuMDA1Mjk1IDBjMTIuMzgzODktMC40NjMyMTUgMTguMzM5NTA2LTIuNjcxMTM1IDIyLjYxMDQ1Mi01LjE3MjE5MiAxLjczMDY0NS0xLjAxMzQ1MyAzLjE4MzgyNS0yLjA2NzAwMyA0LjY3Mjk1LTMuMDcyOTg0IDMuOTM2MDM2IDguNDM2NjY4IDYuMDQ5NjU0IDE3Ljc2MjkzOCA2LjA3MzU5NyAyNy40MTQ5ODEtMC4wMDgyMzYgMjcuNDg0NjUyLTQuNzMzMzA4IDQ2LjczMjMwMi0yOS45MzQxNTQgNjIuNDgyODNsMi40NjUxNzcgMTguNTgwOTQ0YzUuMjQ1MzUxIDEuNTkyODg5IDEwLjY2NzMwNSAzLjM0MDY3MSAxNi4xNzAzNTQgNS4yNTcyMiAwLjc2ODUzNSAzLjIwNjE4MyAxLjY1NjQ5MiA3LjQxMTMwNiAyLjI1Mzc0OCAxMS44ODE3MzkgMC42MjU2NyA0LjY4MzQ1NCAwLjg3MTc0OSA5LjU1NjMzMyAwLjQ4NjAxMSAxMy4yMTUxMzktMC4zODU3MzggMy42NTg4MDYtMS41MjE3MTYgNS42MzM5NzItMS43MjExNzQgNS44MzM0NTktMTIuODA4OTg0IDEyLjgwODk1NS0zNS41NDYwMzYgMjAuMjc5MTM5LTU4LjYwODQzOCAyMC4yNzkxMzktMjMuMDYyMzkzIDAtNDUuNzk5NDQ0LTcuNDcwMTg0LTU4LjYwODQyMy0yMC4yNzkxMzktMC4xOTk0NjEtMC4xOTk0ODctMS4zMzU0NTYtMi4xNzQ2NTMtMS43MjExOTQtNS44MzM0NTktMC4zODU3MzUtMy42NTg4MDYtMC4xMzk2NjItOC41MzE2ODUgMC40ODYwMjYtMTMuMjE1MTM5IDAuNjAwNTI3LTQuNDk1MTE1IDEuNDk1NTUyLTguNzI1MDI4IDIuMjY2OTYzLTExLjkzNzQ2NyA1LjQ0ODA4Ni0xLjg5NDYwNiAxMC44MTU1NDctMy42MjQwNDIgMTYuMDEwMDczLTUuMjAxNDkxbDEuNDY5NTYxLTE5LjkwOTc1NmMtMS4xOTY1NzEtMS41MzQ1NjQtMi40MTU3ODItMi41NTExNjctMy44NzA5NTktMy42NDI4ODQtNS42MjQzNzctNC4yMTk1NjUtMTIuNDQ1MTQyLTEzLjUwMjI0NS0xNy4yNjMwNDktMjQuMzUwNjEzLTQuODE2MTg5LTEwLjg0NDQ5OS03LjgwMDAzOC0yMy4yNDAwMjMtNy44MDQ1MzYtMzMuMTYyODE4IDAuMDI5OTI2LTExLjg5NjM4MiAzLjIzMTM3OS0yMy4yOTkzMDQgOS4xMTE1MTYtMzMuMTQ5MDMyIDEuMDUyMTE1LTAuMzkxNjE4IDIuMTYxNTY2LTAuODA1NTE3IDMuNDA4NDg4LTEuMjE1NjM0IDQuMzg1MDE3LTEuNDQyMjUgMTAuMzkzOTczLTIuODE4ODg5IDIwLjgzODcxNi0yLjc5MjYyOHpNMjU1LjYzMDc4IDQyNS42MzgxMzZjLTAuMDE4NTAyIDAuMTM0OTYxLTAuMDM5MzUzIDAuMjY2NjgxLTAuMDU3NDQ5IDAuNDAyMTQ4LTAuNzYwOTE0IDUuNjk1NjM2LTEuMjA4MDMxIDExLjg5NTI3My0wLjU1MzgxNyAxOC4xMDA2NzUgMC42NTQyMTQgNi4yMDU0MDIgMi4yOTE1NjggMTIuODg2NDMyIDcuNjM4NTA3IDE4LjIzMzM1IDE4LjI1MDg2MSAxOC4yNTA4ODEgNDUuODcxNzU5IDI2LjMxMDIzMyA3My4xNjczMTggMjYuMzEwMjMzIDI3LjI5NTU1MSAwIDU0LjkxNjQ1Mi04LjA1OTM1MSA3My4xNjczMDQtMjYuMzEwMjMzIDUuMzQ2OTQ4LTUuMzQ2OTE4IDYuOTg0MzItMTIuMDI3OTQ4IDcuNjM4NTIyLTE4LjIzMzM1IDAuNjU0MjAyLTYuMjA1NDMxIDAuMjA3MTA2LTEyLjQwNTAzOS0wLjU1MzgxMS0xOC4xMDA2NzUtMC4wMTUwMDEtMC4xMTIyNDgtMC4wMzI0MTQtMC4yMjEzMDctMC4wNDc2OC0wLjMzMzIxIDI3Ljc0NzUzIDEyLjE2ODM2IDU0LjU2Nzc0NiAyOS41OTUyNjEgNjkuMzY3MDE1IDU1LjYxNDczNGwwIDExMC41NDkyMjgtNDkuMjY4ODMyIDAgMC03Ny45NDc3MDQtMjAuNTg5OTYgMCAwIDc3Ljk0NzcwNC0xNjAuMDEzNCAwIDAtNzcuOTQ3NzA0LTIwLjU4OTk2IDAgMCA3Ny45NDc3MDQtNDguODI3NjE4IDAgMC0xMTAuNTQ5MjI4YzE0LjgyNzE1Ni0yNi4wNjg1MzYgNDEuNzIwNTQ3LTQzLjUxMjIzMiA2OS41MjM4Ni01NS42ODM2NzJ6TTIxOS45ODEgMTA3LjUxOTU3NWMtMTA5LjkzNDgyNCAwLTE5OS41MDEgODkuMTg4MzQ1LTE5OS41MDEgMTk4LjkxMTk5OWwwIDQxMS4xMzU5ODljMCAxMDkuNzIzNjU5IDg5LjU2NjE3NiAxOTguOTEyMDExIDE5OS41MDEgMTk4LjkxMjAxMWw1ODQuMDM3OTg5IDBjMTA5LjkzNDg1MyAwIDE5OS41MDEwMDEtODkuMTg4MzUxIDE5OS41MDEwMDEtMTk4LjkxMjAxMWwwLTQxMS4xMzU5ODljMC0xMDkuNzIzNjUzLTg5LjU2NjE0OC0xOTguOTExOTk5LTE5OS41MDEwMDEtMTk4LjkxMTk5OWwtNTg0LjAzNzk4OSAwem0wIDYxLjQ0MDAwMWw1ODQuMDM3OTg5IDBjNzcuMDc0OTU1IDAgMTM4LjA2MTAwMyA2MC44Mzg5MTUgMTM4LjA2MTAwMyAxMzcuNDcxOTk4bDAgNDExLjEzNTk4OWMwIDc2LjYzMzA5NC02MC45ODYwNDggMTM3LjQ3MjAxMi0xMzguMDYxMDAzIDEzNy40NzIwMTJsLTU4NC4wMzc5ODkgMGMtNzcuMDc0OTYgMC0xMzguMDYxLTYwLjgzODkxOC0xMzguMDYxLTEzNy40NzIwMTJsMC00MTEuMTM1OTg5YzAtNzYuNjMzMDgyIDYwLjk4NjA0LTEzNy40NzE5OTggMTM4LjA2MS0xMzcuNDcxOTk4eiIgcC1pZD0iODMyMCI+PC9wYXRoPjwvc3ZnPg==',
-      className: 'important-node',
-      properties: {collaborativeWay: '2', nodeRatio: '50'},
-    },
-    {
-      type: 'between',
-      text: '中间节点-会签',
-      label: '中间节点-会签',
-      icon: 'data:image/svg+xml;charset=utf-8;base64,PHN2ZyB0PSIxNzQ4MTc1Mzc1ODI3IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjgzMTkiIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiI+PHBhdGggZD0iTTMzNS43NTE4MDQgMjQ0Ljc4MzE0N0MyODMuNjA3MDI5IDI0NC43ODMxNDcgMjQ2LjMwMzg5OSAyODQuODY5MDYgMjQ2LjE5OTI3IDMzMC41Mjk2NDJsMCAwLjAxMzIwNyAwIDAuMDEyNjQ4YzAuMDAzMjk0IDEzLjgwODQ2NSAzLjczOTc0MyAyOC4zODE3NDcgOS41Nzc0MzEgNDEuNTI2MzQyIDQuMjE1MTMyIDkuNDkxMTE1IDkuNDU1Nzk4IDE4LjIxNjY3NiAxNS44NDE3NDQgMjUuMjA2NjE0QzIzMy42NjU1ODggNDEwLjI3Mjg1MyAxODkuMjAxOTQ5IDQzMS42NDI4ODMgMTY2LjcyOCA0NzMuNzgxNTNMMTY1LjUxNjk2IDQ3Ni4wNTI1MTRsMCAxMzYuNDA4NDgyIDM0MC40Njk2ODkgMCAwLTEzNi40MDg0ODItMS4yMTEwNDMtMi4yNzA5ODRjLTIyLjE1MDcwOC00MS41MzI1NjYtNjUuNjUyMjA0LTYyLjg3Mjg0OC0xMDMuMjM4MjA0LTc1LjkxMTExNiAxOC4zNDg0MTktMTguNjU4MjE4IDIzLjc2MTA0OS00Mi43NDA1NzMgMjMuNzY2OTMyLTY3LjMxNDkybDAtMC4wMTI2NDggMC0wLjAxMzIwN0M0MjUuMTk5NzA3IDI4NC44NjkwNjMgMzg3Ljg5NjU4MyAyNDQuNzgzMTQ3IDMzNS43NTE4MDQgMjQ0Ljc4MzE0N1pNMzAwLjE0ODUyMyAyOTMuNDA0NTIxYzIuNDEwMzI4IDAuMDA2MDU5IDUuMDU2NjUgMC4wODY1NzIgNy45NzQwMTUgMC4yNTg1MjIgMjMuMjQ0MDI5IDEuMzcwMDI5IDMxLjA2Njk5NiA1LjU1NDA1OSAzNy4wODAzMjMgOS41MjIyODMgNi4wMTMyOTggMy45NjgyMjMgMTAuMjUyNDE3IDcuNzQ1Njk5IDI2LjE0NDE4OSA4LjIwODk4MmwwLjAwNDcwNiAwIDAuMDA1Mjk1IDBjMTIuMzgzODktMC40NjMyMTUgMTguMzM5NTA2LTIuNjcxMTM1IDIyLjYxMDQ1Mi01LjE3MjE5MiAxLjczMDY0NS0xLjAxMzQ1MyAzLjE4MzgyNS0yLjA2NzAwMyA0LjY3Mjk1LTMuMDcyOTg0IDMuOTM2MDM2IDguNDM2NjY4IDYuMDQ5NjU0IDE3Ljc2MjkzOCA2LjA3MzU5NyAyNy40MTQ5ODEtMC4wMDgyMzYgMjcuNDg0NjUyLTQuNzMzMzA4IDQ2LjczMjMwMi0yOS45MzQxNTQgNjIuNDgyODNsMi40NjUxNzcgMTguNTgwOTQ0YzUuMjQ1MzUxIDEuNTkyODg5IDEwLjY2NzMwNSAzLjM0MDY3MSAxNi4xNzAzNTQgNS4yNTcyMiAwLjc2ODUzNSAzLjIwNjE4MyAxLjY1NjQ5MiA3LjQxMTMwNiAyLjI1Mzc0OCAxMS44ODE3MzkgMC42MjU2NyA0LjY4MzQ1NCAwLjg3MTc0OSA5LjU1NjMzMyAwLjQ4NjAxMSAxMy4yMTUxMzktMC4zODU3MzggMy42NTg4MDYtMS41MjE3MTYgNS42MzM5NzItMS43MjExNzQgNS44MzM0NTktMTIuODA4OTg0IDEyLjgwODk1NS0zNS41NDYwMzYgMjAuMjc5MTM5LTU4LjYwODQzOCAyMC4yNzkxMzktMjMuMDYyMzkzIDAtNDUuNzk5NDQ0LTcuNDcwMTg0LTU4LjYwODQyMy0yMC4yNzkxMzktMC4xOTk0NjEtMC4xOTk0ODctMS4zMzU0NTYtMi4xNzQ2NTMtMS43MjExOTQtNS44MzM0NTktMC4zODU3MzUtMy42NTg4MDYtMC4xMzk2NjItOC41MzE2ODUgMC40ODYwMjYtMTMuMjE1MTM5IDAuNjAwNTI3LTQuNDk1MTE1IDEuNDk1NTUyLTguNzI1MDI4IDIuMjY2OTYzLTExLjkzNzQ2NyA1LjQ0ODA4Ni0xLjg5NDYwNiAxMC44MTU1NDctMy42MjQwNDIgMTYuMDEwMDczLTUuMjAxNDkxbDEuNDY5NTYxLTE5LjkwOTc1NmMtMS4xOTY1NzEtMS41MzQ1NjQtMi40MTU3ODItMi41NTExNjctMy44NzA5NTktMy42NDI4ODQtNS42MjQzNzctNC4yMTk1NjUtMTIuNDQ1MTQyLTEzLjUwMjI0NS0xNy4yNjMwNDktMjQuMzUwNjEzLTQuODE2MTg5LTEwLjg0NDQ5OS03LjgwMDAzOC0yMy4yNDAwMjMtNy44MDQ1MzYtMzMuMTYyODE4IDAuMDI5OTI2LTExLjg5NjM4MiAzLjIzMTM3OS0yMy4yOTkzMDQgOS4xMTE1MTYtMzMuMTQ5MDMyIDEuMDUyMTE1LTAuMzkxNjE4IDIuMTYxNTY2LTAuODA1NTE3IDMuNDA4NDg4LTEuMjE1NjM0IDQuMzg1MDE3LTEuNDQyMjUgMTAuMzkzOTczLTIuODE4ODg5IDIwLjgzODcxNi0yLjc5MjYyOHpNMjU1LjYzMDc4IDQyNS42MzgxMzZjLTAuMDE4NTAyIDAuMTM0OTYxLTAuMDM5MzUzIDAuMjY2NjgxLTAuMDU3NDQ5IDAuNDAyMTQ4LTAuNzYwOTE0IDUuNjk1NjM2LTEuMjA4MDMxIDExLjg5NTI3My0wLjU1MzgxNyAxOC4xMDA2NzUgMC42NTQyMTQgNi4yMDU0MDIgMi4yOTE1NjggMTIuODg2NDMyIDcuNjM4NTA3IDE4LjIzMzM1IDE4LjI1MDg2MSAxOC4yNTA4ODEgNDUuODcxNzU5IDI2LjMxMDIzMyA3My4xNjczMTggMjYuMzEwMjMzIDI3LjI5NTU1MSAwIDU0LjkxNjQ1Mi04LjA1OTM1MSA3My4xNjczMDQtMjYuMzEwMjMzIDUuMzQ2OTQ4LTUuMzQ2OTE4IDYuOTg0MzItMTIuMDI3OTQ4IDcuNjM4NTIyLTE4LjIzMzM1IDAuNjU0MjAyLTYuMjA1NDMxIDAuMjA3MTA2LTEyLjQwNTAzOS0wLjU1MzgxMS0xOC4xMDA2NzUtMC4wMTUwMDEtMC4xMTIyNDgtMC4wMzI0MTQtMC4yMjEzMDctMC4wNDc2OC0wLjMzMzIxIDI3Ljc0NzUzIDEyLjE2ODM2IDU0LjU2Nzc0NiAyOS41OTUyNjEgNjkuMzY3MDE1IDU1LjYxNDczNGwwIDExMC41NDkyMjgtNDkuMjY4ODMyIDAgMC03Ny45NDc3MDQtMjAuNTg5OTYgMCAwIDc3Ljk0NzcwNC0xNjAuMDEzNCAwIDAtNzcuOTQ3NzA0LTIwLjU4OTk2IDAgMCA3Ny45NDc3MDQtNDguODI3NjE4IDAgMC0xMTAuNTQ5MjI4YzE0LjgyNzE1Ni0yNi4wNjg1MzYgNDEuNzIwNTQ3LTQzLjUxMjIzMiA2OS41MjM4Ni01NS42ODM2NzJ6TTIxOS45ODEgMTA3LjUxOTU3NWMtMTA5LjkzNDgyNCAwLTE5OS41MDEgODkuMTg4MzQ1LTE5OS41MDEgMTk4LjkxMTk5OWwwIDQxMS4xMzU5ODljMCAxMDkuNzIzNjU5IDg5LjU2NjE3NiAxOTguOTEyMDExIDE5OS41MDEgMTk4LjkxMjAxMWw1ODQuMDM3OTg5IDBjMTA5LjkzNDg1MyAwIDE5OS41MDEwMDEtODkuMTg4MzUxIDE5OS41MDEwMDEtMTk4LjkxMjAxMWwwLTQxMS4xMzU5ODljMC0xMDkuNzIzNjUzLTg5LjU2NjE0OC0xOTguOTExOTk5LTE5OS41MDEwMDEtMTk4LjkxMTk5OWwtNTg0LjAzNzk4OSAwem0wIDYxLjQ0MDAwMWw1ODQuMDM3OTg5IDBjNzcuMDc0OTU1IDAgMTM4LjA2MTAwMyA2MC44Mzg5MTUgMTM4LjA2MTAwMyAxMzcuNDcxOTk4bDAgNDExLjEzNTk4OWMwIDc2LjYzMzA5NC02MC45ODYwNDggMTM3LjQ3MjAxMi0xMzguMDYxMDAzIDEzNy40NzIwMTJsLTU4NC4wMzc5ODkgMGMtNzcuMDc0OTYgMC0xMzguMDYxLTYwLjgzODkxOC0xMzguMDYxLTEzNy40NzIwMTJsMC00MTEuMTM1OTg5YzAtNzYuNjMzMDgyIDYwLjk4NjA0LTEzNy40NzE5OTggMTM4LjA2MS0xMzcuNDcxOTk4eiIgcC1pZD0iODMyMCI+PC9wYXRoPjwvc3ZnPg==',
-      className: 'important-node',
-      properties: {collaborativeWay: '3'},
     },
     {
       type: 'serial',
@@ -230,19 +325,40 @@ function initDndPanel() {
       type: 'end',
       text: '结束',
       label: '结束节点',
-      icon: 'data:image/svg+xml;charset=utf-8;base64,PHN2ZyB0PSIxNzQ4MTc1ODQ2ODU1IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjE5NDMyIiB3aWR0aD0iMzYiIGhlaWdodD0iMzYiPjxwYXRoIGQ9Ik01MTIgMGE1MTIgNTEyIDAgMSAxIDAgMTAyNEE1MTIgNTEyIDAgMCAxIDUxMiAweiBtMCA2NGE0NDggNDQ4IDAgMSAwIDAgODk2QTQ0OCA0NDggMCAwIDAgNTEyIDY0eiIgZmlsbD0iIzAwMDAwMCIgcC1pZD0iMTk0MzMiPjwvcGF0aD48cGF0aCBkPSJNNTEyIDEyOGEzODQgMzg0IDAgMSAxIDAgNzY4QTM4NCAzODQgMCAwIDEgNTEyIDEyOHogbTAgNjRhMzIwIDMyMCAwIDEgMCAwIDY0MEEzMjAgMzIwIDAgMCAwIDUxMiAxOTJ6IiBmaWxsPSIjMDAwMDAwIiBwLWlkPSIxOTQzNCI+PC9wYXRoPjwvc3ZnPg==',
+      icon: "data:image/svg+xml;charset=utf-8;base64,PHN2ZyB0PSIxNzUwMzg4OTY4OTA4IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIg0KICAgICB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjY5MTciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIg0KICAgICB3aWR0aD0iMzYiIGhlaWdodD0iMzYiPg0KICA8cGF0aCBkPSJNNTEyLjAwNTExNyA5NTguNzA4OTcxQzI2NS42ODMwMzUgOTU4LjcwODk3MSA2NS4yOTAwMDUgNzU4LjMxNjk2NSA2NS4yOTAwMDUgNTExLjk5Mzg2YzAtMjQ2LjMxMDgyNSAyMDAuMzkzMDMtNDQ2LjcwMzg1NSA0NDYuNzE1MTExLTQ0Ni43MDM4NTUgMjQ2LjMxMDgyNSAwIDQ0Ni43MDM4NTUgMjAwLjM5MzAzIDQ0Ni43MDM4NTUgNDQ2LjcwMzg1NUM5NTguNzA4OTcxIDc1OC4zMTY5NjUgNzU4LjMxNjk2NSA5NTguNzA4OTcxIDUxMi4wMDUxMTcgOTU4LjcwODk3MXpNNTEyLjAwNTExNyAxNjkuNzE2MzU2Yy0xODguNzM4NTk1IDAtMzQyLjI4OTc4NCAxNTMuNTQ1MDQ4LTM0Mi4yODk3ODQgMzQyLjI3NzUwNCAwIDE4OC43Mzg1OTUgMTUzLjU1MTE4OCAzNDIuMjg5Nzg0IDM0Mi4yODk3ODQgMzQyLjI4OTc4NCAxODguNzMzNDc5IDAgMzQyLjI3ODUyNy0xNTMuNTUxMTg4IDM0Mi4yNzg1MjctMzQyLjI4OTc4NEM4NTQuMjgzNjQ0IDMyMy4yNjE0MDUgNzAwLjczODU5NSAxNjkuNzE2MzU2IDUxMi4wMDUxMTcgMTY5LjcxNjM1NnoiIHAtaWQ9IjY5MTgiPjwvcGF0aD4NCjwvc3ZnPg=="
     },
   ]);
 }
-function saveJsonModel() {
-  const loadingInstance = ElLoading.service(({ fullscreen: true , text: "保存中，请稍等"}))
-  let graphData = lf.value.getGraphData()
-  value.value['nodes'] = graphData['nodes']
-  value.value['edges'] = graphData['edges']
-  value.value['id'] = definitionId.value
-  let jsonString = logicFlowJsonToWarmFlow(value.value);
-  saveJson(jsonString).then(response => {
 
+function getBaseInfo() {
+  const baseInfoData = proxy.$refs.baseInfoRef.getFormData();
+  logicJson.value = {
+    ...logicJson.value,
+    ...baseInfoData
+  };
+}
+
+function handleFlowNameUpdate(newName) {
+  logicJson.value.flowName = newName; // 更新父组件中的流程名称
+}
+
+async function saveJsonModel() {
+  const loadingInstance = ElLoading.service(({fullscreen: true, text: "保存中，请稍等"}))
+  let validate = await proxy.$refs.baseInfoRef.validate();
+  if (!validate) {
+    loadingInstance.close();
+    return;
+  }
+  getBaseInfo();
+  if (lf.value) {
+    let graphData = lf.value.getGraphData()
+    logicJson.value['nodes'] = graphData['nodes']
+    logicJson.value['edges'] = graphData['edges']
+  }
+  logicJson.value['id'] = definitionId.value
+
+  let jsonString = logicFlowJsonToWarmFlow(logicJson.value);
+  saveJson(jsonString).then(response => {
     if (response.code === 200) {
       proxy.$modal.msgSuccess("保存成功");
       close();
@@ -259,69 +375,106 @@ function saveJsonModel() {
  */
 function initMenu() {
   // 为菜单追加选项（必须在 lf.render() 之前设置）
-  lf.value.extension.menu.addMenuConfig({
-    nodeMenu: [
+  lf.value.extension.menu.setMenuConfig({
+    nodeMenu: [],
+    edgeMenu: [
       {
-        text: "属性",
-        callback(node) {
-          alert(`
-          节点id：${node.id}
-          节点类型：${node.type}
-          节点坐标：(x: ${node.x}, y: ${node.y})
-          文本坐标：(x: ${node.text.x}, y: ${node.text.y})`);
+        text: "添加中间节点",
+        callback(edge) {
+          addBetweenNode(lf.value, edge, "between");
+        },
+      },
+      {
+        text: "添加互斥网关",
+        callback(edge) {
+          addGatewayNode(lf.value, edge, "serial");
+        },
+      },
+      {
+        text: "添加并行网关",
+        callback(edge) {
+          addGatewayNode(lf.value, edge, "parallel");
         },
       },
     ],
-    edgeMenu: [
+  });
+
+  // 指定类型元素配置菜单
+  lf.value.extension.menu.setMenuByType({
+    type: "serial",
+    menu: [
       {
-        text: "属性",
-        callback(edge) {
-          alert(`
-          边id：${edge.id}
-          边类型：${edge.type}
-          边坐标：(x: ${edge.x}, y: ${edge.y})
-          文本坐标：(x: ${edge.text.x}, y: ${edge.text.y})
-          源节点id：${edge.sourceNodeId}
-          目标节点id：${edge.targetNodeId}`);
+        text: "添加中间节点",
+        callback(node) {
+          gatewayAddNode(lf.value, node);
+        },
+      },
+    ],
+  });
+
+  lf.value.extension.menu.setMenuByType({
+    type: "parallel",
+    menu: [
+      {
+        text: "添加中间节点",
+        callback(node) {
+          gatewayAddNode(lf.value, node);
         },
       },
     ],
   });
 }
+
 /**
  * 注册自定义节点和边
  */
 function register() {
-  lf.value.register(Start);
-  lf.value.register(Between);
-  lf.value.register(Serial);
-  lf.value.register(Parallel);
-  lf.value.register(End);
-  lf.value.register(Skip);
+  if ("CLASSICS" === logicJson.value.mode) {
+    lf.value.register(StartC);
+    lf.value.register(BetweenC);
+    lf.value.register(SerialC);
+    lf.value.register(ParallelC);
+    lf.value.register(EndC);
+    lf.value.register(SkipC);
+  } else {
+    lf.value.register(StartM);
+    lf.value.register(BetweenM);
+    lf.value.register(SerialM);
+    lf.value.register(ParallelM);
+    lf.value.register(EndM);
+    lf.value.register(SkipM);
+  }
+
 }
 
 /**
  * 添加扩展
  */
 function use() {
-  LogicFlow.use(DndPanel);
-  LogicFlow.use(SelectionSelect);
+  // 只有经典模式才有拖拽面板
+  if ("CLASSICS" === logicJson.value.mode) {
+    LogicFlow.use(DndPanel);
+  }
   LogicFlow.use(Menu);
   LogicFlow.use(Snapshot);
 }
 function initEvent() {
   const { eventCenter } = lf.value.graphModel
-  eventCenter.on('node:click', (args) => {
-    nodeClick.value = args.data
-    let graphData = lf.value.getGraphData()
-    nodes.value = graphData['nodes']
-    skips.value = graphData['edges']
-    proxy.$nextTick(() => {
-      propertySettingRef.value.show()
-    })
+  // 中间节点双击事件
+  eventCenter.on('node:dbclick', (args) => {
+    if ('between' === args.data.type) {
+      nodeClick.value = args.data
+      let graphData = lf.value.getGraphData()
+      nodes.value = graphData['nodes']
+      skips.value = graphData['edges']
+      proxy.$nextTick(() => {
+        propertySettingRef.value.show()
+      })
+    }
   })
 
-  eventCenter.on('edge:click  ', (args) => {
+  // 边双击事件
+  eventCenter.on('edge:dbclick  ', (args) => {
     nodeClick.value = args.data
     const nodeModel = lf.value.getNodeModelById(nodeClick.value.sourceNodeId);
     skipConditionShow.value = nodeModel['type'] === 'serial'
@@ -348,15 +501,18 @@ function initEvent() {
     })
   })
 }
+
 /** 关闭按钮 */
 function close() {
   window.parent.postMessage({ method: "close" }, "*");
 }
+
 const zoomViewport = async (zoom) => {
   lf.value.zoom(zoom);
   // 将内容平移至画布中心
   lf.value.translateCenter();
 };
+
 const undoOrRedo = async (undo) => {
   if(undo){
     lf.value.undo(undo)
@@ -373,7 +529,7 @@ const clear = async () => {
  * 下载流程图
  */
 function downLoad() {
-  lf.value.getSnapshot(value.value.flowName, {
+  lf.value.getSnapshot(logicJson.value.flowName, {
     fileType: 'png',        // 可选：'png'、'webp'、'jpeg'、'svg'
     backgroundColor: '#f5f5f5',
     padding: 30,           // 内边距，单位为像素
@@ -381,32 +537,45 @@ function downLoad() {
     quality: 0.92          // 对jpeg和webp格式有效，取值范围0-1
   })
 }
+
+async function downJson() {
+  try {
+    getBaseInfo();
+    if (lf.value) {
+      let graphData = lf.value.getGraphData()
+      logicJson.value['nodes'] = graphData['nodes']
+      logicJson.value['edges'] = graphData['edges']
+    }
+    let jsonString = logicFlowJsonToWarmFlow(logicJson.value);
+
+    // 创建 Blob 并触发下载
+    const filename = `${logicJson.value.flowName}_${logicJson.value.version}.json`;
+    // 格式化用于下载
+    const jsonPretty = JSON.stringify(JSON.parse(jsonString), null, 2); // 先 parse 成对象再 stringify
+    const blob = new Blob([jsonPretty], { type: 'application/json' });
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(downloadUrl);
+  } catch (error) {
+    console.error('下载失败:', error);
+  }
+}
+
 </script>
 
 <style>
-
 .container {
   flex: 1;
   width: 100%;
-  height: 800px;
+  height: 800px; /* 根据实际需求调整高度 */
 }
 
-.top-text {
-  position: absolute;
-  font-weight: bold;
-  left: 500px;
-  top: 10px;
-  border: 1px solid #d1e9ff;
-  background-color: #e8f4ff;
-  padding: 4px 8px;
-  border-radius: 4px;
-  max-width: 300px;
-  font-size: 15px; /* 可以根据需要调整字体大小 */
-  color: #333; /* 可以根据需要调整颜色 */
-  z-index: 1; /* 确保文本在其他内容之上显示 */
-}
-
-.log-text {
+.logo-text {
   position: absolute;
   font-weight: bold;
   right: 10px;
@@ -415,4 +584,62 @@ function downLoad() {
   color: #333; /* 可以根据需要调整颜色 */
   z-index: 1; /* 确保文本在其他内容之上显示 */
 }
+
+.flow-name {
+  font-weight: bold;
+  padding-left: 40px;
+  margin-right: 10px; /* 右侧间距 */
+  width: 500px;
+  max-width: 500px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #333; /* 可以根据需要调整颜色 */
+}
+
+.steps-container {
+  display: flex;
+  align-items: center;
+  height: 35px;
+  justify-content: space-between; /* 确保内容在水平方向上两端对齐 */
+}
+
+.topButton {
+  display: flex;
+  align-items: center; /* 垂直居中对齐 */
+  margin-left: auto; /* 确保按钮始终位于最右边 */
+  margin-right: 50px; /* 添加此行，设置与右边的距离 */
+  button {
+    background-color: #1890ff;
+    color: #FFF;
+    font-size: 15px;
+  }
+}
+
+.baseInfo {
+  background-color: #fff;
+  border: 1px solid #ddd; /* 添加边框 */
+  border-radius: 6px; /* 添加圆角 */
+  margin: 5px;
+}
+
+.steps {
+  display: flex;
+}
+
+.step-item {
+  display: flex;
+  align-items: center;
+  margin-right: 100px;
+  cursor: pointer;
+}
+
+.step-item i {
+  margin-right: 5px;
+}
+
+.step-item.active {
+  color: #409eff; /* 选中时为深色 */
+}
+
 </style>

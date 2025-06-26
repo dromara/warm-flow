@@ -77,6 +77,11 @@ public class FlowDefinition implements Definition {
     private String flowName;
 
     /**
+     * 设计器模式（CLASSICS经典模式 MIMIC仿钉钉模式）
+     */
+    private String mode;
+
+    /**
      * 流程类别
      */
     private String category;

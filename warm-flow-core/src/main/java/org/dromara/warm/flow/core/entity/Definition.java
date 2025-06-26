@@ -65,6 +65,10 @@ public interface Definition extends RootEntity {
 
     public Definition setFlowName(String flowName);
 
+    public String getMode();
+
+    public Definition setMode(String mode);
+
     public String getCategory();
 
     public Definition setCategory(String category);
@@ -111,16 +115,12 @@ public interface Definition extends RootEntity {
 
     default Definition copy() {
         return FlowEngine.newDef()
-                .setId(this.getId())
-                .setCreateTime(this.getCreateTime())
-                .setUpdateTime(this.getUpdateTime())
                 .setTenantId(this.getTenantId())
                 .setDelFlag(this.getDelFlag())
                 .setFlowCode(this.getFlowCode())
                 .setFlowName(this.getFlowName())
                 .setCategory(this.getCategory())
                 .setVersion(this.getVersion())
-                .setIsPublish(this.getIsPublish())
                 .setFormCustom(this.getFormCustom())
                 .setFormPath(this.getFormPath())
                 .setActivityStatus(this.getActivityStatus())
