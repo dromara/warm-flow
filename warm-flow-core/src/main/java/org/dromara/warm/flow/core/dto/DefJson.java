@@ -58,9 +58,9 @@ public class DefJson {
     private String flowName;
 
     /**
-     * 设计器模式（CLASSICS经典模式 MIMIC仿钉钉模式）
+     * 设计器模型（CLASSICS经典模型 MIMIC仿钉钉模型）
      */
-    private String mode;
+    private String modelValue;
 
     /**
      * 流程类别
@@ -131,7 +131,7 @@ public class DefJson {
         DefJson defJson = new DefJson()
                 .setFlowCode(definition.getFlowCode())
                 .setFlowName(definition.getFlowName())
-                .setMode(definition.getMode())
+                .setModelValue(definition.getModelValue())
                 .setVersion(definition.getVersion())
                 .setCategory(definition.getCategory())
                 .setFormCustom(definition.getFormCustom())
@@ -184,7 +184,7 @@ public class DefJson {
                 .setId(defJson.getId())
                 .setFlowCode(defJson.getFlowCode())
                 .setFlowName(defJson.getFlowName())
-                .setMode(defJson.getMode())
+                .setModelValue(defJson.getModelValue())
                 .setVersion(defJson.getVersion())
                 .setCategory(defJson.getCategory())
                 .setFormCustom(defJson.getFormCustom())

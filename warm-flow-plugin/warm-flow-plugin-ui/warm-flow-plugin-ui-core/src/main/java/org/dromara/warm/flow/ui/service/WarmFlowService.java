@@ -88,8 +88,7 @@ public class WarmFlowService {
         try {
             DefJson defJson;
             if (id == null) {
-                defJson = new DefJson()
-                        .setMode(ModeEnum.CLASSICS.name());
+                defJson = new DefJson().setModelValue(ModeEnum.CLASSICS.name());
             } else {
                 defJson = FlowEngine.defService().queryDesign(id);
             }

@@ -9,12 +9,12 @@
         <el-input v-model="form.flowName" placeholder="请输入流程名称" maxlength="100" show-word-limit @input="nameChange" />
       </el-form-item>
 
-      <el-form-item label="设计器模式" prop="mode">
-        <el-radio-group v-model="form.mode" :disabled="!!definitionId">
+      <el-form-item label="设计器模型" prop="modelValue">
+        <el-radio-group v-model="form.modelValue" :disabled="!!definitionId">
           <el-radio label="CLASSICS">经典模式</el-radio>
-<!--          <el-radio label="MIMIC">仿钉钉模式-->
-<!--            <span style="color: #ff4949; margin-left: 50px;">切换后重置节点，保存后不支持修改！</span>-->
-<!--          </el-radio>-->
+          <el-radio label="MIMIC">仿钉钉模式
+            <span style="color: #ff4949; margin-left: 50px;">切换后重置节点，保存后不支持修改！</span>
+          </el-radio>
         </el-radio-group>
       </el-form-item>
 
@@ -113,7 +113,7 @@ const form = ref({
   id: null,
   flowCode: "",
   flowName: "",
-  mode: "",
+  modelValue: "",
   category: "",
   formCustom: "N",
   formPath: "",
@@ -129,8 +129,8 @@ watch(() => props.logicJson, newValue => {
 
 const definitionList = ref([]);
 const rules = {
-  mode: [
-    { required: true, message: "设计器模式不能为空", trigger: "blur" }
+  modelValue: [
+    { required: true, message: "设计器模型不能为空", trigger: "blur" }
   ],
   flowCode: [
     { required: true, message: "流程编码不能为空", trigger: "blur" }
@@ -207,7 +207,7 @@ defineExpose({ getFormData, validate });
 </script>
 
 <style scoped lang="scss">
-::v-deep.Tabs {
+:deep(.Tabs) {
   margin-top: -20px;
   box-shadow: none;
   border-bottom: 0;
@@ -227,7 +227,7 @@ defineExpose({ getFormData, validate });
   width: 1000px;
   margin: 50px auto;
 }
-::v-deep.listenerItem {
+:deep(.listenerItem) {
   .el-form-item__label {
     float: none;
     display: inline-block;

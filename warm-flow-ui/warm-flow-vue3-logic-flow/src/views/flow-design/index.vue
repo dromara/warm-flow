@@ -147,15 +147,15 @@ async function handleStepClick(index) {
   activeStep.value = index;
 
   if (index === 1) {
-    // 原设计器模式
-    const modeOrg =logicJson.value.mode;
+    // 原设计器模型
+    const modeOrg =logicJson.value.modelValue;
     // 获取基础信息
     getBaseInfo();
-    const modeNew =logicJson.value.mode;
+    const modeNew =logicJson.value.modelValue;
     if (!lf.value || modeOrg !== modeNew) {
       await nextTick(() => {
         // 读取本地文件/initData.json文件，并将数据转换json对象
-        let initData = ("CLASSICS" === logicJson.value.mode) ? initClassicsData: initMimicData
+        let initData = ("CLASSICS" === logicJson.value.modelValue) ? initClassicsData: initMimicData
         logicJson.value = {
           ...logicJson.value,
           ...initData
@@ -281,7 +281,7 @@ onUnmounted(() => {
  */
 function initDndPanel() {
   // 只有经典模式才有拖拽面板
-  if ("CLASSICS" === logicJson.value.mode) {
+  if (true) {
     lf.value.extension.dndPanel.setPatternItems([
       {
         type: 'start',
@@ -365,7 +365,7 @@ async function saveJsonModel() {
  */
 function initMenu() {
   // 只有仿钉钉模式才初始化菜单
-  if ("MIMIC" === logicJson.value.mode) {
+  if ("MIMIC" === logicJson.value.modelValue) {
     // 为菜单追加选项（必须在 lf.render() 之前设置）
     lf.value.extension.menu.setMenuConfig({
       nodeMenu: [],
@@ -422,7 +422,7 @@ function initMenu() {
  * 注册自定义节点和边
  */
 function register() {
-  if ("CLASSICS" === logicJson.value.mode) {
+  if ("CLASSICS" === logicJson.value.modelValue) {
     lf.value.register(StartC);
     lf.value.register(BetweenC);
     lf.value.register(SerialC);
@@ -445,7 +445,7 @@ function register() {
  */
 function use() {
   // 只有经典模式才有拖拽面板
-  if ("CLASSICS" === logicJson.value.mode) {
+  if (true) {
     LogicFlow.use(DndPanel);
   }
   LogicFlow.use(Menu);
@@ -634,5 +634,4 @@ async function downJson() {
 .step-item.active {
   color: #409eff; /* 选中时为深色 */
 }
-
 </style>

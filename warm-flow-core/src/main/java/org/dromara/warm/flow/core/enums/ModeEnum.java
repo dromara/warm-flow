@@ -19,7 +19,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 设计器模式（CLASSICS经典模式 MIMIC仿钉钉模式）
+ * 设计器模型（CLASSICS经典模型 MIMIC仿钉钉模型）
  *
  * @author warm
  * @since 2025/6/25

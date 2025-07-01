@@ -13,7 +13,7 @@ export const json2LogicFlowJson = (definition) => {
   // 解析definition属性
   graphData.flowCode = definition.flowCode
   graphData.flowName = definition.flowName
-  graphData.mode = definition.mode
+  graphData.modelValue = definition.modelValue
   graphData.category = definition.category
   graphData.version = definition.version
   graphData.fromCustom = definition.fromCustom
@@ -185,7 +185,7 @@ export const logicFlowJsonToWarmFlow = (data) => {
   definition.id = data.id
   definition.flowCode = data.flowCode
   definition.flowName = data.flowName
-  definition.mode = data.mode
+  definition.modelValue = data.modelValue
   definition.category = data.category
   definition.version = data.version
   definition.fromCustom = data.fromCustom
