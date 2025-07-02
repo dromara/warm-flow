@@ -39,7 +39,7 @@
         <el-input v-model="form.formPath" placeholder="请输入审批表单路径" maxlength="100" show-word-limit />
       </el-form-item>
 
-      <el-form-item label="审批流程表单" v-else-if="form.formCustom === 'Y'">
+      <el-form-item label="审批流程表单" prop="formPath" v-else-if="form.formCustom === 'Y'">
         <el-select v-model="form.formPath">
           <el-option v-for="item in definitionList" :key="item.id" :label="`${item.formName} - v${item.version}`" :value="item.id"></el-option>
         </el-select>
@@ -117,6 +117,8 @@ const form = ref({
   category: "",
   formCustom: "N",
   formPath: "",
+  listenerType: "",
+  listenerPath: "",
   listenerRows: []
 });
 
@@ -199,6 +201,8 @@ function nameChange(flowName) {
 }
 
 function getFormData() {
+  form.value.listenerType = form.value.listenerRows.map(row => row.listenerType).join(",")
+  form.value.listenerPath = form.value.listenerRows.map(row => row.listenerPath).join("@@")
   return form.value;
 }
 

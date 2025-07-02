@@ -16,8 +16,11 @@ export const json2LogicFlowJson = (definition) => {
   graphData.modelValue = definition.modelValue
   graphData.category = definition.category
   graphData.version = definition.version
-  graphData.fromCustom = definition.fromCustom
-  graphData.fromPath = definition.fromPath
+  graphData.formCustom = definition.formCustom
+  graphData.formPath = definition.formPath
+  graphData.listenerType = definition.listenerType
+  graphData.listenerPath = definition.listenerPath
+
   if (!definition.nodeList) {
     return graphData;
   }
@@ -188,8 +191,10 @@ export const logicFlowJsonToWarmFlow = (data) => {
   definition.modelValue = data.modelValue
   definition.category = data.category
   definition.version = data.version
-  definition.fromCustom = data.fromCustom
-  definition.fromPath = data.fromPath
+  definition.formCustom = data.formCustom
+  definition.formPath = data.formPath
+  definition.listenerType = data.listenerType
+  definition.listenerPath = data.listenerPath
   // 流程节点
   data.nodes.forEach(anyNode => {
     let node = {}

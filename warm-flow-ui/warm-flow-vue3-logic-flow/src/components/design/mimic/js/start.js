@@ -10,7 +10,6 @@ class StartModel extends HtmlNodeModel {
     this.width = 220;
     this.height = 80;
     this.radius = 20;
-    debugger
     this.inputData = this.text.value
 
   }
@@ -19,7 +18,6 @@ class StartModel extends HtmlNodeModel {
   }
 
   getData () {
-    debugger
     const data = super.getData()
     data.text.value = this.inputData
     return data
@@ -39,7 +37,6 @@ class StartView extends HtmlNode {
     this.r = h(baseNode, {
       text: props.model.inputData,
       onBtnClick: (i) => {
-        debugger
         props.model.text.value = i
       }
     })
