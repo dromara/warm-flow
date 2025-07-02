@@ -154,12 +154,14 @@ async function handleStepClick(index) {
     const modeNew =logicJson.value.mode;
     if (!lf.value || modeOrg !== modeNew) {
       await nextTick(() => {
-        // 读取本地文件/initData.json文件，并将数据转换json对象
-        let initData = ("CLASSICS" === logicJson.value.mode) ? initClassicsData: initMimicData
-        logicJson.value = {
-          ...logicJson.value,
-          ...initData
-        };
+        if (!logicJson.value.nodes) {
+          // 读取本地文件/initData.json文件，并将数据转换json对象
+          let initData = ("CLASSICS" === logicJson.value.modelValue) ? initClassicsData: initMimicData
+          logicJson.value = {
+            ...logicJson.value,
+            ...initData
+          };
+        }
         initLogicFlow();
       });
     }
