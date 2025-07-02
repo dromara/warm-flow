@@ -174,7 +174,7 @@ export const addGatewayNode = (lf, edge, nodeType) => {
 
   // 添加互斥网关开始节点
   const centerX = ["serial", "parallel"].includes(sourceNode.type) ? targetNode.x :sourceNode.x
-  const gatewayNode = addNode(lf, nodeType, centerX, sourceNode.y + offsetY, "")
+  const gatewayNode = addNode(lf, nodeType, centerX, sourceNode.y + offsetY, "添加节点")
   // 连接父节点与互斥网关开始节点
   addEdge(lf, "skip", sourceNode.id, gatewayNode.id)
 
@@ -185,7 +185,7 @@ export const addGatewayNode = (lf, edge, nodeType) => {
   addEdge(lf, "skip", gatewayNode.id, between2Node.id)
 
   // 添加互斥网关结束节点
-  const gatewayNode2 = addNode(lf, nodeType, centerX, sourceNode.y + offsetY * 3, "")
+  const gatewayNode2 = addNode(lf, nodeType, centerX, sourceNode.y + offsetY * 3, "添加节点")
   // 连接两个中间节点与互斥网关结束节点
   addEdge(lf, "skip", between1Node.id, gatewayNode2.id)
   addEdge(lf, "skip", between2Node.id, gatewayNode2.id)
@@ -319,4 +319,9 @@ function getRightmostNode(nodes) {
   return nodes.reduce((rightmost, current) => {
     return (current.x > rightmost.x ? current : rightmost);
   }, nodes[0]);
+}
+
+export const hideText = (style) => {
+  style.display = 'none';
+  return style
 }

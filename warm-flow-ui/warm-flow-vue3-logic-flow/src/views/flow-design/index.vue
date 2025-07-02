@@ -154,12 +154,14 @@ async function handleStepClick(index) {
     const modeNew =logicJson.value.modelValue;
     if (!lf.value || modeOrg !== modeNew) {
       await nextTick(() => {
-        // 读取本地文件/initData.json文件，并将数据转换json对象
-        let initData = ("CLASSICS" === logicJson.value.modelValue) ? initClassicsData: initMimicData
-        logicJson.value = {
-          ...logicJson.value,
-          ...initData
-        };
+        if (!logicJson.value.nodes) {
+          // 读取本地文件/initData.json文件，并将数据转换json对象
+          let initData = ("CLASSICS" === logicJson.value.modelValue) ? initClassicsData: initMimicData
+          logicJson.value = {
+            ...logicJson.value,
+            ...initData
+          };
+        }
         initLogicFlow();
       });
     }
@@ -455,15 +457,13 @@ function initEvent() {
   const { eventCenter } = lf.value.graphModel
   // 中间节点双击事件
   eventCenter.on('node:dbclick', (args) => {
-    if ('between' === args.data.type) {
-      nodeClick.value = args.data
-      let graphData = lf.value.getGraphData()
-      nodes.value = graphData['nodes']
-      skips.value = graphData['edges']
-      proxy.$nextTick(() => {
-        propertySettingRef.value.show()
-      })
-    }
+    nodeClick.value = args.data
+    let graphData = lf.value.getGraphData()
+    nodes.value = graphData['nodes']
+    skips.value = graphData['edges']
+    proxy.$nextTick(() => {
+      propertySettingRef.value.show()
+    })
   })
 
   // 边双击事件

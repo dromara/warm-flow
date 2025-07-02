@@ -1,5 +1,5 @@
 <template>
-  <div class="start-node"  ref="startNodeDiv">
+  <div id="bbb" class="base-node" ref="baseNodeDiv">
     <!-- Top Section -->
     <div class="top-section">
       <span v-if="showSpan" @click="editNodeName">{{ nodeName }}</span>
@@ -8,8 +8,7 @@
           v-if="editingNodeName"
           ref="nodeNameInput"
           v-model="nodeName"
-          @blur="saveNodeName"
-          @keyup.enter="saveNodeName"/>
+          @blur="saveNodeName"/>
     </div>
 
     <!-- Bottom Section -->
@@ -30,7 +29,7 @@ const props = defineProps({
   },
 });
 
-const startNode = computed(() => {
+const baseNode = computed(() => {
   return {
     width: "100%",
     height: "80px",
@@ -41,10 +40,10 @@ const startNode = computed(() => {
 });
 
 const showSpan = ref(true);
-const startNodeDiv = ref(null);
+const baseNodeDiv = ref(null);
 
 
-const emit = defineEmits(['update:model']);
+const emit = defineEmits(['btnClick']);
 
 
 const nodeName = ref('发起人');
@@ -76,6 +75,7 @@ const editNodeName = () => {
 const saveNodeName = () => {
   editingNodeName.value = false;
   showSpan.value = true;
+  emit('btnClick', nodeName.value);
 };
 
 const nodeNameInput = ref(null);
@@ -87,7 +87,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.start-node {
+.base-node {
   width: 100%;
   height: 80px;
   border: 1px solid #ccc;
@@ -101,8 +101,8 @@ onMounted(() => {
   height: 25px;
   display: flex;
   align-items: center;
-  border-top-left-radius: 5px; /* 与 .start-node 的 border-radius 一致 */
-  border-top-right-radius: 5px; /* 与 .start-node 的 border-radius 一致 */
+  border-top-left-radius: 5px; /* 与 .base-node 的 border-radius 一致 */
+  border-top-right-radius: 5px; /* 与 .base-node 的 border-radius 一致 */
 }
 
 .bottom-section {
