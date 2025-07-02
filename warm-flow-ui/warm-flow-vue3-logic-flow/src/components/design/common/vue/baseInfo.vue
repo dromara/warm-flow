@@ -11,8 +11,8 @@
 
       <el-form-item label="设计器模型" prop="modelValue">
         <el-radio-group v-model="form.modelValue" :disabled="!!definitionId">
-          <el-radio label="CLASSICS">经典模式</el-radio>
-          <el-radio label="MIMIC">仿钉钉模式
+          <el-radio label="CLASSICS">经典模型</el-radio>
+          <el-radio label="MIMIC">仿钉钉模型
             <span style="color: #ff4949; margin-left: 50px;">切换后重置节点，保存后不支持修改！</span>
           </el-radio>
         </el-radio-group>

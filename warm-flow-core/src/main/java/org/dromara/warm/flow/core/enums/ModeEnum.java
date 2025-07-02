@@ -28,9 +28,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ModeEnum {
 
-    // 经典模式
+    // 经典模型
     CLASSICS,
 
-    // 经典模式
+    // 仿钉钉模型
     MIMIC
 }

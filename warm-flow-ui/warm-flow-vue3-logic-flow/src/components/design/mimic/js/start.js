@@ -10,45 +10,40 @@ class StartModel extends HtmlNodeModel {
     super.initNodeData(data);
     this.width = 220;
     this.height = 80;
-    this.radius = 10;
+    this.radius = 20;
+    this.processName = this.text.value; // 流程名称，默认值为"发起人"
     this.text.value = ""
   }
   getNodeStyle() {
     return setCommonStyle(super.getNodeStyle(), this.properties, "node");
   }
+
+  getProcessName() {
+    return this.processName;
+  }
+
 }
 
 class StartView extends HtmlNode {
 
   constructor(props) {
     super(props)
-    this.root = document.createElement('div')
-    this.root.style.width = '100%';
-    this.root.style.height = '100%';
-    this.vueComponent = baseNode
+    this.isMounted = false
+    this.r = h(baseNode, {
+      text: props.model.getProcessName(),
+    })
+    this.app = createApp({
+      render: () => this.r
+    })
   }
   setHtml(rootEl) {
-    rootEl.appendChild(this.root)
-    if (this.vm) {
-      this.vm.mount(this.root)
+    if (!this.isMounted) {
+      this.isMounted = true
+      const node = document.createElement('div')
+      rootEl.appendChild(node)
+      this.app.mount(node)
     } else {
-      this.vm = createApp({
-        render: () =>
-            h(this.vueComponent, {
-              props: {
-                model: this.props.model,
-                graphModel: this.props.graphModel,
-                disabled: this.props.graphModel.editConfigModel.isSilentMode,
-                isSelected: this.props.model.isSelected,
-                isHovered: this.props.model.isHovered,
-                properties: this.props.model.getProperties()
-              }
-            }),
-        components: {
-          UserFilled // 手动注册 UserFilled 组件
-        }
-      })
-      this.vm.mount(this.root)
+      this.r.component.props.properties = this.props.model.getProperties()
     }
   }
 }

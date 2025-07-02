@@ -1,108 +1,113 @@
 <template>
-  <div class="start-node">
+  <div class="start-node"  ref="startNodeDiv">
     <!-- Top Section -->
     <div class="top-section">
-
-      <span class="icon-user">sf<el-icon :size="10"><UserFilled/></el-icon></span>
-      <span class="text">发起人</span>
-      <span class="icon-edit" @click="editProcessName"></span>
+      <span v-if="showSpan" @click="editNodeName">{{ nodeName }}</span>
       <!-- Edit Process Name Dialog -->
       <input
-          v-if="editingProcessName"
-          ref="processNameInput"
-          v-model="processName"
-          @blur="saveProcessName"
-          @keyup.enter="saveProcessName"
-      />
+          v-if="editingNodeName"
+          ref="nodeNameInput"
+          v-model="nodeName"
+          @blur="saveNodeName"
+          @keyup.enter="saveNodeName"/>
     </div>
 
     <!-- Bottom Section -->
-    <div class="bottom-section">{{ assignee }}</div>
+    <div class="bottom-section">{{ handler }}</div>
 
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted } from 'vue';
-import {UserFilled} from "@element-plus/icons-vue";
+<script setup name="BaseInfo">
+import {ref, onMounted, computed} from 'vue';
 
-// Define props
 const props = defineProps({
-  model: Object,
-  graphModel: Object,
-  disabled: Boolean,
-  isSelected: Boolean,
-  isHovered: Boolean,
-  properties: Object,
+  text: {
+    type: String,
+    default () {
+      return ''
+    }
+  },
 });
 
-// Define emits
+const startNode = computed(() => {
+  return {
+    width: "100%",
+    height: "80px",
+    border: "1px solid #ccc",
+    backgroundColor: "#fff",
+    borderRadius: "6px", /* 添加圆角 */
+  };
+});
+
+const showSpan = ref(true);
+const startNodeDiv = ref(null);
+
+
 const emit = defineEmits(['update:model']);
 
-// State
-const processName = ref('发起人');
-const assignee = ref('所有人');
-const editingProcessName = ref(false);
 
-// Methods
-const editProcessName = () => {
-  editingProcessName.value = true;
+const nodeName = ref('发起人');
+const handler = ref('所有人');
+
+const editingNodeName = ref(false);
+
+watch(
+    () => props.text,
+    (newVal) => {
+      console.log('text:', newVal);
+      if (newVal) {
+        nodeName.value = newVal;
+      }
+    },
+    { immediate: true }
+);
+
+const editNodeName = () => {
+  showSpan.value = false;
+  editingNodeName.value = true;
   setTimeout(() => {
-    processNameInput.value.focus();
+    nodeNameInput.value.focus();
   }, 0);
 };
 
-const saveProcessName = () => {
-  editingProcessName.value = false;
-  // Update model or do something with the new process name
+
+
+const saveNodeName = () => {
+  editingNodeName.value = false;
+  showSpan.value = true;
 };
 
-// References
-const processNameInput = ref(null);
+const nodeNameInput = ref(null);
 const assigneeInput = ref(null);
 
-// Lifecycle hooks
 onMounted(() => {
-  // Initialize values from props if needed
-  processName.value = '发起人';
-  assignee.value = '所有人';
+  handler.value = '所有人';
 });
 </script>
 
 <style scoped>
 .start-node {
   width: 100%;
-  height: 100%;
+  height: 80px;
   border: 1px solid #ccc;
-  border-radius: 10px; /* 添加圆角 */
+  border-radius: 5px; /* 添加圆角 */
+  background-color: #fff; /* 设置背景色 */
 }
 
 .top-section {
   background-color: #ccc;
   padding: 10px;
-  height: 30%;
+  height: 25px;
   display: flex;
   align-items: center;
+  border-top-left-radius: 5px; /* 与 .start-node 的 border-radius 一致 */
+  border-top-right-radius: 5px; /* 与 .start-node 的 border-radius 一致 */
 }
 
 .bottom-section {
   padding: 10px;
-  height: calc(100% - 40px);
-  box-sizing: border-box;
-  cursor: pointer;
+  height: calc(100%);
 }
-
-.icon-user {
-  padding: 10px;
-}
-
-.icon-edit {
-  margin-left: 5px;
-  cursor: pointer;
-}
-
-.text {
-}
-
 
 </style>
