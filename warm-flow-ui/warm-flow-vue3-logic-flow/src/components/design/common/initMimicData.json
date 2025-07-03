@@ -1,142 +1,152 @@
 {
   "nodes": [
     {
-      "id": "start",
+      "text": {
+        "x": 317,
+        "y": 78,
+        "value": "开始"
+      },
+      "properties": {
+        "nodeRatio": "0",
+        "permissionFlag": null,
+        "anyNodeSkip": null,
+        "listenerType": "",
+        "listenerPath": "",
+        "formCustom": "",
+        "formPath": null,
+        "status": null,
+        "chartStatusColor": null,
+        "promptContent": null,
+        "ext": {}
+      },
       "type": "start",
-      "x": 319,
-      "y": 99,
-      "properties": {
-        "nodeRatio": "0",
-        "permissionFlag": null,
-        "anyNodeSkip": null,
-        "listenerType": null,
-        "listenerPath": null,
-        "formCustom": null,
-        "formPath": null,
-        "status": null,
-        "chartStatusColor": null,
-        "promptContent": null,
-        "ext": {},
-        "width": 100,
-        "height": 80
-      },
-      "text": {
-        "x": 319,
-        "y": 99,
-        "value": "发起人"
-      }
+      "id": "startId",
+      "x": 317,
+      "y": 78
     },
     {
-      "id": "end",
-      "type": "end",
-      "x": 319,
-      "y": 340,
-      "properties": {
-        "nodeRatio": "0",
-        "permissionFlag": null,
-        "anyNodeSkip": null,
-        "listenerType": null,
-        "listenerPath": null,
-        "formCustom": null,
-        "formPath": null,
-        "status": null,
-        "chartStatusColor": null,
-        "promptContent": null,
-        "ext": {},
-        "width": 40,
-        "height": 40
-      },
       "text": {
-        "x": 319,
-        "y": 340,
-        "value": "结束"
-      }
-    },
-    {
-      "id": "83cf4d89-689c-4206-9585-740085c4f399",
-      "type": "between",
-      "x": 319,
-      "y": 225,
-      "properties": {
-        "nodeRatio": "0",
-        "permissionFlag": null,
-        "anyNodeSkip": null,
-        "listenerType": null,
-        "listenerPath": null,
-        "formCustom": null,
-        "formPath": null,
-        "status": null,
-        "chartStatusColor": null,
-        "promptContent": null,
-        "ext": {},
-        "width": 100,
-        "height": 80
-      },
-      "text": {
-        "x": 319,
-        "y": 225,
+        "x": 317,
+        "y": 252,
         "value": "中间节点"
-      }
+      },
+      "properties": {
+        "nodeRatio": "0",
+        "permissionFlag": "",
+        "anyNodeSkip": null,
+        "listenerType": "",
+        "listenerPath": "",
+        "formCustom": null,
+        "formPath": null,
+        "status": null,
+        "chartStatusColor": null,
+        "promptContent": null,
+        "ext": {
+          "base3": "common",
+          "base4": "1",
+          "new_tabs1": [
+            "3",
+            "4"
+          ],
+          "new_tabs2": "1"
+        }
+      },
+      "type": "between",
+      "id": "betweenId",
+      "x": 317,
+      "y": 252
+    },
+    {
+      "text": {
+        "x": 317,
+        "y": 414,
+        "value": "结束"
+      },
+      "properties": {
+        "nodeRatio": "0",
+        "permissionFlag": null,
+        "anyNodeSkip": null,
+        "listenerType": null,
+        "listenerPath": null,
+        "formCustom": null,
+        "formPath": null,
+        "status": null,
+        "chartStatusColor": null,
+        "promptContent": null,
+        "ext": {}
+      },
+      "type": "end",
+      "id": "endId",
+      "x": 317,
+      "y": 414
     }
   ],
   "edges": [
     {
-      "id": "b63caba9-62c8-4d96-9f5a-a4d2b8676025",
-      "type": "skip",
+      "text": {
+        "value": null
+      },
       "properties": {
-        "skipType": "PASS"
+        "skipCondition": null,
+        "skipName": null,
+        "skipType": "PASS",
+        "status": null,
+        "chartStatusColor": null
       },
-      "sourceNodeId": "start",
-      "targetNodeId": "83cf4d89-689c-4206-9585-740085c4f399",
-      "sourceAnchorId": "start_2",
-      "targetAnchorId": "83cf4d89-689c-4206-9585-740085c4f399_0",
-      "startPoint": {
-        "x": 319,
-        "y": 119
-      },
-      "endPoint": {
-        "x": 319,
-        "y": 185
-      },
+      "type": "skip",
+      "sourceNodeId": "startId",
+      "targetNodeId": "betweenId",
       "pointsList": [
         {
-          "x": 319,
-          "y": 119
+          "x": 317,
+          "y": 118
         },
         {
-          "x": 319,
-          "y": 185
+          "x": 317,
+          "y": 212
         }
-      ]
+      ],
+      "startPoint": {
+        "x": 317,
+        "y": 118
+      },
+      "endPoint": {
+        "x": 317,
+        "y": 212
+      }
     },
     {
-      "id": "b49ab24c-86ba-4a54-9d80-3ad57695096e",
-      "type": "skip",
+      "text": {
+        "value": null
+      },
       "properties": {
-        "skipType": "PASS"
+        "skipCondition": null,
+        "skipName": null,
+        "skipType": "PASS",
+        "status": null,
+        "chartStatusColor": null
       },
-      "sourceNodeId": "83cf4d89-689c-4206-9585-740085c4f399",
-      "targetNodeId": "end",
-      "sourceAnchorId": "83cf4d89-689c-4206-9585-740085c4f399_2",
-      "targetAnchorId": "end_0",
-      "startPoint": {
-        "x": 319,
-        "y": 265
-      },
-      "endPoint": {
-        "x": 319,
-        "y": 320
-      },
+      "type": "skip",
+      "sourceNodeId": "betweenId",
+      "targetNodeId": "endId",
       "pointsList": [
         {
-          "x": 319,
-          "y": 265
+          "x": 317,
+          "y": 292
         },
         {
-          "x": 319,
-          "y": 320
+          "x": 317,
+          "y": 394
         }
-      ]
+      ],
+      "startPoint": {
+        "x": 317,
+        "y": 292
+      },
+      "endPoint": {
+        "x": 317,
+        "y": 394
+      }
     }
   ]
 }

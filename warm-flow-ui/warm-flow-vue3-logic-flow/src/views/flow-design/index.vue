@@ -37,7 +37,7 @@
       <div style="padding: 5px 0; text-align: right;">
         <div>
           <el-button size="small" icon="ZoomOut" @click="zoomViewport(false)">缩小</el-button>
-          <el-button size="small" icon="Rank" @click="zoomViewport(1)">自适应</el-button>
+          <el-button size="small" v-if="'CLASSICS' === logicJson.modelValue" icon="Rank" @click="zoomViewport(1)">自适应</el-button>
           <el-button size="small" icon="ZoomIn" @click="zoomViewport(true)">放大</el-button>
           <el-button size="small" icon="DArrowLeft" @click="undoOrRedo(true)" v-if="!disabled">上一步</el-button>
           <el-button size="small" icon="DArrowRight" @click="undoOrRedo(false)" v-if="!disabled">下一步</el-button>
@@ -156,7 +156,7 @@ async function handleStepClick(index) {
       await nextTick(() => {
         if (!logicJson.value.nodes) {
           // 读取本地文件/initData.json文件，并将数据转换json对象
-          let initData = ("CLASSICS" === logicJson.value.modelValue) ? initClassicsData: initMimicData
+          let initData = (isClassics()) ? initClassicsData: initMimicData
           logicJson.value = {
             ...logicJson.value,
             ...initData
@@ -200,6 +200,11 @@ function initLogicFlow() {
     use();
     lf.value = new LogicFlow({
       container: proxy.$refs.containerRef,
+      textEdit: false,
+      snapToGrid: true,
+      stopMoveGraph: !isClassics(),
+      hideAnchors: !isClassics(),
+      adjustNodePosition: isClassics(),
       grid: {
         size: 20,
         visible: 'true' === appParams.value.showGrid,
@@ -212,7 +217,7 @@ function initLogicFlow() {
           backgroundColor: "#fff",
         },
       },
-      keyboard: {
+      keyboard: isClassics() ? {
         enabled: true,
         shortcuts: [
           {
@@ -225,7 +230,7 @@ function initLogicFlow() {
             },
           },
         ],
-      },
+      } : {},
     });
     lf.value.setTheme({
       snapline: {
@@ -283,7 +288,7 @@ onUnmounted(() => {
  */
 function initDndPanel() {
   // 只有经典模式才有拖拽面板
-  if (true) {
+  if (isClassics()) {
     lf.value.extension.dndPanel.setPatternItems([
       {
         type: 'start',
@@ -367,7 +372,7 @@ async function saveJsonModel() {
  */
 function initMenu() {
   // 只有仿钉钉模式才初始化菜单
-  if ("MIMIC" === logicJson.value.modelValue) {
+  if (!isClassics()) {
     // 为菜单追加选项（必须在 lf.render() 之前设置）
     lf.value.extension.menu.setMenuConfig({
       nodeMenu: [],
@@ -392,31 +397,6 @@ function initMenu() {
         },
       ],
     });
-
-    // 指定类型元素配置菜单
-    lf.value.extension.menu.setMenuByType({
-      type: "serial",
-      menu: [
-        {
-          text: "添加中间节点",
-          callback(node) {
-            gatewayAddNode(lf.value, node);
-          },
-        },
-      ],
-    });
-
-    lf.value.extension.menu.setMenuByType({
-      type: "parallel",
-      menu: [
-        {
-          text: "添加中间节点",
-          callback(node) {
-            gatewayAddNode(lf.value, node);
-          },
-        },
-      ],
-    });
   }
 }
 
@@ -424,7 +404,7 @@ function initMenu() {
  * 注册自定义节点和边
  */
 function register() {
-  if ("CLASSICS" === logicJson.value.modelValue) {
+  if (isClassics()) {
     lf.value.register(StartC);
     lf.value.register(BetweenC);
     lf.value.register(SerialC);
@@ -443,11 +423,19 @@ function register() {
 }
 
 /**
+ * 注册自定义节点和边
+ */
+function isClassics() {
+  return "CLASSICS" === logicJson.value.modelValue
+}
+
+
+/**
  * 添加扩展
  */
 function use() {
   // 只有经典模式才有拖拽面板
-  if (true) {
+  if (isClassics()) {
     LogicFlow.use(DndPanel);
   }
   LogicFlow.use(Menu);
@@ -455,15 +443,37 @@ function use() {
 }
 function initEvent() {
   const { eventCenter } = lf.value.graphModel
+
+  if (!isClassics()) {
+    // 更新节点名称
+    eventCenter.on('update:nodeName', (data) => {
+      console.log('data.nodeName', data.nodeName)
+      lf.value.updateText(data.id, data.nodeName)
+      lf.value.setProperties(data.id, {
+        nodeName: data.nodeName
+      })
+    })
+
+    // 中间节点双击事件
+    eventCenter.on('node:click', (args) => {
+      if (['serial', 'parallel'].includes(args.data.type)) {
+        gatewayAddNode(lf.value, args.data);
+      }
+    })
+  }
+
+
   // 中间节点双击事件
   eventCenter.on('node:dbclick', (args) => {
-    nodeClick.value = args.data
-    let graphData = lf.value.getGraphData()
-    nodes.value = graphData['nodes']
-    skips.value = graphData['edges']
-    proxy.$nextTick(() => {
-      propertySettingRef.value.show()
-    })
+    if ('between' === args.data.type) {
+      nodeClick.value = args.data
+      let graphData = lf.value.getGraphData()
+      nodes.value = graphData['nodes']
+      skips.value = graphData['edges']
+      proxy.$nextTick(() => {
+        propertySettingRef.value.show()
+      })
+    }
   })
 
   // 边双击事件

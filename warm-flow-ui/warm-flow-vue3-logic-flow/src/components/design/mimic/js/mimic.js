@@ -208,7 +208,7 @@ export const gatewayAddNode = (lf, gatewayNode) => {
   const edges = lf.getGraphData().edges;
 
   // 新中间节点的位置（在互斥网关开始节点的正右边）
-  const offsetX = 150; // 偏移量
+  const offsetX = 300; // 偏移量
 
   // 找到互斥网关结束节点
   let allSuccessors = findAllNextNodes(gatewayNode.id, nodes, edges);

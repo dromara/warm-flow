@@ -21,6 +21,7 @@ import org.dromara.warm.flow.core.config.WarmFlow;
 import org.dromara.warm.flow.core.dto.*;
 import org.dromara.warm.flow.core.entity.Form;
 import org.dromara.warm.flow.core.entity.Instance;
+import org.dromara.warm.flow.core.enums.FormCustomEnum;
 import org.dromara.warm.flow.core.enums.ModeEnum;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
@@ -88,7 +89,9 @@ public class WarmFlowService {
         try {
             DefJson defJson;
             if (id == null) {
-                defJson = new DefJson().setModelValue(ModeEnum.CLASSICS.name());
+                defJson = new DefJson()
+                        .setModelValue(ModeEnum.CLASSICS.name())
+                        .setFormCustom(FormCustomEnum.N.name());
             } else {
                 defJson = FlowEngine.defService().queryDesign(id);
             }

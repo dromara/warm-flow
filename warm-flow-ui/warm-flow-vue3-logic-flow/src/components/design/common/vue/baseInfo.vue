@@ -30,9 +30,9 @@
       </el-form-item>
 
       <el-form-item label="审批表单是否自定义" prop="formCustom">
-        <el-select v-model="form.formCustom" clearable>
-          <el-option label="表单路径" value="N"></el-option>
-        </el-select>
+        <el-radio-group v-model="form.formCustom">
+          <el-radio label="N">表单路径</el-radio>
+        </el-radio-group>
       </el-form-item>
 
       <el-form-item label="审批表单路径" prop="formPath" v-if="form.formCustom === 'N'">
