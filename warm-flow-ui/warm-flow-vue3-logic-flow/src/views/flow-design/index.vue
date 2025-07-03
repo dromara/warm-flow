@@ -170,6 +170,8 @@ async function handleStepClick(index) {
 
 
 onMounted(() => {
+  // 隐藏滚动条
+  document.body.style.overflow = 'hidden';
   if (!appParams.value) appStore.fetchTokenName();
   if (appParams.value.id) {
     definitionId.value = appParams.value.id;
@@ -202,9 +204,13 @@ function initLogicFlow() {
       container: proxy.$refs.containerRef,
       textEdit: false,
       snapToGrid: true,
-      stopMoveGraph: !isClassics(),
       hideAnchors: !isClassics(),
       adjustNodePosition: isClassics(),
+      hoverOutline: isClassics(),
+      nodeSelectedOutline: isClassics(),
+      edgeSelectedOutline: isClassics(),
+      nodeTextDraggable: isClassics(),
+      edgeTextDraggable: isClassics(),
       grid: {
         size: 20,
         visible: 'true' === appParams.value.showGrid,

@@ -1,7 +1,7 @@
 <template>
   <div class="base-node" ref="baseNodeDiv">
     <div class="top-section">
-      <span v-if="showSpan" @click="editNodeName">{{ nodeName }}</span>
+      <span v-if="showSpan" @click="editNodeName">{{ nodeName }} 📝</span>
       <input
           v-if="editingNodeName"
           ref="nodeNameInput"
@@ -110,6 +110,7 @@ const nodeNameInput = ref(null);
   border: 1px solid #ccc;
   border-radius: 5px; /* 添加圆角 */
   background-color: #fff; /* 设置背景色 */
+  cursor: pointer; /* 可选 */
 }
 
 .top-section {
