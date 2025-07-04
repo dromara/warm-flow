@@ -41,7 +41,7 @@
           <el-button size="small" icon="ZoomIn" @click="zoomViewport(true)">放大</el-button>
           <el-button size="small" icon="DArrowLeft" @click="undoOrRedo(true)" v-if="!disabled">上一步</el-button>
           <el-button size="small" icon="DArrowRight" @click="undoOrRedo(false)" v-if="!disabled">下一步</el-button>
-          <el-button size="small" icon="Delete" @click="clear()" v-if="!disabled">清空</el-button>
+          <el-button size="small" icon="Delete" @click="clear()" v-if="!disabled && 'CLASSICS' === logicJson.modelValue">清空</el-button>
           <el-button size="small" icon="Download" @click="downLoad">下载流程图</el-button>
           <el-button size="small" icon="Download" @click="downJson">下载json</el-button>
         </div>
@@ -92,8 +92,8 @@ import SkipM from "@/components/design/mimic/js/skip";
 import useAppStore from "@/store/app";
 import {computed, onMounted, onUnmounted, ref, watch} from "vue";
 import BaseInfo from "@/components/design/common/vue/baseInfo.vue";
-import initClassicsData from "@/components/design/common/initClassicsData.json";
-import initMimicData from "@/components/design/common/initMimicData.json";
+import initClassicsData from "@/components/design/classics/initClassicsData.json";
+import initMimicData from "@/components/design/mimic/initMimicData.json";
 import {addBetweenNode, addGatewayNode, gatewayAddNode} from "@/components/design/mimic/js/mimic.js";
 import EdgeTooltip from "@/components/design/mimic/vue/EdgeTooltip.vue";
 
@@ -176,9 +176,10 @@ async function handleStepClick(index) {
     const modeNew =logicJson.value.modelValue;
     if (!lf.value || modeOrg !== modeNew) {
       await nextTick(() => {
-        if (!logicJson.value.nodes) {
+        debugger
+        if (!jsonString.value.nodeList || jsonString.value.nodeList.length === 0) {
           // 读取本地文件/initData.json文件，并将数据转换json对象
-          let initData = (isClassics()) ? initClassicsData: initMimicData
+          let initData = isClassics() ? initClassicsData: initMimicData
           logicJson.value = {
             ...logicJson.value,
             ...initData
@@ -207,10 +208,11 @@ onMounted(() => {
     if (jsonString.value) {
       logicJson.value = json2LogicFlowJson(jsonString.value);
       if (!logicJson.value.nodes || logicJson.value.nodes.length === 0) {
+        let initData = isClassics() ? initClassicsData: initMimicData
         // 读取本地文件/initClassicsData.json文件，并将数据转换json对象
         logicJson.value = {
           ...logicJson.value,
-          ...initClassicsData
+          ...initData
         };
       }
     }
@@ -273,7 +275,9 @@ function initLogicFlow() {
     initEvent();
     if (logicJson.value) {
       lf.value.render(logicJson.value);
-      zoomViewport(1); // 在可见状态下调用自适应
+      if (isClassics()) {
+        zoomViewport(1); // 在可见状态下调用自适应
+      }
     }
   }
 }
