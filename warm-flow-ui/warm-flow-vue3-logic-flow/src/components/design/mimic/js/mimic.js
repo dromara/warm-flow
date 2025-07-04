@@ -137,7 +137,7 @@ export const addBetweenNode = (lf, edge) => {
   const targetNode = nodes.find(node => node.id === edge.targetNodeId);
 
   // 偏移距离
-  const offsetY = 160;
+  const offsetY = 180;
 
   // 添加中间节点
   const betweenNode = addNode(lf, 'between', ["serial", "parallel"].includes(sourceNode.type) ? targetNode.x :sourceNode.x,
@@ -167,7 +167,7 @@ export const addGatewayNode = (lf, edge, nodeType) => {
 
   // 偏移距离
   const offsetX = 150;
-  const offsetY = 160;
+  const offsetY = 180;
 
   // 添加互斥网关开始节点
   const centerX = ["serial", "parallel"].includes(sourceNode.type) ? targetNode.x :sourceNode.x

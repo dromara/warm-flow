@@ -176,7 +176,6 @@ async function handleStepClick(index) {
     const modeNew =logicJson.value.modelValue;
     if (!lf.value || modeOrg !== modeNew) {
       await nextTick(() => {
-        debugger
         if (!jsonString.value.nodeList || jsonString.value.nodeList.length === 0) {
           // 读取本地文件/initData.json文件，并将数据转换json对象
           let initData = isClassics() ? initClassicsData: initMimicData
@@ -227,14 +226,14 @@ function initLogicFlow() {
     lf.value = new LogicFlow({
       container: proxy.$refs.containerRef,
       textEdit: false,
-      snapToGrid: true,
-      hideAnchors: !isClassics(),
-      adjustNodePosition: isClassics(),
-      hoverOutline: isClassics(),
-      nodeSelectedOutline: isClassics(),
-      edgeSelectedOutline: isClassics(),
-      nodeTextDraggable: isClassics(),
-      edgeTextDraggable: isClassics(),
+      // snapToGrid: true,
+      // hideAnchors: !isClassics(),
+      // adjustNodePosition: isClassics(),
+      // hoverOutline: isClassics(),
+      // nodeSelectedOutline: isClassics(),
+      // edgeSelectedOutline: isClassics(),
+      // nodeTextDraggable: isClassics(),
+      // edgeTextDraggable: isClassics(),
       grid: {
         size: 20,
         visible: 'true' === appParams.value.showGrid,
@@ -247,7 +246,7 @@ function initLogicFlow() {
           backgroundColor: "#fff",
         },
       },
-      keyboard: isClassics() ? {
+      keyboard: true ? {
         enabled: true,
         shortcuts: [
           {

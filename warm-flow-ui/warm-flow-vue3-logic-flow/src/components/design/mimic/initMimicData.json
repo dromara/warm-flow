@@ -1,108 +1,108 @@
 {
   "nodes": [
     {
-      "id": "f2a0d5dc-74d7-428d-a92f-6a73971cfd9a",
+      "id": "startId",
       "type": "start",
-      "x": 686,
-      "y": 104,
+      "x": 700,
+      "y": 100,
       "properties": {
         "width": 220,
         "height": 80
       },
       "text": {
-        "x": 686,
+        "x": 700,
         "y": 104,
         "value": "开始"
       }
     },
     {
-      "id": "03130937-e52d-4d59-a4ee-33e51635127d",
+      "id": "betweenId",
       "type": "between",
-      "x": 686,
-      "y": 283,
+      "x": 700,
+      "y": 280,
       "properties": {
         "collaborativeWay": "1",
         "width": 220,
         "height": 80
       },
       "text": {
-        "x": 686,
-        "y": 283,
+        "x": 700,
+        "y": 284,
         "value": "中间节点"
       }
     },
     {
-      "id": "e5112505-2b8c-40bd-8f3a-6ca4f433d347",
+      "id": "endId",
       "type": "end",
-      "x": 686,
-      "y": 440,
+      "x": 700,
+      "y": 420,
       "properties": {
         "width": 40,
         "height": 40
       },
       "text": {
-        "x": 686,
-        "y": 440,
+        "x": 700,
+        "y": 420,
         "value": "结束"
       }
     }
   ],
   "edges": [
     {
-      "id": "a87b0824-0a38-4745-8dd1-8a14f3604cb5",
+      "id": "startToBetweenId",
       "type": "skip",
       "properties": {
         "skipType": "PASS"
       },
-      "sourceNodeId": "f2a0d5dc-74d7-428d-a92f-6a73971cfd9a",
-      "targetNodeId": "03130937-e52d-4d59-a4ee-33e51635127d",
-      "sourceAnchorId": "f2a0d5dc-74d7-428d-a92f-6a73971cfd9a_2",
-      "targetAnchorId": "03130937-e52d-4d59-a4ee-33e51635127d_0",
+      "sourceNodeId": "startId",
+      "targetNodeId": "betweenId",
+      "sourceAnchorId": "startId_2",
+      "targetAnchorId": "betweenId_0",
       "startPoint": {
-        "x": 686,
-        "y": 144
+        "x": 700,
+        "y": 140
       },
       "endPoint": {
-        "x": 686,
-        "y": 243
+        "x": 700,
+        "y": 240
       },
       "pointsList": [
         {
-          "x": 686,
-          "y": 144
+          "x": 700,
+          "y": 140
         },
         {
-          "x": 686,
-          "y": 243
+          "x": 700,
+          "y": 240
         }
       ]
     },
     {
-      "id": "7f24c458-546b-430d-b398-e08f78782641",
+      "id": "betweenToEndId",
       "type": "skip",
       "properties": {
         "skipType": "PASS"
       },
-      "sourceNodeId": "03130937-e52d-4d59-a4ee-33e51635127d",
-      "targetNodeId": "e5112505-2b8c-40bd-8f3a-6ca4f433d347",
-      "sourceAnchorId": "03130937-e52d-4d59-a4ee-33e51635127d_2",
-      "targetAnchorId": "e5112505-2b8c-40bd-8f3a-6ca4f433d347_0",
+      "sourceNodeId": "betweenId",
+      "targetNodeId": "endId",
+      "sourceAnchorId": "betweenId_2",
+      "targetAnchorId": "endId_0",
       "startPoint": {
-        "x": 686,
-        "y": 323
+        "x": 700,
+        "y": 320
       },
       "endPoint": {
-        "x": 686,
-        "y": 420
+        "x": 700,
+        "y": 400
       },
       "pointsList": [
         {
-          "x": 686,
-          "y": 323
+          "x": 700,
+          "y": 320
         },
         {
-          "x": 686,
-          "y": 420
+          "x": 700,
+          "y": 400
         }
       ]
     }
