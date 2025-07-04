@@ -187,8 +187,16 @@ export const addGatewayNode = (lf, edge, nodeType) => {
   // 添加互斥网关结束节点
   const gatewayNode2 = addNode(lf, nodeType, centerX, sourceNode.y + offsetY * 3, "添加节点")
   // 连接两个中间节点与互斥网关结束节点
-  addEdge(lf, "skip", between1Node.id, gatewayNode2.id)
-  addEdge(lf, "skip", between2Node.id, gatewayNode2.id)
+  addEdgeAll(lf, "skip", between1Node.id, gatewayNode2.id, null, {
+    value: "双击添加条件",
+    x: between1Node.x,
+    y: between1Node.y - offsetY / 2,
+  })
+  addEdge(lf, "skip", between2Node.id, gatewayNode2.id, null, {
+    value: "双击添加条件",
+    x: between2Node.x,
+    y: between1Node.y - offsetY / 2,
+  })
 
   // 找到并删除开始节点和目标节点之间的直接连接
   lf.deleteEdge(edge.id);

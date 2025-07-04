@@ -110,7 +110,6 @@ const nodeNameInput = ref(null);
   border: 1px solid #ccc;
   border-radius: 5px; /* 添加圆角 */
   background-color: #fff; /* 设置背景色 */
-  cursor: pointer; /* 可选 */
 }
 
 .top-section {
@@ -129,7 +128,6 @@ const nodeNameInput = ref(null);
   right: 8px;
   top: 50%;
   transform: translateY(-50%);
-  cursor: pointer;
   display: none;
   font-size: 16px;
   color: #999;

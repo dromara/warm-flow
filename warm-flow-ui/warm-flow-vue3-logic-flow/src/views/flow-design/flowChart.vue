@@ -23,7 +23,6 @@
 
     <div
         v-if="visible"
-        class="custom-tooltip"
         :style="{ left: tooltipPosition.x + 'px', top: tooltipPosition.y + 'px' }"
         ref="tooltipContainerRef">
     </div>

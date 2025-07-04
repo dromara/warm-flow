@@ -1,6 +1,6 @@
 import {HtmlNodeModel} from "@logicflow/core";
-import {setCommonStyle} from "@/components/design/common/js/tool.js";
-import {hideText} from "@/components/design/mimic/js/mimic.js";
+import {setCommonStyle} from "@/components/design/common/js/tool";
+import {hideText} from "@/components/design/mimic/js/mimic";
 
 export class BaseNodeModel extends HtmlNodeModel {
 

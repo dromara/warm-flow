@@ -57,6 +57,14 @@
       </div>
     </el-header>
   </div>
+
+  <!-- 弹框组件 -->
+  <EdgeTooltip
+      v-if="tooltipVisible"
+      :position="tooltipPosition"
+      @option-click="handleOptionClick"
+      @close-tooltip="tooltipVisible = false"
+  />
 </template>
 
 <script setup name="Design">
@@ -86,6 +94,7 @@ import BaseInfo from "@/components/design/common/vue/baseInfo.vue";
 import initClassicsData from "@/components/design/common/initClassicsData.json";
 import initMimicData from "@/components/design/common/initMimicData.json";
 import {addBetweenNode, addGatewayNode, gatewayAddNode} from "@/components/design/mimic/js/mimic.js";
+import EdgeTooltip from "@/components/design/mimic/vue/EdgeTooltip.vue";
 
 const appStore = useAppStore();
 const appParams = computed(() => useAppStore().appParams);
@@ -138,6 +147,14 @@ const steps = [
   { title: '流程设计', icon: 'flowDesign' },
   // { title: '表单设计', icon: 'formDesign' }
 ];
+
+const tooltipVisible = ref(false);
+const tooltipPosition = ref({ x: 0, y: 0 });
+
+const handleOptionClick = (item) => {
+  console.log('Clicked option:', item.value);
+  // 处理选项点击事件
+};
 
 async function handleStepClick(index) {
   if (activeStep.value === 0) {
@@ -466,6 +483,17 @@ function initEvent() {
         gatewayAddNode(lf.value, args.data);
       }
     })
+
+    // 鼠标进入边
+    eventCenter.on('show:EdgeTooltip', (args) => {
+      tooltipVisible.value = true;
+      tooltipPosition.value = { x: args.e.clientX, y: args.e.clientY };
+
+    });
+    // 鼠标离开边
+    eventCenter.on('hide:EdgeTooltip', () => {
+      tooltipVisible.value = false;
+    });
   }
 
 

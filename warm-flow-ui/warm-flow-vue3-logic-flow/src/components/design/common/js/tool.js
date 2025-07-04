@@ -271,5 +271,6 @@ export const setCommonStyle = (style, properties, type) => {
   }
 
   style.strokeWidth = 1
+  style.cursor = 'pointer'
   return style;
 }
