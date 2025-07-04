@@ -12,6 +12,7 @@ import { computed } from 'vue';
 
 const props = defineProps({
   position: Object,
+  tooltipEdge: Object,
 });
 
 const options = [
@@ -50,6 +51,7 @@ function handleTooltipLeave() {
 }
 
 const handleClick = (item) => {
+  item['tooltipEdge'] = props.tooltipEdge;
   emit('option-click', item);
 };
 

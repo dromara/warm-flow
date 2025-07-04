@@ -62,6 +62,7 @@
   <EdgeTooltip
       v-if="tooltipVisible"
       :position="tooltipPosition"
+      :tooltipEdge="tooltipEdge"
       @option-click="handleOptionClick"
       @close-tooltip="tooltipVisible = false"
   />
@@ -150,10 +151,14 @@ const steps = [
 
 const tooltipVisible = ref(false);
 const tooltipPosition = ref({ x: 0, y: 0 });
+const tooltipEdge = ref({});
 
 const handleOptionClick = (item) => {
-  console.log('Clicked option:', item.value);
-  // 处理选项点击事件
+  if (item.icon === "between") {
+    addBetweenNode(lf.value, item.tooltipEdge);
+  } else {
+    addGatewayNode(lf.value, item.tooltipEdge, item.icon);
+  }
 };
 
 async function handleStepClick(index) {
@@ -399,26 +404,7 @@ function initMenu() {
     // 为菜单追加选项（必须在 lf.render() 之前设置）
     lf.value.extension.menu.setMenuConfig({
       nodeMenu: [],
-      edgeMenu: [
-        {
-          text: "添加中间节点",
-          callback(edge) {
-            addBetweenNode(lf.value, edge, "between");
-          },
-        },
-        {
-          text: "添加互斥网关",
-          callback(edge) {
-            addGatewayNode(lf.value, edge, "serial");
-          },
-        },
-        {
-          text: "添加并行网关",
-          callback(edge) {
-            addGatewayNode(lf.value, edge, "parallel");
-          },
-        },
-      ],
+      edgeMenu: [],
     });
   }
 }
@@ -470,7 +456,6 @@ function initEvent() {
   if (!isClassics()) {
     // 更新节点名称
     eventCenter.on('update:nodeName', (data) => {
-      console.log('data.nodeName', data.nodeName)
       lf.value.updateText(data.id, data.nodeName)
       lf.value.setProperties(data.id, {
         nodeName: data.nodeName
@@ -481,25 +466,43 @@ function initEvent() {
     eventCenter.on('node:click', (args) => {
       if (['serial', 'parallel'].includes(args.data.type)) {
         gatewayAddNode(lf.value, args.data);
+      } else {
+        nodeClick.value = args.data
+        let graphData = lf.value.getGraphData()
+        nodes.value = graphData['nodes']
+        skips.value = graphData['edges']
+        proxy.$nextTick(() => {
+          propertySettingRef.value.show()
+        })
       }
     })
+
+    // 单击边
+    eventCenter.on('show:EdgeSetting', (args) => {
+      nodeClick.value = lf.value.getEdgeModelById(args.id)
+      const nodeModel = lf.value.getNodeModelById(nodeClick.value.sourceNodeId);
+      skipConditionShow.value = nodeModel['type'] === 'serial'
+      let graphData = lf.value.getGraphData()
+      nodes.value = graphData['nodes']
+      skips.value = graphData['edges']
+      proxy.$nextTick(() => {
+        propertySettingRef.value.show(nodeModel['nodeType'] === 'serial')
+      })
+    });
 
     // 鼠标进入边
     eventCenter.on('show:EdgeTooltip', (args) => {
       tooltipVisible.value = true;
       tooltipPosition.value = { x: args.e.clientX, y: args.e.clientY };
-
+      tooltipEdge.value = lf.value.getEdgeModelById(args.id)
     });
     // 鼠标离开边
     eventCenter.on('hide:EdgeTooltip', () => {
       tooltipVisible.value = false;
     });
-  }
-
-
-  // 中间节点双击事件
-  eventCenter.on('node:dbclick', (args) => {
-    if ('between' === args.data.type) {
+  } else {
+    // 中间节点双击事件
+    eventCenter.on('node:click', (args) => {
       nodeClick.value = args.data
       let graphData = lf.value.getGraphData()
       nodes.value = graphData['nodes']
@@ -507,21 +510,21 @@ function initEvent() {
       proxy.$nextTick(() => {
         propertySettingRef.value.show()
       })
-    }
-  })
-
-  // 边双击事件
-  eventCenter.on('edge:dbclick  ', (args) => {
-    nodeClick.value = args.data
-    const nodeModel = lf.value.getNodeModelById(nodeClick.value.sourceNodeId);
-    skipConditionShow.value = nodeModel['type'] === 'serial'
-    let graphData = lf.value.getGraphData()
-    nodes.value = graphData['nodes']
-    skips.value = graphData['edges']
-    proxy.$nextTick(() => {
-      propertySettingRef.value.show(nodeModel['nodeType'] === 'serial')
     })
-  })
+
+    // 边双击事件
+    eventCenter.on('edge:click  ', (args) => {
+      nodeClick.value = args.data
+      const nodeModel = lf.value.getNodeModelById(nodeClick.value.sourceNodeId);
+      skipConditionShow.value = nodeModel['type'] === 'serial'
+      let graphData = lf.value.getGraphData()
+      nodes.value = graphData['nodes']
+      skips.value = graphData['edges']
+      proxy.$nextTick(() => {
+        propertySettingRef.value.show(nodeModel['nodeType'] === 'serial')
+      })
+    })
+  }
 
   eventCenter.on('edge:add', (args) => {
     lf.value.changeEdgeType(args.data.id, 'skip')

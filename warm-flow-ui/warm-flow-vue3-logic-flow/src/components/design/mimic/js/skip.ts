@@ -61,14 +61,34 @@ class SkipView extends CurvedEdge {
         // 判断是否由横线变为竖线
         if (Math.abs(p0[1] - p1[1]) === 5 && p0[0] !== p1[0]) {
           const midPoint = [(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2];
-          plusElements = this.getPlusElements(midPoint);
+          const obj = [
+            // 使用 SVG 图标代替原来的图形
+            h('foreignObject', {
+              x: midPoint[0] - 16, // 居中定位
+              y: midPoint[1] - 50,
+              width: 32,
+              height: 32,
+            }, [
+              h('div', {
+                style: {
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '100%',
+                  height: '100%'
+                },
+                innerHTML: `
+<svg t="1751615394607" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="11883" width="32" height="32"><path d="M853.5 960.7h-683c-59.3 0-106-46.8-106-106v-683c0-59.3 46.8-106 106-106h682.9c59.3 0 106 46.8 106 106v682.9c0.1 59.3-49.8 106.1-105.9 106.1z" fill="#93C861" p-id="11884"></path><path d="M666.4 564.7c31.2 9.4 49.9 37.4 46.8 68.6-3.1 31.2-31.2 53-62.4 53s-59.3-21.8-62.4-53c-3.1-31.2 15.6-59.3 46.8-68.6v-65.5c0-9.4-6.2-15.6-15.6-15.6H401.3c-9.4 0-15.6 6.2-15.6 15.6v65.5c31.2 9.4 49.9 37.4 46.8 68.6-3.1 31.2-31.2 53-62.4 53s-59.3-21.8-62.4-53c-3.1-31.2 15.6-59.3 46.8-68.6v-81.1c0-18.7 12.5-31.2 31.2-31.2h109.1v-81.1c-31.2-9.4-49.9-37.4-46.8-68.6 3.1-31.2 31.2-53 62.4-53s59.3 21.8 62.4 53-15.6 59.3-46.8 68.6v81.1h109.1c18.7 0 31.2 12.5 31.2 31.2v81.1z m-156-218.3c18.7 0 31.2-12.5 31.2-31.2S529.1 284 510.4 284s-31.2 12.5-31.2 31.2c0.1 15.6 15.6 31.2 31.2 31.2zM370.1 655.1c18.7 0 31.2-12.5 31.2-31.2s-12.5-31.2-31.2-31.2-31.2 12.5-31.2 31.2 15.6 31.2 31.2 31.2z m280.7 0c18.7 0 31.2-12.5 31.2-31.2s-12.5-31.2-31.2-31.2-31.2 12.5-31.2 31.2 12.5 31.2 31.2 31.2z" fill="#FFFFFF" p-id="11885"></path></svg>                `,
+              })
+            ])
+          ]
+          plusElements = this.getAddElements(midPoint, obj, true);
         }
       }
     }
 
     // 绘制主路径
     let mainPathElement: h.JSX.Element[] = [];
-    debugger
     mainPathElement.push(h('path', {
       d: mainPath,
       style: isAnimation ? animationStyle : {},
@@ -78,54 +98,77 @@ class SkipView extends CurvedEdge {
     }));
 
     // 返回所有路径元素
-    return h('g', {}, [mainPathElement, ...plusElements]);
+    return h('g', {}, [...mainPathElement, ...plusElements]);
   }
 
   private getPlusElements(midPoint: number[]) {
+    return this.getAddElements(midPoint, null);
+  }
+
+  private getAddElements(midPoint: number[], obj, isCondition: boolean = false) {
+    if (!obj) {
+      obj = [
+        h('circle', {
+          cx: midPoint[0],
+          cy: midPoint[1],
+          r: 16,
+          fill: 'blue',
+        }),
+        h('line', {
+          x1: midPoint[0] - 8,
+          y1: midPoint[1],
+          x2: midPoint[0] + 8,
+          y2: midPoint[1],
+          stroke: 'white',
+          'stroke-width': '2',
+        }),
+        h('line', {
+          x1: midPoint[0],
+          y1: midPoint[1] - 8,
+          x2: midPoint[0],
+          y2: midPoint[1] + 8,
+          stroke: 'white',
+          'stroke-width': '2',
+        })
+      ]
+    }
     let plusElements: h.JSX.Element[] = [];
     plusElements.push(
         h('g', {
-          onMouseEnter: (e) => {
-            this.props.graphModel.eventCenter.emit("show:EdgeTooltip", {e: e, id: this.props.model.id});
-          },
-          onMouseLeave: (e) => {
-            setTimeout(() => {
-              if (!(window as any).isTooltipHovered) {
-                this.props.graphModel.eventCenter.emit("hide:EdgeTooltip", e);
-
-              }
-            }, 100);
-          },
+          ...this.getEventHandlers(isCondition), // 根据 isCondition 动态选择事件处理器
           style: {
-            pointerEvents: 'auto'
+            pointerEvents: 'auto',
+            cursor: 'pointer'
           }
-        }, [
-          h('circle', {
-            cx: midPoint[0],
-            cy: midPoint[1],
-            r: 16,
-            fill: 'blue',
-          }),
-          h('line', {
-            x1: midPoint[0] - 8,
-            y1: midPoint[1],
-            x2: midPoint[0] + 8,
-            y2: midPoint[1],
-            stroke: 'white',
-            'stroke-width': '2',
-          }),
-          h('line', {
-            x1: midPoint[0],
-            y1: midPoint[1] - 8,
-            x2: midPoint[0],
-            y2: midPoint[1] + 8,
-            stroke: 'white',
-            'stroke-width': '2',
-          })
-        ])
+        }, obj)
     );
     return plusElements;
   }
+
+  // 新增方法：根据 isCondition 返回不同的事件处理器
+  private getEventHandlers(isCondition: boolean): any {
+    if (isCondition) {
+      return {
+        onClick: (e) => {
+          this.props.graphModel.eventCenter.emit("show:EdgeSetting", { id: this.props.model.id });
+        }
+      };
+    } else {
+      return {
+        onMouseEnter: (e) => {
+          this.props.graphModel.eventCenter.emit("show:EdgeTooltip", { e: e, id: this.props.model.id });
+        },
+        onMouseLeave: (e) => {
+          setTimeout(() => {
+            if (!(window as any).isTooltipHovered) {
+              this.props.graphModel.eventCenter.emit("hide:EdgeTooltip", e);
+            }
+          }, 100);
+        }
+      };
+    }
+  }
+
   private pointFilter(points: number[][]) {
     const all = points
     let i = 1

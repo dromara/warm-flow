@@ -128,12 +128,9 @@ function updateEdges(lf) {
   const edges = lf.getGraphData().edges;
   // 获取源节点的后置节点
   deleteAndAddEdge(startNode, nodes, edges, lf, nodeMap, new Map(), new Set());
-
-  console.log(lf.getGraphData().nodes)
-  console.log(lf.getGraphData().edges)
 }
 
-export const addBetweenNode = (lf, edge, nodeType) => {
+export const addBetweenNode = (lf, edge) => {
   const nodes = lf.getGraphData().nodes;
   const edges = lf.getGraphData().edges;
   const sourceNode = nodes.find(node => node.id === edge.sourceNodeId);
@@ -143,7 +140,7 @@ export const addBetweenNode = (lf, edge, nodeType) => {
   const offsetY = 160;
 
   // 添加中间节点
-  const betweenNode = addNode(lf, nodeType, ["serial", "parallel"].includes(sourceNode.type) ? targetNode.x :sourceNode.x,
+  const betweenNode = addNode(lf, 'between', ["serial", "parallel"].includes(sourceNode.type) ? targetNode.x :sourceNode.x,
       sourceNode.y + offsetY, "中间节点")
   addEdge(lf, "skip", sourceNode.id, betweenNode.id)
 
