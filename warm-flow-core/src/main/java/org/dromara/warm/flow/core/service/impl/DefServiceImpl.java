@@ -218,7 +218,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
 
     @Override
     public String exportJson(Long id) {
-        return FlowEngine.jsonConvert.objToStr(DefJson.copyDef(getAllDataDefinition(id)));
+        return FlowEngine.jsonConvert.objToStr(queryDesign(id).setIsPublish(null));
     }
 
     @Override

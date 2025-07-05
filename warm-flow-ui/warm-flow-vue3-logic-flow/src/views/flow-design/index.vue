@@ -198,11 +198,11 @@ onMounted(() => {
   if (appParams.value.id) {
     definitionId.value = appParams.value.id;
   }
-  if (appParams.value.disabled === 'true') {
-    disabled.value = true
-  }
   queryDef(definitionId.value).then(res => {
     jsonString.value = res.data;
+    if (res.data.isPublish !== 0) {
+      disabled.value = true
+    }
     categoryList.value = res.data.categoryList;
     if (jsonString.value) {
       logicJson.value = json2LogicFlowJson(jsonString.value);
