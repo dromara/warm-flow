@@ -159,6 +159,7 @@ const handleOptionClick = (item) => {
   } else {
     addGatewayNode(lf.value, item.tooltipEdge, item.icon);
   }
+  tooltipVisible.value = false;
 };
 
 async function handleStepClick(index) {
@@ -246,7 +247,7 @@ function initLogicFlow() {
           backgroundColor: "#fff",
         },
       },
-      keyboard: true ? {
+      keyboard: isClassics() ? {
         enabled: true,
         shortcuts: [
           {

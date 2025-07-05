@@ -170,30 +170,21 @@ export const addGatewayNode = (lf, edge, nodeType) => {
   const offsetY = 180;
 
   // 添加互斥网关开始节点
-  const centerX = ["serial", "parallel"].includes(sourceNode.type) ? targetNode.x :sourceNode.x
-  const gatewayNode = addNode(lf, nodeType, centerX, sourceNode.y + offsetY, "添加节点")
+  const gatewayNode = addNode(lf, nodeType, sourceNode.x, sourceNode.y + offsetY, "添加节点")
   // 连接父节点与互斥网关开始节点
   addEdge(lf, "skip", sourceNode.id, gatewayNode.id)
 
   // 添加两个中间节点
-  const between1Node = addNode(lf, "between", centerX - offsetX, sourceNode.y + offsetY * 2, "中间节点")
-  const between2Node = addNode(lf, "between", centerX + offsetX, sourceNode.y + offsetY * 2, "中间节点")
+  const between1Node = addNode(lf, "between", sourceNode.x - offsetX, sourceNode.y + offsetY * 2, "中间节点")
+  const between2Node = addNode(lf, "between", sourceNode.x + offsetX, sourceNode.y + offsetY * 2, "中间节点")
   addEdge(lf, "skip", gatewayNode.id, between1Node.id)
   addEdge(lf, "skip", gatewayNode.id, between2Node.id)
 
   // 添加互斥网关结束节点
-  const gatewayNode2 = addNode(lf, nodeType, centerX, sourceNode.y + offsetY * 3, "添加节点")
+  const gatewayNode2 = addNode(lf, nodeType, sourceNode.x, sourceNode.y + offsetY * 3, "添加节点")
   // 连接两个中间节点与互斥网关结束节点
-  addEdgeAll(lf, "skip", between1Node.id, gatewayNode2.id, null, {
-    value: "双击添加条件",
-    x: between1Node.x,
-    y: between1Node.y - offsetY / 2,
-  })
-  addEdge(lf, "skip", between2Node.id, gatewayNode2.id, null, {
-    value: "双击添加条件",
-    x: between2Node.x,
-    y: between1Node.y - offsetY / 2,
-  })
+  addEdge(lf, "skip", between1Node.id, gatewayNode2.id)
+  addEdge(lf, "skip", between2Node.id, gatewayNode2.id)
 
   // 找到并删除开始节点和目标节点之间的直接连接
   lf.deleteEdge(edge.id);
