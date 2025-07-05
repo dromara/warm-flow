@@ -200,7 +200,7 @@ onMounted(() => {
   }
   queryDef(definitionId.value).then(res => {
     jsonString.value = res.data;
-    if (res.data.isPublish !== 0) {
+    if (res.data.isPublish && res.data.isPublish !== 0) {
       disabled.value = true
     }
     categoryList.value = res.data.categoryList;
