@@ -1,5 +1,5 @@
 const OFFSET_X = 150;
-const OFFSET_Y = 180;
+const OFFSET_Y = 150;
 
 function addNode(lf, nodeType, x, y, name) {
   let text = null;
@@ -197,6 +197,39 @@ export const addGatewayNode = (lf, edge, nodeType) => {
 
   // 连接互斥网关结束节点到目标节点
   addEdge(lf, "skip", gatewayNode2.id, targetNode.id)
+
+  // 找出所有节点nodes中的x坐标，减去sourceNode.x的最小的差值，小于横向偏移量，才移动节点
+  let needMoveLeftNode = []
+  let needMoveRightNode = []
+  let LeftMove = false;
+  let rightMove = false;
+  // 过滤nodes在between1Node和between2Node之间的节点
+  nodes.forEach(node => {
+    if (node.x <= between1Node.x) {
+      needMoveLeftNode.push(node)
+      if (between1Node.x - node.x < OFFSET_X) {
+        LeftMove = true
+      }
+    } else if (node.x >= between2Node.x) {
+      needMoveRightNode.push(node)
+      if (node.x - between2Node.x < OFFSET_X) {
+        rightMove = true
+      }
+    }
+  })
+
+  // 水平自动布局
+  if (LeftMove) {
+    needMoveLeftNode.forEach(node => {
+      lf.graphModel.moveNode(node.id, -OFFSET_X, 0, true);
+    });
+  }
+  if (rightMove) {
+    needMoveRightNode.forEach(node => {
+      lf.graphModel.moveNode(node.id, OFFSET_X, 0, true);
+    });
+  }
+
   updateEdges(lf)
 
   // 自动调整画布大小

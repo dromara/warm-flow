@@ -119,11 +119,11 @@ public interface Definition extends RootEntity {
                 .setDelFlag(this.getDelFlag())
                 .setFlowCode(this.getFlowCode())
                 .setFlowName(this.getFlowName())
+                .setModelValue(this.getModelValue())
                 .setCategory(this.getCategory())
                 .setVersion(this.getVersion())
                 .setFormCustom(this.getFormCustom())
                 .setFormPath(this.getFormPath())
-                .setActivityStatus(this.getActivityStatus())
                 .setListenerType(this.getListenerType())
                 .setListenerPath(this.getListenerPath())
                 .setExt(this.getExt());

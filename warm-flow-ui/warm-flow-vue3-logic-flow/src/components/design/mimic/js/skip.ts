@@ -42,9 +42,10 @@ class SkipView extends CurvedEdge {
     let mainPath = getCurvedEdgePath(points, radius as number);
     let plusElements: h.JSX.Element[] = [];
 
+    const offsetY = 30
     // 直线中间增加加号
     if (points.length === 2) {
-      const midPoint = [(points[0][0] + points[1][0]) / 2, (points[0][1] + points[1][1]) / 2];
+      const midPoint = [points[0][0], points[0][1] + offsetY];
       plusElements = this.getPlusElements(midPoint);
     }
 
@@ -57,17 +58,17 @@ class SkipView extends CurvedEdge {
 
         // 判断是否由竖线变为横线
         if (Math.abs(p0[0] - p1[0]) === 5 && p0[1] !== p1[1]) {
-          const midPoint = [(p0[0] + p1[0]) / 2, (p0[1] + p1[1]) / 2];
+          const midPoint = [p0[0] , p0[1] + offsetY];
           plusElements = this.getPlusElements(midPoint);
         }
         // 判断是否由横线变为竖线
         if (Math.abs(p0[1] - p1[1]) === 5 && p0[0] !== p1[0]) {
-          const midPoint = [(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2];
+          const midPoint = [p2[0], p1[1] + offsetY];
           const obj = [
             // 使用 SVG 图标代替原来的图形
             h('foreignObject', {
-              x: midPoint[0] - 16, // 居中定位
-              y: midPoint[1] - 50,
+              x: midPoint[0] - 16,
+              y: midPoint[1],
               width: 32,
               height: 32,
             }, [
@@ -109,26 +110,28 @@ class SkipView extends CurvedEdge {
 
   private getAddElements(midPoint: number[], obj, isCondition: boolean = false) {
     if (!obj) {
+      const x = midPoint[0]
+      const y = midPoint[1]
       obj = [
         h('circle', {
-          cx: midPoint[0],
-          cy: midPoint[1],
-          r: 16,
+          cx: x,
+          cy: y,
+          r: 13,
           fill: 'blue',
         }),
         h('line', {
-          x1: midPoint[0] - 8,
-          y1: midPoint[1],
-          x2: midPoint[0] + 8,
-          y2: midPoint[1],
+          x1: x - 8,
+          y1: y,
+          x2: x + 8,
+          y2: y,
           stroke: 'white',
           'stroke-width': '2',
         }),
         h('line', {
-          x1: midPoint[0],
-          y1: midPoint[1] - 8,
-          x2: midPoint[0],
-          y2: midPoint[1] + 8,
+          x1: x,
+          y1: y - 8,
+          x2: x,
+          y2: y + 8,
           stroke: 'white',
           'stroke-width': '2',
         })
