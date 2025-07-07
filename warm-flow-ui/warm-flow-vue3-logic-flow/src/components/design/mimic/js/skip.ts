@@ -10,8 +10,7 @@ class SkipModel extends CurvedEdgeModel  {
   }
 
   getEdgeStyle() {
-    let style = super.getEdgeStyle()
-    return setCommonStyle(style, this.properties, "skip");
+    return setCommonStyle(super.getEdgeStyle(), this.properties, "skip");
 
   }
 
@@ -31,6 +30,9 @@ class SkipView extends CurvedEdge {
 
   getEdge(): h.JSX.Element {
     const { model } = this.props;
+    if ((model.sourceNode.type as string) === "parallel") {
+      return super.getEdge();
+    }
     const { points: pointsStr, isAnimation, arrowConfig, radius = 5 } = model;
     const style = model.getEdgeStyle();
     const animationStyle = model.getEdgeAnimationStyle();

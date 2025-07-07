@@ -227,14 +227,14 @@ function initLogicFlow() {
     lf.value = new LogicFlow({
       container: proxy.$refs.containerRef,
       textEdit: false,
-      // snapToGrid: true,
-      // hideAnchors: !isClassics(),
-      // adjustNodePosition: isClassics(),
-      // hoverOutline: isClassics(),
-      // nodeSelectedOutline: isClassics(),
-      // edgeSelectedOutline: isClassics(),
-      // nodeTextDraggable: isClassics(),
-      // edgeTextDraggable: isClassics(),
+      snapToGrid: true,
+      hideAnchors: !isClassics(),
+      adjustNodePosition: isClassics(),
+      hoverOutline: isClassics(),
+      nodeSelectedOutline: isClassics(),
+      edgeSelectedOutline: isClassics(),
+      nodeTextDraggable: isClassics(),
+      edgeTextDraggable: isClassics(),
       grid: {
         size: 20,
         visible: 'true' === appParams.value.showGrid,
@@ -468,10 +468,15 @@ function initEvent() {
 
     // 中间节点双击事件
     eventCenter.on('node:click', (args) => {
-      if (['serial', 'parallel'].includes(args.data.type)) {
-        gatewayAddNode(lf.value, args.data);
-      } else {
-        nodeClick.value = args.data
+      nodeClick.value = args.data
+      if (['serial', 'parallel'].includes(nodeClick.value.type)) {
+        gatewayAddNode(lf.value, nodeClick.value);
+      }
+    })
+
+    eventCenter.on('edit:node', (args) => {
+      if (args.click) {
+        nodeClick.value = lf.value.getNodeModelById(args.id)
         let graphData = lf.value.getGraphData()
         nodes.value = graphData['nodes']
         skips.value = graphData['edges']

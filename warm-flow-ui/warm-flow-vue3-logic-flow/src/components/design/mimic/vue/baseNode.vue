@@ -1,16 +1,16 @@
 <template>
   <div class="base-node" ref="baseNodeDiv">
     <div class="top-section">
-      <span v-if="showSpan" @click="editNodeName">{{ nodeName }} 📝</span>
+      <span v-show="showSpan" @click="editNodeName" v-click-outside="handleLeave">{{ nodeName }} 📝</span>
       <input
-          v-if="editingNodeName"
+          v-show="editingNodeName"
           ref="nodeNameInput"
           v-model="nodeName"
           @blur="saveNodeName"/>
-      <span v-if="props.type === 'between'" class="delete-btn" @click.stop="deleteNode">✕</span>
+      <span v-show="props.type === 'between'" class="delete-btn" @click.stop="deleteNode">✕</span>
     </div>
 
-    <div class="bottom-section">{{ handler }}</div>
+    <div class="bottom-section" @click="editNode">{{ handler }}</div>
 
   </div>
 </template>
@@ -42,19 +42,16 @@ const props = defineProps({
 
 const showSpan = ref(true);
 const baseNodeDiv = ref(null);
+const nodeName = ref('发起人');
+const handler = ref('所有人');
+const nodeNameInput = ref(null);
+const editingNodeName = ref(false);
 
-
-const emit = defineEmits(['updateNodeName', 'deleteNode']); // 添加 deleteNode 事件
+const emit = defineEmits(['updateNodeName', 'deleteNode', 'editNode']); // 添加 deleteNode 事件
 
 const deleteNode = () => {
   emit('deleteNode'); // 触发删除事件，由父组件处理
 };
-
-
-const nodeName = ref('发起人');
-const handler = ref('所有人');
-
-const editingNodeName = ref(false);
 
 watch(
     () => props.text,
@@ -84,14 +81,9 @@ watch(
 );
 
 const editNodeName = () => {
-  showSpan.value = false;
   editingNodeName.value = true;
-  setTimeout(() => {
-    nodeNameInput.value.focus();
-  }, 0);
+  showSpan.value = false;
 };
-
-
 
 const saveNodeName = () => {
   editingNodeName.value = false;
@@ -99,7 +91,14 @@ const saveNodeName = () => {
   emit('updateNodeName', nodeName.value);
 };
 
-const nodeNameInput = ref(null);
+const editNode = () => {
+  emit('editNode');
+};
+
+function handleLeave() {
+  editingNodeName.value = false;
+  showSpan.value = true;
+}
 
 </script>
 
@@ -115,6 +114,7 @@ const nodeNameInput = ref(null);
 .top-section {
   position: relative; /* 用于绝对定位子元素 */
   background-color: #ccc;
+  font-size: 13px;
   padding: 10px;
   height: 25px;
   display: flex;
@@ -129,7 +129,6 @@ const nodeNameInput = ref(null);
   top: 50%;
   transform: translateY(-50%);
   display: none;
-  font-size: 16px;
   color: #999;
 }
 
@@ -141,6 +140,7 @@ const nodeNameInput = ref(null);
 .bottom-section {
   padding: 10px;
   height: calc(100%);
+  font-size: 14px;
 }
 
 </style>

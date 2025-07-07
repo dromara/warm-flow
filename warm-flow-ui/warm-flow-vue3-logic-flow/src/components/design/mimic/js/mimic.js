@@ -1,3 +1,6 @@
+const OFFSET_X = 150;
+const OFFSET_Y = 180;
+
 function addNode(lf, nodeType, x, y, name) {
   let text = null;
   if (name) {
@@ -136,24 +139,25 @@ export const addBetweenNode = (lf, edge) => {
   const sourceNode = nodes.find(node => node.id === edge.sourceNodeId);
   const targetNode = nodes.find(node => node.id === edge.targetNodeId);
 
-  // 偏移距离
-  const offsetY = 180;
-
   // 添加中间节点
   const betweenNode = addNode(lf, 'between', ["serial", "parallel"].includes(sourceNode.type) ? targetNode.x :sourceNode.x,
-      sourceNode.y + offsetY, "中间节点")
+      sourceNode.y + OFFSET_Y, "中间节点")
   addEdge(lf, "skip", sourceNode.id, betweenNode.id)
 
   // 找到并删除开始节点和结束节点之间的直接连接
   lf.deleteEdge(edge.id);
 
-  const allNextNodes = findAllNextNodes(sourceNode.id, nodes, edges);
-  allNextNodes.forEach(node => {
-    if (node) {
-      lf.graphModel.moveNode(node.id, 0, offsetY, true);
-    }
-  });
-  addEdgeAll(lf, "skip", betweenNode.id, targetNode.id, edge.properties, edge.text)
+  // 当目标节点减新增中间节点差，小于竖向偏移量，才移动节点
+  if (targetNode.y - betweenNode.y < OFFSET_Y) {
+    const allNextNodes = findAllNextNodes(sourceNode.id, nodes, edges);
+    allNextNodes.forEach(node => {
+      if (node) {
+        lf.graphModel.moveNode(node.id, 0, OFFSET_Y, true);
+      }
+    });
+  }
+
+  addEdgeAll(lf, "skip", betweenNode.id, targetNode.id, edge.properties)
   updateEdges(lf)
   // 自动调整画布大小
   // adjustCanvasSize();
@@ -165,31 +169,31 @@ export const addGatewayNode = (lf, edge, nodeType) => {
   const sourceNode = nodes.find(node => node.id === edge.sourceNodeId);
   const targetNode = nodes.find(node => node.id === edge.targetNodeId);
 
-  // 偏移距离
-  const offsetX = 150;
-  const offsetY = 180;
-
   // 添加互斥网关开始节点
-  const gatewayNode = addNode(lf, nodeType, sourceNode.x, sourceNode.y + offsetY, "添加节点")
+  const gatewayNode = addNode(lf, nodeType, sourceNode.x, sourceNode.y + OFFSET_Y, "添加节点")
   // 连接父节点与互斥网关开始节点
   addEdge(lf, "skip", sourceNode.id, gatewayNode.id)
 
   // 添加两个中间节点
-  const between1Node = addNode(lf, "between", sourceNode.x - offsetX, sourceNode.y + offsetY * 2, "中间节点")
-  const between2Node = addNode(lf, "between", sourceNode.x + offsetX, sourceNode.y + offsetY * 2, "中间节点")
+  const between1Node = addNode(lf, "between", sourceNode.x - OFFSET_X, sourceNode.y + OFFSET_Y * 2, "中间节点")
+  const between2Node = addNode(lf, "between", sourceNode.x + OFFSET_X, sourceNode.y + OFFSET_Y * 2, "中间节点")
   addEdge(lf, "skip", gatewayNode.id, between1Node.id)
   addEdge(lf, "skip", gatewayNode.id, between2Node.id)
 
   // 添加互斥网关结束节点
-  const gatewayNode2 = addNode(lf, nodeType, sourceNode.x, sourceNode.y + offsetY * 3, "添加节点")
+  const gatewayNode2 = addNode(lf, nodeType, sourceNode.x, sourceNode.y + OFFSET_Y * 3, "添加节点")
   // 连接两个中间节点与互斥网关结束节点
   addEdge(lf, "skip", between1Node.id, gatewayNode2.id)
   addEdge(lf, "skip", between2Node.id, gatewayNode2.id)
 
   // 找到并删除开始节点和目标节点之间的直接连接
   lf.deleteEdge(edge.id);
-  const allNextNodes = findAllNextNodes(sourceNode.id, nodes, edges);
-  allNextNodes.forEach(node => lf.graphModel.moveNode(node.id, 0, offsetY * 3, true));
+
+  // 当目标节点减新增互斥网关结束节点差，小于竖向偏移量，才移动节点
+  if (targetNode.y - gatewayNode2.y < OFFSET_Y) {
+    const allNextNodes = findAllNextNodes(sourceNode.id, nodes, edges);
+    allNextNodes.forEach(node => lf.graphModel.moveNode(node.id, 0, OFFSET_Y * 3, true));
+  }
 
   // 连接互斥网关结束节点到目标节点
   addEdge(lf, "skip", gatewayNode2.id, targetNode.id)
@@ -202,9 +206,6 @@ export const addGatewayNode = (lf, edge, nodeType) => {
 export const gatewayAddNode = (lf, gatewayNode) => {
   const nodes = lf.getGraphData().nodes;
   const edges = lf.getGraphData().edges;
-
-  // 新中间节点的位置（在互斥网关开始节点的正右边）
-  const offsetX = 300; // 偏移量
 
   // 找到互斥网关结束节点
   let allSuccessors = findAllNextNodes(gatewayNode.id, nodes, edges);
@@ -227,7 +228,7 @@ export const gatewayAddNode = (lf, gatewayNode) => {
   let rightmostChild = getRightmostNode(allSuccessors)
 
   // 连接互斥网关开始节点到新的中间节点
-  const betweenNode = addNode(lf, "between", rightmostChild.x + offsetX, rightmostChild.y, "中间节点")
+  const betweenNode = addNode(lf, "between", rightmostChild.x + OFFSET_X * 2, rightmostChild.y, "中间节点")
 
   // 连接网关开始节点到新的中间节点
   addEdge(lf, "skip", gatewayNode.id, betweenNode.id)

@@ -1,6 +1,7 @@
 import { HtmlNode } from "@logicflow/core";
 import baseNode from '../vue/baseNode.vue'
 import { createApp, h } from 'vue';
+import {ClickOutside} from "element-plus";
 
 export class BaseNodeView extends HtmlNode {
 
@@ -15,6 +16,9 @@ export class BaseNodeView extends HtmlNode {
         props.model.text.value = nodeName
         props.graphModel.eventCenter.emit("update:nodeName", {id: props.model.id, nodeName: nodeName});
       },
+      onEditNode: () => {
+        props.graphModel.eventCenter.emit("edit:node", {id: props.model.id, click: true});
+      },
       onDeleteNode: () => {
         props.model.graphModel.deleteNode(props.model.id); // 删除节点
       }
@@ -22,6 +26,7 @@ export class BaseNodeView extends HtmlNode {
     this.app = createApp({
       render: () => this.r
     })
+    this.app.directive('click-outside', ClickOutside);
   }
 
   shouldUpdate() {
