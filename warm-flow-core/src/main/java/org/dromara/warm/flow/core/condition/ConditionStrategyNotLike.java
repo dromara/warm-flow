@@ -32,7 +32,7 @@ public class ConditionStrategyNotLike extends AbstractConditionStrategy {
 
     @Override
     public Boolean afterEval(String value, String variableValue) {
-        return !value.contains(variableValue);
+        return !variableValue.contains(value);
     }
 
 }
