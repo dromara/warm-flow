@@ -18,8 +18,8 @@ package org.dromara.warm.flow.core.condition;
 import org.dromara.warm.flow.core.enums.ConditionType;
 
 /**
- * 条件表达式不包含 notNike@@flag|4
- * 条件表达式不包含 notNike@@flag|4 and eq@@flag|5 or lt@@flag|6
+ * 条件表达式不包含 notLike@@flag|4
+ * 条件表达式不包含 notLike@@flag|4 and eq@@flag|5 or lt@@flag|6
  *
  * @author warm
  */
@@ -27,7 +27,7 @@ public class ConditionStrategyNotLike extends AbstractConditionStrategy {
 
     @Override
     public String getType() {
-        return ConditionType.NOT_NIKE.getKey();
+        return ConditionType.NOT_LIKE.getKey();
     }
 
     @Override

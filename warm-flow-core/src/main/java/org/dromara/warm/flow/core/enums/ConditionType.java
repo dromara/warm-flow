@@ -59,7 +59,7 @@ public enum ConditionType {
     /**
      * 不包含
      */
-    NOT_NIKE("notNike","不包含");
+    NOT_LIKE("notLike","不包含");
 
     /**
      * 表达式类型
