@@ -228,13 +228,13 @@ function initLogicFlow() {
       container: proxy.$refs.containerRef,
       textEdit: false,      // 是否开启文本编辑。
       snapToGrid: true,   // 是否开启网格吸附，开启后拖动节点会有以网格大小为补步长移动
-      // hideAnchors: !isClassics(),   // 是否隐藏节点的锚点，静默模式下默认隐藏。
-      // adjustNodePosition: isClassics(),   // 是否允许拖动节点。
-      // hoverOutline: isClassics(),   // 鼠标 hover 的时候是否显示节点的外框。
-      // nodeSelectedOutline: isClassics(),    // 节点被选中时是否显示节点的外框。
-      // edgeSelectedOutline: isClassics(),    //	边被选中时是否显示边的外框。
-      // nodeTextDraggable: isClassics(),    // 允许节点文本可以拖拽。
-      // edgeTextDraggable: isClassics(),    // 允许边文本可以拖拽。
+      hideAnchors: !isClassics(),   // 是否隐藏节点的锚点，静默模式下默认隐藏。
+      adjustNodePosition: isClassics(),   // 是否允许拖动节点。
+      hoverOutline: isClassics(),   // 鼠标 hover 的时候是否显示节点的外框。
+      nodeSelectedOutline: isClassics(),    // 节点被选中时是否显示节点的外框。
+      edgeSelectedOutline: isClassics(),    //	边被选中时是否显示边的外框。
+      nodeTextDraggable: isClassics(),    // 允许节点文本可以拖拽。
+      edgeTextDraggable: isClassics(),    // 允许边文本可以拖拽。
       grid: {
         size: 20,
         visible: 'true' === appParams.value.showGrid,

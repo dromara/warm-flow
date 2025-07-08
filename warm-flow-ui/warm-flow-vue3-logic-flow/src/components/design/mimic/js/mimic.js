@@ -1,5 +1,6 @@
 const OFFSET_X = 150;
 const OFFSET_Y = 150;
+const OFFSET_GETEWAY_Y = OFFSET_Y - 30;
 
 function addNode(lf, nodeType, x, y, name) {
   let text = null;
@@ -170,18 +171,18 @@ export const addGatewayNode = (lf, edge, nodeType) => {
   const targetNode = nodes.find(node => node.id === edge.targetNodeId);
 
   // 添加互斥网关开始节点
-  const gatewayNode = addNode(lf, nodeType, sourceNode.x, sourceNode.y + OFFSET_Y, "添加节点")
+  const gatewayNode = addNode(lf, nodeType, sourceNode.x, sourceNode.y + OFFSET_GETEWAY_Y, "添加节点")
   // 连接父节点与互斥网关开始节点
   addEdge(lf, "skip", sourceNode.id, gatewayNode.id)
 
   // 添加两个中间节点
-  const between1Node = addNode(lf, "between", sourceNode.x - OFFSET_X, sourceNode.y + OFFSET_Y * 2, "中间节点")
-  const between2Node = addNode(lf, "between", sourceNode.x + OFFSET_X, sourceNode.y + OFFSET_Y * 2, "中间节点")
+  const between1Node = addNode(lf, "between", sourceNode.x - OFFSET_X, sourceNode.y + OFFSET_GETEWAY_Y * 2, "中间节点")
+  const between2Node = addNode(lf, "between", sourceNode.x + OFFSET_X, sourceNode.y + OFFSET_GETEWAY_Y * 2, "中间节点")
   addEdge(lf, "skip", gatewayNode.id, between1Node.id)
   addEdge(lf, "skip", gatewayNode.id, between2Node.id)
 
   // 添加互斥网关结束节点
-  const gatewayNode2 = addNode(lf, nodeType, sourceNode.x, sourceNode.y + OFFSET_Y * 3, "添加节点")
+  const gatewayNode2 = addNode(lf, nodeType, sourceNode.x, sourceNode.y + OFFSET_GETEWAY_Y * 3, "添加节点")
   // 连接两个中间节点与互斥网关结束节点
   addEdge(lf, "skip", between1Node.id, gatewayNode2.id)
   addEdge(lf, "skip", between2Node.id, gatewayNode2.id)
@@ -189,14 +190,15 @@ export const addGatewayNode = (lf, edge, nodeType) => {
   // 找到并删除开始节点和目标节点之间的直接连接
   lf.deleteEdge(edge.id);
 
-  // 当目标节点减新增互斥网关结束节点差，小于竖向偏移量，才移动节点
-  if (targetNode.y - gatewayNode2.y < OFFSET_Y) {
-    const allNextNodes = findAllNextNodes(sourceNode.id, nodes, edges);
-    allNextNodes.forEach(node => lf.graphModel.moveNode(node.id, 0, OFFSET_Y * 3, true));
-  }
-
   // 连接互斥网关结束节点到目标节点
   addEdge(lf, "skip", gatewayNode2.id, targetNode.id)
+
+  // 当目标节点减新增互斥网关结束节点差，小于竖向偏移量，才移动节点
+  if (targetNode.y - gatewayNode2.y < OFFSET_GETEWAY_Y) {
+    const allNextNodes = findAllNextNodes(sourceNode.id, nodes, edges);
+    allNextNodes.forEach(node => lf.graphModel.moveNode(node.id, 0, (OFFSET_GETEWAY_Y - 10) * 3, true));
+  }
+
 
   // 找出所有节点nodes中的x坐标，减去sourceNode.x的最小的差值，小于横向偏移量，才移动节点
   let needMoveLeftNode = []

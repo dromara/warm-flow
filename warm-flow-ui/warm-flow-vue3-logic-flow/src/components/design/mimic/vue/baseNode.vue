@@ -1,7 +1,7 @@
 <template>
   <div class="base-node" ref="baseNodeDiv">
-    <div class="top-section">
-      <span v-show="showSpan" @click="editNodeName" v-click-outside="handleLeave">{{ nodeName }} 📝</span>
+    <div class="top-section" v-click-outside="handleLeave">
+      <span v-show="showSpan" @click="editNodeName">{{ nodeName }} 📝</span>
       <input
           v-show="editingNodeName"
           ref="nodeNameInput"
