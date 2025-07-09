@@ -71,7 +71,7 @@
 <script setup name="Design">
 import LogicFlow from "@logicflow/core";
 import "@logicflow/core/lib/style/index.css";
-import { DndPanel, Menu, Snapshot } from '@logicflow/extension';
+import {DndPanel, InsertNodeInPolyline, Menu, Snapshot} from '@logicflow/extension';
 import '@logicflow/extension/lib/style/index.css'
 import { ElLoading } from 'element-plus'
 import PropertySetting from '@/components/design/common/vue/propertySetting.vue'
@@ -448,6 +448,7 @@ function use() {
   // 只有经典模式才有拖拽面板
   if (isClassics()) {
     LogicFlow.use(DndPanel);
+    LogicFlow.use(InsertNodeInPolyline)
   }
   LogicFlow.use(Menu);
   LogicFlow.use(Snapshot);
