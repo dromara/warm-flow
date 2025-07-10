@@ -267,6 +267,13 @@ function initLogicFlow() {
         stroke: '#1E90FF',
         strokeWidth: 2,
       },
+      edgeText: {
+        fontSize: 13,
+        strokeWidth: 1,
+        background: {
+          fill: "#DDDDDD",
+        },
+      },
     });
 
     initDndPanel();
