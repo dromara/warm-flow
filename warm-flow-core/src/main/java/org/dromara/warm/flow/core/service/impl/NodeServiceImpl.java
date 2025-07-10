@@ -111,6 +111,15 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
         return list(FlowEngine.newNode().setDefinitionId(definitionId).setNodeType(NodeType.END.getKey()));
     }
 
+
+    @Override
+    public List<Node> getFirstBetweenNode(Long definitionId, Map<String, Object> variable) {
+        FlowCombine flowCombine = FlowEngine.defService().getFlowCombineNoDef(definitionId);
+        Node startNode = StreamUtils.filterOne(flowCombine.getAllNodes(), t -> NodeType.isStart(t.getNodeType()));
+        return getNextNodeList(startNode, null, SkipType.PASS.getKey(),
+                variable, null, flowCombine);
+    }
+
     @Override
     public Node getEndNode(Long definitionId) {
         return getOne(FlowEngine.newNode().setDefinitionId(definitionId).setNodeType(NodeType.END.getKey()));
