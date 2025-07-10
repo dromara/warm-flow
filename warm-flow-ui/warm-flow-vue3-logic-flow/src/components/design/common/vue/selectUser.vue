@@ -156,7 +156,7 @@ const emit = defineEmits(["update:userVisible", "handleUserSelect"]);
 /** 通过条件过滤节点  */
 const filterNode = (value, data) => {
  if (!value) return true;
- return data.label.indexOf(value) !== -1;
+ return data.name.indexOf(value) !== -1;
 };
 
 /** 根据名称筛选部门树 */
