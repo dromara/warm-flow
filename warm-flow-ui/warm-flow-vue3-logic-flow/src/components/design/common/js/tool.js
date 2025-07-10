@@ -274,3 +274,20 @@ export const setCommonStyle = (style, properties, type) => {
   style.cursor = 'pointer'
   return style;
 }
+
+export function getPreviousNodes(nodes, skips, nowNodeCode) {
+  let previousCode = getPreviousCode(skips, nowNodeCode)
+  return nodes.filter(node => previousCode.includes(node.id)).reverse();
+}
+
+function getPreviousCode(skips, nowNodeCode) {
+  let passSkip = skips.filter(skip => skip.properties.skipType === "PASS");
+  const previousCode = [];
+  for (const skip of passSkip) {
+    if (skip.targetNodeId === nowNodeCode) {
+      previousCode.push(skip.sourceNodeId);
+      previousCode.push(...getPreviousCode(passSkip, skip.sourceNodeId));
+    }
+  }
+  return previousCode;
+}

@@ -169,6 +169,7 @@ import selectUser from "./selectUser";
 import { Delete } from '@element-plus/icons-vue'
 import {publishedList, handlerDict, nodeExt, handlerFeedback} from "@/api/flow/definition";
 import nodeExtList from "./nodeExtList";
+import {getPreviousNodes} from "@/components/design/common/js/tool.js";
 const { proxy } = getCurrentInstance();
 
 const props = defineProps({
@@ -356,23 +357,10 @@ function handleDeleteRow(index) {
 }
 
 const filteredNodes = computed(() => {
-  let skipList = props.skips.filter(skip => skip.properties.skipType === "PASS");
-
-  let previousCode = getPreviousCode(skipList, form.value.nodeCode)
-  return props.nodes.filter(node => !["start", "serial", "parallel"].includes(node.type)
-      && previousCode.includes(node.id)).reverse();
+  let previousNodes = getPreviousNodes(props.nodes, props.skips, form.value.nodeCode)
+  return previousNodes.filter(node => !["start", "serial", "parallel"].includes(node.type));
 });
 
-function getPreviousCode(skipList, nowNodeCode) {
-  const previousCode = [];
-  for (const skip of skipList) {
-    if (skip.targetNodeId === nowNodeCode) {
-      previousCode.push(skip.sourceNodeId);
-      previousCode.push(...getPreviousCode(skipList, skip.sourceNodeId));
-    }
-  }
-  return previousCode;
-}
 
 getPermissionFlag();
 // TODO form 开发中

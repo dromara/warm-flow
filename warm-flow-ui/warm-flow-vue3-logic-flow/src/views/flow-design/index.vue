@@ -76,7 +76,7 @@ import '@logicflow/extension/lib/style/index.css'
 import { ElLoading } from 'element-plus'
 import PropertySetting from '@/components/design/common/vue/propertySetting.vue'
 import { queryDef, saveJson } from "@/api/flow/definition";
-import { json2LogicFlowJson, logicFlowJsonToWarmFlow } from "@/components/design/common/js/tool";
+import {getPreviousNodes, json2LogicFlowJson, logicFlowJsonToWarmFlow} from "@/components/design/common/js/tool";
 import StartC from "@/components/design/classics/js/start";
 import BetweenC from "@/components/design/classics/js/between";
 import SerialC from "@/components/design/classics/js/serial";
@@ -517,7 +517,7 @@ function initEvent() {
     });
   } else {
     // 中间节点双击事件
-    eventCenter.on('node:click', (args) => {
+    eventCenter.on('node:dbclick', (args) => {
       nodeClick.value = args.data
       let graphData = lf.value.getGraphData()
       nodes.value = graphData['nodes']
@@ -528,7 +528,7 @@ function initEvent() {
     })
 
     // 边双击事件
-    eventCenter.on('edge:click  ', (args) => {
+    eventCenter.on('edge:dbclick  ', (args) => {
       nodeClick.value = args.data
       const nodeModel = lf.value.getNodeModelById(nodeClick.value.sourceNodeId);
       skipConditionShow.value = nodeModel['type'] === 'serial'
@@ -542,10 +542,12 @@ function initEvent() {
   }
 
   eventCenter.on('edge:add', (args) => {
+    let graphData = lf.value.getGraphData()
+    const previousNodes = getPreviousNodes(graphData['nodes'], graphData['edges'], args.data.sourceNodeId);
     lf.value.changeEdgeType(args.data.id, 'skip')
     // 修改边类型
     lf.value.setProperties(args.data.id, {
-      skipType: 'PASS'
+      skipType: previousNodes.some(node => node.id === args.data.targetNodeId) ? 'REJECT' : 'PASS'
     })
   })
 
