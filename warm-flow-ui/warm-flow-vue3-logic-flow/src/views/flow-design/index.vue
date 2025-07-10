@@ -472,7 +472,7 @@ function initEvent() {
       })
     })
 
-    // 中间节点双击事件
+    // 网关节点单击事件
     eventCenter.on('node:click', (args) => {
       nodeClick.value = args.data
       if (['serial', 'parallel'].includes(nodeClick.value.type)) {

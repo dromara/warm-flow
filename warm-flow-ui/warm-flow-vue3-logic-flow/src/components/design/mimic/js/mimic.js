@@ -221,21 +221,17 @@ export const addBetweenNode = (lf, edge) => {
   const targetNode = nodes.find(node => node.id === edge.targetNodeId);
 
   // 添加中间节点
-  const betweenNode = addNode(lf, 'between', ["serial", "parallel"].includes(sourceNode.type) ? targetNode.x :sourceNode.x,
-      sourceNode.y + OFFSET_Y, "中间节点")
+  const betweenNode = addNode(lf, 'between', sourceNode.x, getMoveY(sourceNode, 'between'), "中间节点")
   addEdge(lf, "skip", sourceNode.id, betweenNode.id)
 
   // 找到并删除开始节点和结束节点之间的直接连接
   lf.deleteEdge(edge.id);
 
   // 当目标节点减新增中间节点差，小于竖向偏移量，才移动节点
-  if (targetNode.y - betweenNode.y < OFFSET_Y) {
-    const allNextNodes = findAllNextNodes(sourceNode.id, nodes, edges);
-    allNextNodes.forEach(node => {
-      if (node) {
-        lf.graphModel.moveNode(node.id, 0, OFFSET_Y, true);
-      }
-    });
+  if (targetNode.y - betweenNode.y < OFFSET_GETEWAY_Y) {
+    let lastNode = betweenNode;
+    const initialNodes = findNextNodes(sourceNode.id, nodes, edges);
+    recursivelyMoveNodes(lf, initialNodes, lastNode, nodes, edges);
   }
 
   addEdgeAll(lf, "skip", betweenNode.id, targetNode.id, edge.properties)
@@ -251,7 +247,8 @@ export const addGatewayNode = (lf, edge, nodeType) => {
   const targetNode = nodes.find(node => node.id === edge.targetNodeId);
 
   // 添加互斥网关开始节点
-  const gatewayNode = addNode(lf, nodeType, sourceNode.x, sourceNode.y + OFFSET_GETEWAY_Y, "添加节点")
+  const gatewayNode = addNode(lf, nodeType, sourceNode.x, ['serial', 'parallel'].includes(sourceNode.type)
+      ? sourceNode.y + OFFSET_GETEWAY_Y - 20 : sourceNode.y + OFFSET_GETEWAY_Y, "添加节点")
   // 连接父节点与互斥网关开始节点
   addEdge(lf, "skip", sourceNode.id, gatewayNode.id)
 
@@ -275,8 +272,9 @@ export const addGatewayNode = (lf, edge, nodeType) => {
 
   // 当目标节点减新增互斥网关结束节点差，小于竖向偏移量，才移动节点
   if (targetNode.y - gatewayNode2.y < OFFSET_GETEWAY_Y) {
-    const allNextNodes = findAllNextNodes(sourceNode.id, nodes, edges);
-    allNextNodes.forEach(node => lf.graphModel.moveNode(node.id, 0, OFFSET_GETEWAY_Y * 3, true));
+    let lastNode = gatewayNode2;
+    const initialNodes = findNextNodes(sourceNode.id, nodes, edges);
+    recursivelyMoveNodes(lf, initialNodes, lastNode, nodes, edges);
   }
 
 
@@ -317,6 +315,51 @@ export const addGatewayNode = (lf, edge, nodeType) => {
   // 自动调整画布大小
   // adjustCanvasSize();
 }
+
+function getMoveY(sourceNode, targetType) {
+  let moveY;
+  if (['start', 'between'].includes(sourceNode.type) && targetType === 'between') {
+    moveY = sourceNode.y + OFFSET_Y;
+  } else if (['start', 'between'].includes(sourceNode.type) && targetType === 'end') {
+    moveY = sourceNode.y + OFFSET_Y - 20;
+  } else if (['start', 'between'].includes(sourceNode.type) && ['serial', 'parallel'].includes(targetType)) {
+    moveY = sourceNode.y + OFFSET_Y - 25;
+  } else if (['serial', 'parallel'].includes(sourceNode.type) && ['serial', 'parallel'].includes(targetType)) {
+    moveY = sourceNode.y + OFFSET_Y - 50;
+  } else if (['serial', 'parallel'].includes(sourceNode.type) && targetType === 'between') {
+    moveY = sourceNode.y + OFFSET_Y - 25;
+  } else if (['serial', 'parallel'].includes(sourceNode.type) && targetType === 'end') {
+    moveY = sourceNode.y + OFFSET_Y - 45;
+  }
+  return moveY;
+}
+
+/**
+ * 递归处理节点的 Y 轴移动逻辑
+ * @param {Object} lf - lf
+ * @param {Array} nodesToMove - 当前要移动的节点数组
+ * @param {Object} lastNode - 上一个移动后的节点模型
+ * @param {Array} nodes - 所有节点
+ * @param {Array} edges - 所有边
+ */
+function recursivelyMoveNodes(lf, nodesToMove, lastNode, nodes, edges) {
+  if (!nodesToMove || nodesToMove.length === 0) return;
+
+  nodesToMove.forEach(node => {
+    let moveY = getMoveY(lastNode, node.type);
+
+    // 移动当前节点
+    lf.graphModel.moveNode2Coordinate(node.id, node.x, moveY, true);
+
+    // 更新 lastNode
+    const updatedNode = lf.graphModel.getNodeModelById(node.id);
+
+    // 查找当前节点的后续节点并递归处理
+    const nextNodes = findNextNodes(node.id, nodes, edges);
+    recursivelyMoveNodes(lf, nextNodes, updatedNode, nodes, edges);
+  });
+}
+
 
 export const gatewayAddNode = (lf, gatewayNode) => {
   const nodes = lf.getGraphData().nodes;
@@ -395,11 +438,12 @@ function findLastEdges(nodeId, edges) {
 }
 
 function findNextNodes(nodeId, nodes, edges) {
-  return edges
-      .filter(edge => edge.sourceNodeId === nodeId)
+  return edges.filter(edge => edge.sourceNodeId === nodeId)
       .map(edge => nodes.find(node => node.id === edge.targetNodeId))
       .filter(Boolean);
 }
+
+
 
 function adjustCanvasSize() {
   const nodes = lf.getGraphData().nodes;
