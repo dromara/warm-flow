@@ -18,7 +18,6 @@ package org.dromara.warm.flow.core.utils;
 import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.constant.FlowCons;
 import org.dromara.warm.flow.core.entity.Definition;
-import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.entity.Task;
 import org.dromara.warm.flow.core.enums.NodeType;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
