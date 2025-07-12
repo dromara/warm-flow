@@ -291,3 +291,10 @@ function getPreviousCode(skips, nowNodeCode) {
   }
   return previousCode;
 }
+
+/**
+ * 判断是否经典模式
+ */
+export function isClassics(modelValue) {
+  return "CLASSICS" === modelValue
+}

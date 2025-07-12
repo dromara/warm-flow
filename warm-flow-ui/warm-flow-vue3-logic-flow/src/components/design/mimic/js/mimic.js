@@ -1,6 +1,5 @@
 const OFFSET_X = 150;
 const OFFSET_Y = 150;
-const OFFSET_GETEWAY_Y = OFFSET_Y - 30;
 
 function addNode(lf, nodeType, x, y, name) {
   let text = null;
@@ -228,7 +227,7 @@ export const addBetweenNode = (lf, edge) => {
   lf.deleteEdge(edge.id);
 
   // 当目标节点减新增中间节点差，小于竖向偏移量，才移动节点
-  if (targetNode.y - betweenNode.y < OFFSET_GETEWAY_Y) {
+  if (targetNode.y < getMoveY(betweenNode, targetNode.type)) {
     let lastNode = betweenNode;
     const initialNodes = findNextNodes(sourceNode.id, nodes, edges);
     recursivelyMoveNodes(lf, initialNodes, lastNode, nodes, edges);
@@ -247,19 +246,18 @@ export const addGatewayNode = (lf, edge, nodeType) => {
   const targetNode = nodes.find(node => node.id === edge.targetNodeId);
 
   // 添加互斥网关开始节点
-  const gatewayNode = addNode(lf, nodeType, sourceNode.x, ['serial', 'parallel'].includes(sourceNode.type)
-      ? sourceNode.y + OFFSET_GETEWAY_Y - 20 : sourceNode.y + OFFSET_GETEWAY_Y, "添加节点")
+  const gatewayNode = addNode(lf, nodeType, sourceNode.x, getMoveY(sourceNode, nodeType), "添加节点")
   // 连接父节点与互斥网关开始节点
   addEdge(lf, "skip", sourceNode.id, gatewayNode.id)
 
   // 添加两个中间节点
-  const between1Node = addNode(lf, "between", sourceNode.x - OFFSET_X, sourceNode.y + OFFSET_GETEWAY_Y * 2, "中间节点")
-  const between2Node = addNode(lf, "between", sourceNode.x + OFFSET_X, sourceNode.y + OFFSET_GETEWAY_Y * 2, "中间节点")
+  const between1Node = addNode(lf, "between", sourceNode.x - OFFSET_X, getMoveY(gatewayNode, "between"), "中间节点")
+  const between2Node = addNode(lf, "between", sourceNode.x + OFFSET_X, getMoveY(gatewayNode, "between"), "中间节点")
   addEdge(lf, "skip", gatewayNode.id, between1Node.id)
   addEdge(lf, "skip", gatewayNode.id, between2Node.id)
 
   // 添加互斥网关结束节点
-  const gatewayNode2 = addNode(lf, nodeType, sourceNode.x, sourceNode.y + OFFSET_GETEWAY_Y * 3, "添加节点")
+  const gatewayNode2 = addNode(lf, nodeType, sourceNode.x, getMoveY(between1Node, nodeType), "添加节点")
   // 连接两个中间节点与互斥网关结束节点
   addEdge(lf, "skip", between1Node.id, gatewayNode2.id)
   addEdge(lf, "skip", between2Node.id, gatewayNode2.id)
@@ -271,7 +269,7 @@ export const addGatewayNode = (lf, edge, nodeType) => {
   addEdge(lf, "skip", gatewayNode2.id, targetNode.id)
 
   // 当目标节点减新增互斥网关结束节点差，小于竖向偏移量，才移动节点
-  if (targetNode.y - gatewayNode2.y < OFFSET_GETEWAY_Y) {
+  if (targetNode.y < getMoveY(gatewayNode2, targetNode.type)) {
     let lastNode = gatewayNode2;
     const initialNodes = findNextNodes(sourceNode.id, nodes, edges);
     recursivelyMoveNodes(lf, initialNodes, lastNode, nodes, edges);
@@ -316,6 +314,44 @@ export const addGatewayNode = (lf, edge, nodeType) => {
   // adjustCanvasSize();
 }
 
+export const gatewayAddNode = (lf, gatewayNode) => {
+  const nodes = lf.getGraphData().nodes;
+  const edges = lf.getGraphData().edges;
+
+  // 找到互斥网关结束节点
+  let allSuccessors = findAllNextNodes(gatewayNode.id, nodes, edges);
+  let n = 1
+  const gatewayEndNode = allSuccessors.find(node => {
+    if (gatewayNode.type.includes(node.type)) {
+      if (n === 1) {
+        return node
+      }
+      if (findNextEdges(node.id, edges).length > 1) {
+        n++
+      } else {
+        n--
+      }
+    }
+  })
+
+  // 在直接子节点中找到最右边的节点
+  allSuccessors = findAllNextNodes(gatewayNode.id, nodes, edges, new Set(), [], gatewayEndNode);
+  let rightmostChild = getRightmostNode(allSuccessors)
+
+  // 连接互斥网关开始节点到新的中间节点
+  const betweenNode = addNode(lf, "between", rightmostChild.x + OFFSET_X * 2, rightmostChild.y, "中间节点")
+
+  // 连接网关开始节点到新的中间节点
+  addEdge(lf, "skip", gatewayNode.id, betweenNode.id)
+
+
+  if (gatewayEndNode) {
+    // 连接新的中间节点到互斥网关结束节点
+    addEdge(lf, "skip", betweenNode.id, gatewayEndNode.id)
+  }
+  updateNodesAndEdges(lf)
+};
+
 function getMoveY(sourceNode, targetType) {
   let moveY;
   if (['start', 'between'].includes(sourceNode.type) && targetType === 'between') {
@@ -359,45 +395,6 @@ function recursivelyMoveNodes(lf, nodesToMove, lastNode, nodes, edges) {
     recursivelyMoveNodes(lf, nextNodes, updatedNode, nodes, edges);
   });
 }
-
-
-export const gatewayAddNode = (lf, gatewayNode) => {
-  const nodes = lf.getGraphData().nodes;
-  const edges = lf.getGraphData().edges;
-
-  // 找到互斥网关结束节点
-  let allSuccessors = findAllNextNodes(gatewayNode.id, nodes, edges);
-  let n = 1
-  const gatewayEndNode = allSuccessors.find(node => {
-    if (gatewayNode.type.includes(node.type)) {
-      if (n === 1) {
-        return node
-      }
-      if (findNextEdges(node.id, edges).length > 1) {
-        n++
-      } else {
-        n--
-      }
-    }
-  })
-
-  // 在直接子节点中找到最右边的节点
-  allSuccessors = findAllNextNodes(gatewayNode.id, nodes, edges, new Set(), [], gatewayEndNode);
-  let rightmostChild = getRightmostNode(allSuccessors)
-
-  // 连接互斥网关开始节点到新的中间节点
-  const betweenNode = addNode(lf, "between", rightmostChild.x + OFFSET_X * 2, rightmostChild.y, "中间节点")
-
-  // 连接网关开始节点到新的中间节点
-  addEdge(lf, "skip", gatewayNode.id, betweenNode.id)
-
-
-  if (gatewayEndNode) {
-    // 连接新的中间节点到互斥网关结束节点
-    addEdge(lf, "skip", betweenNode.id, gatewayEndNode.id)
-  }
-  updateNodesAndEdges(lf)
-};
 
 function findAllNextNodes(nodeId, nodes, edges, visited = new Set(), result = [], endId) {
   if (visited.has(nodeId)) {

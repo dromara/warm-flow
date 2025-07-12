@@ -10,7 +10,7 @@
       <span v-show="props.type === 'between'" class="delete-btn" @click.stop="deleteNode">✕</span>
     </div>
 
-    <div class="bottom-section" @click="editNode">{{ handler }}</div>
+    <div class="bottom-section" @click="editNode" :title="handler">{{ handler }}</div>
 
   </div>
 </template>

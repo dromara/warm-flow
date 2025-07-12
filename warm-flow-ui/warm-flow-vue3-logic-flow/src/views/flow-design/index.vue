@@ -76,7 +76,12 @@ import '@logicflow/extension/lib/style/index.css'
 import { ElLoading } from 'element-plus'
 import PropertySetting from '@/components/design/common/vue/propertySetting.vue'
 import { queryDef, saveJson } from "@/api/flow/definition";
-import {getPreviousNodes, json2LogicFlowJson, logicFlowJsonToWarmFlow} from "@/components/design/common/js/tool";
+import {
+  getPreviousNodes,
+  isClassics,
+  json2LogicFlowJson,
+  logicFlowJsonToWarmFlow
+} from "@/components/design/common/js/tool";
 import StartC from "@/components/design/classics/js/start";
 import BetweenC from "@/components/design/classics/js/between";
 import SerialC from "@/components/design/classics/js/serial";
@@ -179,7 +184,7 @@ async function handleStepClick(index) {
       await nextTick(() => {
         if (!jsonString.value.nodeList || jsonString.value.nodeList.length === 0) {
           // 读取本地文件/initData.json文件，并将数据转换json对象
-          let initData = isClassics() ? initClassicsData: initMimicData
+          let initData = isClassics(logicJson.value.modelValue) ? initClassicsData: initMimicData
           logicJson.value = {
             ...logicJson.value,
             ...initData
@@ -208,7 +213,7 @@ onMounted(() => {
     if (jsonString.value) {
       logicJson.value = json2LogicFlowJson(jsonString.value);
       if (!logicJson.value.nodes || logicJson.value.nodes.length === 0) {
-        let initData = isClassics() ? initClassicsData: initMimicData
+        let initData = isClassics(logicJson.value.modelValue) ? initClassicsData: initMimicData
         // 读取本地文件/initClassicsData.json文件，并将数据转换json对象
         logicJson.value = {
           ...logicJson.value,
@@ -228,13 +233,13 @@ function initLogicFlow() {
       container: proxy.$refs.containerRef,
       textEdit: false,      // 是否开启文本编辑。
       snapToGrid: true,   // 是否开启网格吸附，开启后拖动节点会有以网格大小为补步长移动
-      hideAnchors: !isClassics(),   // 是否隐藏节点的锚点，静默模式下默认隐藏。
-      adjustNodePosition: isClassics(),   // 是否允许拖动节点。
-      hoverOutline: isClassics(),   // 鼠标 hover 的时候是否显示节点的外框。
-      nodeSelectedOutline: isClassics(),    // 节点被选中时是否显示节点的外框。
-      edgeSelectedOutline: isClassics(),    //	边被选中时是否显示边的外框。
-      nodeTextDraggable: isClassics(),    // 允许节点文本可以拖拽。
-      edgeTextDraggable: isClassics(),    // 允许边文本可以拖拽。
+      hideAnchors: !isClassics(logicJson.value.modelValue),   // 是否隐藏节点的锚点，静默模式下默认隐藏。
+      adjustNodePosition: isClassics(logicJson.value.modelValue),   // 是否允许拖动节点。
+      hoverOutline: isClassics(logicJson.value.modelValue),   // 鼠标 hover 的时候是否显示节点的外框。
+      nodeSelectedOutline: isClassics(logicJson.value.modelValue),    // 节点被选中时是否显示节点的外框。
+      edgeSelectedOutline: isClassics(logicJson.value.modelValue),    //	边被选中时是否显示边的外框。
+      nodeTextDraggable: isClassics(logicJson.value.modelValue),    // 允许节点文本可以拖拽。
+      edgeTextDraggable: isClassics(logicJson.value.modelValue),    // 允许边文本可以拖拽。
       grid: {
         size: 20,
         visible: 'true' === appParams.value.showGrid,
@@ -247,7 +252,7 @@ function initLogicFlow() {
           backgroundColor: "#fff",
         },
       },
-      keyboard: isClassics() ? {
+      keyboard: isClassics(logicJson.value.modelValue) ? {
         enabled: true,
         shortcuts: [
           {
@@ -325,7 +330,7 @@ onUnmounted(() => {
  */
 function initDndPanel() {
   // 只有经典模式才有拖拽面板
-  if (isClassics()) {
+  if (isClassics(logicJson.value.modelValue)) {
     lf.value.extension.dndPanel.setPatternItems([
       {
         type: 'start',
@@ -409,7 +414,7 @@ async function saveJsonModel() {
  */
 function initMenu() {
   // 只有仿钉钉模式才初始化菜单
-  if (!isClassics()) {
+  if (!isClassics(logicJson.value.modelValue)) {
     // 为菜单追加选项（必须在 lf.render() 之前设置）
     lf.value.extension.menu.setMenuConfig({
       nodeMenu: [],
@@ -422,7 +427,7 @@ function initMenu() {
  * 注册自定义节点和边
  */
 function register() {
-  if (isClassics()) {
+  if (isClassics(logicJson.value.modelValue)) {
     lf.value.register(StartC);
     lf.value.register(BetweenC);
     lf.value.register(SerialC);
@@ -437,23 +442,14 @@ function register() {
     lf.value.register(EndM);
     lf.value.register(SkipM);
   }
-
 }
-
-/**
- * 注册自定义节点和边
- */
-function isClassics() {
-  return "CLASSICS" === logicJson.value.modelValue
-}
-
 
 /**
  * 添加扩展
  */
 function use() {
   // 只有经典模式才有拖拽面板
-  if (isClassics()) {
+  if (isClassics(logicJson.value.modelValue)) {
     LogicFlow.use(DndPanel);
     LogicFlow.use(InsertNodeInPolyline)
   }
@@ -463,7 +459,7 @@ function use() {
 function initEvent() {
   const { eventCenter } = lf.value.graphModel
 
-  if (!isClassics()) {
+  if (!isClassics(logicJson.value.modelValue)) {
     // 更新节点名称
     eventCenter.on('update:nodeName', (data) => {
       lf.value.updateText(data.id, data.nodeName)
@@ -477,6 +473,8 @@ function initEvent() {
       nodeClick.value = args.data
       if (['serial', 'parallel'].includes(nodeClick.value.type)) {
         gatewayAddNode(lf.value, nodeClick.value);
+        const pageWidth = window.innerWidth;
+        console.log('页面宽度:', pageWidth);
       }
     })
 
@@ -567,7 +565,7 @@ function close() {
 const zoomViewport = async (zoom) => {
   lf.value.zoom(zoom);
   // 将内容平移至画布中心
-  if (isClassics()) {
+  if (isClassics(logicJson.value.modelValue)) {
     lf.value.translateCenter();
   }
 };

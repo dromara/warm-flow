@@ -34,11 +34,11 @@ export class BaseNodeView extends HtmlNode {
     if (this.preProperties) {
       const preProperties = JSON.parse(this.preProperties)
       let flag = false
-      if (preProperties.permissionFlag && preProperties.permissionFlag !== currentProperties.permissionFlag ) {
+      if (currentProperties.permissionFlag !== preProperties.permissionFlag) {
         this.preProperties = this.currentProperties;
         flag = true
       }
-      if (this.preText && this.preText !== this.props.model.text.value ) {
+      if (this.props.model.text.value!== this.preText) {
         this.preText = this.props.model.text.value
         flag = true
       }

@@ -228,9 +228,9 @@ const dictList = ref(); // 办理人选项
 const permissionRows = ref([]); // 办理人表格
 const emit = defineEmits(["change"]);
 
-watch(() => form, n => {
+watch(() => form.value, n => {
   if (n) {
-    emit('change', n)
+    emit('update:modelValue', n)
   }
 },{ deep: true });
 
