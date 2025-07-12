@@ -194,7 +194,6 @@ function validate() {
 
 function nameChange(flowName) {
   // 可以在这里添加额外的逻辑，比如验证或格式化
-  props.logicJson.flowName = flowName; // 更新 logicJson 中的流程名称
   proxy.$emit('update:flow-name', flowName); // 如果需要通知父组件
 }
 
