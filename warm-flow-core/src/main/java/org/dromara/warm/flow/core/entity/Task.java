@@ -15,7 +15,7 @@
  */
 package org.dromara.warm.flow.core.entity;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.List;
 
 /**
@@ -27,80 +27,80 @@ import java.util.List;
 public interface Task extends RootEntity {
 
     @Override
-    public Long getId();
+    Long getId();
 
     @Override
-    public Task setId(Long id);
+    Task setId(Long id);
 
     @Override
-    public Date getCreateTime();
+    Instant getCreateTime();
 
     @Override
-    public Task setCreateTime(Date createTime);
+    Task setCreateTime(Instant createTime);
 
     @Override
-    public Date getUpdateTime();
+    Instant getUpdateTime();
 
     @Override
-    public Task setUpdateTime(Date updateTime);
+    Task setUpdateTime(Instant updateTime);
 
     @Override
-    public String getTenantId();
+    String getTenantId();
 
     @Override
-    public Task setTenantId(String tenantId);
+    Task setTenantId(String tenantId);
 
     @Override
-    public String getDelFlag();
+    String getDelFlag();
 
     @Override
-    public Task setDelFlag(String delFlag);
+    Task setDelFlag(String delFlag);
 
-    public Long getDefinitionId();
+    Long getDefinitionId();
 
-    public Task setDefinitionId(Long definitionId);
+    Task setDefinitionId(Long definitionId);
 
-    public Long getInstanceId();
+    Long getInstanceId();
 
-    public Task setInstanceId(Long instanceId);
+    Task setInstanceId(Long instanceId);
 
-    public String getFlowName();
+    String getFlowName();
 
-    public Task setFlowName(String flowName);
+    Task setFlowName(String flowName);
 
-    public String getBusinessId();
+    String getBusinessId();
 
-    public Task setBusinessId(String businessId);
+    Task setBusinessId(String businessId);
 
-    public String getNodeCode();
+    String getNodeCode();
 
-    public Task setNodeCode(String nodeCode);
+    Task setNodeCode(String nodeCode);
 
-    public String getNodeName();
+    String getNodeName();
 
-    public Task setNodeName(String nodeName);
+    Task setNodeName(String nodeName);
 
-    public Integer getNodeType();
+    Integer getNodeType();
 
-    public Task setNodeType(Integer nodeType);
+    Task setNodeType(Integer nodeType);
 
-    public String getFlowStatus();
+    String getFlowStatus();
 
-    public Task setFlowStatus(String flowStatus);
+    Task setFlowStatus(String flowStatus);
 
-    public List<String> getPermissionList();
+    List<String> getPermissionList();
 
-    public Task setPermissionList(List<String> permissionList);
+    Task setPermissionList(List<String> permissionList);
 
-    public List<User> getUserList();
+    List<User> getUserList();
 
-    public Task setUserList(List<User> userList);
+    Task setUserList(List<User> userList);
 
-    public String getFormCustom();
+    String getFormCustom();
 
-    public Task setFormCustom(String formCustom);
+    Task setFormCustom(String formCustom);
 
-    public String getFormPath();
+    String getFormPath();
 
-    public Task setFormPath(String formPath);
+    Task setFormPath(String formPath);
 }

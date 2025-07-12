@@ -17,7 +17,7 @@ package org.dromara.warm.flow.core.entity;
 
 import org.dromara.warm.flow.core.FlowEngine;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
@@ -30,125 +30,125 @@ import java.util.Map;
 public interface HisTask extends RootEntity {
 
     @Override
-    public Long getId();
+    Long getId();
 
     @Override
-    public HisTask setId(Long id);
+    HisTask setId(Long id);
 
     @Override
-    public Date getCreateTime();
+    Instant getCreateTime();
 
     @Override
-    public HisTask setCreateTime(Date createTime);
+    HisTask setCreateTime(Instant createTime);
 
     @Override
-    public Date getUpdateTime();
+    Instant getUpdateTime();
 
     @Override
-    public HisTask setUpdateTime(Date updateTime);
+    HisTask setUpdateTime(Instant updateTime);
 
     @Override
-    public String getTenantId();
+    String getTenantId();
 
     @Override
-    public HisTask setTenantId(String tenantId);
+    HisTask setTenantId(String tenantId);
 
     @Override
-    public String getDelFlag();
+    String getDelFlag();
 
     @Override
-    public HisTask setDelFlag(String delFlag);
+    HisTask setDelFlag(String delFlag);
 
-    public Long getDefinitionId();
+    Long getDefinitionId();
 
-    public HisTask setDefinitionId(Long definitionId);
+    HisTask setDefinitionId(Long definitionId);
 
-    public String getFlowName();
+    String getFlowName();
 
-    public HisTask setFlowName(String flowName);
+    HisTask setFlowName(String flowName);
 
-    public Long getInstanceId();
+    Long getInstanceId();
 
-    public HisTask setInstanceId(Long instanceId);
+    HisTask setInstanceId(Long instanceId);
 
-    public Integer getCooperateType();
+    Integer getCooperateType();
 
-    public HisTask setCooperateType(Integer cooperateType);
+    HisTask setCooperateType(Integer cooperateType);
 
-    public Long getTaskId();
+    Long getTaskId();
 
-    public HisTask setTaskId(Long taskId);
+    HisTask setTaskId(Long taskId);
 
-    public String getBusinessId();
+    String getBusinessId();
 
-    public HisTask setBusinessId(String businessId);
+    HisTask setBusinessId(String businessId);
 
-    public String getNodeCode();
+    String getNodeCode();
 
-    public HisTask setNodeCode(String nodeCode);
+    HisTask setNodeCode(String nodeCode);
 
-    public String getNodeName();
+    String getNodeName();
 
-    public HisTask setNodeName(String nodeName);
+    HisTask setNodeName(String nodeName);
 
-    public Integer getNodeType();
+    Integer getNodeType();
 
-    public HisTask setNodeType(Integer nodeType);
+    HisTask setNodeType(Integer nodeType);
 
-    public String getTargetNodeCode();
+    String getTargetNodeCode();
 
-    public HisTask setTargetNodeCode(String targetNodeCode);
+    HisTask setTargetNodeCode(String targetNodeCode);
 
-    public String getTargetNodeName();
+    String getTargetNodeName();
 
-    public HisTask setTargetNodeName(String targetNodeName);
+    HisTask setTargetNodeName(String targetNodeName);
 
-    public String getApprover();
+    String getApprover();
 
-    public HisTask setApprover(String approver);
+    HisTask setApprover(String approver);
 
-    public String getCollaborator();
+    String getCollaborator();
 
-    public HisTask setCollaborator(String collaborator);
+    HisTask setCollaborator(String collaborator);
 
-    public List<String> getPermissionList();
+    List<String> getPermissionList();
 
-    public HisTask setPermissionList(List<String> permissionList);
+    HisTask setPermissionList(List<String> permissionList);
 
-    public String getSkipType();
+    String getSkipType();
 
-    public HisTask setSkipType(String skipType);
+    HisTask setSkipType(String skipType);
 
-    public String getFlowStatus();
+    String getFlowStatus();
 
-    public HisTask setFlowStatus(String flowStatus);
+    HisTask setFlowStatus(String flowStatus);
 
-    public String getMessage();
+    String getMessage();
 
-    public HisTask setMessage(String message);
+    HisTask setMessage(String message);
 
-    public String getVariable();
+    String getVariable();
 
-    public HisTask setVariable(String variable);
+    HisTask setVariable(String variable);
 
-    default public Map<String, Object> getVariableMap() {
+    default Map<String, Object> getVariableMap() {
         return FlowEngine.jsonConvert.strToMap(this.getVariable());
     }
 
-    public String getExt();
+    String getExt();
 
-    public HisTask setExt(String ext);
+    HisTask setExt(String ext);
 
-    public String getCreateBy();
+    String getCreateBy();
 
-    public HisTask setCreateBy(String createBy);
+    HisTask setCreateBy(String createBy);
 
-    public String getFormCustom();
+    String getFormCustom();
 
-    public HisTask setFormCustom(String formCustom);
+    HisTask setFormCustom(String formCustom);
 
-    public String getFormPath();
+    String getFormPath();
 
-    public HisTask setFormPath(String formPath);
+    HisTask setFormPath(String formPath);
 
 }

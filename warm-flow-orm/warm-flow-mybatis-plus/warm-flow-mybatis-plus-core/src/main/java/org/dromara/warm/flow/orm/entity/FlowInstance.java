@@ -20,7 +20,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import org.dromara.warm.flow.core.entity.Instance;
 
-import java.util.Date;
+import java.time.Instant;
 
 /**
  * 流程实例对象 flow_instance
@@ -43,13 +43,13 @@ public class FlowInstance implements Instance {
      * 创建时间
      */
     @TableField(fill = FieldFill.INSERT)
-    private Date createTime;
+    private Instant createTime;
 
     /**
      * 更新时间
      */
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    private Date updateTime;
+    private Instant updateTime;
 
     /**
      * 租户ID

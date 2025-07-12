@@ -17,7 +17,7 @@ package org.dromara.warm.flow.core.entity;
 
 import org.dromara.warm.flow.core.FlowEngine;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.List;
 
 /**
@@ -27,83 +27,84 @@ import java.util.List;
  * @since 2023-03-29
  */
 public interface Definition extends RootEntity {
-    @Override
-    public Long getId();
 
     @Override
-    public Definition setId(Long id);
+    Long getId();
 
     @Override
-    public Date getCreateTime();
+    Definition setId(Long id);
 
     @Override
-    public Definition setCreateTime(Date createTime);
+    Instant getCreateTime();
 
     @Override
-    public Date getUpdateTime();
+    Definition setCreateTime(Instant createTime);
 
     @Override
-    public Definition setUpdateTime(Date updateTime);
+    Instant getUpdateTime();
 
     @Override
-    public String getTenantId();
+    Definition setUpdateTime(Instant updateTime);
 
     @Override
-    public Definition setTenantId(String tenantId);
+    String getTenantId();
 
     @Override
-    public String getDelFlag();
+    Definition setTenantId(String tenantId);
 
     @Override
-    public Definition setDelFlag(String delFlag);
+    String getDelFlag();
 
-    public String getFlowCode();
+    @Override
+    Definition setDelFlag(String delFlag);
 
-    public Definition setFlowCode(String flowCode);
+    String getFlowCode();
 
-    public String getFlowName();
+    Definition setFlowCode(String flowCode);
 
-    public Definition setFlowName(String flowName);
+    String getFlowName();
 
-    public String getMode();
+    Definition setFlowName(String flowName);
 
-    public Definition setMode(String mode);
+    String getMode();
 
-    public String getCategory();
+    Definition setMode(String mode);
 
-    public Definition setCategory(String category);
+    String getCategory();
 
-    public String getVersion();
+    Definition setCategory(String category);
 
-    public Definition setVersion(String version);
+    String getVersion();
 
-    public Integer getIsPublish();
+    Definition setVersion(String version);
 
-    public Definition setIsPublish(Integer isPublish);
+    Integer getIsPublish();
 
-    public String getFormCustom();
+    Definition setIsPublish(Integer isPublish);
 
-    public Definition setFormCustom(String formCustom);
+    String getFormCustom();
 
-    public String getFormPath();
+    Definition setFormCustom(String formCustom);
 
-    public Definition setFormPath(String formPath);
+    String getFormPath();
 
-    public String getExt();
+    Definition setFormPath(String formPath);
 
-    public Definition setExt(String ext);
+    String getExt();
 
-    public List<Node> getNodeList();
+    Definition setExt(String ext);
 
-    public Definition setNodeList(List<Node> nodeList);
+    List<Node> getNodeList();
 
-    public List<User> getUserList();
+    Definition setNodeList(List<Node> nodeList);
 
-    public Definition setUserList(List<User> userList);
+    List<User> getUserList();
 
-    public Integer getActivityStatus();
+    Definition setUserList(List<User> userList);
 
-    public Definition setActivityStatus(Integer activityStatus);
+    Integer getActivityStatus();
+
+    Definition setActivityStatus(Integer activityStatus);
 
     String getListenerType();
 

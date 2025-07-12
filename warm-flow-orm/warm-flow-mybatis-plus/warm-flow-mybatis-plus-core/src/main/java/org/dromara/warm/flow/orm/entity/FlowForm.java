@@ -20,12 +20,10 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import org.dromara.warm.flow.core.entity.Form;
 
-import java.util.Date;
+import java.time.Instant;
 
 /**
  * @author vanlin
- * @className FlowForm
- * @description
  * @since 2024-9-23 16:15
  */
 @Data
@@ -43,13 +41,13 @@ public class FlowForm implements Form {
      * 创建时间
      */
     @TableField(fill = FieldFill.INSERT)
-    private Date createTime;
+    private Instant createTime;
 
     /**
      * 更新时间
      */
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    private Date updateTime;
+    private Instant updateTime;
 
     /**
      * 删除标记

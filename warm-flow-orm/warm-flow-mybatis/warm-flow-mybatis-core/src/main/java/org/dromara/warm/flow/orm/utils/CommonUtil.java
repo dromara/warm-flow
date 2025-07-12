@@ -15,9 +15,9 @@
  */
 package org.dromara.warm.flow.orm.utils;
 
+import org.apache.ibatis.session.Configuration;
 import org.dromara.warm.flow.core.config.WarmFlow;
 import org.dromara.warm.flow.core.utils.StringUtils;
-import org.apache.ibatis.session.Configuration;
 
 import javax.sql.DataSource;
 import java.sql.Connection;

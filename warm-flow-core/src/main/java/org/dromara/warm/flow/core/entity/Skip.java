@@ -17,7 +17,7 @@ package org.dromara.warm.flow.core.entity;
 
 import org.dromara.warm.flow.core.FlowEngine;
 
-import java.util.Date;
+import java.time.Instant;
 
 /**
  * 节点跳转关联对象 flow_skip
@@ -28,74 +28,75 @@ import java.util.Date;
 public interface Skip extends RootEntity {
 
     @Override
-    public Long getId();
+    Long getId();
 
     @Override
-    public Skip setId(Long id);
+    Skip setId(Long id);
 
     @Override
-    public Date getCreateTime();
+    Instant getCreateTime();
 
     @Override
-    public Skip setCreateTime(Date createTime);
+    Skip setCreateTime(Instant createTime);
 
     @Override
-    public Date getUpdateTime();
+    Instant getUpdateTime();
 
     @Override
-    public Skip setUpdateTime(Date updateTime);
+    Skip setUpdateTime(Instant updateTime);
 
     @Override
-    public String getTenantId();
+    String getTenantId();
 
     @Override
-    public Skip setTenantId(String tenantId);
+    Skip setTenantId(String tenantId);
 
     @Override
-    public String getDelFlag();
+    String getDelFlag();
 
     @Override
-    public Skip setDelFlag(String delFlag);
+    Skip setDelFlag(String delFlag);
 
-    public Long getDefinitionId();
+    Long getDefinitionId();
 
-    public Skip setDefinitionId(Long definitionId);
+    Skip setDefinitionId(Long definitionId);
 
-    public Long getNodeId();
+    Long getNodeId();
 
-    public Skip setNodeId(Long nodeId);
+    Skip setNodeId(Long nodeId);
 
-    public String getNowNodeCode();
+    String getNowNodeCode();
 
-    public Skip setNowNodeCode(String nowNodeCode);
+    Skip setNowNodeCode(String nowNodeCode);
 
-    public Integer getNowNodeType();
+    Integer getNowNodeType();
 
-    public Skip setNowNodeType(Integer nowNodeType);
+    Skip setNowNodeType(Integer nowNodeType);
 
-    public String getNextNodeCode();
+    String getNextNodeCode();
 
-    public Skip setNextNodeCode(String nextNodeCode);
+    Skip setNextNodeCode(String nextNodeCode);
 
-    public Integer getNextNodeType();
+    Integer getNextNodeType();
 
-    public Skip setNextNodeType(Integer nextNodeType);
+    Skip setNextNodeType(Integer nextNodeType);
 
-    public String getSkipName();
+    String getSkipName();
 
-    public Skip setSkipName(String skipName);
+    Skip setSkipName(String skipName);
 
-    public String getSkipType();
+    String getSkipType();
 
-    public Skip setSkipType(String skipType);
+    Skip setSkipType(String skipType);
 
-    public String getSkipCondition();
+    String getSkipCondition();
 
-    public Skip setSkipCondition(String skipCondition);
+    Skip setSkipCondition(String skipCondition);
 
-    public String getCoordinate();
+    String getCoordinate();
 
-    public Skip setCoordinate(String coordinate);
+    Skip setCoordinate(String coordinate);
+
     default Skip copy() {
         return FlowEngine.newSkip()
                 .setTenantId(getTenantId())

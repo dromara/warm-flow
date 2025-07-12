@@ -15,11 +15,10 @@
  */
 package org.dromara.warm.flow.solon;
 
-import org.dromara.warm.flow.solon.config.FlowAutoConfig;
-import org.dromara.warm.plugin.modes.solon.config.BeanConfig;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.Configuration;
+import org.dromara.warm.flow.solon.config.FlowAutoConfig;
 import org.noear.solon.core.AppContext;
 import org.noear.solon.core.Plugin;
 import org.noear.solon.core.event.EventBus;

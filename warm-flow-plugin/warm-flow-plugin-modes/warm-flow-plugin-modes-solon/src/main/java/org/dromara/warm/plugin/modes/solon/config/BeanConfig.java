@@ -24,7 +24,10 @@ import org.dromara.warm.flow.core.service.impl.*;
 import org.dromara.warm.flow.orm.dao.*;
 import org.dromara.warm.flow.orm.entity.*;
 import org.noear.solon.Solon;
-import org.noear.solon.annotation.*;
+import org.noear.solon.annotation.Bean;
+import org.noear.solon.annotation.Condition;
+import org.noear.solon.annotation.Configuration;
+import org.noear.solon.annotation.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

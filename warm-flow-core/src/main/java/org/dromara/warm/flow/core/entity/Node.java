@@ -18,7 +18,7 @@ package org.dromara.warm.flow.core.entity;
 import org.dromara.warm.flow.core.FlowEngine;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.Instant;
 import java.util.List;
 
 /**
@@ -36,16 +36,16 @@ public interface Node extends RootEntity {
     Node setId(Long id);
 
     @Override
-    Date getCreateTime();
+    Instant getCreateTime();
 
     @Override
-    Node setCreateTime(Date createTime);
+    Node setCreateTime(Instant createTime);
 
     @Override
-    Date getUpdateTime();
+    Instant getUpdateTime();
 
     @Override
-    Node setUpdateTime(Date updateTime);
+    Node setUpdateTime(Instant updateTime);
 
     @Override
     String getTenantId();

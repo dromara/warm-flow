@@ -15,9 +15,9 @@
  */
 package org.dromara.warm.flow.solon.config;
 
+import org.apache.ibatis.solon.annotation.Db;
 import org.dromara.warm.flow.core.config.WarmFlow;
 import org.dromara.warm.flow.orm.utils.CommonUtil;
-import org.apache.ibatis.solon.annotation.Db;
 import org.noear.solon.annotation.Bean;
 import org.noear.solon.annotation.Condition;
 import org.noear.solon.annotation.Configuration;

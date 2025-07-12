@@ -17,12 +17,10 @@ package org.dromara.warm.flow.orm.entity;
 
 import org.dromara.warm.flow.core.entity.Form;
 
-import java.util.Date;
+import java.time.Instant;
 
 /**
  * @author vanlin
- * @className FlowForm
- * @description
  * @since 2024/8/19 10:30
  */
 public class FlowForm implements Form {
@@ -74,12 +72,12 @@ public class FlowForm implements Form {
     /**
      * 创建时间
      */
-    private Date createTime;
+    private Instant createTime;
 
     /**
      * 更新时间
      */
-    private Date updateTime;
+    private Instant updateTime;
 
     /**
      * 租户ID
@@ -103,23 +101,23 @@ public class FlowForm implements Form {
     }
 
     @Override
-    public Date getCreateTime() {
+    public Instant getCreateTime() {
         return createTime;
     }
 
     @Override
-    public FlowForm setCreateTime(Date createTime) {
+    public FlowForm setCreateTime(Instant createTime) {
         this.createTime = createTime;
         return this;
     }
 
     @Override
-    public Date getUpdateTime() {
+    public Instant getUpdateTime() {
         return updateTime;
     }
 
     @Override
-    public FlowForm setUpdateTime(Date updateTime) {
+    public FlowForm setUpdateTime(Instant updateTime) {
         this.updateTime = updateTime;
         return this;
     }

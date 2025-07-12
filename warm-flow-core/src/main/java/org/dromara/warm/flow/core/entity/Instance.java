@@ -17,7 +17,7 @@ package org.dromara.warm.flow.core.entity;
 
 import org.dromara.warm.flow.core.FlowEngine;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.Map;
 
 /**
@@ -29,58 +29,58 @@ import java.util.Map;
 public interface Instance extends RootEntity {
 
     @Override
-    public Long getId();
+    Long getId();
 
     @Override
-    public Instance setId(Long id);
+    Instance setId(Long id);
 
     @Override
-    public Date getCreateTime();
+    Instant getCreateTime();
 
     @Override
-    public Instance setCreateTime(Date createTime);
+    Instance setCreateTime(Instant createTime);
 
     @Override
-    public Date getUpdateTime();
+    Instant getUpdateTime();
 
     @Override
-    public Instance setUpdateTime(Date updateTime);
+    Instance setUpdateTime(Instant updateTime);
 
     @Override
-    public String getTenantId();
+    String getTenantId();
 
     @Override
-    public Instance setTenantId(String tenantId);
+    Instance setTenantId(String tenantId);
 
     @Override
-    public String getDelFlag();
+    String getDelFlag();
 
     @Override
-    public Instance setDelFlag(String delFlag);
+    Instance setDelFlag(String delFlag);
 
-    public Long getDefinitionId();
+    Long getDefinitionId();
 
-    public Instance setDefinitionId(Long definitionId);
+    Instance setDefinitionId(Long definitionId);
 
-    public String getFlowName();
+    String getFlowName();
 
-    public Instance setFlowName(String flowName);
+    Instance setFlowName(String flowName);
 
-    public String getBusinessId();
+    String getBusinessId();
 
-    public Instance setBusinessId(String businessId);
+    Instance setBusinessId(String businessId);
 
-    public Integer getNodeType();
+    Integer getNodeType();
 
-    public Instance setNodeType(Integer nodeType);
+    Instance setNodeType(Integer nodeType);
 
-    public String getNodeCode();
+    String getNodeCode();
 
-    public Instance setNodeCode(String nodeCode);
+    Instance setNodeCode(String nodeCode);
 
-    public String getNodeName();
+    String getNodeName();
 
-    public Instance setNodeName(String nodeName);
+    Instance setNodeName(String nodeName);
 
     String getVariable();
 
@@ -90,32 +90,32 @@ public interface Instance extends RootEntity {
         return FlowEngine.jsonConvert.strToMap(getVariable());
     }
 
-    public String getFlowStatus();
+    String getFlowStatus();
 
-    public Instance setFlowStatus(String flowStatus);
+    Instance setFlowStatus(String flowStatus);
 
-    public String getCreateBy();
+    String getCreateBy();
 
-    public Instance setCreateBy(String createBy);
+    Instance setCreateBy(String createBy);
 
-    public String getFormCustom();
+    String getFormCustom();
 
-    public Instance setFormCustom(String formCustom);
+    Instance setFormCustom(String formCustom);
 
-    public String getFormPath();
+    String getFormPath();
 
-    public Instance setFormPath(String formPath);
+    Instance setFormPath(String formPath);
 
-    public String getDefJson();
+    String getDefJson();
 
-    public Instance setDefJson(String defJson);
+    Instance setDefJson(String defJson);
 
-    public String getExt();
+    String getExt();
 
-    public Instance setExt(String ext);
+    Instance setExt(String ext);
 
-    public Integer getActivityStatus();
+    Integer getActivityStatus();
 
-    public Instance setActivityStatus(Integer activityStatus);
+    Instance setActivityStatus(Integer activityStatus);
 
 }

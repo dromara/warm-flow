@@ -21,7 +21,10 @@ import org.dromara.warm.flow.core.dto.FlowCombine;
 import org.dromara.warm.flow.core.dto.FlowParams;
 import org.dromara.warm.flow.core.dto.PathWayData;
 import org.dromara.warm.flow.core.entity.*;
-import org.dromara.warm.flow.core.enums.*;
+import org.dromara.warm.flow.core.enums.ActivityStatus;
+import org.dromara.warm.flow.core.enums.FlowStatus;
+import org.dromara.warm.flow.core.enums.NodeType;
+import org.dromara.warm.flow.core.enums.SkipType;
 import org.dromara.warm.flow.core.listener.Listener;
 import org.dromara.warm.flow.core.listener.ListenerVariable;
 import org.dromara.warm.flow.core.orm.dao.FlowInstanceDao;
@@ -29,8 +32,8 @@ import org.dromara.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import org.dromara.warm.flow.core.service.InsService;
 import org.dromara.warm.flow.core.utils.*;
 
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -172,7 +175,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
     private Instance setStartInstance(Node firstBetweenNode, String businessId
             , FlowParams flowParams) {
         Instance instance = FlowEngine.newIns();
-        Date now = new Date();
+        Instant now = Instant.now();
         FlowEngine.dataFillHandler().idFill(instance);
         // 关联业务id,起始后面可以不用到业务id,传业务id目前来看只是为了批量创建流程的时候能创建出有区别化的流程,也是为了后期需要用到businessId。
         instance.setDefinitionId(firstBetweenNode.getDefinitionId())
