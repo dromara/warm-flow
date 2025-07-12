@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-tabs type="border-card" class="Tabs" v-model="tabsValue" @tab-change="tabChange">
-      <el-tab-pane v-for="item in tabsList" :label="item" :name="item"></el-tab-pane>
+      <el-tab-pane v-for="item in tabsList" :key="item" :label="item" :name="item"></el-tab-pane>
     </el-tabs>
     <el-row :gutter="20" class="content">
       <!--左侧树状选择数据-->
