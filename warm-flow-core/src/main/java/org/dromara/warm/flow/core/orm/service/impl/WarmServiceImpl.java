@@ -40,6 +40,7 @@ public abstract class WarmServiceImpl<M extends WarmDao<T>, T> implements IWarmS
 
     protected M warmDao;
 
+    @Override
     public M getDao() {
         return warmDao;
     }

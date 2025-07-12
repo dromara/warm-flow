@@ -20,11 +20,9 @@ import org.dromara.warm.flow.core.orm.service.IWarmService;
 import org.dromara.warm.flow.core.utils.page.Page;
 
 /**
- *  流程表单Service接口
+ * 流程表单Service接口
  *
  * @author vanlin
- * @className FormService
- * @description
  * @since 2024/8/19 10:06
  */
 public interface FormService extends IWarmService<Form> {
@@ -32,16 +30,17 @@ public interface FormService extends IWarmService<Form> {
     /**
      * 保存流程表单
      *
-     * @param form
-     * @return
+     * @param form form
+     * @return 保存情况
      */
+    @Override
     boolean save(Form form);
 
     /**
      * 发布流程表单
      *
-     * @param id
-     * @return
+     * @param id id
+     * @return 发布结果
      */
     boolean publish(Long id);
 
@@ -49,48 +48,49 @@ public interface FormService extends IWarmService<Form> {
     /**
      * 取消发布流程表单
      *
-     * @param id
-     * @return
+     * @param id id
+     * @return 取消发布
      */
     boolean unPublish(Long id);
 
     /**
      * 复制流程表单
      *
-     * @param id
-     * @return
+     * @param id id
+     * @return 复制表单结果
      */
     boolean copyForm(Long id);
 
     /**
      * 读取流程表单
      *
-     * @param formCode
-     * @param formVersion
-     * @return
+     * @param formCode 表单编码
+     * @param formVersion 版本
+     * @return 表单信息
      */
     Form getByCode(String formCode, String formVersion);
 
     /**
      *
-     * @param id
-     * @return
+     * @param id id
+     * @return 表单信息
      */
     Form getById(Long id);
 
     /**
      * 已发布表单
-     * @param formName
-     * @param pageNum
-     * @param pageSize
-     * @return
+     * @param formName 表单名
+     * @param pageNum 页码
+     * @param pageSize 每页记录
+     * @return 已发布记录
      */
     Page<Form> publishedPage(String formName, Integer pageNum, Integer pageSize);
 
     /**
      * 保存表单内容
-     * @param id
-     * @param formContent
+     * @param id id
+     * @param formContent 表单内容
+     * @return 保存结果
      */
     boolean saveContent(Long id, String formContent);
 }

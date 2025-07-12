@@ -18,15 +18,19 @@ package org.dromara.warm.flow.core.service.impl;
 import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.constant.ExceptionCons;
 import org.dromara.warm.flow.core.entity.Definition;
-import org.dromara.warm.flow.core.entity.Instance;
-import org.dromara.warm.flow.core.entity.Node;
-import org.dromara.warm.flow.core.orm.dao.FlowFormDao;
 import org.dromara.warm.flow.core.entity.Form;
+import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.enums.PublishStatus;
+import org.dromara.warm.flow.core.orm.dao.FlowFormDao;
 import org.dromara.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import org.dromara.warm.flow.core.service.FormService;
-import org.dromara.warm.flow.core.utils.*;
+import org.dromara.warm.flow.core.utils.AssertUtil;
+import org.dromara.warm.flow.core.utils.ClassUtil;
+import org.dromara.warm.flow.core.utils.CollUtil;
+import org.dromara.warm.flow.core.utils.ObjectUtil;
 import org.dromara.warm.flow.core.utils.page.Page;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,12 +39,13 @@ import java.util.List;
  * 流程表单Service业务层处理
  *
  * @author vanlin
- * @className FormServiceImpl
- * @description
  * @since 2024/8/19 10:07
  */
 public class FormServiceImpl extends WarmServiceImpl<FlowFormDao<Form>, Form> implements FormService {
 
+    public static final Logger LOGGER = LoggerFactory.getLogger(FormServiceImpl.class);
+
+    @Override
     public FormService setDao(FlowFormDao<Form> warmDao) {
         this.warmDao = warmDao;
         return this;
@@ -126,6 +131,7 @@ public class FormServiceImpl extends WarmServiceImpl<FlowFormDao<Form>, Form> im
                         highestVersion = version;
                     }
                 } catch (NumberFormatException e) {
+                    LOGGER.error("版本格式化异常 - {}", e.getLocalizedMessage());
                 }
             }
         }

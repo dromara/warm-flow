@@ -25,17 +25,18 @@ import java.util.stream.Collectors;
 /**
  * 办理人表达式策略接口
  *
- * @author warm
+ * @author warm,battcn
  */
 public interface VariableStrategy extends ExpressionStrategy<List<String>> {
 
     /**
      * 办理人表达式策略实现类集合
      */
-    List<ExpressionStrategy<List<String>>> expressionStrategyList = new ArrayList<>();
+    List<ExpressionStrategy<List<String>>> EXPRESSION_STRATEGY_LIST = new ArrayList<>();
 
+    @Override
     default void setExpression(ExpressionStrategy<List<String>> expressionStrategy) {
-        expressionStrategyList.add(expressionStrategy);
+        EXPRESSION_STRATEGY_LIST.add(expressionStrategy);
     }
 
     Object preEval(String expression, Map<String, Object> variable);
@@ -46,15 +47,15 @@ public interface VariableStrategy extends ExpressionStrategy<List<String>> {
     }
 
     default List<String> afterEval(Object o) {
-        if (ObjectUtil.isNotNull(o)) {
-            if (o instanceof List) {
-                return StreamUtils.toList((List<?>) o, Object::toString);
-            }
-            if (o instanceof Object[]) {
-                return Arrays.stream((Object[]) o).map(Object::toString).collect(Collectors.toList());
-            }
-            return Collections.singletonList(o.toString());
+        if (ObjectUtil.isNull(o)) {
+            return null;
         }
-        return null;
+        if (o instanceof List) {
+            return StreamUtils.toList((List<?>) o, Object::toString);
+        }
+        if (o instanceof Object[]) {
+            return Arrays.stream((Object[]) o).map(Object::toString).collect(Collectors.toList());
+        }
+        return Collections.singletonList(o.toString());
     }
 }

@@ -30,110 +30,110 @@ import java.util.List;
 public interface Node extends RootEntity {
 
     @Override
-    public Long getId();
+    Long getId();
 
     @Override
-    public Node setId(Long id);
+    Node setId(Long id);
 
     @Override
-    public Date getCreateTime();
+    Date getCreateTime();
 
     @Override
-    public Node setCreateTime(Date createTime);
+    Node setCreateTime(Date createTime);
 
     @Override
-    public Date getUpdateTime();
+    Date getUpdateTime();
 
     @Override
-    public Node setUpdateTime(Date updateTime);
+    Node setUpdateTime(Date updateTime);
 
     @Override
-    public String getTenantId();
+    String getTenantId();
 
     @Override
-    public Node setTenantId(String tenantId);
+    Node setTenantId(String tenantId);
 
     @Override
-    public String getDelFlag();
+    String getDelFlag();
 
     @Override
-    public Node setDelFlag(String delFlag);
+    Node setDelFlag(String delFlag);
 
-    public Integer getNodeType();
+    Integer getNodeType();
 
-    public Node setNodeType(Integer nodeType);
+    Node setNodeType(Integer nodeType);
 
-    public Long getDefinitionId();
+    Long getDefinitionId();
 
-    public Node setDefinitionId(Long definitionId);
+    Node setDefinitionId(Long definitionId);
 
-    public String getNodeCode();
+    String getNodeCode();
 
-    public Node setNodeCode(String nodeCode);
+    Node setNodeCode(String nodeCode);
 
-    public String getNodeName();
+    String getNodeName();
 
-    public Node setNodeName(String nodeName);
+    Node setNodeName(String nodeName);
 
-    public BigDecimal getNodeRatio();
+    BigDecimal getNodeRatio();
 
-    public Node setNodeRatio(BigDecimal nodeRatio);
+    Node setNodeRatio(BigDecimal nodeRatio);
 
-    public String getPermissionFlag();
+    String getPermissionFlag();
 
-    public Node setPermissionFlag(String permissionFlag);
+    Node setPermissionFlag(String permissionFlag);
 
-    public String getCoordinate();
+    String getCoordinate();
 
-    public Node setCoordinate(String coordinate);
+    Node setCoordinate(String coordinate);
 
-    public String getAnyNodeSkip();
+    String getAnyNodeSkip();
 
-    public Node setAnyNodeSkip(String anyNodeSkip);
+    Node setAnyNodeSkip(String anyNodeSkip);
 
-    public String getListenerType();
+    String getListenerType();
 
-    public Node setListenerType(String listenerType);
+    Node setListenerType(String listenerType);
 
-    public String getListenerPath();
+    String getListenerPath();
 
-    public Node setListenerPath(String listenerPath);
+    Node setListenerPath(String listenerPath);
 
-    public String getHandlerType();
+    String getHandlerType();
 
-    public Node setHandlerType(String listenerType);
+    Node setHandlerType(String listenerType);
 
-    public String getHandlerPath();
+    String getHandlerPath();
 
-    public Node setHandlerPath(String listenerPath);
+    Node setHandlerPath(String listenerPath);
 
-    public String getFormCustom();
+    String getFormCustom();
 
-    public Node setFormCustom(String formCustom);
+    Node setFormCustom(String formCustom);
 
-    public String getFormPath();
+    String getFormPath();
 
-    public Node setFormPath(String formPath);
+    Node setFormPath(String formPath);
 
-    public String getExt();
+    String getExt();
 
-    public Node setExt(String ext);
+    Node setExt(String ext);
 
     /**
      * @deprecated 下个版本废弃
      */
     @Deprecated
-    public String getVersion();
+    String getVersion();
 
     /**
      * @deprecated 下个版本废弃
      */
     @Deprecated
-    public Node setVersion(String version);
+    Node setVersion(String version);
 
-    public List<Skip> getSkipList();
+    List<Skip> getSkipList();
 
-    public Node setSkipList(List<Skip> skipList);
+    Node setSkipList(List<Skip> skipList);
 
     default Node copy() {
         return FlowEngine.newNode()
