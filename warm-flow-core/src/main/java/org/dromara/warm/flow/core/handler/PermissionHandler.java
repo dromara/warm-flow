@@ -38,7 +38,7 @@ public interface PermissionHandler {
     List<String> permissions();
 
     /**
-     * 获取当前办理人, 用于记录实例表和历史表
+     * 获取当前办理人
      * 后续在{@link FlowParams#getHandler()}  中获取
      * @return 当前办理人
      */
