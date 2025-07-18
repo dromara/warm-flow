@@ -226,7 +226,7 @@ const rules = reactive({
 const definitionList = ref([]); // 流程表单列表
 const dictList = ref(); // 办理人选项
 const permissionRows = ref([]); // 办理人表格
-const emit = defineEmits(["change"]);
+const emit = defineEmits(["change", 'update:modelValue']);
 
 watch(() => form.value, n => {
   if (n) {

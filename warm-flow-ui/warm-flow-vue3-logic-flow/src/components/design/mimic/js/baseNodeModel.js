@@ -1,6 +1,5 @@
 import {HtmlNodeModel} from "@logicflow/core";
 import {setCommonStyle} from "@/components/design/common/js/tool";
-import {hideText} from "@/components/design/mimic/js/mimic";
 
 export class BaseNodeModel extends HtmlNodeModel {
 
@@ -22,7 +21,9 @@ export class BaseNodeModel extends HtmlNodeModel {
   }
 
   getTextStyle() {
-    return hideText(super.getTextStyle());
+    const style = super.getTextStyle();
+    style.display = 'none';
+    return style;
   }
 
 }

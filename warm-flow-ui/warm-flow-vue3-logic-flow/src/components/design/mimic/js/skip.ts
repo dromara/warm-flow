@@ -28,7 +28,7 @@ class SkipModel extends CurvedEdgeModel  {
 
     // 设置文本位置
     position.x = x2;
-    position.y = y2 - 35;
+    position.y = y2 - 30;
 
     return position;
   }
@@ -62,12 +62,13 @@ class SkipView extends CurvedEdge {
 
     // 跳转线是直线
     if (points.length === 2) {
-      const midPoint = [points[0][0], points[0][1] + offsetY];
       let nextEdge = model.graphModel.edges.filter(edge => edge.sourceNodeId ===  model.sourceNode.id);
       // 如果上一个节点是互斥网关，并且网关后节点大于1个，也就是说是互斥网关结束节点时
       if ((model.sourceNode.type as string) === "serial" && nextEdge.length > 1) {
+        const midPoint = [points[0][0], points[0][1] + offsetY - 10];
         plusElements = this.getForeignObject(midPoint);
       } else {
+        const midPoint = [points[0][0], points[0][1] + offsetY];
         plusElements = this.getPlusElements(midPoint);
       }
     } else {
@@ -82,7 +83,7 @@ class SkipView extends CurvedEdge {
       }
 
       // 判断是否由横线变为竖线，并且是互斥网关
-      if ((model.sourceNode.type as string) === "serial" && p0[1] === p1[1] && p0[0] !== p1[0]) {
+      if (model.sourceNode && (model.sourceNode.type as string) === "serial" && p0[1] === p1[1] && p0[0] !== p1[0]) {
         const midPoint = [p2[0], p1[1] + offsetY];
         plusElements = this.getForeignObject(midPoint);
       }
@@ -107,7 +108,7 @@ class SkipView extends CurvedEdge {
       // 使用 SVG 图标代替原来的图形
       h('foreignObject', {
         x: midPoint[0] - 16,
-        y: midPoint[1] - 15,
+        y: midPoint[1] - 20,
         width: 32,
         height: 32,
       }, [

@@ -128,9 +128,9 @@ function deleteAndAddEdge(sourceNode, nodes, edges, lf, edgeMap = new Map()
 }
 
 /**
- * 水平自动布局
+ * 水平自动布局，不需要移动的节点
  */
-function moveLevelNode(targetEdges, nodes, edges, lf, visitedNodes, type = true
+function LevelNotMoveNode(targetEdges, nodes, edges, lf, visitedNodes, type = true
                   , nodeMap = new Map()) {
   if (nodeMap.size === 0) {
     nodeMap = new Map(nodes.map(node => [node.id, node]));
@@ -157,7 +157,7 @@ function moveLevelNode(targetEdges, nodes, edges, lf, visitedNodes, type = true
     if (!targetEdges || targetEdges.length === 0) {
       return;
     }
-    moveLevelNode(targetEdges, nodes, edges, lf, visitedNodes, type, nodeMap)
+    LevelNotMoveNode(targetEdges, nodes, edges, lf, visitedNodes, type, nodeMap)
   }
 }
 
@@ -236,45 +236,8 @@ export const addGatewayNode = (lf, edge, nodeType) => {
   }
 
   // 找到属于新增位置区域的节点，水平移动的时候排除它
-  let visitedNodes = new Set()
   const targetEdges = [edges.find(edge1 => edge1.id === edge.id)];
-  moveLevelNode(targetEdges, nodes, edges, lf, visitedNodes)
-  moveLevelNode(targetEdges, nodes, edges, lf, visitedNodes, false)
-
-  // 找出所有节点nodes中的x坐标，减去sourceNode.x的最小的差值，小于横向偏移量，才移动节点
-  let needMoveLeftNode = []
-  let needMoveRightNode = []
-  let LeftMove = false;
-  let rightMove = false;
-  // 过滤nodes在between1Node和between2Node之间的节点
-  nodes.forEach(node => {
-    if (visitedNodes.has(node.id)) {
-      return
-    }
-    if (node.x <= between1Node.x) {
-      needMoveLeftNode.push(node)
-      if (between1Node.x - node.x <= OFFSET_X) {
-        LeftMove = true
-      }
-    } else if (node.x >= between2Node.x) {
-      needMoveRightNode.push(node)
-      if (node.x - between2Node.x <= OFFSET_X) {
-        rightMove = true
-      }
-    }
-  })
-
-  // 水平自动布局
-  if (LeftMove) {
-    needMoveLeftNode.forEach(node => {
-      lf.graphModel.moveNode(node.id, -OFFSET_X, 0, true);
-    });
-  }
-  if (rightMove) {
-    needMoveRightNode.forEach(node => {
-      lf.graphModel.moveNode(node.id, OFFSET_X, 0, true);
-    });
-  }
+  moveLevelNode(nodes, edges, targetEdges, lf, between1Node, between2Node);
 
   updateEdges(lf)
 
@@ -286,39 +249,100 @@ export const gatewayAddNode = (lf, gatewayNode) => {
   const nodes = lf.getGraphData().nodes;
   const edges = lf.getGraphData().edges;
 
-  // 找到互斥网关结束节点
-  let allSuccessors = findAllNextNodes(gatewayNode.id, nodes, edges);
-  let n = 1
-  const gatewayEndNode = allSuccessors.find(node => {
-    if (gatewayNode.type.includes(node.type)) {
+  // 找到互斥网关结束节点之间的节点
+  const nextNodes = findNextNodes(gatewayNode.id, nodes, edges);
+  const gatewayEnd = getGateWayEnd(gatewayNode, nodes, edges, nextNodes)
+
+  const allSuccessors = findAllNextNodes(gatewayNode.id, nodes, edges, gatewayEnd);
+
+  // 获取nextNodes中节点的x与gatewayNode.x差值的绝对值最大的节点, 判断是在左边新增还是右边新增
+  const rightNextNodes = nextNodes.filter(node => node.x > gatewayNode.x)
+  const leftNextNodes = nextNodes.filter(node => node.x < gatewayNode.x)
+  const leftMove = rightNextNodes.length > leftNextNodes.length
+  const mostChild = leftMove ? getLeftmostNode(allSuccessors) : getRightmostNode(allSuccessors)
+
+
+  // 连接互斥网关开始节点到新的中间节点
+  const betweenNode = addNode(lf, "between", leftMove ? mostChild.x - OFFSET_X * 2
+      : mostChild.x + OFFSET_X * 2, getMoveY(gatewayNode, "between"), "中间节点")
+
+  // 连接网关开始节点到新的中间节点
+  addEdge(lf, "skip", gatewayNode.id, betweenNode.id)
+
+  // 找到属于新增位置区域的节点，水平移动的时候排除它
+  const targetEdges = [edges.find(edge1 => edge1.targetNodeId === gatewayNode.id)];
+  moveLevelNode(nodes, edges, targetEdges, lf, leftMove ? betweenNode : null , leftMove ? null : betweenNode);
+
+  // 连接新的中间节点到互斥网关结束节点
+  addEdge(lf, "skip", betweenNode.id, gatewayEnd.id)
+  updateEdges(lf)
+};
+
+function getGateWayEnd(startNode, nodes, edges, nextNodes, n = 1) {
+  if (nextNodes && nextNodes.length > 0) {
+    nextNodes = findNextNodes(startNode.id, nodes, edges);
+  }
+  if (nextNodes && nextNodes.length > 0) {
+    if (nextNodes[0].type === startNode.type) {
       if (n === 1) {
-        return node
+        return nextNodes[0]
       }
-      if (findNextEdges(node.id, edges).length > 1) {
+      if (findNextEdges(nextNodes[0].id, edges).length > 1) {
         n++
       } else {
         n--
       }
     }
+    startNode = {id : nextNodes[0].id, type : startNode.type}
+    nextNodes = findNextNodes(startNode.id, nodes, edges);
+    return getGateWayEnd(startNode, nodes, edges, nextNodes, n)
+  }
+}
+
+/**
+ * 水平移动节点
+ */
+function moveLevelNode(nodes, edges, targetEdges, lf, between1Node, between2Node) {
+  let visitedNodes = new Set()
+  LevelNotMoveNode(targetEdges, nodes, edges, lf, visitedNodes)
+  LevelNotMoveNode(targetEdges, nodes, edges, lf, visitedNodes, false)
+
+  // 找出所有节点nodes中的x坐标，减去sourceNode.x的最小的差值，小于横向偏移量，才移动节点
+  let needMoveLeftNode = []
+  let needMoveRightNode = []
+  let LeftMove = false;
+  let rightMove = false;
+  // 过滤nodes在between1Node和between2Node之间的节点
+  nodes.forEach(node => {
+    if (visitedNodes.has(node.id)) {
+      return
+    }
+    if (between1Node && node.x <= between1Node.x) {
+      needMoveLeftNode.push(node)
+      if (between1Node.x - node.x <= OFFSET_X) {
+        LeftMove = true
+      }
+    } else if (between2Node && node.x >= between2Node.x) {
+      needMoveRightNode.push(node)
+      if (node.x - between2Node.x <= OFFSET_X) {
+        rightMove = true
+      }
+    }
   })
 
-  // 在直接子节点中找到最右边的节点
-  allSuccessors = findAllNextNodes(gatewayNode.id, nodes, edges, new Set(), [], gatewayEndNode);
-  let rightmostChild = getRightmostNode(allSuccessors)
-
-  // 连接互斥网关开始节点到新的中间节点
-  const betweenNode = addNode(lf, "between", rightmostChild.x + OFFSET_X * 2, rightmostChild.y, "中间节点")
-
-  // 连接网关开始节点到新的中间节点
-  addEdge(lf, "skip", gatewayNode.id, betweenNode.id)
-
-
-  if (gatewayEndNode) {
-    // 连接新的中间节点到互斥网关结束节点
-    addEdge(lf, "skip", betweenNode.id, gatewayEndNode.id)
+  let n = between1Node && between2Node ? 1 : 2;
+  // 水平自动布局
+  if (LeftMove) {
+    needMoveLeftNode.forEach(node => {
+      lf.graphModel.moveNode(node.id, -OFFSET_X * n, 0, true);
+    });
   }
-  updateEdges(lf)
-};
+  if (rightMove) {
+    needMoveRightNode.forEach(node => {
+      lf.graphModel.moveNode(node.id, OFFSET_X * n, 0, true);
+    });
+  }
+}
 
 function getMoveY(sourceNode, targetType) {
   let moveY;
@@ -366,7 +390,7 @@ function recursivelyMoveNodes(lf, nodesToMove, lastNode, nodes, edges) {
   });
 }
 
-function findAllNextNodes(nodeId, nodes, edges, visited = new Set(), result = [], endId) {
+function findAllNextNodes(nodeId, nodes, edges, gateWayEnd, visited = new Set(), result = []) {
   if (visited.has(nodeId)) {
     return result;
   }
@@ -387,9 +411,11 @@ function findAllNextNodes(nodeId, nodes, edges, visited = new Set(), result = []
     if (!result.some(node => node.id === child.id)) {
       result.push(child);
     }
-    if (!endId || endId !== child.id) {
+    if (gateWayEnd && gateWayEnd.id === child.id) {
+      gateWayEnd = child;
+    } else {
       // 递归查找子节点的后继节点
-      findAllNextNodes(child.id, nodes, edges, visited, result);
+      findAllNextNodes(child.id, nodes, edges, gateWayEnd, visited, result);
     }
   }
 
@@ -444,7 +470,11 @@ function getRightmostNode(nodes) {
   }, nodes[0]);
 }
 
-export const hideText = (style) => {
-  style.display = 'none';
-  return style
+
+function getLeftmostNode(nodes) {
+  if (nodes.length === 0) return null;
+
+  return nodes.reduce((leftmost, current) => {
+    return (current.x < leftmost.x ? current : leftmost);
+  }, nodes[0]);
 }
