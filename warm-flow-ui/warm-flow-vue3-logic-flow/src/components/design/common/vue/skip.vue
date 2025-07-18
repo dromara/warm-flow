@@ -60,7 +60,7 @@ const form = ref(props.modelValue);
 const emit = defineEmits(["change"]);
 const { proxy } = getCurrentInstance();
 
-watch(() => form.value, n => {
+watch(() => form, n => {
   n = n.value
   if (n.conditionType) {
     let skipCondition;

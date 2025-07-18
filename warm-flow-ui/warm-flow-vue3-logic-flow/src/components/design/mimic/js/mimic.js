@@ -40,7 +40,11 @@ function addEdgeAll(lf, nodeType, sourceNodeId, targetNodeId, properties, text, 
   });
 }
 
-function deleteAndAddEdge(sourceNode, nodes, edges, lf, nodeMap, edgeMap, visitedNodes = new Set()) {
+function deleteAndAddEdge(sourceNode, nodes, edges, lf, edgeMap = new Map()
+                          , visitedNodes = new Set(), nodeMap = new Map()) {
+  if (nodeMap.size === 0) {
+    nodes.forEach((node) => nodeMap.set(node.id, node));
+  }
   // 如果该节点已经被访问过，则直接返回，防止死循环
   if (visitedNodes.has(sourceNode.id)) {
     return;
@@ -71,17 +75,22 @@ function deleteAndAddEdge(sourceNode, nodes, edges, lf, nodeMap, edgeMap, visite
           {x: targetNode.x, y: sourceNode.y},
           {x: targetNode.x, y: targetNode.y - targetNode.properties.height / 2},
         ]);
-      } else {
+      } else if (targetNode.x < sourceNode.x) {
         addEdgeAll(lf, "skip", sourceNode.id, edge.targetNodeId, edge.properties, edge.text, [
           {x: sourceNode.x - sourceNode.properties.width / 2, y: sourceNode.y},
           {x: targetNode.x, y: sourceNode.y},
+          {x: targetNode.x, y: targetNode.y - targetNode.properties.height / 2},
+        ]);
+      } else {
+        addEdgeAll(lf, "skip", sourceNode.id, edge.targetNodeId, edge.properties, edge.text, [
+          {x: sourceNode.x, y: sourceNode.y + sourceNode.properties.height / 2},
           {x: targetNode.x, y: targetNode.y - targetNode.properties.height / 2},
         ]);
       }
 
       edgeMap.set(edge.sourceNodeId + ":" + edge.targetNodeId, edge);
       // 继续处理子节点，带上 visitedNodes
-      deleteAndAddEdge(targetNode, nodes, edges, lf, nodeMap, edgeMap, visitedNodes);
+      deleteAndAddEdge(targetNode, nodes, edges, lf, edgeMap, visitedNodes, nodeMap);
     }
   } else {
     const edge = nextEdges[0];
@@ -93,21 +102,18 @@ function deleteAndAddEdge(sourceNode, nodes, edges, lf, nodeMap, edgeMap, visite
       return;
     }
 
-    const lastEdges = findLastEdges(targetNode.id, edges);
-    if (lastEdges.length > 1) {
-      if (targetNode.x > sourceNode.x) {
-        addEdgeAll(lf, "skip", sourceNode.id, edge.targetNodeId, edge.properties, edge.text, [
-          {x: sourceNode.x, y: sourceNode.y + sourceNode.properties.height / 2},
-          {x: sourceNode.x, y: targetNode.y},
-          {x: targetNode.x - targetNode.properties.width / 2, y: targetNode.y}
-        ]);
-      } else {
-        addEdgeAll(lf, "skip", sourceNode.id, edge.targetNodeId, edge.properties, edge.text, [
-          {x: sourceNode.x, y: sourceNode.y + sourceNode.properties.height / 2},
-          {x: sourceNode.x, y: targetNode.y},
-          {x: targetNode.x + targetNode.properties.width / 2, y: targetNode.y}
-        ]);
-      }
+    if (targetNode.x > sourceNode.x) {
+      addEdgeAll(lf, "skip", sourceNode.id, edge.targetNodeId, edge.properties, edge.text, [
+        {x: sourceNode.x, y: sourceNode.y + sourceNode.properties.height / 2},
+        {x: sourceNode.x, y: targetNode.y},
+        {x: targetNode.x - targetNode.properties.width / 2, y: targetNode.y}
+      ]);
+    } else if (targetNode.x < sourceNode.x) {
+      addEdgeAll(lf, "skip", sourceNode.id, edge.targetNodeId, edge.properties, edge.text, [
+        {x: sourceNode.x, y: sourceNode.y + sourceNode.properties.height / 2},
+        {x: sourceNode.x, y: targetNode.y},
+        {x: targetNode.x + targetNode.properties.width / 2, y: targetNode.y}
+      ]);
     } else {
       edgeMap.set(edge.sourceNodeId + ":" + edge.targetNodeId, edge);
       addEdgeAll(lf, "skip", sourceNode.id, edge.targetNodeId, edge.properties, edge.text, [
@@ -117,100 +123,54 @@ function deleteAndAddEdge(sourceNode, nodes, edges, lf, nodeMap, edgeMap, visite
     }
 
     // 带着 visitedNodes 递归
-    deleteAndAddEdge(targetNode, nodes, edges, lf, nodeMap, edgeMap, visitedNodes);
+    deleteAndAddEdge(targetNode, nodes, edges, lf, edgeMap, visitedNodes, nodeMap);
   }
 }
 
-function deleteAndAddNode(sourceNode, nodes, edges, lf, nodeMap, edgeMap, visitedNodes = new Set()) {
-  // 如果该节点已经被访问过，则直接返回，防止死循环
-  if (visitedNodes.has(sourceNode.id)) {
-    return;
-  }
-  visitedNodes.add(sourceNode.id);
-  const nextEdges = findNextEdges(sourceNode.id, edges);
-  if (!nextEdges || nextEdges.length === 0) {
-    return;
+/**
+ * 水平自动布局
+ */
+function moveLevelNode(targetEdges, nodes, edges, lf, visitedNodes, type = true
+                  , nodeMap = new Map()) {
+  if (nodeMap.size === 0) {
+    nodeMap = new Map(nodes.map(node => [node.id, node]));
   }
 
-  if (nextEdges.length > 1) {
-    for (let i = 0; i < nextEdges.length; i++) {
-      const edge = nextEdges[i];
-      lf.deleteEdge(edge.id);
-      const targetNode = nodeMap.get(edge.targetNodeId);
-      if (!targetNode) continue;
-
-      // 边重复检测
-      if (["serial", "parallel"].includes(sourceNode.type) && edgeMap.has(edge.sourceNodeId + ":" + edge.targetNodeId)) {
-        continue; // 跳过重复边
-      }
-
-      // 添加新边
-      if (targetNode.x > sourceNode.x) {
-        addEdgeAll(lf, "skip", sourceNode.id, edge.targetNodeId, edge.properties, edge.text, [
-          {x: sourceNode.x + sourceNode.properties.width / 2, y: sourceNode.y},
-          {x: targetNode.x, y: sourceNode.y},
-          {x: targetNode.x, y: targetNode.y - targetNode.properties.height / 2},
-        ]);
-      } else {
-        addEdgeAll(lf, "skip", sourceNode.id, edge.targetNodeId, edge.properties, edge.text, [
-          {x: sourceNode.x - sourceNode.properties.width / 2, y: sourceNode.y},
-          {x: targetNode.x, y: sourceNode.y},
-          {x: targetNode.x, y: targetNode.y - targetNode.properties.height / 2},
-        ]);
-      }
-
-      edgeMap.set(edge.sourceNodeId + ":" + edge.targetNodeId, edge);
-      // 继续处理子节点，带上 visitedNodes
-      deleteAndAddEdge(targetNode, nodes, edges, lf, nodeMap, edgeMap, visitedNodes);
+  if (targetEdges.length > 1) {
+    for (let i = 0; i < targetEdges.length; i++) {
+      const edge = targetEdges[i];
+      extracted(edge);
     }
   } else {
-    const edge = nextEdges[0];
-    lf.deleteEdge(edge.id);
-    const targetNode = nodeMap.get(edge.targetNodeId);
-    if (!targetNode) return;
+    const edge = targetEdges[0]
+    extracted(edge);
+  }
 
-    if (["serial", "parallel"].includes(sourceNode.type) && edgeMap.has(edge.sourceNodeId + ":" + edge.targetNodeId)) {
+  function extracted(edge) {
+    const targetNode = type ? nodeMap.get(edge.targetNodeId) : nodeMap.get(edge.sourceNodeId);
+    // 如果该节点已经被访问过，则直接返回，防止死循环
+    if (visitedNodes.has(targetNode.id)) {
       return;
     }
-
-    const lastEdges = findLastEdges(targetNode.id, edges);
-    if (lastEdges.length > 1) {
-      if (targetNode.x > sourceNode.x) {
-        addEdgeAll(lf, "skip", sourceNode.id, edge.targetNodeId, edge.properties, edge.text, [
-          {x: sourceNode.x, y: sourceNode.y + sourceNode.properties.height / 2},
-          {x: sourceNode.x, y: targetNode.y},
-          {x: targetNode.x - targetNode.properties.width / 2, y: targetNode.y}
-        ]);
-      } else {
-        addEdgeAll(lf, "skip", sourceNode.id, edge.targetNodeId, edge.properties, edge.text, [
-          {x: sourceNode.x, y: sourceNode.y + sourceNode.properties.height / 2},
-          {x: sourceNode.x, y: targetNode.y},
-          {x: targetNode.x + targetNode.properties.width / 2, y: targetNode.y}
-        ]);
-      }
-    } else {
-      edgeMap.set(edge.sourceNodeId + ":" + edge.targetNodeId, edge);
-      addEdgeAll(lf, "skip", sourceNode.id, edge.targetNodeId, edge.properties, edge.text, [
-        {x: sourceNode.x, y: sourceNode.y + sourceNode.properties.height / 2},
-        {x: targetNode.x, y: targetNode.y - targetNode.properties.height / 2}
-      ]);
+    visitedNodes.add(targetNode.id);
+    const targetEdges = type ? findNextEdges(targetNode.id, edges) : findLastEdges(targetNode.id, edges);
+    if (!targetEdges || targetEdges.length === 0) {
+      return;
     }
-
-    // 带着 visitedNodes 递归
-    deleteAndAddEdge(targetNode, nodes, edges, lf, nodeMap, edgeMap, visitedNodes);
+    moveLevelNode(targetEdges, nodes, edges, lf, visitedNodes, type, nodeMap)
   }
 }
 
 
 // 更新边
-function updateNodesAndEdges(lf) {
+function updateEdges(lf) {
   const nodes = lf.getGraphData().nodes;
   const startNode = nodes.find(node => node.type === "start")
-  const nodeMap = new Map()
-  nodes.forEach((node) => nodeMap.set(node.id, node));
+  // 以上两行重构，改成一行
+
   const edges = lf.getGraphData().edges;
   // 获取源节点的后置节点
-  deleteAndAddEdge(startNode, nodes, edges, lf, nodeMap, new Map(), new Set());
+  deleteAndAddEdge(startNode, nodes, edges, lf);
 }
 
 export const addBetweenNode = (lf, edge) => {
@@ -234,7 +194,7 @@ export const addBetweenNode = (lf, edge) => {
   }
 
   addEdgeAll(lf, "skip", betweenNode.id, targetNode.id, edge.properties)
-  updateNodesAndEdges(lf)
+  updateEdges(lf)
   // 自动调整画布大小
   // adjustCanvasSize();
 }
@@ -275,6 +235,11 @@ export const addGatewayNode = (lf, edge, nodeType) => {
     recursivelyMoveNodes(lf, initialNodes, lastNode, nodes, edges);
   }
 
+  // 找到属于新增位置区域的节点，水平移动的时候排除它
+  let visitedNodes = new Set()
+  const targetEdges = [edges.find(edge1 => edge1.id === edge.id)];
+  moveLevelNode(targetEdges, nodes, edges, lf, visitedNodes)
+  moveLevelNode(targetEdges, nodes, edges, lf, visitedNodes, false)
 
   // 找出所有节点nodes中的x坐标，减去sourceNode.x的最小的差值，小于横向偏移量，才移动节点
   let needMoveLeftNode = []
@@ -283,14 +248,17 @@ export const addGatewayNode = (lf, edge, nodeType) => {
   let rightMove = false;
   // 过滤nodes在between1Node和between2Node之间的节点
   nodes.forEach(node => {
+    if (visitedNodes.has(node.id)) {
+      return
+    }
     if (node.x <= between1Node.x) {
       needMoveLeftNode.push(node)
-      if (between1Node.x - node.x < OFFSET_X) {
+      if (between1Node.x - node.x <= OFFSET_X) {
         LeftMove = true
       }
     } else if (node.x >= between2Node.x) {
       needMoveRightNode.push(node)
-      if (node.x - between2Node.x < OFFSET_X) {
+      if (node.x - between2Node.x <= OFFSET_X) {
         rightMove = true
       }
     }
@@ -308,7 +276,7 @@ export const addGatewayNode = (lf, edge, nodeType) => {
     });
   }
 
-  updateNodesAndEdges(lf)
+  updateEdges(lf)
 
   // 自动调整画布大小
   // adjustCanvasSize();
@@ -349,7 +317,7 @@ export const gatewayAddNode = (lf, gatewayNode) => {
     // 连接新的中间节点到互斥网关结束节点
     addEdge(lf, "skip", betweenNode.id, gatewayEndNode.id)
   }
-  updateNodesAndEdges(lf)
+  updateEdges(lf)
 };
 
 function getMoveY(sourceNode, targetType) {
@@ -384,15 +352,17 @@ function recursivelyMoveNodes(lf, nodesToMove, lastNode, nodes, edges) {
   nodesToMove.forEach(node => {
     let moveY = getMoveY(lastNode, node.type);
 
-    // 移动当前节点
-    lf.graphModel.moveNode2Coordinate(node.id, node.x, moveY, true);
+    if (node.y < moveY) {
+      // 移动当前节点
+      lf.graphModel.moveNode2Coordinate(node.id, node.x, moveY, true);
 
-    // 更新 lastNode
-    const updatedNode = lf.graphModel.getNodeModelById(node.id);
+      // 更新 lastNode
+      const updatedNode = lf.graphModel.getNodeModelById(node.id);
 
-    // 查找当前节点的后续节点并递归处理
-    const nextNodes = findNextNodes(node.id, nodes, edges);
-    recursivelyMoveNodes(lf, nextNodes, updatedNode, nodes, edges);
+      // 查找当前节点的后续节点并递归处理
+      const nextNodes = findNextNodes(node.id, nodes, edges);
+      recursivelyMoveNodes(lf, nextNodes, updatedNode, nodes, edges);
+    }
   });
 }
 
