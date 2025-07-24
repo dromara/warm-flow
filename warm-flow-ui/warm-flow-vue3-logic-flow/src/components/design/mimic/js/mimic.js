@@ -175,7 +175,6 @@ function updateEdges(lf) {
 
 export const addBetweenNode = (lf, edge) => {
   const nodes = lf.getGraphData().nodes;
-  const edges = lf.getGraphData().edges;
   const sourceNode = nodes.find(node => node.id === edge.sourceNodeId);
   const targetNode = nodes.find(node => node.id === edge.targetNodeId);
 
@@ -186,14 +185,11 @@ export const addBetweenNode = (lf, edge) => {
   // 找到并删除开始节点和结束节点之间的直接连接
   lf.deleteEdge(edge.id);
 
-  // 当目标节点减新增中间节点差，小于竖向偏移量，才移动节点
-  if (targetNode.y < getMoveY(betweenNode, targetNode.type)) {
-    let lastNode = betweenNode;
-    const initialNodes = findNextNodes(sourceNode.id, nodes, edges);
-    recursivelyMoveNodes(lf, initialNodes, lastNode, nodes, edges);
-  }
-
   addEdgeAll(lf, "skip", betweenNode.id, targetNode.id, edge.properties)
+
+  // 当目标节点减新增中间节点差，小于竖向偏移量，才移动节点
+  recursivelyMoveNodes(lf, betweenNode);
+
   updateEdges(lf)
   // 自动调整画布大小
   // adjustCanvasSize();
@@ -229,11 +225,7 @@ export const addGatewayNode = (lf, edge, nodeType) => {
   addEdge(lf, "skip", gatewayNode2.id, targetNode.id)
 
   // 当目标节点减新增互斥网关结束节点差，小于竖向偏移量，才移动节点
-  if (targetNode.y < getMoveY(gatewayNode2, targetNode.type)) {
-    let lastNode = gatewayNode2;
-    const initialNodes = findNextNodes(sourceNode.id, nodes, edges);
-    recursivelyMoveNodes(lf, initialNodes, lastNode, nodes, edges);
-  }
+  recursivelyMoveNodes(lf, gatewayNode2);
 
   // 找到属于新增位置区域的节点，水平移动的时候排除它
   const targetEdges = [edges.find(edge1 => edge1.id === edge.id)];
@@ -297,6 +289,38 @@ function getGateWayEnd(startNode, nodes, edges, nextNodes, n = 1) {
     nextNodes = findNextNodes(startNode.id, nodes, edges);
     return getGateWayEnd(startNode, nodes, edges, nextNodes, n)
   }
+}
+
+export const removeNode = (lf, nodeModel) => {
+  const sourceNodes = lf.getNodeIncomingNode(nodeModel.id)
+  const targetNodes = lf.getNodeOutgoingNode(nodeModel.id)
+  const [sourceNode, targetNode] = [sourceNodes[0], targetNodes[0]]
+  let moveSourceNode = sourceNode
+  let moveTargetNode = targetNode
+  lf.deleteNode(nodeModel.id)
+  const nodes = lf.getGraphData().nodes;
+  const edges = lf.getGraphData().edges;
+
+  if (['serial', 'parallel'].includes(sourceNode.type) && ['serial', 'parallel'].includes(targetNode.type)
+      && sourceNode.type === targetNode.type) {
+    if (lf.getNodeOutgoingNode(sourceNode.id).length === 2) {
+      return
+    }
+    if (lf.getNodeOutgoingNode(sourceNode.id).length === 1) {
+      moveSourceNode = lf.getNodeIncomingNode(sourceNode.id)[0]
+      moveTargetNode = lf.getNodeOutgoingNode(targetNode.id)[0]
+      const delNodes = findAllNextNodes(sourceNode.id, nodes, edges, targetNode);
+      lf.deleteNode(sourceNode.id)
+      delNodes.forEach(node => {
+        lf.deleteNode(node.id)
+      })
+    }
+
+  }
+  addEdge(lf, "skip", moveSourceNode.id, moveTargetNode.id)
+  // 当目标节点减新增互斥网关结束节点差，小于竖向偏移量，才移动节点
+  recursivelyMoveNodes(lf, moveSourceNode, false);
+  updateEdges(lf)
 }
 
 /**
@@ -364,28 +388,42 @@ function getMoveY(sourceNode, targetType) {
 
 /**
  * 递归处理节点的 Y 轴移动逻辑
- * @param {Object} lf - lf
- * @param {Array} nodesToMove - 当前要移动的节点数组
- * @param {Object} lastNode - 上一个移动后的节点模型
- * @param {Array} nodes - 所有节点
- * @param {Array} edges - 所有边
  */
-function recursivelyMoveNodes(lf, nodesToMove, lastNode, nodes, edges) {
+function recursivelyMoveNodes(lf, lastNode, addFlag = true) {
+  const nodes = lf.getGraphData().nodes;
+  const edges = lf.getGraphData().edges
+  // 查找当前节点的后续节点并递归处理
+  const nodesToMove = findNextNodes(lastNode.id, nodes, edges);
+
   if (!nodesToMove || nodesToMove.length === 0) return;
 
   nodesToMove.forEach(node => {
     let moveY = getMoveY(lastNode, node.type);
+    let move = false;
+    if (addFlag && node.y < moveY) {
+      move = true;
+    } else if (!addFlag) {
+      if (['serial', 'parallel'].includes(node.type)) {
+        const lastNodes = findLastNodes(node.id, nodes, edges)
+        // 找出lastNodes中的最大的y坐标的节点
+        const maxNode = lastNodes.reduce((prev, current) => {
+          return (current.y > prev.y ? current : prev);
+        }, lastNodes[0]);
+        moveY = getMoveY(maxNode, node.type);
+        if (node.y >= moveY) {
+          move = true;
+        }
+      } else if (node.y >= moveY) {
+        move = true;
+      }
+    }
 
-    if (node.y < moveY) {
+    if (move) {
       // 移动当前节点
       lf.graphModel.moveNode2Coordinate(node.id, node.x, moveY, true);
-
       // 更新 lastNode
       const updatedNode = lf.graphModel.getNodeModelById(node.id);
-
-      // 查找当前节点的后续节点并递归处理
-      const nextNodes = findNextNodes(node.id, nodes, edges);
-      recursivelyMoveNodes(lf, nextNodes, updatedNode, nodes, edges);
+      recursivelyMoveNodes(lf, updatedNode, addFlag);
     }
   });
 }
@@ -433,6 +471,12 @@ function findLastEdges(nodeId, edges) {
 function findNextNodes(nodeId, nodes, edges) {
   return edges.filter(edge => edge.sourceNodeId === nodeId)
       .map(edge => nodes.find(node => node.id === edge.targetNodeId))
+      .filter(Boolean);
+}
+
+function findLastNodes(nodeId, nodes, edges) {
+  return edges.filter(edge => edge.targetNodeId === nodeId)
+      .map(edge => nodes.find(node => node.id === edge.sourceNodeId))
       .filter(Boolean);
 }
 

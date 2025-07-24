@@ -99,7 +99,7 @@ import {computed, onMounted, onUnmounted, ref, watch} from "vue";
 import BaseInfo from "@/components/design/common/vue/baseInfo.vue";
 import initClassicsData from "@/components/design/classics/initClassicsData.json";
 import initMimicData from "@/components/design/mimic/initMimicData.json";
-import {addBetweenNode, addGatewayNode, gatewayAddNode} from "@/components/design/mimic/js/mimic.js";
+import {addBetweenNode, addGatewayNode, gatewayAddNode, removeNode} from "@/components/design/mimic/js/mimic.js";
 import EdgeTooltip from "@/components/design/mimic/vue/EdgeTooltip.vue";
 
 const appStore = useAppStore();
@@ -513,6 +513,11 @@ function initEvent() {
     eventCenter.on('hide:EdgeTooltip', () => {
       tooltipVisible.value = false;
     });
+    // 删除节点事件
+    eventCenter.on('delete:node', (args) => {
+      const nodeModel = lf.value.getNodeModelById(args.id)
+      removeNode(lf.value, nodeModel)
+    })
   } else {
     // 中间节点双击事件
     eventCenter.on('node:dbclick', (args) => {

@@ -20,7 +20,7 @@ export class BaseNodeView extends HtmlNode {
         props.graphModel.eventCenter.emit("edit:node", {id: props.model.id, click: true});
       },
       onDeleteNode: () => {
-        props.model.graphModel.deleteNode(props.model.id); // 删除节点
+        props.graphModel.eventCenter.emit("delete:node", {id: props.model.id});
       }
     })
     this.app = createApp({
