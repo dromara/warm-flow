@@ -130,7 +130,7 @@ function deleteAndAddEdge(sourceNode, nodes, edges, lf, edgeMap = new Map()
 /**
  * 水平自动布局，不需要移动的节点
  */
-function LevelNotMoveNode(targetEdges, nodes, edges, lf, visitedNodes, type = true
+function LevelNotMoveNode(targetEdges, nodes, edges, lf, visitedIds, type = true
                   , nodeMap = new Map()) {
   if (nodeMap.size === 0) {
     nodeMap = new Map(nodes.map(node => [node.id, node]));
@@ -149,15 +149,15 @@ function LevelNotMoveNode(targetEdges, nodes, edges, lf, visitedNodes, type = tr
   function extracted(edge) {
     const targetNode = type ? nodeMap.get(edge.targetNodeId) : nodeMap.get(edge.sourceNodeId);
     // 如果该节点已经被访问过，则直接返回，防止死循环
-    if (visitedNodes.has(targetNode.id)) {
+    if (visitedIds.has(targetNode.id)) {
       return;
     }
-    visitedNodes.add(targetNode.id);
+    visitedIds.add(targetNode.id);
     const targetEdges = type ? findNextEdges(targetNode.id, edges) : findLastEdges(targetNode.id, edges);
     if (!targetEdges || targetEdges.length === 0) {
       return;
     }
-    LevelNotMoveNode(targetEdges, nodes, edges, lf, visitedNodes, type, nodeMap)
+    LevelNotMoveNode(targetEdges, nodes, edges, lf, visitedIds, type, nodeMap)
   }
 }
 
@@ -303,7 +303,17 @@ export const removeNode = (lf, nodeModel) => {
 
   if (['serial', 'parallel'].includes(sourceNode.type) && ['serial', 'parallel'].includes(targetNode.type)
       && sourceNode.type === targetNode.type) {
-    if (lf.getNodeOutgoingNode(sourceNode.id).length === 2) {
+    const sourceEdges = lf.getNodeIncomingEdge(sourceNode.id)
+    let visitedIds = new Set()
+    LevelNotMoveNode(sourceEdges, nodes, edges, lf, visitedIds)
+    LevelNotMoveNode(sourceEdges, nodes, edges, lf, visitedIds, false)
+    // 查询nodes中visitedIds包含node.id的数组
+    const visitedNodes = nodes.filter(node => visitedIds.has(node.id))
+
+    moveLevelNode(nodes, edges, sourceEdges, lf, nodeModel.x < sourceNode.x ? getLeftmostNode(visitedNodes) : null
+        , nodeModel.x < sourceNode.x ? null : getRightmostNode(visitedNodes), false, visitedIds);
+
+    if (lf.getNodeOutgoingNode(sourceNode.id).length >= 2) {
       return
     }
     if (lf.getNodeOutgoingNode(sourceNode.id).length === 1) {
@@ -326,10 +336,11 @@ export const removeNode = (lf, nodeModel) => {
 /**
  * 水平移动节点
  */
-function moveLevelNode(nodes, edges, targetEdges, lf, between1Node, between2Node) {
-  let visitedNodes = new Set()
-  LevelNotMoveNode(targetEdges, nodes, edges, lf, visitedNodes)
-  LevelNotMoveNode(targetEdges, nodes, edges, lf, visitedNodes, false)
+function moveLevelNode(nodes, edges, targetEdges, lf, betweenLeft, betweenRight, addFlag = true, visitedIds = new Set()) {
+  if (!visitedIds || visitedIds.size === 0) {
+    LevelNotMoveNode(targetEdges, nodes, edges, lf, visitedIds)
+    LevelNotMoveNode(targetEdges, nodes, edges, lf, visitedIds, false)
+  }
 
   // 找出所有节点nodes中的x坐标，减去sourceNode.x的最小的差值，小于横向偏移量，才移动节点
   let needMoveLeftNode = []
@@ -338,32 +349,38 @@ function moveLevelNode(nodes, edges, targetEdges, lf, between1Node, between2Node
   let rightMove = false;
   // 过滤nodes在between1Node和between2Node之间的节点
   nodes.forEach(node => {
-    if (visitedNodes.has(node.id)) {
+    if (visitedIds.has(node.id)) {
       return
     }
-    if (between1Node && node.x <= between1Node.x) {
+    if (betweenLeft && node.x <= betweenLeft.x) {
       needMoveLeftNode.push(node)
-      if (between1Node.x - node.x <= OFFSET_X) {
+      if (addFlag && betweenLeft.x - node.x <= OFFSET_X) {
         LeftMove = true
       }
-    } else if (between2Node && node.x >= between2Node.x) {
+      if (!addFlag && betweenLeft.x - node.x > OFFSET_X) {
+        LeftMove = true
+      }
+    } else if (betweenRight && node.x >= betweenRight.x) {
       needMoveRightNode.push(node)
-      if (node.x - between2Node.x <= OFFSET_X) {
+      if (addFlag && node.x - betweenRight.x <= OFFSET_X) {
+        rightMove = true
+      }
+      if (!addFlag && node.x - betweenRight.x > OFFSET_X) {
         rightMove = true
       }
     }
   })
 
-  let n = between1Node && between2Node ? 1 : 2;
+  let n = betweenLeft && betweenRight ? 1 : 2;
   // 水平自动布局
   if (LeftMove) {
     needMoveLeftNode.forEach(node => {
-      lf.graphModel.moveNode(node.id, -OFFSET_X * n, 0, true);
+      lf.graphModel.moveNode(node.id, addFlag ? -OFFSET_X * n : OFFSET_X * n, 0, true);
     });
   }
   if (rightMove) {
     needMoveRightNode.forEach(node => {
-      lf.graphModel.moveNode(node.id, OFFSET_X * n, 0, true);
+      lf.graphModel.moveNode(node.id, addFlag ? OFFSET_X * n : -OFFSET_X * n, 0, true);
     });
   }
 }

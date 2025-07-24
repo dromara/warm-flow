@@ -26,6 +26,7 @@ import org.dromara.warm.flow.core.enums.ModeEnum;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.utils.ExceptionUtil;
+import org.dromara.warm.flow.core.utils.StreamUtils;
 import org.dromara.warm.flow.core.utils.StringUtils;
 import org.dromara.warm.flow.ui.dto.HandlerFeedBackDto;
 import org.dromara.warm.flow.ui.dto.HandlerQuery;
@@ -184,7 +185,9 @@ public class WarmFlowService {
             // 需要业务系统实现该接口
             HandlerSelectService handlerSelectService = FrameInvoker.getBean(HandlerSelectService.class);
             if (handlerSelectService == null) {
-                return ApiResult.ok(new ArrayList<>());
+                List<HandlerFeedBackVo> handlerFeedBackVos = StreamUtils.toList(handlerFeedBackDto.getStorageIds(),
+                        storageId -> new HandlerFeedBackVo(storageId, null));
+                return ApiResult.ok(handlerFeedBackVos);
             }
             List<HandlerFeedBackVo> handlerFeedBackVos = handlerSelectService.handlerFeedback(handlerFeedBackDto.getStorageIds());
             return ApiResult.ok(handlerFeedBackVos);
