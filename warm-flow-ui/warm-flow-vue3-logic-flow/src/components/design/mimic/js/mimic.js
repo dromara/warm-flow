@@ -244,14 +244,36 @@ export const gatewayAddNode = (lf, gatewayNode) => {
   // 找到互斥网关结束节点之间的节点
   const nextNodes = findNextNodes(gatewayNode.id, nodes, edges);
   const gatewayEnd = getGateWayEnd(gatewayNode, nodes, edges, nextNodes)
+  const regionNodes = findAllNextNodes(gatewayNode.id, nodes, edges, gatewayEnd);
+  let xSet = new Set()
+  regionNodes.forEach(node => {
+    if (node.type === 'between' && !xSet.has(node.x)) {
+      xSet.add(node.x)
+    }
+  })
+  let mostLeftX
+  // 判断xSet.size取余2
+  if ((xSet.size + 1) % 2 === 0) {
+    mostLeftX = gatewayNode.x - OFFSET_X * (xSet.size + 1)
+  } else {
+    mostLeftX = gatewayNode.x - OFFSET_X * xSet.size
+  }
+  const mostLeftNode = getLeftmostNode(regionNodes)
 
-  const allSuccessors = findAllNextNodes(gatewayNode.id, nodes, edges, gatewayEnd);
+  if (mostLeftNode.x > mostLeftX) {
+    regionNodes.forEach(node => {
+      if (gatewayEnd.id !== node.id) {
+        lf.graphModel.moveNode(node.id, -OFFSET_X, 0, true);
+        node.x = node.x - OFFSET_X
+      }
+    })
+  }
 
   // 获取nextNodes中节点的x与gatewayNode.x差值的绝对值最大的节点, 判断是在左边新增还是右边新增
   const rightNextNodes = nextNodes.filter(node => node.x > gatewayNode.x)
   const leftNextNodes = nextNodes.filter(node => node.x < gatewayNode.x)
   const leftMove = rightNextNodes.length > leftNextNodes.length
-  const mostChild = leftMove ? getLeftmostNode(allSuccessors) : getRightmostNode(allSuccessors)
+  const mostChild = leftMove ? getLeftmostNode(regionNodes) : getRightmostNode(regionNodes)
 
 
   // 连接互斥网关开始节点到新的中间节点
@@ -271,12 +293,12 @@ export const gatewayAddNode = (lf, gatewayNode) => {
 };
 
 function getGateWayEnd(startNode, nodes, edges, nextNodes, n = 1) {
-  if (nextNodes && nextNodes.length > 0) {
+  if (!nextNodes || nextNodes.length === 0) {
     nextNodes = findNextNodes(startNode.id, nodes, edges);
   }
   if (nextNodes && nextNodes.length > 0) {
     if (nextNodes[0].type === startNode.type) {
-      if (n === 1) {
+      if (n === 1 && nextNodes[0].x === startNode.x) {
         return nextNodes[0]
       }
       if (findNextEdges(nextNodes[0].id, edges).length > 1) {
@@ -285,7 +307,7 @@ function getGateWayEnd(startNode, nodes, edges, nextNodes, n = 1) {
         n--
       }
     }
-    startNode = {id : nextNodes[0].id, type : startNode.type}
+    startNode = {id : nextNodes[0].id, type : startNode.type, x : startNode.x}
     nextNodes = findNextNodes(startNode.id, nodes, edges);
     return getGateWayEnd(startNode, nodes, edges, nextNodes, n)
   }

@@ -247,8 +247,9 @@ export const logicFlowJsonToWarmFlow = (data) => {
 
 export const setCommonStyle = (style, properties, type) => {
   // 从 chartStatusColor 数组中提取颜色值
-  const [doneColor, todoColor, notDoneColor] = properties.chartStatusColor
-  || ["157,255,0", "255,205,23", "0,0,0"]; // 提供默认值
+  const [doneColor, todoColor, notDoneColor] = (properties.chartStatusColor &&
+      properties.chartStatusColor.length === 3) ? properties.chartStatusColor :
+      ["157,255,0", "255,205,23", "0,0,0"]; // 提供默认值
 
   if (properties.status === 2) {
     // 使用活跃状态的 RGB 颜色
