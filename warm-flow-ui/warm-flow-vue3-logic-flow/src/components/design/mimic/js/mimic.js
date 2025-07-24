@@ -345,8 +345,8 @@ function moveLevelNode(nodes, edges, targetEdges, lf, betweenLeft, betweenRight,
   // 找出所有节点nodes中的x坐标，减去sourceNode.x的最小的差值，小于横向偏移量，才移动节点
   let needMoveLeftNode = []
   let needMoveRightNode = []
-  let LeftMove = false;
-  let rightMove = false;
+  let LeftMove = !addFlag;
+  let rightMove = !addFlag;
   // 过滤nodes在between1Node和between2Node之间的节点
   nodes.forEach(node => {
     if (visitedIds.has(node.id)) {
@@ -357,16 +357,16 @@ function moveLevelNode(nodes, edges, targetEdges, lf, betweenLeft, betweenRight,
       if (addFlag && betweenLeft.x - node.x <= OFFSET_X) {
         LeftMove = true
       }
-      if (!addFlag && betweenLeft.x - node.x > OFFSET_X) {
-        LeftMove = true
+      if (!addFlag && betweenLeft.x - node.x <= OFFSET_X * 2) {
+        LeftMove = false
       }
     } else if (betweenRight && node.x >= betweenRight.x) {
       needMoveRightNode.push(node)
       if (addFlag && node.x - betweenRight.x <= OFFSET_X) {
         rightMove = true
       }
-      if (!addFlag && node.x - betweenRight.x > OFFSET_X) {
-        rightMove = true
+      if (!addFlag && node.x - betweenRight.x <= OFFSET_X * 2) {
+        rightMove = false
       }
     }
   })
