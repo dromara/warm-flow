@@ -110,7 +110,7 @@
             <slot name="form-item-task-formPath" :model="form" field="formPath" v-else-if="form.formCustom === 'Y'">
               <el-form-item label="审批流程表单：">
                 <el-select v-model="form.formPath">
-                  <el-option v-for="item in definitionList" :key="id" :label="`${item.formName} - v${item.version}`" :value="item.id"></el-option>
+                  <el-option v-for="item in definitionList" :key="item.id" :label="`${item.formName} - v${item.version}`" :value="item.id"></el-option>
                 </el-select>
               </el-form-item>
             </slot>
