@@ -64,9 +64,9 @@ public interface Definition extends RootEntity {
 
     String getFlowName();
 
-    Definition setFlowName(String flowName);
+    public String getModelValue();
 
-    String getMode();
+    public Definition setModelValue(String modelValue);
 
     Definition setMode(String mode);
 
@@ -120,11 +120,11 @@ public interface Definition extends RootEntity {
                 .setDelFlag(this.getDelFlag())
                 .setFlowCode(this.getFlowCode())
                 .setFlowName(this.getFlowName())
+                .setModelValue(this.getModelValue())
                 .setCategory(this.getCategory())
                 .setVersion(this.getVersion())
                 .setFormCustom(this.getFormCustom())
                 .setFormPath(this.getFormPath())
-                .setActivityStatus(this.getActivityStatus())
                 .setListenerType(this.getListenerType())
                 .setListenerPath(this.getListenerPath())
                 .setExt(this.getExt());

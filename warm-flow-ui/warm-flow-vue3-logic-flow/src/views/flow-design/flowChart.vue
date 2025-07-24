@@ -23,7 +23,6 @@
 
     <div
         v-if="visible"
-        class="custom-tooltip"
         :style="{ left: tooltipPosition.x + 'px', top: tooltipPosition.y + 'px' }"
         ref="tooltipContainerRef">
     </div>
@@ -37,14 +36,20 @@ import { ref, onMounted, onUnmounted, watch, computed, render, h, nextTick } fro
 import LogicFlow from "@logicflow/core";
 import { Snapshot } from "@logicflow/extension";
 import "@logicflow/core/lib/style/index.css";
-import Start from "@/components/design/classics/js/start";
-import Between from "@/components/design/classics/js/between";
-import Serial from "@/components/design/classics/js/serial";
-import Parallel from "@/components/design/classics/js/parallel";
-import End from "@/components/design/classics/js/end";
-import Skip from "@/components/design/classics/js/skip";
+import StartC from "@/components/design/classics/js/start";
+import BetweenC from "@/components/design/classics/js/between";
+import SerialC from "@/components/design/classics/js/serial";
+import ParallelC from "@/components/design/classics/js/parallel";
+import EndC from "@/components/design/classics/js/end";
+import SkipC from "@/components/design/classics/js/skip";
+import StartM from "@/components/design/mimic/js/start";
+import BetweenM from "@/components/design/mimic/js/between";
+import SerialM from "@/components/design/mimic/js/serial";
+import ParallelM from "@/components/design/mimic/js/parallel";
+import EndM from "@/components/design/mimic/js/end";
+import SkipM from "@/components/design/mimic/js/skip";
 import useAppStore from "@/store/app";
-import { json2LogicFlowJson } from "@/components/design/common/js/tool";
+import {isClassics, json2LogicFlowJson} from "@/components/design/common/js/tool";
 import { queryFlowChart } from "@/api/flow/definition";
 
 const appStore = useAppStore();
@@ -85,12 +90,21 @@ const use = () => {
 };
 
 const register = () => {
-  lf.value.register(Start);
-  lf.value.register(Between);
-  lf.value.register(Serial);
-  lf.value.register(Parallel);
-  lf.value.register(End);
-  lf.value.register(Skip);
+  if (isClassics(defJson.value.modelValue)) {
+    lf.value.register(StartC);
+    lf.value.register(BetweenC);
+    lf.value.register(SerialC);
+    lf.value.register(ParallelC);
+    lf.value.register(EndC);
+    lf.value.register(SkipC);
+  } else {
+    lf.value.register(StartM);
+    lf.value.register(BetweenM);
+    lf.value.register(SerialM);
+    lf.value.register(ParallelM);
+    lf.value.register(EndM);
+    lf.value.register(SkipM);
+  }
 };
 
 const initEvent = () => {

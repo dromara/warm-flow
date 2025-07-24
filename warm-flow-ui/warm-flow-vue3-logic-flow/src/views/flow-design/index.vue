@@ -37,11 +37,11 @@
       <div style="padding: 5px 0; text-align: right;">
         <div>
           <el-button size="small" icon="ZoomOut" @click="zoomViewport(false)">缩小</el-button>
-          <el-button size="small" icon="Rank" @click="zoomViewport(1)">自适应</el-button>
+          <el-button size="small" v-if="'CLASSICS' === logicJson.modelValue" icon="Rank" @click="zoomViewport(1)">自适应</el-button>
           <el-button size="small" icon="ZoomIn" @click="zoomViewport(true)">放大</el-button>
           <el-button size="small" icon="DArrowLeft" @click="undoOrRedo(true)" v-if="!disabled">上一步</el-button>
           <el-button size="small" icon="DArrowRight" @click="undoOrRedo(false)" v-if="!disabled">下一步</el-button>
-          <el-button size="small" icon="Delete" @click="clear()" v-if="!disabled">清空</el-button>
+          <el-button size="small" icon="Delete" @click="clear()" v-if="!disabled && 'CLASSICS' === logicJson.modelValue">清空</el-button>
           <el-button size="small" icon="Download" @click="downLoad">下载流程图</el-button>
           <el-button size="small" icon="Download" @click="downJson">下载json</el-button>
         </div>
@@ -57,17 +57,31 @@
       </div>
     </el-header>
   </div>
+
+  <!-- 弹框组件 -->
+  <EdgeTooltip
+      v-if="tooltipVisible"
+      :position="tooltipPosition"
+      :tooltipEdge="tooltipEdge"
+      @option-click="handleOptionClick"
+      @close-tooltip="tooltipVisible = false"
+  />
 </template>
 
 <script setup name="Design">
 import LogicFlow from "@logicflow/core";
 import "@logicflow/core/lib/style/index.css";
-import { DndPanel, Menu, Snapshot } from '@logicflow/extension';
+import {DndPanel, InsertNodeInPolyline, Menu, Snapshot} from '@logicflow/extension';
 import '@logicflow/extension/lib/style/index.css'
 import { ElLoading } from 'element-plus'
 import PropertySetting from '@/components/design/common/vue/propertySetting.vue'
 import { queryDef, saveJson } from "@/api/flow/definition";
-import { json2LogicFlowJson, logicFlowJsonToWarmFlow } from "@/components/design/common/js/tool";
+import {
+  getPreviousNodes,
+  isClassics,
+  json2LogicFlowJson,
+  logicFlowJsonToWarmFlow
+} from "@/components/design/common/js/tool";
 import StartC from "@/components/design/classics/js/start";
 import BetweenC from "@/components/design/classics/js/between";
 import SerialC from "@/components/design/classics/js/serial";
@@ -83,9 +97,10 @@ import SkipM from "@/components/design/mimic/js/skip";
 import useAppStore from "@/store/app";
 import {computed, onMounted, onUnmounted, ref, watch} from "vue";
 import BaseInfo from "@/components/design/common/vue/baseInfo.vue";
-import initClassicsData from "@/components/design/common/initClassicsData.json";
-import initMimicData from "@/components/design/common/initMimicData.json";
-import {addBetweenNode, addGatewayNode, gatewayAddNode} from "@/components/design/mimic/js/mimic.js";
+import initClassicsData from "@/components/design/classics/initClassicsData.json";
+import initMimicData from "@/components/design/mimic/initMimicData.json";
+import {addBetweenNode, addGatewayNode, gatewayAddNode, removeNode} from "@/components/design/mimic/js/mimic.js";
+import EdgeTooltip from "@/components/design/mimic/vue/EdgeTooltip.vue";
 
 const appStore = useAppStore();
 const appParams = computed(() => useAppStore().appParams);
@@ -139,6 +154,19 @@ const steps = [
   // { title: '表单设计', icon: 'formDesign' }
 ];
 
+const tooltipVisible = ref(false);
+const tooltipPosition = ref({ x: 0, y: 0 });
+const tooltipEdge = ref({});
+
+const handleOptionClick = (item) => {
+  if (item.icon === "between") {
+    addBetweenNode(lf.value, item.tooltipEdge);
+  } else {
+    addGatewayNode(lf.value, item.tooltipEdge, item.icon);
+  }
+  tooltipVisible.value = false;
+};
+
 async function handleStepClick(index) {
   if (activeStep.value === 0) {
     let validate = await proxy.$refs.baseInfoRef.validate();
@@ -147,16 +175,16 @@ async function handleStepClick(index) {
   activeStep.value = index;
 
   if (index === 1) {
-    // 原设计器模式
-    const modeOrg =logicJson.value.mode;
+    // 原设计器模型
+    const modeOrg =logicJson.value.modelValue;
     // 获取基础信息
     getBaseInfo();
-    const modeNew =logicJson.value.mode;
+    const modeNew =logicJson.value.modelValue;
     if (!lf.value || modeOrg !== modeNew) {
       await nextTick(() => {
-        if (!logicJson.value.nodes) {
+        if (!jsonString.value.nodeList || jsonString.value.nodeList.length === 0) {
           // 读取本地文件/initData.json文件，并将数据转换json对象
-          let initData = ("CLASSICS" === logicJson.value.modelValue) ? initClassicsData: initMimicData
+          let initData = isClassics(logicJson.value.modelValue) ? initClassicsData: initMimicData
           logicJson.value = {
             ...logicJson.value,
             ...initData
@@ -170,23 +198,26 @@ async function handleStepClick(index) {
 
 
 onMounted(() => {
+  // 隐藏滚动条
+  document.body.style.overflow = 'hidden';
   if (!appParams.value) appStore.fetchTokenName();
   if (appParams.value.id) {
     definitionId.value = appParams.value.id;
   }
-  if (appParams.value.disabled === 'true') {
-    disabled.value = true
-  }
   queryDef(definitionId.value).then(res => {
     jsonString.value = res.data;
+    if (res.data.isPublish && res.data.isPublish !== 0) {
+      disabled.value = true
+    }
     categoryList.value = res.data.categoryList;
     if (jsonString.value) {
       logicJson.value = json2LogicFlowJson(jsonString.value);
       if (!logicJson.value.nodes || logicJson.value.nodes.length === 0) {
+        let initData = isClassics(logicJson.value.modelValue) ? initClassicsData: initMimicData
         // 读取本地文件/initClassicsData.json文件，并将数据转换json对象
         logicJson.value = {
           ...logicJson.value,
-          ...initClassicsData
+          ...initData
         };
       }
     }
@@ -200,6 +231,15 @@ function initLogicFlow() {
     use();
     lf.value = new LogicFlow({
       container: proxy.$refs.containerRef,
+      textEdit: false,      // 是否开启文本编辑。
+      snapToGrid: true,   // 是否开启网格吸附，开启后拖动节点会有以网格大小为补步长移动
+      hideAnchors: !isClassics(logicJson.value.modelValue),   // 是否隐藏节点的锚点，静默模式下默认隐藏。
+      adjustNodePosition: isClassics(logicJson.value.modelValue),   // 是否允许拖动节点。
+      hoverOutline: isClassics(logicJson.value.modelValue),   // 鼠标 hover 的时候是否显示节点的外框。
+      nodeSelectedOutline: isClassics(logicJson.value.modelValue),    // 节点被选中时是否显示节点的外框。
+      edgeSelectedOutline: isClassics(logicJson.value.modelValue),    //	边被选中时是否显示边的外框。
+      nodeTextDraggable: isClassics(logicJson.value.modelValue),    // 允许节点文本可以拖拽。
+      edgeTextDraggable: isClassics(logicJson.value.modelValue),    // 允许边文本可以拖拽。
       grid: {
         size: 20,
         visible: 'true' === appParams.value.showGrid,
@@ -212,7 +252,7 @@ function initLogicFlow() {
           backgroundColor: "#fff",
         },
       },
-      keyboard: {
+      keyboard: isClassics(logicJson.value.modelValue) ? {
         enabled: true,
         shortcuts: [
           {
@@ -225,12 +265,19 @@ function initLogicFlow() {
             },
           },
         ],
-      },
+      } : {},
     });
     lf.value.setTheme({
       snapline: {
         stroke: '#1E90FF',
         strokeWidth: 2,
+      },
+      edgeText: {
+        fontSize: 13,
+        strokeWidth: 1,
+        background: {
+          fill: "#DDDDDD",
+        },
       },
     });
 
@@ -283,7 +330,7 @@ onUnmounted(() => {
  */
 function initDndPanel() {
   // 只有经典模式才有拖拽面板
-  if ("CLASSICS" === logicJson.value.mode) {
+  if (isClassics(logicJson.value.modelValue)) {
     lf.value.extension.dndPanel.setPatternItems([
       {
         type: 'start',
@@ -367,55 +414,11 @@ async function saveJsonModel() {
  */
 function initMenu() {
   // 只有仿钉钉模式才初始化菜单
-  if ("MIMIC" === logicJson.value.mode) {
+  if (!isClassics(logicJson.value.modelValue)) {
     // 为菜单追加选项（必须在 lf.render() 之前设置）
     lf.value.extension.menu.setMenuConfig({
       nodeMenu: [],
-      edgeMenu: [
-        {
-          text: "添加中间节点",
-          callback(edge) {
-            addBetweenNode(lf.value, edge, "between");
-          },
-        },
-        {
-          text: "添加互斥网关",
-          callback(edge) {
-            addGatewayNode(lf.value, edge, "serial");
-          },
-        },
-        {
-          text: "添加并行网关",
-          callback(edge) {
-            addGatewayNode(lf.value, edge, "parallel");
-          },
-        },
-      ],
-    });
-
-    // 指定类型元素配置菜单
-    lf.value.extension.menu.setMenuByType({
-      type: "serial",
-      menu: [
-        {
-          text: "添加中间节点",
-          callback(node) {
-            gatewayAddNode(lf.value, node);
-          },
-        },
-      ],
-    });
-
-    lf.value.extension.menu.setMenuByType({
-      type: "parallel",
-      menu: [
-        {
-          text: "添加中间节点",
-          callback(node) {
-            gatewayAddNode(lf.value, node);
-          },
-        },
-      ],
+      edgeMenu: [],
     });
   }
 }
@@ -424,7 +427,7 @@ function initMenu() {
  * 注册自定义节点和边
  */
 function register() {
-  if ("CLASSICS" === logicJson.value.mode) {
+  if (isClassics(logicJson.value.modelValue)) {
     lf.value.register(StartC);
     lf.value.register(BetweenC);
     lf.value.register(SerialC);
@@ -439,7 +442,6 @@ function register() {
     lf.value.register(EndM);
     lf.value.register(SkipM);
   }
-
 }
 
 /**
@@ -447,17 +449,78 @@ function register() {
  */
 function use() {
   // 只有经典模式才有拖拽面板
-  if ("CLASSICS" === logicJson.value.mode) {
+  if (isClassics(logicJson.value.modelValue)) {
     LogicFlow.use(DndPanel);
+    LogicFlow.use(InsertNodeInPolyline)
   }
   LogicFlow.use(Menu);
   LogicFlow.use(Snapshot);
 }
 function initEvent() {
   const { eventCenter } = lf.value.graphModel
-  // 中间节点双击事件
-  eventCenter.on('node:dbclick', (args) => {
-    if ('between' === args.data.type) {
+
+  if (!isClassics(logicJson.value.modelValue)) {
+    // 更新节点名称
+    eventCenter.on('update:nodeName', (data) => {
+      lf.value.updateText(data.id, data.nodeName)
+      lf.value.setProperties(data.id, {
+        nodeName: data.nodeName
+      })
+    })
+
+    // 网关节点单击事件
+    eventCenter.on('node:click', (args) => {
+      nodeClick.value = args.data
+      if (['serial', 'parallel'].includes(nodeClick.value.type)) {
+        gatewayAddNode(lf.value, nodeClick.value);
+        const pageWidth = window.innerWidth;
+        console.log('页面宽度:', pageWidth);
+      }
+    })
+
+    eventCenter.on('edit:node', (args) => {
+      if (args.click) {
+        nodeClick.value = lf.value.getNodeModelById(args.id)
+        let graphData = lf.value.getGraphData()
+        nodes.value = graphData['nodes']
+        skips.value = graphData['edges']
+        proxy.$nextTick(() => {
+          propertySettingRef.value.show()
+        })
+      }
+    })
+
+    // 单击边
+    eventCenter.on('show:EdgeSetting', (args) => {
+      nodeClick.value = lf.value.getEdgeModelById(args.id)
+      const nodeModel = lf.value.getNodeModelById(nodeClick.value.sourceNodeId);
+      skipConditionShow.value = nodeModel['type'] === 'serial'
+      let graphData = lf.value.getGraphData()
+      nodes.value = graphData['nodes']
+      skips.value = graphData['edges']
+      proxy.$nextTick(() => {
+        propertySettingRef.value.show(nodeModel['nodeType'] === 'serial')
+      })
+    });
+
+    // 鼠标进入边
+    eventCenter.on('show:EdgeTooltip', (args) => {
+      tooltipVisible.value = true;
+      tooltipPosition.value = { x: args.e.clientX, y: args.e.clientY };
+      tooltipEdge.value = lf.value.getEdgeModelById(args.id)
+    });
+    // 鼠标离开边
+    eventCenter.on('hide:EdgeTooltip', () => {
+      tooltipVisible.value = false;
+    });
+    // 删除节点事件
+    eventCenter.on('delete:node', (args) => {
+      const nodeModel = lf.value.getNodeModelById(args.id)
+      removeNode(lf.value, nodeModel)
+    })
+  } else {
+    // 中间节点双击事件
+    eventCenter.on('node:dbclick', (args) => {
       nodeClick.value = args.data
       let graphData = lf.value.getGraphData()
       nodes.value = graphData['nodes']
@@ -465,27 +528,29 @@ function initEvent() {
       proxy.$nextTick(() => {
         propertySettingRef.value.show()
       })
-    }
-  })
-
-  // 边双击事件
-  eventCenter.on('edge:dbclick  ', (args) => {
-    nodeClick.value = args.data
-    const nodeModel = lf.value.getNodeModelById(nodeClick.value.sourceNodeId);
-    skipConditionShow.value = nodeModel['type'] === 'serial'
-    let graphData = lf.value.getGraphData()
-    nodes.value = graphData['nodes']
-    skips.value = graphData['edges']
-    proxy.$nextTick(() => {
-      propertySettingRef.value.show(nodeModel['nodeType'] === 'serial')
     })
-  })
+
+    // 边双击事件
+    eventCenter.on('edge:dbclick  ', (args) => {
+      nodeClick.value = args.data
+      const nodeModel = lf.value.getNodeModelById(nodeClick.value.sourceNodeId);
+      skipConditionShow.value = nodeModel['type'] === 'serial'
+      let graphData = lf.value.getGraphData()
+      nodes.value = graphData['nodes']
+      skips.value = graphData['edges']
+      proxy.$nextTick(() => {
+        propertySettingRef.value.show(nodeModel['nodeType'] === 'serial')
+      })
+    })
+  }
 
   eventCenter.on('edge:add', (args) => {
+    let graphData = lf.value.getGraphData()
+    const previousNodes = getPreviousNodes(graphData['nodes'], graphData['edges'], args.data.sourceNodeId);
     lf.value.changeEdgeType(args.data.id, 'skip')
     // 修改边类型
     lf.value.setProperties(args.data.id, {
-      skipType: 'PASS'
+      skipType: previousNodes.some(node => node.id === args.data.targetNodeId) ? 'REJECT' : 'PASS'
     })
   })
 
@@ -505,7 +570,9 @@ function close() {
 const zoomViewport = async (zoom) => {
   lf.value.zoom(zoom);
   // 将内容平移至画布中心
-  lf.value.translateCenter();
+  if (isClassics(logicJson.value.modelValue)) {
+    lf.value.translateCenter();
+  }
 };
 
 const undoOrRedo = async (undo) => {
@@ -636,5 +703,4 @@ async function downJson() {
 .step-item.active {
   color: #409eff; /* 选中时为深色 */
 }
-
 </style>

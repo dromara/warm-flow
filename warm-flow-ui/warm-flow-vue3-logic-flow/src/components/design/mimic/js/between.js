@@ -1,20 +1,9 @@
-import {RectNode, RectNodeModel} from "@logicflow/core";
-import {setCommonStyle} from "@/components/design/common/js/tool.js";
+import {BaseNodeModel} from "@/components/design/mimic/js/baseNodeModel";
+import {BaseNodeView} from "@/components/design/mimic/js/baseNodeView";
 
-class BetweenModel extends RectNodeModel {
+class BetweenModel extends BaseNodeModel {}
 
-  initNodeData(data) {
-    super.initNodeData(data);
-    this.width = 100;
-    this.height = 80;
-    this.radius = 5;
-  }
-  getNodeStyle() {
-    return setCommonStyle(super.getNodeStyle(), this.properties, "node");
-  }
-}
-
-class BetweenView extends RectNode {}
+class BetweenView extends BaseNodeView {}
 
 export default {
   type: "between",

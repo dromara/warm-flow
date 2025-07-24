@@ -1,22 +1,13 @@
-import { CircleNode, CircleNodeModel } from "@logicflow/core";
-import {setCommonStyle} from "@/components/design/common/js/tool.js";
+import {BaseNodeModel} from "@/components/design/mimic/js/baseNodeModel";
+import {BaseNodeView} from "@/components/design/mimic/js/baseNodeView";
 
-class StartModel extends CircleNodeModel {
+class StartModel extends BaseNodeModel {}
 
-  initNodeData(data) {
-    super.initNodeData(data);
-    this.r = 20
-  }
-
-  getNodeStyle() {
-    return setCommonStyle(super.getNodeStyle(), this.properties, "node");
-  }
-}
-
-class StartView extends CircleNode {}
+class StartView extends BaseNodeView {}
 
 export default {
   type: "start",
   model: StartModel,
   view: StartView,
 };
+

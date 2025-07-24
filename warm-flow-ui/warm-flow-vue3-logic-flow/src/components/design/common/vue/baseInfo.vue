@@ -9,12 +9,12 @@
         <el-input v-model="form.flowName" placeholder="请输入流程名称" maxlength="100" show-word-limit @input="nameChange" />
       </el-form-item>
 
-      <el-form-item label="设计器模式" prop="mode">
-        <el-radio-group v-model="form.mode" :disabled="!!definitionId">
-          <el-radio label="CLASSICS">经典模式</el-radio>
-<!--          <el-radio label="MIMIC">仿钉钉模式-->
-<!--            <span style="color: #ff4949; margin-left: 50px;">切换后重置节点，保存后不支持修改！</span>-->
-<!--          </el-radio>-->
+      <el-form-item label="设计器模型" prop="modelValue">
+        <el-radio-group v-model="form.modelValue" :disabled="!!definitionId">
+          <el-radio label="CLASSICS">经典模型</el-radio>
+          <el-radio label="MIMIC">仿钉钉模型
+            <span style="color: #ff4949; margin-left: 50px;">切换后重置节点，保存后不支持修改！</span>
+          </el-radio>
         </el-radio-group>
       </el-form-item>
 
@@ -30,16 +30,16 @@
       </el-form-item>
 
       <el-form-item label="审批表单是否自定义" prop="formCustom">
-        <el-select v-model="form.formCustom" clearable>
-          <el-option label="表单路径" value="N"></el-option>
-        </el-select>
+        <el-radio-group v-model="form.formCustom">
+          <el-radio label="N">表单路径</el-radio>
+        </el-radio-group>
       </el-form-item>
 
       <el-form-item label="审批表单路径" prop="formPath" v-if="form.formCustom === 'N'">
         <el-input v-model="form.formPath" placeholder="请输入审批表单路径" maxlength="100" show-word-limit />
       </el-form-item>
 
-      <el-form-item label="审批流程表单" v-else-if="form.formCustom === 'Y'">
+      <el-form-item label="审批流程表单" prop="formPath" v-else-if="form.formCustom === 'Y'">
         <el-select v-model="form.formPath">
           <el-option v-for="item in definitionList" :key="item.id" :label="`${item.formName} - v${item.version}`" :value="item.id"></el-option>
         </el-select>
@@ -113,10 +113,12 @@ const form = ref({
   id: null,
   flowCode: "",
   flowName: "",
-  mode: "",
+  modelValue: "",
   category: "",
   formCustom: "N",
   formPath: "",
+  listenerType: "",
+  listenerPath: "",
   listenerRows: []
 });
 
@@ -129,8 +131,8 @@ watch(() => props.logicJson, newValue => {
 
 const definitionList = ref([]);
 const rules = {
-  mode: [
-    { required: true, message: "设计器模式不能为空", trigger: "blur" }
+  modelValue: [
+    { required: true, message: "设计器模型不能为空", trigger: "blur" }
   ],
   flowCode: [
     { required: true, message: "流程编码不能为空", trigger: "blur" }
@@ -194,11 +196,12 @@ function validate() {
 
 function nameChange(flowName) {
   // 可以在这里添加额外的逻辑，比如验证或格式化
-  props.logicJson.flowName = flowName; // 更新 logicJson 中的流程名称
   proxy.$emit('update:flow-name', flowName); // 如果需要通知父组件
 }
 
 function getFormData() {
+  form.value.listenerType = form.value.listenerRows.map(row => row.listenerType).join(",")
+  form.value.listenerPath = form.value.listenerRows.map(row => row.listenerPath).join("@@")
   return form.value;
 }
 
@@ -207,7 +210,7 @@ defineExpose({ getFormData, validate });
 </script>
 
 <style scoped lang="scss">
-::v-deep.Tabs {
+:deep(.Tabs) {
   margin-top: -20px;
   box-shadow: none;
   border-bottom: 0;
@@ -227,7 +230,7 @@ defineExpose({ getFormData, validate });
   width: 1000px;
   margin: 50px auto;
 }
-::v-deep.listenerItem {
+:deep(.listenerItem) {
   .el-form-item__label {
     float: none;
     display: inline-block;

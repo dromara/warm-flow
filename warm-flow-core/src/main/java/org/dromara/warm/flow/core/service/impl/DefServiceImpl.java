@@ -218,7 +218,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
 
     @Override
     public String exportJson(Long id) {
-        return FlowEngine.jsonConvert.objToStr(DefJson.copyDef(getAllDataDefinition(id)));
+        return FlowEngine.jsonConvert.objToStr(queryDesign(id).setIsPublish(null));
     }
 
     @Override
@@ -350,6 +350,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     @Override
     public boolean active(Long id) {
         Definition definition = getById(id);
+        AssertUtil.isNull(definition, ExceptionCons.NOT_FOUNT_DEF);
         AssertUtil.isTrue(ActivityStatus.isActivity(definition.getActivityStatus()), ExceptionCons.DEFINITION_ALREADY_ACTIVITY);
         definition.setActivityStatus(ActivityStatus.ACTIVITY.getKey());
         return updateById(definition);
@@ -358,6 +359,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     @Override
     public boolean unActive(Long id) {
         Definition definition = getById(id);
+        AssertUtil.isNull(definition, ExceptionCons.NOT_FOUNT_DEF);
         AssertUtil.isTrue(ActivityStatus.isSuspended(definition.getActivityStatus()), ExceptionCons.DEFINITION_ALREADY_SUSPENDED);
         definition.setActivityStatus(ActivityStatus.SUSPENDED.getKey());
         return updateById(definition);

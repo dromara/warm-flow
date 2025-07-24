@@ -19,18 +19,15 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 设计器模型（CLASSICS经典模型 MIMIC仿钉钉模型）
+ * 表单类型
  *
  * @author warm
  * @since 2025/6/25
  */
 @Getter
 @AllArgsConstructor
-public enum ModeEnum {
+public enum FormCustomEnum {
 
-    // 经典模型
-    CLASSICS,
-
-    // 仿钉钉模型
-    MIMIC
+    // 表单路径
+    N,
 }

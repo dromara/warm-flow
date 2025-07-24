@@ -110,7 +110,7 @@
             <slot name="form-item-task-formPath" :model="form" field="formPath" v-else-if="form.formCustom === 'Y'">
               <el-form-item label="审批流程表单：">
                 <el-select v-model="form.formPath">
-                  <el-option v-for="item in definitionList" :key="id" :label="`${item.formName} - v${item.version}`" :value="item.id"></el-option>
+                  <el-option v-for="item in definitionList" :key="item.id" :label="`${item.formName} - v${item.version}`" :value="item.id"></el-option>
                 </el-select>
               </el-form-item>
             </slot>
@@ -169,6 +169,7 @@ import selectUser from "./selectUser";
 import { Delete } from '@element-plus/icons-vue'
 import {publishedList, handlerDict, nodeExt, handlerFeedback} from "@/api/flow/definition";
 import nodeExtList from "./nodeExtList";
+import {getPreviousNodes} from "@/components/design/common/js/tool.js";
 const { proxy } = getCurrentInstance();
 
 const props = defineProps({
@@ -225,11 +226,11 @@ const rules = reactive({
 const definitionList = ref([]); // 流程表单列表
 const dictList = ref(); // 办理人选项
 const permissionRows = ref([]); // 办理人表格
-const emit = defineEmits(["change"]);
+const emit = defineEmits(["change", 'update:modelValue']);
 
-watch(() => form, n => {
+watch(() => form.value, n => {
   if (n) {
-    emit('change', n)
+    emit('update:modelValue', n)
   }
 },{ deep: true });
 
@@ -356,23 +357,10 @@ function handleDeleteRow(index) {
 }
 
 const filteredNodes = computed(() => {
-  let skipList = props.skips.filter(skip => skip.properties.skipType === "PASS");
-
-  let previousCode = getPreviousCode(skipList, form.value.nodeCode)
-  return props.nodes.filter(node => !["start", "serial", "parallel"].includes(node.type)
-      && previousCode.includes(node.id)).reverse();
+  let previousNodes = getPreviousNodes(props.nodes, props.skips, form.value.nodeCode)
+  return previousNodes.filter(node => !["start", "serial", "parallel"].includes(node.type));
 });
 
-function getPreviousCode(skipList, nowNodeCode) {
-  const previousCode = [];
-  for (const skip of skipList) {
-    if (skip.targetNodeId === nowNodeCode) {
-      previousCode.push(skip.sourceNodeId);
-      previousCode.push(...getPreviousCode(skipList, skip.sourceNodeId));
-    }
-  }
-  return previousCode;
-}
 
 getPermissionFlag();
 // TODO form 开发中

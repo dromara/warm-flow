@@ -13,11 +13,14 @@ export const json2LogicFlowJson = (definition) => {
   // 解析definition属性
   graphData.flowCode = definition.flowCode
   graphData.flowName = definition.flowName
-  graphData.mode = definition.mode
+  graphData.modelValue = definition.modelValue
   graphData.category = definition.category
   graphData.version = definition.version
-  graphData.fromCustom = definition.fromCustom
-  graphData.fromPath = definition.fromPath
+  graphData.formCustom = definition.formCustom
+  graphData.formPath = definition.formPath
+  graphData.listenerType = definition.listenerType
+  graphData.listenerPath = definition.listenerPath
+
   if (!definition.nodeList) {
     return graphData;
   }
@@ -185,11 +188,13 @@ export const logicFlowJsonToWarmFlow = (data) => {
   definition.id = data.id
   definition.flowCode = data.flowCode
   definition.flowName = data.flowName
-  definition.mode = data.mode
+  definition.modelValue = data.modelValue
   definition.category = data.category
   definition.version = data.version
-  definition.fromCustom = data.fromCustom
-  definition.fromPath = data.fromPath
+  definition.formCustom = data.formCustom
+  definition.formPath = data.formPath
+  definition.listenerType = data.listenerType
+  definition.listenerPath = data.listenerPath
   // 流程节点
   data.nodes.forEach(anyNode => {
     let node = {}
@@ -266,5 +271,30 @@ export const setCommonStyle = (style, properties, type) => {
   }
 
   style.strokeWidth = 1
+  style.cursor = 'pointer'
   return style;
+}
+
+export function getPreviousNodes(nodes, skips, nowNodeCode) {
+  let previousCode = getPreviousCode(skips, nowNodeCode)
+  return nodes.filter(node => previousCode.includes(node.id)).reverse();
+}
+
+function getPreviousCode(skips, nowNodeCode) {
+  let passSkip = skips.filter(skip => skip.properties.skipType === "PASS");
+  const previousCode = [];
+  for (const skip of passSkip) {
+    if (skip.targetNodeId === nowNodeCode) {
+      previousCode.push(skip.sourceNodeId);
+      previousCode.push(...getPreviousCode(passSkip, skip.sourceNodeId));
+    }
+  }
+  return previousCode;
+}
+
+/**
+ * 判断是否经典模式
+ */
+export function isClassics(modelValue) {
+  return "CLASSICS" === modelValue
 }

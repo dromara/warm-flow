@@ -21,10 +21,12 @@ import org.dromara.warm.flow.core.config.WarmFlow;
 import org.dromara.warm.flow.core.dto.*;
 import org.dromara.warm.flow.core.entity.Form;
 import org.dromara.warm.flow.core.entity.Instance;
+import org.dromara.warm.flow.core.enums.FormCustomEnum;
 import org.dromara.warm.flow.core.enums.ModeEnum;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.utils.ExceptionUtil;
+import org.dromara.warm.flow.core.utils.StreamUtils;
 import org.dromara.warm.flow.core.utils.StringUtils;
 import org.dromara.warm.flow.ui.dto.HandlerFeedBackDto;
 import org.dromara.warm.flow.ui.dto.HandlerQuery;
@@ -89,7 +91,8 @@ public class WarmFlowService {
             DefJson defJson;
             if (id == null) {
                 defJson = new DefJson()
-                        .setMode(ModeEnum.CLASSICS.name());
+                        .setModelValue(ModeEnum.CLASSICS.name())
+                        .setFormCustom(FormCustomEnum.N.name());
             } else {
                 defJson = FlowEngine.defService().queryDesign(id);
             }
@@ -182,7 +185,9 @@ public class WarmFlowService {
             // 需要业务系统实现该接口
             HandlerSelectService handlerSelectService = FrameInvoker.getBean(HandlerSelectService.class);
             if (handlerSelectService == null) {
-                return ApiResult.ok(new ArrayList<>());
+                List<HandlerFeedBackVo> handlerFeedBackVos = StreamUtils.toList(handlerFeedBackDto.getStorageIds(),
+                        storageId -> new HandlerFeedBackVo(storageId, null));
+                return ApiResult.ok(handlerFeedBackVos);
             }
             List<HandlerFeedBackVo> handlerFeedBackVos = handlerSelectService.handlerFeedback(handlerFeedBackDto.getStorageIds());
             return ApiResult.ok(handlerFeedBackVos);
