@@ -108,7 +108,7 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
 
     @Override
     public List<Node> getBetweenNode(Long definitionId) {
-        return list(FlowEngine.newNode().setDefinitionId(definitionId).setNodeType(NodeType.END.getKey()));
+        return list(FlowEngine.newNode().setDefinitionId(definitionId).setNodeType(NodeType.BETWEEN.getKey()));
     }
 
 
