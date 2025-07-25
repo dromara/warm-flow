@@ -67,7 +67,7 @@ getInfo();
 </script>
 
 <style scoped lang="scss">
-::v-deep.container {
+:deep(.container) {
   width: 100%;
   .fcDesigner {
     height: 100vh;

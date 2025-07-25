@@ -269,23 +269,19 @@ export const gatewayAddNode = (lf, gatewayNode) => {
     })
   }
 
-  // 获取nextNodes中节点的x与gatewayNode.x差值的绝对值最大的节点, 判断是在左边新增还是右边新增
-  const rightNextNodes = nextNodes.filter(node => node.x > gatewayNode.x)
-  const leftNextNodes = nextNodes.filter(node => node.x < gatewayNode.x)
-  const leftMove = rightNextNodes.length > leftNextNodes.length
-  const mostChild = leftMove ? getLeftmostNode(regionNodes) : getRightmostNode(regionNodes)
-
+  const mostChild = getRightmostNode(regionNodes)
 
   // 连接互斥网关开始节点到新的中间节点
-  const betweenNode = addNode(lf, "between", leftMove ? mostChild.x - OFFSET_X * 2
-      : mostChild.x + OFFSET_X * 2, getMoveY(gatewayNode, "between"), "中间节点")
+  const betweenNode = addNode(lf, "between", mostChild.x + OFFSET_X * 2,
+      getMoveY(gatewayNode, "between"), "中间节点")
+  regionNodes.push(lf.getDataById(betweenNode.id))
 
   // 连接网关开始节点到新的中间节点
   addEdge(lf, "skip", gatewayNode.id, betweenNode.id)
 
   // 找到属于新增位置区域的节点，水平移动的时候排除它
   const targetEdges = [edges.find(edge1 => edge1.targetNodeId === gatewayNode.id)];
-  moveLevelNode(nodes, edges, targetEdges, lf, leftMove ? betweenNode : null , leftMove ? null : betweenNode);
+  moveLevelNode(nodes, edges, targetEdges, lf, getLeftmostNode(regionNodes) , getRightmostNode(regionNodes));
 
   // 连接新的中间节点到互斥网关结束节点
   addEdge(lf, "skip", betweenNode.id, gatewayEnd.id)
@@ -347,8 +343,8 @@ export const removeNode = (lf, nodeModel) => {
         lf.deleteNode(node.id)
       })
     }
-
   }
+
   addEdge(lf, "skip", moveSourceNode.id, moveTargetNode.id)
   // 当目标节点减新增互斥网关结束节点差，小于竖向偏移量，才移动节点
   recursivelyMoveNodes(lf, moveSourceNode, false);
