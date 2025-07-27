@@ -128,6 +128,11 @@ public class DefJson {
     private String topText;
 
     /**
+     * 顶部信息: 流程名称是否显示
+     */
+    private boolean topTextShow;
+
+    /**
      * 流程类别
      */
     private List<Tree> categoryList;

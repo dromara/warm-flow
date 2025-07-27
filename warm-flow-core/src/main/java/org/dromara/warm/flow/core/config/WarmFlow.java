@@ -96,6 +96,11 @@ public class WarmFlow implements Serializable {
      */
     private List<String> chartStatusColor;
 
+    /**
+     * 顶部信息: 流程名称是否显示
+     */
+    private boolean topTextShow = true;
+
     public void init() {
         // 设置租户模式
         FlowEngine.initTenantHandler(this.getTenantHandlerPath());
