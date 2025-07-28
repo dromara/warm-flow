@@ -251,23 +251,13 @@ export const gatewayAddNode = (lf, gatewayNode) => {
       xSet.add(node.x)
     }
   })
-  let mostLeftX
-  // 判断xSet.size取余2
-  if ((xSet.size + 1) % 2 === 0) {
-    mostLeftX = gatewayNode.x - OFFSET_X * (xSet.size + 1)
-  } else {
-    mostLeftX = gatewayNode.x - OFFSET_X * xSet.size
-  }
-  const mostLeftNode = getLeftmostNode(regionNodes)
 
-  if (mostLeftNode.x > mostLeftX) {
-    regionNodes.forEach(node => {
-      if (gatewayEnd.id !== node.id) {
-        lf.graphModel.moveNode(node.id, -OFFSET_X, 0, true);
-        node.x = node.x - OFFSET_X
-      }
-    })
-  }
+  regionNodes.forEach(node => {
+    if (gatewayEnd.id !== node.id) {
+      lf.graphModel.moveNode(node.id, -OFFSET_X, 0, true);
+      node.x = node.x - OFFSET_X
+    }
+  })
 
   const mostChild = getRightmostNode(regionNodes)
 
@@ -316,23 +306,41 @@ export const removeNode = (lf, nodeModel) => {
   let moveSourceNode = sourceNode
   let moveTargetNode = targetNode
   lf.deleteNode(nodeModel.id)
-  const nodes = lf.getGraphData().nodes;
-  const edges = lf.getGraphData().edges;
+  let nodes = lf.getGraphData().nodes;
+  let edges = lf.getGraphData().edges;
 
   if (['serial', 'parallel'].includes(sourceNode.type) && ['serial', 'parallel'].includes(targetNode.type)
       && sourceNode.type === targetNode.type) {
-    const sourceEdges = lf.getNodeIncomingEdge(sourceNode.id)
-    let visitedIds = new Set()
-    LevelNotMoveNode(sourceEdges, nodes, edges, lf, visitedIds)
-    LevelNotMoveNode(sourceEdges, nodes, edges, lf, visitedIds, false)
-    // 查询nodes中visitedIds包含node.id的数组
-    const visitedNodes = nodes.filter(node => visitedIds.has(node.id))
-
-    moveLevelNode(nodes, edges, sourceEdges, lf, nodeModel.x < sourceNode.x ? getLeftmostNode(visitedNodes) : null
-        , nodeModel.x < sourceNode.x ? null : getRightmostNode(visitedNodes), false, visitedIds);
-
+    let sourceEdges = lf.getNodeIncomingEdge(sourceNode.id)
     if (lf.getNodeOutgoingNode(sourceNode.id).length >= 2) {
-      return
+      nodes = lf.getGraphData().nodes;
+      edges = lf.getGraphData().edges;
+      // 找到互斥网关结束节点之间的节点
+      const nextNodes = findNextNodes(sourceNode.id, nodes, edges);
+      const gatewayEnd = getGateWayEnd(sourceNode, nodes, edges, nextNodes)
+      const regionNodes = findAllNextNodes(sourceNode.id, nodes, edges, gatewayEnd);
+      let xSet = new Set()
+      regionNodes.forEach(node => {
+        if (node.type === 'between' && !xSet.has(node.x)) {
+          xSet.add(node.x)
+        }
+      })
+      // regionNodes按照x轴排序
+      regionNodes.sort((a, b) => {
+        return a.x - b.x
+      })
+      let mostLeftX = sourceNode.x - (xSet.size - 1) * OFFSET_X
+      let moveX
+      regionNodes.forEach(node => {
+        if (gatewayEnd.id !== node.id) {
+          if (moveX) {
+            moveX = moveX + OFFSET_X * 2
+          } else {
+            moveX = mostLeftX
+          }
+          lf.graphModel.moveNode2Coordinate(node.id, moveX, node.y, true);
+        }
+      })
     }
     if (lf.getNodeOutgoingNode(sourceNode.id).length === 1) {
       moveSourceNode = lf.getNodeIncomingNode(sourceNode.id)[0]
@@ -342,10 +350,23 @@ export const removeNode = (lf, nodeModel) => {
       delNodes.forEach(node => {
         lf.deleteNode(node.id)
       })
+      sourceEdges = [addEdge(lf, "skip", moveSourceNode.id, moveTargetNode.id)]
     }
+
+    nodes = lf.getGraphData().nodes;
+    edges = lf.getGraphData().edges;
+    let visitedIds = new Set()
+    LevelNotMoveNode(sourceEdges, nodes, edges, lf, visitedIds)
+    LevelNotMoveNode(sourceEdges, nodes, edges, lf, visitedIds, false)
+    // 查询nodes中visitedIds包含node.id的数组
+    const visitedNodes = nodes.filter(node => visitedIds.has(node.id))
+
+    moveLevelNode(nodes, edges, sourceEdges, lf, nodeModel.x < sourceNode.x ? getLeftmostNode(visitedNodes) : null
+        , nodeModel.x < sourceNode.x ? null : getRightmostNode(visitedNodes), false, visitedIds);
+  } else {
+    addEdge(lf, "skip", moveSourceNode.id, moveTargetNode.id)
   }
 
-  addEdge(lf, "skip", moveSourceNode.id, moveTargetNode.id)
   // 当目标节点减新增互斥网关结束节点差，小于竖向偏移量，才移动节点
   recursivelyMoveNodes(lf, moveSourceNode, false);
   updateEdges(lf)

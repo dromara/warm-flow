@@ -97,7 +97,7 @@ public class WarmFlow implements Serializable {
     private List<String> chartStatusColor;
 
     /**
-     * 顶部信息: 流程名称是否显示
+     * 是否显示流程图顶部文字
      */
     private boolean topTextShow = true;
 
