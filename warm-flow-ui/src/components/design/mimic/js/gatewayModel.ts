@@ -1,7 +1,6 @@
-import { RectNode, RectNodeModel} from '@logicflow/core'
+import { RectNodeModel } from '@logicflow/core'
 import {setCommonStyle} from "@/components/design/common/js/tool.js";
-
-class SerialModel extends RectNodeModel {
+export class GatewayModel extends RectNodeModel {
 
   initNodeData(data) {
     super.initNodeData(data);
@@ -12,12 +11,11 @@ class SerialModel extends RectNodeModel {
   getNodeStyle() {
     return setCommonStyle(super.getNodeStyle(), this.properties, "node");
   }
+
+  getTextStyle() {
+    const style = super.getTextStyle();
+    style.display = 'none';
+    return style;
+  }
 }
 
-class SerialView extends RectNode {}
-
-export default {
-  type: 'serial',
-  view: SerialView,
-  model: SerialModel
-};

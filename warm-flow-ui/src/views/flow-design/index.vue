@@ -473,8 +473,6 @@ function initEvent() {
       nodeClick.value = args.data
       if (['serial', 'parallel'].includes(nodeClick.value.type)) {
         gatewayAddNode(lf.value, nodeClick.value);
-        const pageWidth = window.innerWidth;
-        console.log('页面宽度:', pageWidth);
       }
     })
 

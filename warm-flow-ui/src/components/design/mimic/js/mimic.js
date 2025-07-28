@@ -191,8 +191,6 @@ export const addBetweenNode = (lf, edge) => {
   recursivelyMoveNodes(lf, betweenNode);
 
   updateEdges(lf)
-  // 自动调整画布大小
-  // adjustCanvasSize();
 }
 
 export const addGatewayNode = (lf, edge, nodeType) => {
@@ -202,7 +200,7 @@ export const addGatewayNode = (lf, edge, nodeType) => {
   const targetNode = nodes.find(node => node.id === edge.targetNodeId);
 
   // 添加互斥网关开始节点
-  const gatewayNode = addNode(lf, nodeType, sourceNode.x, getMoveY(sourceNode, nodeType), "添加节点")
+  const gatewayNode = addNode(lf, nodeType, sourceNode.x, getMoveY(sourceNode, nodeType), "加节点")
   // 连接父节点与互斥网关开始节点
   addEdge(lf, "skip", sourceNode.id, gatewayNode.id)
 
@@ -213,7 +211,7 @@ export const addGatewayNode = (lf, edge, nodeType) => {
   addEdge(lf, "skip", gatewayNode.id, between2Node.id)
 
   // 添加互斥网关结束节点
-  const gatewayNode2 = addNode(lf, nodeType, sourceNode.x, getMoveY(between1Node, nodeType), "添加节点")
+  const gatewayNode2 = addNode(lf, nodeType, sourceNode.x, getMoveY(between1Node, nodeType), "加节点")
   // 连接两个中间节点与互斥网关结束节点
   addEdge(lf, "skip", between1Node.id, gatewayNode2.id)
   addEdge(lf, "skip", between2Node.id, gatewayNode2.id)
@@ -230,14 +228,16 @@ export const addGatewayNode = (lf, edge, nodeType) => {
   // 找到属于新增位置区域的节点，水平移动的时候排除它
   const targetEdges = [edges.find(edge1 => edge1.id === edge.id)];
   moveLevelNode(nodes, edges, targetEdges, lf, between1Node, between2Node);
-
   updateEdges(lf)
-
-  // 自动调整画布大小
-  // adjustCanvasSize();
 }
 
 export const gatewayAddNode = (lf, gatewayNode) => {
+  const incomingEdges = lf.getNodeIncomingEdge(gatewayNode.id)
+  // 如果是网关的结束节点，则不新增节点
+  if (incomingEdges.length > 1) {
+    return
+  }
+
   const nodes = lf.getGraphData().nodes;
   const edges = lf.getGraphData().edges;
 
@@ -534,32 +534,6 @@ function findLastNodes(nodeId, nodes, edges) {
   return edges.filter(edge => edge.targetNodeId === nodeId)
       .map(edge => nodes.find(node => node.id === edge.sourceNodeId))
       .filter(Boolean);
-}
-
-
-
-function adjustCanvasSize() {
-  const nodes = lf.getGraphData().nodes;
-  let maxX = 0;
-  let maxY = 0;
-
-  nodes.forEach((node) => {
-    if (node.x > maxX) maxX = node.x;
-    if (node.y > maxY) maxY = node.y;
-  });
-
-  // 扩展画布边界
-  const padding = 200;
-  const containerWidth = maxX + padding;
-  const containerHeight = maxY + padding;
-
-  // 动态修改容器大小
-  proxy.$refs.container.style.width = `${containerWidth}px`;
-  proxy.$refs.container.style.height = `${containerHeight}px`;
-
-  // 可选：重置视图为合适的位置和缩放比例
-  lf.translateCenter(); // 居中显示
-  lf.zoomToFit();       // 自动缩放以适应画布
 }
 
 function getRightmostNode(nodes) {
