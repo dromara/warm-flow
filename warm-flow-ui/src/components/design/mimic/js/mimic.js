@@ -305,12 +305,13 @@ export const removeNode = (lf, nodeModel) => {
   const [sourceNode, targetNode] = [sourceNodes[0], targetNodes[0]]
   let moveSourceNode = sourceNode
   let moveTargetNode = targetNode
+  const targetNodeEdges = lf.getNodeIncomingEdge(targetNode.id)
   lf.deleteNode(nodeModel.id)
   let nodes = lf.getGraphData().nodes;
   let edges = lf.getGraphData().edges;
 
   if (['serial', 'parallel'].includes(sourceNode.type) && ['serial', 'parallel'].includes(targetNode.type)
-      && sourceNode.type === targetNode.type) {
+      && sourceNode.type === targetNode.type && targetNodeEdges.length > 1) {
     let sourceEdges = lf.getNodeIncomingEdge(sourceNode.id)
     if (lf.getNodeOutgoingNode(sourceNode.id).length >= 2) {
       nodes = lf.getGraphData().nodes;
