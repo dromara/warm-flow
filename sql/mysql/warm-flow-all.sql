@@ -117,7 +117,7 @@ CREATE TABLE `flow_his_task`
     `target_node_name` varchar(200)                 DEFAULT NULL COMMENT '结束节点名称',
     `approver`         varchar(40)                  DEFAULT NULL COMMENT '审批者',
     `cooperate_type`   tinyint(1)                   NOT NULL DEFAULT '0' COMMENT '协作方式(1审批 2转办 3委派 4会签 5票签 6加签 7减签)',
-    `collaborator`     varchar(40)                  DEFAULT NULL COMMENT '协作人',
+    `collaborator`     varchar(500)                  DEFAULT NULL COMMENT '协作人',
     `skip_type`        varchar(10)                  NOT NULL COMMENT '流转类型（PASS通过 REJECT退回 NONE无动作）',
     `flow_status`      varchar(20)                  NOT NULL COMMENT '流程状态（0待提交 1审批中 2审批通过 4终止 5作废 6撤销 8已完成 9已退回 10失效 11拿回）',
     `form_custom`      char(1)                      DEFAULT 'N' COMMENT '审批表单是否自定义（Y是 N否）',
