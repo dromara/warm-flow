@@ -11,6 +11,12 @@ class SkipModel extends PolylineEdgeModel {
 
   }
 
+  getTextStyle() {
+    const style = super.getTextStyle();
+    style.background = {fill: "#fff"};
+    return style;
+  }
+
   /**
    * 重写此方法，使保存数据是能带上锚点数据。
    */

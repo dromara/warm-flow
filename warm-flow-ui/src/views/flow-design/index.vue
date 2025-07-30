@@ -29,7 +29,7 @@
       </div>
     </div>
 
-    <BaseInfo class="baseInfo" ref="baseInfoRef" v-show="activeStep === 0" :logic-json="logicJson"
+    <BaseInfo :style="baseInfoStyle" class="baseInfo" ref="baseInfoRef" v-show="activeStep === 0" :logic-json="logicJson"
               :category-list="categoryList" :definition-id="definitionId" :disabled="disabled"
               @update:flow-name="handleFlowNameUpdate"/>
 
@@ -133,6 +133,12 @@ const headerStyle = computed(() => {
     margin: "5px",
   };
 });
+const baseInfoStyle = computed(() => {
+  debugger
+  return {
+    backgroundColor: isDark.value ? "#333" : "#fff",
+  };
+});
 
 const headerContainer = computed(() => {
   return {
@@ -141,7 +147,7 @@ const headerContainer = computed(() => {
     border: "1px solid #ddd", /* 添加边框 */
     borderRadius: "6px", /* 添加圆角 */
     height: "100%", /* 占满父容器高度 */
-    backgroundColor: "#fff",
+    backgroundColor: isDark.value ? "#333" : "#fff",
     top: "5px",
     margin: "0px 5px",
   };
@@ -276,7 +282,7 @@ function initLogicFlow() {
         fontSize: 13,
         strokeWidth: 1,
         background: {
-          fill: "#DDDDDD",
+          fill: "#fff",
         },
       },
     });
@@ -306,7 +312,8 @@ watch(isDark, (v) => {
  * @param e
  */
 function listeningMessage(e) {
-  switch (e.type) {
+  const { data } = e;
+  switch (data.type) {
     case "theme-dark": {
       isDark.value = true;
       return;
@@ -674,7 +681,6 @@ async function downJson() {
 }
 
 .baseInfo {
-  background-color: #fff;
   border: 1px solid #ddd; /* 添加边框 */
   border-radius: 6px; /* 添加圆角 */
   margin: 5px;
