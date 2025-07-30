@@ -14,20 +14,27 @@ class SkipModel extends CurvedEdgeModel  {
 
   }
 
-  getTextPosition() {
-    const position = super.getTextPosition();
+  // getTextPosition() {
+  //   const position = super.getTextPosition();
+  //
+  //   const currentPositionList = this.points.split(' ');
+  //
+  //   // 取最后两个点，用于判断终点方向
+  //   const lastTwoPoints = currentPositionList.slice(-2);
+  //   const [x2, y2] = lastTwoPoints[1].split(',').map(Number);
+  //
+  //   // 设置文本位置
+  //   position.x = x2;
+  //   position.y = y2 - 30;
+  //
+  //   return position;
+  // }
 
-    const currentPositionList = this.points.split(' ');
-
-    // 取最后两个点，用于判断终点方向
-    const lastTwoPoints = currentPositionList.slice(-2);
-    const [x2, y2] = lastTwoPoints[1].split(',').map(Number);
-
-    // 设置文本位置
-    position.x = x2;
-    position.y = y2 - 30;
-
-    return position;
+  getTextStyle() {
+    const style = super.getTextStyle();
+    style.display = 'none';
+    style.background = {fill: "transparent"};
+    return style;
   }
 
   /**
@@ -63,7 +70,7 @@ class SkipView extends CurvedEdge {
       // 如果上一个节点是互斥网关，并且网关后节点大于1个，也就是说是互斥网关结束节点时
       if ((model.sourceNode.type as string) === "serial" && nextEdge.length > 1) {
         const midPoint = [points[0][0], points[0][1] + offsetY - 10];
-        plusElements = this.getForeignObject(midPoint, style.stroke);
+        plusElements = this.getForeignObject(midPoint, style.stroke, model.text.value);
       } else if (!model.properties.chartStatusColor) {
         const midPoint = [points[0][0], points[0][1] + offsetY];
         plusElements = this.getPlusElements(midPoint);
@@ -82,7 +89,7 @@ class SkipView extends CurvedEdge {
       // 判断是否由横线变为竖线，并且是互斥网关
       if (model.sourceNode && (model.sourceNode.type as string) === "serial" && p0[1] === p1[1] && p0[0] !== p1[0]) {
         const midPoint = [p2[0], p1[1] + offsetY];
-        plusElements = this.getForeignObject(midPoint, style.stroke);
+        plusElements = this.getForeignObject(midPoint, style.stroke, model.text.value);
       }
     }
 
@@ -100,8 +107,9 @@ class SkipView extends CurvedEdge {
     return h('g', {}, [...mainPathElement, ...plusElements]);
   }
 
-  private getForeignObject(midPoint: number[], stroke: string) {
-    const obj = [
+  private getForeignObject(midPoint: number[], stroke: string, text: string) {
+    let elements: h.JSX.Element[] = [];
+    elements = [
       // 使用 SVG 图标代替原来的图形
       h('foreignObject', {
         x: midPoint[0] - 16,
@@ -124,13 +132,50 @@ class SkipView extends CurvedEdge {
     <path d="M666.4 564.7c31.2 9.4 49.9 37.4 46.8 68.6-3.1 31.2-31.2 53-62.4 53s-59.3-21.8-62.4-53c-3.1-31.2 15.6-59.3 46.8-68.6v-65.5c0-9.4-6.2-15.6-15.6-15.6H401.3c-9.4 0-15.6 6.2-15.6 15.6v65.5c31.2 9.4 49.9 37.4 46.8 68.6-3.1 31.2-31.2 53-62.4 53s-59.3-21.8-62.4-53c-3.1-31.2 15.6-59.3 46.8-68.6v-81.1c0-18.7 12.5-31.2 31.2-31.2h109.1v-81.1c-31.2-9.4-49.9-37.4-46.8-68.6 3.1-31.2 31.2-53 62.4-53s59.3 21.8 62.4 53-15.6 59.3-46.8 68.6v81.1h109.1c18.7 0 31.2 12.5 31.2 31.2v81.1z m-156-218.3c18.7 0 31.2-12.5 31.2-31.2S529.1 284 510.4 284s-31.2 12.5-31.2 31.2c0.1 15.6 15.6 31.2 31.2 31.2zM370.1 655.1c18.7 0 31.2-12.5 31.2-31.2s-12.5-31.2-31.2-31.2-31.2 12.5-31.2 31.2 15.6 31.2 31.2 31.2z m280.7 0c18.7 0 31.2-12.5 31.2-31.2s-12.5-31.2-31.2-31.2-31.2 12.5-31.2 31.2 12.5 31.2 31.2 31.2z" 
     fill="#FFFFFF" p-id="11885"></path>
   </svg>
-</div>            
+</div>    
 `,
         })
       ])
-    ]
+    ];
 
-    return  this.getAddElements(midPoint, obj, true);
+    // 只有当文本有值时才添加背景矩形和文本
+    if (text && text.trim().length > 0) {
+      // 由于我们无法直接在当前环境中测量文本，我们使用一个估算方法
+      // 通常每个字符大约占用 8-10 像素宽度（取决于字体）
+      const charWidth = 8; // 每个字符的估计宽度
+      const padding = 10; // 左右内边距
+      const minWidth = 40; // 最小宽度
+      const textWidth = Math.max(minWidth, text.length * charWidth + padding);
+
+      // 添加背景矩形
+      elements.push(
+          h('rect', {
+            x: midPoint[0] - textWidth / 2,
+            y: midPoint[1] + 10,
+            width: textWidth,
+            height: 20,
+            fill: "#fff", // 背景颜色
+            rx: 3, // 圆角
+            ry: 3
+          })
+      );
+
+      // 添加文本
+      elements.push(
+          h('text', {
+            x: midPoint[0],
+            y: midPoint[1] + 25,
+            fontSize: 13,
+            fill: "#000",
+            style: {
+              userSelect: 'none',
+              textAnchor: 'middle' // 文本居中对齐
+            }
+          }, `${text}`)
+      );
+    }
+
+    return this.getAddElements(midPoint, elements, true);
   }
 
   private getPlusElements(midPoint: number[]) {
