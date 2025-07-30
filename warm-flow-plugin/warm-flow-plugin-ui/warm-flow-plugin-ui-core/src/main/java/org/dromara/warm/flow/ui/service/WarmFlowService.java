@@ -122,7 +122,7 @@ public class WarmFlowService {
             defJson.setInstance(instance);
 
             // 获取流程图三原色
-            defJson.setChartStatusColor(FlowEngine.chartService().getChartRgb(defJson.getModelValue()));
+            defJson.setChartStatusColor(FlowEngine.chartService().getChartRgb());
             // 是否显示流程图顶部文字
             defJson.setTopTextShow(FlowEngine.getFlowConfig().isTopTextShow());
             // 需要业务系统实现该接口

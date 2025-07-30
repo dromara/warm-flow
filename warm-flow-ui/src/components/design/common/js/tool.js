@@ -249,23 +249,23 @@ export const setCommonStyle = (style, properties, nodeType, type) => {
   // 从 chartStatusColor 数组中提取颜色值
   const [doneColor, todoColor, notDoneColor] = (properties.chartStatusColor &&
       properties.chartStatusColor.length === 3) ? properties.chartStatusColor :
-      ["82,196,26", "255,173,20", type === "mimic" ? "144,147,153" : "0,0,0"]; // 提供默认值
+      ["135,206,250", "255,197,90", "166,178,189"]; // 提供默认值
 
   if (properties.status === 2) {
     // 使用活跃状态的 RGB 颜色
-    if (nodeType === 'node') {
+    if (nodeType === 'node' && type !== "mimic") {
       style.fill = `rgba(${doneColor}, 0.15)`;  // 带透明度
     }
-    style.stroke = `rgb(${doneColor})`;      // 纯色
+    style.stroke = `rgb(${doneColor})`;
   } else if (properties.status === 1) {
     // 使用非活跃状态的 RGB 颜色
-    if (nodeType === 'node') {
+    if (nodeType === 'node' && type !== "mimic") {
       style.fill = `rgba(${todoColor}, 0.15)`;
     }
     style.stroke = `rgb(${todoColor})`;
   } else {
     // 默认状态
-    if (nodeType === 'node') {
+    if (nodeType === 'node' && type !== "mimic") {
       style.fill = `rgba(255, 255, 255)`;
     }
     style.stroke = `rgb(${notDoneColor})`;

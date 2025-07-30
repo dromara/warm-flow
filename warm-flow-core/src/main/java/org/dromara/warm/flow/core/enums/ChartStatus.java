@@ -36,13 +36,11 @@ import java.util.Objects;
 @Getter
 @AllArgsConstructor
 public enum ChartStatus {
-    NOT_DONE(0, "未办理", new Color(0, 0, 0)),
+    NOT_DONE(0, "未办理", new Color(166,178,189)),
 
-    NOT_DONE_MIMIC(0, "未办理", new Color(144,147,153)),
+    TO_DO(1, "待办理", new Color(255,197,90)),
 
-    TO_DO(1, "待办理", new Color(255,173,20)),
-
-    DONE(2, "已办理", new Color(82,196,26));
+    DONE(2, "已办理", new Color(135,206,250));
 
     private final Integer key;
     private final String value;
@@ -65,8 +63,8 @@ public enum ChartStatus {
         }
     }
 
-    public static Color getNotDone(String modelValue) {
-        return getColorByKey(Objects.equals(modelValue, ModeEnum.CLASSICS.name()) ? ChartStatus.NOT_DONE : ChartStatus.NOT_DONE_MIMIC);
+    public static Color getNotDone() {
+        return getColorByKey(ChartStatus.NOT_DONE);
     }
 
     public static Color getToDo() {
