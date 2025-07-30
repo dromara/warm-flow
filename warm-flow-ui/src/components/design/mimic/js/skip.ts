@@ -49,9 +49,6 @@ class SkipView extends CurvedEdge {
 
   getEdge(): h.JSX.Element {
     const { model } = this.props;
-    if (model.properties.chartStatusColor && model.properties.chartStatusColor.length === 3) {
-
-    }
     const { points: pointsStr, isAnimation, arrowConfig, radius = 0 } = model;
     const style = model.getEdgeStyle();
     const animationStyle = model.getEdgeAnimationStyle();

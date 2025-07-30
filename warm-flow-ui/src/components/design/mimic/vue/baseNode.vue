@@ -7,7 +7,7 @@
           ref="nodeNameInput"
           v-model="nodeName"
           @blur="saveNodeName"/>
-      <span v-show="props.type === 'between'" class="delete-btn" @click.stop="deleteNode">✕</span>
+      <span v-show="props.type === 'between' && !chartStatusColor" class="delete-btn" @click.stop="deleteNode">✕</span>
     </div>
 
     <div class="bottom-section" @click="editNode" :title="handler">{{ handler }}</div>
@@ -30,6 +30,12 @@ const props = defineProps({
     type: String,
     default () {
       return ''
+    }
+  },
+  chartStatusColor: {
+    type: Array,
+    default () {
+      return []
     }
   },
   type: {
@@ -105,11 +111,17 @@ watch(
 );
 
 const editNodeName = () => {
+  if (props.chartStatusColor) {
+    return
+  }
   editingNodeName.value = true;
   showSpan.value = false;
 };
 
 const saveNodeName = () => {
+  if (props.chartStatusColor) {
+    return
+  }
   editingNodeName.value = false;
   showSpan.value = true;
   emit('updateNodeName', nodeName.value);

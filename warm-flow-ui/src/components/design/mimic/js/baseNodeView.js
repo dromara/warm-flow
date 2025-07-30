@@ -11,6 +11,7 @@ export class BaseNodeView extends HtmlNode {
     this.r = h(baseNode, {
       text: props.model.inputData,
       permissionFlag: props.model.properties.permissionFlag,
+      chartStatusColor: props.model.properties.chartStatusColor,
       type: props.model.type,
       fill: props.model.getNodeStyle().fill,
       stroke: props.model.getNodeStyle().stroke,
