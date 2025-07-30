@@ -10,7 +10,7 @@ class SkipModel extends CurvedEdgeModel  {
   }
 
   getEdgeStyle() {
-    return setCommonStyle(super.getEdgeStyle(), this.properties, "skip");
+    return setCommonStyle(super.getEdgeStyle(), this.properties, "skip", "mimic");
 
   }
 
@@ -49,6 +49,9 @@ class SkipView extends CurvedEdge {
 
   getEdge(): h.JSX.Element {
     const { model } = this.props;
+    if (model.properties.chartStatusColor && model.properties.chartStatusColor.length === 3) {
+
+    }
     const { points: pointsStr, isAnimation, arrowConfig, radius = 0 } = model;
     const style = model.getEdgeStyle();
     const animationStyle = model.getEdgeAnimationStyle();
@@ -67,7 +70,7 @@ class SkipView extends CurvedEdge {
       if ((model.sourceNode.type as string) === "serial" && nextEdge.length > 1) {
         const midPoint = [points[0][0], points[0][1] + offsetY - 10];
         plusElements = this.getForeignObject(midPoint);
-      } else {
+      } else if (!model.properties.chartStatusColor) {
         const midPoint = [points[0][0], points[0][1] + offsetY];
         plusElements = this.getPlusElements(midPoint);
       }
@@ -77,7 +80,7 @@ class SkipView extends CurvedEdge {
       const p2 = points[2];
 
       // 判断是否由竖线变为横线
-      if (p0[0] === p1[0] && p0[1] !== p1[1]) {
+      if (p0[0] === p1[0] && p0[1] !== p1[1] && !model.properties.chartStatusColor) {
         const midPoint = [p0[0] , p0[1] + offsetY];
         plusElements = this.getPlusElements(midPoint);
       }

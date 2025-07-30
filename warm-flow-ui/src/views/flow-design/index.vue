@@ -39,9 +39,9 @@
           <el-button size="small" icon="ZoomOut" @click="zoomViewport(false)">缩小</el-button>
           <el-button size="small" v-if="'CLASSICS' === logicJson.modelValue" icon="Rank" @click="zoomViewport(1)">自适应</el-button>
           <el-button size="small" icon="ZoomIn" @click="zoomViewport(true)">放大</el-button>
-          <el-button size="small" icon="DArrowLeft" @click="undoOrRedo(true)" v-if="!disabled">上一步</el-button>
-          <el-button size="small" icon="DArrowRight" @click="undoOrRedo(false)" v-if="!disabled">下一步</el-button>
-          <el-button size="small" icon="Delete" @click="clear()" v-if="!disabled && 'CLASSICS' === logicJson.modelValue">清空</el-button>
+          <el-button size="small" icon="DArrowLeft" @click="undoOrRedo(true)">上一步</el-button>
+          <el-button size="small" icon="DArrowRight" @click="undoOrRedo(false)">下一步</el-button>
+          <el-button size="small" icon="Delete" @click="clear()">清空</el-button>
           <el-button size="small" icon="Download" @click="downLoad">下载流程图</el-button>
           <el-button size="small" icon="Download" @click="downJson">下载json</el-button>
         </div>

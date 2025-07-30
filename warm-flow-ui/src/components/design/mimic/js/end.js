@@ -9,7 +9,7 @@ class endModel extends CircleNodeModel {
   }
 
   getNodeStyle() {
-    const style = setCommonStyle(super.getNodeStyle(), this.properties, "node");
+    const style = setCommonStyle(super.getNodeStyle(), this.properties, "node", "mimic");
     style.strokeWidth = 4;
     return style;
   }

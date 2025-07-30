@@ -15,6 +15,7 @@
  */
 package org.dromara.warm.flow.core.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.constant.ExceptionCons;
 import org.dromara.warm.flow.core.dto.FlowCombine;
@@ -41,6 +42,7 @@ import java.util.stream.Collectors;
  * @author warm
  * @since 2023-03-29
  */
+@Slf4j
 public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> implements NodeService {
 
     @Override
@@ -287,6 +289,7 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
 
     private List<String> prefixOrSuffixCodes(Map<String, List<Skip>> skipMap, String nodeCode
             , Function<Skip, String> supplier) {
+        log.info("获取前缀或后缀节点: {}", nodeCode);
         List<String> prefixOrSuffixCode = new ArrayList<>();
         List<Skip> skipList = skipMap.get(nodeCode);
         if (CollUtil.isNotEmpty(skipList)) {

@@ -245,27 +245,27 @@ export const logicFlowJsonToWarmFlow = (data) => {
   return JSON.stringify(definition)
 }
 
-export const setCommonStyle = (style, properties, type) => {
+export const setCommonStyle = (style, properties, nodeType, type) => {
   // 从 chartStatusColor 数组中提取颜色值
   const [doneColor, todoColor, notDoneColor] = (properties.chartStatusColor &&
       properties.chartStatusColor.length === 3) ? properties.chartStatusColor :
-      ["157,255,0", "255,205,23", "0,0,0"]; // 提供默认值
+      ["82,196,26", "255,173,20", type === "mimic" ? "144,147,153" : "0,0,0"]; // 提供默认值
 
   if (properties.status === 2) {
     // 使用活跃状态的 RGB 颜色
-    if (type === 'node') {
+    if (nodeType === 'node') {
       style.fill = `rgba(${doneColor}, 0.15)`;  // 带透明度
     }
     style.stroke = `rgb(${doneColor})`;      // 纯色
   } else if (properties.status === 1) {
     // 使用非活跃状态的 RGB 颜色
-    if (type === 'node') {
+    if (nodeType === 'node') {
       style.fill = `rgba(${todoColor}, 0.15)`;
     }
     style.stroke = `rgb(${todoColor})`;
   } else {
     // 默认状态
-    if (type === 'node') {
+    if (nodeType === 'node') {
       style.fill = `rgba(255, 255, 255)`;
     }
     style.stroke = `rgb(${notDoneColor})`;

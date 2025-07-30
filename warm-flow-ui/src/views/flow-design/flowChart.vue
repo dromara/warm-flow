@@ -230,7 +230,9 @@ onMounted(async () => {
               statusColors.value.done,
               statusColors.value.todo,
               statusColors.value.notDone,
-            ] = res.data.chartStatusColor || ["157,255,0", "255,205,23", "0,0,0"];
+            ]  = (res.data.chartStatusColor &&
+                res.data.chartStatusColor.length === 3) ? res.data.chartStatusColor :
+                ["82,196,26", "255,173,20", defJson.value.modelValue === "mimic" ? "144,147,153" : "0,0,0"]; // 提供默认值
 
             const data = json2LogicFlowJson(defJson.value);
             document.body.style.overflow = 'hidden';

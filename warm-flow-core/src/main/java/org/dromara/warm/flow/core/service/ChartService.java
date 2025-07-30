@@ -44,6 +44,7 @@ public interface ChartService {
 
     /**
      * 获取流程图三原色
+     * @param modelValue 设计器模型
      */
-    List<String> getChartRgb();
+    List<String> getChartRgb(String modelValue);
 }

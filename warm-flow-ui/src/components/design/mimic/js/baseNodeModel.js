@@ -11,7 +11,7 @@ export class BaseNodeModel extends HtmlNodeModel {
 
   }
   getNodeStyle() {
-    return setCommonStyle(super.getNodeStyle(), this.properties, "node");
+    return setCommonStyle(super.getNodeStyle(), this.properties, "node", "mimic");
   }
 
   getData () {

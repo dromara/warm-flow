@@ -1,6 +1,6 @@
 <template>
-  <div class="base-node" ref="baseNodeDiv">
-    <div class="top-section" v-click-outside="handleLeave">
+  <div :style="baseNodeColor" class="base-node" ref="baseNodeDiv">
+    <div :style="topSectionColor" class="top-section" v-click-outside="handleLeave">
       <span v-show="showSpan" @click="editNodeName">{{ nodeName }} 📝</span>
       <input
           v-show="editingNodeName"
@@ -16,7 +16,7 @@
 </template>
 
 <script setup name="BaseInfo">
-import {ref} from 'vue';
+import {computed, ref} from 'vue';
 import {handlerFeedback} from "@/api/flow/definition.js";
 
 const props = defineProps({
@@ -38,6 +38,18 @@ const props = defineProps({
       return ''
     }
   },
+  fill: {
+    type: String,
+    default () {
+      return ''
+    }
+  },
+  stroke: {
+    type: String,
+    default () {
+      return ''
+    }
+  },
 });
 
 const showSpan = ref(true);
@@ -46,8 +58,20 @@ const nodeName = ref('发起人');
 const handler = ref('所有人');
 const nodeNameInput = ref(null);
 const editingNodeName = ref(false);
-
 const emit = defineEmits(['updateNodeName', 'deleteNode', 'editNode']); // 添加 deleteNode 事件
+
+const baseNodeColor = computed(() => {
+  return {
+    backgroundColor: props.fill ? props.fill : "#fff",
+    border: props.stroke ? "1px solid " + props.stroke : "#ccc",
+  };
+});
+
+const topSectionColor = computed(() => {
+  return {
+    backgroundColor: props.stroke ? props.stroke : "#ccc",
+  };
+});
 
 const deleteNode = () => {
   emit('deleteNode'); // 触发删除事件，由父组件处理
@@ -106,14 +130,11 @@ function handleLeave() {
 .base-node {
   width: 100%;
   height: 80px;
-  border: 1px solid #ccc;
   border-radius: 5px; /* 添加圆角 */
-  background-color: #fff; /* 设置背景色 */
 }
 
 .top-section {
   position: relative; /* 用于绝对定位子元素 */
-  background-color: #ccc;
   font-size: 13px;
   padding: 10px;
   height: 25px;

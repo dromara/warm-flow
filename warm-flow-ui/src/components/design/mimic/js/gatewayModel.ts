@@ -9,7 +9,7 @@ export class GatewayModel extends RectNodeModel {
     this.radius = 5;
   }
   getNodeStyle() {
-    return setCommonStyle(super.getNodeStyle(), this.properties, "node");
+    return setCommonStyle(super.getNodeStyle(), this.properties, "node", "mimic");
   }
 
   getTextStyle() {

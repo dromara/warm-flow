@@ -12,6 +12,8 @@ export class BaseNodeView extends HtmlNode {
       text: props.model.inputData,
       permissionFlag: props.model.properties.permissionFlag,
       type: props.model.type,
+      fill: props.model.getNodeStyle().fill,
+      stroke: props.model.getNodeStyle().stroke,
       onUpdateNodeName: (nodeName) => {
         props.model.text.value = nodeName
         props.graphModel.eventCenter.emit("update:nodeName", {id: props.model.id, nodeName: nodeName});
@@ -57,9 +59,6 @@ export class BaseNodeView extends HtmlNode {
       const node = document.createElement('div')
       rootEl.appendChild(node)
       this.app.mount(node)
-    } else {
-      this.r.component.props.text = this.props.model.text.value
-      this.r.component.props.permissionFlag = this.props.model.properties.permissionFlag
     }
   }
 }
