@@ -162,7 +162,7 @@ function handleLeave() {
   top: 50%;
   transform: translateY(-50%);
   display: none;
-  color: #999;
+  color: #000;
 }
 
 /* 悬停时显示删除按钮 */
