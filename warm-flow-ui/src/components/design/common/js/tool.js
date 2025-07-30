@@ -263,6 +263,7 @@ export const setCommonStyle = (style, properties, nodeType, type) => {
       style.fill = `rgba(${todoColor}, 0.15)`;
     }
     style.stroke = `rgb(${todoColor})`;
+    style.strokeDasharray = "5 4";
   } else {
     // 默认状态
     if (nodeType === 'node' && type !== "mimic") {
@@ -271,7 +272,7 @@ export const setCommonStyle = (style, properties, nodeType, type) => {
     style.stroke = `rgb(${notDoneColor})`;
   }
 
-  style.strokeWidth = 1
+  style.strokeWidth = 1.5
   style.cursor = 'pointer'
   return style;
 }

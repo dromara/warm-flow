@@ -9,9 +9,7 @@
           @blur="saveNodeName"/>
       <span v-show="props.type === 'between' && !chartStatusColor" class="delete-btn" @click.stop="deleteNode">✕</span>
     </div>
-
     <div class="bottom-section" @click="editNode" :title="handler">{{ handler }}</div>
-
   </div>
 </template>
 
@@ -36,6 +34,12 @@ const props = defineProps({
     type: Array,
     default () {
       return []
+    }
+  },
+  status: {
+    type: Number,
+    default () {
+      return null
     }
   },
   type: {
@@ -67,15 +71,15 @@ const editingNodeName = ref(false);
 const emit = defineEmits(['updateNodeName', 'deleteNode', 'editNode']); // 添加 deleteNode 事件
 
 const baseNodeColor = computed(() => {
+  debugger
   return {
-    backgroundColor: props.fill ? props.fill : "#fff",
-    border: props.stroke ? "1px solid " + props.stroke : "#ccc",
+    border: props.stroke ? (props.status === 1 ? "2px dashed " : "1px solid ") + props.stroke : "rgb(166,178,189)",
   };
 });
 
 const topSectionColor = computed(() => {
   return {
-    backgroundColor: props.stroke ? props.stroke : "#ccc",
+    backgroundColor: props.stroke ? props.stroke : "rgb(166,178,189)",
   };
 });
 

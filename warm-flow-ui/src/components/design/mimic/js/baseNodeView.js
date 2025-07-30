@@ -12,6 +12,7 @@ export class BaseNodeView extends HtmlNode {
       text: props.model.inputData,
       permissionFlag: props.model.properties.permissionFlag,
       chartStatusColor: props.model.properties.chartStatusColor,
+      status: props.model.properties.status,
       type: props.model.type,
       fill: props.model.getNodeStyle().fill,
       stroke: props.model.getNodeStyle().stroke,
