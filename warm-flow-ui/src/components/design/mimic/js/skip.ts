@@ -18,9 +18,6 @@ class SkipModel extends CurvedEdgeModel  {
     const position = super.getTextPosition();
 
     const currentPositionList = this.points.split(' ');
-    if (!currentPositionList || currentPositionList.length <= 2) {
-      return position;
-    }
 
     // 取最后两个点，用于判断终点方向
     const lastTwoPoints = currentPositionList.slice(-2);

@@ -1,13 +1,19 @@
 <template>
   <div :style="baseNodeColor" class="base-node" ref="baseNodeDiv">
     <div :style="topSectionColor" class="top-section" v-click-outside="handleLeave">
-      <span v-show="showSpan" @click="editNodeName">{{ nodeName }} 📝</span>
+      <span v-show="showSpan" @click="editNodeName">{{ nodeName }}
+        <svg t="1753861236923" class="edit-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1784"
+                     width="16" height="16">
+            <path d="M469.333333 128a42.666667 42.666667 0 0 1 0 85.333333H213.333333v597.333334h597.333334v-256l0.298666-4.992A42.666667 42.666667 0 0 1 896 554.666667v256a85.333333 85.333333 0 0 1-85.333333 85.333333H213.333333a85.333333 85.333333 0 0 1-85.333333-85.333333V213.333333a85.333333 85.333333 0 0 1 85.333333-85.333333z m414.72 12.501333a42.666667 42.666667 0 0 1 0 60.330667L491.861333 593.066667a42.666667 42.666667 0 0 1-60.330666-60.330667l392.192-392.192a42.666667 42.666667 0 0 1 60.330666 0z"
+                  fill="#000000" p-id="1785"></path>
+        </svg>
+      </span>
       <input
           v-show="editingNodeName"
           ref="nodeNameInput"
           v-model="nodeName"
           @blur="saveNodeName"/>
-      <span v-show="props.type === 'between' && !chartStatusColor" class="delete-btn" @click.stop="deleteNode">✕</span>
+      <span v-show="props.type === 'between' && (!chartStatusColor || chartStatusColor.length === 0)" class="delete-btn" @click.stop="deleteNode">✕</span>
     </div>
     <div class="bottom-section" @click="editNode" :title="handler">{{ handler }}</div>
   </div>
@@ -71,7 +77,6 @@ const editingNodeName = ref(false);
 const emit = defineEmits(['updateNodeName', 'deleteNode', 'editNode']); // 添加 deleteNode 事件
 
 const baseNodeColor = computed(() => {
-  debugger
   return {
     border: props.stroke ? (props.status === 1 ? "2px dashed " : "1px solid ") + props.stroke : "rgb(166,178,189)",
   };
@@ -178,6 +183,11 @@ function handleLeave() {
   padding: 10px;
   height: calc(100%);
   font-size: 14px;
+}
+
+.edit-icon {
+  vertical-align: middle;
+  margin: 3px;
 }
 
 </style>

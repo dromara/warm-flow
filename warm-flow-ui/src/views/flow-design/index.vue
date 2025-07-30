@@ -591,10 +591,7 @@ const clear = async () => {
 function downLoad() {
   lf.value.getSnapshot(logicJson.value.flowName, {
     fileType: 'png',        // 可选：'png'、'webp'、'jpeg'、'svg'
-    backgroundColor: '#f5f5f5',
-    padding: 30,           // 内边距，单位为像素
-    partial: false,        // false: 导出所有元素，true: 只导出可见区域
-    quality: 0.92          // 对jpeg和webp格式有效，取值范围0-1
+    backgroundColor: '#fff',
   })
 }
 
