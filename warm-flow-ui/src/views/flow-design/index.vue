@@ -1,7 +1,7 @@
 <template>
   <div style="background-color: #e5e7eb">
     <!-- 流程名称和步骤条容器 -->
-    <div :style="headerContainer">
+    <div :style="headerContainer" v-if="!onlyDesignShow">
       <!-- 流程名称 -->
       <el-tooltip :content="logicJson.flowName" placement="top">
         <div class="flow-name">
@@ -17,25 +17,18 @@
               :key="index"
               class="step-item"
               :class="{ 'active': activeStep === index }"
-              @click="handleStepClick(index)"
+              @click="activeStep = index"
           >
             <svg-icon :icon-class="step.icon" style="margin-right: 5px"/>
             <span>{{ step.title }}</span>
           </div>
         </div>
       </div>
-      <div class="topButton">
-        <el-button size="small" @click="saveJsonModel" v-if="!disabled"><svg-icon icon-class="save" style="margin-right: 5px"/>保存</el-button>
-      </div>
     </div>
 
-    <BaseInfo :style="baseInfoStyle" class="baseInfo" ref="baseInfoRef" v-show="activeStep === 0" :logic-json="logicJson"
-              :category-list="categoryList" :definition-id="definitionId" :disabled="disabled"
-              @update:flow-name="handleFlowNameUpdate"/>
-
-    <el-header :style="headerStyle" v-show="activeStep === 1">
+    <el-header :style="headerStyle">
       <div style="padding: 5px 0; text-align: right;">
-        <div>
+        <div v-if="activeStep === 1">
           <el-button size="small" icon="ZoomOut" @click="zoomViewport(false)">缩小</el-button>
           <el-button size="small" v-if="'CLASSICS' === logicJson.modelValue" icon="Rank" @click="zoomViewport(1)">自适应</el-button>
           <el-button size="small" icon="ZoomIn" @click="zoomViewport(true)">放大</el-button>
@@ -44,17 +37,27 @@
           <el-button size="small" icon="Delete" @click="clear()">清空</el-button>
           <el-button size="small" icon="Download" @click="downLoad">下载流程图</el-button>
           <el-button size="small" icon="Download" @click="downJson">下载json</el-button>
+          <el-button size="small" style="background-color: #48D1CC;"  @click="saveJsonModel" v-if="!disabled">
+            <svg-icon icon-class="save" style="margin-right: 5px;"/>保存
+          </el-button>
+        </div>
+        <div v-else>
+          <el-button size="small" style="background-color: #48D1CC;" @click="saveJsonModel" v-if="!disabled">
+            <svg-icon icon-class="save" style="margin-right: 5px;"/>保存
+          </el-button>
         </div>
       </div>
-      <div class="container" ref="containerRef">
+
+      <BaseInfo :style="baseInfoStyle" class="baseInfo" ref="baseInfoRef" v-if="!onlyDesignShow" v-show="activeStep === 0"
+                :logic-json="logicJson" :category-list="categoryList" :definition-id="definitionId" :disabled="disabled"
+                @update:flow-name="handleFlowNameUpdate"/>
+
+      <div class="container" ref="containerRef" v-show="activeStep === 1">
         <PropertySetting ref="propertySettingRef" :node="nodeClick" :lf="lf" :disabled="disabled"
                          :skipConditionShow="skipConditionShow" :nodes="nodes" :skips="skips">
-          <template v-slot:[key]="data" v-for="(item, key) in $slots">
-            <slot :name="key" v-bind="data || {}"></slot>
-          </template>
         </PropertySetting>
-        <div class="logo-text">Warm-Flow</div>
       </div>
+      <div class="logo-text">Warm-Flow</div>
     </el-header>
   </div>
 
@@ -120,6 +123,7 @@ const skips = ref([]);
 const categoryList = ref([]);
 const isDark = ref(false);
 const activeStep = ref(0); // 初始化当前步骤为0（开始）
+const onlyDesignShow = ref(false);
 
 const headerStyle = computed(() => {
   return {
@@ -134,8 +138,10 @@ const headerStyle = computed(() => {
   };
 });
 const baseInfoStyle = computed(() => {
-  debugger
   return {
+    border: "1px solid #ddd", /* 添加边框 */
+    borderRadius: "6px", /* 添加圆角 */
+    margin: "5px",
     backgroundColor: isDark.value ? "#333" : "#fff",
   };
 });
@@ -173,24 +179,27 @@ const handleOptionClick = (item) => {
   tooltipVisible.value = false;
 };
 
-async function handleStepClick(index) {
-  if (activeStep.value === 0) {
+// 使用 watch 监听 activeStep 的变化
+watch(activeStep, async (newIndex, oldIndex) => {
+  if (oldIndex === 0 && !onlyDesignShow.value) {
     let validate = await proxy.$refs.baseInfoRef.validate();
     if (!validate) return;
   }
-  activeStep.value = index;
 
-  if (index === 1) {
+  if (newIndex === 1) {
     // 原设计器模型
-    const modeOrg =logicJson.value.modelValue;
+    const modeOrg = logicJson.value.modelValue;
     // 获取基础信息
-    getBaseInfo();
-    const modeNew =logicJson.value.modelValue;
+    if (!onlyDesignShow.value) {
+      getBaseInfo();
+    }
+    const modeNew = logicJson.value.modelValue;
+
     if (!lf.value || modeOrg !== modeNew) {
       await nextTick(() => {
         if (!jsonString.value.nodeList || jsonString.value.nodeList.length === 0) {
           // 读取本地文件/initData.json文件，并将数据转换json对象
-          let initData = isClassics(logicJson.value.modelValue) ? initClassicsData: initMimicData
+          let initData = isClassics(logicJson.value.modelValue) ? initClassicsData : initMimicData;
           logicJson.value = {
             ...logicJson.value,
             ...initData
@@ -200,7 +209,7 @@ async function handleStepClick(index) {
       });
     }
   }
-}
+});
 
 
 onMounted(() => {
@@ -209,6 +218,9 @@ onMounted(() => {
   if (!appParams.value) appStore.fetchTokenName();
   if (appParams.value.id) {
     definitionId.value = appParams.value.id;
+  }
+  if (appParams.value.onlyDesignShow) {
+    onlyDesignShow.value = appParams.value.onlyDesignShow
   }
   queryDef(definitionId.value).then(res => {
     jsonString.value = res.data;
@@ -225,6 +237,9 @@ onMounted(() => {
           ...logicJson.value,
           ...initData
         };
+      }
+      if (onlyDesignShow.value) {
+        activeStep.value = 1
       }
     }
   });
@@ -390,12 +405,15 @@ function handleFlowNameUpdate(newName) {
 
 async function saveJsonModel() {
   const loadingInstance = ElLoading.service(({fullscreen: true, text: "保存中，请稍等"}))
-  let validate = await proxy.$refs.baseInfoRef.validate();
-  if (!validate) {
-    loadingInstance.close();
-    return;
+  if (!onlyDesignShow.value) {
+    let validate = await proxy.$refs.baseInfoRef.validate();
+    if (!validate) {
+      loadingInstance.close();
+      return;
+    }
+    getBaseInfo();
   }
-  getBaseInfo();
+
   if (lf.value) {
     let graphData = lf.value.getGraphData()
     logicJson.value['nodes'] = graphData['nodes']
@@ -642,7 +660,7 @@ async function downJson() {
 .logo-text {
   position: absolute;
   font-weight: bold;
-  right: 10px;
+  right: 50px;
   bottom: 10px;
   font-size: 15px; /* 可以根据需要调整字体大小 */
   color: #333; /* 可以根据需要调整颜色 */
@@ -666,24 +684,6 @@ async function downJson() {
   align-items: center;
   height: 35px;
   justify-content: space-between; /* 确保内容在水平方向上两端对齐 */
-}
-
-.topButton {
-  display: flex;
-  align-items: center; /* 垂直居中对齐 */
-  margin-left: auto; /* 确保按钮始终位于最右边 */
-  margin-right: 50px; /* 添加此行，设置与右边的距离 */
-  button {
-    background-color: #1890ff;
-    color: #FFF;
-    font-size: 15px;
-  }
-}
-
-.baseInfo {
-  border: 1px solid #ddd; /* 添加边框 */
-  border-radius: 6px; /* 添加圆角 */
-  margin: 5px;
 }
 
 .steps {

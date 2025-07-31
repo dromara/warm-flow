@@ -189,6 +189,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         FlowCombine flowCombine = DefJson.copyCombine(defJson);
         Definition definition = flowCombine.getDefinition();
         Long id = definition.getId();
+        // 如果是新增的流程定义
         if (ObjectUtil.isNull(id)) {
             definition.setVersion(getNewVersion(definition));
             FlowEngine.dataFillHandler().idFill(definition);
@@ -197,6 +198,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         // 校验流程定义合法性
         checkFlowLegal(flowCombine);
 
+        // 如果是新增的流程定义
         if (ObjectUtil.isNull(id)) {
             FlowEngine.defService().save(definition);
         } else {

@@ -120,7 +120,7 @@ watch(
 );
 
 const editNodeName = () => {
-  if (props.chartStatusColor) {
+  if (props.chartStatusColor && props.chartStatusColor.length > 0) {
     return
   }
   editingNodeName.value = true;
@@ -128,7 +128,7 @@ const editNodeName = () => {
 };
 
 const saveNodeName = () => {
-  if (props.chartStatusColor) {
+  if (props.chartStatusColor && props.chartStatusColor.length > 0) {
     return
   }
   editingNodeName.value = false;
