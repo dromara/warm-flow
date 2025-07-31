@@ -861,9 +861,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     private void oneVoteVeto(Task task, String nextNodeCode, FlowCombine flowCombine) {
         // 一票否决（谨慎使用），如果退回，退回指向节点后还存在其他正在执行的待办任务，转历史任务，状态失效,重走流程。
         List<Task> tasks = list(FlowEngine.newTask().setInstanceId(task.getInstanceId()));
-        if (CollUtil.isEmpty(tasks) || (tasks.size() == 1 && task.getId().equals(tasks.get(0).getId()))) {
-            return;
-        }
         // 属于退回指向节点的后置未完成的任务
         List<Task> noDoneTasks = new ArrayList<>();
         List<Node> suffixNodeList = FlowEngine.nodeService().suffixNodeList(nextNodeCode, flowCombine);

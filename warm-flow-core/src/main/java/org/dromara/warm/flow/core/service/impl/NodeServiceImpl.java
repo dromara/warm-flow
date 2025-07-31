@@ -287,21 +287,36 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
         return getDao().deleteNodeByDefIds(defIds);
     }
 
-    private List<String> prefixOrSuffixCodes(Map<String, List<Skip>> skipMap, String nodeCode
-            , Function<Skip, String> supplier) {
-        log.info("获取前缀或后缀节点: {}", nodeCode);
-        List<String> prefixOrSuffixCode = new ArrayList<>();
+    private List<String> prefixOrSuffixCodes(Map<String, List<Skip>> skipMap, String nodeCode,
+                                              Function<Skip, String> supplier) {
+        Set<String> visited = new HashSet<>(); // 记录已访问节点，防止循环
+        List<String> result = new ArrayList<>();
+        prefixOrSuffixCodesRecursive(skipMap, nodeCode, supplier, visited, result);
+        return result;
+    }
+
+    private void prefixOrSuffixCodesRecursive(Map<String, List<Skip>> skipMap, String nodeCode,
+                                              Function<Skip, String> supplier, Set<String> visited, List<String> result) {
+        if (visited.contains(nodeCode)) {
+            return; // 防止循环访问
+        }
+
+        visited.add(nodeCode);
         List<Skip> skipList = skipMap.get(nodeCode);
+
         if (CollUtil.isNotEmpty(skipList)) {
             for (Skip skip : skipList) {
                 if (SkipType.isPass(skip.getSkipType())) {
-                    prefixOrSuffixCode.add(supplier.apply(skip));
-                    prefixOrSuffixCode.addAll(prefixOrSuffixCodes(skipMap, supplier.apply(skip), supplier));
+                    String nextNodeCode = supplier.apply(skip);
+                    if (!result.contains(nextNodeCode)) { // 避免重复添加
+                        result.add(nextNodeCode);
+                    }
+                    prefixOrSuffixCodesRecursive(skipMap, nextNodeCode, supplier, visited, result);
                 }
             }
         }
-        return prefixOrSuffixCode;
     }
+
 
     /**
      * 通过校验跳转类型获取跳转集合

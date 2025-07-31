@@ -278,19 +278,31 @@ export const setCommonStyle = (style, properties, nodeType, type) => {
 }
 
 export function getPreviousNodes(nodes, skips, nowNodeCode) {
-  let previousCode = getPreviousCode(skips, nowNodeCode)
-  return nodes.filter(node => previousCode.includes(node.id)).reverse();
+  let previousCode = getPreviousCode(skips, nowNodeCode, new Set());
+  // 使用 Set 去重后再转换为数组
+  const uniquePreviousCode = [...new Set(previousCode)];
+  return nodes.filter(node => uniquePreviousCode.includes(node.id)).reverse();
 }
 
-function getPreviousCode(skips, nowNodeCode) {
+function getPreviousCode(skips, nowNodeCode, visited = new Set()) {
+  // 防止循环引用导致的无限递归
+  if (visited.has(nowNodeCode)) {
+    return [];
+  }
+
+  visited.add(nowNodeCode);
   let passSkip = skips.filter(skip => skip.properties.skipType === "PASS");
   const previousCode = [];
+
   for (const skip of passSkip) {
     if (skip.targetNodeId === nowNodeCode) {
       previousCode.push(skip.sourceNodeId);
-      previousCode.push(...getPreviousCode(passSkip, skip.sourceNodeId));
+      // 递归获取更前面的节点
+      const ancestors = getPreviousCode(passSkip, skip.sourceNodeId, visited);
+      previousCode.push(...ancestors);
     }
   }
+
   return previousCode;
 }
 
