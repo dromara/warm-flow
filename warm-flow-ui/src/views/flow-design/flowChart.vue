@@ -13,7 +13,7 @@
         <!-- 右侧状态按钮组 -->
         <div style="margin-left: auto; display: flex; align-items: center;">
           <el-button size="small" icon="ZoomIn" @click="zoomViewport(true)">放大</el-button>
-          <el-button size="small" icon="Rank" @click="zoomViewport(1)">自适应</el-button>
+          <el-button size="small" icon="Rank" v-if="isClassics(defJson.modelValue)" @click="zoomViewport(1)">自适应</el-button>
           <el-button size="small" icon="ZoomOut" @click="zoomViewport(false)">缩小</el-button>
           <el-button size="small" icon="Download" @click="downLoad">下载流程图</el-button>
         </div>
@@ -54,7 +54,7 @@ import { queryFlowChart } from "@/api/flow/definition";
 
 const appStore = useAppStore();
 const appParams = computed(() => useAppStore().appParams);
-const definitionId = ref(null);
+const instanceId = ref(null);
 const defJson = ref({});
 const containerRef = ref(null);
 const tooltipPosition = ref({ x: 0, y: 0 });
@@ -219,10 +219,10 @@ const zoomViewport = async (zoom) => {
 
 onMounted(async () => {
   if (!appParams.value) await appStore.fetchTokenName();
-  definitionId.value = appParams.value.id;
+  instanceId.value = appParams.value.id;
 
-  if (definitionId.value) {
-    queryFlowChart(definitionId.value)
+  if (instanceId.value) {
+    queryFlowChart(instanceId.value)
         .then((res) => {
           defJson.value = res.data;
           if (defJson.value) {
@@ -232,7 +232,7 @@ onMounted(async () => {
               statusColors.value.notDone,
             ]  = (res.data.chartStatusColor &&
                 res.data.chartStatusColor.length === 3) ? res.data.chartStatusColor :
-                ["82,196,26", "255,173,20", defJson.value.modelValue === "mimic" ? "144,147,153" : "0,0,0"]; // 提供默认值
+                ["82,196,26", "255,173,20", isClassics(defJson.value.modelValue) ? "0,0,0" : "144,147,153"]; // 提供默认值
 
             const data = json2LogicFlowJson(defJson.value);
             document.body.style.overflow = 'hidden';
@@ -258,7 +258,9 @@ onMounted(async () => {
             register();
             initEvent();
             lf.value.render(data);
-            lf.value.translateCenter();
+            if (isClassics(defJson.value.modelValue)) {
+              lf.value.translateCenter();
+            }
           }
         })
         .catch(() => {
