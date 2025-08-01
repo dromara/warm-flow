@@ -22,8 +22,8 @@
 <script setup name="PropertySetting">
 import start from '@/components/design/common/vue/start.vue'
 import between from '@/components/design/common/vue/between.vue'
-import serial from '@/components/design/common/vue/serial.vue'
-import parallel from '@/components/design/common/vue/parallel.vue'
+import serial from '@/components/design/common/vue/gateway.vue'
+import parallel from '@/components/design/common/vue/gateway.vue'
 import end from '@/components/design/common/vue/end.vue'
 import skip from '@/components/design/common/vue/skip.vue'
 

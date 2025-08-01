@@ -61,6 +61,9 @@ export class BaseNodeView extends HtmlNode {
       const node = document.createElement('div')
       rootEl.appendChild(node)
       this.app.mount(node)
+    } else {
+      this.r.component.props.text = this.props.model.text.value
+      this.r.component.props.permissionFlag = this.props.model.properties.permissionFlag
     }
   }
 }

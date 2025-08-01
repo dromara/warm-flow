@@ -190,9 +190,7 @@ watch(activeStep, async (newIndex, oldIndex) => {
     // 原设计器模型
     const modeOrg = logicJson.value.modelValue;
     // 获取基础信息
-    if (!onlyDesignShow.value) {
-      getBaseInfo();
-    }
+    getBaseInfo();
     const modeNew = logicJson.value.modelValue;
 
     if (!lf.value || modeOrg !== modeNew) {
@@ -392,6 +390,9 @@ function initDndPanel() {
 }
 
 function getBaseInfo() {
+  if (onlyDesignShow.value) {
+    return
+  }
   const baseInfoData = proxy.$refs.baseInfoRef.getFormData();
   logicJson.value = {
     ...logicJson.value,
@@ -411,8 +412,8 @@ async function saveJsonModel() {
       loadingInstance.close();
       return;
     }
-    getBaseInfo();
   }
+  getBaseInfo();
 
   if (lf.value) {
     let graphData = lf.value.getGraphData()
