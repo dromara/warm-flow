@@ -25,6 +25,7 @@ import org.dromara.warm.flow.core.entity.Instance;
 import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.entity.Skip;
 import org.dromara.warm.flow.core.utils.CollUtil;
+import org.dromara.warm.flow.core.utils.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -136,6 +137,14 @@ public class DefJson {
      * 流程类别
      */
     private List<Tree> categoryList;
+
+
+    public String getModelValue() {
+        if (StringUtils.isEmpty(modelValue)) {
+            modelValue = "CLASSICS";
+        }
+        return modelValue;
+    }
 
     public static DefJson copyDef(Definition definition) {
         DefJson defJson = new DefJson()
