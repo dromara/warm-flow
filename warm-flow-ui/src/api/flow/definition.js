@@ -3,11 +3,14 @@ import request from '@/utils/request'
 const urlPrefix = import.meta.env.VITE_URL_PREFIX
 
 // 保存json流程定义
-export function saveJson(data) {
+export function saveJson(data, onlyNodeSkip) {
   return request({
     url: urlPrefix + 'warm-flow/save-json',
     method: 'post',
-    data: data
+    data: data,
+    headers: {
+      'onlyNodeSkip': onlyNodeSkip
+    }
   })
 }
 

@@ -182,7 +182,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     }
 
     @Override
-    public void saveDef(DefJson defJson) {
+    public void saveDef(DefJson defJson, boolean onlyNodeSkip) {
         if (ObjectUtil.isNull(defJson)) {
             return;
         }
@@ -202,7 +202,9 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         if (ObjectUtil.isNull(id)) {
             FlowEngine.defService().save(definition);
         } else {
-            FlowEngine.defService().updateById(definition);
+            if (!onlyNodeSkip) {
+                FlowEngine.defService().updateById(definition);
+            }
             // 删除所有节点和连线
             FlowEngine.nodeService().remove(FlowEngine.newNode().setDefinitionId(id));
             FlowEngine.skipService().remove(FlowEngine.newSkip().setDefinitionId(id));

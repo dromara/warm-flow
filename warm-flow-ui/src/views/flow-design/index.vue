@@ -423,7 +423,7 @@ async function saveJsonModel() {
   logicJson.value['id'] = definitionId.value
 
   let jsonString = logicFlowJsonToWarmFlow(logicJson.value);
-  saveJson(jsonString).then(response => {
+  saveJson(jsonString, onlyDesignShow.value).then(response => {
     if (response.code === 200) {
       proxy.$modal.msgSuccess("保存成功");
       close();
