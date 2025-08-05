@@ -53,8 +53,8 @@ public class WarmFlowController {
      */
     @PostMapping("/save-json")
     @Transactional(rollbackFor = Exception.class)
-    public ApiResult<Void> saveJson(@RequestBody DefJson defJson) throws Exception {
-        return WarmFlowService.saveJson(defJson);
+    public ApiResult<Void> saveJson(@RequestBody DefJson defJson, @RequestHeader boolean onlyNodeSkip) throws Exception {
+        return WarmFlowService.saveJson(defJson, onlyNodeSkip);
     }
 
     /**

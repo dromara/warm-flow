@@ -730,7 +730,7 @@ CREATE TABLE flow_his_task (
     target_node_name nvarchar(100) NULL,
     approver nvarchar(40) NULL,
     cooperate_type tinyint DEFAULT('0') NULL,
-    collaborator nvarchar(40) NULL,
+    collaborator nvarchar(500) NULL,
     skip_type nvarchar(10) NOT NULL,
     flow_status nvarchar(20) NOT NULL,
     form_custom nchar(1) DEFAULT('N') NULL,

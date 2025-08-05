@@ -209,7 +209,7 @@ CREATE TABLE flow_his_task
     target_node_name varchar(200) NULL,
     approver         varchar(40)  NULL,
     cooperate_type   int2         NOT NULL DEFAULT 0,
-    collaborator     varchar(40)  NULL,
+    collaborator     varchar(500)  NULL,
     skip_type        varchar(10)  NULL,
     flow_status      varchar(20)  NOT NULL,
     form_custom      bpchar(1)    NULL     DEFAULT 'N':: character varying,

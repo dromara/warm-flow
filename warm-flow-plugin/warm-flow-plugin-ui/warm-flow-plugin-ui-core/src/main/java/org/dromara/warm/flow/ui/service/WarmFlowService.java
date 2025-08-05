@@ -68,13 +68,14 @@ public class WarmFlowService {
      * 保存流程json字符串
      *
      * @param defJson 流程数据集合
+     * @param onlyNodeSkip 是否只保存节点和跳转
      * @return ApiResult<Void>
      * @throws Exception 异常
      * @author xiarg
      * @since 2024/10/29 16:31
      */
-    public static ApiResult<Void> saveJson(DefJson defJson) throws Exception {
-        FlowEngine.defService().saveDef(defJson);
+    public static ApiResult<Void> saveJson(DefJson defJson, boolean onlyNodeSkip) throws Exception {
+        FlowEngine.defService().saveDef(defJson, onlyNodeSkip);
         return ApiResult.ok();
     }
 
@@ -123,7 +124,8 @@ public class WarmFlowService {
 
             // 获取流程图三原色
             defJson.setChartStatusColor(FlowEngine.chartService().getChartRgb());
-
+            // 是否显示流程图顶部文字
+            defJson.setTopTextShow(FlowEngine.getFlowConfig().isTopTextShow());
             // 需要业务系统实现该接口
             ChartExtService chartExtService = FrameInvoker.getBean(ChartExtService.class);
             if (chartExtService != null) {

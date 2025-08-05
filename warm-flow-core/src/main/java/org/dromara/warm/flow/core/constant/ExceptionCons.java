@@ -45,7 +45,7 @@ public class ExceptionCons {
 
     public static final String NULL_DEST_NODE = "无法他跳转，未配置目标节点!";
 
-    public static final String NULL_SKIP_TYPE = "无法跳转到目标节点,请检查跳转类型是否匹配!";
+    public static final String NULL_SKIP_TYPE = "未找到跳转类型匹配的目标节点!";
 
     public static final String NULL_CONDITION_VALUE_NODE = "未找到跳转条件，不支持跳转!";
 

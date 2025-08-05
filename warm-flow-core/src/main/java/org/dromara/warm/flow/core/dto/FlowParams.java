@@ -42,7 +42,7 @@ public class FlowParams implements Serializable {
     private String flowCode;
 
     /**
-     * 当前办理人唯一标识
+     * 当前办理人唯一标识：就是确定唯一用的，如用户id，通常用来入库，记录流程实例创建人，办理人
      */
     private String handler;
 
@@ -53,7 +53,7 @@ public class FlowParams implements Serializable {
     private String nodeCode;
 
     /**
-     * 用户权限标识
+     * 用户权限标识：和办理权限有关，是否有办理权限，通俗来说，就是设计器里面预设的办理人，和这个标识是否有交集，有交集就可以办理，审批的时候，就不会提示报错
      */
     private List<String> permissionFlag;
 

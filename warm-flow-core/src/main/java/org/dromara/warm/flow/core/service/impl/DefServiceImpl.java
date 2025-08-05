@@ -182,13 +182,14 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     }
 
     @Override
-    public void saveDef(DefJson defJson) {
+    public void saveDef(DefJson defJson, boolean onlyNodeSkip) {
         if (ObjectUtil.isNull(defJson)) {
             return;
         }
         FlowCombine flowCombine = DefJson.copyCombine(defJson);
         Definition definition = flowCombine.getDefinition();
         Long id = definition.getId();
+        // 如果是新增的流程定义
         if (ObjectUtil.isNull(id)) {
             definition.setVersion(getNewVersion(definition));
             FlowEngine.dataFillHandler().idFill(definition);
@@ -197,10 +198,13 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         // 校验流程定义合法性
         checkFlowLegal(flowCombine);
 
+        // 如果是新增的流程定义
         if (ObjectUtil.isNull(id)) {
             FlowEngine.defService().save(definition);
         } else {
-            FlowEngine.defService().updateById(definition);
+            if (!onlyNodeSkip) {
+                FlowEngine.defService().updateById(definition);
+            }
             // 删除所有节点和连线
             FlowEngine.nodeService().remove(FlowEngine.newNode().setDefinitionId(id));
             FlowEngine.skipService().remove(FlowEngine.newSkip().setDefinitionId(id));

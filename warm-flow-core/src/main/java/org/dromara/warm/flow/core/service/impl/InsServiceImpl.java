@@ -208,12 +208,9 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
             FlowEngine.userService().deleteByTaskIds(taskIds);
         }
 
-        boolean success = FlowEngine.taskService().deleteByInsIds(instanceIds);
-        if (success) {
-            FlowEngine.hisTaskService().deleteByInsIds(instanceIds);
-            return FlowEngine.insService().removeByIds(instanceIds);
-        }
-        return false;
+        FlowEngine.taskService().deleteByInsIds(instanceIds);
+        FlowEngine.hisTaskService().deleteByInsIds(instanceIds);
+        return FlowEngine.insService().removeByIds(instanceIds);
     }
 
     @Override

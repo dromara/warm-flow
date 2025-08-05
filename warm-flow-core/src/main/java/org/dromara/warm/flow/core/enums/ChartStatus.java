@@ -25,6 +25,7 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 流程图状态
@@ -35,11 +36,11 @@ import java.util.Map;
 @Getter
 @AllArgsConstructor
 public enum ChartStatus {
-    NOT_DONE(0, "未办理", new Color(0, 0, 0)),
+    NOT_DONE(0, "未办理", new Color(166,178,189)),
 
-    TO_DO(1, "待办理", new Color(255, 205, 23)),
+    TO_DO(1, "待办理", new Color(255,197,90)),
 
-    DONE(2, "已办理", new Color(157, 255, 0));
+    DONE(2, "已办理", new Color(135,206,250));
 
     private final Integer key;
     private final String value;
