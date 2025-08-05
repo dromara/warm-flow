@@ -27,7 +27,6 @@ import java.util.List;
  * @since 2023-03-29
  */
 public interface Definition extends RootEntity {
-
     @Override
     Long getId();
 
@@ -64,11 +63,11 @@ public interface Definition extends RootEntity {
 
     String getFlowName();
 
-    public String getModelValue();
+    Definition setFlowName(String flowName);
 
-    public Definition setModelValue(String modelValue);
+    String getModelValue();
 
-    Definition setMode(String mode);
+    Definition setModelValue(String modelValue);
 
     String getCategory();
 
