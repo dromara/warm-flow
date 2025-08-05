@@ -133,13 +133,13 @@ public class ExceptionCons {
 
     public static final String FLOW_HAVE_USELESS_SKIP = "存在无用的跳转";
 
-    public static final String NUll_TRANSFER_HANDLER = "转办对象不能为空";
+    public static final String NULL_TRANSFER_HANDLER = "转办对象不能为空";
 
-    public static final String NUll_DEPUTE_HANDLER = "委托对象不能为空";
+    public static final String NULL_DEPUTE_HANDLER = "委托对象不能为空";
 
-    public static final String NUll_ADD_SIGNATURE_HANDLER = "加签对象不能为空";
+    public static final String NULL_ADD_SIGNATURE_HANDLER = "加签对象不能为空";
 
-    public static final String NUll_REDUCTION_SIGNATURE_HANDLER = "减签对象不能为空";
+    public static final String NULL_REDUCTION_SIGNATURE_HANDLER = "减签对象不能为空";
 
     public static final String READ_IS_ERROR = "读取is流失败";
 

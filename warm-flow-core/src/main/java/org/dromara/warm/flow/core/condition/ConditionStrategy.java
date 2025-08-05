@@ -40,6 +40,6 @@ public interface ConditionStrategy extends ExpressionStrategy<Boolean> {
 
     @Override
     default String interceptStr() {
-        return FlowCons.splitAt;
+        return FlowCons.SPLIT_AT;
     }
 }

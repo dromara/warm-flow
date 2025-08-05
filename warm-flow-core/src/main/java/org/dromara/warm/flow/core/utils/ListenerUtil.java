@@ -83,7 +83,7 @@ public class ListenerUtil {
                 String listenerType = listenerTypeArr[i].trim();
                 if (listenerType.equals(type)) {
                     if (StringUtils.isNotEmpty(listenerPaths)) {
-                        String[] listenerPathArr = listenerPaths.split(FlowCons.splitAt);
+                        String[] listenerPathArr = listenerPaths.split(FlowCons.SPLIT_AT);
                         String listenerPath = listenerPathArr[i].trim();
                         ValueHolder valueHolder = new ValueHolder();
                         //截取出path 和params
@@ -130,7 +130,7 @@ public class ListenerUtil {
         String path;
         String params;
 
-        Matcher matcher = FlowCons.listenerPattern.matcher(listenerStr);
+        Matcher matcher = FlowCons.LISTENER_PATTERN.matcher(listenerStr);
         if (matcher.find()) {
             path = matcher.group(1).replaceAll("[\\(\\)]", "");
             params = matcher.group(2).replaceAll("[\\(\\)]", "");

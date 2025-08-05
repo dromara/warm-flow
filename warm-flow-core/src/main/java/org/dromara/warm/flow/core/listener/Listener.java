@@ -20,6 +20,7 @@ import java.io.Serializable;
 /**
  * 监听器
  *
+ * @author warm
  */
 public interface Listener extends Serializable {
 
@@ -48,6 +49,9 @@ public interface Listener extends Serializable {
      */
     String LISTENER_FORM_LOAD = "formLoad";
 
-
-    void notify(ListenerVariable listenerVariable);
+    /**
+     * 通知
+     * @param variable variable
+     */
+    void notify(ListenerVariable variable);
 }

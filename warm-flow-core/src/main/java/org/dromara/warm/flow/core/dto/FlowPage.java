@@ -32,8 +32,8 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @Accessors(chain = true)
-public class FlowPage<T> implements Serializable
-{
+public class FlowPage<T> implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     /** 总记录数 */
@@ -54,8 +54,7 @@ public class FlowPage<T> implements Serializable
      * @param list 列表数据
      * @param total 总记录数
      */
-    public FlowPage(List<T> list, int total)
-    {
+    public FlowPage(List<T> list, int total) {
         this.rows = list;
         this.total = total;
     }

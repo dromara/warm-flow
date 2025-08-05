@@ -31,6 +31,7 @@ public interface ListenerStrategy extends ExpressionStrategy<Boolean> {
      * 监听器表达式策略实现类集合
      */
     List<ExpressionStrategy<Boolean>> EXPRESSION_STRATEGY_LIST = new ArrayList<>();
+
     @Override
     default void setExpression(ExpressionStrategy<Boolean> expressionStrategy) {
         EXPRESSION_STRATEGY_LIST.add(expressionStrategy);

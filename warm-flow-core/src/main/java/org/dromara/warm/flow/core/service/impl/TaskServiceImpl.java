@@ -387,7 +387,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     public boolean transfer(Long taskId, FlowParams flowParams) {
         AssertUtil.isNotNull(taskId, ExceptionCons.NULL_TASK_ID);
         AssertUtil.isNotNull(flowParams.getHandler(), ExceptionCons.HANDLER_NOT_EMPTY);
-        AssertUtil.isNotNull(flowParams.getAddHandlers(), ExceptionCons.NUll_TRANSFER_HANDLER);
+        AssertUtil.isNotNull(flowParams.getAddHandlers(), ExceptionCons.NULL_TRANSFER_HANDLER);
         List<User> users = FlowEngine.userService().getByProcessedBys(taskId, flowParams.getAddHandlers(), UserType.TRANSFER.getKey());
         AssertUtil.isNotEmpty(users, ExceptionCons.IS_ALREADY_TRANSFER);
         flowParams.cooperateType(CooperateType.TRANSFER.getKey())
@@ -400,7 +400,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     public boolean depute(Long taskId, FlowParams flowParams) {
         AssertUtil.isNotNull(taskId, ExceptionCons.NULL_TASK_ID);
         AssertUtil.isNotNull(flowParams.getHandler(), ExceptionCons.HANDLER_NOT_EMPTY);
-        AssertUtil.isNotNull(flowParams.getAddHandlers(), ExceptionCons.NUll_DEPUTE_HANDLER);
+        AssertUtil.isNotNull(flowParams.getAddHandlers(), ExceptionCons.NULL_DEPUTE_HANDLER);
         List<User> users = FlowEngine.userService().getByProcessedBys(taskId, flowParams.getAddHandlers(), UserType.DEPUTE.getKey());
         AssertUtil.isNotEmpty(users, ExceptionCons.IS_ALREADY_DEPUTE);
         flowParams.cooperateType(CooperateType.DEPUTE.getKey())
@@ -413,7 +413,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     public boolean addSignature(Long taskId, FlowParams flowParams) {
         AssertUtil.isNotNull(taskId, ExceptionCons.NULL_TASK_ID);
         AssertUtil.isNotNull(flowParams.getHandler(), ExceptionCons.HANDLER_NOT_EMPTY);
-        AssertUtil.isNotNull(flowParams.getAddHandlers(), ExceptionCons.NUll_ADD_SIGNATURE_HANDLER);
+        AssertUtil.isNotNull(flowParams.getAddHandlers(), ExceptionCons.NULL_ADD_SIGNATURE_HANDLER);
         List<User> users = FlowEngine.userService().getByProcessedBys(taskId, flowParams.getAddHandlers(), UserType.APPROVAL.getKey());
         AssertUtil.isNotEmpty(users, ExceptionCons.IS_ALREADY_SIGN);
         flowParams.cooperateType(CooperateType.ADD_SIGNATURE.getKey());
@@ -425,7 +425,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     public boolean reductionSignature(Long taskId, FlowParams flowParams) {
         AssertUtil.isNotNull(taskId, ExceptionCons.NULL_TASK_ID);
         AssertUtil.isNotNull(flowParams.getHandler(), ExceptionCons.HANDLER_NOT_EMPTY);
-        AssertUtil.isNotNull(flowParams.getReductionHandlers(), ExceptionCons.NUll_REDUCTION_SIGNATURE_HANDLER);
+        AssertUtil.isNotNull(flowParams.getReductionHandlers(), ExceptionCons.NULL_REDUCTION_SIGNATURE_HANDLER);
         List<User> users = FlowEngine.userService().listByAssociatedAndTypes(taskId
                 , UserType.APPROVAL.getKey(), UserType.TRANSFER.getKey());
         AssertUtil.isTrue(CollUtil.isEmpty(users) || users.size() == 1, ExceptionCons.REDUCTION_SIGN_ONE_ERROR);
@@ -503,7 +503,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 .setFlowStatus(StringUtils.emptyDefault(flowParams.getFlowStatus(),
                                 setFlowStatus(node.getNodeType(), flowParams.getSkipType())))
                 .setCreateTime(Instant.now())
-                .setPermissionList(StringUtils.str2List(node.getPermissionFlag(), FlowCons.splitAt));
+                .setPermissionList(StringUtils.str2List(node.getPermissionFlag(), FlowCons.SPLIT_AT));
 
         if (StringUtils.isNotEmpty(node.getFormCustom()) && StringUtils.isNotEmpty(node.getFormPath())) {
             // 节点有自定义表单则使用
