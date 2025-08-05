@@ -22,7 +22,7 @@ import org.dromara.warm.flow.core.dto.*;
 import org.dromara.warm.flow.core.entity.Form;
 import org.dromara.warm.flow.core.entity.Instance;
 import org.dromara.warm.flow.core.enums.FormCustomEnum;
-import org.dromara.warm.flow.core.enums.ModeEnum;
+import org.dromara.warm.flow.core.enums.ModelEnum;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.utils.ExceptionUtil;
@@ -92,7 +92,7 @@ public class WarmFlowService {
             DefJson defJson;
             if (id == null) {
                 defJson = new DefJson()
-                        .setModelValue(ModeEnum.CLASSICS.name())
+                        .setModelValue(ModelEnum.CLASSICS.name())
                         .setFormCustom(FormCustomEnum.N.name());
             } else {
                 defJson = FlowEngine.defService().queryDesign(id);
@@ -123,7 +123,7 @@ public class WarmFlowService {
             defJson.setInstance(instance);
 
             // 获取流程图三原色
-            defJson.setChartStatusColor(FlowEngine.chartService().getChartRgb());
+            defJson.setChartStatusColor(FlowEngine.chartService().getChartRgb(defJson.getModelValue()));
             // 是否显示流程图顶部文字
             defJson.setTopTextShow(FlowEngine.getFlowConfig().isTopTextShow());
             // 需要业务系统实现该接口

@@ -54,7 +54,7 @@ public class WarmFlowController {
     @Post
     @Mapping("/save-json")
     @Tran
-    public ApiResult<Void> saveJson(DefJson defJson, @Header boolean onlyNodeSkip) throws Exception {
+    public ApiResult<Void> saveJson(DefJson defJson, @Header("onlyNodeSkip") boolean onlyNodeSkip) throws Exception {
         return WarmFlowService.saveJson(defJson, onlyNodeSkip);
     }
 

@@ -121,13 +121,13 @@ public class ChartServiceImpl implements ChartService {
     }
 
     @Override
-    public List<String> getChartRgb() {
+    public List<String> getChartRgb(String modelValue) {
         List<String> chartStatusColor = new ArrayList<>();
-        Color done = ChartStatus.getDone();
+        Color done = ChartStatus.getDone(modelValue);
         chartStatusColor.add(done.getRed() + "," + done.getGreen() + "," + done.getBlue());
-        Color toDo = ChartStatus.getToDo();
+        Color toDo = ChartStatus.getToDo(modelValue);
         chartStatusColor.add(toDo.getRed() + "," + toDo.getGreen() + "," + toDo.getBlue());
-        Color notDone = ChartStatus.getNotDone();
+        Color notDone = ChartStatus.getNotDone(modelValue);
         chartStatusColor.add(notDone.getRed() + "," + notDone.getGreen() + "," + notDone.getBlue());
         return chartStatusColor;
     }

@@ -30,7 +30,6 @@ import org.dromara.warm.flow.core.utils.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -502,7 +501,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 .setNodeType(node.getNodeType())
                 .setFlowStatus(StringUtils.emptyDefault(flowParams.getFlowStatus(),
                                 setFlowStatus(node.getNodeType(), flowParams.getSkipType())))
-                .setCreateTime(Instant.now())
+                .setCreateTime(new Date())
                 .setPermissionList(StringUtils.str2List(node.getPermissionFlag(), FlowCons.SPLIT_AT));
 
         if (StringUtils.isNotEmpty(node.getFormCustom()) && StringUtils.isNotEmpty(node.getFormPath())) {
@@ -527,7 +526,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     @Override
     public void setInsFinishInfo(Instance instance, List<Task> addTasks, FlowParams flowParams) {
-        instance.setUpdateTime(Instant.now());
+        instance.setUpdateTime(new Date());
         // 合并流程变量到实例对象
         mergeVariable(instance, flowParams.getVariable());
         if (CollUtil.isNotEmpty(addTasks)) {

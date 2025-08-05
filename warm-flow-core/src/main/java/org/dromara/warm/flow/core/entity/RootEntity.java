@@ -16,7 +16,7 @@
 package org.dromara.warm.flow.core.entity;
 
 import java.io.Serializable;
-import java.time.Instant;
+import java.util.Date;
 
 /**
  * 流程基础entity
@@ -30,13 +30,13 @@ public interface RootEntity extends Serializable {
 
     RootEntity setId(Long id);
 
-    Instant getCreateTime();
+    Date getCreateTime();
 
-    RootEntity setCreateTime(Instant createTime);
+    RootEntity setCreateTime(Date createTime);
 
-    Instant getUpdateTime();
+    Date getUpdateTime();
 
-    RootEntity setUpdateTime(Instant updateTime);
+    RootEntity setUpdateTime(Date updateTime);
 
     String getTenantId();
 

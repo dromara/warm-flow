@@ -15,7 +15,7 @@
  */
 package org.dromara.warm.flow.core.entity;
 
-import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -33,16 +33,16 @@ public interface Task extends RootEntity {
     Task setId(Long id);
 
     @Override
-    Instant getCreateTime();
+    Date getCreateTime();
 
     @Override
-    Task setCreateTime(Instant createTime);
+    Task setCreateTime(Date createTime);
 
     @Override
-    Instant getUpdateTime();
+    Date getUpdateTime();
 
     @Override
-    Task setUpdateTime(Instant updateTime);
+    Task setUpdateTime(Date updateTime);
 
     @Override
     String getTenantId();

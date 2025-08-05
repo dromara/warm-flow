@@ -17,7 +17,7 @@ package org.dromara.warm.flow.core.entity;
 
 import org.dromara.warm.flow.core.FlowEngine;
 
-import java.time.Instant;
+import java.util.Date;
 
 /**
  * 节点跳转关联对象 flow_skip
@@ -34,16 +34,16 @@ public interface Skip extends RootEntity {
     Skip setId(Long id);
 
     @Override
-    Instant getCreateTime();
+    Date getCreateTime();
 
     @Override
-    Skip setCreateTime(Instant createTime);
+    Skip setCreateTime(Date createTime);
 
     @Override
-    Instant getUpdateTime();
+    Date getUpdateTime();
 
     @Override
-    Skip setUpdateTime(Instant updateTime);
+    Skip setUpdateTime(Date updateTime);
 
     @Override
     String getTenantId();

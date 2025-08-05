@@ -15,7 +15,7 @@
  */
 package org.dromara.warm.flow.core.entity;
 
-import java.time.Instant;
+import java.util.Date;
 
 /**
  * 流程用户 flow_user
@@ -32,16 +32,16 @@ public interface User extends RootEntity {
     User setId(Long id);
 
     @Override
-    Instant getCreateTime();
+    Date getCreateTime();
 
     @Override
-    User setCreateTime(Instant createTime);
+    User setCreateTime(Date createTime);
 
     @Override
-    Instant getUpdateTime();
+    Date getUpdateTime();
 
     @Override
-    User setUpdateTime(Instant updateTime);
+    User setUpdateTime(Date updateTime);
 
     @Override
     String getTenantId();

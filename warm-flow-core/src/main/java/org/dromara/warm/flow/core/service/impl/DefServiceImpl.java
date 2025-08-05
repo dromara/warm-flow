@@ -395,7 +395,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                         highestVersion = version;
                     }
                 } catch (NumberFormatException e) {
-                    long timestamp = otherDef.getCreateTime().toEpochMilli();
+                    long timestamp = otherDef.getCreateTime().getTime();
                     if (timestamp > latestTimestamp) {
                         latestTimestamp = timestamp;
                         latestNonPositiveVersion = otherDef.getVersion();

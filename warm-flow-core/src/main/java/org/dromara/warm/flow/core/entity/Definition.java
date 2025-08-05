@@ -17,7 +17,7 @@ package org.dromara.warm.flow.core.entity;
 
 import org.dromara.warm.flow.core.FlowEngine;
 
-import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -34,16 +34,16 @@ public interface Definition extends RootEntity {
     Definition setId(Long id);
 
     @Override
-    Instant getCreateTime();
+    Date getCreateTime();
 
     @Override
-    Definition setCreateTime(Instant createTime);
+    Definition setCreateTime(Date createTime);
 
     @Override
-    Instant getUpdateTime();
+    Date getUpdateTime();
 
     @Override
-    Definition setUpdateTime(Instant updateTime);
+    Definition setUpdateTime(Date updateTime);
 
     @Override
     String getTenantId();

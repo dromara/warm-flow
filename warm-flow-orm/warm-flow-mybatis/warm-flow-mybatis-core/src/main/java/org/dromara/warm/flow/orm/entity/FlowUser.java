@@ -19,7 +19,8 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import org.dromara.warm.flow.core.entity.User;
 
-import java.time.Instant;
+import java.util.Date;
+
 
 /**
  * 流程用户对象 flow_user
@@ -39,12 +40,12 @@ public class FlowUser implements User {
     /**
      * 创建时间
      */
-    private Instant createTime;
+    private Date createTime;
 
     /**
      * 更新时间
      */
-    private Instant updateTime;
+    private Date updateTime;
 
     /**
      * 租户ID

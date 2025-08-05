@@ -32,8 +32,8 @@ import org.dromara.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import org.dromara.warm.flow.core.service.InsService;
 import org.dromara.warm.flow.core.utils.*;
 
-import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -175,7 +175,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
     private Instance setStartInstance(Node firstBetweenNode, String businessId
             , FlowParams flowParams) {
         Instance instance = FlowEngine.newIns();
-        Instant now = Instant.now();
+        Date now = new Date();
         FlowEngine.dataFillHandler().idFill(instance);
         // 关联业务id,起始后面可以不用到业务id,传业务id目前来看只是为了批量创建流程的时候能创建出有区别化的流程,也是为了后期需要用到businessId。
         instance.setDefinitionId(firstBetweenNode.getDefinitionId())

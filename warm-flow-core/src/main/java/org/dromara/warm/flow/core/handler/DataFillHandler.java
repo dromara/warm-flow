@@ -19,7 +19,7 @@ import org.dromara.warm.flow.core.entity.RootEntity;
 import org.dromara.warm.flow.core.utils.IdUtils;
 import org.dromara.warm.flow.core.utils.ObjectUtil;
 
-import java.time.Instant;
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -52,8 +52,8 @@ public interface DataFillHandler {
     default void insertFill(Object object) {
         RootEntity entity = (RootEntity) object;
         if (ObjectUtil.isNotNull(entity)) {
-            entity.setCreateTime(ObjectUtil.isNotNull(entity.getCreateTime()) ? entity.getCreateTime() : Instant.now());
-            entity.setUpdateTime(ObjectUtil.isNotNull(entity.getUpdateTime()) ? entity.getUpdateTime() : Instant.now());
+            entity.setCreateTime(ObjectUtil.isNotNull(entity.getCreateTime()) ? entity.getCreateTime() : new Date());
+            entity.setUpdateTime(ObjectUtil.isNotNull(entity.getUpdateTime()) ? entity.getUpdateTime() : new Date());
         }
     }
 
@@ -65,7 +65,7 @@ public interface DataFillHandler {
     default void updateFill(Object object) {
         RootEntity entity = (RootEntity) object;
         if (ObjectUtil.isNotNull(entity)) {
-            entity.setUpdateTime(ObjectUtil.isNotNull(entity.getUpdateTime()) ? entity.getUpdateTime() : Instant.now());
+            entity.setUpdateTime(ObjectUtil.isNotNull(entity.getUpdateTime()) ? entity.getUpdateTime() : new Date());
         }
     }
 }

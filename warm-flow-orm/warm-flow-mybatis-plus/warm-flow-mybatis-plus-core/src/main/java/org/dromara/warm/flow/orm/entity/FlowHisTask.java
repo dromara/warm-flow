@@ -20,7 +20,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import org.dromara.warm.flow.core.entity.HisTask;
 
-import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -44,13 +44,13 @@ public class FlowHisTask implements HisTask {
      * 任务开始时间
      */
     @TableField(fill = FieldFill.INSERT)
-    private Instant createTime;
+    private Date createTime;
 
     /**
      * 审批完成时间
      */
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    private Instant updateTime;
+    private Date updateTime;
 
     /**
      * 租户ID

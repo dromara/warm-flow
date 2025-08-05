@@ -26,7 +26,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum ModeEnum {
+public enum ModelEnum {
 
     // 经典模型
     CLASSICS,
