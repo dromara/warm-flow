@@ -181,9 +181,13 @@ const handleOptionClick = (item) => {
 
 // 使用 watch 监听 activeStep 的变化
 watch(activeStep, async (newIndex, oldIndex) => {
+  debugger
   if (oldIndex === 0 && !onlyDesignShow.value) {
     let validate = await proxy.$refs.baseInfoRef.validate();
-    if (!validate) return;
+    if (!validate) {
+      activeStep.value = oldIndex;
+      return;
+    }
   }
 
   if (newIndex === 1) {
