@@ -17,7 +17,7 @@
               :key="index"
               class="step-item"
               :class="{ 'active': activeStep === index }"
-              @click="activeStep = index"
+              @click="handleStepClick(index)"
           >
             <svg-icon :icon-class="step.icon" style="margin-right: 5px"/>
             <span>{{ step.title }}</span>
@@ -179,18 +179,14 @@ const handleOptionClick = (item) => {
   tooltipVisible.value = false;
 };
 
-// 使用 watch 监听 activeStep 的变化
-watch(activeStep, async (newIndex, oldIndex) => {
-  debugger
-  if (oldIndex === 0 && !onlyDesignShow.value) {
+async function handleStepClick(index) {
+  if (activeStep.value === 0 && !onlyDesignShow.value) {
     let validate = await proxy.$refs.baseInfoRef.validate();
-    if (!validate) {
-      activeStep.value = oldIndex;
-      return;
-    }
+    if (!validate) return
   }
+  activeStep.value = index;
 
-  if (newIndex === 1) {
+  if (index === 1) {
     // 原设计器模型
     const modeOrg = logicJson.value.modelValue;
     // 获取基础信息
@@ -211,7 +207,7 @@ watch(activeStep, async (newIndex, oldIndex) => {
       });
     }
   }
-});
+}
 
 
 onMounted(() => {
@@ -241,7 +237,7 @@ onMounted(() => {
         };
       }
       if (onlyDesignShow.value) {
-        activeStep.value = 1
+        handleStepClick(1)
       }
     }
   });
