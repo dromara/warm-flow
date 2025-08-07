@@ -44,6 +44,12 @@ public interface User extends RootEntity {
     User setUpdateTime(Date updateTime);
 
     @Override
+    String getUpdateBy();
+
+    @Override
+    User setUpdateBy(String updateBy);
+
+    @Override
     String getTenantId();
 
     @Override

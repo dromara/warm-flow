@@ -61,7 +61,7 @@ public class FlowConfigUtil {
         // 每一个流程的开始节点个数
         int startNum = 0;
         Set<String> nodeCodeSet = new HashSet<>();
-        // 便利一个流程中的各个节点
+        // 遍历一个流程中的各个节点
         for (Node node : nodeList) {
             initNodeAndCondition(node, definition.getId(), definition.getVersion());
             startNum = checkStartAndSame(node, startNum, flowName, nodeCodeSet);

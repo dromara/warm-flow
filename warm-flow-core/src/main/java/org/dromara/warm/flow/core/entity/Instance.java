@@ -47,6 +47,12 @@ public interface Instance extends RootEntity {
     Instance setUpdateTime(Date updateTime);
 
     @Override
+    String getUpdateBy();
+
+    @Override
+    Instance setUpdateBy(String updateBy);
+
+    @Override
     String getTenantId();
 
     @Override

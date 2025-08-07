@@ -45,6 +45,12 @@ public interface HisTask extends RootEntity {
     Date getUpdateTime();
 
     @Override
+    String getUpdateBy();
+
+    @Override
+    HisTask setUpdateBy(String updateBy);
+
+    @Override
     HisTask setUpdateTime(Date updateTime);
 
     @Override

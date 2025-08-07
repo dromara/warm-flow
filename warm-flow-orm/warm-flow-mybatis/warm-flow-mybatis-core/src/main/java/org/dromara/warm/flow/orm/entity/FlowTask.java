@@ -58,6 +58,10 @@ public  class FlowTask implements Task {
      */
     private String delFlag;
 
+    private String updateBy;
+
+    private String createBy;
+
     /**
      * 对应flow_definition表的id
      */

@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.dromara.warm</groupId>
         <artifactId>warm-flow-plugin</artifactId>
-        <version>1.8.0-m3</version>
+        <version>1.8.0-cbys-SNAPSHOT</version>
     </parent>
 
     <name>warm-flow-plugin-ui</name>

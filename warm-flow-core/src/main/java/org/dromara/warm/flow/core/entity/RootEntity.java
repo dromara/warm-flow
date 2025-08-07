@@ -46,4 +46,14 @@ public interface RootEntity extends Serializable {
 
     RootEntity setDelFlag(String delFlag);
 
+    String getCreateBy();
+
+    RootEntity setCreateBy(String createBy);
+
+    String getUpdateBy();
+
+    RootEntity setUpdateBy(String updateBy);
+
+
+
 }

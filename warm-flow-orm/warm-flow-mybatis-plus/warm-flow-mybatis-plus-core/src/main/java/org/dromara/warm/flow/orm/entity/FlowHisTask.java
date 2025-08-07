@@ -53,6 +53,11 @@ public class FlowHisTask implements HisTask {
     private Date updateTime;
 
     /**
+     * 更新人
+     */
+    private String updateBy;
+
+    /**
      * 租户ID
      */
     private String tenantId;
@@ -164,7 +169,6 @@ public class FlowHisTask implements HisTask {
     /**
      * 创建者
      */
-    @TableField(exist = false)
     private String createBy;
 
 

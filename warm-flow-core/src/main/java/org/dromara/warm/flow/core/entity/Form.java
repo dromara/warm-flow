@@ -43,6 +43,18 @@ public interface Form extends RootEntity {
     Form setUpdateTime(Date updateTime);
 
     @Override
+    String getCreateBy();
+
+    @Override
+    Form setCreateBy(String createBy);
+
+    @Override
+    String getUpdateBy();
+
+    @Override
+    Form setUpdateBy(String updateBy);
+
+    @Override
     String getTenantId();
 
     @Override

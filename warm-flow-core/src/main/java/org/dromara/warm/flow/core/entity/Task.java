@@ -45,6 +45,18 @@ public interface Task extends RootEntity {
     Task setUpdateTime(Date updateTime);
 
     @Override
+    String getUpdateBy();
+
+    @Override
+    Task setUpdateBy(String updateBy);
+
+    @Override
+    String getCreateBy();
+
+    @Override
+    Task setCreateBy(String createBy);
+
+    @Override
     String getTenantId();
 
     @Override

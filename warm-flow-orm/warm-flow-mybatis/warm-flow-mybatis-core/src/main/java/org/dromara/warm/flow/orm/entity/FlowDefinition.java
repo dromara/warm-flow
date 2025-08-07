@@ -50,6 +50,10 @@ public class FlowDefinition implements Definition {
      */
     private Date updateTime;
 
+    private String updateBy;
+
+    private String createBy;
+
     /**
      * 租户ID
      */

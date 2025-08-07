@@ -46,6 +46,18 @@ public interface Definition extends RootEntity {
     Definition setUpdateTime(Date updateTime);
 
     @Override
+    String getUpdateBy();
+
+    @Override
+    Definition setUpdateBy(String updateBy);
+
+    @Override
+    String getCreateBy();
+
+    @Override
+    Definition setCreateBy(String createBy);
+
+    @Override
     String getTenantId();
 
     @Override
@@ -126,7 +138,9 @@ public interface Definition extends RootEntity {
                 .setFormPath(this.getFormPath())
                 .setListenerType(this.getListenerType())
                 .setListenerPath(this.getListenerPath())
-                .setExt(this.getExt());
+                .setExt(this.getExt())
+                .setCreateBy(this.getCreateBy())
+                .setUpdateBy(this.getUpdateBy());
 
     }
 }
