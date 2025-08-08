@@ -77,8 +77,8 @@ public class ExpressionUtil {
     /**
      * 办理人表达式替换
      *
-     * @param addTasks      任务列表
-     * @param flowParams    流程变量
+     * @param addTasks   任务列表
+     * @param flowParams 流程变量
      */
     public static void evalVariable(List<Task> addTasks, FlowParams flowParams) {
         if (CollUtil.isEmpty(addTasks)) {
@@ -87,15 +87,16 @@ public class ExpressionUtil {
         Map<String, Object> variable = flowParams.getVariable();
         addTasks.forEach(addTask -> {
             List<String> permissions = addTask.getPermissionList().stream()
-                .map(s -> {
-                    List<String> result = evalVariable(s, variable);
-                    if (CollUtil.isNotEmpty(result)) {
-                        return result;
-                    }
-                    return Collections.singletonList(s);
-                }).filter(Objects::nonNull)
-                .flatMap(List::stream)
-                .collect(Collectors.toList());
+                    .map(s -> {
+                        List<String> result = evalVariable(s, variable);
+                        if (CollUtil.isNotEmpty(result)) {
+                            return result;
+                        }
+                        return Collections.singletonList(s);
+                    }).filter(Objects::nonNull)
+                    .flatMap(List::stream)
+                    .distinct()
+                    .collect(Collectors.toList());
 
             // 转换办理人，比如设计器中预设了能办理的人，如果其中包含角色或者部门id等，可以通过此接口进行转换成用户id
             PermissionHandler permissionHandler = FlowEngine.permissionHandler();
@@ -112,9 +113,9 @@ public class ExpressionUtil {
     /**
      * 处理下个任务的处理人
      *
-     * @param nextHandlerAppend     下个任务处理人配置类型
-     * @param nextHandler           下个任务的处理人
-     * @param permissions           节点配置的原下个任务的处理人
+     * @param nextHandlerAppend 下个任务处理人配置类型
+     * @param nextHandler       下个任务的处理人
+     * @param permissions       节点配置的原下个任务的处理人
      * @author xiarg
      * @since 2025/06/03 15:33:38
      */
@@ -139,7 +140,7 @@ public class ExpressionUtil {
      */
     public static List<String> evalVariable(String expression, Map<String, Object> variable) {
         return getValue(VariableStrategy.EXPRESSION_STRATEGY_LIST, expression, variable
-                            , ExceptionCons.NULL_VARIABLE_STRATEGY);
+                , ExceptionCons.NULL_VARIABLE_STRATEGY);
     }
 
     /**
@@ -156,9 +157,9 @@ public class ExpressionUtil {
     /**
      * 获取表达式对应的值
      *
-     * @param strategyList  表达式策略列表
-     * @param expression    变量表达式
-     * @param variable      流程变量
+     * @param strategyList 表达式策略列表
+     * @param expression   变量表达式
+     * @param variable     流程变量
      * @return 执行结果
      */
     private static <T> T getValue(List<ExpressionStrategy<T>> strategyList, String expression
