@@ -57,10 +57,10 @@ public interface DataFillHandler {
             entity.setCreateTime(ObjectUtil.isNotNull(entity.getCreateTime()) ? entity.getCreateTime() : new Date());
             entity.setUpdateTime(ObjectUtil.isNotNull(entity.getUpdateTime()) ? entity.getUpdateTime() : new Date());
             if (StringUtils.isEmpty(entity.getCreateBy()) && ObjectUtil.isNotNull(CurrentUserHolder.getCurrentUser())) {
-                entity.setCreateBy(CurrentUserHolder.getCurrentUser().getUserName());
+                entity.setCreateBy(CurrentUserHolder.getCurrentUser().getUserId());
             }
             if (StringUtils.isEmpty(entity.getUpdateBy()) && ObjectUtil.isNotNull(CurrentUserHolder.getCurrentUser())) {
-                entity.setUpdateBy(CurrentUserHolder.getCurrentUser().getUserName());
+                entity.setUpdateBy(CurrentUserHolder.getCurrentUser().getUserId());
             }
         }
     }
@@ -75,7 +75,7 @@ public interface DataFillHandler {
         if (ObjectUtil.isNotNull(entity)) {
             entity.setUpdateTime(ObjectUtil.isNotNull(entity.getUpdateTime()) ? entity.getUpdateTime() : new Date());
             if (StringUtils.isEmpty(entity.getUpdateBy()) && ObjectUtil.isNotNull(CurrentUserHolder.getCurrentUser())) {
-                entity.setUpdateBy(CurrentUserHolder.getCurrentUser().getUserName());
+                entity.setUpdateBy(CurrentUserHolder.getCurrentUser().getUserId());
             }
         }
     }

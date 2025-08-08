@@ -31,7 +31,7 @@ import java.util.List;
  */
 @Data
 @Accessors(chain = true)
-public  class FlowTask implements Task {
+public class FlowTask implements Task {
 
     /**
      * 主键
@@ -71,6 +71,11 @@ public  class FlowTask implements Task {
      * 流程实例表id
      */
     private Long instanceId;
+
+    /**
+     * 流程发起人
+     */
+    private String initiator;
 
     /**
      * 流程名称

@@ -79,6 +79,12 @@ public class FlowTask implements Task {
     private Long instanceId;
 
     /**
+     * 流程发起人
+     */
+    @TableField(exist = false)
+    private String initiator;
+
+    /**
      * 流程名称
      */
     @TableField(exist = false)
