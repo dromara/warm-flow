@@ -50,7 +50,7 @@
 
       <BaseInfo :style="baseInfoStyle" ref="baseInfoRef" v-if="!onlyDesignShow" v-show="activeStep === 0"
                 :logic-json="logicJson" :category-list="categoryList" :definition-id="definitionId" :disabled="disabled"
-                @update:flow-name="handleFlowNameUpdate"/>
+                @update:flow-name="handleFlowNameUpdate" @update:model-value="handleModelValueUpdate"/>
 
       <div class="container" ref="containerRef" v-show="activeStep === 1">
         <PropertySetting ref="propertySettingRef" :node="nodeClick" :lf="lf" :disabled="disabled"
