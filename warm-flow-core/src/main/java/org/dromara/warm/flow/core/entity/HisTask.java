@@ -77,6 +77,15 @@ public interface HisTask extends RootEntity {
 
     HisTask setInstanceId(Long instanceId);
 
+    /**
+     * 流程发起人，用于前端展示及搜索，提升体验
+     *
+     * @return
+     */
+    String getInitiator();
+
+    HisTask setInitiator(String initiator);
+
     Integer getCooperateType();
 
     HisTask setCooperateType(Integer cooperateType);

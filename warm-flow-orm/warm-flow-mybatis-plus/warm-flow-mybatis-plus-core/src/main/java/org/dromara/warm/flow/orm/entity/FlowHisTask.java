@@ -85,6 +85,18 @@ public class FlowHisTask implements HisTask {
     private Long instanceId;
 
     /**
+     * 流程发起人
+     */
+    @TableField(exist = false)
+    private String initiator;
+
+    /**
+     * 发起时间
+     */
+    @TableField(exist = false)
+    private Date initiateTime;
+
+    /**
      * 任务表id
      */
     private Long taskId;
