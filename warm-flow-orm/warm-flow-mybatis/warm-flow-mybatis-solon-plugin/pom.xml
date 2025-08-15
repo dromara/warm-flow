@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.dromara.warm</groupId>
         <artifactId>warm-flow-mybatis</artifactId>
-        <version>1.8.0-cbys-SNAPSHOT</version>
+        <version>1.8.0</version>
     </parent>
 
     <name>warm-flow-mybatis-solon-plugin</name>
