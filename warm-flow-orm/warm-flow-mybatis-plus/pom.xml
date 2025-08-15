@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.dromara.warm</groupId>
         <artifactId>warm-flow-orm</artifactId>
-        <version>1.8.0</version>
+        <version>1.8.0_cbys</version>
     </parent>
 
     <name>warm-flow-mybatis-plus</name>
