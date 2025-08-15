@@ -71,11 +71,13 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
         queryWrapper.orderBy(StringUtils.isNotEmpty(page.getOrderBy())
                 , page.getIsAsc().equals(SqlKeyword.ASC.getSqlSegment()), page.getOrderBy());
 
-        com.baomidou.mybatisplus.extension.plugins.pagination.Page<T> tPage
-                = getMapper().selectPage(pagePlus, queryWrapper);
+        com.baomidou.mybatisplus.extension.plugins.pagination.Page<T> tPage = getMapper().selectPage(pagePlus, queryWrapper);
 
         if (ObjectUtil.isNotNull(tPage)) {
-            return new Page<>(tPage.getRecords(), tPage.getTotal());
+            Page<T> rPage = new Page<>(tPage.getRecords(), tPage.getTotal());
+            rPage.setPageNum(page.getPageNum());
+            rPage.setPageSize(page.getPageSize());
+            return rPage;
         }
         return Page.empty();
     }
