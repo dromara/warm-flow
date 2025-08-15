@@ -51,6 +51,8 @@ public class FlowInstance implements Instance {
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updateTime;
 
+    private String updateBy;
+
     /**
      * 租户ID
      */

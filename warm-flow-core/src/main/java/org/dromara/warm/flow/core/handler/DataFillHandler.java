@@ -16,8 +16,10 @@
 package org.dromara.warm.flow.core.handler;
 
 import org.dromara.warm.flow.core.entity.RootEntity;
+import org.dromara.warm.flow.core.holder.CurrentUserHolder;
 import org.dromara.warm.flow.core.utils.IdUtils;
 import org.dromara.warm.flow.core.utils.ObjectUtil;
+import org.dromara.warm.flow.core.utils.StringUtils;
 
 import java.util.Date;
 import java.util.Objects;
@@ -54,6 +56,12 @@ public interface DataFillHandler {
         if (ObjectUtil.isNotNull(entity)) {
             entity.setCreateTime(ObjectUtil.isNotNull(entity.getCreateTime()) ? entity.getCreateTime() : new Date());
             entity.setUpdateTime(ObjectUtil.isNotNull(entity.getUpdateTime()) ? entity.getUpdateTime() : new Date());
+            if (StringUtils.isEmpty(entity.getCreateBy()) && ObjectUtil.isNotNull(CurrentUserHolder.getCurrentUser())) {
+                entity.setCreateBy(CurrentUserHolder.getCurrentUser().getUserId());
+            }
+            if (StringUtils.isEmpty(entity.getUpdateBy()) && ObjectUtil.isNotNull(CurrentUserHolder.getCurrentUser())) {
+                entity.setUpdateBy(CurrentUserHolder.getCurrentUser().getUserId());
+            }
         }
     }
 
@@ -66,6 +74,9 @@ public interface DataFillHandler {
         RootEntity entity = (RootEntity) object;
         if (ObjectUtil.isNotNull(entity)) {
             entity.setUpdateTime(ObjectUtil.isNotNull(entity.getUpdateTime()) ? entity.getUpdateTime() : new Date());
+            if (StringUtils.isEmpty(entity.getUpdateBy()) && ObjectUtil.isNotNull(CurrentUserHolder.getCurrentUser())) {
+                entity.setUpdateBy(CurrentUserHolder.getCurrentUser().getUserId());
+            }
         }
     }
 }

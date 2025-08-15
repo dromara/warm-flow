@@ -107,6 +107,8 @@ public class FlowInstance implements Instance {
      */
     private String createBy;
 
+    private String updateBy;
+
     /**
      * 审批表单是否自定义（Y是 2否）
      */

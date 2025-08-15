@@ -47,6 +47,8 @@ public class FlowUser implements User {
      */
     private Date updateTime;
 
+    private String updateBy;
+
     /**
      * 租户ID
      */

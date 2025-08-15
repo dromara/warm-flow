@@ -45,6 +45,18 @@ public interface Task extends RootEntity {
     Task setUpdateTime(Date updateTime);
 
     @Override
+    String getUpdateBy();
+
+    @Override
+    Task setUpdateBy(String updateBy);
+
+    @Override
+    String getCreateBy();
+
+    @Override
+    Task setCreateBy(String createBy);
+
+    @Override
     String getTenantId();
 
     @Override
@@ -63,6 +75,15 @@ public interface Task extends RootEntity {
     Long getInstanceId();
 
     Task setInstanceId(Long instanceId);
+
+    /**
+     * 流程发起人，用于前端展示及搜索，提升体验
+     *
+     * @return
+     */
+    String getInitiator();
+
+    Task setInitiator(String initiator);
 
     String getFlowName();
 

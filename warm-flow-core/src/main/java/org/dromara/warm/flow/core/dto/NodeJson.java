@@ -121,6 +121,10 @@ public class NodeJson {
      */
     private List<SkipJson> skipList = new ArrayList<>();
 
+    private String createBy;
+
+    private String updateBy;
+
     public Map<String, Object> getExtMap() {
         if (MapUtil.isEmpty(extMap)) {
             extMap = new HashMap<>();

@@ -10,7 +10,7 @@
       </el-form-item>
 
       <el-form-item label="设计器模型" prop="modelValue">
-        <el-radio-group v-model="form.modelValue" :disabled="!!definitionId">
+        <el-radio-group v-model="form.modelValue" :disabled="!!definitionId" @change="modelValueChange">
           <el-radio label="CLASSICS">经典模型</el-radio>
           <el-radio label="MIMIC">仿钉钉模型
             <span style="color: #ff4949; margin-left: 50px;">切换后重置节点，保存后不支持修改！</span>
@@ -197,6 +197,10 @@ function validate() {
 function nameChange(flowName) {
   // 可以在这里添加额外的逻辑，比如验证或格式化
   proxy.$emit('update:flow-name', flowName); // 如果需要通知父组件
+}
+
+function modelValueChange() {
+  proxy.$emit('update:model-value'); // 如果需要通知父组件
 }
 
 function getFormData() {

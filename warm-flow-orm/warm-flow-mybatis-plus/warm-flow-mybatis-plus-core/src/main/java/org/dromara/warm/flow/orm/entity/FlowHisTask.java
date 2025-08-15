@@ -53,6 +53,11 @@ public class FlowHisTask implements HisTask {
     private Date updateTime;
 
     /**
+     * 更新人
+     */
+    private String updateBy;
+
+    /**
      * 租户ID
      */
     private String tenantId;
@@ -78,6 +83,18 @@ public class FlowHisTask implements HisTask {
      * 流程实例表id
      */
     private Long instanceId;
+
+    /**
+     * 流程发起人
+     */
+    @TableField(exist = false)
+    private String initiator;
+
+    /**
+     * 发起时间
+     */
+    @TableField(exist = false)
+    private Date initiateTime;
 
     /**
      * 任务表id
@@ -164,7 +181,6 @@ public class FlowHisTask implements HisTask {
     /**
      * 创建者
      */
-    @TableField(exist = false)
     private String createBy;
 
 

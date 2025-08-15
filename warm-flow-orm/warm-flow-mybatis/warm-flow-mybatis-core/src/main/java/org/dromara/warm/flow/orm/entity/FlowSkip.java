@@ -57,6 +57,10 @@ public class FlowSkip implements Skip {
      */
     private String delFlag;
 
+    private String updateBy;
+
+    private String createBy;
+
     /**
      * 流程id
      */

@@ -52,6 +52,10 @@ public class FlowSkip implements Skip {
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updateTime;
 
+    private String createBy;
+
+    private String updateBy;
+
     /**
      * 租户ID
      */

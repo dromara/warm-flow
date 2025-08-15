@@ -26,6 +26,8 @@
         <result property="ext" column="ext"/>
         <result property="delFlag" column="del_flag"/>
         <result property="tenantId" column="tenant_id"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="createBy" column="create_by"/>
     </resultMap>
 
     <sql id="selectVo">
@@ -49,7 +51,9 @@
                t.update_time,
                t.ext,
                t.del_flag,
-               t.tenant_id
+               t.tenant_id,
+               t.create_by,
+               t.update_by
         from flow_node t
     </sql>
 
@@ -95,6 +99,8 @@
             <if test="entity.ext != null">and t.ext = #{entity.ext}</if>
             <if test="entity.delFlag != null  and entity.delFlag != ''">and t.del_flag = #{entity.delFlag}</if>
             <if test="entity.tenantId != null  and entity.tenantId != ''">and t.tenant_id = #{entity.tenantId}</if>
+            <if test="entity.updateBy != null and entity.updateBy != ''">and t.update_by = #{entity.updateBy}</if>
+            <if test="entity.createBy != null and entity.createBy != ''"> and t.create_by = #{entity.createBy}</if>
         </where>
     </sql>
 
@@ -120,7 +126,9 @@
         update_time,
         ext,
         del_flag,
-        tenant_id
+        tenant_id,
+        create_by,
+        update_by
         )
         values
         <foreach collection="list" item="item" separator=",">
@@ -145,7 +153,9 @@
             #{item.updateTime},
             #{item.ext},
             #{item.delFlag},
-            #{item.tenantId}
+            #{item.tenantId},
+            #{item.createBy},
+            #{item.updateBy}
             )
         </foreach>
     </sql>
@@ -174,7 +184,9 @@
         update_time,
         ext,
         del_flag,
-        tenant_id
+        tenant_id,
+        create_by,
+        update_by
         )
         <foreach collection="list" item="item" separator=" union all">
             select
@@ -198,7 +210,9 @@
             #{item.updateTime},
             #{item.ext},
             #{item.delFlag},
-            #{item.tenantId}
+            #{item.tenantId},
+            #{item.createBy},
+            #{item.updateBy}
             from dual
         </foreach>
     </sql>
@@ -287,6 +301,8 @@
             <if test="ext != null">ext,</if>
             <if test="delFlag != null and delFlag != ''">del_flag,</if>
             <if test="tenantId != null and tenantId != ''">tenant_id,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="updateBy != null and updateBy != ''">update_by,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -311,6 +327,8 @@
             <if test="ext != null">#{ext},</if>
             <if test="delFlag != null and delFlag != ''">#{delFlag},</if>
             <if test="tenantId != null and tenantId != ''">#{tenantId},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="updateBy != null and updateBy != ''">#{updateBy},</if>
         </trim>
     </insert>
 
@@ -335,6 +353,8 @@
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="ext != null">ext = #{ext},</if>
+            <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
         </trim>
         where id = #{id}
         <if test="delFlag != null  and delFlag != ''">and del_flag = #{delFlag}</if>

@@ -45,6 +45,12 @@ public interface HisTask extends RootEntity {
     Date getUpdateTime();
 
     @Override
+    String getUpdateBy();
+
+    @Override
+    HisTask setUpdateBy(String updateBy);
+
+    @Override
     HisTask setUpdateTime(Date updateTime);
 
     @Override
@@ -70,6 +76,15 @@ public interface HisTask extends RootEntity {
     Long getInstanceId();
 
     HisTask setInstanceId(Long instanceId);
+
+    /**
+     * 流程发起人，用于前端展示及搜索，提升体验
+     *
+     * @return
+     */
+    String getInitiator();
+
+    HisTask setInitiator(String initiator);
 
     Integer getCooperateType();
 

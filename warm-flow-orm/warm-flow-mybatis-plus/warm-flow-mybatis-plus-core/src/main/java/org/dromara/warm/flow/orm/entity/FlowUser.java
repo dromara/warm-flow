@@ -52,6 +52,8 @@ public class FlowUser implements User {
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updateTime;
 
+    private String updateBy;
+
     /**
      * 租户ID
      */
