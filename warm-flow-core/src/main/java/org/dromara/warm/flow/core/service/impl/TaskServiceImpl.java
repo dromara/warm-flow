@@ -256,7 +256,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 , Listener.LISTENER_START));
 
         // 验证权限是不是当前任务的发起人
-        if (flowParams.isIgnore()) {
+        if (!flowParams.isIgnore()) {
             AssertUtil.isFalse(instance.getCreateBy().equals(flowParams.getHandler())
                     , ExceptionCons.NOT_DEF_PROMOTER_NOT_CANCEL);
         }

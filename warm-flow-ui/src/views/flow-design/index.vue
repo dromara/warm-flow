@@ -17,7 +17,7 @@
               :key="index"
               class="step-item"
               :class="{ 'active': activeStep === index }"
-              @click="activeStep = index"
+              @click="handleStepClick(index)"
           >
             <svg-icon :icon-class="step.icon" style="margin-right: 5px"/>
             <span>{{ step.title }}</span>
@@ -48,16 +48,16 @@
         </div>
       </div>
 
-      <BaseInfo :style="baseInfoStyle" class="baseInfo" ref="baseInfoRef" v-if="!onlyDesignShow" v-show="activeStep === 0"
+      <BaseInfo :style="baseInfoStyle" ref="baseInfoRef" v-if="!onlyDesignShow" v-show="activeStep === 0"
                 :logic-json="logicJson" :category-list="categoryList" :definition-id="definitionId" :disabled="disabled"
-                @update:flow-name="handleFlowNameUpdate"/>
+                @update:flow-name="handleFlowNameUpdate" @update:model-value="handleModelValueUpdate"/>
 
       <div class="container" ref="containerRef" v-show="activeStep === 1">
         <PropertySetting ref="propertySettingRef" :node="nodeClick" :lf="lf" :disabled="disabled"
                          :skipConditionShow="skipConditionShow" :nodes="nodes" :skips="skips">
         </PropertySetting>
       </div>
-      <div class="logo-text">Warm-Flow</div>
+      <div class="logo-text" v-if="activeStep === 1">Warm-Flow</div>
     </el-header>
   </div>
 
@@ -139,8 +139,6 @@ const headerStyle = computed(() => {
 });
 const baseInfoStyle = computed(() => {
   return {
-    border: "1px solid #ddd", /* 添加边框 */
-    borderRadius: "6px", /* 添加圆角 */
     margin: "5px",
     backgroundColor: isDark.value ? "#333" : "#fff",
   };
@@ -179,35 +177,17 @@ const handleOptionClick = (item) => {
   tooltipVisible.value = false;
 };
 
-// 使用 watch 监听 activeStep 的变化
-watch(activeStep, async (newIndex, oldIndex) => {
-  if (oldIndex === 0 && !onlyDesignShow.value) {
+async function handleStepClick(index) {
+  if (activeStep.value === 0 && !onlyDesignShow.value) {
     let validate = await proxy.$refs.baseInfoRef.validate();
-    if (!validate) return;
+    if (!validate) return
   }
+  activeStep.value = index;
 
-  if (newIndex === 1) {
-    // 原设计器模型
-    const modeOrg = logicJson.value.modelValue;
-    // 获取基础信息
-    getBaseInfo();
-    const modeNew = logicJson.value.modelValue;
-
-    if (!lf.value || modeOrg !== modeNew) {
-      await nextTick(() => {
-        if (!jsonString.value.nodeList || jsonString.value.nodeList.length === 0) {
-          // 读取本地文件/initData.json文件，并将数据转换json对象
-          let initData = isClassics(logicJson.value.modelValue) ? initClassicsData : initMimicData;
-          logicJson.value = {
-            ...logicJson.value,
-            ...initData
-          };
-        }
-        initLogicFlow();
-      });
-    }
+  if (index === 1) {
+    handleModelValueUpdate()
   }
-});
+}
 
 
 onMounted(() => {
@@ -225,7 +205,9 @@ onMounted(() => {
     if (res.data.isPublish && res.data.isPublish !== 0) {
       disabled.value = true
     }
-    categoryList.value = res.data.categoryList;
+    if (res.data.categoryList && res.data.categoryList.size > 0) {
+      categoryList.value = res.data.categoryList;
+    }
     if (jsonString.value) {
       logicJson.value = json2LogicFlowJson(jsonString.value);
       if (!logicJson.value.nodes || logicJson.value.nodes.length === 0) {
@@ -237,7 +219,7 @@ onMounted(() => {
         };
       }
       if (onlyDesignShow.value) {
-        activeStep.value = 1
+        handleStepClick(1)
       }
     }
   });
@@ -402,6 +384,28 @@ function getBaseInfo() {
 
 function handleFlowNameUpdate(newName) {
   logicJson.value.flowName = newName; // 更新父组件中的流程名称
+}
+
+function handleModelValueUpdate() {
+  // 原设计器模型
+  const modeOrg = logicJson.value.modelValue;
+  // 获取基础信息
+  getBaseInfo();
+  const modeNew = logicJson.value.modelValue;
+
+  if (!lf.value || modeOrg !== modeNew) {
+    nextTick(() => {
+      if (!jsonString.value.nodeList || jsonString.value.nodeList.length === 0) {
+        // 读取本地文件/initData.json文件，并将数据转换json对象
+        let initData = isClassics(logicJson.value.modelValue) ? initClassicsData : initMimicData;
+        logicJson.value = {
+          ...logicJson.value,
+          ...initData
+        };
+      }
+      initLogicFlow();
+    });
+  }
 }
 
 async function saveJsonModel() {

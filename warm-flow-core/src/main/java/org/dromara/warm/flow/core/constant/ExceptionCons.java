@@ -113,8 +113,6 @@ public class ExceptionCons {
 
     public static final String INSTANCE_ALREADY_ACTIVITY = "当前流程实例已经激活";
 
-    public static final String INSTANCE_ALREADY_SUSPENDED = "当前流程实例已经挂起";
-
     public static final String FORM_ALREADY_PUBLISH = "当前表单状态已发布";
 
     public static final String FORM_ALREADY_UN_PUBLISH = "当前表单状态未发布";
@@ -152,5 +150,7 @@ public class ExceptionCons {
     public static final String NOT_FOUNT_HANDLED_TASK_HANDLER = "拿回的任务未办理!";
 
     public static final String START_NODE_NOT_ALLOW_JUMP = "开始节点不允许跳转!";
+
+    public static final String NOT_DRAW_FLOW_ERROR = "未绘制流程图，不可发布";
 
 }

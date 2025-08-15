@@ -290,6 +290,8 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
 
     @Override
     public boolean publish(Long id) {
+        List<Node> nodeList = FlowEngine.nodeService().getByDefId(id);
+        AssertUtil.isEmpty(nodeList, ExceptionCons.NOT_DRAW_FLOW_ERROR);
         Definition definition = getById(id);
         List<Definition> definitions = getByFlowCode(definition.getFlowCode());
         // 已发布流程定义，改为已失效或者未发布状态
