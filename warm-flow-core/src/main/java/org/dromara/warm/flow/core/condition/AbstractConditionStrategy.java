@@ -53,7 +53,7 @@ public abstract class AbstractConditionStrategy implements ConditionStrategy {
      */
     @Override
     public Boolean eval(String expression, Map<String, Object> variable) {
-        String[] split = expression.split(FlowCons.splitVertical);
+        String[] split = expression.split(FlowCons.SPLIT_VERTICAL);
         preEval(split[0].trim(), variable);
         String variableValue = String.valueOf(variable.get(split[0].trim()));
         return afterEval(split[1].trim(), variableValue);

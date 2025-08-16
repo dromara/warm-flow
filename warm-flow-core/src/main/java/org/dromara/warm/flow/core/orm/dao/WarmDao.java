@@ -60,7 +60,7 @@ public interface WarmDao<T> {
      * 分页查询
      *
      * @param entity 实体列表
-     * @param query
+     * @param query query
      * @return 集合
      */
     List<T> selectList(T entity, WarmQuery<T> query);

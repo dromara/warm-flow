@@ -28,79 +28,77 @@ import java.util.Date;
 public interface Skip extends RootEntity {
 
     @Override
-    public Long getId();
+    Long getId();
 
     @Override
-    public Skip setId(Long id);
+    Skip setId(Long id);
 
     @Override
-    public Date getCreateTime();
+    Date getCreateTime();
 
     @Override
-    public Skip setCreateTime(Date createTime);
+    Skip setCreateTime(Date createTime);
 
     @Override
-    public Date getUpdateTime();
+    Date getUpdateTime();
 
     @Override
-    public Skip setUpdateTime(Date updateTime);
+    Skip setUpdateTime(Date updateTime);
 
     @Override
-    public String getTenantId();
+    String getTenantId();
 
     @Override
-    public Skip setTenantId(String tenantId);
+    Skip setTenantId(String tenantId);
 
     @Override
-    public String getDelFlag();
+    String getDelFlag();
 
     @Override
-    public Skip setDelFlag(String delFlag);
+    Skip setDelFlag(String delFlag);
 
-    public Long getDefinitionId();
+    Long getDefinitionId();
 
-    public Skip setDefinitionId(Long definitionId);
+    Skip setDefinitionId(Long definitionId);
 
-    public Long getNodeId();
+    Long getNodeId();
 
-    public Skip setNodeId(Long nodeId);
+    Skip setNodeId(Long nodeId);
 
-    public String getNowNodeCode();
+    String getNowNodeCode();
 
-    public Skip setNowNodeCode(String nowNodeCode);
+    Skip setNowNodeCode(String nowNodeCode);
 
-    public Integer getNowNodeType();
+    Integer getNowNodeType();
 
-    public Skip setNowNodeType(Integer nowNodeType);
+    Skip setNowNodeType(Integer nowNodeType);
 
-    public String getNextNodeCode();
+    String getNextNodeCode();
 
-    public Skip setNextNodeCode(String nextNodeCode);
+    Skip setNextNodeCode(String nextNodeCode);
 
-    public Integer getNextNodeType();
+    Integer getNextNodeType();
 
-    public Skip setNextNodeType(Integer nextNodeType);
+    Skip setNextNodeType(Integer nextNodeType);
 
-    public String getSkipName();
+    String getSkipName();
 
-    public Skip setSkipName(String skipName);
+    Skip setSkipName(String skipName);
 
-    public String getSkipType();
+    String getSkipType();
 
-    public Skip setSkipType(String skipType);
+    Skip setSkipType(String skipType);
 
-    public String getSkipCondition();
+    String getSkipCondition();
 
-    public Skip setSkipCondition(String skipCondition);
+    Skip setSkipCondition(String skipCondition);
 
-    public String getCoordinate();
+    String getCoordinate();
 
-    public Skip setCoordinate(String coordinate);
+    Skip setCoordinate(String coordinate);
+
     default Skip copy() {
         return FlowEngine.newSkip()
-                .setId(getId())
-                .setCreateTime(getCreateTime())
-                .setUpdateTime(getUpdateTime())
                 .setTenantId(getTenantId())
                 .setDelFlag(getDelFlag())
                 .setDefinitionId(getDefinitionId())

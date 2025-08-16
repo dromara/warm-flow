@@ -1,0 +1,110 @@
+{
+  "nodes": [
+    {
+      "id": "startId",
+      "type": "start",
+      "x": 700,
+      "y": 100,
+      "properties": {
+        "width": 220,
+        "height": 80
+      },
+      "text": {
+        "x": 700,
+        "y": 100,
+        "value": "开始"
+      }
+    },
+    {
+      "id": "betweenId",
+      "type": "between",
+      "x": 700,
+      "y": 250,
+      "properties": {
+        "collaborativeWay": "1",
+        "width": 220,
+        "height": 80
+      },
+      "text": {
+        "x": 700,
+        "y": 250,
+        "value": "中间节点"
+      }
+    },
+    {
+      "id": "endId",
+      "type": "end",
+      "x": 700,
+      "y": 380,
+      "properties": {
+        "width": 40,
+        "height": 40
+      },
+      "text": {
+        "x": 700,
+        "y": 380,
+        "value": "结束"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "startToBetweenId",
+      "type": "skip",
+      "properties": {
+        "skipType": "PASS"
+      },
+      "sourceNodeId": "startId",
+      "targetNodeId": "betweenId",
+      "sourceAnchorId": "startId_2",
+      "targetAnchorId": "betweenId_0",
+      "startPoint": {
+        "x": 700,
+        "y": 140
+      },
+      "endPoint": {
+        "x": 700,
+        "y": 210
+      },
+      "pointsList": [
+        {
+          "x": 700,
+          "y": 140
+        },
+        {
+          "x": 700,
+          "y": 210
+        }
+      ]
+    },
+    {
+      "id": "betweenToEndId",
+      "type": "skip",
+      "properties": {
+        "skipType": "PASS"
+      },
+      "sourceNodeId": "betweenId",
+      "targetNodeId": "endId",
+      "sourceAnchorId": "betweenId_2",
+      "targetAnchorId": "endId_0",
+      "startPoint": {
+        "x": 700,
+        "y": 290
+      },
+      "endPoint": {
+        "x": 700,
+        "y": 360
+      },
+      "pointsList": [
+        {
+          "x": 700,
+          "y": 290
+        },
+        {
+          "x": 700,
+          "y": 360
+        }
+      ]
+    }
+  ]
+}

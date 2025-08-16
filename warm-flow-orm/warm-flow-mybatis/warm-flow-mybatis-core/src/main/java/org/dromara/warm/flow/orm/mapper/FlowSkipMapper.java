@@ -15,8 +15,8 @@
  */
 package org.dromara.warm.flow.orm.mapper;
 
-import org.dromara.warm.flow.orm.entity.FlowSkip;
 import org.apache.ibatis.annotations.Param;
+import org.dromara.warm.flow.orm.entity.FlowSkip;
 
 import java.io.Serializable;
 import java.util.Collection;

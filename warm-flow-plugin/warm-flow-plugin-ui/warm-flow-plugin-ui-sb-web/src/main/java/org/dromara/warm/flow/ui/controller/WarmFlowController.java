@@ -53,8 +53,8 @@ public class WarmFlowController {
      */
     @PostMapping("/save-json")
     @Transactional(rollbackFor = Exception.class)
-    public ApiResult<Void> saveJson(@RequestBody DefJson defJson) throws Exception {
-        return WarmFlowService.saveJson(defJson);
+    public ApiResult<Void> saveJson(@RequestBody DefJson defJson, @RequestHeader("onlyNodeSkip") boolean onlyNodeSkip) throws Exception {
+        return WarmFlowService.saveJson(defJson, onlyNodeSkip);
     }
 
     /**
@@ -65,8 +65,8 @@ public class WarmFlowController {
      * @author xiarg
      * @since 2024/10/29 16:31
      */
-    @GetMapping("/query-def/{id}")
-    public ApiResult<DefJson> queryDef(@PathVariable("id") Long id) {
+    @GetMapping(value = {"/query-def", "/query-def/{id}"})
+    public ApiResult<DefJson> queryDef(@PathVariable(value = "id", required = false) Long id) {
         return WarmFlowService.queryDef(id);
     }
 

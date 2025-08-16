@@ -2,6 +2,7 @@ CREATE TABLE flow_definition (
     id bigint NOT NULL,
     flow_code nvarchar(40) NOT NULL,
     flow_name nvarchar(100) NOT NULL,
+    model_value nvarchar(40) DEFAULT('CLASSICS') NOT NULL,
     category nvarchar(100) NULL,
     version nvarchar(20) NOT NULL,
     is_publish tinyint DEFAULT('0') NULL,
@@ -41,6 +42,13 @@ EXEC sp_addextendedproperty
 'SCHEMA', N'dbo',
 'TABLE', N'flow_definition',
 'COLUMN', N'flow_name'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', N'设计器模型（CLASSICS经典模型 MIMIC仿钉钉模型）',
+'SCHEMA', N'dbo',
+'TABLE', N'flow_definition',
+'COLUMN', N'model_value'
 GO
 
 EXEC sp_addextendedproperty
@@ -722,7 +730,7 @@ CREATE TABLE flow_his_task (
     target_node_name nvarchar(100) NULL,
     approver nvarchar(40) NULL,
     cooperate_type tinyint DEFAULT('0') NULL,
-    collaborator nvarchar(40) NULL,
+    collaborator nvarchar(500) NULL,
     skip_type nvarchar(10) NOT NULL,
     flow_status nvarchar(20) NOT NULL,
     form_custom nchar(1) DEFAULT('N') NULL,

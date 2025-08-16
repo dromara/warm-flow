@@ -23,17 +23,18 @@ import java.util.List;
 /**
  * 监听器表达式策略接口
  *
- * @author warm
+ * @author warm,battcn
  */
 public interface ListenerStrategy extends ExpressionStrategy<Boolean> {
 
     /**
      * 监听器表达式策略实现类集合
      */
-    List<ExpressionStrategy<Boolean>> expressionStrategyList = new ArrayList<>();
+    List<ExpressionStrategy<Boolean>> EXPRESSION_STRATEGY_LIST = new ArrayList<>();
 
+    @Override
     default void setExpression(ExpressionStrategy<Boolean> expressionStrategy) {
-        expressionStrategyList.add(expressionStrategy);
+        EXPRESSION_STRATEGY_LIST.add(expressionStrategy);
     }
 
 }

@@ -70,7 +70,7 @@ public class ExpressionUtil {
      * @return boolean
      */
     public static boolean evalCondition(String expression, Map<String, Object> variable) {
-        return Boolean.TRUE.equals(getValue(ConditionStrategy.expressionStrategyList, expression, variable
+        return Boolean.TRUE.equals(getValue(ConditionStrategy.EXPRESSION_STRATEGY_LIST, expression, variable
                 , ExceptionCons.NULL_CONDITION_STRATEGY));
     }
 
@@ -118,14 +118,14 @@ public class ExpressionUtil {
      * @author xiarg
      * @since 2025/06/03 15:33:38
      */
-    public static List<String> nextHandle(boolean nextHandlerAppend, List<String> nextHandler, List<String> permissions) {
-        if (CollUtil.isEmpty(nextHandler)) {
+    public static List<String> nextHandle(boolean nextHandlerAppend, String[] nextHandler, List<String> permissions) {
+        if (ArrayUtil.isEmpty(nextHandler)) {
             return permissions;
         }
         if (nextHandlerAppend) {
-            permissions.addAll(nextHandler);
+            permissions.addAll(new ArrayList<>(Arrays.asList(nextHandler)));
         } else {
-            permissions = nextHandler;
+            permissions = new ArrayList<>(Arrays.asList(nextHandler));
         }
         return permissions;
     }
@@ -138,7 +138,7 @@ public class ExpressionUtil {
      * @return List<String>
      */
     public static List<String> evalVariable(String expression, Map<String, Object> variable) {
-        return getValue(VariableStrategy.expressionStrategyList, expression, variable
+        return getValue(VariableStrategy.EXPRESSION_STRATEGY_LIST, expression, variable
                             , ExceptionCons.NULL_VARIABLE_STRATEGY);
     }
 
@@ -149,7 +149,7 @@ public class ExpressionUtil {
      * @param variable   变量
      */
     public static boolean evalListener(String expression, Map<String, Object> variable) {
-        return Boolean.TRUE.equals(getValue(ListenerStrategy.expressionStrategyList, expression, variable
+        return Boolean.TRUE.equals(getValue(ListenerStrategy.EXPRESSION_STRATEGY_LIST, expression, variable
                 , ExceptionCons.NULL_LISTENER_STRATEGY));
     }
 

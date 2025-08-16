@@ -15,13 +15,13 @@
  */
 package org.dromara.warm.flow.spring.boot.config;
 
-import org.dromara.warm.flow.core.config.WarmFlow;
-import org.dromara.warm.flow.orm.utils.CommonUtil;
-import org.dromara.warm.plugin.modes.sb.config.BeanConfig;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.JdbcType;
+import org.dromara.warm.flow.core.config.WarmFlow;
+import org.dromara.warm.flow.orm.utils.CommonUtil;
+import org.dromara.warm.plugin.modes.sb.config.BeanConfig;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;

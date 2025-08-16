@@ -18,7 +18,7 @@ package org.dromara.warm.flow.core.utils;
 import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.constant.FlowCons;
 import org.dromara.warm.flow.core.entity.Definition;
-import org.dromara.warm.flow.core.entity.Node;
+import org.dromara.warm.flow.core.entity.Task;
 import org.dromara.warm.flow.core.enums.NodeType;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.listener.GlobalListener;
@@ -52,20 +52,22 @@ public class ListenerUtil {
         // 执行任务创建监听器
         listenerVariable.getNextNodes().forEach(node -> {
             if (!NodeType.isEnd(node.getNodeType())) {
-                executeListener(listenerVariable, Listener.LISTENER_CREATE, node);
+                Task nextTask = StreamUtils.filterOne(listenerVariable.getNextTasks(), task -> task.getNodeCode().equals(node.getNodeCode()));
+                listenerVariable.setNode(node)
+                        .setNextNodes(null)
+                        .setTask(nextTask)
+                        .setNextTasks(null);
+                executeListener(listenerVariable, Listener.LISTENER_CREATE);
             }
         });
     }
 
-    public static void executeListener(ListenerVariable listenerVariable, String type) {
-        executeListener(listenerVariable, type, listenerVariable.getNode());
-    }
 
-    public static void executeListener(ListenerVariable listenerVariable, String type, Node listenerNode) {
+    public static void executeListener(ListenerVariable listenerVariable, String type) {
         // 执行监听器
         //listenerPath({"name": "John Doe", "age": 30})@@listenerPath@@listenerPath
-        String listenerType = listenerNode.getListenerType();
-        execute(listenerVariable, type, listenerNode.getListenerPath(), listenerType);
+        String listenerType = listenerVariable.getNode().getListenerType();
+        execute(listenerVariable, type, listenerVariable.getNode().getListenerPath(), listenerType);
         Definition definition = listenerVariable.getDefinition();
         execute(listenerVariable, type, definition.getListenerPath(), definition.getListenerType());
         GlobalListener globalListener = FlowEngine.globalListener();
@@ -81,7 +83,7 @@ public class ListenerUtil {
                 String listenerType = listenerTypeArr[i].trim();
                 if (listenerType.equals(type)) {
                     if (StringUtils.isNotEmpty(listenerPaths)) {
-                        String[] listenerPathArr = listenerPaths.split(FlowCons.splitAt);
+                        String[] listenerPathArr = listenerPaths.split(FlowCons.SPLIT_AT);
                         String listenerPath = listenerPathArr[i].trim();
                         ValueHolder valueHolder = new ValueHolder();
                         //截取出path 和params
@@ -128,7 +130,7 @@ public class ListenerUtil {
         String path;
         String params;
 
-        Matcher matcher = FlowCons.listenerPattern.matcher(listenerStr);
+        Matcher matcher = FlowCons.LISTENER_PATTERN.matcher(listenerStr);
         if (matcher.find()) {
             path = matcher.group(1).replaceAll("[\\(\\)]", "");
             params = matcher.group(2).replaceAll("[\\(\\)]", "");

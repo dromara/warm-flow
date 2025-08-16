@@ -28,78 +28,82 @@ import java.util.List;
  */
 public interface Definition extends RootEntity {
     @Override
-    public Long getId();
+    Long getId();
 
     @Override
-    public Definition setId(Long id);
+    Definition setId(Long id);
 
     @Override
-    public Date getCreateTime();
+    Date getCreateTime();
 
     @Override
-    public Definition setCreateTime(Date createTime);
+    Definition setCreateTime(Date createTime);
 
     @Override
-    public Date getUpdateTime();
+    Date getUpdateTime();
 
     @Override
-    public Definition setUpdateTime(Date updateTime);
+    Definition setUpdateTime(Date updateTime);
 
     @Override
-    public String getTenantId();
+    String getTenantId();
 
     @Override
-    public Definition setTenantId(String tenantId);
+    Definition setTenantId(String tenantId);
 
     @Override
-    public String getDelFlag();
+    String getDelFlag();
 
     @Override
-    public Definition setDelFlag(String delFlag);
+    Definition setDelFlag(String delFlag);
 
-    public String getFlowCode();
+    String getFlowCode();
 
-    public Definition setFlowCode(String flowCode);
+    Definition setFlowCode(String flowCode);
 
-    public String getFlowName();
+    String getFlowName();
 
-    public Definition setFlowName(String flowName);
+    Definition setFlowName(String flowName);
 
-    public String getCategory();
+    String getModelValue();
 
-    public Definition setCategory(String category);
+    Definition setModelValue(String modelValue);
 
-    public String getVersion();
+    String getCategory();
 
-    public Definition setVersion(String version);
+    Definition setCategory(String category);
 
-    public Integer getIsPublish();
+    String getVersion();
 
-    public Definition setIsPublish(Integer isPublish);
+    Definition setVersion(String version);
 
-    public String getFormCustom();
+    Integer getIsPublish();
 
-    public Definition setFormCustom(String formCustom);
+    Definition setIsPublish(Integer isPublish);
 
-    public String getFormPath();
+    String getFormCustom();
 
-    public Definition setFormPath(String formPath);
+    Definition setFormCustom(String formCustom);
 
-    public String getExt();
+    String getFormPath();
 
-    public Definition setExt(String ext);
+    Definition setFormPath(String formPath);
 
-    public List<Node> getNodeList();
+    String getExt();
 
-    public Definition setNodeList(List<Node> nodeList);
+    Definition setExt(String ext);
 
-    public List<User> getUserList();
+    List<Node> getNodeList();
 
-    public Definition setUserList(List<User> userList);
+    Definition setNodeList(List<Node> nodeList);
 
-    public Integer getActivityStatus();
+    List<User> getUserList();
 
-    public Definition setActivityStatus(Integer activityStatus);
+    Definition setUserList(List<User> userList);
+
+    Integer getActivityStatus();
+
+    Definition setActivityStatus(Integer activityStatus);
 
     String getListenerType();
 
@@ -111,19 +115,15 @@ public interface Definition extends RootEntity {
 
     default Definition copy() {
         return FlowEngine.newDef()
-                .setId(this.getId())
-                .setCreateTime(this.getCreateTime())
-                .setUpdateTime(this.getUpdateTime())
                 .setTenantId(this.getTenantId())
                 .setDelFlag(this.getDelFlag())
                 .setFlowCode(this.getFlowCode())
                 .setFlowName(this.getFlowName())
+                .setModelValue(this.getModelValue())
                 .setCategory(this.getCategory())
                 .setVersion(this.getVersion())
-                .setIsPublish(this.getIsPublish())
                 .setFormCustom(this.getFormCustom())
                 .setFormPath(this.getFormPath())
-                .setActivityStatus(this.getActivityStatus())
                 .setListenerType(this.getListenerType())
                 .setListenerPath(this.getListenerPath())
                 .setExt(this.getExt());

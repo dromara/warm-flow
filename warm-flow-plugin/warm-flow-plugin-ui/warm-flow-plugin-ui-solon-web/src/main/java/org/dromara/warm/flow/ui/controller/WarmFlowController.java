@@ -54,8 +54,8 @@ public class WarmFlowController {
     @Post
     @Mapping("/save-json")
     @Tran
-    public ApiResult<Void> saveJson(DefJson defJson) throws Exception {
-        return WarmFlowService.saveJson(defJson);
+    public ApiResult<Void> saveJson(DefJson defJson, @Header("onlyNodeSkip") boolean onlyNodeSkip) throws Exception {
+        return WarmFlowService.saveJson(defJson, onlyNodeSkip);
     }
 
     /**
@@ -71,6 +71,20 @@ public class WarmFlowController {
     public ApiResult<DefJson> queryDef(@Path("id") Long id) {
         return WarmFlowService.queryDef(id);
     }
+
+    /**
+     * 获取流程定义全部数据(包含节点和跳转)
+     *
+     * @return ApiResult<Definition>
+     * @author xiarg
+     * @since 2024/10/29 16:31
+     */
+    @Get
+    @Mapping("/query-def")
+    public ApiResult<DefJson> queryDef1() {
+        return WarmFlowService.queryDef(null);
+    }
+
 
     /**
      * 获取流程图

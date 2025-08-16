@@ -17,9 +17,9 @@ package org.dromara.warm.flow.core.orm.service.impl;
 
 
 import org.dromara.warm.flow.core.FlowEngine;
-import org.dromara.warm.flow.core.orm.dao.WarmDao;
 import org.dromara.warm.flow.core.handler.DataFillHandler;
 import org.dromara.warm.flow.core.orm.agent.WarmQuery;
+import org.dromara.warm.flow.core.orm.dao.WarmDao;
 import org.dromara.warm.flow.core.orm.service.IWarmService;
 import org.dromara.warm.flow.core.utils.CollUtil;
 import org.dromara.warm.flow.core.utils.ObjectUtil;
@@ -40,6 +40,7 @@ public abstract class WarmServiceImpl<M extends WarmDao<T>, T> implements IWarmS
 
     protected M warmDao;
 
+    @Override
     public M getDao() {
         return warmDao;
     }

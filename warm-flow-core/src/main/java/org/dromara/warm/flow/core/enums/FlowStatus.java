@@ -50,7 +50,9 @@ public enum FlowStatus {
 
     INVALID("10", "失效"),
 
-    TASK_BACK("11", "拿回");
+    TASK_BACK("11", "拿回"),
+
+    RE_START("12", "重启");
 
     private final String key;
     private final String value;

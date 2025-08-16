@@ -21,7 +21,10 @@ import org.dromara.warm.flow.core.dto.FlowCombine;
 import org.dromara.warm.flow.core.dto.FlowParams;
 import org.dromara.warm.flow.core.dto.PathWayData;
 import org.dromara.warm.flow.core.entity.*;
-import org.dromara.warm.flow.core.enums.*;
+import org.dromara.warm.flow.core.enums.ActivityStatus;
+import org.dromara.warm.flow.core.enums.FlowStatus;
+import org.dromara.warm.flow.core.enums.NodeType;
+import org.dromara.warm.flow.core.enums.SkipType;
 import org.dromara.warm.flow.core.listener.Listener;
 import org.dromara.warm.flow.core.listener.ListenerVariable;
 import org.dromara.warm.flow.core.orm.dao.FlowInstanceDao;
@@ -109,25 +112,8 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
     }
 
     @Override
-    public Instance skipByInsId(Long instanceId, FlowParams flowParams) {
-        List<Task> taskList = FlowEngine.taskService().getByInsId(instanceId);
-        AssertUtil.isEmpty(taskList, ExceptionCons.NOT_FOUNT_TASK);
-        AssertUtil.isTrue(taskList.size() > 1, ExceptionCons.TASK_NOT_ONE);
-        return FlowEngine.taskService().skip(flowParams, taskList.get(0));
-    }
-
-    @Override
     public List<Instance> listByDefIds(List<Long> defIds) {
         return getDao().getByDefIds(defIds);
-    }
-
-    @Override
-    public Instance termination(Long instanceId, FlowParams flowParams) {
-        // 获取待办任务
-        List<Task> taskList = FlowEngine.taskService().getByInsId(instanceId);
-        AssertUtil.isEmpty(taskList, ExceptionCons.NOT_FOUNT_TASK);
-        Task task = taskList.get(0);
-        return FlowEngine.taskService().termination(task, flowParams);
     }
 
     @Override
@@ -222,18 +208,15 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
             FlowEngine.userService().deleteByTaskIds(taskIds);
         }
 
-        boolean success = FlowEngine.taskService().deleteByInsIds(instanceIds);
-        if (success) {
-            FlowEngine.hisTaskService().deleteByInsIds(instanceIds);
-            return FlowEngine.insService().removeByIds(instanceIds);
-        }
-        return false;
+        FlowEngine.taskService().deleteByInsIds(instanceIds);
+        FlowEngine.hisTaskService().deleteByInsIds(instanceIds);
+        return FlowEngine.insService().removeByIds(instanceIds);
     }
 
     @Override
     public boolean active(Long id) {
         Instance instance = getById(id);
-        AssertUtil.isTrue(instance.getActivityStatus().equals(ActivityStatus.ACTIVITY.getKey()), ExceptionCons.INSTANCE_ALREADY_ACTIVITY);
+        AssertUtil.isTrue(ActivityStatus.isActivity(instance.getActivityStatus()), ExceptionCons.INSTANCE_ALREADY_ACTIVITY);
         instance.setActivityStatus(ActivityStatus.ACTIVITY.getKey());
         return updateById(instance);
     }
@@ -241,7 +224,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
     @Override
     public boolean unActive(Long id) {
         Instance instance = getById(id);
-        AssertUtil.isTrue(instance.getActivityStatus().equals(ActivityStatus.SUSPENDED.getKey()), ExceptionCons.INSTANCE_ALREADY_SUSPENDED);
+        AssertUtil.isTrue(ActivityStatus.isSuspended(instance.getActivityStatus()), ExceptionCons.INSTANCE_ALREADY_ACTIVITY);
         instance.setActivityStatus(ActivityStatus.SUSPENDED.getKey());
         return updateById(instance);
     }

@@ -7,6 +7,7 @@
         <result property="id" column="id"/>
         <result property="flowCode" column="flow_code"/>
         <result property="flowName" column="flow_name"/>
+        <result property="modelValue" column="model_value"/>
         <result property="category" column="category"/>
         <result property="version" column="version"/>
         <result property="isPublish" column="is_publish"/>
@@ -26,6 +27,7 @@
         select t.id,
                t.flow_code,
                t.flow_name,
+               t.model_value,
                t.category,
                t.version,
                t.is_publish,
@@ -57,6 +59,7 @@
             <if test="entity.id != null ">and t.id = #{entity.id}</if>
             <if test="entity.flowCode != null  and entity.flowCode != ''">and t.flow_code = #{entity.flowCode}</if>
             <if test="entity.flowName != null  and entity.flowName != ''">and t.flow_name = #{entity.flowName}</if>
+            <if test="entity.modelValue != null  and entity.modelValue != ''">and t.model_value = #{entity.modelValue}</if>
             <if test="entity.category != null  and entity.category != ''">and t.category = #{entity.category}</if>
             <if test="entity.version != null  and entity.version != ''">and t.version = #{entity.version}</if>
             <if test="entity.isPublish != null ">and t.is_publish = #{entity.isPublish}</if>
@@ -78,6 +81,7 @@
         id,
         flow_code,
         flow_name,
+        model_value,
         category,
         version,
         is_publish,
@@ -98,6 +102,7 @@
             #{item.id},
             #{item.flowCode},
             #{item.flowName},
+            #{item.modelValue},
             #{item.category},
             #{item.version},
             #{item.isPublish},
@@ -120,6 +125,7 @@
         id,
         flow_code,
         flow_name,
+        model_value,
         category,
         version,
         is_publish,
@@ -139,6 +145,7 @@
             #{item.id},
             #{item.flowCode},
             #{item.flowName},
+            #{item.modelValue},
             #{item.category},
             #{item.version},
             #{item.isPublish},
@@ -220,6 +227,7 @@
             <if test="id != null">id,</if>
             <if test="flowCode != null and flowCode != ''">flow_code,</if>
             <if test="flowName != null and flowName != ''">flow_name,</if>
+            <if test="modelValue != null and modelValue != ''">model_value,</if>
             <if test="category != null and category != ''">category,</if>
             <if test="version != null and version != ''">version,</if>
             <if test="isPublish != null">is_publish,</if>
@@ -238,6 +246,7 @@
             <if test="id != null">#{id},</if>
             <if test="flowCode != null and flowCode != ''">#{flowCode},</if>
             <if test="flowName != null and flowName != ''">#{flowName},</if>
+            <if test="modelValue != null and modelValue != ''">#{modelValue},</if>
             <if test="category != null and category != ''">#{category},</if>
             <if test="version != null and version != ''">#{version},</if>
             <if test="isPublish != null">#{isPublish},</if>
@@ -259,6 +268,7 @@
         <trim prefix="SET" suffixOverrides=",">
             <if test="flowCode != null and flowCode != ''">flow_code = #{flowCode},</if>
             <if test="flowName != null and flowName != ''">flow_name = #{flowName},</if>
+            <if test="modelValue != null and modelValue != ''">model_value = #{modelValue},</if>
             <if test="category != null and category != ''">category = #{category},</if>
             <if test="version != null and version != ''">version = #{version},</if>
             <if test="isPublish != null">is_publish = #{isPublish},</if>
@@ -338,6 +348,7 @@
             <if test="id != null">and id = #{id}</if>
             <if test="flowCode != null and flowCode != ''">and flow_code = #{flowCode}</if>
             <if test="flowName != null and flowName != ''">and flow_name = #{flowName}</if>
+            <if test="modelValue != null and modelValue != ''">and model_value = #{modelValue}</if>
             <if test="category != null and category != ''">and category = #{category}</if>
             <if test="version != null and version != ''">and version = #{version}</if>
             <if test="isPublish != null">and is_publish = #{isPublish}</if>
@@ -360,6 +371,7 @@
             <if test="entity.id != null">and id = #{entity.id}</if>
             <if test="entity.flowCode != null and entity.flowCode != ''">and flow_code = #{entity.flowCode}</if>
             <if test="entity.flowName != null and entity.flowName != ''">and flow_name = #{entity.flowName}</if>
+            <if test="entity.modelValue != null and entity.modelValue != ''">and model_value = #{entity.modelValue}</if>
             <if test="entity.category != null and entity.category != ''">and category = #{entity.category}</if>
             <if test="entity.version != null and entity.version != ''">and version = #{entity.version}</if>
             <if test="entity.isPublish != null">and is_publish = #{entity.isPublish}</if>

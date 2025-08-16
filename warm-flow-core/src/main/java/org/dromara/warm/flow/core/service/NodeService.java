@@ -119,6 +119,14 @@ public interface NodeService extends IWarmService<Node> {
     List<Node> getBetweenNode(Long definitionId);
 
     /**
+     * 根据流程定义id和流程变量获取第一个中间节点
+     * @param definitionId 流程定义id
+     * @param variable 流程变量
+     * @return  Node
+     */
+    List<Node> getFirstBetweenNode(Long definitionId, Map<String, Object> variable);
+
+    /**
      * 根据流程定义id获取结束节点
      * @param definitionId 流程定义id
      * @return Node

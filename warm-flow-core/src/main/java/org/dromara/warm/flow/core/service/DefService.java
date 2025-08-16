@@ -65,7 +65,9 @@ public interface DefService extends IWarmService<Definition> {
      * 新增流程定义，并初始化流程节点和流程跳转数据
      * @param definition 流程定义对象
      * @return boolean
+     * @deprecated 下个版本废弃，请改用{@link #checkAndSave(Definition)}
      */
+    @Deprecated
     boolean saveAndInitNode(Definition definition);
 
     /**
@@ -79,10 +81,11 @@ public interface DefService extends IWarmService<Definition> {
      * 保存流程节点和跳转
      *
      * @param defJson 流程定义json对象
+     * @param onlyNodeSkip 是否只保存节点和跳转
      * @author xiarg
      * @since 2024/10/29 16:30
      */
-    void saveDef(DefJson defJson) throws Exception;
+    void saveDef(DefJson defJson, boolean onlyNodeSkip) throws Exception;
 
     /**
      * 导出流程定义(流程定义、流程节点和流程跳转数据)的json字符串

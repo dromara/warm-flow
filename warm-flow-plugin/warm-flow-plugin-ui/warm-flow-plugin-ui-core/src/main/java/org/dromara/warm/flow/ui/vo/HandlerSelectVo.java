@@ -19,6 +19,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.dromara.warm.flow.core.dto.FlowPage;
+import org.dromara.warm.flow.core.dto.Tree;
 
 import java.util.List;
 
@@ -36,6 +37,6 @@ public class HandlerSelectVo {
     private FlowPage<HandlerAuth> handlerAuths;
 
     /** 左侧树状选择，配合{@link #handlerAuths}使用，比如用户先选择部门，然后选择用户 */
-    private List<TreeSelection> treeSelections;
+    private List<Tree> treeSelections;
 
 }

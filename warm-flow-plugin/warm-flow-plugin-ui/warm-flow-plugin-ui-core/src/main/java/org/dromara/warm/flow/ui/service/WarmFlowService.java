@@ -18,18 +18,19 @@ package org.dromara.warm.flow.ui.service;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.config.WarmFlow;
-import org.dromara.warm.flow.core.dto.ApiResult;
-import org.dromara.warm.flow.core.dto.DefJson;
-import org.dromara.warm.flow.core.dto.FlowDto;
-import org.dromara.warm.flow.core.dto.FlowParams;
+import org.dromara.warm.flow.core.dto.*;
 import org.dromara.warm.flow.core.entity.Form;
 import org.dromara.warm.flow.core.entity.Instance;
+import org.dromara.warm.flow.core.enums.FormCustomEnum;
+import org.dromara.warm.flow.core.enums.ModelEnum;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.utils.ExceptionUtil;
+import org.dromara.warm.flow.core.utils.StreamUtils;
 import org.dromara.warm.flow.core.utils.StringUtils;
 import org.dromara.warm.flow.ui.dto.HandlerFeedBackDto;
 import org.dromara.warm.flow.ui.dto.HandlerQuery;
+import org.dromara.warm.flow.ui.utils.TreeUtil;
 import org.dromara.warm.flow.ui.vo.*;
 
 import java.util.*;
@@ -67,13 +68,14 @@ public class WarmFlowService {
      * 保存流程json字符串
      *
      * @param defJson 流程数据集合
+     * @param onlyNodeSkip 是否只保存节点和跳转
      * @return ApiResult<Void>
      * @throws Exception 异常
      * @author xiarg
      * @since 2024/10/29 16:31
      */
-    public static ApiResult<Void> saveJson(DefJson defJson) throws Exception {
-        FlowEngine.defService().saveDef(defJson);
+    public static ApiResult<Void> saveJson(DefJson defJson, boolean onlyNodeSkip) throws Exception {
+        FlowEngine.defService().saveDef(defJson, onlyNodeSkip);
         return ApiResult.ok();
     }
 
@@ -87,7 +89,20 @@ public class WarmFlowService {
      */
     public static ApiResult<DefJson> queryDef(Long id) {
         try {
-            return ApiResult.ok(FlowEngine.defService().queryDesign(id));
+            DefJson defJson;
+            if (id == null) {
+                defJson = new DefJson()
+                        .setModelValue(ModelEnum.CLASSICS.name())
+                        .setFormCustom(FormCustomEnum.N.name());
+            } else {
+                defJson = FlowEngine.defService().queryDesign(id);
+            }
+            CategoryService categoryService = FrameInvoker.getBean(CategoryService.class);
+            if (categoryService != null) {
+                List<Tree> treeList = categoryService.queryCategory();
+                defJson.setCategoryList(TreeUtil.buildTree(treeList));
+            }
+            return ApiResult.ok(defJson);
         } catch (Exception e) {
             log.error("获取流程json字符串", e);
             throw new FlowException(ExceptionUtil.handleMsg("获取流程json字符串失败", e));
@@ -102,12 +117,15 @@ public class WarmFlowService {
      */
     public static ApiResult<DefJson> queryFlowChart(Long id) {
         try {
-            String defJsonStr = FlowEngine.insService().getById(id).getDefJson();
+            Instance instance = FlowEngine.insService().getById(id);
+            String defJsonStr = instance.getDefJson();
             DefJson defJson = FlowEngine.jsonConvert.strToBean(defJsonStr, DefJson.class);
+            defJson.setInstance(instance);
 
             // 获取流程图三原色
-            defJson.setChartStatusColor(FlowEngine.chartService().getChartRgb());
-
+            defJson.setChartStatusColor(FlowEngine.chartService().getChartRgb(defJson.getModelValue()));
+            // 是否显示流程图顶部文字
+            defJson.setTopTextShow(FlowEngine.getFlowConfig().isTopTextShow());
             // 需要业务系统实现该接口
             ChartExtService chartExtService = FrameInvoker.getBean(ChartExtService.class);
             if (chartExtService != null) {
@@ -169,7 +187,9 @@ public class WarmFlowService {
             // 需要业务系统实现该接口
             HandlerSelectService handlerSelectService = FrameInvoker.getBean(HandlerSelectService.class);
             if (handlerSelectService == null) {
-                return ApiResult.ok(new ArrayList<>());
+                List<HandlerFeedBackVo> handlerFeedBackVos = StreamUtils.toList(handlerFeedBackDto.getStorageIds(),
+                        storageId -> new HandlerFeedBackVo(storageId, null));
+                return ApiResult.ok(handlerFeedBackVos);
             }
             List<HandlerFeedBackVo> handlerFeedBackVos = handlerSelectService.handlerFeedback(handlerFeedBackDto.getStorageIds());
             return ApiResult.ok(handlerFeedBackVos);

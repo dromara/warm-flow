@@ -15,10 +15,8 @@
  */
 package org.dromara.warm.flow.ui.utils;
 
-import org.dromara.warm.flow.core.utils.StreamUtils;
+import org.dromara.warm.flow.core.dto.Tree;
 import org.dromara.warm.flow.core.utils.StringUtils;
-import org.dromara.warm.flow.ui.dto.Tree;
-import org.dromara.warm.flow.ui.vo.TreeSelection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +32,7 @@ public class TreeUtil {
      * @param trees 部门列表
      * @return 树结构列表
      */
-    public static List<TreeSelection> buildTree(List<Tree> trees) {
+    public static List<Tree> buildTree(List<Tree> trees) {
         List<Tree> returnList = new ArrayList<>();
         List<String> tempList = trees.stream().map(Tree::getId).collect(Collectors.toList());
         for (Tree dept : trees) {
@@ -47,7 +45,7 @@ public class TreeUtil {
         if (returnList.isEmpty()) {
             returnList = trees;
         }
-        return StreamUtils.toList(returnList, TreeSelection::new);
+        return returnList;
     }
 
     /**
