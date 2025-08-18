@@ -1,5 +1,5 @@
 <template>
-  <div style="background-color: #e5e7eb">
+  <div>
     <!-- 流程名称和步骤条容器 -->
     <div :style="headerContainer" v-if="!onlyDesignShow">
       <!-- 流程名称 -->
