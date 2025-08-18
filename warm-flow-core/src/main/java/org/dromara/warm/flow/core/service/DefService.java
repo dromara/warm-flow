@@ -35,18 +35,21 @@ public interface DefService extends IWarmService<Definition> {
 
     /**
      * 导入流程定义、流程节点和流程跳转数据
+     *
      * @param is 流程定义的输入流
      */
     Definition importIs(InputStream is);
 
     /**
      * 导入流程定义、流程节点和流程跳转数据
+     *
      * @param defStr 流程定义的json字符串 {@link DefJson 的json格式}
      */
     Definition importJson(String defStr);
 
     /**
      * 导入流程定义、流程节点和流程跳转数据
+     *
      * @param defJson 流程定义json对象，流程定义、流程节点和流程跳转按照主子集传递
      */
     Definition importDef(DefJson defJson);
@@ -55,14 +58,15 @@ public interface DefService extends IWarmService<Definition> {
      * 新增工作流定义，并初始化流程节点和流程跳转数据
      *
      * @param definition 流程定义
-     * @param nodeList 流程节点
-     * @param skipList 流程跳转
+     * @param nodeList   流程节点
+     * @param skipList   流程跳转
      */
     Definition insertFlow(Definition definition, List<Node> nodeList, List<Skip> skipList);
 
 
     /**
      * 新增流程定义，并初始化流程节点和流程跳转数据
+     *
      * @param definition 流程定义对象
      * @return boolean
      * @deprecated 下个版本废弃，请改用{@link #checkAndSave(Definition)}
@@ -72,6 +76,7 @@ public interface DefService extends IWarmService<Definition> {
 
     /**
      * 只新增流程定义表数据
+     *
      * @param definition 流程定义对象
      * @return boolean
      */
@@ -80,7 +85,7 @@ public interface DefService extends IWarmService<Definition> {
     /**
      * 保存流程节点和跳转
      *
-     * @param defJson 流程定义json对象
+     * @param defJson      流程定义json对象
      * @param onlyNodeSkip 是否只保存节点和跳转
      * @author xiarg
      * @since 2024/10/29 16:30
@@ -89,6 +94,7 @@ public interface DefService extends IWarmService<Definition> {
 
     /**
      * 导出流程定义(流程定义、流程节点和流程跳转数据)的json字符串
+     *
      * @param id 流程定义id
      * @return json字符串
      */
@@ -96,6 +102,7 @@ public interface DefService extends IWarmService<Definition> {
 
     /**
      * 获取流程定义全部数据(包含节点和跳转)
+     *
      * @param id 流程定义id
      * @return Definition
      */
@@ -103,6 +110,7 @@ public interface DefService extends IWarmService<Definition> {
 
     /**
      * 流程数据集合
+     *
      * @param id 流程定义id
      * @return FlowCombine
      */
@@ -110,6 +118,7 @@ public interface DefService extends IWarmService<Definition> {
 
     /**
      * 流程数据集合不包含流程定义
+     *
      * @param id 流程定义id
      * @return FlowCombine
      */
@@ -117,6 +126,7 @@ public interface DefService extends IWarmService<Definition> {
 
     /**
      * 流程数据集合
+     *
      * @param definition 流程定义
      * @return FlowCombine
      */
@@ -124,6 +134,7 @@ public interface DefService extends IWarmService<Definition> {
 
     /**
      * 查询流程设计所需的数据，比如流程图渲染
+     *
      * @param id 流程定义id
      * @return 流程定义json对象
      */
@@ -131,6 +142,7 @@ public interface DefService extends IWarmService<Definition> {
 
     /**
      * 根据流程定义code列表查询流程定义
+     *
      * @param flowCodeList 流程定义code列表
      * @return List<Definition>
      */
@@ -138,7 +150,8 @@ public interface DefService extends IWarmService<Definition> {
 
     /**
      * 更新流程定义发布状态
-     * @param defIds 流程定义id列表
+     *
+     * @param defIds        流程定义id列表
      * @param publishStatus 流程定义发布状态
      */
     void updatePublishStatus(List<Long> defIds, Integer publishStatus);
@@ -177,18 +190,21 @@ public interface DefService extends IWarmService<Definition> {
 
     /**
      * 激活流程
+     *
      * @param id 流程定义id
      */
     boolean active(Long id);
 
     /**
      * 挂起流程：流程定义挂起后，相关的流程实例都无法继续流转
+     *
      * @param id 流程定义id
      */
     boolean unActive(Long id);
 
     /**
      * 根据流程定义code查询流程定义
+     *
      * @param flowCode 流程定义code
      * @return List<Definition>
      */
@@ -196,6 +212,7 @@ public interface DefService extends IWarmService<Definition> {
 
     /**
      * 根据流程定义code查询已发布的流程定义
+     *
      * @param flowCode 流程定义code
      * @return Definition
      */

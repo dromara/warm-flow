@@ -51,6 +51,7 @@ public interface Listener extends Serializable {
 
     /**
      * 通知
+     *
      * @param variable variable
      */
     void notify(ListenerVariable variable);

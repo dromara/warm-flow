@@ -39,8 +39,8 @@ public class ReflectionUtil {
             for (Class<?> interfaceClass : interfaces) {
                 Set<Class<?>> implementSet = ClassUtil.findClasses(implementPath);
                 Class<?> implementationClass = implementSet.stream().filter(clazz -> isDirectImplementation(clazz, interfaceClass)
-                                && !clazz.isInterface() && !Modifier.isAbstract(clazz.getModifiers()))
-                        .findFirst().orElse(null);
+                        && !clazz.isInterface() && !Modifier.isAbstract(clazz.getModifiers()))
+                    .findFirst().orElse(null);
 
                 if (implementationClass != null) {
                     Object instance = implementationClass.getDeclaredConstructor().newInstance();
@@ -68,8 +68,8 @@ public class ReflectionUtil {
             for (Class<?> interfaceClass : interfaces) {
                 Set<Class<?>> implementSet = ClassUtil.findClasses(implementPath);
                 implementSet.stream().filter(clazz -> isDirectImplementation(clazz, interfaceClass)
-                                && !clazz.isInterface() && !Modifier.isAbstract(clazz.getModifiers()))
-                        .findFirst().ifPresent(implementationClass -> instances.put(interfaceClass, implementationClass));
+                        && !clazz.isInterface() && !Modifier.isAbstract(clazz.getModifiers()))
+                    .findFirst().ifPresent(implementationClass -> instances.put(interfaceClass, implementationClass));
 
             }
         } catch (Exception e) {
@@ -94,14 +94,14 @@ public class ReflectionUtil {
             for (Class<?> interfaceClass : interfaces) {
                 Set<Class<?>> implementSet = ClassUtil.findClasses(implementPath);
                 implementSet.stream().filter(clazz -> isDirectImplementation(clazz, interfaceClass)
-                                && !clazz.isInterface() && !Modifier.isAbstract(clazz.getModifiers()))
-                        .findFirst().ifPresent(implementationClass -> suppliers.put(interfaceClass, () -> {
-                            try {
-                                return implementationClass.getDeclaredConstructor().newInstance();
-                            } catch (Exception e) {
-                                throw new FlowException("扫描异常");
-                            }
-                        }));
+                        && !clazz.isInterface() && !Modifier.isAbstract(clazz.getModifiers()))
+                    .findFirst().ifPresent(implementationClass -> suppliers.put(interfaceClass, () -> {
+                        try {
+                            return implementationClass.getDeclaredConstructor().newInstance();
+                        } catch (Exception e) {
+                            throw new FlowException("扫描异常");
+                        }
+                    }));
 
             }
         } catch (Exception e) {

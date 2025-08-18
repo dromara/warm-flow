@@ -29,7 +29,7 @@ import org.noear.solon.annotation.Configuration;
  * @since 2023/6/5 23:01
  */
 @Configuration
-@Condition(onProperty="${warm-flow.enabled:true} = true")
+@Condition(onProperty = "${warm-flow.enabled:true} = true")
 public class FlowAutoConfig {
 
     @Bean

@@ -15,6 +15,9 @@
  */
 package org.dromara.warm.flow.core.utils.page;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +28,10 @@ import java.util.List;
  * @author warm
  * @since 2023/5/17 1:28
  */
+@Getter
+@Setter
 public class Page<T> implements OrderBy, Serializable {
+
     private static final long serialVersionUID = -1615974051898019272L;
 
     /**
@@ -59,8 +65,6 @@ public class Page<T> implements OrderBy, Serializable {
     private String isAsc = "ASC";
 
     public Page() {
-        this.pageNum = 1;
-        this.pageSize = 10;
     }
 
     public Page(int pageNum, int pageSize) {
@@ -92,44 +96,12 @@ public class Page<T> implements OrderBy, Serializable {
     /**
      * 计算分页起始页
      *
-     * @param pageNum  当前页码
-     * @param size     每页显示记录数
+     * @param pageNum 当前页码
+     * @param size    每页显示记录数
      * @return 分页结果
      */
     public static <T> Page<T> pageOf(Integer pageNum, Integer size) {
         return new Page<>(pageNum, size);
-    }
-
-    public int getPageNum() {
-        return pageNum;
-    }
-
-    public void setPageNum(int pageNum) {
-        this.pageNum = pageNum;
-    }
-
-    public int getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
-    }
-
-    public List<T> getList() {
-        return list;
-    }
-
-    public void setList(List<T> list) {
-        this.list = list;
-    }
-
-    public long getTotal() {
-        return total;
-    }
-
-    public void setTotal(long total) {
-        this.total = total;
     }
 
     @Override

@@ -123,7 +123,7 @@ public class StreamUtils {
             return new HashMap<>();
         }
         return collection.stream().filter(Objects::nonNull)
-                .collect(Collectors.toMap(key, Function.identity(), (l, r) -> l));
+            .collect(Collectors.toMap(key, Function.identity(), (l, r) -> l));
     }
 
     /**
@@ -160,7 +160,7 @@ public class StreamUtils {
             return new HashMap<>();
         }
         return collection.stream().filter(Objects::nonNull)
-                .collect(Collectors.groupingBy(key, LinkedHashMap::new, Collectors.toList()));
+            .collect(Collectors.groupingBy(key, LinkedHashMap::new, Collectors.toList()));
     }
 
     /**
@@ -178,7 +178,7 @@ public class StreamUtils {
             return new HashMap<>();
         }
         return collection.stream().filter(predicate)
-                .collect(Collectors.groupingBy(key, LinkedHashMap::new, Collectors.toList()));
+            .collect(Collectors.groupingBy(key, LinkedHashMap::new, Collectors.toList()));
     }
 
     /**
@@ -199,7 +199,7 @@ public class StreamUtils {
             return new HashMap<>();
         }
         return collection.stream().filter(Objects::nonNull).collect(Collectors.groupingBy(key1, LinkedHashMap::new,
-                Collectors.groupingBy(key2, LinkedHashMap::new, Collectors.toList())));
+            Collectors.groupingBy(key2, LinkedHashMap::new, Collectors.toList())));
     }
 
     /**
@@ -220,7 +220,7 @@ public class StreamUtils {
             return new HashMap<>();
         }
         return collection.stream().filter(Objects::nonNull).collect(
-                Collectors.groupingBy(key1, LinkedHashMap::new, Collectors.toMap(key2, Function.identity(), (l, r) -> l)));
+            Collectors.groupingBy(key1, LinkedHashMap::new, Collectors.toMap(key2, Function.identity(), (l, r) -> l)));
     }
 
     /**
@@ -238,8 +238,8 @@ public class StreamUtils {
             return new ArrayList<>();
         }
         return collection.stream().map(function).filter(Objects::nonNull)
-                // 注意此处不要使用 .toList() 新语法 因为返回的是不可变List 会导致序列化问题
-                .collect(Collectors.toList());
+            // 注意此处不要使用 .toList() 新语法 因为返回的是不可变List 会导致序列化问题
+            .collect(Collectors.toList());
     }
 
     /**
@@ -257,7 +257,7 @@ public class StreamUtils {
             return new ArrayList<>();
         }
         return collection.stream().map(function).flatMap(List::stream)
-                .collect(Collectors.toList());
+            .collect(Collectors.toList());
     }
 
     /**

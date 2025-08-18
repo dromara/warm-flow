@@ -293,8 +293,8 @@
             <if test="formCustom != null">form_custom = #{formCustom},</if>
             <if test="formPath != null">form_path = #{formPath},</if>
             <if test="activityStatus != null">activity_status = #{activityStatus},</if>
-            <if test="listenerType != null and listenerType != ''">listener_type = #{listenerType},</if>
-            <if test="listenerPath != null and listenerPath != ''">listener_path = #{listenerPath},</if>
+            <if test="listenerType != null">listener_type = #{listenerType},</if>
+            <if test="listenerPath != null">listener_path = #{listenerPath},</if>
             <if test="ext != null and ext != ''">ext = #{ext},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>

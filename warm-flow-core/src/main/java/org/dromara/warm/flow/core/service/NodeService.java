@@ -51,6 +51,7 @@ public interface NodeService extends IWarmService<Node> {
 
     /**
      * 根据节点id获取所有的前置节点集合
+     *
      * @param nodeId 节点id
      * @return 所有的前置节点集合
      */
@@ -60,13 +61,14 @@ public interface NodeService extends IWarmService<Node> {
      * 根据流程定义id和当前节点code获取所有的前置节点集合
      *
      * @param definitionId 程定义id
-     * @param nowNodeCode 当前节点code
+     * @param nowNodeCode  当前节点code
      * @return 所有的前置节点集合
      */
     List<Node> previousNodeList(Long definitionId, String nowNodeCode);
 
     /**
      * 根据节点id获取所有的后置节点集合
+     *
      * @param nodeId 节点id
      * @return 所有的后置节点集合
      */
@@ -76,7 +78,7 @@ public interface NodeService extends IWarmService<Node> {
      * 根据流程定义id和当前节点code获取所有的后置节点集合
      *
      * @param definitionId 程定义id
-     * @param nowNodeCode 当前节点code
+     * @param nowNodeCode  当前节点code
      * @return 所有的后置点集合
      */
     List<Node> suffixNodeList(Long definitionId, String nowNodeCode);
@@ -92,6 +94,7 @@ public interface NodeService extends IWarmService<Node> {
 
     /**
      * 根据流程定义id获取流程节点集合
+     *
      * @param definitionId 流程定义id
      * @return 所有的节点集合
      */
@@ -99,6 +102,7 @@ public interface NodeService extends IWarmService<Node> {
 
     /**
      * 根据流程定义id和节点编码获取流程节点
+     *
      * @param definitionId 流程定义id
      * @return 节点
      */
@@ -106,6 +110,7 @@ public interface NodeService extends IWarmService<Node> {
 
     /**
      * 根据流程定义id获取开始节点
+     *
      * @param definitionId 流程定义id
      * @return Node
      */
@@ -113,6 +118,7 @@ public interface NodeService extends IWarmService<Node> {
 
     /**
      * 根据流程定义id获取中间节点集合
+     *
      * @param definitionId 流程定义id
      * @return List<Node>
      */
@@ -120,14 +126,16 @@ public interface NodeService extends IWarmService<Node> {
 
     /**
      * 根据流程定义id和流程变量获取第一个中间节点
+     *
      * @param definitionId 流程定义id
-     * @param variable 流程变量
-     * @return  Node
+     * @param variable     流程变量
+     * @return Node
      */
     List<Node> getFirstBetweenNode(Long definitionId, Map<String, Object> variable);
 
     /**
      * 根据流程定义id获取结束节点
+     *
      * @param definitionId 流程定义id
      * @return Node
      */
@@ -137,25 +145,26 @@ public interface NodeService extends IWarmService<Node> {
      * 根据流程定义和当前节点code获取下一节点,如是网关跳过取下一节点,并行网关返回多个节点
      * anyNodeCode不为空，则可跳转anyNodeCode节点
      *
-     * @param definitionId  流程定义id
-     * @param nowNodeCode   当前节点code
-     * @param anyNodeCode   anyNodeCode不为空，则可跳转anyNodeCode节点（优先级最高）
-     * @param skipType      跳转类型（PASS审批通过 REJECT退回）
-     * @param variable      流程变量,下一个节点是网关需要判断跳转条件,并行网关返回多个节点
+     * @param definitionId 流程定义id
+     * @param nowNodeCode  当前节点code
+     * @param anyNodeCode  anyNodeCode不为空，则可跳转anyNodeCode节点（优先级最高）
+     * @param skipType     跳转类型（PASS审批通过 REJECT退回）
+     * @param variable     流程变量,下一个节点是网关需要判断跳转条件,并行网关返回多个节点
      * @return List<Node>
      * @author xiarg
      * @since 2024/8/21 16:48
      */
     List<Node> getNextNodeList(Long definitionId, String nowNodeCode, String anyNodeCode, String skipType,
-                                     Map<String, Object> variable);
+                               Map<String, Object> variable);
 
     /**
      * 根据当前节点获取下一节点
      * anyNodeCode不为空，则可跳转anyNodeCode节点
-     * @param definitionId  流程定义id
-     * @param nowNodeCode   当前节点code
-     * @param anyNodeCode   anyNodeCode不为空，则可跳转anyNodeCode节点（优先级最高）
-     * @param skipType      跳转类型（PASS审批通过 REJECT退回）
+     *
+     * @param definitionId 流程定义id
+     * @param nowNodeCode  当前节点code
+     * @param anyNodeCode  anyNodeCode不为空，则可跳转anyNodeCode节点（优先级最高）
+     * @param skipType     跳转类型（PASS审批通过 REJECT退回）
      * @return Node
      */
     Node getNextNode(Long definitionId, String nowNodeCode, String anyNodeCode, String skipType);
@@ -165,24 +174,25 @@ public interface NodeService extends IWarmService<Node> {
      * 当前节点获取下一节点,如是网关跳过取下一节点,并行网关返回多个节点
      * anyNodeCode不为空，则可跳转anyNodeCode节点
      *
-     * @param nowNode   当前节点
-     * @param anyNodeCode   anyNodeCode不为空，则可跳转anyNodeCode节点（优先级最高）
-     * @param skipType      跳转类型（PASS审批通过 REJECT退回）
-     * @param variable      流程变量,下一个节点是网关需要判断跳转条件,并行网关返回多个节点
-     * @param pathWayData      办理过程中途径数据，用于渲染流程图
+     * @param nowNode     当前节点
+     * @param anyNodeCode anyNodeCode不为空，则可跳转anyNodeCode节点（优先级最高）
+     * @param skipType    跳转类型（PASS审批通过 REJECT退回）
+     * @param variable    流程变量,下一个节点是网关需要判断跳转条件,并行网关返回多个节点
+     * @param pathWayData 办理过程中途径数据，用于渲染流程图
      * @param flowCombine 流程数据集合
      * @return List<Node>
      */
-    List<Node> getNextNodeList(Node nowNode, String anyNodeCode, String skipType,Map<String, Object> variable,
+    List<Node> getNextNodeList(Node nowNode, String anyNodeCode, String skipType, Map<String, Object> variable,
                                PathWayData pathWayData, FlowCombine flowCombine);
 
     /**
      * 根据当前节点获取下一节点
      * anyNodeCode不为空，则可跳转anyNodeCode节点
-     * @param nowNode 当前节点
-     * @param anyNodeCode   anyNodeCode不为空，则可跳转anyNodeCode节点（优先级最高）
-     * @param skipType      跳转类型（PASS审批通过 REJECT退回）
-     * @param pathWayData      办理过程中途径数据，用于渲染流程图
+     *
+     * @param nowNode     当前节点
+     * @param anyNodeCode anyNodeCode不为空，则可跳转anyNodeCode节点（优先级最高）
+     * @param skipType    跳转类型（PASS审批通过 REJECT退回）
+     * @param pathWayData 办理过程中途径数据，用于渲染流程图
      * @param flowCombine 流程数据集合
      * @return Node
      */
@@ -191,14 +201,14 @@ public interface NodeService extends IWarmService<Node> {
     /**
      * 校验是否网关节点,如果是重新获取新的后面的节点
      *
-     * @param variable      流程变量
-     * @param nextNode      下一个节点
-     * @param pathWayData      办理过程中途径数据，用于渲染流程图
+     * @param variable    流程变量
+     * @param nextNode    下一个节点
+     * @param pathWayData 办理过程中途径数据，用于渲染流程图
      * @param flowCombine 流程数据集合
      * @return List<Node>
      */
     List<Node> getNextByCheckGateway(Map<String, Object> variable, Node nextNode, PathWayData pathWayData
-            , FlowCombine flowCombine);
+        , FlowCombine flowCombine);
 
     /**
      * 批量删除流程节点

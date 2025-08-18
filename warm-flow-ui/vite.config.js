@@ -37,7 +37,7 @@ export default defineConfig(({ mode, command }) => {
     },
     // vite 相关配置
     server: {
-      port: 81,
+      port: 8082,
       host: true,
       open: true,
       proxy: {

@@ -40,6 +40,7 @@ public interface PermissionHandler {
     /**
      * 获取当前办理人：就是确定唯一用的，如用户id，通常用来入库，记录流程实例创建人，办理人
      * 后续在{@link FlowParams#getHandler()}  中获取
+     *
      * @return 当前办理人
      */
     String getHandler();

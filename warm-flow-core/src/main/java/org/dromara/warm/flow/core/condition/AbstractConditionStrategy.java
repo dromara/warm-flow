@@ -33,7 +33,7 @@ public abstract class AbstractConditionStrategy implements ConditionStrategy {
     /**
      * 执行表达式前置方法 合法性校验
      *
-     * @param name    变量名称：flag
+     * @param name     变量名称：flag
      * @param variable 流程变量
      */
     public void preEval(String name, Map<String, Object> variable) {
@@ -44,7 +44,7 @@ public abstract class AbstractConditionStrategy implements ConditionStrategy {
 
     /**
      * 执行表达式
-
+     *
      * @param expression 表达式：flag@@5
      *                   在{@link ExpressionUtil#evalCondition}中格式为，比如：eq@@flag|5，
      *                   截取前缀进入此方法后为：flag|5
@@ -62,7 +62,7 @@ public abstract class AbstractConditionStrategy implements ConditionStrategy {
     /**
      * 执行表达式后置方法
      *
-     * @param value 表达式最后一个参数，比如：eq@@flag|5的[5]
+     * @param value         表达式最后一个参数，比如：eq@@flag|5的[5]
      * @param variableValue 流程变量值
      * @return 执行结果
      */

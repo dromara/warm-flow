@@ -92,7 +92,7 @@ public interface Instance extends RootEntity {
 
     Instance setVariable(String variable);
 
-    default Map<String, Object> getVariableMap()  {
+    default Map<String, Object> getVariableMap() {
         return FlowEngine.jsonConvert.strToMap(getVariable());
     }
 

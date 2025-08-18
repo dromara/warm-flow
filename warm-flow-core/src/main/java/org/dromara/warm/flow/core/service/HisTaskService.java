@@ -36,7 +36,7 @@ public interface HisTaskService extends IWarmService<HisTask> {
     /**
      * 根据任务id和协作类型查询
      *
-     * @param taskId 任务id
+     * @param taskId         任务id
      * @param cooperateTypes 协作类型集合
      * @return List<HisTask>
      */
@@ -46,8 +46,8 @@ public interface HisTaskService extends IWarmService<HisTask> {
      * 根据实例Id和节点编码查询
      *
      * @param instanceId 流程实例id
-     * @param nodeCodes 节点编码集合
-     * @return  List<HisTask>
+     * @param nodeCodes  节点编码集合
+     * @return List<HisTask>
      */
     List<HisTask> getByInsAndNodeCodes(Long instanceId, List<String> nodeCodes);
 
@@ -86,7 +86,7 @@ public interface HisTaskService extends IWarmService<HisTask> {
      * @param collaborators 协作人
      */
     HisTask setCooperateHis(Task task, Node node, FlowParams flowParams
-            , List<String> collaborators);
+        , List<String> collaborators);
 
     /**
      * 委派历史任务
@@ -112,9 +112,9 @@ public interface HisTaskService extends IWarmService<HisTask> {
     /**
      * 设置流程历史任务信息
      *
-     * @param task              当前任务
-     * @param nextNode          跳转的节点
-     * @param flowParams        流程参数
+     * @param task       当前任务
+     * @param nextNode   跳转的节点
+     * @param flowParams 流程参数
      * @return HisTask          历史任务
      * @author xiarg
      * @since 2024/9/30 11:59
@@ -123,6 +123,7 @@ public interface HisTaskService extends IWarmService<HisTask> {
 
     /**
      * 根据流程实例id查询历史任务
+     *
      * @param instanceId 流程实例id
      * @return 历史记录集合
      */

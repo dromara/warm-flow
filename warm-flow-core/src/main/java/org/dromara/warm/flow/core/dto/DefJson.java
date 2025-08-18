@@ -275,13 +275,13 @@ public class DefJson {
         flowCombine.setDefinition(definition);
         flowCombine.setAllNodes(definition.getNodeList());
         List<Skip> skipList = Optional.of(definition)
-                .map(Definition::getNodeList)
-                .orElse(Collections.emptyList())
-                .stream()
-                .map(Node::getSkipList)
-                .filter(Objects::nonNull)
-                .flatMap(List::stream)
-                .collect(Collectors.toList());
+            .map(Definition::getNodeList)
+            .orElse(Collections.emptyList())
+            .stream()
+            .map(Node::getSkipList)
+            .filter(Objects::nonNull)
+            .flatMap(List::stream)
+            .collect(Collectors.toList());
 
         flowCombine.setAllSkips(skipList);
         return flowCombine;

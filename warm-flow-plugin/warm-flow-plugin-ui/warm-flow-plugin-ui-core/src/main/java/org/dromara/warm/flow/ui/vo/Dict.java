@@ -28,14 +28,17 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class Dict implements Serializable
-{
+public class Dict implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    /** 字典标签 */
+    /**
+     * 字典标签
+     */
     private String label;
 
-    /** 字典值 */
+    /**
+     * 字典值
+     */
     private String value;
 
     private List<Dict> childList;

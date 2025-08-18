@@ -83,6 +83,7 @@ public class WarmFlowController {
 
     /**
      * 办理人权限设置列表tabs页签
+     *
      * @return List<String>
      */
     @GetMapping("/handler-type")
@@ -92,6 +93,7 @@ public class WarmFlowController {
 
     /**
      * 办理人权限设置列表结果
+     *
      * @return HandlerSelectVo
      */
     @GetMapping("/handler-result")
@@ -101,6 +103,7 @@ public class WarmFlowController {
 
     /**
      * 办理人权限名称回显
+     *
      * @return HandlerSelectVo
      */
     @GetMapping("/handler-feedback")
@@ -110,6 +113,7 @@ public class WarmFlowController {
 
     /**
      * 办理人选择项
+     *
      * @return List<Dict>
      */
     @GetMapping("/handler-dict")
@@ -128,6 +132,7 @@ public class WarmFlowController {
 
     /**
      * 读取表单内容
+     *
      * @param id
      * @return
      */
@@ -138,6 +143,7 @@ public class WarmFlowController {
 
     /**
      * 保存表单内容,该接口不需要系统实现
+     *
      * @param flowDto
      * @return
      */
@@ -185,13 +191,14 @@ public class WarmFlowController {
     @Transactional(rollbackFor = Exception.class)
     @PostMapping(value = "/execute/handle")
     public ApiResult<Instance> handle(@RequestBody Map<String, Object> formData, @RequestParam("taskId") Long taskId
-            , @RequestParam("skipType") String skipType,  @RequestParam("message") String message
-            , @RequestParam(value = "nodeCode", required = false) String nodeCode) {
+        , @RequestParam("skipType") String skipType, @RequestParam("message") String message
+        , @RequestParam(value = "nodeCode", required = false) String nodeCode) {
         return WarmFlowService.handle(formData, taskId, skipType, message, nodeCode);
     }
 
     /**
      * 获取节点扩展属性
+     *
      * @return List<NodeExt>
      */
     @GetMapping("/node-ext")

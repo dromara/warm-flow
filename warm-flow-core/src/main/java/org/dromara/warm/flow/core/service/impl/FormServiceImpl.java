@@ -83,9 +83,9 @@ public class FormServiceImpl extends WarmServiceImpl<FlowFormDao<Form>, Form> im
         AssertUtil.isTrue(ObjectUtil.isNull(form), ExceptionCons.NOT_FOUNT_DEF);
         FlowEngine.dataFillHandler().idFill(form.setId(null));
         form.setVersion(getNewVersion(form))
-                .setIsPublish(PublishStatus.UNPUBLISHED.getKey())
-                .setCreateTime(null)
-                .setUpdateTime(null);
+            .setIsPublish(PublishStatus.UNPUBLISHED.getKey())
+            .setCreateTime(null)
+            .setUpdateTime(null);
         return save(form);
     }
 
@@ -106,7 +106,7 @@ public class FormServiceImpl extends WarmServiceImpl<FlowFormDao<Form>, Form> im
     @Override
     public Page<Form> publishedPage(String formName, Integer pageNum, Integer pageSize) {
         return page(FlowEngine.newForm().setFormName(formName).setIsPublish(1),
-                Page.<Form>pageOf(pageNum, pageSize));
+            Page.<Form>pageOf(pageNum, pageSize));
     }
 
     @Override

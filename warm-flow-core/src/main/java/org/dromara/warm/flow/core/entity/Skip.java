@@ -111,17 +111,17 @@ public interface Skip extends RootEntity {
 
     default Skip copy() {
         return FlowEngine.newSkip()
-                .setTenantId(getTenantId())
-                .setDelFlag(getDelFlag())
-                .setDefinitionId(getDefinitionId())
-                .setNowNodeCode(getNowNodeCode())
-                .setNowNodeType(getNowNodeType())
-                .setNextNodeCode(getNextNodeCode())
-                .setNextNodeType(getNextNodeType())
-                .setSkipName(getSkipName())
-                .setSkipType(getSkipType())
-                .setSkipCondition(getSkipCondition())
-                .setCoordinate(getCoordinate());
+            .setTenantId(getTenantId())
+            .setDelFlag(getDelFlag())
+            .setDefinitionId(getDefinitionId())
+            .setNowNodeCode(getNowNodeCode())
+            .setNowNodeType(getNowNodeType())
+            .setNextNodeCode(getNextNodeCode())
+            .setNextNodeType(getNextNodeType())
+            .setSkipName(getSkipName())
+            .setSkipType(getSkipType())
+            .setSkipCondition(getSkipCondition())
+            .setCoordinate(getCoordinate());
     }
 
 }

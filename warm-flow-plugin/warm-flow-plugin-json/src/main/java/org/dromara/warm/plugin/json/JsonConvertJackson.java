@@ -43,11 +43,13 @@ public class JsonConvertJackson implements JsonConvert {
     private static final Logger log = LoggerFactory.getLogger(JsonConvertJackson.class);
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
-            .enable(SerializationFeature.INDENT_OUTPUT)
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            .setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+        .enable(SerializationFeature.INDENT_OUTPUT)
+        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+        .setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+
     /**
      * 将字符串转为map
+     *
      * @param jsonStr json字符串
      * @return map
      */
@@ -66,8 +68,9 @@ public class JsonConvertJackson implements JsonConvert {
 
     /**
      * 将字符串转为bean
+     *
      * @param jsonStr json字符串
-     * @param clazz Class<T>
+     * @param clazz   Class<T>
      * @return T
      */
     @Override
@@ -85,6 +88,7 @@ public class JsonConvertJackson implements JsonConvert {
 
     /**
      * 将字符串转为集合
+     *
      * @param jsonStr json字符串
      * @return List<T>
      */
@@ -92,7 +96,8 @@ public class JsonConvertJackson implements JsonConvert {
     public <T> List<T> strToList(String jsonStr) {
         if (StringUtils.isNotEmpty(jsonStr)) {
             try {
-                return OBJECT_MAPPER.readValue(jsonStr, new TypeReference<List<T>>(){});
+                return OBJECT_MAPPER.readValue(jsonStr, new TypeReference<List<T>>() {
+                });
             } catch (IOException e) {
                 log.error("json转换异常", e);
                 throw new FlowException("json转换异常");
@@ -103,6 +108,7 @@ public class JsonConvertJackson implements JsonConvert {
 
     /**
      * 将对象转为字符串
+     *
      * @param variable object
      * @return json字符串
      */

@@ -35,11 +35,11 @@ import java.util.Map;
 @Getter
 @AllArgsConstructor
 public enum ChartStatus {
-    NOT_DONE(0, "未办理", new Color(166,178,189)),
+    NOT_DONE(0, "未办理", new Color(166, 178, 189)),
 
-    TO_DO(1, "待办理", new Color(255,197,90)),
+    TO_DO(1, "待办理", new Color(255, 197, 90)),
 
-    DONE(2, "已办理", new Color(135,206,250));
+    DONE(2, "已办理", new Color(135, 206, 250));
 
     private final Integer key;
     private final String value;

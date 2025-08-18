@@ -16,6 +16,7 @@
 package org.dromara.warm.flow.core.listener;
 
 /**
+ *
  */
 public class ValueHolder {
     private String path;
@@ -53,9 +54,9 @@ public class ValueHolder {
     @Override
     public String toString() {
         return "ValueHolder{" +
-                "path='" + path + '\'' +
-                ", listener=" + listener + '\'' +
-                ", params='" + params + '\'' +
-                '}';
+            "path='" + path + '\'' +
+            ", listener=" + listener + '\'' +
+            ", params='" + params + '\'' +
+            '}';
     }
 }

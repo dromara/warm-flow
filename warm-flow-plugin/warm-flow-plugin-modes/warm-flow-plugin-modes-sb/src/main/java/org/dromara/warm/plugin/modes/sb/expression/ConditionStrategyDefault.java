@@ -36,7 +36,7 @@ public class ConditionStrategyDefault implements ConditionStrategy {
     @Override
     public Boolean eval(String expression, Map<String, Object> variable) {
         expression = expression.replace("$", "#");
-        for (Map.Entry<String, Object> entry: variable.entrySet()) {
+        for (Map.Entry<String, Object> entry : variable.entrySet()) {
             if (expression.contains(entry.getKey())) {
                 expression = expression.replace(entry.getKey(), "#" + entry.getKey());
             }

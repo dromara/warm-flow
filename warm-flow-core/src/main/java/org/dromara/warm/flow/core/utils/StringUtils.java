@@ -414,7 +414,8 @@ public class StringUtils {
 
     /**
      * 自定义分隔符的拼接
-     * @param array 待拼接对象数组
+     *
+     * @param array     待拼接对象数组
      * @param delimiter 分隔符
      * @return 拼接后的字符串
      */
@@ -424,10 +425,11 @@ public class StringUtils {
 
     /**
      * 指定位置拼接
-     * @param array 待拼接对象数组
-     * @param delimiter 分隔符
+     *
+     * @param array      待拼接对象数组
+     * @param delimiter  分隔符
      * @param startIndex 起始位置
-     * @param endIndex 终止位置
+     * @param endIndex   终止位置
      * @return 拼接后的字符串
      */
     public static String join(Object[] array, String delimiter, int startIndex, int endIndex) {
@@ -437,7 +439,7 @@ public class StringUtils {
             return "";
         } else {
             StringJoiner joiner = new StringJoiner(toStringOrEmpty(delimiter));
-            for(int i = startIndex; i < endIndex; ++i) {
+            for (int i = startIndex; i < endIndex; ++i) {
                 joiner.add(toStringOrEmpty(array[i]));
             }
             return joiner.toString();
@@ -446,6 +448,7 @@ public class StringUtils {
 
     /**
      * 字符串默认值
+     *
      * @param obj 原始对象
      * @return 对象转成字符串Result
      */
