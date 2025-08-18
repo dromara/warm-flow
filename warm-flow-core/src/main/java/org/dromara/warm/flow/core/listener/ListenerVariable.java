@@ -112,8 +112,8 @@ public class ListenerVariable {
         this.nextNodes = nextNodes;
     }
 
-    public ListenerVariable(Definition definition, Instance instance, Node node , Map<String, Object> variable, Task task
-            , List<Node> nextNodes, List<Task> nextTasks) {
+    public ListenerVariable(Definition definition, Instance instance, Node node, Map<String, Object> variable, Task task
+        , List<Node> nextNodes, List<Task> nextTasks) {
         this.definition = definition;
         this.instance = instance;
         this.node = node;
@@ -199,14 +199,14 @@ public class ListenerVariable {
     @Override
     public String toString() {
         return "ListenerVariable{" +
-                "definition=" + definition +
-                ", instance=" + instance +
-                ", node=" + node +
-                ", task=" + task +
-                ", nextNodes=" + nextNodes +
-                ", nextTasks=" + nextTasks +
-                ", variable=" + variable +
-                ", flowParams=" + flowParams +
-                '}';
+            "definition=" + definition +
+            ", instance=" + instance +
+            ", node=" + node +
+            ", task=" + task +
+            ", nextNodes=" + nextNodes +
+            ", nextTasks=" + nextTasks +
+            ", variable=" + variable +
+            ", flowParams=" + flowParams +
+            '}';
     }
 }

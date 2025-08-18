@@ -30,6 +30,7 @@ public interface ChartService {
 
     /**
      * 获取流程开启时的流程图元数据
+     *
      * @param pathWayData 办理过程中途径数据，用于渲染流程图
      * @return 流程图元数据json
      */
@@ -37,6 +38,7 @@ public interface ChartService {
 
     /**
      * 获取流程运行时的流程图元数据
+     *
      * @param pathWayData 办理过程中途径数据，用于渲染流程图
      * @return 流程图元数据json
      */
@@ -44,6 +46,7 @@ public interface ChartService {
 
     /**
      * 获取流程图三原色
+     *
      * @param modelValue 流程模型
      */
     List<String> getChartRgb(String modelValue);

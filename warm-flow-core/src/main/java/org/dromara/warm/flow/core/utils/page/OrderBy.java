@@ -23,12 +23,14 @@ public interface OrderBy {
 
     /**
      * 获取排序字段
+     *
      * @return 排序字段
      */
     String getOrderBy();
 
     /**
      * 排序策略,是否 Asc
+     *
      * @return 是的话返回 asc,不是 desc
      */
     String getIsAsc();

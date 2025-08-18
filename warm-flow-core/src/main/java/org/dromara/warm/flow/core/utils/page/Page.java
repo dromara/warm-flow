@@ -96,8 +96,8 @@ public class Page<T> implements OrderBy, Serializable {
     /**
      * 计算分页起始页
      *
-     * @param pageNum  当前页码
-     * @param size     每页显示记录数
+     * @param pageNum 当前页码
+     * @param size    每页显示记录数
      * @return 分页结果
      */
     public static <T> Page<T> pageOf(Integer pageNum, Integer size) {

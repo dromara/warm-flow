@@ -71,14 +71,14 @@ public class ExpressionUtil {
      */
     public static boolean evalCondition(String expression, Map<String, Object> variable) {
         return Boolean.TRUE.equals(getValue(ConditionStrategy.EXPRESSION_STRATEGY_LIST, expression, variable
-                , ExceptionCons.NULL_CONDITION_STRATEGY));
+            , ExceptionCons.NULL_CONDITION_STRATEGY));
     }
 
     /**
      * 办理人表达式替换
      *
-     * @param addTasks      任务列表
-     * @param flowParams    流程变量
+     * @param addTasks   任务列表
+     * @param flowParams 流程变量
      */
     public static void evalVariable(List<Task> addTasks, FlowParams flowParams) {
         if (CollUtil.isEmpty(addTasks)) {
@@ -112,9 +112,9 @@ public class ExpressionUtil {
     /**
      * 处理下个任务的处理人
      *
-     * @param nextHandlerAppend     下个任务处理人配置类型
-     * @param nextHandler           下个任务的处理人
-     * @param permissions           节点配置的原下个任务的处理人
+     * @param nextHandlerAppend 下个任务处理人配置类型
+     * @param nextHandler       下个任务的处理人
+     * @param permissions       节点配置的原下个任务的处理人
      * @author xiarg
      * @since 2025/06/03 15:33:38
      */
@@ -139,7 +139,7 @@ public class ExpressionUtil {
      */
     public static List<String> evalVariable(String expression, Map<String, Object> variable) {
         return getValue(VariableStrategy.EXPRESSION_STRATEGY_LIST, expression, variable
-                            , ExceptionCons.NULL_VARIABLE_STRATEGY);
+            , ExceptionCons.NULL_VARIABLE_STRATEGY);
     }
 
     /**
@@ -150,19 +150,19 @@ public class ExpressionUtil {
      */
     public static boolean evalListener(String expression, Map<String, Object> variable) {
         return Boolean.TRUE.equals(getValue(ListenerStrategy.EXPRESSION_STRATEGY_LIST, expression, variable
-                , ExceptionCons.NULL_LISTENER_STRATEGY));
+            , ExceptionCons.NULL_LISTENER_STRATEGY));
     }
 
     /**
      * 获取表达式对应的值
      *
-     * @param strategyList  表达式策略列表
-     * @param expression    变量表达式
-     * @param variable      流程变量
+     * @param strategyList 表达式策略列表
+     * @param expression   变量表达式
+     * @param variable     流程变量
      * @return 执行结果
      */
     private static <T> T getValue(List<ExpressionStrategy<T>> strategyList, String expression
-            , Map<String, Object> variable, String errMsg) {
+        , Map<String, Object> variable, String errMsg) {
         if (StringUtils.isNotEmpty(expression)) {
             // 倒叙遍历，优先匹配最后注入的策略实现类
             for (int i = strategyList.size() - 1; i >= 0; i--) {

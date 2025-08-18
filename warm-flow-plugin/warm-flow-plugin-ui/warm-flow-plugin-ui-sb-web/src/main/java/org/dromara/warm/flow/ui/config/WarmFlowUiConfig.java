@@ -31,15 +31,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @ConditionalOnProperty(value = "warm-flow.ui", havingValue = "true", matchIfMissing = true)
 @Import({WarmFlowUiController.class
-        , WarmFlowController.class})
-public class WarmFlowUiConfig implements WebMvcConfigurer
-{
+    , WarmFlowController.class})
+public class WarmFlowUiConfig implements WebMvcConfigurer {
     @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry)
-    {
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
         /** warm-flow配置 */
         registry.addResourceHandler("/warm-flow-ui/**")
-                .addResourceLocations("classpath:/META-INF/resources/warm-flow-ui/", "classpath:/warm-flow-ui/");
+            .addResourceLocations("classpath:/META-INF/resources/warm-flow-ui/", "classpath:/warm-flow-ui/");
 
     }
 }

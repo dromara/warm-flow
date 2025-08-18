@@ -52,14 +52,14 @@ public class ChartServiceImpl implements ChartService {
         List<NodeJson> nodeList = defJson.getNodeList();
 
         Map<String, NodeJson> nodeMap = StreamUtils.toMap(nodeList, NodeJson::getNodeCode
-                , node -> node.setStatus(ChartStatus.NOT_DONE.getKey()));
+            , node -> node.setStatus(ChartStatus.NOT_DONE.getKey()));
         Map<String, SkipJson> skipMap = nodeList.stream().map(NodeJson::getSkipList).flatMap(List::stream)
-                .collect(Collectors.toMap(this::getSkipKey, skip -> skip.setStatus(ChartStatus.NOT_DONE.getKey())));
+            .collect(Collectors.toMap(this::getSkipKey, skip -> skip.setStatus(ChartStatus.NOT_DONE.getKey())));
 
         pathWayData.getPathWayNodes().forEach(node -> nodeMap.get(node.getNodeCode()).setStatus(ChartStatus.DONE.getKey()));
         pathWayData.getPathWaySkips().forEach(skip -> skipMap.get(getSkipKey(skip)).setStatus(ChartStatus.DONE.getKey()));
         pathWayData.getTargetNodes().forEach(node -> nodeMap.get(node.getNodeCode()).setStatus(
-                NodeType.isEnd(node.getNodeType()) ? ChartStatus.DONE.getKey() : ChartStatus.TO_DO.getKey()
+            NodeType.isEnd(node.getNodeType()) ? ChartStatus.DONE.getKey() : ChartStatus.TO_DO.getKey()
         ));
 
         return FlowEngine.jsonConvert.objToStr(defJson);
@@ -102,7 +102,7 @@ public class ChartServiceImpl implements ChartService {
 
         if (SkipType.isReject(pathWayData.getSkipType())) {
             Map<String, List<SkipJson>> skipNextMap = StreamUtils.groupByKeyFilter(skip ->
-                    !SkipType.isReject(skip.getSkipType()), skipList, SkipJson::getNowNodeCode);
+                !SkipType.isReject(skip.getSkipType()), skipList, SkipJson::getNowNodeCode);
             pathWayData.getTargetNodes().forEach(node -> rejectReset(node.getNodeCode(), skipNextMap, nodeMap));
         }
 
@@ -134,18 +134,18 @@ public class ChartServiceImpl implements ChartService {
 
     private String getSkipKey(SkipJson skip) {
         return StringUtils.join(new String[]{
-                skip.getNowNodeCode(),
-                skip.getSkipType(),
-                skip.getSkipCondition(),
-                skip.getNextNodeCode()}, ":");
+            skip.getNowNodeCode(),
+            skip.getSkipType(),
+            skip.getSkipCondition(),
+            skip.getNextNodeCode()}, ":");
     }
 
     private String getSkipKey(Skip skip) {
         return StringUtils.join(new String[]{
-                skip.getNowNodeCode(),
-                skip.getSkipType(),
-                skip.getSkipCondition(),
-                skip.getNextNodeCode()}, ":");
+            skip.getNowNodeCode(),
+            skip.getSkipType(),
+            skip.getSkipCondition(),
+            skip.getNextNodeCode()}, ":");
     }
 
     private void rejectReset(String nodeCode, Map<String, List<SkipJson>> skipNextMap, Map<String, NodeJson> nodeMap) {

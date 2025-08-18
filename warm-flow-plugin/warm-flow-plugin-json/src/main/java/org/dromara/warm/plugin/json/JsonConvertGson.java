@@ -38,13 +38,15 @@ public class JsonConvertGson implements JsonConvert {
 
     /**
      * 将字符串转为map
+     *
      * @param jsonStr json字符串
      * @return map
      */
     @Override
     public Map<String, Object> strToMap(String jsonStr) {
         if (StringUtils.isNotEmpty(jsonStr)) {
-            Type type = new TypeToken<Map<String, Object>>(){}.getType();
+            Type type = new TypeToken<Map<String, Object>>() {
+            }.getType();
             return GSON.fromJson(jsonStr, type);
         }
         return new HashMap<>();
@@ -52,8 +54,9 @@ public class JsonConvertGson implements JsonConvert {
 
     /**
      * 将字符串转为bean
+     *
      * @param jsonStr json字符串
-     * @param clazz Class<T>
+     * @param clazz   Class<T>
      * @return T
      */
     @Override
@@ -66,13 +69,15 @@ public class JsonConvertGson implements JsonConvert {
 
     /**
      * 将字符串转为集合
+     *
      * @param jsonStr json字符串
      * @return List<T>
      */
     @Override
     public <T> List<T> strToList(String jsonStr) {
         if (StringUtils.isNotEmpty(jsonStr)) {
-            Type listType = new TypeToken<List<T>>() {}.getType();
+            Type listType = new TypeToken<List<T>>() {
+            }.getType();
             return GSON.fromJson(jsonStr, listType);
         }
         return null;
@@ -80,6 +85,7 @@ public class JsonConvertGson implements JsonConvert {
 
     /**
      * 将对象转为字符串
+     *
      * @param variable object
      * @return json字符串
      */

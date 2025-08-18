@@ -31,7 +31,7 @@ import java.util.List;
  */
 @Data
 @Accessors(chain = true)
-public  class FlowTask implements Task {
+public class FlowTask implements Task {
 
     /**
      * 主键

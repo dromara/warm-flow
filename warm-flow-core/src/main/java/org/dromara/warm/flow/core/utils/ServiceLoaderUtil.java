@@ -125,7 +125,7 @@ public class ServiceLoaderUtil {
         } else {
             // 绕开权限检查
             return AccessController.doPrivileged(
-                    (PrivilegedAction<ClassLoader>) () -> Thread.currentThread().getContextClassLoader());
+                (PrivilegedAction<ClassLoader>) () -> Thread.currentThread().getContextClassLoader());
         }
     }
 
@@ -142,7 +142,7 @@ public class ServiceLoaderUtil {
         } else {
             // 绕开权限检查
             return AccessController.doPrivileged(
-                    (PrivilegedAction<ClassLoader>) ClassLoader::getSystemClassLoader);
+                (PrivilegedAction<ClassLoader>) ClassLoader::getSystemClassLoader);
         }
     }
 

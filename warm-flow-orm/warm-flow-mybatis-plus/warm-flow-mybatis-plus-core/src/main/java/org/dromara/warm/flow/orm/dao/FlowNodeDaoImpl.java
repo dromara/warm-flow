@@ -49,7 +49,7 @@ public class FlowNodeDaoImpl extends WarmDaoImpl<FlowNode> implements FlowNodeDa
     public List<FlowNode> getByNodeCodes(List<String> nodeCodes, Long definitionId) {
         LambdaQueryWrapper<FlowNode> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.in(CollUtil.isNotEmpty(nodeCodes), FlowNode::getNodeCode, nodeCodes)
-                .eq(FlowNode::getDefinitionId, definitionId);
+            .eq(FlowNode::getDefinitionId, definitionId);
         return getMapper().selectList(queryWrapper);
     }
 

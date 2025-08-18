@@ -143,14 +143,14 @@ public class WarmFlow implements Serializable {
     private void printBanner() {
         if (this.isBanner()) {
             System.out.println("\n" +
-                    "   ▄     ▄                             ▄▄▄▄▄▄   ▄                     \n" +
-                    "   █  █  █  ▄▄▄    ▄ ▄▄  ▄▄▄▄▄         █        █     ▄▄▄  ▄     ▄    \n" +
-                    "   ▀ █▀█ █ ▀   █   █▀  ▀ █ █ █  ▄▄▄▄▄  █▄▄▄▄▄   █    █▀ ▀█ ▀▄ ▄ ▄▀    \n" +
-                    "    ██ ██▀ ▄▀▀▀█   █     █ █ █         █        █    █   █  █▄█▄█     \n" +
-                    "    █   █  ▀▄▄▀█   █     █ █ █         █        █▄▄  ▀█▄█▀   █ █      \n" +
-                    "\n" +
-                    "\033[32m   :: Warm-Flow ::     (v" + WarmFlow.class.getPackage()
-                    .getImplementationVersion() + ")\033[0m\n");
+                "   ▄     ▄                             ▄▄▄▄▄▄   ▄                     \n" +
+                "   █  █  █  ▄▄▄    ▄ ▄▄  ▄▄▄▄▄         █        █     ▄▄▄  ▄     ▄    \n" +
+                "   ▀ █▀█ █ ▀   █   █▀  ▀ █ █ █  ▄▄▄▄▄  █▄▄▄▄▄   █    █▀ ▀█ ▀▄ ▄ ▄▀    \n" +
+                "    ██ ██▀ ▄▀▀▀█   █     █ █ █         █        █    █   █  █▄█▄█     \n" +
+                "    █   █  ▀▄▄▀█   █     █ █ █         █        █▄▄  ▀█▄█▀   █ █      \n" +
+                "\n" +
+                "\033[32m   :: Warm-Flow ::     (v" + WarmFlow.class.getPackage()
+                .getImplementationVersion() + ")\033[0m\n");
         }
     }
 

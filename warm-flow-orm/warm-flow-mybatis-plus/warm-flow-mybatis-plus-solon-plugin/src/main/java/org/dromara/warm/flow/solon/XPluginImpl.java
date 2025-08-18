@@ -38,13 +38,13 @@ public class XPluginImpl implements Plugin {
         context.beanMake(FlowAutoConfig.class);
         EventBus.subscribe(Configuration.class, e -> {
             List<String> mapperList = Arrays.asList("warm/flow/FlowDefinitionMapper.xml", "warm/flow/FlowHisTaskMapper.xml"
-                    , "warm/flow/FlowInstanceMapper.xml", "warm/flow/FlowNodeMapper.xml", "warm/flow/FlowFormMapper.xml"
-                    , "warm/flow/FlowSkipMapper.xml", "warm/flow/FlowTaskMapper.xml", "warm/flow/FlowUserMapper.xml");
+                , "warm/flow/FlowInstanceMapper.xml", "warm/flow/FlowNodeMapper.xml", "warm/flow/FlowFormMapper.xml"
+                , "warm/flow/FlowSkipMapper.xml", "warm/flow/FlowTaskMapper.xml", "warm/flow/FlowUserMapper.xml");
 
             try {
                 for (String mapper : mapperList) {
                     XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(Resources.getResourceAsStream(mapper),
-                            e, getClass().getResource("/") + mapper, e.getSqlFragments());
+                        e, getClass().getResource("/") + mapper, e.getSqlFragments());
                     xmlMapperBuilder.parse();
                 }
             } catch (Exception ex) {

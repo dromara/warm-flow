@@ -170,7 +170,7 @@ public class FlowParams implements Serializable {
     }
 
     public FlowParams(String skipType, String message, Map<String, Object> variable
-            , String flowStatus, String hisStatus) {
+        , String flowStatus, String hisStatus) {
         this.skipType = skipType;
         this.message = message;
         this.variable = variable;
@@ -179,7 +179,7 @@ public class FlowParams implements Serializable {
     }
 
     public FlowParams(String nodeCode, String skipType, String message, Map<String, Object> variable
-            , String flowStatus, String hisStatus) {
+        , String flowStatus, String hisStatus) {
         this.nodeCode = nodeCode;
         this.skipType = skipType;
         this.message = message;

@@ -85,7 +85,7 @@ public class FlowConfigUtil {
         }
         // 保证不存在重复的nodeCode
         AssertUtil.contains(nodeCodeSet, node.getNodeCode(),
-                "【" + flowName + "】" + ExceptionCons.SAME_NODE_CODE);
+            "【" + flowName + "】" + ExceptionCons.SAME_NODE_CODE);
         nodeCodeSet.add(node.getNodeCode());
         return startNum;
     }
@@ -131,9 +131,9 @@ public class FlowConfigUtil {
     /**
      * 读取工作节点和跳转条件
      *
-     * @param node node
+     * @param node         node
      * @param definitionId definitionId
-     * @param version version
+     * @param version      version
      */
     public static void initNodeAndCondition(Node node, Long definitionId, String version) {
         String nodeName = node.getNodeName();

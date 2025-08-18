@@ -33,7 +33,7 @@ public interface FlowHisTaskDao<T extends HisTask> extends WarmDao<T> {
      * @param instanceId
      * @return
      */
-    List<T> getNoReject( Long instanceId);
+    List<T> getNoReject(Long instanceId);
 
 
     /**

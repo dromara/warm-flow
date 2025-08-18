@@ -49,7 +49,7 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser> implements FlowUserDa
         FlowUser entity = TenantDeleteUtil.getEntity(newEntity());
         if (StringUtils.isNotEmpty(entity.getDelFlag())) {
             return getMapper().updateByTaskIdsLogic(taskIdList, entity, FlowEngine.getFlowConfig().getLogicDeleteValue(),
-                    entity.getDelFlag());
+                entity.getDelFlag());
         }
         return getMapper().deleteByTaskIds(taskIdList, entity);
     }
@@ -59,10 +59,10 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser> implements FlowUserDa
         String dataSourceType = FlowEngine.dataSourceType();
         if (CollUtil.isNotEmpty(associateds) && associateds.size() == 1) {
             return getMapper().listByAssociatedAndTypes(types, null
-                    , TenantDeleteUtil.getEntity(newEntity()).setAssociated(associateds.get(0)), dataSourceType);
+                , TenantDeleteUtil.getEntity(newEntity()).setAssociated(associateds.get(0)), dataSourceType);
         }
         return getMapper().listByAssociatedAndTypes(types, associateds
-                , TenantDeleteUtil.getEntity(newEntity()), dataSourceType);
+            , TenantDeleteUtil.getEntity(newEntity()), dataSourceType);
     }
 
     @Override
@@ -70,9 +70,9 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser> implements FlowUserDa
         String dataSourceType = FlowEngine.dataSourceType();
         if (CollUtil.isNotEmpty(processedBys) && processedBys.size() == 1) {
             return getMapper().listByProcessedBys(types, null, TenantDeleteUtil
-                    .getEntity(newEntity()).setAssociated(associated).setProcessedBy(processedBys.get(0)), dataSourceType);
+                .getEntity(newEntity()).setAssociated(associated).setProcessedBy(processedBys.get(0)), dataSourceType);
         }
         return getMapper().listByProcessedBys(types, processedBys
-                , TenantDeleteUtil.getEntity(newEntity()).setAssociated(associated), dataSourceType);
+            , TenantDeleteUtil.getEntity(newEntity()).setAssociated(associated), dataSourceType);
     }
 }

@@ -83,8 +83,8 @@ public class SnowFlakeId15 implements KenGen {
 
         // 生成ID并保证其为15位
         long id = ((timestamp - epoch) << timestampShift)
-                | (machineId << machineIdShift)
-                | sequence;
+            | (machineId << machineIdShift)
+            | sequence;
         // 保证生成的ID为15位
         return id % 10_000_000_000_000_000L;
     }

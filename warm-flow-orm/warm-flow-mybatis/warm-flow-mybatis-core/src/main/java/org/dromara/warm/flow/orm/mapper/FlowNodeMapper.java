@@ -32,7 +32,7 @@ import java.util.List;
 public interface FlowNodeMapper extends WarmMapper<FlowNode> {
 
     List<FlowNode> getByNodeCodes(@Param("nodeCodes") List<String> nodeCodes, @Param("definitionId") Long definitionId
-            , @Param("entity") FlowNode entity);
+        , @Param("entity") FlowNode entity);
 
     /**
      * 批量删除流程节点
@@ -49,6 +49,6 @@ public interface FlowNodeMapper extends WarmMapper<FlowNode> {
      * @return 结果
      */
     int updateNodeByDefIdsLogic(@Param("defIds") Collection<? extends Serializable> defIds, @Param("entity") FlowNode entity
-            , @Param("logicDeleteValue") String logicDeleteValue
-            , @Param("logicNotDeleteValue") String logicNotDeleteValue);
+        , @Param("logicDeleteValue") String logicDeleteValue
+        , @Param("logicNotDeleteValue") String logicNotDeleteValue);
 }

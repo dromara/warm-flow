@@ -66,18 +66,18 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
 
         // 判断流程定义是否激活状态
         AssertUtil.isTrue(definition.getActivityStatus().equals(ActivityStatus.SUSPENDED.getKey())
-                , ExceptionCons.NOT_DEFINITION_ACTIVITY);
+            , ExceptionCons.NOT_DEFINITION_ACTIVITY);
         flowParams.skipType(SkipType.PASS.getKey());
 
         // 执行开始监听器
         ListenerUtil.executeListener(new ListenerVariable(definition, null, startNode, flowParams.getVariable())
-                .setFlowParams(flowParams), Listener.LISTENER_START);
+            .setFlowParams(flowParams), Listener.LISTENER_START);
 
 
         // 获取下一个节点，如果是网关节点，则重新获取后续节点
         PathWayData pathWayData = new PathWayData().setDefId(startNode.getDefinitionId()).setSkipType(flowParams.getSkipType());
         List<Node> nextNodes = FlowEngine.nodeService().getNextNodeList(startNode, null, flowParams.getSkipType(),
-                flowParams.getVariable(), pathWayData, flowCombine);
+            flowParams.getVariable(), pathWayData, flowCombine);
 
         // 设置流程实例对象
         Instance instance = setStartInstance(nextNodes.get(0), businessId, flowParams);
@@ -86,7 +86,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         HisTask hisTask = setHisTask(nextNodes, flowParams, startNode, instance.getId());
 
         List<Task> addTasks = StreamUtils.toList(nextNodes, node -> FlowEngine.taskService()
-                .addTask(node, instance, definition, flowParams));
+            .addTask(node, instance, definition, flowParams));
 
         // 办理人变量替换
         if (CollUtil.isNotEmpty(addTasks)) {
@@ -99,14 +99,14 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
 
         // 执行分派监听器
         ListenerUtil.executeListener(new ListenerVariable(definition, instance, startNode, flowParams.getVariable()
-                , null, nextNodes, addTasks).setFlowParams(flowParams), Listener.LISTENER_ASSIGNMENT);
+            , null, nextNodes, addTasks).setFlowParams(flowParams), Listener.LISTENER_ASSIGNMENT);
 
         // 开启流程，保存流程信息
         saveFlowInfo(instance, addTasks, hisTask, flowParams);
 
         // 执行完成和创建监听器
         ListenerUtil.endCreateListener(new ListenerVariable(definition, instance, startNode, flowParams.getVariable()
-                , null, nextNodes, addTasks).setFlowParams(flowParams));
+            , null, nextNodes, addTasks).setFlowParams(flowParams));
 
         return instance;
     }
@@ -136,11 +136,11 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
      */
     private HisTask setHisTask(List<Node> nextNodes, FlowParams flowParams, Node startNode, Long instanceId) {
         Task startTask = FlowEngine.newTask()
-                .setInstanceId(instanceId)
-                .setDefinitionId(startNode.getDefinitionId())
-                .setNodeCode(startNode.getNodeCode())
-                .setNodeName(startNode.getNodeName())
-                .setNodeType(startNode.getNodeType());
+            .setInstanceId(instanceId)
+            .setDefinitionId(startNode.getDefinitionId())
+            .setNodeCode(startNode.getNodeCode())
+            .setNodeName(startNode.getNodeName())
+            .setNodeType(startNode.getNodeType());
         FlowEngine.dataFillHandler().idFill(startTask);
         // 开始任务转历史任务
         return FlowEngine.hisTaskService().setSkipInsHis(startTask, nextNodes, flowParams);
@@ -173,23 +173,23 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
      * @return Instance
      */
     private Instance setStartInstance(Node firstBetweenNode, String businessId
-            , FlowParams flowParams) {
+        , FlowParams flowParams) {
         Instance instance = FlowEngine.newIns();
         Date now = new Date();
         FlowEngine.dataFillHandler().idFill(instance);
         // 关联业务id,起始后面可以不用到业务id,传业务id目前来看只是为了批量创建流程的时候能创建出有区别化的流程,也是为了后期需要用到businessId。
         instance.setDefinitionId(firstBetweenNode.getDefinitionId())
-                .setBusinessId(businessId)
-                .setNodeType(firstBetweenNode.getNodeType())
-                .setNodeCode(firstBetweenNode.getNodeCode())
-                .setNodeName(firstBetweenNode.getNodeName())
-                .setFlowStatus(StringUtils.emptyDefault(flowParams.getFlowStatus(), FlowStatus.TOBESUBMIT.getKey()))
-                .setActivityStatus(ActivityStatus.ACTIVITY.getKey())
-                .setVariable(FlowEngine.jsonConvert.objToStr(flowParams.getVariable()))
-                .setCreateTime(now)
-                .setUpdateTime(now)
-                .setCreateBy(flowParams.getHandler())
-                .setExt(flowParams.getExt());
+            .setBusinessId(businessId)
+            .setNodeType(firstBetweenNode.getNodeType())
+            .setNodeCode(firstBetweenNode.getNodeCode())
+            .setNodeName(firstBetweenNode.getNodeName())
+            .setFlowStatus(StringUtils.emptyDefault(flowParams.getFlowStatus(), FlowStatus.TOBESUBMIT.getKey()))
+            .setActivityStatus(ActivityStatus.ACTIVITY.getKey())
+            .setVariable(FlowEngine.jsonConvert.objToStr(flowParams.getVariable()))
+            .setCreateTime(now)
+            .setUpdateTime(now)
+            .setCreateBy(flowParams.getHandler())
+            .setExt(flowParams.getExt());
         return instance;
     }
 
@@ -198,11 +198,11 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
 
         List<Long> taskIds = new ArrayList<>();
         instanceIds.forEach(instanceId -> taskIds.addAll(
-                FlowEngine.taskService()
-                        .list(FlowEngine.newTask().setInstanceId(instanceId))
-                        .stream()
-                        .map(Task::getId)
-                        .collect(Collectors.toList())));
+            FlowEngine.taskService()
+                .list(FlowEngine.newTask().setInstanceId(instanceId))
+                .stream()
+                .map(Task::getId)
+                .collect(Collectors.toList())));
 
         if (CollUtil.isNotEmpty(taskIds)) {
             FlowEngine.userService().deleteByTaskIds(taskIds);

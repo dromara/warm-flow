@@ -100,6 +100,7 @@ public class WarmFlowController {
 
     /**
      * 办理人权限设置列表tabs页签
+     *
      * @return List<SelectGroup>
      */
     @Get
@@ -110,6 +111,7 @@ public class WarmFlowController {
 
     /**
      * 办理人权限设置列表结果
+     *
      * @return List<SelectGroup>
      */
     @Get
@@ -120,6 +122,7 @@ public class WarmFlowController {
 
     /**
      * 办理人权限名称回显
+     *
      * @return HandlerSelectVo
      */
     @Get
@@ -130,6 +133,7 @@ public class WarmFlowController {
 
     /**
      * 办理人选择项
+     *
      * @return List<Dict>
      */
     @Get
@@ -150,6 +154,7 @@ public class WarmFlowController {
 
     /**
      * 读取表单内容
+     *
      * @param id
      * @return
      */
@@ -161,6 +166,7 @@ public class WarmFlowController {
 
     /**
      * 保存表单内容,该接口不需要系统实现
+     *
      * @param flowDto
      * @return
      */
@@ -212,12 +218,13 @@ public class WarmFlowController {
     @Post
     @Mapping(value = "/execute/handle/{taskId}")
     public ApiResult<Instance> handle(Map<String, Object> formData, @Path("taskId") Long taskId, String skipType
-            , String message, String nodeCode) {
+        , String message, String nodeCode) {
         return WarmFlowService.handle(formData, taskId, skipType, message, nodeCode);
     }
 
     /**
      * 获取节点扩展属性
+     *
      * @return List<NodeExt>
      */
     @Get

@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  */
 @SuppressWarnings("rawtypes unchecked")
 @Configuration
-@Condition(onProperty="${warm-flow.enabled:true} = true")
+@Condition(onProperty = "${warm-flow.enabled:true} = true")
 public class BeanConfig {
 
     private static final Logger log = LoggerFactory.getLogger(BeanConfig.class);

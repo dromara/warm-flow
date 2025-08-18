@@ -65,11 +65,11 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
     @Override
     public Page<T> selectPage(T entity, Page<T> page) {
         com.baomidou.mybatisplus.extension.plugins.pagination.Page<T> pagePlus =
-                new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(page.getPageNum(), page.getPageSize());
+            new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(page.getPageNum(), page.getPageSize());
 
         QueryWrapper<T> queryWrapper = new QueryWrapper<>(entity);
         queryWrapper.orderBy(StringUtils.isNotEmpty(page.getOrderBy())
-                , page.getIsAsc().equals(SqlKeyword.ASC.getSqlSegment()), page.getOrderBy());
+            , page.getIsAsc().equals(SqlKeyword.ASC.getSqlSegment()), page.getOrderBy());
 
         com.baomidou.mybatisplus.extension.plugins.pagination.Page<T> tPage = getMapper().selectPage(pagePlus, queryWrapper);
 
@@ -87,7 +87,7 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
         QueryWrapper<T> queryWrapper = new QueryWrapper<>(entity);
         if (ObjectUtil.isNotNull(query)) {
             queryWrapper.orderBy(StringUtils.isNotEmpty(query.getOrderBy())
-                    , query.getIsAsc().equals(SqlKeyword.ASC.getSqlSegment()), query.getOrderBy());
+                , query.getIsAsc().equals(SqlKeyword.ASC.getSqlSegment()), query.getOrderBy());
         }
         return getMapper().selectList(queryWrapper);
     }

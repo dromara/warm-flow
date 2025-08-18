@@ -44,6 +44,6 @@ public interface FlowSkipMapper extends WarmMapper<FlowSkip> {
      * @return 结果
      */
     int updateSkipByDefIdsLogic(@Param("defIds") Collection<? extends Serializable> defIds, @Param("entity") FlowSkip entity
-            , @Param("logicDeleteValue") String logicDeleteValue
-            , @Param("logicNotDeleteValue") String logicNotDeleteValue);
+        , @Param("logicDeleteValue") String logicDeleteValue
+        , @Param("logicNotDeleteValue") String logicNotDeleteValue);
 }

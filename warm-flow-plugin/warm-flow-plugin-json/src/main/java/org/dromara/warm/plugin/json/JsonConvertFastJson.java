@@ -35,21 +35,24 @@ public class JsonConvertFastJson implements JsonConvert {
 
     /**
      * 将字符串转为map
+     *
      * @param jsonStr json字符串
      * @return map
      */
     @Override
     public Map<String, Object> strToMap(String jsonStr) {
         if (StringUtils.isNotEmpty(jsonStr)) {
-            return JSON.parseObject(jsonStr, new TypeReference<Map<String, Object>>(){});
+            return JSON.parseObject(jsonStr, new TypeReference<Map<String, Object>>() {
+            });
         }
         return new HashMap<>();
     }
 
     /**
      * 将字符串转为bean
+     *
      * @param jsonStr json字符串
-     * @param clazz Class<T>
+     * @param clazz   Class<T>
      * @return T
      */
     @Override
@@ -62,18 +65,22 @@ public class JsonConvertFastJson implements JsonConvert {
 
     /**
      * 将字符串转为集合
+     *
      * @param jsonStr json字符串
      * @return List<T>
      */
     @Override
     public <T> List<T> strToList(String jsonStr) {
         if (StringUtils.isNotEmpty(jsonStr)) {
-            return JSON.parseObject(jsonStr, new TypeReference<List<T>>() {});
+            return JSON.parseObject(jsonStr, new TypeReference<List<T>>() {
+            });
         }
         return null;
     }
+
     /**
      * 将对象转为字符串
+     *
      * @param variable object
      * @return json字符串
      */

@@ -28,6 +28,7 @@ public interface NodeExtService {
 
     /**
      * 获取节点扩展属性
+     *
      * @return 结果
      */
     List<NodeExt> getNodeExt();
