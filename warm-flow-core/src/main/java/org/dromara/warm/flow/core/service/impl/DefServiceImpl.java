@@ -182,13 +182,14 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     }
 
     @Override
-    public void saveDef(DefJson defJson) {
+    public void saveDef(DefJson defJson, boolean onlyNodeSkip) {
         if (ObjectUtil.isNull(defJson)) {
             return;
         }
         FlowCombine flowCombine = DefJson.copyCombine(defJson);
         Definition definition = flowCombine.getDefinition();
         Long id = definition.getId();
+        // 如果是新增的流程定义
         if (ObjectUtil.isNull(id)) {
             definition.setVersion(getNewVersion(definition));
             FlowEngine.dataFillHandler().idFill(definition);
@@ -197,10 +198,13 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
         // 校验流程定义合法性
         checkFlowLegal(flowCombine);
 
+        // 如果是新增的流程定义
         if (ObjectUtil.isNull(id)) {
             FlowEngine.defService().save(definition);
         } else {
-            FlowEngine.defService().updateById(definition);
+            if (!onlyNodeSkip) {
+                FlowEngine.defService().updateById(definition);
+            }
             // 删除所有节点和连线
             FlowEngine.nodeService().remove(FlowEngine.newNode().setDefinitionId(id));
             FlowEngine.skipService().remove(FlowEngine.newSkip().setDefinitionId(id));
@@ -218,7 +222,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
 
     @Override
     public String exportJson(Long id) {
-        return FlowEngine.jsonConvert.objToStr(DefJson.copyDef(getAllDataDefinition(id)));
+        return FlowEngine.jsonConvert.objToStr(queryDesign(id).setIsPublish(null));
     }
 
     @Override
@@ -286,6 +290,8 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
 
     @Override
     public boolean publish(Long id) {
+        List<Node> nodeList = FlowEngine.nodeService().getByDefId(id);
+        AssertUtil.isEmpty(nodeList, ExceptionCons.NOT_DRAW_FLOW_ERROR);
         Definition definition = getById(id);
         List<Definition> definitions = getByFlowCode(definition.getFlowCode());
         // 已发布流程定义，改为已失效或者未发布状态
@@ -350,6 +356,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     @Override
     public boolean active(Long id) {
         Definition definition = getById(id);
+        AssertUtil.isNull(definition, ExceptionCons.NOT_FOUNT_DEF);
         AssertUtil.isTrue(ActivityStatus.isActivity(definition.getActivityStatus()), ExceptionCons.DEFINITION_ALREADY_ACTIVITY);
         definition.setActivityStatus(ActivityStatus.ACTIVITY.getKey());
         return updateById(definition);
@@ -358,6 +365,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     @Override
     public boolean unActive(Long id) {
         Definition definition = getById(id);
+        AssertUtil.isNull(definition, ExceptionCons.NOT_FOUNT_DEF);
         AssertUtil.isTrue(ActivityStatus.isSuspended(definition.getActivityStatus()), ExceptionCons.DEFINITION_ALREADY_SUSPENDED);
         definition.setActivityStatus(ActivityStatus.SUSPENDED.getKey());
         return updateById(definition);

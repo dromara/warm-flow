@@ -30,7 +30,7 @@ public interface JsonConvert {
      * @param jsonStr json字符串
      * @return map
      */
-    public Map<String, Object> strToMap(String jsonStr);
+    Map<String, Object> strToMap(String jsonStr);
 
     /**
      * 将字符串转为bean
@@ -38,7 +38,7 @@ public interface JsonConvert {
      * @param clazz Class<T>
      * @return T
      */
-    public <T> T strToBean(String jsonStr, Class<T> clazz);
+    <T> T strToBean(String jsonStr, Class<T> clazz);
 
     /**
      * TODO 未测试
@@ -46,12 +46,12 @@ public interface JsonConvert {
      * @param jsonStr json字符串
      * @return List<T>
      */
-    public <T> List<T> strToList(String jsonStr);
+    <T> List<T> strToList(String jsonStr);
 
     /**
      * 将对象转为字符串
      * @param variable object
      * @return json字符串
      */
-    public String objToStr(Object variable);
+    String objToStr(Object variable);
 }

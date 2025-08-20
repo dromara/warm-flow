@@ -16,15 +16,20 @@
 package org.dromara.warm.flow.core.service.impl;
 
 import org.dromara.warm.flow.core.FlowEngine;
-import org.dromara.warm.flow.core.dto.*;
+import org.dromara.warm.flow.core.dto.DefJson;
+import org.dromara.warm.flow.core.dto.NodeJson;
+import org.dromara.warm.flow.core.dto.PathWayData;
+import org.dromara.warm.flow.core.dto.SkipJson;
 import org.dromara.warm.flow.core.entity.Instance;
 import org.dromara.warm.flow.core.entity.Skip;
 import org.dromara.warm.flow.core.enums.ChartStatus;
 import org.dromara.warm.flow.core.enums.NodeType;
 import org.dromara.warm.flow.core.enums.SkipType;
 import org.dromara.warm.flow.core.service.ChartService;
-
-import org.dromara.warm.flow.core.utils.*;
+import org.dromara.warm.flow.core.utils.CollUtil;
+import org.dromara.warm.flow.core.utils.ObjectUtil;
+import org.dromara.warm.flow.core.utils.StreamUtils;
+import org.dromara.warm.flow.core.utils.StringUtils;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -116,13 +121,13 @@ public class ChartServiceImpl implements ChartService {
     }
 
     @Override
-    public List<String> getChartRgb() {
+    public List<String> getChartRgb(String modelValue) {
         List<String> chartStatusColor = new ArrayList<>();
-        Color done = ChartStatus.getDone();
+        Color done = ChartStatus.getDone(modelValue);
         chartStatusColor.add(done.getRed() + "," + done.getGreen() + "," + done.getBlue());
-        Color toDo = ChartStatus.getToDo();
+        Color toDo = ChartStatus.getToDo(modelValue);
         chartStatusColor.add(toDo.getRed() + "," + toDo.getGreen() + "," + toDo.getBlue());
-        Color notDone = ChartStatus.getNotDone();
+        Color notDone = ChartStatus.getNotDone(modelValue);
         chartStatusColor.add(notDone.getRed() + "," + notDone.getGreen() + "," + notDone.getBlue());
         return chartStatusColor;
     }

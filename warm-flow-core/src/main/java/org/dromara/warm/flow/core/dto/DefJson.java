@@ -25,6 +25,7 @@ import org.dromara.warm.flow.core.entity.Instance;
 import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.entity.Skip;
 import org.dromara.warm.flow.core.utils.CollUtil;
+import org.dromara.warm.flow.core.utils.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -58,9 +59,9 @@ public class DefJson {
     private String flowName;
 
     /**
-     * 设计器模式（CLASSICS经典模式 MIMIC仿钉钉模式）
+     * 设计器模型（CLASSICS经典模型 MIMIC仿钉钉模型）
      */
-    private String mode;
+    private String modelValue;
 
     /**
      * 流程类别
@@ -71,6 +72,11 @@ public class DefJson {
      * 流程版本
      */
     private String version;
+
+    /**
+     * 是否发布（0未开启 1开启）
+     */
+    private Integer isPublish;
 
     /**
      * 审批表单是否自定义（Y是 2否）
@@ -123,16 +129,30 @@ public class DefJson {
     private String topText;
 
     /**
+     * 顶部信息: 流程名称是否显示
+     */
+    private boolean topTextShow;
+
+    /**
      * 流程类别
      */
     private List<Tree> categoryList;
+
+
+    public String getModelValue() {
+        if (StringUtils.isEmpty(modelValue)) {
+            modelValue = "CLASSICS";
+        }
+        return modelValue;
+    }
 
     public static DefJson copyDef(Definition definition) {
         DefJson defJson = new DefJson()
                 .setFlowCode(definition.getFlowCode())
                 .setFlowName(definition.getFlowName())
-                .setMode(definition.getMode())
+                .setModelValue(definition.getModelValue())
                 .setVersion(definition.getVersion())
+                .setIsPublish(definition.getIsPublish())
                 .setCategory(definition.getCategory())
                 .setFormCustom(definition.getFormCustom())
                 .setFormPath(definition.getFormPath())
@@ -184,7 +204,7 @@ public class DefJson {
                 .setId(defJson.getId())
                 .setFlowCode(defJson.getFlowCode())
                 .setFlowName(defJson.getFlowName())
-                .setMode(defJson.getMode())
+                .setModelValue(defJson.getModelValue())
                 .setVersion(defJson.getVersion())
                 .setCategory(defJson.getCategory())
                 .setFormCustom(defJson.getFormCustom())

@@ -21,10 +21,12 @@ import org.dromara.warm.flow.core.config.WarmFlow;
 import org.dromara.warm.flow.core.dto.*;
 import org.dromara.warm.flow.core.entity.Form;
 import org.dromara.warm.flow.core.entity.Instance;
-import org.dromara.warm.flow.core.enums.ModeEnum;
+import org.dromara.warm.flow.core.enums.FormCustomEnum;
+import org.dromara.warm.flow.core.enums.ModelEnum;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.utils.ExceptionUtil;
+import org.dromara.warm.flow.core.utils.StreamUtils;
 import org.dromara.warm.flow.core.utils.StringUtils;
 import org.dromara.warm.flow.ui.dto.HandlerFeedBackDto;
 import org.dromara.warm.flow.ui.dto.HandlerQuery;
@@ -66,13 +68,14 @@ public class WarmFlowService {
      * 保存流程json字符串
      *
      * @param defJson 流程数据集合
+     * @param onlyNodeSkip 是否只保存节点和跳转
      * @return ApiResult<Void>
      * @throws Exception 异常
      * @author xiarg
      * @since 2024/10/29 16:31
      */
-    public static ApiResult<Void> saveJson(DefJson defJson) throws Exception {
-        FlowEngine.defService().saveDef(defJson);
+    public static ApiResult<Void> saveJson(DefJson defJson, boolean onlyNodeSkip) throws Exception {
+        FlowEngine.defService().saveDef(defJson, onlyNodeSkip);
         return ApiResult.ok();
     }
 
@@ -89,7 +92,8 @@ public class WarmFlowService {
             DefJson defJson;
             if (id == null) {
                 defJson = new DefJson()
-                        .setMode(ModeEnum.CLASSICS.name());
+                        .setModelValue(ModelEnum.CLASSICS.name())
+                        .setFormCustom(FormCustomEnum.N.name());
             } else {
                 defJson = FlowEngine.defService().queryDesign(id);
             }
@@ -119,8 +123,9 @@ public class WarmFlowService {
             defJson.setInstance(instance);
 
             // 获取流程图三原色
-            defJson.setChartStatusColor(FlowEngine.chartService().getChartRgb());
-
+            defJson.setChartStatusColor(FlowEngine.chartService().getChartRgb(defJson.getModelValue()));
+            // 是否显示流程图顶部文字
+            defJson.setTopTextShow(FlowEngine.getFlowConfig().isTopTextShow());
             // 需要业务系统实现该接口
             ChartExtService chartExtService = FrameInvoker.getBean(ChartExtService.class);
             if (chartExtService != null) {
@@ -182,7 +187,9 @@ public class WarmFlowService {
             // 需要业务系统实现该接口
             HandlerSelectService handlerSelectService = FrameInvoker.getBean(HandlerSelectService.class);
             if (handlerSelectService == null) {
-                return ApiResult.ok(new ArrayList<>());
+                List<HandlerFeedBackVo> handlerFeedBackVos = StreamUtils.toList(handlerFeedBackDto.getStorageIds(),
+                        storageId -> new HandlerFeedBackVo(storageId, null));
+                return ApiResult.ok(handlerFeedBackVos);
             }
             List<HandlerFeedBackVo> handlerFeedBackVos = handlerSelectService.handlerFeedback(handlerFeedBackDto.getStorageIds());
             return ApiResult.ok(handlerFeedBackVos);

@@ -3,7 +3,7 @@ CREATE TABLE flow_definition
     id              int8         NOT NULL,
     flow_code       varchar(40)  NOT NULL,
     flow_name       varchar(100) NOT NULL,
-    mode            varchar(40)  NOT NULL DEFAULT 'CLASSICS',
+    model_value     varchar(40)  NOT NULL DEFAULT 'CLASSICS',
     category        varchar(100) NULL,
     "version"       varchar(20)  NOT NULL,
     is_publish      int2         NOT NULL DEFAULT 0,
@@ -24,7 +24,7 @@ COMMENT ON TABLE flow_definition IS '流程定义表';
 COMMENT ON COLUMN flow_definition.id IS '主键id';
 COMMENT ON COLUMN flow_definition.flow_code IS '流程编码';
 COMMENT ON COLUMN flow_definition.flow_name IS '流程名称';
-COMMENT ON COLUMN flow_definition.mode IS '设计器模式（CLASSICS经典模式 MIMIC仿钉钉模式）';
+COMMENT ON COLUMN flow_definition.model_value IS '设计器模型（CLASSICS经典模型 MIMIC仿钉钉模型）';
 COMMENT ON COLUMN flow_definition.category IS '流程类别';
 COMMENT ON COLUMN flow_definition."version" IS '流程版本';
 COMMENT ON COLUMN flow_definition.is_publish IS '是否发布（0未发布 1已发布 9失效）';
@@ -209,7 +209,7 @@ CREATE TABLE flow_his_task
     target_node_name varchar(200) NULL,
     approver         varchar(40)  NULL,
     cooperate_type   int2         NOT NULL DEFAULT 0,
-    collaborator     varchar(40)  NULL,
+    collaborator     varchar(500)  NULL,
     skip_type        varchar(10)  NULL,
     flow_status      varchar(20)  NOT NULL,
     form_custom      bpchar(1)    NULL     DEFAULT 'N':: character varying,

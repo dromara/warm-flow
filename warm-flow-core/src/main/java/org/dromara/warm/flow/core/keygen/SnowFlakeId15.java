@@ -21,18 +21,31 @@ package org.dromara.warm.flow.core.keygen;
  * @author HUANGJIANSHISHENG
  */
 public class SnowFlakeId15 implements KenGen {
-    // 开始时间戳 (任意设置，建议为项目的开始时间)
-    private final long epoch = 1609459200000L; // 2021-01-01 00:00:00
+    /**
+     * 开始时间戳 (任意设置，建议为项目的开始时间)
+     * // 2021-01-01 00:00:00
+     */
+    private final long epoch = 1609459200000L;
 
-    // 各部分的位数
-    private final long sequenceBits = 6L;   // 序列号占用6位
-    private final long machineIdBits = 4L;  // 机器ID占用4位
 
-    // 各部分的最大值
+    /**
+     * 各部分的位数-序列号占用6位
+     */
+    private final long sequenceBits = 6L;
+    /**
+     * 各部分的位数-机器ID占用4位
+     */
+    private final long machineIdBits = 4L;
+
+    /**
+     * 各部分的最大值
+     */
     private final long maxMachineId = -1L ^ (-1L << machineIdBits);
     private final long maxSequence = -1L ^ (-1L << sequenceBits);
 
-    // 各部分的偏移量
+    /**
+     * 各部分的偏移量
+     */
     private final long sequenceShift = 0;
     private final long machineIdShift = sequenceBits;
     private final long timestampShift = machineIdBits + sequenceBits;
@@ -70,10 +83,10 @@ public class SnowFlakeId15 implements KenGen {
 
         // 生成ID并保证其为15位
         long id = ((timestamp - epoch) << timestampShift)
-            | (machineId << machineIdShift)
-            | sequence;
-
-        return id % 10_000_000_000_000_000L; // 保证生成的ID为15位
+                | (machineId << machineIdShift)
+                | sequence;
+        // 保证生成的ID为15位
+        return id % 10_000_000_000_000_000L;
     }
 
     private long tilNextMillis(long lastTimestamp) {

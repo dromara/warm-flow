@@ -45,7 +45,7 @@ public class ExceptionCons {
 
     public static final String NULL_DEST_NODE = "无法他跳转，未配置目标节点!";
 
-    public static final String NULL_SKIP_TYPE = "无法跳转到目标节点,请检查跳转类型是否匹配!";
+    public static final String NULL_SKIP_TYPE = "未找到跳转类型匹配的目标节点!";
 
     public static final String NULL_CONDITION_VALUE_NODE = "未找到跳转条件，不支持跳转!";
 
@@ -113,8 +113,6 @@ public class ExceptionCons {
 
     public static final String INSTANCE_ALREADY_ACTIVITY = "当前流程实例已经激活";
 
-    public static final String INSTANCE_ALREADY_SUSPENDED = "当前流程实例已经挂起";
-
     public static final String FORM_ALREADY_PUBLISH = "当前表单状态已发布";
 
     public static final String FORM_ALREADY_UN_PUBLISH = "当前表单状态未发布";
@@ -133,13 +131,13 @@ public class ExceptionCons {
 
     public static final String FLOW_HAVE_USELESS_SKIP = "存在无用的跳转";
 
-    public static final String NUll_TRANSFER_HANDLER = "转办对象不能为空";
+    public static final String NULL_TRANSFER_HANDLER = "转办对象不能为空";
 
-    public static final String NUll_DEPUTE_HANDLER = "委托对象不能为空";
+    public static final String NULL_DEPUTE_HANDLER = "委托对象不能为空";
 
-    public static final String NUll_ADD_SIGNATURE_HANDLER = "加签对象不能为空";
+    public static final String NULL_ADD_SIGNATURE_HANDLER = "加签对象不能为空";
 
-    public static final String NUll_REDUCTION_SIGNATURE_HANDLER = "减签对象不能为空";
+    public static final String NULL_REDUCTION_SIGNATURE_HANDLER = "减签对象不能为空";
 
     public static final String READ_IS_ERROR = "读取is流失败";
 
@@ -152,5 +150,7 @@ public class ExceptionCons {
     public static final String NOT_FOUNT_HANDLED_TASK_HANDLER = "拿回的任务未办理!";
 
     public static final String START_NODE_NOT_ALLOW_JUMP = "开始节点不允许跳转!";
+
+    public static final String NOT_DRAW_FLOW_ERROR = "未绘制流程图，不可发布";
 
 }

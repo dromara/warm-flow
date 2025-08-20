@@ -21,7 +21,10 @@ import org.dromara.warm.flow.core.dto.FlowCombine;
 import org.dromara.warm.flow.core.dto.FlowParams;
 import org.dromara.warm.flow.core.dto.PathWayData;
 import org.dromara.warm.flow.core.entity.*;
-import org.dromara.warm.flow.core.enums.*;
+import org.dromara.warm.flow.core.enums.ActivityStatus;
+import org.dromara.warm.flow.core.enums.FlowStatus;
+import org.dromara.warm.flow.core.enums.NodeType;
+import org.dromara.warm.flow.core.enums.SkipType;
 import org.dromara.warm.flow.core.listener.Listener;
 import org.dromara.warm.flow.core.listener.ListenerVariable;
 import org.dromara.warm.flow.core.orm.dao.FlowInstanceDao;
@@ -205,12 +208,9 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
             FlowEngine.userService().deleteByTaskIds(taskIds);
         }
 
-        boolean success = FlowEngine.taskService().deleteByInsIds(instanceIds);
-        if (success) {
-            FlowEngine.hisTaskService().deleteByInsIds(instanceIds);
-            return FlowEngine.insService().removeByIds(instanceIds);
-        }
-        return false;
+        FlowEngine.taskService().deleteByInsIds(instanceIds);
+        FlowEngine.hisTaskService().deleteByInsIds(instanceIds);
+        return FlowEngine.insService().removeByIds(instanceIds);
     }
 
     @Override

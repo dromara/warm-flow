@@ -27,12 +27,12 @@ public class FlowCons {
     /**
      * 分隔符
      */
-    public static final String splitAt = "@@";
-    public static final String splitVertical = "\\|";
-    public static final String splitAnd = "and";
-    public static final String splitOr = "or";
+    public static final String SPLIT_AT = "@@";
+    public static final String SPLIT_VERTICAL = "\\|";
+    public static final String SPLIT_AND = "and";
+    public static final String SPLIT_OR = "or";
 
-    public static final Pattern listenerPattern = Pattern.compile("^([^()]*)(.*)$");
+    public static final Pattern LISTENER_PATTERN = Pattern.compile("^([^()]*)(.*)$");
 
     /**
      * 权限标识中的发起人标识符，办理过程中进行替换

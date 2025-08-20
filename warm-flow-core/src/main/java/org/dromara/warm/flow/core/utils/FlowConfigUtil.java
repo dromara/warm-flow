@@ -131,10 +131,9 @@ public class FlowConfigUtil {
     /**
      * 读取工作节点和跳转条件
      *
-     * @param node
-     * @param definitionId
-     * @param version
-     * @return
+     * @param node node
+     * @param definitionId definitionId
+     * @param version version
      */
     public static void initNodeAndCondition(Node node, Long definitionId, String version) {
         String nodeName = node.getNodeName();
@@ -154,29 +153,30 @@ public class FlowConfigUtil {
         Set<String> gateWaySet = new HashSet<>();
         int skipNum = 0;
         // 遍历节点下的跳转条件
-        if (CollUtil.isNotEmpty(skipList)) {
-            for (Skip skip : skipList) {
-                if (NodeType.isStart(node.getNodeType())) {
-                    skipNum++;
-                    AssertUtil.isTrue(skipNum > 1, "[" + node.getNodeName() + "]" + ExceptionCons.MUL_START_SKIP);
-                }
-                AssertUtil.isEmpty(skip.getNextNodeCode(), "【" + nodeName + "】" + ExceptionCons.LOST_DEST_NODE);
-                // 流程id
-                skip.setDefinitionId(definitionId);
-                skip.setNowNodeType(node.getNodeType());
-                if (NodeType.isGateWaySerial(node.getNodeType())) {
-                    String target = skip.getSkipCondition() + ":" + skip.getNextNodeCode();
-                    AssertUtil.contains(gateWaySet, target, "[" + nodeName + "]" + ExceptionCons.SAME_CONDITION_NODE);
-                    gateWaySet.add(target);
-                } else if (NodeType.isGateWayParallel(node.getNodeType())) {
-                    String target = skip.getNextNodeCode();
-                    AssertUtil.contains(gateWaySet, target, "[" + nodeName + "]" + ExceptionCons.SAME_DEST_NODE);
-                    gateWaySet.add(target);
-                } else {
-                    String value = skip.getSkipType() + ":" + skip.getNextNodeCode();
-                    AssertUtil.contains(betweenSet, value, "[" + nodeName + "]" + ExceptionCons.SAME_CONDITION_VALUE);
-                    betweenSet.add(value);
-                }
+        if (CollUtil.isEmpty(skipList)) {
+            return;
+        }
+        for (Skip skip : skipList) {
+            if (NodeType.isStart(node.getNodeType())) {
+                skipNum++;
+                AssertUtil.isTrue(skipNum > 1, "[" + node.getNodeName() + "]" + ExceptionCons.MUL_START_SKIP);
+            }
+            AssertUtil.isEmpty(skip.getNextNodeCode(), "【" + nodeName + "】" + ExceptionCons.LOST_DEST_NODE);
+            // 流程id
+            skip.setDefinitionId(definitionId);
+            skip.setNowNodeType(node.getNodeType());
+            if (NodeType.isGateWaySerial(node.getNodeType())) {
+                String target = skip.getSkipCondition() + ":" + skip.getNextNodeCode();
+                AssertUtil.contains(gateWaySet, target, "[" + nodeName + "]" + ExceptionCons.SAME_CONDITION_NODE);
+                gateWaySet.add(target);
+            } else if (NodeType.isGateWayParallel(node.getNodeType())) {
+                String target = skip.getNextNodeCode();
+                AssertUtil.contains(gateWaySet, target, "[" + nodeName + "]" + ExceptionCons.SAME_DEST_NODE);
+                gateWaySet.add(target);
+            } else {
+                String value = skip.getSkipType() + ":" + skip.getNextNodeCode();
+                AssertUtil.contains(betweenSet, value, "[" + nodeName + "]" + ExceptionCons.SAME_CONDITION_VALUE);
+                betweenSet.add(value);
             }
         }
     }

@@ -22,7 +22,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -32,6 +35,10 @@ import java.util.jar.JarFile;
  * @author warm
  */
 public class ClassUtil {
+
+    public static final String RES_PROTOCOL_FILE = "file";
+    public static final String RES_PROTOCOL_JAR = "jar";
+
     /**
      * 通过包名获取Class对象
      */
@@ -46,9 +53,9 @@ public class ClassUtil {
     /**
      * 通过反射实现对象克隆
      *
-     * @param origin
-     * @param <C>
-     * @return
+     * @param origin 原始对象
+     * @param <C> 目标对象
+     * @return 克隆结果
      */
     public static <C> C clone(C origin) {
         if (Objects.isNull(origin)) {
@@ -86,7 +93,7 @@ public class ClassUtil {
     /**
      * 让指定字段变为可访问
      *
-     * @param field
+     * @param field field
      */
     public static void makeAccessible(Field field) {
         if ((!Modifier.isPublic(field.getModifiers())
@@ -108,9 +115,9 @@ public class ClassUtil {
             if (resourcePath.startsWith("file:")) {
                 resourcePath = resourcePath.substring(5);
             }
-            if (resource.getProtocol().equals("file")) {
+            if (resource.getProtocol().equals(RES_PROTOCOL_FILE)) {
                 findClassesInFile(packageName, resourcePath, classes);
-            } else if (resource.getProtocol().equals("jar")) {
+            } else if (resource.getProtocol().equals(RES_PROTOCOL_JAR)) {
                 // 处理 JAR 文件
                 findClassesInJar(resourcePath, classes);
             }
@@ -120,7 +127,7 @@ public class ClassUtil {
 
     private static void findClassesInFile(String packageName, String resourcePath, Set<Class<?>> classes) throws ClassNotFoundException {
         File dir = new File(resourcePath);
-        if (!dir.exists() ||!dir.isDirectory()) {
+        if (!dir.exists() || !dir.isDirectory()) {
             return;
         }
         File[] files = dir.listFiles();

@@ -31,13 +31,15 @@ public interface ConditionStrategy extends ExpressionStrategy<Boolean> {
     /**
      * 条件表达式策略实现类集合
      */
-    List<ExpressionStrategy<Boolean>> expressionStrategyList = new ArrayList<>();
+    List<ExpressionStrategy<Boolean>> EXPRESSION_STRATEGY_LIST = new ArrayList<>();
 
+    @Override
     default void setExpression(ExpressionStrategy<Boolean> expressionStrategy) {
-        expressionStrategyList.add(expressionStrategy);
+        EXPRESSION_STRATEGY_LIST.add(expressionStrategy);
     }
 
+    @Override
     default String interceptStr() {
-        return FlowCons.splitAt;
+        return FlowCons.SPLIT_AT;
     }
 }

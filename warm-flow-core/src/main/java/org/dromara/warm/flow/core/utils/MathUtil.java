@@ -33,14 +33,18 @@ public class MathUtil {
      * @param str 字符串
      */
     public static boolean isNumeric(String str) {
-        if (str == null || str.isEmpty()) { // 检查字符串是否为空
+        // 检查字符串是否为空
+        if (str == null || str.isEmpty()) {
             return false;
         }
         try {
-            Double.parseDouble(str.trim()); // 使用Double.parseDouble()方法尝试将字符串转换为double
-            return true; // 转换成功，字符串是数字
+            // 使用Double.parseDouble()方法尝试将字符串转换为double
+            Double.parseDouble(str.trim());
+            // 转换成功，字符串是数字
+            return true;
         } catch (NumberFormatException e) {
-            return false; // 转换失败，字符串不是数字
+            // 转换失败，字符串不是数字
+            return false;
         }
     }
 

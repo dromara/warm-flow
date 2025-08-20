@@ -17,6 +17,7 @@ package org.dromara.warm.flow.ui.service;
 
 import org.dromara.warm.flow.core.dto.DefJson;
 import org.dromara.warm.flow.core.dto.PromptContent;
+import org.dromara.warm.flow.core.enums.NodeType;
 import org.dromara.warm.flow.core.utils.MapUtil;
 
 import java.util.ArrayList;
@@ -45,6 +46,10 @@ public interface ChartExtService {
         defJson.getNodeList().forEach(nodeJson -> {
             // 提示信息主对象
             PromptContent promptContent = new PromptContent();
+
+            if (NodeType.isGateWay(nodeJson.getNodeType())) {
+                return;
+            }
 
             // 设置 dialogStyle 样式
             promptContent.setDialogStyle(MapUtil.mergeAll(

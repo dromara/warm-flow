@@ -15,7 +15,6 @@
  */
 package org.dromara.warm.flow.ui.controller;
 
-import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.dto.ApiResult;
 import org.dromara.warm.flow.core.dto.DefJson;
 import org.dromara.warm.flow.core.dto.FlowDto;
@@ -54,8 +53,8 @@ public class WarmFlowController {
      */
     @PostMapping("/save-json")
     @Transactional(rollbackFor = Exception.class)
-    public ApiResult<Void> saveJson(@RequestBody DefJson defJson) throws Exception {
-        return WarmFlowService.saveJson(defJson);
+    public ApiResult<Void> saveJson(@RequestBody DefJson defJson, @RequestHeader("onlyNodeSkip") boolean onlyNodeSkip) throws Exception {
+        return WarmFlowService.saveJson(defJson, onlyNodeSkip);
     }
 
     /**

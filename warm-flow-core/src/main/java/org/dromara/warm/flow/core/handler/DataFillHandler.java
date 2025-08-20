@@ -60,7 +60,7 @@ public interface DataFillHandler {
     /**
      * 设置更新常用参数
      *
-     * @param object
+     * @param object object
      */
     default void updateFill(Object object) {
         RootEntity entity = (RootEntity) object;

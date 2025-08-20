@@ -70,7 +70,7 @@ public class ExpressionUtil {
      * @return boolean
      */
     public static boolean evalCondition(String expression, Map<String, Object> variable) {
-        return Boolean.TRUE.equals(getValue(ConditionStrategy.expressionStrategyList, expression, variable
+        return Boolean.TRUE.equals(getValue(ConditionStrategy.EXPRESSION_STRATEGY_LIST, expression, variable
                 , ExceptionCons.NULL_CONDITION_STRATEGY));
     }
 
@@ -138,7 +138,7 @@ public class ExpressionUtil {
      * @return List<String>
      */
     public static List<String> evalVariable(String expression, Map<String, Object> variable) {
-        return getValue(VariableStrategy.expressionStrategyList, expression, variable
+        return getValue(VariableStrategy.EXPRESSION_STRATEGY_LIST, expression, variable
                             , ExceptionCons.NULL_VARIABLE_STRATEGY);
     }
 
@@ -149,7 +149,7 @@ public class ExpressionUtil {
      * @param variable   变量
      */
     public static boolean evalListener(String expression, Map<String, Object> variable) {
-        return Boolean.TRUE.equals(getValue(ListenerStrategy.expressionStrategyList, expression, variable
+        return Boolean.TRUE.equals(getValue(ListenerStrategy.EXPRESSION_STRATEGY_LIST, expression, variable
                 , ExceptionCons.NULL_LISTENER_STRATEGY));
     }
 
