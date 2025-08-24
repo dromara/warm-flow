@@ -151,6 +151,7 @@ function handleLeave() {
 .base-node {
   width: 100%;
   height: 80px;
+  box-sizing: border-box;
   border-radius: 5px; /* 添加圆角 */
 }
 
