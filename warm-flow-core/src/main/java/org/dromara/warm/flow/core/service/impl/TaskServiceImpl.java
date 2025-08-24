@@ -493,6 +493,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     @Override
     public Task addTask(Node node, Instance instance, Definition definition, FlowParams flowParams) {
         Task addTask = FlowEngine.newTask();
+        Date now = new Date();
         FlowEngine.dataFillHandler().idFill(addTask);
         addTask.setDefinitionId(instance.getDefinitionId())
             .setInstanceId(instance.getId())
@@ -501,7 +502,10 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             .setNodeType(node.getNodeType())
             .setFlowStatus(StringUtils.emptyDefault(flowParams.getFlowStatus(),
                 setFlowStatus(node.getNodeType(), flowParams.getSkipType())))
-            .setCreateTime(new Date())
+            .setCreateTime(now)
+            .setUpdateTime(now)
+            .setCreateBy(flowParams.getHandler())
+            .setUpdateBy(flowParams.getHandler())
             .setPermissionList(StringUtils.str2List(node.getPermissionFlag(), FlowCons.SPLIT_AT));
 
         if (StringUtils.isNotEmpty(node.getFormCustom()) && StringUtils.isNotEmpty(node.getFormPath())) {
@@ -527,6 +531,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     @Override
     public void setInsFinishInfo(Instance instance, List<Task> addTasks, FlowParams flowParams) {
         instance.setUpdateTime(new Date());
+        instance.setUpdateBy(flowParams.getHandler());
         // 合并流程变量到实例对象
         mergeVariable(instance, flowParams.getVariable());
         if (CollUtil.isNotEmpty(addTasks)) {

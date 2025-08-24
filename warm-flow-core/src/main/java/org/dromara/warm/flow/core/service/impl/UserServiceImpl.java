@@ -28,6 +28,7 @@ import org.dromara.warm.flow.core.utils.StreamUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -148,11 +149,15 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
 
     @Override
     public User structureUser(Long associated, String permission, String type, String handler) {
+        Date now = new Date();
         User user = FlowEngine.newUser()
             .setType(type)
             .setProcessedBy(permission)
             .setAssociated(associated)
-            .setCreateBy(handler);
+            .setCreateBy(handler)
+            .setUpdateBy(handler)
+            .setCreateTime(now)
+            .setUpdateTime(now);
         FlowEngine.dataFillHandler().idFill(user);
         return user;
     }

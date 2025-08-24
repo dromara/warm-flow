@@ -135,12 +135,17 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
      * @param instanceId 流程实例id
      */
     private HisTask setHisTask(List<Node> nextNodes, FlowParams flowParams, Node startNode, Long instanceId) {
+        Date now = new Date();
         Task startTask = FlowEngine.newTask()
             .setInstanceId(instanceId)
             .setDefinitionId(startNode.getDefinitionId())
             .setNodeCode(startNode.getNodeCode())
             .setNodeName(startNode.getNodeName())
-            .setNodeType(startNode.getNodeType());
+            .setNodeType(startNode.getNodeType())
+            .setCreateTime(now)
+            .setUpdateTime(now)
+            .setCreateBy(flowParams.getHandler())
+            .setUpdateBy(flowParams.getHandler());
         FlowEngine.dataFillHandler().idFill(startTask);
         // 开始任务转历史任务
         return FlowEngine.hisTaskService().setSkipInsHis(startTask, nextNodes, flowParams);
@@ -177,20 +182,20 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         Instance instance = FlowEngine.newIns();
         Date now = new Date();
         FlowEngine.dataFillHandler().idFill(instance);
-        // 关联业务id,起始后面可以不用到业务id,传业务id目前来看只是为了批量创建流程的时候能创建出有区别化的流程,也是为了后期需要用到businessId。
+        // 关联业务id,其实后面可以不用到业务id,传业务id目前来看只是为了批量创建流程的时候能创建出有区别化的流程,也是为了后期需要用到businessId。
         instance.setDefinitionId(firstBetweenNode.getDefinitionId())
-                .setBusinessId(businessId)
-                .setNodeType(firstBetweenNode.getNodeType())
-                .setNodeCode(firstBetweenNode.getNodeCode())
-                .setNodeName(firstBetweenNode.getNodeName())
-                .setFlowStatus(StringUtils.emptyDefault(flowParams.getFlowStatus(), FlowStatus.TOBESUBMIT.getKey()))
-                .setActivityStatus(ActivityStatus.ACTIVITY.getKey())
-                .setVariable(FlowEngine.jsonConvert.objToStr(flowParams.getVariable()))
-                .setCreateTime(now)
-                .setUpdateTime(now)
-                .setCreateBy(flowParams.getHandler())
-                .setUpdateBy(flowParams.getHandler())
-                .setExt(flowParams.getExt());
+            .setBusinessId(businessId)
+            .setNodeType(firstBetweenNode.getNodeType())
+            .setNodeCode(firstBetweenNode.getNodeCode())
+            .setNodeName(firstBetweenNode.getNodeName())
+            .setFlowStatus(StringUtils.emptyDefault(flowParams.getFlowStatus(), FlowStatus.TOBESUBMIT.getKey()))
+            .setActivityStatus(ActivityStatus.ACTIVITY.getKey())
+            .setVariable(FlowEngine.jsonConvert.objToStr(flowParams.getVariable()))
+            .setCreateTime(now)
+            .setUpdateTime(now)
+            .setCreateBy(flowParams.getHandler())
+            .setUpdateBy(flowParams.getHandler())
+            .setExt(flowParams.getExt());
         return instance;
     }
 

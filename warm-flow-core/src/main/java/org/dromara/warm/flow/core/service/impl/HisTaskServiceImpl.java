@@ -118,7 +118,10 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
             .setVariable(flowParams.getVariableStr())
             //业务详情添加至历史记录
             .setExt(flowParams.getHisTaskExt())
-            .setCreateTime(task.getCreateTime());
+            .setCreateTime(task.getCreateTime())
+            .setUpdateTime(task.getUpdateTime())
+            .setCreateBy(task.getCreateBy())
+            .setUpdateBy(task.getUpdateBy());
         FlowEngine.dataFillHandler().idFill(hisTask);
         return hisTask;
     }
@@ -148,7 +151,10 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
             .setVariable(flowParams.getVariableStr())
             //业务详情添加至历史记录
             .setExt(flowParams.getHisTaskExt())
-            .setCreateTime(task.getCreateTime());
+            .setCreateTime(task.getCreateTime())
+            .setUpdateTime(task.getUpdateTime())
+            .setCreateBy(task.getCreateBy())
+            .setUpdateBy(task.getUpdateBy());
         FlowEngine.dataFillHandler().idFill(hisTask);
         return hisTask;
     }
@@ -177,7 +183,10 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
             .setVariable(flowParams.getVariableStr())
             //业务详情添加至历史记录
             .setExt(flowParams.getHisTaskExt())
-            .setCreateTime(task.getCreateTime());
+            .setCreateTime(task.getCreateTime())
+            .setUpdateTime(task.getUpdateTime())
+            .setCreateBy(task.getCreateBy())
+            .setUpdateBy(task.getUpdateBy());
         FlowEngine.dataFillHandler().idFill(hisTask);
         return hisTask;
     }
@@ -210,7 +219,10 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
             .setVariable(flowParams.getVariableStr())
             //业务详情添加至历史记录
             .setExt(flowParams.getHisTaskExt())
-            .setCreateTime(task.getCreateTime());
+            .setCreateTime(task.getCreateTime())
+            .setUpdateTime(task.getUpdateTime())
+            .setCreateBy(task.getCreateBy())
+            .setUpdateBy(task.getUpdateBy());
         FlowEngine.dataFillHandler().idFill(hisTask);
         return hisTask;
     }
