@@ -55,6 +55,10 @@
 
 https://warm-flow.dromara.org/
 
+> 部分地区访问不了，可本地部署
+https://gitee.com/warm_4/warm-flow-doc.git
+
+
 ## 学习视频：
 [Warm-Flow初体验](https://www.bilibili.com/video/BV1pWRGY7EEM/?spm_id_from=333.788.recommend_more_video.0)
 
