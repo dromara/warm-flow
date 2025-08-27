@@ -27,15 +27,17 @@ public interface GlobalListener extends Serializable {
 
     /**
      * 开始监听器，任务开始办理时执行
+     *
      * @param listenerVariable 监听器变量
      */
-    default void start(ListenerVariable listenerVariable){
+    default void start(ListenerVariable listenerVariable) {
 
     }
 
     /**
      * 分派监听器，动态修改代办任务信息
-     * @param listenerVariable  监听器变量
+     *
+     * @param listenerVariable 监听器变量
      */
     default void assignment(ListenerVariable listenerVariable) {
 
@@ -43,7 +45,8 @@ public interface GlobalListener extends Serializable {
 
     /**
      * 完成监听器，当前任务完成后执行
-     * @param listenerVariable  监听器变量
+     *
+     * @param listenerVariable 监听器变量
      */
     default void finish(ListenerVariable listenerVariable) {
 
@@ -51,7 +54,8 @@ public interface GlobalListener extends Serializable {
 
     /**
      * 创建监听器，任务创建时执行
-     * @param listenerVariable  监听器变量
+     *
+     * @param listenerVariable 监听器变量
      */
     default void create(ListenerVariable listenerVariable) {
 

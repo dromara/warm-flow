@@ -41,6 +41,7 @@ public class JsonConvertSnack implements JsonConvert {
 
     /**
      * 将字符串转为map
+     *
      * @param jsonStr json字符串
      * @return map
      */
@@ -51,8 +52,9 @@ public class JsonConvertSnack implements JsonConvert {
 
     /**
      * 将字符串转为bean
+     *
      * @param jsonStr json字符串
-     * @param clazz Class<T>
+     * @param clazz   Class<T>
      * @return T
      */
     @Override
@@ -62,16 +64,19 @@ public class JsonConvertSnack implements JsonConvert {
 
     /**
      * 将字符串转为集合
+     *
      * @param jsonStr json字符串
      * @return List<T>
      */
     @Override
     public <T> List<T> strToList(String jsonStr) {
-        return StringUtils.isEmpty(jsonStr) ? null : ONode.deserialize(jsonStr, (new ArrayList<T>(){}).getClass());
+        return StringUtils.isEmpty(jsonStr) ? null : ONode.deserialize(jsonStr, (new ArrayList<T>() {
+        }).getClass());
     }
 
     /**
      * 将对象转为字符串
+     *
      * @param variable object
      * @return json字符串
      */

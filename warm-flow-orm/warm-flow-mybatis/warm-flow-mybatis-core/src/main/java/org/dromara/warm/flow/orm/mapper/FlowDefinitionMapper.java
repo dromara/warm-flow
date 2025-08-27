@@ -35,5 +35,5 @@ public interface FlowDefinitionMapper extends WarmMapper<FlowDefinition> {
 
 
     void updatePublishStatus(@Param("ids") List<Long> ids, @Param("publishStatus") Integer publishStatus
-            , @Param("entity") FlowDefinition flowDefinition);
+        , @Param("entity") FlowDefinition flowDefinition);
 }

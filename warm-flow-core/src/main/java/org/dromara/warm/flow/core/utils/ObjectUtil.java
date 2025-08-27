@@ -58,9 +58,9 @@ public class ObjectUtil {
     /**
      * 如果被检查对象为null， 返回默认值defaultValue；否则直接返回
      *
-     * @param source               被检查对象
-     * @param defaultValue         默认值
-     * @param <T>                  对象类型
+     * @param source       被检查对象
+     * @param defaultValue 默认值
+     * @param <T>          对象类型
      * @throws NullPointerException {@code defaultValueSupplier == null} 时，抛出
      */
     public static <T> T defaultNull(T source, T defaultValue) {

@@ -54,7 +54,7 @@ public class ClassUtil {
      * 通过反射实现对象克隆
      *
      * @param origin 原始对象
-     * @param <C> 目标对象
+     * @param <C>    目标对象
      * @return 克隆结果
      */
     public static <C> C clone(C origin) {
@@ -97,9 +97,9 @@ public class ClassUtil {
      */
     public static void makeAccessible(Field field) {
         if ((!Modifier.isPublic(field.getModifiers())
-                || !Modifier.isPublic(field.getDeclaringClass().getModifiers())
-                || Modifier.isFinal(field.getModifiers()))
-                && !field.isAccessible()) {
+            || !Modifier.isPublic(field.getDeclaringClass().getModifiers())
+            || Modifier.isFinal(field.getModifiers()))
+            && !field.isAccessible()) {
             field.setAccessible(true);
         }
     }

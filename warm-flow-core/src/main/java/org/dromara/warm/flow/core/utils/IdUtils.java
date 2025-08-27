@@ -30,10 +30,14 @@ import org.dromara.warm.flow.core.keygen.SnowFlakeId19;
  */
 public class IdUtils {
 
-    /** 内置id算法 */
+    /**
+     * 内置id算法
+     */
     private volatile static KenGen instance;
 
-    /** orm框架配置了原生id算法 */
+    /**
+     * orm框架配置了原生id算法
+     */
     private static KenGen instanceNative;
 
     public static String nextIdStr() {

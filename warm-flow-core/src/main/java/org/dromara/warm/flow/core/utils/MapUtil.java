@@ -59,6 +59,7 @@ public class MapUtil {
 
     /**
      * 合并多个map
+     *
      * @param maps 需要合并的map
      */
     @SafeVarargs
@@ -74,6 +75,7 @@ public class MapUtil {
 
     /**
      * 合并多个参数为 Map，每两个参数为一组 key-value
+     *
      * @param values 参数
      */
     @SuppressWarnings("unchecked")

@@ -48,8 +48,8 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask> implements Flow
     public List<FlowHisTask> getNoReject(Long instanceId) {
         LambdaQueryWrapper<FlowHisTask> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(FlowHisTask::getInstanceId, instanceId)
-                .eq(FlowHisTask::getSkipType, SkipType.PASS.getKey())
-                .orderByDesc(FlowHisTask::getCreateTime);
+            .eq(FlowHisTask::getSkipType, SkipType.PASS.getKey())
+            .orderByDesc(FlowHisTask::getCreateTime);
         return getMapper().selectList(queryWrapper);
     }
 
@@ -57,8 +57,8 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask> implements Flow
     public List<FlowHisTask> getByInsAndNodeCodes(Long instanceId, List<String> nodeCodes) {
         LambdaQueryWrapper<FlowHisTask> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(FlowHisTask::getInstanceId, instanceId)
-                .in(CollUtil.isNotEmpty(nodeCodes), FlowHisTask::getNodeCode, nodeCodes)
-                .orderByDesc(FlowHisTask::getCreateTime);
+            .in(CollUtil.isNotEmpty(nodeCodes), FlowHisTask::getNodeCode, nodeCodes)
+            .orderByDesc(FlowHisTask::getCreateTime);
         return getMapper().selectList(queryWrapper);
     }
 
@@ -70,7 +70,7 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask> implements Flow
     @Override
     public List<FlowHisTask> listByTaskIdAndCooperateTypes(Long taskId, Integer[] cooperateTypes) {
         LambdaQueryWrapper<FlowHisTask> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(FlowHisTask::getTaskId, taskId).in(FlowHisTask::getCooperateType,  Arrays.asList(cooperateTypes));
+        queryWrapper.eq(FlowHisTask::getTaskId, taskId).in(FlowHisTask::getCooperateType, Arrays.asList(cooperateTypes));
         return getMapper().selectList(queryWrapper);
     }
 

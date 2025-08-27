@@ -3,34 +3,35 @@ package org.dromara.warm.flow.core.utils;
 import java.io.*;
 
 public class AddCopyrightHeader {
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
         //项目的绝对路径，也就是想修改的文件路径
         String filePath = "D:\\IdeaProjects\\min\\RuoYi-Vue-Warm-Flow\\warm-flow";
         File f = new File(filePath);
         String content = "/*\n" +
-                " *    Copyright 2024-2025, Warm-Flow (290631660@qq.com).\n" +
-                " *\n" +
-                " *    Licensed under the Apache License, Version 2.0 (the \"License\");\n" +
-                " *    you may not use this file except in compliance with the License.\n" +
-                " *    You may obtain a copy of the License at\n" +
-                " *\n" +
-                " *       https://www.apache.org/licenses/LICENSE-2.0\n" +
-                " *\n" +
-                " *    Unless required by applicable law or agreed to in writing, software\n" +
-                " *    distributed under the License is distributed on an \"AS IS\" BASIS,\n" +
-                " *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n" +
-                " *    See the License for the specific language governing permissions and\n" +
-                " *    limitations under the License.\n" +
-                " */\n";
-        fileTree(f,content);
+            " *    Copyright 2024-2025, Warm-Flow (290631660@qq.com).\n" +
+            " *\n" +
+            " *    Licensed under the Apache License, Version 2.0 (the \"License\");\n" +
+            " *    you may not use this file except in compliance with the License.\n" +
+            " *    You may obtain a copy of the License at\n" +
+            " *\n" +
+            " *       https://www.apache.org/licenses/LICENSE-2.0\n" +
+            " *\n" +
+            " *    Unless required by applicable law or agreed to in writing, software\n" +
+            " *    distributed under the License is distributed on an \"AS IS\" BASIS,\n" +
+            " *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n" +
+            " *    See the License for the specific language governing permissions and\n" +
+            " *    limitations under the License.\n" +
+            " */\n";
+        fileTree(f, content);
     }
 
     /**
      * 取出所有的文件及文件夹
+     *
      * @param f 文件夹对象
      */
-    public static void fileTree(File f,String content) throws Exception{
-        File [] t = f.listFiles();
+    public static void fileTree(File f, String content) throws Exception {
+        File[] t = f.listFiles();
         if (t != null) {
             for (File file : t) {
                 if (file.isDirectory()) {
@@ -44,7 +45,8 @@ public class AddCopyrightHeader {
 
     /**
      * 开始插入内容（仅在没有版权信息时插入）
-     * @param f 文件对象
+     *
+     * @param f       文件对象
      * @param content 要插入的版权内容
      */
     public static void insert(File f, String content) throws IOException {
@@ -58,9 +60,9 @@ public class AddCopyrightHeader {
         temp.deleteOnExit();
 
         try (
-                RandomAccessFile raf = new RandomAccessFile(f, "rw");
-                FileOutputStream tempOut = new FileOutputStream(temp);
-                FileInputStream tempInput = new FileInputStream(temp);
+            RandomAccessFile raf = new RandomAccessFile(f, "rw");
+            FileOutputStream tempOut = new FileOutputStream(temp);
+            FileInputStream tempInput = new FileInputStream(temp);
         ) {
             // 检查是否已经包含版权信息
             String copyrightLine = "Copyright 2024-2025, Warm-Flow";

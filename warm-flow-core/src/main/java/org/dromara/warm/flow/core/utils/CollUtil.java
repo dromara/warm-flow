@@ -58,7 +58,7 @@ public class CollUtil {
     /**
      * 如果集合是空，则返回空集合
      *
-     * @param list        集合
+     * @param list 集合
      * @return 结果
      */
     public static <T> List<T> emptyDefault(List<T> list) {
@@ -236,7 +236,7 @@ public class CollUtil {
     public static <T> List<List<T>> split(List<T> list, int batchSize) {
         final int N = (int) Math.ceil((double) list.size() / batchSize);
         return IntStream.range(0, N).boxed()
-                .map(i -> list.subList(i * batchSize, Math.min((i + 1) * batchSize, list.size())))
-                .collect(Collectors.toList());
+            .map(i -> list.subList(i * batchSize, Math.min((i + 1) * batchSize, list.size())))
+            .collect(Collectors.toList());
     }
 }

@@ -178,7 +178,9 @@ public class FlowEngine {
     }
 
     public static void initDataFillHandler(String handlerPath) {
-        dataFillHandler = initBean(DataFillHandler.class, handlerPath, () -> new DataFillHandler(){});;
+        dataFillHandler = initBean(DataFillHandler.class, handlerPath, () -> new DataFillHandler() {
+        });
+        ;
     }
 
     public static void initTenantHandler(String handlerPath) {
@@ -189,7 +191,7 @@ public class FlowEngine {
         permissionHandler = initBean(PermissionHandler.class, null, null);
     }
 
-     public static void initGlobalListener() {
+    public static void initGlobalListener() {
         globalListener = initBean(GlobalListener.class, null, null);
     }
 
@@ -238,11 +240,12 @@ public class FlowEngine {
 
     /**
      * 初始化bean，先从yml配置获取bean的全包名路径，否则从spring容器获取bean，如果都没有，则通过supplier获取bean
-     * @param tClazz bean的class类型
+     *
+     * @param tClazz   bean的class类型
      * @param beanPath bean全包名路径
      * @param supplier 获取bean的lambda
+     * @param <T>      bean类型
      * @return bean
-     * @param <T> bean类型
      */
     private static <T> T initBean(Class<T> tClazz, String beanPath, Supplier<T> supplier) {
         T hander = null;

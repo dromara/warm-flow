@@ -1,5 +1,5 @@
 <template>
-  <div style="background-color: #e5e7eb">
+  <div>
     <!-- 流程名称和步骤条容器 -->
     <div :style="headerContainer" v-if="!onlyDesignShow">
       <!-- 流程名称 -->
@@ -205,7 +205,7 @@ onMounted(() => {
     if (res.data.isPublish && res.data.isPublish !== 0) {
       disabled.value = true
     }
-    if (res.data.categoryList && res.data.categoryList.size > 0) {
+    if (res.data.categoryList && res.data.categoryList.length > 0) {
       categoryList.value = res.data.categoryList;
     }
     if (jsonString.value) {

@@ -54,9 +54,9 @@ public class ListenerUtil {
             if (!NodeType.isEnd(node.getNodeType())) {
                 Task nextTask = StreamUtils.filterOne(listenerVariable.getNextTasks(), task -> task.getNodeCode().equals(node.getNodeCode()));
                 listenerVariable.setNode(node)
-                        .setNextNodes(null)
-                        .setTask(nextTask)
-                        .setNextTasks(null);
+                    .setNextNodes(null)
+                    .setTask(nextTask)
+                    .setNextTasks(null);
                 executeListener(listenerVariable, Listener.LISTENER_CREATE);
             }
         });

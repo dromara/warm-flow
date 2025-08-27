@@ -29,7 +29,7 @@ package org.dromara.warm.flow.core.keygen;
  *
  * @author warm
  */
-public class SnowFlakeId19 implements KenGen{
+public class SnowFlakeId19 implements KenGen {
 
     // ==============================Fields===========================================
     /**
@@ -135,7 +135,7 @@ public class SnowFlakeId19 implements KenGen{
         // 如果当前时间小于上一次ID生成的时间戳，说明系统时钟回退过这个时候应当抛出异常
         if (timestamp < lastTimestamp) {
             throw new RuntimeException(
-                    String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds", lastTimestamp - timestamp));
+                String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds", lastTimestamp - timestamp));
         }
 
         // 如果是同一时间生成的，则进行毫秒内序列
@@ -156,10 +156,10 @@ public class SnowFlakeId19 implements KenGen{
         lastTimestamp = timestamp;
 
         // 移位并通过或运算拼到一起组成64位的ID
-        return ((timestamp - twepoch) << timestampLeftShift) //
-                | (datacenterId << datacenterIdShift) //
-                | (workerId << workerIdShift) //
-                | sequence;
+        return ((timestamp - twepoch) << timestampLeftShift)
+            | (datacenterId << datacenterIdShift)
+            | (workerId << workerIdShift)
+            | sequence;
     }
 
     /**

@@ -36,7 +36,7 @@ public class XPluginImpl implements Plugin {
         WarmFlow warmFlow = Solon.context().getBean(WarmFlow.class);
         if (warmFlow.isUi()) {
             StaticMappings.add("/warm-flow-ui/"
-                    , new ClassPathStaticRepository("/META-INF/resources/warm-flow-ui/"));
+                , new ClassPathStaticRepository("/META-INF/resources/warm-flow-ui/"));
         }
     }
 }

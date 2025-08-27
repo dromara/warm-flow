@@ -54,7 +54,7 @@ public interface IWarmService<T> {
      * 分页查询
      *
      * @param entity 查询实体
-     * @param page 分页对象
+     * @param page   分页对象
      * @return 集合
      */
     Page<T> page(T entity, Page<T> page);

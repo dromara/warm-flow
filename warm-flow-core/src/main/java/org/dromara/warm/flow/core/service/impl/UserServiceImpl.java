@@ -57,7 +57,7 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
     public List<User> taskAddUser(Task task) {
         // 遍历权限集合，生成流程节点的权限
         List<User> userList = StreamUtils.toList(task.getPermissionList()
-                , permission -> structureUser(task.getId(), permission, UserType.APPROVAL.getKey()));
+            , permission -> structureUser(task.getId(), permission, UserType.APPROVAL.getKey()));
         task.setUserList(userList);
         return userList;
     }
@@ -74,10 +74,10 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
         }
         if (types.length == 1) {
             return StreamUtils.toList(list(FlowEngine.newUser().setAssociated(associated).setType(types[0]))
-                    , User::getProcessedBy);
+                , User::getProcessedBy);
         }
         return StreamUtils.toList(getDao().listByAssociatedAndTypes(Collections.singletonList(associated), types)
-                , User::getProcessedBy);
+            , User::getProcessedBy);
     }
 
     @Override
@@ -149,10 +149,10 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
     @Override
     public User structureUser(Long associated, String permission, String type, String handler) {
         User user = FlowEngine.newUser()
-                .setType(type)
-                .setProcessedBy(permission)
-                .setAssociated(associated)
-                .setCreateBy(handler);
+            .setType(type)
+            .setProcessedBy(permission)
+            .setAssociated(associated)
+            .setCreateBy(handler);
         FlowEngine.dataFillHandler().idFill(user);
         return user;
     }

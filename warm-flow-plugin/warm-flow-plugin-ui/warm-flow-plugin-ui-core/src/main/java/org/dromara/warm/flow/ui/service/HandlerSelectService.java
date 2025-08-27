@@ -85,7 +85,7 @@ public interface HandlerSelectService {
         // 遍历storageIds，按照原本的顺序回显名称
         for (String storageId : storageIds) {
             handlerFeedBackVos.add(new HandlerFeedBackVo(storageId
-                    , MapUtil.isEmpty(authMap) ? "": authMap.get(storageId)));
+                , MapUtil.isEmpty(authMap) ? "" : authMap.get(storageId)));
         }
         return handlerFeedBackVos;
     }
@@ -95,11 +95,11 @@ public interface HandlerSelectService {
         // 遍历角色数据，封装为组件可识别的数据
         for (T obj : handlerFunDto.getList()) {
             handlerAuths.add(new HandlerAuth()
-                    .setStorageId(handlerFunDto.getStorageId() == null ? null : handlerFunDto.getStorageId().apply(obj))
-                    .setHandlerCode(handlerFunDto.getHandlerCode() == null ? null : handlerFunDto.getHandlerCode().apply(obj))
-                    .setHandlerName(handlerFunDto.getHandlerName() == null ? null : handlerFunDto.getHandlerName().apply(obj))
-                    .setCreateTime(handlerFunDto.getCreateTime() == null ? null : handlerFunDto.getCreateTime().apply(obj))
-                    .setGroupName(handlerFunDto.getGroupName() == null ? null : handlerFunDto.getGroupName().apply(obj)));
+                .setStorageId(handlerFunDto.getStorageId() == null ? null : handlerFunDto.getStorageId().apply(obj))
+                .setHandlerCode(handlerFunDto.getHandlerCode() == null ? null : handlerFunDto.getHandlerCode().apply(obj))
+                .setHandlerName(handlerFunDto.getHandlerName() == null ? null : handlerFunDto.getHandlerName().apply(obj))
+                .setCreateTime(handlerFunDto.getCreateTime() == null ? null : handlerFunDto.getCreateTime().apply(obj))
+                .setGroupName(handlerFunDto.getGroupName() == null ? null : handlerFunDto.getGroupName().apply(obj)));
         }
         return getResult(handlerAuths, handlerFunDto.getTotal());
     }
@@ -108,9 +108,9 @@ public interface HandlerSelectService {
         HandlerSelectVo handlerSelectVo = getHandlerSelectVo(handlerFunDto);
 
         List<Tree> treeList = StreamUtils.toList(treeFunDto.getList(), org ->
-                new Tree().setId(treeFunDto.getId() == null ? null : treeFunDto.getId().apply(org))
-                        .setName(treeFunDto.getName() == null ? null : treeFunDto.getName().apply(org))
-                        .setParentId(treeFunDto.getParentId() == null ? null : treeFunDto.getParentId().apply(org)));
+            new Tree().setId(treeFunDto.getId() == null ? null : treeFunDto.getId().apply(org))
+                .setName(treeFunDto.getName() == null ? null : treeFunDto.getName().apply(org))
+                .setParentId(treeFunDto.getParentId() == null ? null : treeFunDto.getParentId().apply(org)));
 
         // 通过递归，构建树状结构
         return handlerSelectVo.setTreeSelections(TreeUtil.buildTree(treeList));
@@ -119,10 +119,10 @@ public interface HandlerSelectService {
 
     default HandlerSelectVo getResult(List<HandlerAuth> handlerAuths, long total) {
         return new HandlerSelectVo().setHandlerAuths(new FlowPage<HandlerAuth>()
-                .setCode(HttpStatus.SUCCESS)
-                .setMsg("查询成功")
-                .setRows(handlerAuths)
-                .setTotal(total));
+            .setCode(HttpStatus.SUCCESS)
+            .setMsg("查询成功")
+            .setRows(handlerAuths)
+            .setTotal(total));
     }
 
 }

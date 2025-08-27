@@ -29,9 +29,9 @@ import org.dromara.warm.flow.core.utils.ObjectUtil;
 @AllArgsConstructor
 public enum ActivityStatus {
 
-    SUSPENDED(0,"挂起"),
+    SUSPENDED(0, "挂起"),
 
-    ACTIVITY(1,"激活");
+    ACTIVITY(1, "激活");
 
     private final Integer key;
     private final String value;

@@ -30,6 +30,7 @@ public class MybatisPlusIdGen implements KenGen {
 
     /**
      * 获取唯一ID
+     *
      * @return id
      */
     @Override

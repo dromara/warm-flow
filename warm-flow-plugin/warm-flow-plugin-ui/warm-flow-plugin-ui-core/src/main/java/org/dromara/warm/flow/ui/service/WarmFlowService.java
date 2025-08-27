@@ -46,6 +46,7 @@ public class WarmFlowService {
 
     /**
      * 返回流程定义的配置
+     *
      * @return ApiResult<WarmFlowVo>
      */
     public static ApiResult<WarmFlowVo> config() {
@@ -58,7 +59,7 @@ public class WarmFlowService {
         }
         String[] tokenNames = tokenName.split(",");
         List<String> tokenNameList = Arrays.stream(tokenNames).filter(StringUtils::isNotEmpty)
-                .map(String::trim).collect(Collectors.toList());
+            .map(String::trim).collect(Collectors.toList());
         warmFlowVo.setTokenNameList(tokenNameList);
 
         return ApiResult.ok(warmFlowVo);
@@ -67,7 +68,7 @@ public class WarmFlowService {
     /**
      * 保存流程json字符串
      *
-     * @param defJson 流程数据集合
+     * @param defJson      流程数据集合
      * @param onlyNodeSkip 是否只保存节点和跳转
      * @return ApiResult<Void>
      * @throws Exception 异常
@@ -92,8 +93,8 @@ public class WarmFlowService {
             DefJson defJson;
             if (id == null) {
                 defJson = new DefJson()
-                        .setModelValue(ModelEnum.CLASSICS.name())
-                        .setFormCustom(FormCustomEnum.N.name());
+                    .setModelValue(ModelEnum.CLASSICS.name())
+                    .setFormCustom(FormCustomEnum.N.name());
             } else {
                 defJson = FlowEngine.defService().queryDesign(id);
             }
@@ -142,6 +143,7 @@ public class WarmFlowService {
 
     /**
      * 办理人权限设置列表tabs页签
+     *
      * @return List<String>
      */
     public static ApiResult<List<String>> handlerType() {
@@ -161,6 +163,7 @@ public class WarmFlowService {
 
     /**
      * 办理人权限设置列表结果
+     *
      * @return HandlerSelectVo
      */
     public static ApiResult<HandlerSelectVo> handlerResult(HandlerQuery query) {
@@ -180,6 +183,7 @@ public class WarmFlowService {
 
     /**
      * 办理人权限名称回显
+     *
      * @return HandlerSelectVo
      */
     public static ApiResult<List<HandlerFeedBackVo>> handlerFeedback(HandlerFeedBackDto handlerFeedBackDto) {
@@ -188,7 +192,7 @@ public class WarmFlowService {
             HandlerSelectService handlerSelectService = FrameInvoker.getBean(HandlerSelectService.class);
             if (handlerSelectService == null) {
                 List<HandlerFeedBackVo> handlerFeedBackVos = StreamUtils.toList(handlerFeedBackDto.getStorageIds(),
-                        storageId -> new HandlerFeedBackVo(storageId, null));
+                    storageId -> new HandlerFeedBackVo(storageId, null));
                 return ApiResult.ok(handlerFeedBackVos);
             }
             List<HandlerFeedBackVo> handlerFeedBackVos = handlerSelectService.handlerFeedback(handlerFeedBackDto.getStorageIds());
@@ -201,6 +205,7 @@ public class WarmFlowService {
 
     /**
      * 办理人选择项
+     *
      * @return List<Dict>
      */
     public static ApiResult<List<Dict>> handlerDict() {
@@ -245,11 +250,13 @@ public class WarmFlowService {
 
     /**
      * 读取表单内容
+     *
      * @param id
      * @return
      */
     public static ApiResult<String> getFormContent(Long id) {
-        try {return ApiResult.ok(FlowEngine.formService().getById(id).getFormContent());
+        try {
+            return ApiResult.ok(FlowEngine.formService().getById(id).getFormContent());
         } catch (Exception e) {
             log.error("获取表单内容字符串", e);
             throw new FlowException(ExceptionUtil.handleMsg("获取表单内容字符串失败", e));
@@ -258,6 +265,7 @@ public class WarmFlowService {
 
     /**
      * 保存表单内容,该接口不需要系统实现
+     *
      * @param flowDto
      * @return
      */
@@ -304,11 +312,11 @@ public class WarmFlowService {
      * @return
      */
     public static ApiResult<Instance> handle(Map<String, Object> formData, Long taskId, String skipType
-            , String message, String nodeCode) {
+        , String message, String nodeCode) {
         FlowParams flowParams = FlowParams.build()
-                .skipType(skipType)
-                .nodeCode(nodeCode)
-                .message(message);
+            .skipType(skipType)
+            .nodeCode(nodeCode)
+            .message(message);
 
         flowParams.formData(formData);
 
@@ -317,6 +325,7 @@ public class WarmFlowService {
 
     /**
      * 获取节点扩展属性
+     *
      * @return List<NodeExt>
      */
     public static ApiResult<List<NodeExt>> nodeExt() {

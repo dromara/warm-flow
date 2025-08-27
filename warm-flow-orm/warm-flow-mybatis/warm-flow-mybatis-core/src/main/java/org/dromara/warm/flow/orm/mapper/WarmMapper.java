@@ -96,7 +96,7 @@ public interface WarmMapper<T> {
      * @return 结果
      */
     int updateLogic(@Param("entity") T entity, @Param("logicDeleteValue") String logicDeleteValue
-            , @Param("logicNotDeleteValue") String logicNotDeleteValue);
+        , @Param("logicNotDeleteValue") String logicNotDeleteValue);
 
     /**
      * 根据id删除
@@ -114,7 +114,7 @@ public interface WarmMapper<T> {
      * @return 结果
      */
     int updateByIdLogic(@Param("id") Serializable id, @Param("entity") T entity, @Param("logicDeleteValue") String logicDeleteValue
-            , @Param("logicNotDeleteValue") String logicNotDeleteValue);
+        , @Param("logicNotDeleteValue") String logicNotDeleteValue);
 
     /**
      * 根据ids批量删除
@@ -132,8 +132,8 @@ public interface WarmMapper<T> {
      * @return 结果
      */
     int updateByIdsLogic(@Param("ids") Collection<? extends Serializable> ids, @Param("entity") T entity
-            , @Param("logicDeleteValue") String logicDeleteValue
-            , @Param("logicNotDeleteValue") String logicNotDeleteValue);
+        , @Param("logicDeleteValue") String logicDeleteValue
+        , @Param("logicNotDeleteValue") String logicNotDeleteValue);
 
     /**
      * 批量插入

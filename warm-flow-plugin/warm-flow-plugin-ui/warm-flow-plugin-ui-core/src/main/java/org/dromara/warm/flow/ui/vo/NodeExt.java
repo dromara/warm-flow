@@ -20,6 +20,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.List;
+
 /**
  * 节点扩展属性
  *
@@ -28,8 +29,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class NodeExt implements Serializable
-{
+public class NodeExt implements Serializable {
     private static final long serialVersionUID = 1L;
     private String code;
     private String name;

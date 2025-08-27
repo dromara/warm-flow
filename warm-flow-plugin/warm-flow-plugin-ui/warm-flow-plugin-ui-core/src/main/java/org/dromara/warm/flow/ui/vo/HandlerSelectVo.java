@@ -33,10 +33,14 @@ import java.util.List;
 @Accessors(chain = true)
 public class HandlerSelectVo {
 
-    /** 办理人选择，分页列表，有具体办理对象 比如：部门、角色和用户等情况 */
+    /**
+     * 办理人选择，分页列表，有具体办理对象 比如：部门、角色和用户等情况
+     */
     private FlowPage<HandlerAuth> handlerAuths;
 
-    /** 左侧树状选择，配合{@link #handlerAuths}使用，比如用户先选择部门，然后选择用户 */
+    /**
+     * 左侧树状选择，配合{@link #handlerAuths}使用，比如用户先选择部门，然后选择用户
+     */
     private List<Tree> treeSelections;
 
 }

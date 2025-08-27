@@ -115,18 +115,18 @@ public interface Definition extends RootEntity {
 
     default Definition copy() {
         return FlowEngine.newDef()
-                .setTenantId(this.getTenantId())
-                .setDelFlag(this.getDelFlag())
-                .setFlowCode(this.getFlowCode())
-                .setFlowName(this.getFlowName())
-                .setModelValue(this.getModelValue())
-                .setCategory(this.getCategory())
-                .setVersion(this.getVersion())
-                .setFormCustom(this.getFormCustom())
-                .setFormPath(this.getFormPath())
-                .setListenerType(this.getListenerType())
-                .setListenerPath(this.getListenerPath())
-                .setExt(this.getExt());
+            .setTenantId(this.getTenantId())
+            .setDelFlag(this.getDelFlag())
+            .setFlowCode(this.getFlowCode())
+            .setFlowName(this.getFlowName())
+            .setModelValue(this.getModelValue())
+            .setCategory(this.getCategory())
+            .setVersion(this.getVersion())
+            .setFormCustom(this.getFormCustom())
+            .setFormPath(this.getFormPath())
+            .setListenerType(this.getListenerType())
+            .setListenerPath(this.getListenerPath())
+            .setExt(this.getExt());
 
     }
 }

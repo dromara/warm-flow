@@ -37,7 +37,7 @@ public interface FlowTaskMapper extends WarmMapper<FlowTask> {
      * @return 结果
      */
     int deleteByInsIds(@Param("instanceIds") Collection<? extends Serializable> instanceIds
-            , @Param("entity") FlowTask entity);
+        , @Param("entity") FlowTask entity);
 
     /**
      * 逻辑删除
@@ -46,16 +46,16 @@ public interface FlowTaskMapper extends WarmMapper<FlowTask> {
      * @return 结果
      */
     int updateByInsIdsLogic(@Param("instanceIds") Collection<? extends Serializable> instanceIds
-            , @Param("entity") FlowTask entity
-            , @Param("logicDeleteValue") String logicDeleteValue
-            , @Param("logicNotDeleteValue") String logicNotDeleteValue);
+        , @Param("entity") FlowTask entity
+        , @Param("logicDeleteValue") String logicDeleteValue
+        , @Param("logicNotDeleteValue") String logicNotDeleteValue);
 
     /**
      * 根据实例id和节点code查询
      *
-     * @param instanceId  实例id
-     * @param nodeCodes    节点code
-     * @param entity 实体
+     * @param instanceId 实例id
+     * @param nodeCodes  节点code
+     * @param entity     实体
      * @return 结果
      */
     List<FlowTask> getByInsIdAndNodeCodes(@Param("instanceId") Long instanceId,

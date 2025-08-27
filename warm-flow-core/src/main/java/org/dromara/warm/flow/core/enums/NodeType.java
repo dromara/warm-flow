@@ -119,7 +119,7 @@ public enum NodeType {
      */
     public static Boolean isGateWay(Integer Key) {
         return ObjectUtil.isNotNull(Key) && (NodeType.SERIAL.getKey().equals(Key)
-                || NodeType.PARALLEL.getKey().equals(Key));
+            || NodeType.PARALLEL.getKey().equals(Key));
     }
 
     /**

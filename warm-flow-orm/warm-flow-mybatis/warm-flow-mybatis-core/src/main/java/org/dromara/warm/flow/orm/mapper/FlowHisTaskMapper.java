@@ -38,7 +38,7 @@ public interface FlowHisTaskMapper extends WarmMapper<FlowHisTask> {
      * @return
      */
     List<FlowHisTask> getNoReject(@Param("instanceId") Long instanceId
-            , @Param("entity") FlowHisTask entity);
+        , @Param("entity") FlowHisTask entity);
 
     /**
      * 根据instanceId和流程编码获取未退回的历史记录
@@ -48,8 +48,8 @@ public interface FlowHisTaskMapper extends WarmMapper<FlowHisTask> {
      * @return
      */
     List<FlowHisTask> getByInsAndNodeCodes(@Param("instanceId") Long instanceId
-            , @Param("nodeCodes") List<String> nodeCodes
-            , @Param("entity") FlowHisTask entity);
+        , @Param("nodeCodes") List<String> nodeCodes
+        , @Param("entity") FlowHisTask entity);
 
 
     /**
@@ -68,9 +68,9 @@ public interface FlowHisTaskMapper extends WarmMapper<FlowHisTask> {
      * @return 结果
      */
     int updateByInsIdsLogic(@Param("instanceIds") Collection<? extends Serializable> instanceIds
-            , @Param("entity") FlowHisTask entity, @Param("logicDeleteValue") String logicDeleteValue
-            , @Param("logicNotDeleteValue") String logicNotDeleteValue);
+        , @Param("entity") FlowHisTask entity, @Param("logicDeleteValue") String logicDeleteValue
+        , @Param("logicNotDeleteValue") String logicNotDeleteValue);
 
     List<FlowHisTask> listByTaskIdAndCooperateTypes(@Param("cooperateTypes") Integer[] cooperateTypes
-            , @Param("entity") FlowHisTask entity);
+        , @Param("entity") FlowHisTask entity);
 }
