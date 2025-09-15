@@ -166,7 +166,6 @@ watch(groupName, val => {
 watch(() => props.selectUser, (val, oldVal) => {
   if (oldVal) {
     proxy.$nextTick(() => {
-        debugger
       checkedItemList.value = checkedItemList.value.filter(e => {
         let index = val ? val.findIndex(v => v === e.storageId) : -1;
         tableList.value.forEach(u => {
