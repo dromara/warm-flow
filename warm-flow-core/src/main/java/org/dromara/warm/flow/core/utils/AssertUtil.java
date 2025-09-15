@@ -38,7 +38,7 @@ public class AssertUtil {
     }
 
     public static void isNotNull(Object obj, String errorMsg) {
-        if (obj == null) {
+        if (obj != null) {
             throw new FlowException(errorMsg);
         }
     }

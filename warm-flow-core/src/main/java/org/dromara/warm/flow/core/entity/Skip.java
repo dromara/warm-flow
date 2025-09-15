@@ -46,16 +46,16 @@ public interface Skip extends RootEntity {
     Skip setUpdateTime(Date updateTime);
 
     @Override
-    String getUpdateBy();
-
-    @Override
-    Skip setUpdateBy(String updateBy);
-
-    @Override
     String getCreateBy();
 
     @Override
     Skip setCreateBy(String createBy);
+
+    @Override
+    String getUpdateBy();
+
+    @Override
+    Skip setUpdateBy(String updateBy);
 
     @Override
     String getTenantId();

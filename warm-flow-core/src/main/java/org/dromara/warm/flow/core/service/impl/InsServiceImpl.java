@@ -135,17 +135,12 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
      * @param instanceId 流程实例id
      */
     private HisTask setHisTask(List<Node> nextNodes, FlowParams flowParams, Node startNode, Long instanceId) {
-        Date now = new Date();
         Task startTask = FlowEngine.newTask()
             .setInstanceId(instanceId)
             .setDefinitionId(startNode.getDefinitionId())
             .setNodeCode(startNode.getNodeCode())
             .setNodeName(startNode.getNodeName())
-            .setNodeType(startNode.getNodeType())
-            .setCreateTime(now)
-            .setUpdateTime(now)
-            .setCreateBy(flowParams.getHandler())
-            .setUpdateBy(flowParams.getHandler());
+            .setNodeType(startNode.getNodeType());
         FlowEngine.dataFillHandler().idFill(startTask);
         // 开始任务转历史任务
         return FlowEngine.hisTaskService().setSkipInsHis(startTask, nextNodes, flowParams);

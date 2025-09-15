@@ -51,6 +51,14 @@ public class FlowInstance implements Instance {
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updateTime;
 
+    /**
+     * 创建人
+     */
+    private String createBy;
+
+    /**
+     * 更新人
+     */
     private String updateBy;
 
     /**
@@ -109,11 +117,6 @@ public class FlowInstance implements Instance {
      * 流程激活状态（0挂起 1激活）
      */
     private Integer activityStatus;
-
-    /**
-     * 创建者
-     */
-    private String createBy;
 
     /**
      * 审批表单是否自定义（Y是 2否）

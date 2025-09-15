@@ -50,8 +50,14 @@ public class FlowForm implements Form {
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updateTime;
 
+    /**
+     * 创建人
+     */
     private String createBy;
 
+    /**
+     * 更新人
+     */
     private String updateBy;
 
     /**

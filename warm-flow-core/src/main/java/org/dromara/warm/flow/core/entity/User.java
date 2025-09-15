@@ -43,6 +43,10 @@ public interface User extends RootEntity {
     @Override
     User setUpdateTime(Date updateTime);
 
+    String getCreateBy();
+
+    User setCreateBy(String createBy);
+
     @Override
     String getUpdateBy();
 
@@ -60,10 +64,6 @@ public interface User extends RootEntity {
 
     @Override
     User setDelFlag(String delFlag);
-
-    String getCreateBy();
-
-    User setCreateBy(String createBy);
 
     String getType();
 

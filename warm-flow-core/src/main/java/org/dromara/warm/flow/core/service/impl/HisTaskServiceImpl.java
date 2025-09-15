@@ -118,10 +118,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
             .setVariable(flowParams.getVariableStr())
             //业务详情添加至历史记录
             .setExt(flowParams.getHisTaskExt())
-            .setCreateTime(task.getCreateTime())
-            .setUpdateTime(task.getUpdateTime())
-            .setCreateBy(task.getCreateBy())
-            .setUpdateBy(task.getUpdateBy());
+            .setCreateTime(task.getCreateTime());
         FlowEngine.dataFillHandler().idFill(hisTask);
         return hisTask;
     }
@@ -139,7 +136,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
             .setDefinitionId(task.getDefinitionId())
             .setTargetNodeCode(task.getNodeCode())
             .setTargetNodeName(task.getNodeName())
-            .setApprover(entrustedUser.getProcessedBy())
+            .setApprover(flowParams.getHandler())
             .setCollaborator(entrustedUser.getCreateBy())
             .setSkipType(flowParams.getSkipType())
             .setFlowStatus(StringUtils.isNotEmpty(flowStatus)
@@ -151,10 +148,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
             .setVariable(flowParams.getVariableStr())
             //业务详情添加至历史记录
             .setExt(flowParams.getHisTaskExt())
-            .setCreateTime(task.getCreateTime())
-            .setUpdateTime(task.getUpdateTime())
-            .setCreateBy(task.getCreateBy())
-            .setUpdateBy(task.getUpdateBy());
+            .setCreateTime(task.getCreateTime());
         FlowEngine.dataFillHandler().idFill(hisTask);
         return hisTask;
     }
@@ -183,10 +177,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
             .setVariable(flowParams.getVariableStr())
             //业务详情添加至历史记录
             .setExt(flowParams.getHisTaskExt())
-            .setCreateTime(task.getCreateTime())
-            .setUpdateTime(task.getUpdateTime())
-            .setCreateBy(task.getCreateBy())
-            .setUpdateBy(task.getUpdateBy());
+            .setCreateTime(task.getCreateTime());
         FlowEngine.dataFillHandler().idFill(hisTask);
         return hisTask;
     }
@@ -219,10 +210,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
             .setVariable(flowParams.getVariableStr())
             //业务详情添加至历史记录
             .setExt(flowParams.getHisTaskExt())
-            .setCreateTime(task.getCreateTime())
-            .setUpdateTime(task.getUpdateTime())
-            .setCreateBy(task.getCreateBy())
-            .setUpdateBy(task.getUpdateBy());
+            .setCreateTime(task.getCreateTime());
         FlowEngine.dataFillHandler().idFill(hisTask);
         return hisTask;
     }

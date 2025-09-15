@@ -38,6 +38,18 @@ public interface RootEntity extends Serializable {
 
     RootEntity setUpdateTime(Date updateTime);
 
+    default String getCreateBy() {
+        return null;
+    }
+
+    default RootEntity setCreateBy(String createBy) {
+        return this;
+    }
+
+    String getUpdateBy();
+
+    RootEntity setUpdateBy(String updateBy);
+
     String getTenantId();
 
     RootEntity setTenantId(String tenantId);
@@ -45,15 +57,5 @@ public interface RootEntity extends Serializable {
     String getDelFlag();
 
     RootEntity setDelFlag(String delFlag);
-
-    String getCreateBy();
-
-    RootEntity setCreateBy(String createBy);
-
-    String getUpdateBy();
-
-    RootEntity setUpdateBy(String updateBy);
-
-
 
 }

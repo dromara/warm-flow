@@ -46,6 +46,10 @@ public interface Instance extends RootEntity {
     @Override
     Instance setUpdateTime(Date updateTime);
 
+    String getCreateBy();
+
+    Instance setCreateBy(String createBy);
+
     @Override
     String getUpdateBy();
 
@@ -99,10 +103,6 @@ public interface Instance extends RootEntity {
     String getFlowStatus();
 
     Instance setFlowStatus(String flowStatus);
-
-    String getCreateBy();
-
-    Instance setCreateBy(String createBy);
 
     String getFormCustom();
 

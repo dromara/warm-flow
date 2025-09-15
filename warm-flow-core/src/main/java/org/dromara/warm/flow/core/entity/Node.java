@@ -48,16 +48,16 @@ public interface Node extends RootEntity {
     Node setUpdateTime(Date updateTime);
 
     @Override
-    String getUpdateBy();
-
-    @Override
-    Node setUpdateBy(String updateBy);
-
-    @Override
     String getCreateBy();
 
     @Override
     Node setCreateBy(String createBy);
+
+    @Override
+    String getUpdateBy();
+
+    @Override
+    Node setUpdateBy(String updateBy);
 
     @Override
     String getTenantId();

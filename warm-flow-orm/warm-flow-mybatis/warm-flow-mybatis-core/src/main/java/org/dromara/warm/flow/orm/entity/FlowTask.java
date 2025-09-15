@@ -49,6 +49,16 @@ public class FlowTask implements Task {
     private Date updateTime;
 
     /**
+     * 创建人
+     */
+    private String createBy;
+
+    /**
+     * 更新人
+     */
+    private String updateBy;
+
+    /**
      * 租户ID
      */
     private String tenantId;
@@ -57,10 +67,6 @@ public class FlowTask implements Task {
      * 删除标记
      */
     private String delFlag;
-
-    private String updateBy;
-
-    private String createBy;
 
     /**
      * 对应flow_definition表的id
@@ -71,11 +77,6 @@ public class FlowTask implements Task {
      * 流程实例表id
      */
     private Long instanceId;
-
-    /**
-     * 流程发起人
-     */
-    private String initiator;
 
     /**
      * 流程名称

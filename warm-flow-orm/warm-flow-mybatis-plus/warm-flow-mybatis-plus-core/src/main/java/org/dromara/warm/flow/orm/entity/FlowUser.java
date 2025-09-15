@@ -52,6 +52,14 @@ public class FlowUser implements User {
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updateTime;
 
+    /**
+     * 创建人：比如作为委托的人保存
+     */
+    private String createBy;
+
+    /**
+     * 更新人
+     */
     private String updateBy;
 
     /**
@@ -79,10 +87,5 @@ public class FlowUser implements User {
      * 任务表id
      */
     private Long associated;
-
-    /**
-     * 创建人：比如作为委托的人保存
-     */
-    private String createBy;
 
 }

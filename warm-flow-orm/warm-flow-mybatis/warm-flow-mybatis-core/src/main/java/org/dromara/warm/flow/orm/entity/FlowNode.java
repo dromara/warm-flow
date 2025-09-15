@@ -52,9 +52,15 @@ public class FlowNode implements Node {
      */
     private Date updateTime;
 
-    private String updateBy;
-
+    /**
+     * 创建人
+     */
     private String createBy;
+
+    /**
+     * 更新人
+     */
+    private String updateBy;
 
     /**
      * 租户ID

@@ -48,6 +48,16 @@ public class FlowSkip implements Skip {
     private Date updateTime;
 
     /**
+     * 创建人
+     */
+    private String createBy;
+
+    /**
+     * 更新人
+     */
+    private String updateBy;
+
+    /**
      * 租户ID
      */
     private String tenantId;
@@ -56,10 +66,6 @@ public class FlowSkip implements Skip {
      * 删除标记
      */
     private String delFlag;
-
-    private String updateBy;
-
-    private String createBy;
 
     /**
      * 流程id

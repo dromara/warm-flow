@@ -154,10 +154,7 @@ public class UserServiceImpl extends WarmServiceImpl<FlowUserDao<User>, User> im
             .setType(type)
             .setProcessedBy(permission)
             .setAssociated(associated)
-            .setCreateBy(handler)
-            .setUpdateBy(handler)
-            .setCreateTime(now)
-            .setUpdateTime(now);
+            .setCreateBy(handler);
         FlowEngine.dataFillHandler().idFill(user);
         return user;
     }

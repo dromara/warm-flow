@@ -27,6 +27,7 @@ import java.util.List;
  * @since 2023-03-29
  */
 public interface Definition extends RootEntity {
+
     @Override
     Long getId();
 
@@ -46,16 +47,16 @@ public interface Definition extends RootEntity {
     Definition setUpdateTime(Date updateTime);
 
     @Override
-    String getUpdateBy();
-
-    @Override
-    Definition setUpdateBy(String updateBy);
-
-    @Override
     String getCreateBy();
 
     @Override
     Definition setCreateBy(String createBy);
+
+    @Override
+    String getUpdateBy();
+
+    @Override
+    Definition setUpdateBy(String updateBy);
 
     @Override
     String getTenantId();

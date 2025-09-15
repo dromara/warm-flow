@@ -53,8 +53,14 @@ public class FlowTask implements Task {
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updateTime;
 
+    /**
+     * 创建人
+     */
     private String createBy;
 
+    /**
+     * 更新人
+     */
     private String updateBy;
 
     /**
@@ -77,12 +83,6 @@ public class FlowTask implements Task {
      * 流程实例表id
      */
     private Long instanceId;
-
-    /**
-     * 流程发起人
-     */
-    @TableField(exist = false)
-    private String initiator;
 
     /**
      * 流程名称

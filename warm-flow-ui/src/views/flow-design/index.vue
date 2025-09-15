@@ -239,8 +239,6 @@ function initLogicFlow() {
       hoverOutline: isClassics(logicJson.value.modelValue),   // 鼠标 hover 的时候是否显示节点的外框。
       nodeSelectedOutline: isClassics(logicJson.value.modelValue),    // 节点被选中时是否显示节点的外框。
       edgeSelectedOutline: isClassics(logicJson.value.modelValue),    //	边被选中时是否显示边的外框。
-      nodeTextDraggable: isClassics(logicJson.value.modelValue),    // 允许节点文本可以拖拽。
-      edgeTextDraggable: isClassics(logicJson.value.modelValue),    // 允许边文本可以拖拽。
       grid: {
         size: 20,
         visible: 'true' === appParams.value.showGrid,
@@ -612,7 +610,16 @@ const undoOrRedo = async (undo) => {
 };
 //清空
 const clear = async () => {
-  lf.value.clearData()
+    if (isClassics(logicJson.value.modelValue)) {
+        lf.value.clearData()
+    } else {
+        logicJson.value = {
+            ...logicJson.value,
+            ...initMimicData
+        };
+        lf.value.render(logicJson.value);
+    }
+
 }
 
 /**

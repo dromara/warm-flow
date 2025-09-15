@@ -78,16 +78,6 @@ public class FlowHisTask implements HisTask {
     private Long instanceId;
 
     /**
-     * 流程发起人
-     */
-    private String initiator;
-
-    /**
-     * 发起时间
-     */
-    private Date initiateTime;
-
-    /**
      * 任务表id
      */
     private Long taskId;
@@ -166,12 +156,6 @@ public class FlowHisTask implements HisTask {
      * 业务详情 存业务类的json
      */
     private String ext;
-
-    /**
-     * 创建者
-     */
-    private String createBy;
-
 
     /**
      * 审批表单是否自定义（Y是 2否）

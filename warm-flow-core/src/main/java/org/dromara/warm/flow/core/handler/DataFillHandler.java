@@ -57,10 +57,12 @@ public interface DataFillHandler {
             entity.setUpdateTime(ObjectUtil.isNotNull(entity.getUpdateTime()) ? entity.getUpdateTime() : new Date());
 
             PermissionHandler permissionHandler = FlowEngine.permissionHandler();
+            String handler = null;
             if (permissionHandler != null) {
-                entity.setCreateBy(ObjectUtil.isNotNull(entity.getCreateBy()) ? entity.getCreateBy() : permissionHandler.getHandler());
-                entity.setUpdateBy(ObjectUtil.isNotNull(entity.getUpdateBy()) ? entity.getUpdateBy() : permissionHandler.getHandler());
+                handler = permissionHandler.getHandler();
             }
+            entity.setCreateBy(ObjectUtil.isNotNull(entity.getCreateBy()) ? entity.getCreateBy() : handler);
+            entity.setUpdateBy(ObjectUtil.isNotNull(entity.getUpdateBy()) ? entity.getUpdateBy() : handler);
 
         }
     }
@@ -76,9 +78,11 @@ public interface DataFillHandler {
             entity.setUpdateTime(ObjectUtil.isNotNull(entity.getUpdateTime()) ? entity.getUpdateTime() : new Date());
 
             PermissionHandler permissionHandler = FlowEngine.permissionHandler();
+            String handler = null;
             if (permissionHandler != null) {
-                entity.setUpdateBy(ObjectUtil.isNotNull(entity.getUpdateBy()) ? entity.getUpdateBy() : permissionHandler.getHandler());
+                handler = permissionHandler.getHandler();
             }
+            entity.setUpdateBy(ObjectUtil.isNotNull(entity.getUpdateBy()) ? entity.getUpdateBy() : handler);
         }
     }
 }

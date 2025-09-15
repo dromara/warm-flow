@@ -242,6 +242,9 @@ onMounted(async () => {
               plugins: [Snapshot],
               isSilentMode: true,
               textEdit: false,
+              hoverOutline: isClassics(defJson.value.modelValue),   // 鼠标 hover 的时候是否显示节点的外框。
+              nodeSelectedOutline: isClassics(defJson.value.modelValue),    // 节点被选中时是否显示节点的外框。
+              edgeSelectedOutline: isClassics(defJson.value.modelValue),    //	边被选中时是否显示边的外框。
               grid: {
                 size: 20,
                 visible: 'true' === appParams.value.showGrid,
