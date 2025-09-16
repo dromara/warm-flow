@@ -138,7 +138,7 @@
     </el-form>
 
     <!-- 权限标识：会签票签选择用户 -->
-    <el-dialog title="办理人选择" v-if="userVisible" v-model="userVisible" width="80%" append-to-body>
+    <el-dialog title="人员选择" v-if="userVisible" v-model="userVisible" width="80%" append-to-body>
       <selectUser v-model:selectUser="form.permissionFlag" v-model:userVisible="userVisible" :permissionRows="permissionRows" @handleUserSelect="handleUserSelect"></selectUser>
     </el-dialog>
   </div>
