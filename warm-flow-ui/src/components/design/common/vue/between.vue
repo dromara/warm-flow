@@ -1,6 +1,6 @@
 <template>
   <div class="between">
-    <el-form ref="formRef" class="betweenForm" :model="form" label-width="100px" size="small" :rules="rules" :disabled="disabled" label-position="left">
+    <el-form ref="formRef" class="betweenForm" :model="form" label-width="120px" size="small" :rules="rules" :disabled="disabled" label-position="left">
       <el-tabs type="border-card" class="Tabs" v-model="tabsValue">
         <el-tab-pane v-for="item in tabsList" :key="item.name" :label="item.label" :name="item.name">
           <div v-if="tabsValue === '1'">

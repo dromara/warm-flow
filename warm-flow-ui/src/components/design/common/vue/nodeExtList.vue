@@ -1,6 +1,5 @@
 <template>
-    <div v-once>
-    <el-form ref="nodeExtRef" class="nodeExtForm" :model="form" label-width="100px" size="small" :disabled="disabled"
+    <el-form ref="nodeExtRef" class="nodeExtForm" :model="form" label-width="120px" size="small" :disabled="disabled"
              label-position="left">
         <el-form-item :label="`${item.label}：`" :prop="item.code" v-for="(item, index) in formList" :key="index"
                       :rules="[{ required: item.must, message: `${item.label}不能为空`, trigger: ['blur', 'change'] }]">
@@ -61,7 +60,6 @@
                     :permissionRows="permissionRows[itemCode]"
                     @handleUserSelect="(checkedItemList) => handleUserSelect(checkedItemList, itemCode)"></selectUser>
     </el-dialog>
-    </div>
 </template>
 
 <script setup name="NodeExtList">
