@@ -212,7 +212,7 @@ watch(() => form.value.listenerRows?.map(e => e.listenerType), (n) => {
   props.lf.setProperties(objId.value, {
     listenerType: Array.isArray(n) ? n.join(",") : n
   })
-});
+}, { deep: true });
 
 // 监听：监听器路径数组
 watch(() => form.value.listenerRows?.map(e => e.listenerPath), (n) => {
@@ -220,7 +220,7 @@ watch(() => form.value.listenerRows?.map(e => e.listenerPath), (n) => {
   props.lf.setProperties(objId.value, {
     listenerPath: Array.isArray(n) ? n.join("@@") : n
   })
-});
+}, { deep: true });
 
 watch(() => form.value.formCustom, (n) => {
   props.lf.setProperties(objId.value, {
