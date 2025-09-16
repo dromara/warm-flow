@@ -19,6 +19,7 @@ import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.entity.RootEntity;
 import org.dromara.warm.flow.core.utils.IdUtils;
 import org.dromara.warm.flow.core.utils.ObjectUtil;
+import org.dromara.warm.flow.core.utils.StringUtils;
 
 import java.util.Date;
 import java.util.Objects;
@@ -61,9 +62,8 @@ public interface DataFillHandler {
             if (permissionHandler != null) {
                 handler = permissionHandler.getHandler();
             }
-            entity.setCreateBy(ObjectUtil.isNotNull(entity.getCreateBy()) ? entity.getCreateBy() : handler);
-            entity.setUpdateBy(ObjectUtil.isNotNull(entity.getUpdateBy()) ? entity.getUpdateBy() : handler);
-
+            entity.setCreateBy(StringUtils.isNotEmpty(handler) ? handler : entity.getCreateBy());
+            entity.setUpdateBy(StringUtils.isNotEmpty(handler) ? handler : entity.getUpdateBy());
         }
     }
 
@@ -82,7 +82,7 @@ public interface DataFillHandler {
             if (permissionHandler != null) {
                 handler = permissionHandler.getHandler();
             }
-            entity.setUpdateBy(ObjectUtil.isNotNull(entity.getUpdateBy()) ? entity.getUpdateBy() : handler);
+            entity.setUpdateBy(StringUtils.isNotEmpty(handler) ? handler : entity.getUpdateBy());
         }
     }
 }

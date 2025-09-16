@@ -108,6 +108,7 @@ public abstract class WarmServiceImpl<M extends WarmDao<T>, T> implements IWarmS
 
     @Override
     public boolean remove(T entity) {
+        updateFill(entity);
         return SqlHelper.retBool(getDao().delete(entity));
     }
 
