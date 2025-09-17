@@ -197,10 +197,10 @@ onMounted(() => {
   if (appParams.value.id) {
     definitionId.value = appParams.value.id;
   }
-  if (appParams.value.onlyDesignShow) {
-    onlyDesignShow.value = appParams.value.onlyDesignShow
-  }
-  queryDef(definitionId.value).then(res => {
+    onlyDesignShow.value = appParams.value.onlyDesignShow === 'true' ||
+        appParams.value.onlyDesignShow === true;
+
+    queryDef(definitionId.value).then(res => {
     jsonString.value = res.data;
     if (res.data.isPublish && res.data.isPublish !== 0) {
       disabled.value = true
