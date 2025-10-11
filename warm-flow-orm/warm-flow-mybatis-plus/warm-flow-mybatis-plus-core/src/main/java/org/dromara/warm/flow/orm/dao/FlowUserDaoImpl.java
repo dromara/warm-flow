@@ -51,13 +51,13 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser> implements FlowUserDa
     }
 
     @Override
-    public List<FlowUser> listByAssociatedAndTypes(List<Long> associateds, String[] types) {
+    public List<FlowUser> listByAssociatedAndTypes(List<Long> associatedList, String[] types) {
         LambdaQueryWrapper<FlowUser> queryWrapper = new LambdaQueryWrapper<>();
-        if (CollUtil.isNotEmpty(associateds)) {
-            if (associateds.size() == 1) {
-                queryWrapper.eq(FlowUser::getAssociated, associateds.get(0));
+        if (CollUtil.isNotEmpty(associatedList)) {
+            if (associatedList.size() == 1) {
+                queryWrapper.eq(FlowUser::getAssociated, associatedList.get(0));
             } else {
-                queryWrapper.in(FlowUser::getAssociated, associateds);
+                queryWrapper.in(FlowUser::getAssociated, associatedList);
             }
         }
         queryWrapper.in(ArrayUtil.isNotEmpty(types), FlowUser::getType, Arrays.asList(types));
