@@ -74,4 +74,9 @@ public class FlowCons {
      * 表单数据
      */
     public static final String FORM_DATA = "formData";
+
+
+    public static final String PREVIOUS = "previous";
+
+    public static final String SUFFIX = "suffix";
 }
