@@ -107,12 +107,12 @@ public class FlowDefinition implements Definition {
     private Integer isPublish;
 
     /**
-     * 审批表单是否自定义（Y=是 N=否）
+     * 审批表单是否自定义（Y是 N否）
      */
     private String formCustom;
 
     /**
-     * 审批表单是否自定义（Y=是 N=否）
+     * 审批表单路径
      */
     private String formPath;
 

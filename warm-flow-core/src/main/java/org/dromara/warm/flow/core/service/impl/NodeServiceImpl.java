@@ -203,13 +203,11 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
             pathWayData.getPathWayNodes().add(nowNode);
         }
         Node nextNode = null;
-        // 如果指定了跳转节点，直接获取节点
         if (StringUtils.isNotEmpty(anyNodeCode)) {
+            // 如果指定了跳转节点，直接获取节点
             nextNode = StreamUtils.filterOne(flowCombine.getAllNodes(), node -> anyNodeCode.equals(node.getNodeCode()));
-        }
-
-        // 如果配置了任意跳转节点，直接获取节点
-        if (StringUtils.isNotEmpty(nowNode.getAnyNodeSkip()) && SkipType.isReject(skipType)) {
+        } else if (StringUtils.isNotEmpty(nowNode.getAnyNodeSkip()) && SkipType.isReject(skipType)) {
+            // 如果配置了任意跳转节点，直接获取节点
             nextNode = StreamUtils.filterOne(flowCombine.getAllNodes(), node -> nowNode.getAnyNodeSkip().equals(node.getNodeCode()));
         }
 

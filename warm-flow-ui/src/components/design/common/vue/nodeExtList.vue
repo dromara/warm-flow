@@ -5,7 +5,7 @@
                       :rules="[{ required: item.must, message: `${item.label}不能为空`, trigger: ['blur', 'change'] }]">
             <template #label>
                 <span>{{ item.label }}</span>
-                <el-tooltip v-if="item.type === 4" effect="dark" :content="item.desc">
+                <el-tooltip v-if="[4, 5].includes(item.type)" effect="dark" :content="item.desc">
                     <el-icon :size="14" style="margin-left: 2px;margin-top: 4px;">
                         <WarningFilled/>
                     </el-icon>
