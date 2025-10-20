@@ -1,10 +1,12 @@
 <template>
-  <div :style="tooltipStyle" @mouseenter="handleTooltipEnter" @mouseleave="handleTooltipLeave">
-    <div v-for="(item, index) in options" :key="index" @click="handleClick(item)" class="tooltip-item">
-      <svg-icon :icon-class="item.icon" class="tooltip-icon" />
-      <span>{{ item.label }}</span>
+    <div :style="tooltipStyle" @mouseenter="handleTooltipEnter" @mouseleave="handleTooltipLeave">
+        <div class="tooltip-container">
+            <div v-for="(item, index) in options" :key="index" @click="handleClick(item)" class="tooltip-item">
+                <svg-icon :icon-class="item.icon" class="tooltip-icon" />
+                <span>{{ item.label }}</span>
+            </div>
+        </div>
     </div>
-  </div>
 </template>
 
 <script setup name="EdgeTooltip">
@@ -19,6 +21,7 @@ const options = [
   { icon: 'between', label: '审批' },
   { icon: 'serial', label: '互斥网关' },
   { icon: 'parallel', label: '并行网关' },
+  { icon: 'inclusive', label: '包含网关' },
 ]
 
 const emit = defineEmits(['option-click', 'close-tooltip']); // 新增 close-tooltip 事件
@@ -32,7 +35,7 @@ const tooltipStyle = computed(() => ({
   border: "1px solid #ccc", /* 灰色边框 */
   borderRadius: "4px", /* 添加圆角 */
   boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)", /* 阴影效果（轻微立体感） */
-  padding: "8px 5px", /* 内边距（内容与边框的间距） */
+  padding: "4px 5px", /* 内边距（内容与边框的间距） */
   fontSize: "15px", /* 字体大小 */
   zIndex: 1000, /* 层级高于其他元素，确保提示框可见 */
   color: "#333", /* 深色文字 */
@@ -58,27 +61,36 @@ const handleClick = (item) => {
 </script>
 
 <style scoped>
+.tooltip-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    width: 100%;
+}
+
 .tooltip-item {
-  display: flex;
-  align-items: center; /* 水平居中 */
-  padding: 8px 10px  ; /* 上下间距 */
-  cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 4px 5px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s;
 }
 
 .tooltip-item:hover {
-  background-color: #f0f0f0;
+    background-color: #f0f0f0;
 }
 
 .tooltip-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;     /* 圆形宽度 */
-  height: 32px;    /* 圆形高度 */
-  border: 1px solid #ddd; /* 边框颜色 */
-  border-radius: 50%;     /* 变成圆形 */
-  margin-right: 10px;
-  color: #666; /* 图标颜色 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    margin-right: 10px;
+    color: #666;
 }
 
 </style>

@@ -361,7 +361,7 @@ function handleDeleteRow(index) {
 
 const filteredNodes = computed(() => {
   let previousNodes = getPreviousNodes(props.nodes, props.skips, form.value.nodeCode)
-  return previousNodes.filter(node => !["start", "serial", "parallel"].includes(node.type));
+  return previousNodes.filter(node => !["start", "serial", "parallel", 'inclusive'].includes(node.type));
 });
 
 

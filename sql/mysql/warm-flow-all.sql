@@ -1,4 +1,3 @@
--- TODO createBy 开发中
 CREATE TABLE `flow_definition`
 (
     `id`              bigint          NOT NULL COMMENT '主键id',

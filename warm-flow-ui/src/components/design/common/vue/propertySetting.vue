@@ -24,6 +24,7 @@ import start from '@/components/design/common/vue/start.vue'
 import between from '@/components/design/common/vue/between.vue'
 import serial from '@/components/design/common/vue/gateway.vue'
 import parallel from '@/components/design/common/vue/gateway.vue'
+import inclusive from '@/components/design/common/vue/gateway.vue'
 import end from '@/components/design/common/vue/end.vue'
 import skip from '@/components/design/common/vue/skip.vue'
 
@@ -34,6 +35,7 @@ const COMPONENT_LIST = {
   between,
   serial,
   parallel,
+  inclusive,
   end,
   skip
 }
@@ -90,7 +92,9 @@ const title = computed(() => {
     return '设置串行网关属性'
   } else if (props.node && props.node.type === 'parallel') {
     return '设置并行网关属性'
-  } else if (props.node && props.node.type === 'start') {
+  } else if (props.node && props.node.type === 'inclusive') {
+      return '设置包含网关属性'
+  }  else if (props.node && props.node.type === 'start') {
     return '设置开始属性'
   } else if (props.node && props.node.type === 'end') {
     return '设置结束属性'

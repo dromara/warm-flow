@@ -49,7 +49,12 @@ public enum NodeType {
     /**
      * 并行网关
      */
-    PARALLEL(4, "parallel");
+    PARALLEL(4, "parallel"),
+
+    /**
+     * 包容网关
+     */
+    INCLUSIVE(5, "inclusive");
 
     private final Integer key;
     private final String value;
@@ -63,9 +68,9 @@ public enum NodeType {
         return null;
     }
 
-    public static String getValueByKey(Integer Key) {
+    public static String getValueByKey(Integer key) {
         for (NodeType item : NodeType.values()) {
-            if (item.getKey().equals(Key)) {
+            if (item.getKey().equals(key)) {
                 return item.getValue();
             }
         }
@@ -84,62 +89,72 @@ public enum NodeType {
     /**
      * 判断是否开始节点
      *
-     * @param Key
-     * @return
+     * @param key 枚举key
+     * @return  boolean
      */
-    public static Boolean isStart(Integer Key) {
-        return ObjectUtil.isNotNull(Key) && (NodeType.START.getKey().equals(Key));
+    public static Boolean isStart(Integer key) {
+        return ObjectUtil.isNotNull(key) && (NodeType.START.getKey().equals(key));
     }
 
     /**
      * 判断是否中间节点
      *
-     * @param Key
-     * @return
+     * @param key 枚举key
+     * @return  boolean
      */
-    public static Boolean isBetween(Integer Key) {
-        return ObjectUtil.isNotNull(Key) && (NodeType.BETWEEN.getKey().equals(Key));
+    public static Boolean isBetween(Integer key) {
+        return ObjectUtil.isNotNull(key) && (NodeType.BETWEEN.getKey().equals(key));
     }
 
     /**
      * 判断是否结束节点
      *
-     * @param Key
-     * @return
+     * @param key 枚举key
+     * @return  boolean
      */
-    public static Boolean isEnd(Integer Key) {
-        return ObjectUtil.isNotNull(Key) && (NodeType.END.getKey().equals(Key));
+    public static Boolean isEnd(Integer key) {
+        return ObjectUtil.isNotNull(key) && (NodeType.END.getKey().equals(key));
     }
 
     /**
      * 判断是否网关节点
      *
-     * @param Key
-     * @return
+     * @param key 枚举key
+     * @return  boolean
      */
-    public static Boolean isGateWay(Integer Key) {
-        return ObjectUtil.isNotNull(Key) && (NodeType.SERIAL.getKey().equals(Key)
-            || NodeType.PARALLEL.getKey().equals(Key));
+    public static Boolean isGateWay(Integer key) {
+        return ObjectUtil.isNotNull(key) && (NodeType.SERIAL.getKey().equals(key)
+            || NodeType.PARALLEL.getKey().equals(key)|| NodeType.INCLUSIVE.getKey().equals(key));
     }
 
     /**
      * 判断是否互斥网关节点
      *
-     * @param Key
-     * @return
+     * @param key 枚举key
+     * @return  boolean
      */
-    public static Boolean isGateWaySerial(Integer Key) {
-        return ObjectUtil.isNotNull(Key) && NodeType.SERIAL.getKey().equals(Key);
+    public static Boolean isGateWaySerial(Integer key) {
+        return ObjectUtil.isNotNull(key) && NodeType.SERIAL.getKey().equals(key);
     }
 
     /**
      * 判断是否并行网关节点
      *
-     * @param Key
-     * @return
+     * @param key 枚举key
+     * @return  boolean
      */
-    public static Boolean isGateWayParallel(Integer Key) {
-        return ObjectUtil.isNotNull(Key) && NodeType.PARALLEL.getKey().equals(Key);
+    public static Boolean isGateWayParallel(Integer key) {
+        return ObjectUtil.isNotNull(key) && NodeType.PARALLEL.getKey().equals(key);
+    }
+
+    /**
+     * 判断是否包容网关节点
+     *
+     * @param key 枚举key
+     * @return  boolean
+     */
+    public static Boolean isGateWayInclusive(Integer key) {
+        return ObjectUtil.isNotNull(key) && NodeType.INCLUSIVE.getKey().equals(key);
     }
 
 }

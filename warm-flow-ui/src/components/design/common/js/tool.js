@@ -1,4 +1,4 @@
-const NODE_TYPE_MAP = {0: 'start', 1: 'between', 2: 'end', 3: 'serial', 4: 'parallel'}
+const NODE_TYPE_MAP = {0: 'start', 1: 'between', 2: 'end', 3: 'serial', 4: 'parallel', 5: 'inclusive'}
 
 /**
  * 将warm-flow的定义json数据转成LogicFlow支持的数据格式
@@ -311,4 +311,12 @@ function getPreviousCode(skips, nowNodeCode, visited = new Set()) {
  */
 export function isClassics(modelValue) {
   return "CLASSICS" === modelValue
+}
+
+/**
+ * 判断是否网关节点
+ */
+export function isGateWay(nodeType) {
+  return ['serial', 'parallel', 'inclusive'].includes(nodeType);
+
 }

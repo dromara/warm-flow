@@ -28,6 +28,9 @@ import org.dromara.warm.flow.core.utils.ObjectUtil;
 @Getter
 @AllArgsConstructor
 public enum FlowStatus {
+    /**
+     * 流程状态
+     */
     TOBESUBMIT("0", "待提交"),
 
     APPROVAL("1", "审批中"),
@@ -87,11 +90,11 @@ public enum FlowStatus {
     /**
      * 判断是否结束节点
      *
-     * @param Key
-     * @return
+     * @param key 枚举key
+     * @return  boolean
      */
-    public static Boolean isFinished(String Key) {
-        return ObjectUtil.isNotNull(Key) && (FlowStatus.FINISHED.getKey().equals(Key));
+    public static Boolean isFinished(String key) {
+        return ObjectUtil.isNotNull(key) && (FlowStatus.FINISHED.getKey().equals(key));
     }
 
 }

@@ -1,5 +1,5 @@
 import { RectNodeModel } from '@logicflow/core'
-import {setCommonStyle} from "@/components/design/common/js/tool.js";
+import {setCommonStyle} from "../../common/js/tool";
 export class GatewayModel extends RectNodeModel {
 
   initNodeData(data) {

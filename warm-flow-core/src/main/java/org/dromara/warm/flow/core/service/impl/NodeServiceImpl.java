@@ -240,21 +240,39 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
             if (CollUtil.isEmpty(skipsGateway)) {
                 return null;
             }
-            if (!NodeType.isStart(nextNode.getNodeType()) && NodeType.isGateWaySerial(nextNode.getNodeType())) {
-                //  如果满足跳转条件，则取任意一条，否则取跳转条件为空的任意一条
-                Skip skipOne = null;
+
+            // 满足条件的跳转关系
+            List<Skip> satisfySkipsGateway = new ArrayList<>();
+            // 跳转关系为空的
+            List<Skip> emptySkipsGateway = new ArrayList<>();
+            if (NodeType.isGateWaySerial(nextNode.getNodeType()) || NodeType.isGateWayInclusive(nextNode.getNodeType())) {
                 for (Skip skip : skipsGateway) {
+                    // 取出满足跳转条件的跳转线，否则取跳转条件为空
                     if (StringUtils.isNotEmpty(skip.getSkipCondition())) {
                         if (ExpressionUtil.evalCondition(skip.getSkipCondition(), variable)) {
-                            skipOne = skip;
-                            break;
+                            satisfySkipsGateway.add(skip);
+                            // 如果是互斥网关，则取任意一条，否则取跳转条件为空的任意一条
+                            if (NodeType.isGateWaySerial(nextNode.getNodeType())) {
+                                break;
+                            }
                         }
                     } else {
-                        skipOne = skip;
+                        emptySkipsGateway.add(skip);
                     }
                 }
-                skipsGateway = skipOne == null ? null : CollUtil.toList(skipOne);
+                //  如果没有满足跳转条件的跳转线，取跳转条件为空
+                if (CollUtil.isEmpty(satisfySkipsGateway)) {
+                    // 如果是互斥网关，取跳转条件为空的任意一条
+                    if (NodeType.isGateWaySerial(nextNode.getNodeType())) {
+                        skipsGateway = CollUtil.isEmpty(emptySkipsGateway) ? null : Collections.singletonList(emptySkipsGateway.get(0));
+                    } else {
+                        skipsGateway = emptySkipsGateway;
+                    }
+                } else {
+                    skipsGateway = satisfySkipsGateway;
+                }
             }
+
             AssertUtil.isEmpty(skipsGateway, ExceptionCons.NULL_CONDITION_VALUE_NODE);
             List<String> nextNodeCodes = StreamUtils.toList(skipsGateway, Skip::getNextNodeCode);
             List<Node> nextNodes = StreamUtils.filter(flowCombine.getAllNodes()

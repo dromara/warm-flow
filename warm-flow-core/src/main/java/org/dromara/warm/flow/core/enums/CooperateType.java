@@ -38,12 +38,21 @@ import java.util.Objects;
 @AllArgsConstructor
 public enum CooperateType {
 
+    /**
+     * 协作类型
+     */
     APPROVAL(1, "无"),
+
     TRANSFER(2, "转办"),
+
     DEPUTE(3, "委派"),
+
     COUNTERSIGN(4, "会签"),
+
     VOTE(5, "票签"),
+
     ADD_SIGNATURE(6, "加签"),
+
     REDUCTION_SIGNATURE(7, "减签");
 
     private final Integer key;

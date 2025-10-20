@@ -28,8 +28,13 @@ import org.dromara.warm.flow.core.utils.StringUtils;
 @Getter
 @AllArgsConstructor
 public enum SkipType {
+    /**
+     * 审批动作
+     */
     PASS("PASS", "审批通过"),
+
     REJECT("REJECT", "退回"),
+
     NONE("NONE", "无动作");
 
     private final String key;
@@ -65,31 +70,31 @@ public enum SkipType {
     /**
      * 判断是否通过类型
      *
-     * @param Key
-     * @return
+     * @param key 枚举key
+     * @return  boolean
      */
-    public static Boolean isPass(String Key) {
-        return StringUtils.isNotEmpty(Key) && (SkipType.PASS.getKey().equals(Key));
+    public static Boolean isPass(String key) {
+        return StringUtils.isNotEmpty(key) && (SkipType.PASS.getKey().equals(key));
     }
 
     /**
      * 判断是否退回类型
      *
-     * @param Key
-     * @return
+     * @param key 枚举key
+     * @return  boolean
      */
-    public static Boolean isReject(String Key) {
-        return StringUtils.isNotEmpty(Key) && (SkipType.REJECT.getKey().equals(Key));
+    public static Boolean isReject(String key) {
+        return StringUtils.isNotEmpty(key) && (SkipType.REJECT.getKey().equals(key));
     }
 
     /**
      * 判断是否无动作类型
      *
-     * @param Key
-     * @return
+     * @param key 枚举key
+     * @return  boolean
      */
-    public static Boolean isNone(String Key) {
-        return StringUtils.isNotEmpty(Key) && (SkipType.NONE.getKey().equals(Key));
+    public static Boolean isNone(String key) {
+        return StringUtils.isNotEmpty(key) && (SkipType.NONE.getKey().equals(key));
     }
 
 }

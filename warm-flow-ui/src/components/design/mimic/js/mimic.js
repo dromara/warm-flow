@@ -1,3 +1,5 @@
+import {isGateWay} from "@/components/design/common/js/tool.js";
+
 const OFFSET_X = 150;
 const OFFSET_Y = 150;
 
@@ -64,7 +66,7 @@ function deleteAndAddEdge(sourceNode, nodes, edges, lf, edgeMap = new Map()
       if (!targetNode) continue;
 
       // 边重复检测
-      if (["serial", "parallel"].includes(sourceNode.type) && edgeMap.has(edge.sourceNodeId + ":" + edge.targetNodeId)) {
+      if (isGateWay(sourceNode.type) && edgeMap.has(edge.sourceNodeId + ":" + edge.targetNodeId)) {
         continue; // 跳过重复边
       }
 
@@ -98,7 +100,7 @@ function deleteAndAddEdge(sourceNode, nodes, edges, lf, edgeMap = new Map()
     const targetNode = nodeMap.get(edge.targetNodeId);
     if (!targetNode) return;
 
-    if (["serial", "parallel"].includes(sourceNode.type) && edgeMap.has(edge.sourceNodeId + ":" + edge.targetNodeId)) {
+    if (isGateWay(sourceNode.type) && edgeMap.has(edge.sourceNodeId + ":" + edge.targetNodeId)) {
       return;
     }
 
@@ -310,7 +312,7 @@ export const removeNode = (lf, nodeModel) => {
   let nodes = lf.getGraphData().nodes;
   let edges = lf.getGraphData().edges;
 
-  if (['serial', 'parallel'].includes(sourceNode.type) && ['serial', 'parallel'].includes(targetNode.type)
+  if (isGateWay(sourceNode.type) && isGateWay(targetNode.type)
       && sourceNode.type === targetNode.type && targetNodeEdges.length > 1) {
     let sourceEdges = lf.getNodeIncomingEdge(sourceNode.id)
     if (lf.getNodeOutgoingNode(sourceNode.id).length >= 2) {
@@ -431,13 +433,13 @@ function getMoveY(sourceNode, targetType) {
     moveY = sourceNode.y + OFFSET_Y;
   } else if (['start', 'between'].includes(sourceNode.type) && targetType === 'end') {
     moveY = sourceNode.y + OFFSET_Y - 20;
-  } else if (['start', 'between'].includes(sourceNode.type) && ['serial', 'parallel'].includes(targetType)) {
+  } else if (['start', 'between'].includes(sourceNode.type) && isGateWay(targetType)) {
     moveY = sourceNode.y + OFFSET_Y - 25;
-  } else if (['serial', 'parallel'].includes(sourceNode.type) && ['serial', 'parallel'].includes(targetType)) {
+  } else if (isGateWay(sourceNode.type) && isGateWay(targetType)) {
     moveY = sourceNode.y + OFFSET_Y - 50;
-  } else if (['serial', 'parallel'].includes(sourceNode.type) && targetType === 'between') {
+  } else if (isGateWay(sourceNode.type) && targetType === 'between') {
     moveY = sourceNode.y + OFFSET_Y - 25;
-  } else if (['serial', 'parallel'].includes(sourceNode.type) && targetType === 'end') {
+  } else if (isGateWay(sourceNode.type) && targetType === 'end') {
     moveY = sourceNode.y + OFFSET_Y - 45;
   }
   return moveY;
@@ -460,7 +462,7 @@ function recursivelyMoveNodes(lf, lastNode, addFlag = true) {
     if (addFlag && node.y < moveY) {
       move = true;
     } else if (!addFlag) {
-      if (['serial', 'parallel'].includes(node.type)) {
+      if (isGateWay(node.type)) {
         const lastNodes = findLastNodes(node.id, nodes, edges)
         // 找出lastNodes中的最大的y坐标的节点
         const maxNode = lastNodes.reduce((prev, current) => {

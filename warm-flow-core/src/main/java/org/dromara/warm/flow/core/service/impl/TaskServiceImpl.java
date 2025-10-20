@@ -777,7 +777,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     /**
-     * 判断并行网关节点前置跳转线是否都完成，才能生成新的代办任务
+     * 判断并行网关和包容网关节点只剩一个前置代办任务，才能生成新的代办任务
      *
      * @param pathWayData 办理过程中途径数据
      * @param instance    实例
@@ -791,30 +791,35 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         Map<String, List<Skip>> skipLastMap = StreamUtils.groupByKey(pathWayData.getPathWaySkips(), Skip::getNextNodeCode);
         DefJson defJson = FlowEngine.jsonConvert.strToBean(instance.getDefJson(), DefJson.class);
         Map<String, NodeJson> nodeJsonMap = StreamUtils.toMap(defJson.getNodeList(), NodeJson::getNodeCode, node -> node);
-        List<SkipJson> skipList = StreamUtils.toListAll(defJson.getNodeList(), NodeJson::getSkipList);
-        Map<String, List<SkipJson>> skipJsonLastMap = StreamUtils.groupByKey(skipList, SkipJson::getNextNodeCode);
 
         nextNodes.removeIf(targetNode -> {
             List<Skip> skips = skipLastMap.get(targetNode.getNodeCode());
-            // 如果没有跳转线，说明没有并行网关，直接生成新任务
+            // 如果没有跳转线，说明是任意跳转或者指定跳转节点，直接生成新任务
             if (CollUtil.isEmpty(skips)) {
                 return false;
             }
-            // 获取目标节点途径最近的并行网关集合
-            if (!NodeType.isGateWayParallel(skips.get(0).getNowNodeType())) {
+            // 如果不是并行网关或者包含网关，不过滤，直接生成新任务
+            if (!NodeType.isGateWayParallel(skips.get(0).getNowNodeType())
+                && !NodeType.isGateWayInclusive(skips.get(0).getNowNodeType())) {
                 return false;
             }
-            NodeJson lastGateWayParallel = nodeJsonMap.get(skips.get(0).getNowNodeCode());
-            // 如果是空说明中间没有并行网关，直接生成新任务
-            if (lastGateWayParallel == null) {
+            NodeJson lastParallelOrInclusive = nodeJsonMap.get(skips.get(0).getNowNodeCode());
+            // 如果是空说明中间没有并行网关或者包含网关，直接生成新任务
+            if (lastParallelOrInclusive == null) {
                 return false;
             }
-            List<NodeJson> noGateWayParallelNodes = noGateWayParallel(lastGateWayParallel.getNodeCode(), nodeJsonMap, skipJsonLastMap);
-            // 如果已办数量=总数量-1，说明可以生成新任务
-            long statusTwoCount = noGateWayParallelNodes.stream()
-                .filter(node -> node.getStatus() == 2)
-                .count();
-            return !(statusTwoCount == noGateWayParallelNodes.size() - 1);
+            List<Node> previousNodeList = FlowEngine.nodeService().previousNodeList(pathWayData.getDefId()
+                , lastParallelOrInclusive.getNodeCode());
+            // 获取前置节点中代办节点的数量
+            long statusOneCount = previousNodeList.stream()
+                .map(Node::getNodeCode)
+                .map(nodeJsonMap::get)
+                .filter(Objects::nonNull)
+                .filter(nodeJson -> nodeJson.getStatus() == 1) // 过滤状态为1的节点
+                .count(); // 统计数量
+
+            // 并行网关和包容网关节点只剩一个前置代办任务，说明不能过滤，可以生成新任务
+            return statusOneCount > 1;
         });
     }
 

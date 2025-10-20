@@ -32,7 +32,9 @@ public enum PublishStatus {
      * 9=已失效；0=未发布；1=已发布
      */
     EXPIRED(9, "已失效"),
+
     UNPUBLISHED(0, "未发布"),
+    
     PUBLISHED(1, "已发布");
 
     private final Integer key;
