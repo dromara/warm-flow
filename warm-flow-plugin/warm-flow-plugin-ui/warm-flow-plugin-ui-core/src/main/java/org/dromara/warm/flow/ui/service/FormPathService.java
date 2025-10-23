@@ -13,28 +13,24 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.dromara.warm.flow.core.enums;
+package org.dromara.warm.flow.ui.service;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import org.dromara.warm.flow.core.dto.Tree;
+
+import java.util.List;
 
 /**
- * 表单类型
+ * 自定义表单路径接口
  *
  * @author warm
- * @since 2025/6/25
+ * @since 2025/10/22
  */
-@Getter
-@AllArgsConstructor
-public enum FormCustomEnum {
+public interface FormPathService {
 
     /**
-     * 表单路径
+     * 查询自定义表单路径
+     *
+     * @return 自定义表单路径
      */
-    N,
-
-    /**
-     * 表单路径
-     */
-    Y,
+    List<Tree> queryFormPath();
 }

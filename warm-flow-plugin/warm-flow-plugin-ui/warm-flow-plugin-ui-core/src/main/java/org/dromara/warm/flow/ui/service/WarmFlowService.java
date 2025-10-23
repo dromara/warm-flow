@@ -25,6 +25,7 @@ import org.dromara.warm.flow.core.enums.FormCustomEnum;
 import org.dromara.warm.flow.core.enums.ModelEnum;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
+import org.dromara.warm.flow.core.utils.CollUtil;
 import org.dromara.warm.flow.core.utils.ExceptionUtil;
 import org.dromara.warm.flow.core.utils.StreamUtils;
 import org.dromara.warm.flow.core.utils.StringUtils;
@@ -102,6 +103,14 @@ public class WarmFlowService {
             if (categoryService != null) {
                 List<Tree> treeList = categoryService.queryCategory();
                 defJson.setCategoryList(TreeUtil.buildTree(treeList));
+            }
+            FormPathService formPathService = FrameInvoker.getBean(FormPathService.class);
+            if (formPathService != null) {
+                List<Tree> treeList = formPathService.queryFormPath();
+                defJson.setFormPathList(TreeUtil.buildTree(treeList));
+                if (id == null) {
+                    defJson.setFormCustom(FormCustomEnum.Y.name());
+                }
             }
             return ApiResult.ok(defJson);
         } catch (Exception e) {

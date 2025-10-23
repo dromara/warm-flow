@@ -49,12 +49,14 @@
       </div>
 
       <BaseInfo :style="baseInfoStyle" ref="baseInfoRef" v-if="!onlyDesignShow" v-show="activeStep === 0"
-                :logic-json="logicJson" :category-list="categoryList" :definition-id="definitionId" :disabled="disabled"
+                :logic-json="logicJson" :category-list="categoryList" :form-path-list="formPathList"
+                :definition-id="definitionId" :disabled="disabled"
                 @update:flow-name="handleFlowNameUpdate" @update:model-value="handleModelValueUpdate"/>
 
       <div class="container" ref="containerRef" v-show="activeStep === 1">
         <PropertySetting ref="propertySettingRef" :node="nodeClick" :lf="lf" :disabled="disabled"
-                         :skipConditionShow="skipConditionShow" :nodes="nodes" :skips="skips">
+                         :skipConditionShow="skipConditionShow" :nodes="nodes" :skips="skips"
+                         :form-path-list="formPathList">
         </PropertySetting>
       </div>
       <div class="logo-text" v-if="activeStep === 1">Warm-Flow</div>
@@ -123,6 +125,7 @@ const skipConditionShow = ref(true);
 const nodes = ref([]);
 const skips = ref([]);
 const categoryList = ref([]);
+const formPathList = ref([]);
 const isDark = ref(false);
 const activeStep = ref(0); // 初始化当前步骤为0（开始）
 const onlyDesignShow = ref(false);
@@ -209,6 +212,9 @@ onMounted(() => {
     }
     if (res.data.categoryList && res.data.categoryList.length > 0) {
       categoryList.value = res.data.categoryList;
+    }
+    if (res.data.formPathList && res.data.formPathList.length > 0) {
+        formPathList.value = res.data.formPathList;
     }
     if (jsonString.value) {
       logicJson.value = json2LogicFlowJson(jsonString.value);

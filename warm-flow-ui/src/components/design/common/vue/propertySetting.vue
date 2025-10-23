@@ -10,7 +10,7 @@
       :append-to-body="true"
       :before-close="handleClose">
       <component :ref="componentType.name" :is="componentType" v-model="form" :disabled="disabled" :skipConditionShow="skipConditionShow"
-                 :nodes="nodes" :skips="skips">
+                 :nodes="nodes" :skips="skips" :form-path-list="formPathList">
         <template v-slot:[key]="data" v-for="(item, key) in $slots">
           <slot :name="key" v-bind="data || {}"></slot>
         </template>
@@ -27,6 +27,7 @@ import parallel from '@/components/design/common/vue/gateway.vue'
 import inclusive from '@/components/design/common/vue/gateway.vue'
 import end from '@/components/design/common/vue/end.vue'
 import skip from '@/components/design/common/vue/skip.vue'
+import BaseInfo from "@/components/design/common/vue/baseInfo.vue";
 
 const { proxy } = getCurrentInstance();
 
@@ -78,7 +79,13 @@ const props = defineProps({
     default () {
       return []
     }
-  }
+  },
+  formPathList: {
+      type: Array,
+      default () {
+          return []
+      }
+  },
 });
 
 const drawer = ref(false);
@@ -144,7 +151,8 @@ watch(() => props.node, n => {
             "3" : nodeRatio ? "2" : "1";
       }
       if (n.properties.collaborativeWay === "2" && !n.properties.nodeRatio) n.properties.nodeRatio = "50";
-      n.properties.formCustom = JSON.stringify(n.properties) === "{}" ? "N" : (n.properties.formCustom || "");
+      n.properties.formCustom = JSON.stringify(n.properties) === "{}" ? "N" : (n.properties.formCustom ?
+          n.properties.formCustom : props.formPathList && props.formPathList.length > 0 ? "Y" :"N");
       let listenerTypes = n.properties.listenerType ? n.properties.listenerType.split(",") : [];
       let listenerPaths = n.properties.listenerPath ? n.properties.listenerPath.split("@@") : [];
       n.properties.listenerRows = listenerTypes && listenerTypes.length > 0 ? listenerTypes.map((type, index) => ({

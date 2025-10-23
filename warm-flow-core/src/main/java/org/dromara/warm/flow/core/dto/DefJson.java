@@ -142,6 +142,11 @@ public class DefJson {
      */
     private List<Tree> categoryList;
 
+    /**
+     * 自定义表单的唯一标识：如formCode+version
+     */
+    private List<Tree> formPathList;
+
 
     public String getModelValue() {
         if (StringUtils.isEmpty(modelValue)) {
