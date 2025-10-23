@@ -43,7 +43,6 @@ public class JsonConvertJackson implements JsonConvert {
     private static final Logger log = LoggerFactory.getLogger(JsonConvertJackson.class);
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
-        .enable(SerializationFeature.INDENT_OUTPUT)
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         .setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
 
@@ -116,7 +115,7 @@ public class JsonConvertJackson implements JsonConvert {
     public String objToStr(Object variable) {
         if (ObjectUtil.isNotNull(variable)) {
             try {
-                return OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(variable);
+                return OBJECT_MAPPER.writeValueAsString(variable);
             } catch (Exception e) {
                 log.error("Map转换异常", e);
                 throw new FlowException("Map转换异常");

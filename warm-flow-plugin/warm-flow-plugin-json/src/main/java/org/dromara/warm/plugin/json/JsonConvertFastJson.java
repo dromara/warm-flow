@@ -87,7 +87,7 @@ public class JsonConvertFastJson implements JsonConvert {
     @Override
     public String objToStr(Object variable) {
         if (ObjectUtil.isNotNull(variable)) {
-            return JSON.toJSONString(variable, JSONWriter.Feature.PrettyFormat);
+            return JSON.toJSONString(variable);
         }
         return null;
     }

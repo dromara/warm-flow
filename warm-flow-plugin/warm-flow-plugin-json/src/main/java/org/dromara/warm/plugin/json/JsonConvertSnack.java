@@ -83,7 +83,7 @@ public class JsonConvertSnack implements JsonConvert {
     @Override
     public String objToStr(Object variable) {
         if (ObjectUtil.isNotNull(variable)) {
-            return ONode.stringify(variable, Options.def().add(Feature.PrettyFormat));
+            return ONode.stringify(variable);
         }
         return null;
     }
