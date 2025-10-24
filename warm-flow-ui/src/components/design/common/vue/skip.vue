@@ -12,7 +12,8 @@
       </el-form-item>
       <el-form-item label="跳转条件" v-if="skipConditionShow">
         <el-input v-model="form.condition" v-if="!spelFlag" placeholder="条件名" :style="{ width: !spelFlag? '30%' : '0%' }"/>
-        <el-select v-model="form.conditionType" placeholder="请选择条件方式" :style="{ width: spelFlag? '18%' : '25%', 'margin-left': '1%' }" @change="changeOper">
+        <el-select v-model="form.conditionType" placeholder="请选择条件方式" :style="{ width: spelFlag? '18%' : '25%', 'margin-left': '1%' }"
+                   clearable @change="changeOper" @clear="handleClear">
           <el-option label="默认" value="default"/>
           <el-option label="spel" value="spel"/>
           <el-option label="大于" value="gt"/>
@@ -69,6 +70,16 @@ watch(() => form, n => {
 
 function changeOper(obj) {
   spelFlag.value = (obj === 'spel' || obj === 'default');
+}
+
+function handleClear() {
+    // 处理清空操作的逻辑
+    form.value.conditionType = '';
+    spelFlag.value = false;
+    // 可以根据需要重置其他相关字段
+    form.value.condition = '';
+    form.value.conditionValue = '';
+    form.value.skipCondition = '';
 }
 
 if (props.modelValue?.conditionType === 'spel' || props.modelValue?.conditionType === 'default') {

@@ -241,36 +241,24 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
                 return null;
             }
 
-            // 满足条件的跳转关系
-            List<Skip> satisfySkipsGateway = new ArrayList<>();
-            // 跳转关系为空的
-            List<Skip> emptySkipsGateway = new ArrayList<>();
-            if (NodeType.isGateWaySerial(nextNode.getNodeType()) || NodeType.isGateWayInclusive(nextNode.getNodeType())) {
+            //如果是互斥网关，跳转条件匹配的，则取任意第一条，否则取跳转条件为空的任意一条
+            if (NodeType.isGateWaySerial(nextNode.getNodeType())) {
+                Skip skipOne = null;
                 for (Skip skip : skipsGateway) {
-                    // 取出满足跳转条件的跳转线，否则取跳转条件为空
                     if (StringUtils.isNotEmpty(skip.getSkipCondition())) {
                         if (ExpressionUtil.evalCondition(skip.getSkipCondition(), variable)) {
-                            satisfySkipsGateway.add(skip);
-                            // 如果是互斥网关，则取任意一条，否则取跳转条件为空的任意一条
-                            if (NodeType.isGateWaySerial(nextNode.getNodeType())) {
-                                break;
-                            }
+                            skipOne = skip;
+                            break;
                         }
                     } else {
-                        emptySkipsGateway.add(skip);
+                        skipOne = skip;
                     }
                 }
-                //  如果没有满足跳转条件的跳转线，取跳转条件为空
-                if (CollUtil.isEmpty(satisfySkipsGateway)) {
-                    // 如果是互斥网关，取跳转条件为空的任意一条
-                    if (NodeType.isGateWaySerial(nextNode.getNodeType())) {
-                        skipsGateway = CollUtil.isEmpty(emptySkipsGateway) ? null : Collections.singletonList(emptySkipsGateway.get(0));
-                    } else {
-                        skipsGateway = emptySkipsGateway;
-                    }
-                } else {
-                    skipsGateway = satisfySkipsGateway;
-                }
+                skipsGateway = skipOne == null ? null : CollUtil.toList(skipOne);
+            } else if (NodeType.isGateWayInclusive(nextNode.getNodeType())) {
+                //如果是包含网关，有跳转条件的分支，但是跳转条件不匹配的不执行，没跳转条件为空的分支默认执行
+                skipsGateway.removeIf(skip -> StringUtils.isNotEmpty(skip.getSkipCondition())
+                    && !ExpressionUtil.evalCondition(skip.getSkipCondition(), variable));
             }
 
             AssertUtil.isEmpty(skipsGateway, ExceptionCons.NULL_CONDITION_VALUE_NODE);
