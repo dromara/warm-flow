@@ -42,6 +42,12 @@
             <artifactId>snack3</artifactId>
             <optional>true</optional>
         </dependency>
+
+        <dependency>
+            <groupId>org.noear</groupId>
+            <artifactId>snack4</artifactId>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
 </project>
