@@ -112,7 +112,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
             .setNodeName("开始")
             .setNodeType(NodeType.START.getKey())
             .setCoordinate("260,200|260,200")
-            .setNodeRatio(BigDecimal.ZERO)
+            .setNodeRatio("0")
             .setVersion(definition.getVersion());
         nodeList.add(startNode);
 
@@ -122,7 +122,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
             .setNodeName("中间节点-或签1")
             .setNodeType(NodeType.BETWEEN.getKey())
             .setCoordinate("420,200|420,200")
-            .setNodeRatio(BigDecimal.ZERO)
+            .setNodeRatio("0")
             .setVersion(definition.getVersion());
         nodeList.add(betweenOneNode);
 
@@ -132,7 +132,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
             .setNodeName("中间节点-或签2")
             .setNodeType(NodeType.BETWEEN.getKey())
             .setCoordinate("600,200|600,200")
-            .setNodeRatio(BigDecimal.ZERO)
+            .setNodeRatio("0")
             .setVersion(definition.getVersion());
         nodeList.add(betweenTwoNode);
 
@@ -142,7 +142,7 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
             .setNodeName("结束")
             .setNodeType(NodeType.END.getKey())
             .setCoordinate("760,200|760,200")
-            .setNodeRatio(BigDecimal.ZERO)
+            .setNodeRatio("0")
             .setVersion(definition.getVersion());
         nodeList.add(endNode);
 
@@ -309,11 +309,9 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
                 if (CollUtil.isNotEmpty(useDefIds)) {
                     // 已发布已使用过的流程定义，改为已失效
                     updatePublishStatus(new ArrayList<>(useDefIds), PublishStatus.EXPIRED.getKey());
-
-                    // 已发布未使用的流定义
+                    // 过滤掉已发布已使用-->已发布未使用
                     otherDefIds.removeIf(useDefIds::contains);
                 }
-
             }
             if (CollUtil.isNotEmpty(otherDefIds)) {
                 // 已发布未使用过的流程定义，改为未发布

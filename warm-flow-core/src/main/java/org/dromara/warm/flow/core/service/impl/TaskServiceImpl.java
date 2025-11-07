@@ -697,7 +697,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
      * @return boolean
      */
     private boolean cooperate(Node nowNode, Task task, FlowParams flowParams) {
-        BigDecimal nodeRatio = nowNode.getNodeRatio();
+        String nodeRatio = nowNode.getNodeRatio();
         // 或签，直接返回
         if (CooperateType.isOrSign(nodeRatio)) {
             return false;
@@ -712,11 +712,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         User todoUser = CollUtil.getOne(StreamUtils.filter(todoList, u -> Objects.equals(u.getProcessedBy(), flowParams.getHandler())));
         AssertUtil.isNull(todoUser, ExceptionCons.NOT_AUTHORITY);
 
-        // 当只剩一位待办用户时，由当前用户决定走向
-        if (todoList.size() == 1) {
-            return false;
-        }
-
         // 除当前办理人外剩余办理人列表
         List<User> restList = StreamUtils.filter(todoList, u -> !Objects.equals(u.getProcessedBy(), flowParams.getHandler()));
 
@@ -727,15 +722,11 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         }
 
         // 查询会签票签已办列表
-
-        List<HisTask> doneList = FlowEngine.hisTaskService().listByTaskIdAndCooperateTypes(task.getId()
-            , CooperateType.isCountersign(nodeRatio) ? CooperateType.COUNTERSIGN.getKey() : CooperateType.VOTE.getKey());
+        List<HisTask> doneList = FlowEngine.hisTaskService().listByTaskId(task.getId());
         doneList = CollUtil.emptyDefault(doneList);
 
-        // TODO 这里处理 cooperation handler 获取下面的 passRatio rejectRatio all 值，能获取使用 handler的值，不能获取使用以下全自动计算代码
-
-        // 所有人
-        BigDecimal all = BigDecimal.ZERO.add(BigDecimal.valueOf(todoList.size())).add(BigDecimal.valueOf(doneList.size()));
+        // 总人数
+        BigDecimal allNum = BigDecimal.ZERO.add(BigDecimal.valueOf(todoList.size())).add(BigDecimal.valueOf(doneList.size()));
 
         List<HisTask> donePassList = StreamUtils.filter(doneList
             , hisTask -> Objects.equals(hisTask.getSkipType(), SkipType.PASS.getKey()));
@@ -744,26 +735,65 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             , hisTask -> Objects.equals(hisTask.getSkipType(), SkipType.REJECT.getKey()));
 
         boolean isPass = SkipType.isPass(flowParams.getSkipType());
+        // 如果是票签默认或者spel表达式策略，则执行表达式
+        if (CooperateType.isVoteSignDefault(nodeRatio) || CooperateType.isVoteSignRejectSpel(nodeRatio)) {
+            Map<String, Object> variable = MapUtil.clone(flowParams.getVariable());
+            variable.put("skipType", flowParams.getSkipType());
+            variable.put("passNum", donePassList.size());
+            variable.put("rejectNum", doneRejectList.size());
+            variable.put("todoNum", todoList.size());
+            variable.put("passList", donePassList);
+            variable.put("rejectList", doneRejectList);
+            variable.put("todoList", todoList);
+            if (ExpressionUtil.evalVoteSign(nodeRatio, variable)) {
+                // 添加历史任务
+                FlowEngine.userService().removeByIds(StreamUtils.toList(restList, User::getId));
+                return false;
+            }
+        } else {
+            // 计算通过率
+            BigDecimal passRatio = (isPass ? BigDecimal.ONE : BigDecimal.ZERO)
+                .add(BigDecimal.valueOf(donePassList.size()))
+                .divide(allNum, 4, RoundingMode.HALF_UP).multiply(MathUtil.ONE_HUNDRED);
+            // 判断是否是票签中的固定通过人数，如果是则判断是否达到该人数
+            if (isPass && CooperateType.isVoteSignPassCount(nodeRatio)) {
+                String passCount = StringUtils.substring(nodeRatio, nodeRatio.indexOf("="));
+                if (donePassList.size() + 1 >= Integer.parseInt(passCount)) {
+                    // 添加历史任务
+                    FlowEngine.userService().removeByIds(StreamUtils.toList(restList, User::getId));
+                    return false;
+                }
+            }
 
-        // 计算通过率
-        BigDecimal passRatio = (isPass ? BigDecimal.ONE : BigDecimal.ZERO)
-            .add(BigDecimal.valueOf(donePassList.size()))
-            .divide(all, 4, RoundingMode.HALF_UP).multiply(CooperateType.ONE_HUNDRED);
+            // 计算驳回率
+            BigDecimal rejectRatio = (isPass ? BigDecimal.ZERO : BigDecimal.ONE)
+                .add(BigDecimal.valueOf(doneRejectList.size()))
+                .divide(allNum, 4, RoundingMode.HALF_UP).multiply(MathUtil.ONE_HUNDRED);
+            // 判断是否是票签中的固定驳回人数，如果是则判断是否达到该人数
+            if (!isPass && CooperateType.isVoteSignRejectCount(nodeRatio)) {
+                String rejectCount = StringUtils.substring(nodeRatio, nodeRatio.indexOf("="));
+                if (donePassList.size() + 1 >= Integer.parseInt(rejectCount)) {
+                    // 添加历史任务
+                    FlowEngine.userService().removeByIds(StreamUtils.toList(restList, User::getId));
+                    return false;
+                }
+            }
 
-        // 计算驳回率
-        BigDecimal rejectRatio = (isPass ? BigDecimal.ZERO : BigDecimal.ONE)
-            .add(BigDecimal.valueOf(doneRejectList.size()))
-            .divide(all, 4, RoundingMode.HALF_UP).multiply(CooperateType.ONE_HUNDRED);
+            if (!isPass && rejectRatio.compareTo(MathUtil.ONE_HUNDRED.subtract(new BigDecimal(nodeRatio))) > 0) {
+                // 驳回，并且当前是驳回
+                FlowEngine.userService().removeByIds(StreamUtils.toList(restList, User::getId));
+                return false;
+            }
 
-        if (!isPass && rejectRatio.compareTo(CooperateType.ONE_HUNDRED.subtract(nodeRatio)) > 0) {
-            // 驳回，并且当前是驳回
-            FlowEngine.userService().removeByIds(StreamUtils.toList(restList, User::getId));
-            return false;
+            if (passRatio.compareTo(new BigDecimal(nodeRatio)) >= 0) {
+                // 大于等于 nodeRatio 设置值结束任务
+                FlowEngine.userService().removeByIds(StreamUtils.toList(restList, User::getId));
+                return false;
+            }
         }
 
-        if (passRatio.compareTo(nodeRatio) >= 0) {
-            // 大于等于 nodeRatio 设置值结束任务
-            FlowEngine.userService().removeByIds(StreamUtils.toList(restList, User::getId));
+        // 当只剩一位待办用户时，由当前用户决定走向
+        if (todoList.size() == 1) {
             return false;
         }
 

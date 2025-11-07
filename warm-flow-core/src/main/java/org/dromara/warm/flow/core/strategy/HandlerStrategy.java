@@ -13,9 +13,8 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.dromara.warm.flow.core.variable;
+package org.dromara.warm.flow.core.strategy;
 
-import org.dromara.warm.flow.core.strategy.ExpressionStrategy;
 import org.dromara.warm.flow.core.utils.ObjectUtil;
 import org.dromara.warm.flow.core.utils.StreamUtils;
 
@@ -27,7 +26,7 @@ import java.util.stream.Collectors;
  *
  * @author warm,battcn
  */
-public interface VariableStrategy extends ExpressionStrategy<List<String>> {
+public interface HandlerStrategy extends ExpressionStrategy<List<String>> {
 
     /**
      * 办理人表达式策略实现类集合

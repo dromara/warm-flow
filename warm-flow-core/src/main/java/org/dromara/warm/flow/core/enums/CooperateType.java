@@ -17,9 +17,9 @@ package org.dromara.warm.flow.core.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.math.BigDecimal;
-import java.util.Objects;
+import org.dromara.warm.flow.core.constant.FlowCons;
+import org.dromara.warm.flow.core.utils.MathUtil;
+import org.dromara.warm.flow.core.utils.StringUtils;
 
 /**
  * 协作类型
@@ -58,6 +58,16 @@ public enum CooperateType {
     private final Integer key;
     private final String value;
 
+
+    /**
+     * 票签中的固定通过人数策略前缀
+     */
+    public final static String PASS_COUNT = "passCount";
+    /**
+     * 票签中的固定驳回人数策略前缀
+     */
+    public final static String REJECT_COUNT = "rejectCount";
+
     public static Integer getKeyByValue(String value) {
         for (CooperateType item : CooperateType.values()) {
             if (item.getValue().equals(value)) {
@@ -86,46 +96,74 @@ public enum CooperateType {
     }
 
 
-    public final static BigDecimal ONE_HUNDRED = BigDecimal.valueOf(100);
-
     /**
      * 判断是否为或签
-     *
-     * @param
-     * @return
+     * @param ratio 比例
+     * @return true：是；false：不是
      */
-    public static boolean isOrSign(BigDecimal ratio) {
-        if (Objects.isNull(ratio) || ratio.compareTo(BigDecimal.ZERO) <= 0) {
-            return true;
-        }
-        return false;
+    public static boolean isOrSign(String ratio) {
+        return MathUtil.isZero(ratio);
     }
 
 
     /**
-     * 判断是否是票签
+     * 判断是否是票签中通过率策略
      *
-     * @param
-     * @return
+     * @param ratio 比例
+     * @return true：是；false：不是
      */
-    public static boolean isVoteSign(BigDecimal ratio) {
-        if (Objects.nonNull(ratio) && ratio.compareTo(BigDecimal.ZERO) > 0 && ratio.compareTo(ONE_HUNDRED) < 0) {
-            return true;
-        }
-        return false;
+    public static boolean isVoteSignPassRatio(String ratio) {
+        return MathUtil.isBetweenZeroAndHundred(ratio);
     }
 
     /**
      * 判断是否是会签
      *
-     * @param
-     * @return
+     * @param ratio 比例
+     * @return true：是；false：不是
      */
-    public static boolean isCountersign(BigDecimal ratio) {
-        if (Objects.nonNull(ratio) && ratio.compareTo(ONE_HUNDRED) >= 0) {
-            return true;
-        }
-        return false;
+    public static boolean isCountersign(String ratio) {
+        return MathUtil.isHundred(ratio);
+    }
+
+    /**
+     * 判断是否是票签中的固定通过人数策略
+     *
+     * @param passCount 固定通过人数
+     * @return true：是；false：不是
+     */
+    public static boolean isVoteSignPassCount(String passCount) {
+        return StringUtils.isNotEmpty(passCount) && passCount.startsWith(PASS_COUNT);
+    }
+
+    /**
+     * 判断是否是票签中的固定驳回人数策略
+     *
+     * @param rejectCount 固定驳回人数
+     * @return true：是；false：不是
+     */
+    public static boolean isVoteSignRejectCount(String rejectCount) {
+        return StringUtils.isNotEmpty(rejectCount) && rejectCount.startsWith(REJECT_COUNT);
+    }
+
+    /**
+     * 判断是否是票签中的默认表达式策略
+     *
+     * @param expression 默认表达式
+     * @return true：是；false：不是
+     */
+    public static boolean isVoteSignDefault(String expression) {
+        return StringUtils.isNotEmpty(expression) && expression.startsWith(FlowCons.DEFAULT);
+    }
+
+    /**
+     * 判断是否是票签中的spel表达式策略
+     *
+     * @param expression spel表达式
+     * @return true：是；false：不是
+     */
+    public static boolean isVoteSignRejectSpel(String expression) {
+        return StringUtils.isNotEmpty(expression) && expression.startsWith(FlowCons.SPEL);
     }
 
 }

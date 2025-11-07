@@ -16,8 +16,6 @@
         <result property="anyNodeSkip" column="any_node_skip"/>
         <result property="listenerType" column="listener_type"/>
         <result property="listenerPath" column="listener_path"/>
-        <result property="handlerType" column="handler_type"/>
-        <result property="handlerPath" column="handler_path"/>
         <result property="formCustom" column="form_custom"/>
         <result property="formPath" column="form_path"/>
         <result property="version" column="version"/>
@@ -42,8 +40,6 @@
                t.any_node_skip,
                t.listener_type,
                t.listener_path,
-               t.handler_type,
-               t.handler_path,
                t.form_custom,
                t.form_path,
                t.version,
@@ -89,8 +85,6 @@
             <if test="entity.listenerPath != null and entity.listenerPath != ''">and t.listener_path =
                 #{entity.listenerPath}
             </if>
-            <if test="entity.handlerType != null and entity.handlerType != ''">and t.handler_type = #{entity.handlerType}</if>
-            <if test="entity.handlerPath != null and entity.handlerPath != ''">and t.handler_path = #{entity.handlerPath}</if>
             <if test="entity.formCustom != null and entity.formCustom != ''">and t.form_custom = #{entity.formCustom}</if>
             <if test="entity.formPath != null and entity.formPath != ''">and t.form_path = #{entity.formPath}</if>
             <if test="entity.version != null and entity.version != ''">and t.version = #{entity.version}</if>
@@ -117,8 +111,6 @@
         any_node_skip,
         listener_type,
         listener_path,
-        handler_type,
-        handler_path,
         form_custom,
         form_path,
         version,
@@ -144,8 +136,6 @@
             #{item.anyNodeSkip},
             #{item.listenerType},
             #{item.listenerPath},
-            #{item.handlerType},
-            #{item.handlerPath},
             #{item.formCustom},
             #{item.formPath},
             #{item.version},
@@ -175,8 +165,6 @@
         any_node_skip,
         listener_type,
         listener_path,
-        handler_type,
-        handler_path,
         form_custom,
         form_path,
         version,
@@ -201,8 +189,6 @@
             #{item.anyNodeSkip},
             #{item.listenerType},
             #{item.listenerPath},
-            #{item.handlerType},
-            #{item.handlerPath},
             #{item.formCustom},
             #{item.formPath},
             #{item.version},
@@ -291,8 +277,6 @@
             <if test="anyNodeSkip != null and anyNodeSkip != ''">any_node_skip,</if>
             <if test="listenerType != null and listenerType != ''">listener_type,</if>
             <if test="listenerPath != null and listenerPath != ''">listener_path,</if>
-            <if test="handlerType != null and handlerType != ''">handler_type,</if>
-            <if test="handlerPath != null and handlerPath != ''">handler_path,</if>
             <if test="formCustom != null and formCustom != ''">form_custom,</if>
             <if test="formPath != null and formPath != ''">form_path,</if>
             <if test="version != null and version != ''">version,</if>
@@ -317,8 +301,6 @@
             <if test="anyNodeSkip != null and anyNodeSkip != ''">#{anyNodeSkip},</if>
             <if test="listenerType != null and listenerType != ''">#{listenerType},</if>
             <if test="listenerPath != null and listenerPath != ''">#{listenerPath},</if>
-            <if test="handlerType != null and handlerType != ''">#{handlerType},</if>
-            <if test="handlerPath != null and handlerPath != ''">#{handlerPath},</if>
             <if test="formCustom != null and formCustom != ''">#{formCustom},</if>
             <if test="formPath != null and formPath != ''">#{formPath},</if>
             <if test="version != null and version != ''">#{version},</if>
@@ -345,8 +327,6 @@
             <if test="anyNodeSkip != null and anyNodeSkip != ''">any_node_skip = #{anyNodeSkip},</if>
             <if test="listenerType != null and listenerType != ''">listener_type = #{listenerType},</if>
             <if test="listenerPath != null and listenerPath != ''">listener_path = #{listenerPath},</if>
-            <if test="handlerType != null and handlerType != ''">handler_type = #{handlerType},</if>
-            <if test="handlerPath != null and handlerPath != ''">handler_path = #{handlerPath},</if>
             <if test="formCustom != null and formCustom != ''">form_custom = #{formCustom},</if>
             <if test="formPath != null and formPath != ''">form_path = #{formPath},</if>
             <if test="version != null and version != ''">version = #{version},</if>
@@ -411,8 +391,6 @@
             <if test="anyNodeSkip != null and anyNodeSkip != ''">and any_node_skip = #{anyNodeSkip}</if>
             <if test="listenerType != null and listenerType != ''">and listener_type = #{listenerType}</if>
             <if test="listenerPath != null and listenerPath != ''">and listener_path = #{listenerPath}</if>
-            <if test="handlerType != null and handlerType != ''">and handler_type = #{handlerType},</if>
-            <if test="handlerPath != null and handlerPath != ''">and handler_path = #{handlerPath},</if>
             <if test="formCustom != null and formCustom != ''">and form_custom = #{formCustom},</if>
             <if test="formPath != null and formPath != ''">and form_path = #{formPath},</if>
             <if test="version != null and version != ''">and version = #{version}</if>
@@ -446,12 +424,6 @@
             </if>
             <if test="entity.listenerPath != null and entity.listenerPath != ''">and listener_path =
                 #{entity.listenerPath}
-            </if>
-            <if test="entity.handlerType != null and entity.handlerType != ''">and handler_type =
-                #{entity.handlerType}
-            </if>
-            <if test="entity.handlerPath != null and entity.handlerPath != ''">and handler_path =
-                #{entity.handlerPath}
             </if>
             <if test="entity.formCustom != null and entity.formCustom != ''">and form_custom = #{entity.formCustom}</if>
             <if test="entity.formPath != null and entity.formPath != ''">and form_path = #{entity.formPath}</if>

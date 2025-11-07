@@ -145,12 +145,29 @@ watch(() => props.node, n => {
         conditionValue: conditionValue
       }
     } else {
+      let nodeRatio = n.properties.nodeRatio || "";
       if (!n.properties.collaborativeWay) {
-        let nodeRatio = n.properties.nodeRatio || "";
         n.properties.collaborativeWay = parseFloat(nodeRatio) === 0 ? "1" : parseFloat(nodeRatio) === 100 ?
             "3" : nodeRatio ? "2" : "1";
       }
       if (n.properties.collaborativeWay === "2" && !n.properties.nodeRatio) n.properties.nodeRatio = "50";
+
+      let nodeRatioType = 'passRatio', nodeRatioValue = ''
+      if (nodeRatio) {
+          if (/^passCount|rejectCount/.test(nodeRatio)) {
+              const [type, value] = nodeRatio.split('=');
+              nodeRatioType = type;
+              nodeRatioValue = value;
+          } else if (/^spel|default/.test(nodeRatio)) {
+              const [type, value] = nodeRatio.split('@@');
+              nodeRatioType = type;
+              nodeRatioValue = value;
+          } else {
+              // 默认情况：直接使用整个字符串
+              nodeRatioValue = nodeRatio;
+          }
+      }
+
       n.properties.formCustom = JSON.stringify(n.properties) === "{}" ? "N" : (n.properties.formCustom ?
           n.properties.formCustom : props.formPathList && props.formPathList.length > 0 ? "Y" :"N");
       let listenerTypes = n.properties.listenerType ? n.properties.listenerType.split(",") : [];
@@ -164,7 +181,9 @@ watch(() => props.node, n => {
         nodeCode: n.id,
         ext: n.properties.ext ? n.properties.ext : {},
         ...n.properties,
-        nodeName: n.text instanceof Object ? n.text.value : n.text
+        nodeName: n.text instanceof Object ? n.text.value : n.text,
+        nodeRatioType: nodeRatioType,
+        nodeRatioValue: nodeRatioValue,
       }
     }
   }

@@ -13,26 +13,32 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.dromara.warm.flow.core.variable;
+package org.dromara.warm.flow.core.strategy;
 
-import java.util.Map;
+import org.dromara.warm.flow.core.constant.FlowCons;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * 默认办理人表达式策略： @@default@@|${flag}
+ * 条件表达式接口
  *
  * @author warm
  */
-public class DefaultVariableStrategy implements VariableStrategy {
+public interface ConditionStrategy extends ExpressionStrategy<Boolean> {
+
+    /**
+     * 条件表达式策略实现类集合
+     */
+    List<ExpressionStrategy<Boolean>> EXPRESSION_STRATEGY_LIST = new ArrayList<>();
 
     @Override
-    public String getType() {
-        return "$";
+    default void setExpression(ExpressionStrategy<Boolean> expressionStrategy) {
+        EXPRESSION_STRATEGY_LIST.add(expressionStrategy);
     }
 
     @Override
-    public Object preEval(String expression, Map<String, Object> variable) {
-        String result = expression.replace("${", "").replace("}", "");
-        return variable.get(result);
+    default String interceptStr() {
+        return FlowCons.SPLIT_AT;
     }
-
 }
