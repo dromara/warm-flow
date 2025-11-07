@@ -29,6 +29,7 @@
             <groupId>org.dromara.warm</groupId>
             <artifactId>warm-flow-mybatis-core</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.noear</groupId>
             <artifactId>mybatis-solon-plugin</artifactId>

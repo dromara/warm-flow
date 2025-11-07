@@ -26,11 +26,12 @@
 
         <dependency>
             <groupId>org.noear</groupId>
-            <artifactId>solon.data</artifactId>
+            <artifactId>solon-data</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.noear</groupId>
-            <artifactId>solon.web.staticfiles</artifactId>
+            <artifactId>solon-web-staticfiles</artifactId>
         </dependency>
     </dependencies>
 
