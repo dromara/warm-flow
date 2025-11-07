@@ -15,10 +15,15 @@
  */
 package org.dromara.warm.flow.solon;
 
+import org.apache.ibatis.builder.xml.XMLMapperBuilder;
+import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.Configuration;
 import org.dromara.warm.flow.solon.config.FlowAutoConfig;
 import org.noear.solon.core.AppContext;
 import org.noear.solon.core.Plugin;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Warm-Flow工作流插件
@@ -32,21 +37,25 @@ public class WarmFlowDaoSolonPlugin implements Plugin {
         context.beanMake(FlowAutoConfig.class);
 
         context.onEvent(Configuration.class, e -> {
-            e.addMappers("org.dromara.warm.flow.orm.mapper");
+            List<String> mapperList = Arrays.asList(
+                "warm/flow/FlowDefinitionMapper.xml",
+                "warm/flow/FlowHisTaskMapper.xml",
+                "warm/flow/FlowInstanceMapper.xml",
+                "warm/flow/FlowNodeMapper.xml",
+                "warm/flow/FlowFormMapper.xml",
+                "warm/flow/FlowSkipMapper.xml",
+                "warm/flow/FlowTaskMapper.xml",
+                "warm/flow/FlowUserMapper.xml");
 
-//            List<String> mapperList = Arrays.asList("warm/flow/FlowDefinitionMapper.xml", "warm/flow/FlowHisTaskMapper.xml"
-//                , "warm/flow/FlowInstanceMapper.xml", "warm/flow/FlowNodeMapper.xml", "warm/flow/FlowFormMapper.xml"
-//                , "warm/flow/FlowSkipMapper.xml", "warm/flow/FlowTaskMapper.xml", "warm/flow/FlowUserMapper.xml");
-//
-//            try {
-//                for (String mapper : mapperList) {
-//                    XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(Resources.getResourceAsStream(mapper),
-//                        e, getClass().getResource("/") + mapper, e.getSqlFragments());
-//                    xmlMapperBuilder.parse();
-//                }
-//            } catch (Exception ex) {
-//                throw new RuntimeException(ex);
-//            }
+            try {
+                for (String mapper : mapperList) {
+                    XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(Resources.getResourceAsStream(mapper),
+                        e, getClass().getResource("/") + mapper, e.getSqlFragments());
+                    xmlMapperBuilder.parse();
+                }
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
         });
     }
 }
