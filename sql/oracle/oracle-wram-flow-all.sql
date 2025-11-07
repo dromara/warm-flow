@@ -52,13 +52,12 @@ create table FLOW_NODE
     DEFINITION_ID   NUMBER(20)    not null,
     NODE_CODE       VARCHAR2(100) not null,
     NODE_NAME       VARCHAR2(100),
-    NODE_RATIO      NUMBER(6, 3),
+    PERMISSION_FLAG VARCHAR2(200),
+    NODE_RATIO      VARCHAR2(200),
     COORDINATE      VARCHAR2(100),
     ANY_NODE_SKIP   VARCHAR2(100),
     LISTENER_TYPE   VARCHAR2(100),
     LISTENER_PATH   VARCHAR2(500),
-    HANDLER_TYPE    VARCHAR2(100),
-    HANDLER_PATH    VARCHAR2(400),
     FORM_CUSTOM     VARCHAR2(1)   default 'N',
     FORM_PATH       VARCHAR2(100),
     VERSION         VARCHAR2(20),
@@ -68,8 +67,7 @@ create table FLOW_NODE
     UPDATE_BY       VARCHAR2(64) default '',
     EXT        CLOB,
     DEL_FLAG        VARCHAR2(1)   default '0',
-    TENANT_ID       VARCHAR2(40),
-    PERMISSION_FLAG VARCHAR2(200)
+    TENANT_ID       VARCHAR2(40)
 );
 
 alter table FLOW_NODE
