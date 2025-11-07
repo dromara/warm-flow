@@ -24,7 +24,7 @@ import org.noear.solon.core.Plugin;
  *
  * @author warm
  */
-public class XPluginImpl implements Plugin {
+public class WarmFlowModesSolonPlugin implements Plugin {
 
 
     @Override
