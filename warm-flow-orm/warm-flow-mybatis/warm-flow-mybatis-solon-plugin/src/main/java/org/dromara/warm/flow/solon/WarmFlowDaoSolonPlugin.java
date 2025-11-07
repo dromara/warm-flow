@@ -21,7 +21,6 @@ import org.apache.ibatis.session.Configuration;
 import org.dromara.warm.flow.solon.config.FlowAutoConfig;
 import org.noear.solon.core.AppContext;
 import org.noear.solon.core.Plugin;
-import org.noear.solon.core.event.EventBus;
 
 import java.util.Arrays;
 import java.util.List;
@@ -31,15 +30,22 @@ import java.util.List;
  *
  * @author warm
  */
-public class XPluginImpl implements Plugin {
+public class WarmFlowDaoSolonPlugin implements Plugin {
 
     @Override
     public void start(AppContext context) {
         context.beanMake(FlowAutoConfig.class);
-        EventBus.subscribe(Configuration.class, e -> {
-            List<String> mapperList = Arrays.asList("warm/flow/FlowDefinitionMapper.xml", "warm/flow/FlowHisTaskMapper.xml"
-                , "warm/flow/FlowInstanceMapper.xml", "warm/flow/FlowNodeMapper.xml", "warm/flow/FlowFormMapper.xml"
-                , "warm/flow/FlowSkipMapper.xml", "warm/flow/FlowTaskMapper.xml", "warm/flow/FlowUserMapper.xml");
+
+        context.onEvent(Configuration.class, e -> {
+            List<String> mapperList = Arrays.asList(
+                "warm/flow/FlowDefinitionMapper.xml",
+                "warm/flow/FlowHisTaskMapper.xml",
+                "warm/flow/FlowInstanceMapper.xml",
+                "warm/flow/FlowNodeMapper.xml",
+                "warm/flow/FlowFormMapper.xml",
+                "warm/flow/FlowSkipMapper.xml",
+                "warm/flow/FlowTaskMapper.xml",
+                "warm/flow/FlowUserMapper.xml");
 
             try {
                 for (String mapper : mapperList) {
