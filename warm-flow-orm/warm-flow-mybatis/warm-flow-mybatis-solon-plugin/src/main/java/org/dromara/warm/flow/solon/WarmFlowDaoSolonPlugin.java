@@ -15,7 +15,7 @@
  */
 package org.dromara.warm.flow.solon;
 
-import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import org.apache.ibatis.session.Configuration;
 import org.dromara.warm.flow.solon.config.FlowAutoConfig;
 import org.noear.solon.core.AppContext;
 import org.noear.solon.core.Plugin;
@@ -25,23 +25,18 @@ import org.noear.solon.core.Plugin;
  *
  * @author warm
  */
-public class WarmFlowSolonPlugin implements Plugin {
+public class WarmFlowDaoSolonPlugin implements Plugin {
 
     @Override
     public void start(AppContext context) {
         context.beanMake(FlowAutoConfig.class);
 
-        context.onEvent(MybatisConfiguration.class, e -> {
+        context.onEvent(Configuration.class, e -> {
             e.addMappers("org.dromara.warm.flow.orm.mapper");
-//            List<String> mapperList = Arrays.asList(
-//                "warm/flow/FlowDefinitionMapper.xml",
-//                "warm/flow/FlowHisTaskMapper.xml",
-//                "warm/flow/FlowInstanceMapper.xml",
-//                "warm/flow/FlowNodeMapper.xml",
-//                "warm/flow/FlowFormMapper.xml",
-//                "warm/flow/FlowSkipMapper.xml",
-//                "warm/flow/FlowTaskMapper.xml",
-//                "warm/flow/FlowUserMapper.xml");
+
+//            List<String> mapperList = Arrays.asList("warm/flow/FlowDefinitionMapper.xml", "warm/flow/FlowHisTaskMapper.xml"
+//                , "warm/flow/FlowInstanceMapper.xml", "warm/flow/FlowNodeMapper.xml", "warm/flow/FlowFormMapper.xml"
+//                , "warm/flow/FlowSkipMapper.xml", "warm/flow/FlowTaskMapper.xml", "warm/flow/FlowUserMapper.xml");
 //
 //            try {
 //                for (String mapper : mapperList) {
