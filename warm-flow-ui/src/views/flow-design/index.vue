@@ -196,12 +196,12 @@ async function handleStepClick(index) {
 
 
 onMounted(() => {
-  // 隐藏滚动条
-  document.body.style.overflow = 'hidden';
-  if (!appParams.value) appStore.fetchTokenName();
-  if (appParams.value.id) {
-    definitionId.value = appParams.value.id;
-  }
+    // 隐藏滚动条
+    document.body.style.overflow = 'hidden';
+    if (!appParams.value) appStore.fetchTokenName();
+    if (appParams.value.id) {
+      definitionId.value = appParams.value.id;
+    }
     onlyDesignShow.value = appParams.value.onlyDesignShow === 'true' ||
         appParams.value.onlyDesignShow === true;
 
@@ -209,6 +209,9 @@ onMounted(() => {
     jsonString.value = res.data;
     if (res.data.isPublish && res.data.isPublish !== 0) {
       disabled.value = true
+    }
+    if (appParams.value.disabled === 'true') {
+        disabled.value = true
     }
     if (res.data.categoryList && res.data.categoryList.length > 0) {
       categoryList.value = res.data.categoryList;

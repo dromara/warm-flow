@@ -728,9 +728,11 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 总人数
         BigDecimal allNum = BigDecimal.ZERO.add(BigDecimal.valueOf(todoList.size())).add(BigDecimal.valueOf(doneList.size()));
 
+        // 通过历史记录
         List<HisTask> donePassList = StreamUtils.filter(doneList
             , hisTask -> Objects.equals(hisTask.getSkipType(), SkipType.PASS.getKey()));
 
+        // 驳回历史记录
         List<HisTask> doneRejectList = StreamUtils.filter(doneList
             , hisTask -> Objects.equals(hisTask.getSkipType(), SkipType.REJECT.getKey()));
 
@@ -746,7 +748,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             variable.put("rejectList", doneRejectList);
             variable.put("todoList", todoList);
             if (ExpressionUtil.evalVoteSign(nodeRatio, variable)) {
-                // 添加历史任务
+                // 删除剩余办理人
                 FlowEngine.userService().removeByIds(StreamUtils.toList(restList, User::getId));
                 return false;
             }
@@ -759,7 +761,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             if (isPass && CooperateType.isVoteSignPassCount(nodeRatio)) {
                 String passCount = StringUtils.substring(nodeRatio, nodeRatio.indexOf("="));
                 if (donePassList.size() + 1 >= Integer.parseInt(passCount)) {
-                    // 添加历史任务
+                    // 删除剩余办理人
                     FlowEngine.userService().removeByIds(StreamUtils.toList(restList, User::getId));
                     return false;
                 }
@@ -773,7 +775,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             if (!isPass && CooperateType.isVoteSignRejectCount(nodeRatio)) {
                 String rejectCount = StringUtils.substring(nodeRatio, nodeRatio.indexOf("="));
                 if (donePassList.size() + 1 >= Integer.parseInt(rejectCount)) {
-                    // 添加历史任务
+                    // 删除剩余办理人
                     FlowEngine.userService().removeByIds(StreamUtils.toList(restList, User::getId));
                     return false;
                 }

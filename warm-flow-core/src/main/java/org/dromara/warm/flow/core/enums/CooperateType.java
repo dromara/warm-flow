@@ -68,6 +68,11 @@ public enum CooperateType {
      */
     public final static String REJECT_COUNT = "rejectCount";
 
+    /**
+     * 顺签
+     */
+    public final static String SEQUENCE = "sequence";
+
     public static Integer getKeyByValue(String value) {
         for (CooperateType item : CooperateType.values()) {
             if (item.getValue().equals(value)) {
@@ -105,6 +110,15 @@ public enum CooperateType {
         return MathUtil.isZero(ratio);
     }
 
+    /**
+     * 判断是否是会签
+     *
+     * @param ratio 比例
+     * @return true：是；false：不是
+     */
+    public static boolean isCountersign(String ratio) {
+        return MathUtil.isHundred(ratio);
+    }
 
     /**
      * 判断是否是票签中通过率策略
@@ -114,16 +128,6 @@ public enum CooperateType {
      */
     public static boolean isVoteSignPassRatio(String ratio) {
         return MathUtil.isBetweenZeroAndHundred(ratio);
-    }
-
-    /**
-     * 判断是否是会签
-     *
-     * @param ratio 比例
-     * @return true：是；false：不是
-     */
-    public static boolean isCountersign(String ratio) {
-        return MathUtil.isHundred(ratio);
     }
 
     /**
@@ -164,6 +168,29 @@ public enum CooperateType {
      */
     public static boolean isVoteSignRejectSpel(String expression) {
         return StringUtils.isNotEmpty(expression) && expression.startsWith(FlowCons.SPEL);
+    }
+
+    /**
+     * 判断是否是顺签
+     *
+     * @param expression 表达式
+     * @return true：是；false：不是
+     */
+    public static boolean isSequenceSign(String expression) {
+        return StringUtils.isNotEmpty(expression) && expression.endsWith(FlowCons.SPLIT_AT + SEQUENCE);
+    }
+
+    /**
+     * 判断是否是顺签
+     *
+     * @param expression 表达式
+     * @return true：是；false：不是
+     */
+    public static String removeSequence(String expression) {
+        if (isSequenceSign(expression)) {
+            return expression.substring(0, expression.lastIndexOf(FlowCons.SPLIT_AT + SEQUENCE));
+        }
+        return expression;
     }
 
 }
