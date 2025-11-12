@@ -89,7 +89,7 @@
         <gson.version>2.9.0</gson.version>
 
         <!-- orm库版本 -->
-        <mybatis-spring-boot>2.3.0</mybatis-spring-boot>
+        <mybatis-spring-boot>2.3.2</mybatis-spring-boot>
         <mybatis.version>3.5.15</mybatis.version>
         <mybatis-plus.version>3.5.12</mybatis-plus.version>
 
