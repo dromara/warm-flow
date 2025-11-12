@@ -77,15 +77,14 @@ public class StringUtils {
     /**
      * 指定字符串数组中，是否包含空字符串
      *
-     * @param strs
-     * @return
+     * @param args args
+     * @return 是否为空
      */
-    public static boolean hasEmpty(String... strs) {
-        if (ArrayUtil.isEmpty(strs)) {
+    public static boolean hasEmpty(String... args) {
+        if (ArrayUtil.isEmpty(args)) {
             return true;
         }
-
-        for (String str : strs) {
+        for (String str : args) {
             if (isEmpty(str)) {
                 return true;
             }
@@ -96,11 +95,11 @@ public class StringUtils {
     /**
      * 是否存都不为null或空对象或空白符的对象
      *
-     * @param args
-     * @return
+     * @param args args
+     * @return 全都不为空 = true;
      */
     public static boolean isAllNotEmpty(String... args) {
-        return false == hasEmpty(args);
+        return !hasEmpty(args);
     }
 
     /**
@@ -120,14 +119,13 @@ public class StringUtils {
     public static boolean containsAny(Collection<String> collection, String... array) {
         if (CollUtil.isEmpty(collection) || ArrayUtil.isEmpty(array)) {
             return false;
-        } else {
-            for (String str : array) {
-                if (collection.contains(str)) {
-                    return true;
-                }
-            }
-            return false;
         }
+        for (String str : array) {
+            if (collection.contains(str)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -372,8 +370,8 @@ public class StringUtils {
      * @param size 字符串指定长度
      * @return 返回数字的字符串格式，该字符串为指定长度。
      */
-    public static final String padl(final Number num, final int size) {
-        return padl(num.toString(), size, '0');
+    public static String padLeft(final Number num, final int size) {
+        return padLeft(num.toString(), size, '0');
     }
 
     /**
@@ -384,7 +382,7 @@ public class StringUtils {
      * @param c    用于补齐的字符
      * @return 返回指定长度的字符串，由原字符串左补齐或截取得到。
      */
-    public static final String padl(final String s, final int size, final char c) {
+    public static String padLeft(final String s, final int size, final char c) {
         final StringBuilder sb = new StringBuilder(size);
         if (s != null) {
             final int len = s.length();
