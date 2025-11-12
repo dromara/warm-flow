@@ -17,7 +17,7 @@
             <el-radio label="1" v-if="form.collaborativeWay ==='1' || showWays">
                 <span class="flex-hc">
                   或签
-                  <el-tooltip class="box-item" effect="dark" content="只需一个人审批">
+                  <el-tooltip class="box-item" effect="dark" placement="top" content="只需一个人审批">
                     <el-icon :size="14" class="ml5">
                       <WarningFilled />
                     </el-icon>
@@ -27,7 +27,8 @@
             <el-radio label="2" v-if="form.collaborativeWay ==='2' || showWays">
                 <span class="flex-hc">
                   票签
-                  <el-tooltip class="box-item" effect="dark" content="部分办理人审批，建议选择用户；如果选择角色或者部门等，需自行通过办理人表达式或者监听器，转成具体办理用户">
+                  <el-tooltip class="box-item" effect="dark"  placement="top"
+                              content="部分办理人审批，建议选择用户；如果选择角色或者部门等，需自行通过办理人表达式或者监听器，转成具体办理用户">
                     <el-icon :size="14" class="ml5">
                       <WarningFilled />
                     </el-icon>
@@ -37,7 +38,8 @@
             <el-radio label="3" v-if="form.collaborativeWay ==='3' || showWays">
                 <span class="flex-hc">
                   会签
-                  <el-tooltip class="box-item" effect="dark" content="所有办理都需要审批，建议选择用户；如果选择角色或者部门等，需自行通过办理人表达式或者监听器，转成具体办理用户">
+                  <el-tooltip class="box-item" effect="dark" placement="top"
+                              content="所有办理都需要审批，建议选择用户；如果选择角色或者部门等，需自行通过办理人表达式或者监听器，转成具体办理用户">
                     <el-icon :size="14" class="ml5">
                       <WarningFilled />
                     </el-icon>
@@ -46,9 +48,16 @@
             </el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="票签占比：" prop="nodeRatio" v-if="form.collaborativeWay === '2'">
-          <el-input v-model="form.nodeRatio" type="number" placeholder="请输入"></el-input>
-          <div class="placeholder mt5">票签比例范围：(0-100)的值</div>
+        <el-form-item label="票签策略：" prop="nodeRatio" v-if="form.collaborativeWay === '2'">
+          <el-select v-model="form.nodeRatioType" placeholder="请选择策略类型" style="width: 25%"
+                     clearable @clear="handleClear">
+              <el-option label="通过率" value="passRatio"/>
+              <el-option label="固定通过人数" value="passCount"/>
+              <el-option label="固定驳回人数" value="rejectCount"/>
+              <el-option label="默认表达式" value="default"/>
+              <el-option label="spel表达式" value="spel"/>
+          </el-select>
+          <el-input v-model="form.nodeRatioValue" :placeholder="getNodeRatioDescription()" style="width: 74%; margin-left: 1%"/>
         </el-form-item>
         <el-form-item label="驳回到指定节点" prop="formCustom">
           <template #label>
@@ -64,20 +73,43 @@
           </el-select>
           <div class="placeholder mt5">【票签】必须选择驳到指定节点！</div>
         </el-form-item>
-        <el-form-item label="审批表单：" prop="formCustom">
-          <el-select v-model="form.formCustom" clearable>
-            <el-option label="表单路径" value="N"></el-option>
-            <!--TODO form 开发中-->
-            <!--              <el-option label="动态表单" value="Y"></el-option>-->
-          </el-select>
+        <el-form-item label="自定义表单：" prop="formCustom">
+            <el-radio-group v-model="form.formCustom">
+                <el-radio label="N">
+              <span class="flex-hc">
+                  否
+                  <el-tooltip class="box-item" effect="dark" placement="top"
+                              content="填写页面地址：如system/process/approve">
+                    <el-icon :size="14" class="ml5">
+                      <WarningFilled />
+                    </el-icon>
+                  </el-tooltip>
+                </span>
+                </el-radio>
+                <el-radio label="Y">
+              <span class="flex-hc">
+                  是
+                  <el-tooltip class="box-item" effect="dark" placement="top"
+                              content="填写自定义表单的唯一标识：如formCode+version">
+                    <el-icon :size="14" class="ml5">
+                      <WarningFilled />
+                    </el-icon>
+                  </el-tooltip>
+                </span>
+                </el-radio>
+            </el-radio-group>
         </el-form-item>
-        <el-form-item label="审批表单路径：" prop="formPath" v-if="form.formCustom === 'N'">
+        <el-form-item label="表单路径：" prop="formPath" v-if="form.formCustom === 'N'">
           <el-input v-model="form.formPath"></el-input>
         </el-form-item>
-        <el-form-item label="审批流程表单：" prop="formPath" v-else-if="form.formCustom === 'Y'">
-          <el-select v-model="form.formPath">
-            <el-option v-for="item in definitionList" :key="item.id" :label="`${item.formName} - v${item.version}`" :value="item.id"></el-option>
-          </el-select>
+        <el-form-item label="自定义表单唯一标识：" prop="formPath" v-else-if="form.formCustom === 'Y'">
+            <el-tree-select
+                v-model="form.formPath"
+                :data="formPathList"
+                :props="{ value: 'id', label: 'name', children: 'children' }"
+                value-key="id"
+                placeholder="请选择流程类别"
+                check-strictly/>
         </el-form-item>
         <el-divider content-position="center"/>
         <nodeExtList v-if="baseList.length > 0" ref="nodeBase" v-model="form.ext" :formList="baseList" :disabled="disabled"></nodeExtList>
@@ -181,7 +213,13 @@ const props = defineProps({
     default () {
       return []
     }
-  }
+  },
+  formPathList: {
+      type: Array,
+      default () {
+          return []
+      }
+  },
 });
 
 const tabsValue = ref("1");
@@ -199,13 +237,39 @@ const baseList = ref([]);
 const buttonList = ref({});
 
 const rules = reactive({
-  nodeRatio: [
-    { required: false, message: "请输入", trigger: "change" },
-    { pattern: /^(?:[1-9]\d?|0\.\d{1,3}|[1-9]\d?\.\d{1,3})$/, message: "请输入(0, 100)的值，最多保留三位小数", trigger: ["change", "blur"] }
-  ],
-  listenerType: [{ required: true, message: '监听器类型不能为空', trigger: 'change' }],
-  listenerPath: [{ required: true, message: '监听器路径不能为空', trigger: 'blur' }]
+    nodeRatio: computed(() => {
+        const type = form.value.nodeRatioType;
+        if (!type) return [];
+
+        if (type === 'passRatio') {
+            console.log('passRatio')
+            return [
+                {required: true, message: "请输入", trigger: "change"},
+                {validator: validatePassRatio, trigger: ["change", "blur"]}
+            ];
+        } else if (['passCount', 'rejectCount'].includes(type)) {
+            return [
+                {required: true, message: "请输入", trigger: "change"},
+                {validator: validatePassCount, trigger: ["change", "blur"]}
+            ];
+        } else if (type === 'default') {
+            return [
+                {required: true, message: "请输入", trigger: "change"},
+                {validator: validateDefault, trigger: ["change", "blur"]}
+            ];
+        }  else if (type === 'spel') {
+            return [
+                {required: true, message: "请输入", trigger: "change"},
+                {validator: validateSpel, trigger: ["change", "blur"]}
+            ];
+        }
+        // 其他类型不作限制
+        return [];
+    }),
+    listenerType: [{required: true, message: '监听器类型不能为空', trigger: 'change'}],
+    listenerPath: [{required: true, message: '监听器路径不能为空', trigger: 'blur'}]
 });
+
 const definitionList = ref([]); // 流程表单列表
 const dictList = ref(); // 办理人选项
 const permissionRows = ref([]); // 办理人表格
@@ -215,7 +279,95 @@ watch(() => form.value, n => {
   if (n) {
     emit('update:modelValue', n)
   }
+  if (n.nodeRatioType) {
+      let nodeRatio = '';
+      if (/^passCount|rejectCount/.test(n.nodeRatioType)) {
+          nodeRatio = n.nodeRatioType + "=";
+      } else if (/^spel|default/.test(n.nodeRatioType)) {
+          nodeRatio = n.nodeRatioType + "@@";
+      }
+      n.nodeRatio = nodeRatio + (n.nodeRatioValue ? n.nodeRatioValue : '')
+  }
 },{ deep: true });
+
+function validatePassRatio(rule, value, callback) {
+    if (value === '' || value === undefined || value === null) {
+        callback(new Error('请输入通过率'));
+    } else {
+        const numValue = Number(value);
+        if (isNaN(numValue)) {
+            callback(new Error('请输入有效数字'));
+        } else if (numValue < 0.001 || numValue > 100) {
+            callback(new Error('通过率必须在0.001-100之间'));
+        } else if (!/^\d+(\.\d{1,3})?$/.test(value)) {
+            callback(new Error('通过率最多保留三位小数'));
+        }  else {
+            callback();
+        }
+    }
+}
+
+function validatePassCount(rule, value, callback) {
+    if (value === '' || value === undefined || value === null) {
+        callback(new Error('请输入固定人数'));
+    } else {
+        value = value.replace('passCount', '').replace('rejectCount', '').replace('=', '').trim();
+        console.log('validatePassCount', value)
+        const reg = /^[1-9]\d*$/;
+        if (!reg.test(value)) {
+            callback(new Error('请输入正整数'));
+        } else {
+            callback();
+        }
+    }
+}
+
+function validateDefault(rule, value, callback) {
+    value = value.replace('default@@', '').replace('=', '').trim();
+    if (value === '' || value === undefined || value === null) {
+        callback(new Error('请输入默认表达式'));
+    } else if (!/^\$\{.*\}$/.test(value)) {
+        callback(new Error('默认表达式必须以${开头，以}结尾'));
+    } else {
+        callback();
+    }
+}
+
+function validateSpel(rule, value, callback) {
+    value = value.replace('spel@@', '').replace('=', '').trim();
+    if (value === '' || value === undefined || value === null) {
+        callback(new Error('请输入spel表达式'));
+    } else if (!/^\#\{.*\}$/.test(value)) {
+        callback(new Error('spel表达式必须以#{开头，以}结尾'));
+    } else {
+        callback();
+    }
+}
+
+function getNodeRatioDescription() {
+    const type = form.value.nodeRatioType;
+    switch (type) {
+        case 'passRatio':
+            return '请输入通过率(0.001-100)';
+        case 'passCount':
+            return '请输入固定通过人数，类型为正整数';
+        case 'rejectCount':
+            return '请输入固定驳回人数，类型为正整数';
+        case 'default':
+            return '请输入默认表达式,格式如: ${flag > 4}';
+        case 'spel':
+            return '请输入spel表达式，格式如: #{@user.eval(#flag)}';
+        default:
+            return '请输入';
+    }
+}
+
+function handleClear() {
+    // 处理清空操作的逻辑
+    form.value.nodeRatioType = '';
+    form.value.nodeRatioValue = '';
+    form.value.nodeRatio = '';
+}
 
 // 删除办理人
 function delPermission(index) {
@@ -361,7 +513,7 @@ function handleDeleteRow(index) {
 
 const filteredNodes = computed(() => {
   let previousNodes = getPreviousNodes(props.nodes, props.skips, form.value.nodeCode)
-  return previousNodes.filter(node => !["start", "serial", "parallel"].includes(node.type));
+  return previousNodes.filter(node => !["start", "serial", "parallel", 'inclusive'].includes(node.type));
 });
 
 

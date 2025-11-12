@@ -5,7 +5,7 @@ class endModel extends CircleNodeModel {
 
   initNodeData(data) {
     super.initNodeData(data);
-    this.r = 20
+    this.r = 25
   }
 
   getNodeStyle() {

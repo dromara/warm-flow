@@ -13,23 +13,27 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.dromara.warm.plugin.modes.solon;
+package org.dromara.warm.plugin.modes.sb.expression;
 
-import org.dromara.warm.plugin.modes.solon.config.BeanConfig;
-import org.noear.solon.core.AppContext;
-import org.noear.solon.core.Plugin;
+import org.dromara.warm.flow.core.strategy.HandlerStrategy;
+import org.dromara.warm.plugin.modes.sb.helper.SpelHelper;
+
+import java.util.Map;
 
 /**
- * Warm-Flow工作流插件
+ * 办理人表达式spel: @@spel@@|#{@user.evalVar()}
  *
  * @author warm
  */
-public class XPluginImpl implements Plugin {
-
+public class HandlerStrategySpel implements HandlerStrategy {
 
     @Override
-    public void start(AppContext context) {
-        context.beanMake(BeanConfig.class);
+    public String getType() {
+        return "#";
+    }
 
+    @Override
+    public Object preEval(String expression, Map<String, Object> variable) {
+        return SpelHelper.parseExpression(expression, variable);
     }
 }

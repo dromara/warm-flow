@@ -13,28 +13,24 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.dromara.warm.plugin.modes.sb.expression;
+package org.dromara.warm.flow.ui.service;
 
-import org.dromara.warm.flow.core.constant.FlowCons;
-import org.dromara.warm.flow.core.strategy.ConditionStrategy;
-import org.dromara.warm.plugin.modes.sb.helper.SpelHelper;
+import org.dromara.warm.flow.core.dto.Tree;
 
-import java.util.Map;
+import java.util.List;
 
 /**
- * spel条件表达式 spel@@#{@user.eval()}
+ * 自定义表单路径接口
  *
  * @author warm
+ * @since 2025/10/22
  */
-public class ConditionStrategySpel implements ConditionStrategy {
+public interface FormPathService {
 
-    @Override
-    public String getType() {
-        return FlowCons.SPEL;
-    }
-
-    @Override
-    public Boolean eval(String expression, Map<String, Object> variable) {
-        return Boolean.TRUE.equals(SpelHelper.parseExpression(expression, variable));
-    }
+    /**
+     * 查询自定义表单路径
+     *
+     * @return 自定义表单路径
+     */
+    List<Tree> queryFormPath();
 }

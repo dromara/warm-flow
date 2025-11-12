@@ -22,10 +22,8 @@ import org.dromara.warm.flow.core.dto.FlowParams;
 import org.dromara.warm.flow.core.entity.Task;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.handler.PermissionHandler;
-import org.dromara.warm.flow.core.listener.ListenerStrategy;
-import org.dromara.warm.flow.core.strategy.ExpressionStrategy;
-import org.dromara.warm.flow.core.variable.DefaultVariableStrategy;
-import org.dromara.warm.flow.core.variable.VariableStrategy;
+import org.dromara.warm.flow.core.strategy.*;
+import org.dromara.warm.flow.core.handler.DefaultHandlerStrategy;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -49,7 +47,7 @@ public class ExpressionUtil {
         setExpression(new ConditionStrategyNotLike());
 
         // 注册办理人表达式
-        setExpression(new DefaultVariableStrategy());
+        setExpression(new DefaultHandlerStrategy());
     }
 
     /**
@@ -111,27 +109,6 @@ public class ExpressionUtil {
     }
 
     /**
-     * 处理下个任务的处理人
-     *
-     * @param nextHandlerAppend 下个任务处理人配置类型
-     * @param nextHandler       下个任务的处理人
-     * @param permissions       节点配置的原下个任务的处理人
-     * @author xiarg
-     * @since 2025/06/03 15:33:38
-     */
-    public static List<String> nextHandle(boolean nextHandlerAppend, String[] nextHandler, List<String> permissions) {
-        if (ArrayUtil.isEmpty(nextHandler)) {
-            return permissions;
-        }
-        if (nextHandlerAppend) {
-            permissions.addAll(new ArrayList<>(Arrays.asList(nextHandler)));
-        } else {
-            permissions = new ArrayList<>(Arrays.asList(nextHandler));
-        }
-        return permissions;
-    }
-
-    /**
      * 办理人表达式替换
      *
      * @param expression 表达式，比如“${flag}或者# { &#064;user.notify(#listenerVariable) } ” ，或者自定义策略
@@ -139,7 +116,7 @@ public class ExpressionUtil {
      * @return List<String>
      */
     public static List<String> evalVariable(String expression, Map<String, Object> variable) {
-        return getValue(VariableStrategy.EXPRESSION_STRATEGY_LIST, expression, variable
+        return getValue(HandlerStrategy.EXPRESSION_STRATEGY_LIST, expression, variable
                 , ExceptionCons.NULL_VARIABLE_STRATEGY);
     }
 
@@ -152,6 +129,18 @@ public class ExpressionUtil {
     public static boolean evalListener(String expression, Map<String, Object> variable) {
         return Boolean.TRUE.equals(getValue(ListenerStrategy.EXPRESSION_STRATEGY_LIST, expression, variable
                 , ExceptionCons.NULL_LISTENER_STRATEGY));
+    }
+
+    /**
+     * 票签表达式替换
+     *
+     * @param expression 表达式，比如“${flag}或者# { &#064;user.notify(#listenerVariable) } ” ，或者自定义策略
+     * @param variable   流程变量
+     * @return boolean
+     */
+    public static boolean evalVoteSign(String expression, Map<String, Object> variable) {
+        return Boolean.TRUE.equals(getValue(VoteSignStrategy.EXPRESSION_STRATEGY_LIST, expression, variable
+            , ExceptionCons.NULL_VOTESIGN_STRATEGY));
     }
 
     /**
@@ -180,5 +169,26 @@ public class ExpressionUtil {
             }
         }
         return null;
+    }
+
+    /**
+     * 处理下个任务的处理人
+     *
+     * @param nextHandlerAppend 下个任务处理人配置类型
+     * @param nextHandler       下个任务的处理人
+     * @param permissions       节点配置的原下个任务的处理人
+     * @author xiarg
+     * @since 2025/06/03 15:33:38
+     */
+    private static List<String> nextHandle(boolean nextHandlerAppend, String[] nextHandler, List<String> permissions) {
+        if (ArrayUtil.isEmpty(nextHandler)) {
+            return permissions;
+        }
+        if (nextHandlerAppend) {
+            permissions.addAll(new ArrayList<>(Arrays.asList(nextHandler)));
+        } else {
+            permissions = new ArrayList<>(Arrays.asList(nextHandler));
+        }
+        return permissions;
     }
 }

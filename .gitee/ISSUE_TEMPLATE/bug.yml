@@ -21,7 +21,7 @@ body:
     attributes:
       label: 功能不好用不会用是否已经看过项目文档？
       options:
-        - label: https://warm-flow.dromara.org/
+        - label: https://www.warm-flow.com/
           required: true
   - type: checkboxes
     attributes:

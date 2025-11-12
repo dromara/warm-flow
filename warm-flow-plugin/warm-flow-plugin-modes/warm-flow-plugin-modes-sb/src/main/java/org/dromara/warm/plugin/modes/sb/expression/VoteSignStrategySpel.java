@@ -15,33 +15,26 @@
  */
 package org.dromara.warm.plugin.modes.sb.expression;
 
-
 import org.dromara.warm.flow.core.constant.FlowCons;
-import org.dromara.warm.flow.core.strategy.ConditionStrategy;
+import org.dromara.warm.flow.core.strategy.VoteSignStrategy;
 import org.dromara.warm.plugin.modes.sb.helper.SpelHelper;
 
 import java.util.Map;
 
 /**
- * 默认条件表达式 default@@${flag == 5 && flag > 4}
+ * spel条件表达式 spel@@#{@user.eval()}
  *
  * @author warm
  */
-public class ConditionStrategyDefault implements ConditionStrategy {
+public class VoteSignStrategySpel implements VoteSignStrategy {
 
     @Override
     public String getType() {
-        return FlowCons.DEFAULT;
+        return FlowCons.SPEL;
     }
 
     @Override
     public Boolean eval(String expression, Map<String, Object> variable) {
-        expression = expression.replace("$", "#");
-        for (Map.Entry<String, Object> entry : variable.entrySet()) {
-            if (expression.contains(entry.getKey())) {
-                expression = expression.replace(entry.getKey(), "#" + entry.getKey());
-            }
-        }
         return Boolean.TRUE.equals(SpelHelper.parseExpression(expression, variable));
     }
 }

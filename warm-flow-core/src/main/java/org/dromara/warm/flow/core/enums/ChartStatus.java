@@ -35,6 +35,9 @@ import java.util.Map;
 @Getter
 @AllArgsConstructor
 public enum ChartStatus {
+    /**
+     * 流程图状态
+     */
     NOT_DONE(0, "未办理", new Color(166, 178, 189)),
 
     TO_DO(1, "待办理", new Color(255, 197, 90)),

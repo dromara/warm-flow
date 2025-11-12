@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.dromara.warm</groupId>
         <artifactId>warm-flow-mybatis-plus</artifactId>
-        <version>1.8.2</version>
+        <version>1.8.4-m1</version>
     </parent>
 
     <name>warm-flow-mybatis-plus-sb-starter</name>
@@ -23,6 +23,11 @@
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-jsqlparser-4.9</artifactId>
         </dependency>
 
         <dependency>

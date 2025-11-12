@@ -28,8 +28,13 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum UserType {
 
+    /**
+     * 流程用户类型
+     */
     APPROVAL("1", "待办任务的审批人权限"),
+
     TRANSFER("2", "待办任务的转办人权限"),
+
     DEPUTE("3", "待办任务的委托人权限");
 
     private final String key;

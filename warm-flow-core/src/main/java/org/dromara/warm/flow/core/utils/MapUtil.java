@@ -96,4 +96,17 @@ public class MapUtil {
         map.put(k, v);
         return map;
     }
+
+    /**
+     * 克隆一个Map
+     *
+     * @param map 要克隆的Map
+     * @return 克隆后的Map
+     */
+    public static <K, V> Map<K, V> clone(Map<K, V> map) {
+        if (isEmpty(map)) {
+            return new HashMap<>();
+        }
+        return new HashMap<>(map);
+    }
 }

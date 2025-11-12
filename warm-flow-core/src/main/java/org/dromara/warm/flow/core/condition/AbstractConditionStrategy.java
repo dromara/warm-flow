@@ -17,6 +17,7 @@ package org.dromara.warm.flow.core.condition;
 
 import org.dromara.warm.flow.core.constant.ExceptionCons;
 import org.dromara.warm.flow.core.constant.FlowCons;
+import org.dromara.warm.flow.core.strategy.ConditionStrategy;
 import org.dromara.warm.flow.core.utils.AssertUtil;
 import org.dromara.warm.flow.core.utils.ExpressionUtil;
 

@@ -27,6 +27,7 @@ import org.dromara.warm.flow.core.listener.ListenerVariable;
 import org.dromara.warm.flow.core.listener.ValueHolder;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 
@@ -50,9 +51,10 @@ public class ListenerUtil {
         // 执行任务完成监听器
         executeListener(listenerVariable, Listener.LISTENER_FINISH);
         // 执行任务创建监听器
+        List<Task> tasks = listenerVariable.getNextTasks();
         listenerVariable.getNextNodes().forEach(node -> {
             if (!NodeType.isEnd(node.getNodeType())) {
-                Task nextTask = StreamUtils.filterOne(listenerVariable.getNextTasks(), task -> task.getNodeCode().equals(node.getNodeCode()));
+                Task nextTask = StreamUtils.filterOne(tasks, task -> task.getNodeCode().equals(node.getNodeCode()));
                 listenerVariable.setNode(node)
                     .setNextNodes(null)
                     .setTask(nextTask)

@@ -10,7 +10,7 @@
       :append-to-body="true"
       :before-close="handleClose">
       <component :ref="componentType.name" :is="componentType" v-model="form" :disabled="disabled" :skipConditionShow="skipConditionShow"
-                 :nodes="nodes" :skips="skips">
+                 :nodes="nodes" :skips="skips" :form-path-list="formPathList">
         <template v-slot:[key]="data" v-for="(item, key) in $slots">
           <slot :name="key" v-bind="data || {}"></slot>
         </template>
@@ -24,8 +24,10 @@ import start from '@/components/design/common/vue/start.vue'
 import between from '@/components/design/common/vue/between.vue'
 import serial from '@/components/design/common/vue/gateway.vue'
 import parallel from '@/components/design/common/vue/gateway.vue'
+import inclusive from '@/components/design/common/vue/gateway.vue'
 import end from '@/components/design/common/vue/end.vue'
 import skip from '@/components/design/common/vue/skip.vue'
+import BaseInfo from "@/components/design/common/vue/baseInfo.vue";
 
 const { proxy } = getCurrentInstance();
 
@@ -34,6 +36,7 @@ const COMPONENT_LIST = {
   between,
   serial,
   parallel,
+  inclusive,
   end,
   skip
 }
@@ -76,7 +79,13 @@ const props = defineProps({
     default () {
       return []
     }
-  }
+  },
+  formPathList: {
+      type: Array,
+      default () {
+          return []
+      }
+  },
 });
 
 const drawer = ref(false);
@@ -90,7 +99,9 @@ const title = computed(() => {
     return '设置串行网关属性'
   } else if (props.node && props.node.type === 'parallel') {
     return '设置并行网关属性'
-  } else if (props.node && props.node.type === 'start') {
+  } else if (props.node && props.node.type === 'inclusive') {
+      return '设置包含网关属性'
+  }  else if (props.node && props.node.type === 'start') {
     return '设置开始属性'
   } else if (props.node && props.node.type === 'end') {
     return '设置结束属性'
@@ -134,13 +145,31 @@ watch(() => props.node, n => {
         conditionValue: conditionValue
       }
     } else {
+      let nodeRatio = n.properties.nodeRatio || "";
       if (!n.properties.collaborativeWay) {
-        let nodeRatio = n.properties.nodeRatio || "";
         n.properties.collaborativeWay = parseFloat(nodeRatio) === 0 ? "1" : parseFloat(nodeRatio) === 100 ?
             "3" : nodeRatio ? "2" : "1";
       }
       if (n.properties.collaborativeWay === "2" && !n.properties.nodeRatio) n.properties.nodeRatio = "50";
-      n.properties.formCustom = JSON.stringify(n.properties) === "{}" ? "N" : (n.properties.formCustom || "");
+
+      let nodeRatioType = 'passRatio', nodeRatioValue = ''
+      if (nodeRatio) {
+          if (/^passCount|rejectCount/.test(nodeRatio)) {
+              const [type, value] = nodeRatio.split('=');
+              nodeRatioType = type;
+              nodeRatioValue = value;
+          } else if (/^spel|default/.test(nodeRatio)) {
+              const [type, value] = nodeRatio.split('@@');
+              nodeRatioType = type;
+              nodeRatioValue = value;
+          } else {
+              // 默认情况：直接使用整个字符串
+              nodeRatioValue = nodeRatio;
+          }
+      }
+
+      n.properties.formCustom = JSON.stringify(n.properties) === "{}" ? "N" : (n.properties.formCustom ?
+          n.properties.formCustom : props.formPathList && props.formPathList.length > 0 ? "Y" :"N");
       let listenerTypes = n.properties.listenerType ? n.properties.listenerType.split(",") : [];
       let listenerPaths = n.properties.listenerPath ? n.properties.listenerPath.split("@@") : [];
       n.properties.listenerRows = listenerTypes && listenerTypes.length > 0 ? listenerTypes.map((type, index) => ({
@@ -152,7 +181,9 @@ watch(() => props.node, n => {
         nodeCode: n.id,
         ext: n.properties.ext ? n.properties.ext : {},
         ...n.properties,
-        nodeName: n.text instanceof Object ? n.text.value : n.text
+        nodeName: n.text instanceof Object ? n.text.value : n.text,
+        nodeRatioType: nodeRatioType,
+        nodeRatioValue: nodeRatioValue,
       }
     }
   }

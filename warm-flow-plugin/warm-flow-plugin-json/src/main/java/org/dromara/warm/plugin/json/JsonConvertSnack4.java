@@ -18,9 +18,7 @@ package org.dromara.warm.plugin.json;
 import org.dromara.warm.flow.core.json.JsonConvert;
 import org.dromara.warm.flow.core.utils.ObjectUtil;
 import org.dromara.warm.flow.core.utils.StringUtils;
-import org.noear.snack.ONode;
-import org.noear.snack.core.Feature;
-import org.noear.snack.core.Options;
+import org.noear.snack4.ONode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,7 +30,7 @@ import java.util.Map;
  *
  * @author warm
  */
-public class JsonConvertSnack implements JsonConvert {
+public class JsonConvertSnack4 implements JsonConvert {
 
     /**
      * 不可删除，为了在spi加载时候，发下不存在snack3依赖包，触发异常不加载此实现类
@@ -83,7 +81,7 @@ public class JsonConvertSnack implements JsonConvert {
     @Override
     public String objToStr(Object variable) {
         if (ObjectUtil.isNotNull(variable)) {
-            return ONode.stringify(variable);
+            return ONode.serialize(variable);
         }
         return null;
     }

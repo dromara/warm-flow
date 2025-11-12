@@ -307,16 +307,16 @@ public class StreamUtils {
      */
     public static <K, X, Y, V> Map<K, V> merge(Map<K, X> map1, Map<K, Y> map2, BiFunction<X, Y, V> merge) {
         if (MapUtil.isEmpty(map1) && MapUtil.isEmpty(map2)) {
-            return new HashMap<>();
+            return new HashMap<>(16);
         } else if (MapUtil.isEmpty(map1)) {
-            map1 = new HashMap<>();
+            map1 = new HashMap<>(16);
         } else if (MapUtil.isEmpty(map2)) {
-            map2 = new HashMap<>();
+            map2 = new HashMap<>(16);
         }
         Set<K> key = new HashSet<>();
         key.addAll(map1.keySet());
         key.addAll(map2.keySet());
-        Map<K, V> map = new HashMap<>();
+        Map<K, V> map = new HashMap<>(16);
         for (K t : key) {
             X x = map1.get(t);
             Y y = map2.get(t);

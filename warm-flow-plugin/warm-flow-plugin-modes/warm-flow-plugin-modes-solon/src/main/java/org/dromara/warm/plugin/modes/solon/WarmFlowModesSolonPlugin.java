@@ -13,30 +13,23 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.dromara.warm.flow.ui;
+package org.dromara.warm.plugin.modes.solon;
 
-import org.dromara.warm.flow.core.config.WarmFlow;
-import org.noear.solon.Solon;
+import org.dromara.warm.plugin.modes.solon.config.BeanConfig;
 import org.noear.solon.core.AppContext;
 import org.noear.solon.core.Plugin;
-import org.noear.solon.web.staticfiles.StaticMappings;
-import org.noear.solon.web.staticfiles.repository.ClassPathStaticRepository;
 
 /**
  * Warm-Flow工作流插件
  *
  * @author warm
  */
-public class XPluginImpl implements Plugin {
+public class WarmFlowModesSolonPlugin implements Plugin {
 
 
     @Override
     public void start(AppContext context) {
-        context.beanScan(XPluginImpl.class);
-        WarmFlow warmFlow = Solon.context().getBean(WarmFlow.class);
-        if (warmFlow.isUi()) {
-            StaticMappings.add("/warm-flow-ui/"
-                , new ClassPathStaticRepository("/META-INF/resources/warm-flow-ui/"));
-        }
+        context.beanMake(BeanConfig.class);
+
     }
 }

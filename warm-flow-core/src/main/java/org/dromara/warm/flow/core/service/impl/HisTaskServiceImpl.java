@@ -29,7 +29,6 @@ import org.dromara.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import org.dromara.warm.flow.core.service.HisTaskService;
 import org.dromara.warm.flow.core.utils.*;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,9 +47,14 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
     }
 
     @Override
+    public List<HisTask> listByTaskId(Long taskId) {
+        return list(FlowEngine.newHisTask().setTaskId(taskId));
+    }
+
+    @Override
     public List<HisTask> listByTaskIdAndCooperateTypes(Long taskId, Integer... cooperateTypes) {
         if (ArrayUtil.isEmpty(cooperateTypes)) {
-            return list(FlowEngine.newHisTask().setTaskId(taskId));
+            return listByTaskId(taskId);
         }
         if (cooperateTypes.length == 1) {
             return list(FlowEngine.newHisTask().setTaskId(taskId).setCooperateType(cooperateTypes[0]));
@@ -154,7 +158,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
     }
 
     @Override
-    public HisTask setSignHisTask(Task task, FlowParams flowParams, BigDecimal nodeRatio, boolean isPass) {
+    public HisTask setSignHisTask(Task task, FlowParams flowParams, String nodeRatio, boolean isPass) {
         String flowStatus = getFlowStatus(flowParams);
         HisTask hisTask = FlowEngine.newHisTask()
             .setTaskId(task.getId())

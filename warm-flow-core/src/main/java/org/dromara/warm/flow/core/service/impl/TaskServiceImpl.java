@@ -367,7 +367,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         handUndoneTask(r.instance);
         // 最后判断是否存在节点监听器，存在执行节点监听器
         ListenerUtil.executeListener(new ListenerVariable(r.definition, r.instance, r.nowNode, flowParams.getVariable()
-            , task), Listener.LISTENER_FINISH);
+            , task).setFlowParams(flowParams), Listener.LISTENER_FINISH);
         return r.instance;
     }
 
@@ -697,7 +697,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
      * @return boolean
      */
     private boolean cooperate(Node nowNode, Task task, FlowParams flowParams) {
-        BigDecimal nodeRatio = nowNode.getNodeRatio();
+        String nodeRatio = nowNode.getNodeRatio();
         // 或签，直接返回
         if (CooperateType.isOrSign(nodeRatio)) {
             return false;
@@ -712,11 +712,6 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         User todoUser = CollUtil.getOne(StreamUtils.filter(todoList, u -> Objects.equals(u.getProcessedBy(), flowParams.getHandler())));
         AssertUtil.isNull(todoUser, ExceptionCons.NOT_AUTHORITY);
 
-        // 当只剩一位待办用户时，由当前用户决定走向
-        if (todoList.size() == 1) {
-            return false;
-        }
-
         // 除当前办理人外剩余办理人列表
         List<User> restList = StreamUtils.filter(todoList, u -> !Objects.equals(u.getProcessedBy(), flowParams.getHandler()));
 
@@ -727,43 +722,80 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         }
 
         // 查询会签票签已办列表
-
-        List<HisTask> doneList = FlowEngine.hisTaskService().listByTaskIdAndCooperateTypes(task.getId()
-            , CooperateType.isCountersign(nodeRatio) ? CooperateType.COUNTERSIGN.getKey() : CooperateType.VOTE.getKey());
+        List<HisTask> doneList = FlowEngine.hisTaskService().listByTaskId(task.getId());
         doneList = CollUtil.emptyDefault(doneList);
 
-        // TODO 这里处理 cooperation handler 获取下面的 passRatio rejectRatio all 值，能获取使用 handler的值，不能获取使用以下全自动计算代码
+        // 总人数
+        BigDecimal allNum = BigDecimal.ZERO.add(BigDecimal.valueOf(todoList.size())).add(BigDecimal.valueOf(doneList.size()));
 
-        // 所有人
-        BigDecimal all = BigDecimal.ZERO.add(BigDecimal.valueOf(todoList.size())).add(BigDecimal.valueOf(doneList.size()));
-
+        // 通过历史记录
         List<HisTask> donePassList = StreamUtils.filter(doneList
             , hisTask -> Objects.equals(hisTask.getSkipType(), SkipType.PASS.getKey()));
 
+        // 驳回历史记录
         List<HisTask> doneRejectList = StreamUtils.filter(doneList
             , hisTask -> Objects.equals(hisTask.getSkipType(), SkipType.REJECT.getKey()));
 
         boolean isPass = SkipType.isPass(flowParams.getSkipType());
+        // 如果是票签默认或者spel表达式策略，则执行表达式
+        if (CooperateType.isVoteSignDefault(nodeRatio) || CooperateType.isVoteSignRejectSpel(nodeRatio)) {
+            Map<String, Object> variable = MapUtil.clone(flowParams.getVariable());
+            variable.put("skipType", flowParams.getSkipType());
+            variable.put("passNum", donePassList.size());
+            variable.put("rejectNum", doneRejectList.size());
+            variable.put("todoNum", todoList.size());
+            variable.put("passList", donePassList);
+            variable.put("rejectList", doneRejectList);
+            variable.put("todoList", todoList);
+            if (ExpressionUtil.evalVoteSign(nodeRatio, variable)) {
+                // 删除剩余办理人
+                FlowEngine.userService().removeByIds(StreamUtils.toList(restList, User::getId));
+                return false;
+            }
+        } else {
+            // 计算通过率
+            BigDecimal passRatio = (isPass ? BigDecimal.ONE : BigDecimal.ZERO)
+                .add(BigDecimal.valueOf(donePassList.size()))
+                .divide(allNum, 4, RoundingMode.HALF_UP).multiply(MathUtil.ONE_HUNDRED);
+            // 判断是否是票签中的固定通过人数，如果是则判断是否达到该人数
+            if (isPass && CooperateType.isVoteSignPassCount(nodeRatio)) {
+                String passCount = StringUtils.substring(nodeRatio, nodeRatio.indexOf("="));
+                if (donePassList.size() + 1 >= Integer.parseInt(passCount)) {
+                    // 删除剩余办理人
+                    FlowEngine.userService().removeByIds(StreamUtils.toList(restList, User::getId));
+                    return false;
+                }
+            }
 
-        // 计算通过率
-        BigDecimal passRatio = (isPass ? BigDecimal.ONE : BigDecimal.ZERO)
-            .add(BigDecimal.valueOf(donePassList.size()))
-            .divide(all, 4, RoundingMode.HALF_UP).multiply(CooperateType.ONE_HUNDRED);
+            // 计算驳回率
+            BigDecimal rejectRatio = (isPass ? BigDecimal.ZERO : BigDecimal.ONE)
+                .add(BigDecimal.valueOf(doneRejectList.size()))
+                .divide(allNum, 4, RoundingMode.HALF_UP).multiply(MathUtil.ONE_HUNDRED);
+            // 判断是否是票签中的固定驳回人数，如果是则判断是否达到该人数
+            if (!isPass && CooperateType.isVoteSignRejectCount(nodeRatio)) {
+                String rejectCount = StringUtils.substring(nodeRatio, nodeRatio.indexOf("="));
+                if (donePassList.size() + 1 >= Integer.parseInt(rejectCount)) {
+                    // 删除剩余办理人
+                    FlowEngine.userService().removeByIds(StreamUtils.toList(restList, User::getId));
+                    return false;
+                }
+            }
 
-        // 计算驳回率
-        BigDecimal rejectRatio = (isPass ? BigDecimal.ZERO : BigDecimal.ONE)
-            .add(BigDecimal.valueOf(doneRejectList.size()))
-            .divide(all, 4, RoundingMode.HALF_UP).multiply(CooperateType.ONE_HUNDRED);
+            if (!isPass && rejectRatio.compareTo(MathUtil.ONE_HUNDRED.subtract(new BigDecimal(nodeRatio))) > 0) {
+                // 驳回，并且当前是驳回
+                FlowEngine.userService().removeByIds(StreamUtils.toList(restList, User::getId));
+                return false;
+            }
 
-        if (!isPass && rejectRatio.compareTo(CooperateType.ONE_HUNDRED.subtract(nodeRatio)) > 0) {
-            // 驳回，并且当前是驳回
-            FlowEngine.userService().removeByIds(StreamUtils.toList(restList, User::getId));
-            return false;
+            if (passRatio.compareTo(new BigDecimal(nodeRatio)) >= 0) {
+                // 大于等于 nodeRatio 设置值结束任务
+                FlowEngine.userService().removeByIds(StreamUtils.toList(restList, User::getId));
+                return false;
+            }
         }
 
-        if (passRatio.compareTo(nodeRatio) >= 0) {
-            // 大于等于 nodeRatio 设置值结束任务
-            FlowEngine.userService().removeByIds(StreamUtils.toList(restList, User::getId));
+        // 当只剩一位待办用户时，由当前用户决定走向
+        if (todoList.size() == 1) {
             return false;
         }
 
@@ -777,7 +809,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     /**
-     * 判断并行网关节点前置跳转线是否都完成，才能生成新的代办任务
+     * 判断并行网关和包容网关节点只剩一个前置代办任务，才能生成新的代办任务
      *
      * @param pathWayData 办理过程中途径数据
      * @param instance    实例
@@ -791,30 +823,35 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         Map<String, List<Skip>> skipLastMap = StreamUtils.groupByKey(pathWayData.getPathWaySkips(), Skip::getNextNodeCode);
         DefJson defJson = FlowEngine.jsonConvert.strToBean(instance.getDefJson(), DefJson.class);
         Map<String, NodeJson> nodeJsonMap = StreamUtils.toMap(defJson.getNodeList(), NodeJson::getNodeCode, node -> node);
-        List<SkipJson> skipList = StreamUtils.toListAll(defJson.getNodeList(), NodeJson::getSkipList);
-        Map<String, List<SkipJson>> skipJsonLastMap = StreamUtils.groupByKey(skipList, SkipJson::getNextNodeCode);
 
         nextNodes.removeIf(targetNode -> {
             List<Skip> skips = skipLastMap.get(targetNode.getNodeCode());
-            // 如果没有跳转线，说明没有并行网关，直接生成新任务
+            // 如果没有跳转线，说明是任意跳转或者指定跳转节点，直接生成新任务
             if (CollUtil.isEmpty(skips)) {
                 return false;
             }
-            // 获取目标节点途径最近的并行网关集合
-            if (!NodeType.isGateWayParallel(skips.get(0).getNowNodeType())) {
+            // 如果不是并行网关或者包含网关，不过滤，直接生成新任务
+            if (!NodeType.isGateWayParallel(skips.get(0).getNowNodeType())
+                && !NodeType.isGateWayInclusive(skips.get(0).getNowNodeType())) {
                 return false;
             }
-            NodeJson lastGateWayParallel = nodeJsonMap.get(skips.get(0).getNowNodeCode());
-            // 如果是空说明中间没有并行网关，直接生成新任务
-            if (lastGateWayParallel == null) {
+            NodeJson lastParallelOrInclusive = nodeJsonMap.get(skips.get(0).getNowNodeCode());
+            // 如果是空说明中间没有并行网关或者包含网关，直接生成新任务
+            if (lastParallelOrInclusive == null) {
                 return false;
             }
-            List<NodeJson> noGateWayParallelNodes = noGateWayParallel(lastGateWayParallel.getNodeCode(), nodeJsonMap, skipJsonLastMap);
-            // 如果已办数量=总数量-1，说明可以生成新任务
-            long statusTwoCount = noGateWayParallelNodes.stream()
-                .filter(node -> node.getStatus() == 2)
-                .count();
-            return !(statusTwoCount == noGateWayParallelNodes.size() - 1);
+            List<Node> previousNodeList = FlowEngine.nodeService().previousNodeList(pathWayData.getDefId()
+                , lastParallelOrInclusive.getNodeCode());
+            // 获取前置节点中代办节点的数量
+            long statusOneCount = previousNodeList.stream()
+                .map(Node::getNodeCode)
+                .map(nodeJsonMap::get)
+                .filter(Objects::nonNull)
+                .filter(nodeJson -> nodeJson.getStatus() == 1) // 过滤状态为1的节点
+                .count(); // 统计数量
+
+            // 并行网关和包容网关节点只剩一个前置代办任务，说明不能过滤，可以生成新任务
+            return statusOneCount > 1;
         });
     }
 

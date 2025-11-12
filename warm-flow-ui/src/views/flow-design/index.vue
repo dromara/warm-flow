@@ -49,12 +49,14 @@
       </div>
 
       <BaseInfo :style="baseInfoStyle" ref="baseInfoRef" v-if="!onlyDesignShow" v-show="activeStep === 0"
-                :logic-json="logicJson" :category-list="categoryList" :definition-id="definitionId" :disabled="disabled"
+                :logic-json="logicJson" :category-list="categoryList" :form-path-list="formPathList"
+                :definition-id="definitionId" :disabled="disabled"
                 @update:flow-name="handleFlowNameUpdate" @update:model-value="handleModelValueUpdate"/>
 
       <div class="container" ref="containerRef" v-show="activeStep === 1">
         <PropertySetting ref="propertySettingRef" :node="nodeClick" :lf="lf" :disabled="disabled"
-                         :skipConditionShow="skipConditionShow" :nodes="nodes" :skips="skips">
+                         :skipConditionShow="skipConditionShow" :nodes="nodes" :skips="skips"
+                         :form-path-list="formPathList">
         </PropertySetting>
       </div>
       <div class="logo-text" v-if="activeStep === 1">Warm-Flow</div>
@@ -80,21 +82,23 @@ import { ElLoading } from 'element-plus'
 import PropertySetting from '@/components/design/common/vue/propertySetting.vue'
 import { queryDef, saveJson } from "@/api/flow/definition";
 import {
-  getPreviousNodes,
-  isClassics,
-  json2LogicFlowJson,
-  logicFlowJsonToWarmFlow
+    getPreviousNodes,
+    isClassics, isGateWay,
+    json2LogicFlowJson,
+    logicFlowJsonToWarmFlow
 } from "@/components/design/common/js/tool";
 import StartC from "@/components/design/classics/js/start";
 import BetweenC from "@/components/design/classics/js/between";
 import SerialC from "@/components/design/classics/js/serial";
 import ParallelC from "@/components/design/classics/js/parallel";
+import InclusiveC from "@/components/design/classics/js/inclusive";
 import EndC from "@/components/design/classics/js/end";
 import SkipC from "@/components/design/classics/js/skip";
 import StartM from "@/components/design/mimic/js/start";
 import BetweenM from "@/components/design/mimic/js/between";
 import SerialM from "@/components/design/mimic/js/serial";
 import ParallelM from "@/components/design/mimic/js/parallel";
+import InclusiveM from "@/components/design/mimic/js/inclusive";
 import EndM from "@/components/design/mimic/js/end";
 import SkipM from "@/components/design/mimic/js/skip";
 import useAppStore from "@/store/app";
@@ -121,6 +125,7 @@ const skipConditionShow = ref(true);
 const nodes = ref([]);
 const skips = ref([]);
 const categoryList = ref([]);
+const formPathList = ref([]);
 const isDark = ref(false);
 const activeStep = ref(0); // 初始化当前步骤为0（开始）
 const onlyDesignShow = ref(false);
@@ -191,12 +196,12 @@ async function handleStepClick(index) {
 
 
 onMounted(() => {
-  // 隐藏滚动条
-  document.body.style.overflow = 'hidden';
-  if (!appParams.value) appStore.fetchTokenName();
-  if (appParams.value.id) {
-    definitionId.value = appParams.value.id;
-  }
+    // 隐藏滚动条
+    document.body.style.overflow = 'hidden';
+    if (!appParams.value) appStore.fetchTokenName();
+    if (appParams.value.id) {
+      definitionId.value = appParams.value.id;
+    }
     onlyDesignShow.value = appParams.value.onlyDesignShow === 'true' ||
         appParams.value.onlyDesignShow === true;
 
@@ -205,8 +210,14 @@ onMounted(() => {
     if (res.data.isPublish && res.data.isPublish !== 0) {
       disabled.value = true
     }
+    if (appParams.value.disabled === 'true') {
+        disabled.value = true
+    }
     if (res.data.categoryList && res.data.categoryList.length > 0) {
       categoryList.value = res.data.categoryList;
+    }
+    if (res.data.formPathList && res.data.formPathList.length > 0) {
+        formPathList.value = res.data.formPathList;
     }
     if (jsonString.value) {
       logicJson.value = json2LogicFlowJson(jsonString.value);
@@ -350,14 +361,21 @@ function initDndPanel() {
         text: '',
         label: '互斥网关',
         properties: {},
-        icon: 'data:image/svg+xml;charset=utf-8;base64,PHN2ZyB0PSIxNzQ4MTc1NTgyNzMwIiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjkzNjciIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiI+PHBhdGggZD0iTTAgMGgxMDI0djEwMjRIMHoiIGZpbGw9IiNGRkZGRkYiIGZpbGwtb3BhY2l0eT0iMCIgcC1pZD0iOTM2OCI+PC9wYXRoPjxwYXRoIGQ9Ik00NjUuMjI3Mjk0IDE0Mi4yNDU2NDdMMTQyLjI0NTY0NyA0NjUuMjI3Mjk0YTYxLjUwMDIzNSA2MS41MDAyMzUgMCAwIDAgMCA4Ni45Nzk3NjVsMzIyLjk4MTY0NyAzMjIuOTgxNjQ3YzI0LjAzMzg4MiAyNC4wMzM4ODIgNjIuOTQ1ODgyIDI0LjAzMzg4MiA4Ni45Nzk3NjUgMGwzMjIuOTgxNjQ3LTMyMi45ODE2NDdhNjEuNTAwMjM1IDYxLjUwMDIzNSAwIDAgMCAwLTg2Ljk3OTc2NUw1NTIuMjA3MDU5IDE0Mi4yNDU2NDdhNjEuNTAwMjM1IDYxLjUwMDIzNSAwIDAgMC04Ni45Nzk3NjUgMHogbTQ5LjY5NDExOCAzNy4yNTU1MjlsMzIzLjAxMTc2NCAzMjMuMDExNzY1YTguNzk0MzUzIDguNzk0MzUzIDAgMCAxIDAgMTIuNDA4NDcxTDUxNC45MjE0MTIgODM3LjkzMzE3NmE4Ljc5NDM1MyA4Ljc5NDM1MyAwIDAgMS0xMi40MDg0NzEgMEwxNzkuNTAxMTc2IDUxNC45MjE0MTJhOC43OTQzNTMgOC43OTQzNTMgMCAwIDEgMC0xMi40MDg0NzFMNTAyLjUxMjk0MSAxNzkuNTAxMTc2YTguNzk0MzUzIDguNzk0MzUzIDAgMCAxIDEyLjQwODQ3MSAweiIgZmlsbD0iIzMzMzMzMyIgcC1pZD0iOTM2OSI+PC9wYXRoPjxwYXRoIGQ9Ik01OTIuNTM0NTg4IDM4NS4wODQyMzVhMjYuMzUyOTQxIDI2LjM1Mjk0MSAwIDAgMSAzOS41NzQ1ODggMzQuNjM1Mjk0bC0yLjM3OTI5NCAyLjcxMDU4OS0yMTAuODIzNTI5IDIxMC4xMzA4MjNhMjYuMzUyOTQxIDI2LjM1Mjk0MSAwIDAgMS0zOS41NDQ0NzEtMzQuNjM1Mjk0bDIuMzQ5MTc3LTIuNzEwNTg4IDIxMC44MjM1MjktMjEwLjEzMDgyNHoiIGZpbGw9IiMzMzMzMzMiIHAtaWQ9IjkzNzAiPjwvcGF0aD48cGF0aCBkPSJNMzgxLjg2MTY0NyAzODQuOTMzNjQ3YTI2LjM1Mjk0MSAyNi4zNTI5NDEgMCAwIDEgMzQuNTQ0OTQxLTIuMzQ5MTc2bDIuNzEwNTg4IDIuMzQ5MTc2IDIxMC40OTIyMzYgMjEwLjUyMjM1M2EyNi4zNTI5NDEgMjYuMzUyOTQxIDAgMCAxLTM0LjU3NTA1OSAzOS42MDQ3MDZsLTIuNzEwNTg4LTIuMzQ5MTc3LTIxMC40NjIxMTgtMjEwLjUyMjM1M2EyNi4zNTI5NDEgMjYuMzUyOTQxIDAgMCAxIDAtMzcuMjU1NTI5eiIgZmlsbD0iIzMzMzMzMyIgcC1pZD0iOTM3MSI+PC9wYXRoPjwvc3ZnPg==',
+        icon: 'data:image/svg+xml;charset=utf-8;base64,PHN2ZyB0PSIxNzQ4MTc1NTgyNzMwIiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjkzNjciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PHBhdGggZD0iTTAgMGgxMDI0djEwMjRIMHoiIGZpbGw9IiNGRkZGRkYiIGZpbGwtb3BhY2l0eT0iMCIgcC1pZD0iOTM2OCI+PC9wYXRoPjxwYXRoIGQ9Ik00NjUuMjI3Mjk0IDE0Mi4yNDU2NDdMMTQyLjI0NTY0NyA0NjUuMjI3Mjk0YTYxLjUwMDIzNSA2MS41MDAyMzUgMCAwIDAgMCA4Ni45Nzk3NjVsMzIyLjk4MTY0NyAzMjIuOTgxNjQ3YzI0LjAzMzg4MiAyNC4wMzM4ODIgNjIuOTQ1ODgyIDI0LjAzMzg4MiA4Ni45Nzk3NjUgMGwzMjIuOTgxNjQ3LTMyMi45ODE2NDdhNjEuNTAwMjM1IDYxLjUwMDIzNSAwIDAgMCAwLTg2Ljk3OTc2NUw1NTIuMjA3MDU5IDE0Mi4yNDU2NDdhNjEuNTAwMjM1IDYxLjUwMDIzNSAwIDAgMC04Ni45Nzk3NjUgMHogbTQ5LjY5NDExOCAzNy4yNTU1MjlsMzIzLjAxMTc2NCAzMjMuMDExNzY1YTguNzk0MzUzIDguNzk0MzUzIDAgMCAxIDAgMTIuNDA4NDcxTDUxNC45MjE0MTIgODM3LjkzMzE3NmE4Ljc5NDM1MyA4Ljc5NDM1MyAwIDAgMS0xMi40MDg0NzEgMEwxNzkuNTAxMTc2IDUxNC45MjE0MTJhOC43OTQzNTMgOC43OTQzNTMgMCAwIDEgMC0xMi40MDg0NzFMNTAyLjUxMjk0MSAxNzkuNTAxMTc2YTguNzk0MzUzIDguNzk0MzUzIDAgMCAxIDEyLjQwODQ3MSAweiIgZmlsbD0iIzAwMDAwMCIgcC1pZD0iOTM2OSI+PC9wYXRoPjxwYXRoIGQ9Ik01OTIuNTM0NTg4IDM4NS4wODQyMzVhMjYuMzUyOTQxIDI2LjM1Mjk0MSAwIDAgMSAzOS41NzQ1ODggMzQuNjM1Mjk0bC0yLjM3OTI5NCAyLjcxMDU4OS0yMTAuODIzNTI5IDIxMC4xMzA4MjNhMjYuMzUyOTQxIDI2LjM1Mjk0MSAwIDAgMS0zOS41NDQ0NzEtMzQuNjM1Mjk0bDIuMzQ5MTc3LTIuNzEwNTg4IDIxMC44MjM1MjktMjEwLjEzMDgyNHoiIGZpbGw9IiMwMDAwMDAiIHAtaWQ9IjkzNzAiPjwvcGF0aD48cGF0aCBkPSJNMzgxLjg2MTY0NyAzODQuOTMzNjQ3YTI2LjM1Mjk0MSAyNi4zNTI5NDEgMCAwIDEgMzQuNTQ0OTQxLTIuMzQ5MTc2bDIuNzEwNTg4IDIuMzQ5MTc2IDIxMC40OTIyMzYgMjEwLjUyMjM1M2EyNi4zNTI5NDEgMjYuMzUyOTQxIDAgMCAxLTM0LjU3NTA1OSAzOS42MDQ3MDZsLTIuNzEwNTg4LTIuMzQ5MTc3LTIxMC40NjIxMTgtMjEwLjUyMjM1M2EyNi4zNTI5NDEgMjYuMzUyOTQxIDAgMCAxIDAtMzcuMjU1NTI5eiIgZmlsbD0iIzAwMDAwMCIgcC1pZD0iOTM3MSI+PC9wYXRoPjwvc3ZnPg==',
       },
       {
         type: 'parallel',
         text: '',
         label: '并行网关',
         properties: {},
-        icon: 'data:image/svg+xml;charset=utf-8;base64,PHN2ZyB0PSIxNzQ4MTc1NjIwMDAyIiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjEwNDQxIiB3aWR0aD0iMzYiIGhlaWdodD0iMzYiPjxwYXRoIGQ9Ik0wIDBoMTAyNHYxMDI0SDB6IiBmaWxsPSIjRkZGRkZGIiBmaWxsLW9wYWNpdHk9IjAiIHAtaWQ9IjEwNDQyIj48L3BhdGg+PHBhdGggZD0iTTQ2NS4yMjcyOTQgMTQyLjI0NTY0N0wxNDIuMjQ1NjQ3IDQ2NS4yMjcyOTRhNjEuNTAwMjM1IDYxLjUwMDIzNSAwIDAgMCAwIDg2Ljk3OTc2NWwzMjIuOTgxNjQ3IDMyMi45ODE2NDdjMjQuMDMzODgyIDI0LjAzMzg4MiA2Mi45NDU4ODIgMjQuMDMzODgyIDg2Ljk3OTc2NSAwbDMyMi45ODE2NDctMzIyLjk4MTY0N2E2MS41MDAyMzUgNjEuNTAwMjM1IDAgMCAwIDAtODYuOTc5NzY1TDU1Mi4yMDcwNTkgMTQyLjI0NTY0N2E2MS41MDAyMzUgNjEuNTAwMjM1IDAgMCAwLTg2Ljk3OTc2NSAweiBtNDkuNjk0MTE4IDM3LjI1NTUyOWwzMjMuMDExNzY0IDMyMy4wMTE3NjVhOC43OTQzNTMgOC43OTQzNTMgMCAwIDEgMCAxMi40MDg0NzFMNTE0LjkyMTQxMiA4MzcuOTMzMTc2YTguNzk0MzUzIDguNzk0MzUzIDAgMCAxLTEyLjQwODQ3MSAwTDE3OS41MDExNzYgNTE0LjkyMTQxMmE4Ljc5NDM1MyA4Ljc5NDM1MyAwIDAgMSAwLTEyLjQwODQ3MUw1MDIuNTEyOTQxIDE3OS41MDExNzZhOC43OTQzNTMgOC43OTQzNTMgMCAwIDEgMTIuNDA4NDcxIDB6IiBmaWxsPSIjMzMzMzMzIiBwLWlkPSIxMDQ0MyI+PC9wYXRoPjxwYXRoIGQ9Ik01MDUuNzM1NTI5IDMzMy42NDMyOTRjMTMuNDMyNDcxIDAgMjQuNTE1NzY1IDEwLjA1OTI5NCAyNi4xNDIxMTggMjMuMDRsMC4yMTA4MjQgMy4zMTI5NDF2Mjk3LjY1MjcwNmEyNi4zNTI5NDEgMjYuMzUyOTQxIDAgMCAxLTUyLjQ5NTA1OSAzLjMxMjk0MWwtMC4yMTA4MjQtMy4zMTI5NDF2LTI5Ny42NTI3MDZjMC0xNC41NzY5NDEgMTEuNzc2LTI2LjM1Mjk0MSAyNi4zNTI5NDEtMjYuMzUyOTQxeiIgZmlsbD0iIzMzMzMzMyIgcC1pZD0iMTA0NDQiPjwvcGF0aD48cGF0aCBkPSJNNjU0LjU3Njk0MSA0ODIuNDg0NzA2YTI2LjM1Mjk0MSAyNi4zNTI5NDEgMCAwIDEgMy4zMTI5NDEgNTIuNDk1MDU5bC0zLjMxMjk0MSAwLjIxMDgyM0gzNTYuODk0MTE4YTI2LjM1Mjk0MSAyNi4zNTI5NDEgMCAwIDEtMy4zMTI5NDItNTIuNTI1MTc2bDMuMzEyOTQyLTAuMTgwNzA2aDI5Ny42ODI4MjN6IiBmaWxsPSIjMzMzMzMzIiBwLWlkPSIxMDQ0NSI+PC9wYXRoPjwvc3ZnPg==',
+        icon: 'data:image/svg+xml;charset=utf-8;base64,PHN2ZyB0PSIxNzQ4MTc1NjIwMDAyIiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjEwNDQxIiB3aWR0aD0iNDUiIGhlaWdodD0iNDUiPjxwYXRoIGQ9Ik0wIDBoMTAyNHYxMDI0SDB6IiBmaWxsPSIjRkZGRkZGIiBmaWxsLW9wYWNpdHk9IjAiIHAtaWQ9IjEwNDQyIj48L3BhdGg+PHBhdGggZD0iTTQ2NS4yMjcyOTQgMTQyLjI0NTY0N0wxNDIuMjQ1NjQ3IDQ2NS4yMjcyOTRhNjEuNTAwMjM1IDYxLjUwMDIzNSAwIDAgMCAwIDg2Ljk3OTc2NWwzMjIuOTgxNjQ3IDMyMi45ODE2NDdjMjQuMDMzODgyIDI0LjAzMzg4MiA2Mi45NDU4ODIgMjQuMDMzODgyIDg2Ljk3OTc2NSAwbDMyMi45ODE2NDctMzIyLjk4MTY0N2E2MS41MDAyMzUgNjEuNTAwMjM1IDAgMCAwIDAtODYuOTc5NzY1TDU1Mi4yMDcwNTkgMTQyLjI0NTY0N2E2MS41MDAyMzUgNjEuNTAwMjM1IDAgMCAwLTg2Ljk3OTc2NSAweiBtNDkuNjk0MTE4IDM3LjI1NTUyOWwzMjMuMDExNzY0IDMyMy4wMTE3NjVhOC43OTQzNTMgOC43OTQzNTMgMCAwIDEgMCAxMi40MDg0NzFMNTE0LjkyMTQxMiA4MzcuOTMzMTc2YTguNzk0MzUzIDguNzk0MzUzIDAgMCAxLTEyLjQwODQ3MSAwTDE3OS41MDExNzYgNTE0LjkyMTQxMmE4Ljc5NDM1MyA4Ljc5NDM1MyAwIDAgMSAwLTEyLjQwODQ3MUw1MDIuNTEyOTQxIDE3OS41MDExNzZhOC43OTQzNTMgOC43OTQzNTMgMCAwIDEgMTIuNDA4NDcxIDB6IiBmaWxsPSIjMDAwMDAwIiBwLWlkPSIxMDQ0MyI+PC9wYXRoPjxwYXRoIGQ9Ik01MDUuNzM1NTI5IDMzMy42NDMyOTRjMTMuNDMyNDcxIDAgMjQuNTE1NzY1IDEwLjA1OTI5NCAyNi4xNDIxMTggMjMuMDRsMC4yMTA4MjQgMy4zMTI5NDF2Mjk3LjY1MjcwNmEyNi4zNTI5NDEgMjYuMzUyOTQxIDAgMCAxLTUyLjQ5NTA1OSAzLjMxMjk0MWwtMC4yMTA4MjQtMy4zMTI5NDF2LTI5Ny42NTI3MDZjMC0xNC41NzY5NDEgMTEuNzc2LTI2LjM1Mjk0MSAyNi4zNTI5NDEtMjYuMzUyOTQxeiIgZmlsbD0iIzAwMDAwMCIgcC1pZD0iMTA0NDQiPjwvcGF0aD48cGF0aCBkPSJNNjU0LjU3Njk0MSA0ODIuNDg0NzA2YTI2LjM1Mjk0MSAyNi4zNTI5NDEgMCAwIDEgMy4zMTI5NDEgNTIuNDk1MDU5bC0zLjMxMjk0MSAwLjIxMDgyM0gzNTYuODk0MTE4YTI2LjM1Mjk0MSAyNi4zNTI5NDEgMCAwIDEtMy4zMTI5NDItNTIuNTI1MTc2bDMuMzEyOTQyLTAuMTgwNzA2aDI5Ny42ODI4MjN6IiBmaWxsPSIjMDAwMDAwIiBwLWlkPSIxMDQ0NSI+PC9wYXRoPjwvc3ZnPg==',
+      },
+      {
+          type: 'inclusive',
+          text: '',
+          label: '包含网关',
+          properties: {},
+          icon: 'data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiIgdmlld0JveD0iMCAwIDEwMCAxMDAiPgogIDxwYXRoIGQ9Ik01MCwwIEwxMDAsNTAgTDUwLDEwMCBMMCw1MCBaIiAKICAgICAgICBzdHJva2U9IiMwMDAwMDAiIHN0cm9rZS13aWR0aD0iNiIgZmlsbD0ibm9uZSIgLz4KICA8Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSIyNSIgCiAgICAgICAgICBzdHJva2U9IiMwMDAwMDAiIHN0cm9rZS13aWR0aD0iNiIgZmlsbD0ibm9uZSIgLz4KPC9zdmc+Cg==',
       },
       {
         type: 'end',
@@ -460,6 +478,7 @@ function register() {
     lf.value.register(BetweenC);
     lf.value.register(SerialC);
     lf.value.register(ParallelC);
+    lf.value.register(InclusiveC);
     lf.value.register(EndC);
     lf.value.register(SkipC);
   } else {
@@ -467,6 +486,7 @@ function register() {
     lf.value.register(BetweenM);
     lf.value.register(SerialM);
     lf.value.register(ParallelM);
+    lf.value.register(InclusiveM);
     lf.value.register(EndM);
     lf.value.register(SkipM);
   }
@@ -499,7 +519,7 @@ function initEvent() {
     // 网关节点单击事件
     eventCenter.on('node:click', (args) => {
       nodeClick.value = args.data
-      if (['serial', 'parallel'].includes(nodeClick.value.type)) {
+      if (isGateWay(nodeClick.value.type)) {
         gatewayAddNode(lf.value, nodeClick.value);
       }
     })
@@ -520,12 +540,12 @@ function initEvent() {
     eventCenter.on('show:EdgeSetting', (args) => {
       nodeClick.value = lf.value.getEdgeModelById(args.id)
       const nodeModel = lf.value.getNodeModelById(nodeClick.value.sourceNodeId);
-      skipConditionShow.value = nodeModel['type'] === 'serial'
+      skipConditionShow.value = ['serial', 'inclusive'].includes(nodeModel['type'])
       let graphData = lf.value.getGraphData()
       nodes.value = graphData['nodes']
       skips.value = graphData['edges']
       proxy.$nextTick(() => {
-        propertySettingRef.value.show(nodeModel['nodeType'] === 'serial')
+        propertySettingRef.value.show(['serial', 'inclusive'].includes(nodeModel['type']))
       })
     });
 
@@ -560,12 +580,12 @@ function initEvent() {
     eventCenter.on('edge:dbclick  ', (args) => {
       nodeClick.value = args.data
       const nodeModel = lf.value.getNodeModelById(nodeClick.value.sourceNodeId);
-      skipConditionShow.value = nodeModel['type'] === 'serial'
+      skipConditionShow.value = ['serial', 'inclusive'].includes(nodeModel['type'])
       let graphData = lf.value.getGraphData()
       nodes.value = graphData['nodes']
       skips.value = graphData['edges']
       proxy.$nextTick(() => {
-        propertySettingRef.value.show(nodeModel['nodeType'] === 'serial')
+        propertySettingRef.value.show(['serial', 'inclusive'].includes(nodeModel['type']))
       })
     })
   }

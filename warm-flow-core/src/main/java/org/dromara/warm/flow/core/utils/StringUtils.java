@@ -50,7 +50,7 @@ public class StringUtils {
      * @return true：为空 false：非空
      */
     public static boolean isEmpty(String str) {
-        return ObjectUtil.isNull(str) || NULLSTR.equals(str.trim());
+        return str == null || str.trim().isEmpty();
     }
 
     /**
