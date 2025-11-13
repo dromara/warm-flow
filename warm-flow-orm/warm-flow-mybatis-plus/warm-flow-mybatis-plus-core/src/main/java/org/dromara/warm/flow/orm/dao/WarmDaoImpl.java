@@ -59,7 +59,7 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
      */
     @Override
     public List<T> selectByIds(Collection<? extends Serializable> ids) {
-        return getMapper().selectByIds(ids);
+        return getMapper().selectBatchIds(ids);
     }
 
     @Override
@@ -125,7 +125,7 @@ public abstract class WarmDaoImpl<T extends RootEntity> implements WarmDao<T> {
 
     @Override
     public int deleteByIds(Collection<? extends Serializable> ids) {
-        return getMapper().deleteByIds(ids);
+        return getMapper().deleteBatchIds(ids);
     }
 
     @Override

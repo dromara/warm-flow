@@ -31,7 +31,9 @@ import org.dromara.warm.flow.core.utils.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 /**
  * 待办任务Service业务层处理
@@ -197,9 +199,10 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         List<Node> nextNodes = FlowEngine.nodeService().getNextByCheckGateway(flowParams.getVariable()
             , nextNode, pathWayData, flowCombine);
 
-        // 判断并行网关节点前置跳转线是否都完成，才能生成新的代办任务
-        filterCanNewTask(pathWayData, r.instance, nextNodes);
+        // 判断并行网关和包容网关节点只剩一个前置代办任务，才能生成新的代办任务
+        isGenerateNewTask(pathWayData, r.instance, nextNodes);
         pathWayData.getTargetNodes().addAll(nextNodes);
+
         // 设置流程图元数据
         r.instance.setDefJson(FlowEngine.chartService().skipMetadata(pathWayData));
 
@@ -813,64 +816,51 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
      *
      * @param pathWayData 办理过程中途径数据
      * @param instance    实例
-     * @param nextNodes   目标节点集合
      */
-    private void filterCanNewTask(PathWayData pathWayData, Instance instance, List<Node> nextNodes) {
+    private void isGenerateNewTask(PathWayData pathWayData, Instance instance, List<Node> nextNodes) {
         if (SkipType.isReject(pathWayData.getSkipType())) {
             return;
         }
 
-        Map<String, List<Skip>> skipLastMap = StreamUtils.groupByKey(pathWayData.getPathWaySkips(), Skip::getNextNodeCode);
         DefJson defJson = FlowEngine.jsonConvert.strToBean(instance.getDefJson(), DefJson.class);
         Map<String, NodeJson> nodeJsonMap = StreamUtils.toMap(defJson.getNodeList(), NodeJson::getNodeCode, node -> node);
-
-        nextNodes.removeIf(targetNode -> {
-            List<Skip> skips = skipLastMap.get(targetNode.getNodeCode());
-            // 如果没有跳转线，说明是任意跳转或者指定跳转节点，直接生成新任务
-            if (CollUtil.isEmpty(skips)) {
-                return false;
-            }
-            // 如果不是并行网关或者包含网关，不过滤，直接生成新任务
-            if (!NodeType.isGateWayParallel(skips.get(0).getNowNodeType())
-                && !NodeType.isGateWayInclusive(skips.get(0).getNowNodeType())) {
-                return false;
-            }
-            NodeJson lastParallelOrInclusive = nodeJsonMap.get(skips.get(0).getNowNodeCode());
-            // 如果是空说明中间没有并行网关或者包含网关，直接生成新任务
-            if (lastParallelOrInclusive == null) {
-                return false;
-            }
-            List<Node> previousNodeList = FlowEngine.nodeService().previousNodeList(pathWayData.getDefId()
-                , lastParallelOrInclusive.getNodeCode());
+        // 遍历目标节点，获取目标节点中第一个互斥或者包含网关，并且判断只剩一个前置代办任务，才能生成新的代办任务
+        List<Node> parallelOrInclusiveList = Optional.of(pathWayData)
+            .map(PathWayData::getPathWayNodes)
+            .orElse(Collections.emptyList())
+            .stream()
+            .filter(t -> NodeType.isGateWayParallel(t.getNodeType()) || NodeType.isGateWayInclusive(t.getNodeType()))
+            .collect(Collectors.toList());
+        if (CollUtil.isNotEmpty(parallelOrInclusiveList)) {
+            List<Node> previousNodeList = FlowEngine.nodeService().previousNodeList(instance.getDefinitionId()
+                , parallelOrInclusiveList.get(parallelOrInclusiveList.size() - 1).getNodeCode());
             // 获取前置节点中代办节点的数量
             long statusOneCount = previousNodeList.stream()
                 .map(Node::getNodeCode)
                 .map(nodeJsonMap::get)
                 .filter(Objects::nonNull)
-                .filter(nodeJson -> nodeJson.getStatus() == 1) // 过滤状态为1的节点
-                .count(); // 统计数量
-
-            // 并行网关和包容网关节点只剩一个前置代办任务，说明不能过滤，可以生成新任务
-            return statusOneCount > 1;
-        });
-    }
-
-    /**
-     * 获取并行网关最近的非并行网关节点集合
-     */
-    private List<NodeJson> noGateWayParallel(String nodeCode, Map<String, NodeJson> nodeMap
-        , Map<String, List<SkipJson>> skipLastMap) {
-        List<NodeJson> noGateWayParallelList = new ArrayList<>();
-        List<SkipJson> skipJsonList = skipLastMap.get(nodeCode);
-        for (SkipJson skipJson : skipJsonList) {
-            NodeJson nextNodeJson = nodeMap.get(skipJson.getNowNodeCode());
-            if (!NodeType.isGateWayParallel(nextNodeJson.getNodeType())) {
-                noGateWayParallelList.add(nextNodeJson);
-            } else {
-                noGateWayParallelList.addAll(noGateWayParallel(nextNodeJson.getNodeCode(), nodeMap, skipLastMap));
+                .filter(nodeJson -> nodeJson.getStatus() == 1)
+                .count();
+            // 并行网关和包容网关节点超过一个前置代办任务，说明可以不可生成新任务,
+            if (statusOneCount > 1) {
+                nextNodes.clear();
+                AtomicBoolean flag = new AtomicBoolean(false);
+                pathWayData.getPathWayNodes().removeIf(nodeJson -> {
+                    if (nodeJson.getNodeCode().equals(parallelOrInclusiveList.get(0).getNodeCode())) {
+                        flag.set(true);
+                        return false;
+                    }
+                    return flag.get();
+                });
+                flag.set(false);
+                pathWayData.getPathWaySkips().removeIf(nodeJson -> {
+                    if (nodeJson.getNowNodeCode().equals(parallelOrInclusiveList.get(0).getNodeCode())) {
+                        flag.set(true);
+                    }
+                    return flag.get();
+                });
             }
         }
-        return noGateWayParallelList;
     }
 
     /**

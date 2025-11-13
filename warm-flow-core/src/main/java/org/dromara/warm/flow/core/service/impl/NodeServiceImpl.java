@@ -340,7 +340,6 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
         return Optional.ofNullable(skips)
             .orElse(Collections.emptyList())
             .stream()
-            .filter(Objects::nonNull)
             .filter(t -> StringUtils.isEmpty(t.getSkipType()) || skipType.equals(t.getSkipType()))
             .findFirst()
             .orElseThrow(() -> new FlowException(ExceptionCons.NULL_SKIP_TYPE));

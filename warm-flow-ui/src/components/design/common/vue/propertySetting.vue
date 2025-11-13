@@ -145,7 +145,7 @@ watch(() => props.node, n => {
         conditionValue: conditionValue
       }
     } else {
-      let nodeRatio = n.properties.nodeRatio || "";
+      let nodeRatio = n.properties.nodeRatio || "0";
       if (!n.properties.collaborativeWay) {
         n.properties.collaborativeWay = parseFloat(nodeRatio) === 0 ? "1" : parseFloat(nodeRatio) === 100 ?
             "3" : nodeRatio ? "2" : "1";

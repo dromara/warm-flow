@@ -63,17 +63,6 @@ public interface DefService extends IWarmService<Definition> {
      */
     Definition insertFlow(Definition definition, List<Node> nodeList, List<Skip> skipList);
 
-
-    /**
-     * 新增流程定义，并初始化流程节点和流程跳转数据
-     *
-     * @param definition 流程定义对象
-     * @return boolean
-     * @deprecated 下个版本废弃，请改用{@link #checkAndSave(Definition)}
-     */
-    @Deprecated
-    boolean saveAndInitNode(Definition definition);
-
     /**
      * 只新增流程定义表数据
      *

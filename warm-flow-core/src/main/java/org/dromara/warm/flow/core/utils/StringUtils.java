@@ -26,12 +26,17 @@ public class StringUtils {
     /**
      * 空字符串
      */
-    private static final String NULLSTR = "";
+    public static final String NULLPTR = "";
 
     /**
      * 下划线
      */
-    private static final char SEPARATOR = '_';
+    public static final char SEPARATOR = '_';
+
+    /**
+     * 字符串0
+     */
+    public static final String ZERO = "0";
 
     /**
      * 获取参数不为空值
@@ -137,7 +142,7 @@ public class StringUtils {
      */
     public static String substring(final String str, int start) {
         if (str == null) {
-            return NULLSTR;
+            return NULLPTR;
         }
 
         if (start < 0) {
@@ -148,7 +153,7 @@ public class StringUtils {
             start = 0;
         }
         if (start > str.length()) {
-            return NULLSTR;
+            return NULLPTR;
         }
 
         return str.substring(start);
@@ -164,7 +169,7 @@ public class StringUtils {
      */
     public static String substring(final String str, int start, int end) {
         if (str == null) {
-            return NULLSTR;
+            return NULLPTR;
         }
 
         if (end < 0) {
@@ -179,7 +184,7 @@ public class StringUtils {
         }
 
         if (start > end) {
-            return NULLSTR;
+            return NULLPTR;
         }
 
         if (start < 0) {

@@ -100,84 +100,6 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
     }
 
     @Override
-    public boolean saveAndInitNode(Definition definition) {
-        definition.setVersion(getNewVersion(definition));
-        FlowEngine.dataFillHandler().idFill(definition);
-        List<Node> nodeList = new ArrayList<>();
-        List<Skip> skipList = new ArrayList<>();
-
-        Node startNode = FlowEngine.newNode()
-            .setDefinitionId(definition.getId())
-            .setNodeCode(NodeType.START.getValue())
-            .setNodeName("开始")
-            .setNodeType(NodeType.START.getKey())
-            .setCoordinate("260,200|260,200")
-            .setNodeRatio("0")
-            .setVersion(definition.getVersion());
-        nodeList.add(startNode);
-
-        Node betweenOneNode = FlowEngine.newNode()
-            .setDefinitionId(definition.getId())
-            .setNodeCode("submit")
-            .setNodeName("中间节点-或签1")
-            .setNodeType(NodeType.BETWEEN.getKey())
-            .setCoordinate("420,200|420,200")
-            .setNodeRatio("0")
-            .setVersion(definition.getVersion());
-        nodeList.add(betweenOneNode);
-
-        Node betweenTwoNode = FlowEngine.newNode()
-            .setDefinitionId(definition.getId())
-            .setNodeCode("approval")
-            .setNodeName("中间节点-或签2")
-            .setNodeType(NodeType.BETWEEN.getKey())
-            .setCoordinate("600,200|600,200")
-            .setNodeRatio("0")
-            .setVersion(definition.getVersion());
-        nodeList.add(betweenTwoNode);
-
-        Node endNode = FlowEngine.newNode()
-            .setDefinitionId(definition.getId())
-            .setNodeCode(NodeType.END.getValue())
-            .setNodeName("结束")
-            .setNodeType(NodeType.END.getKey())
-            .setCoordinate("760,200|760,200")
-            .setNodeRatio("0")
-            .setVersion(definition.getVersion());
-        nodeList.add(endNode);
-
-        skipList.add(FlowEngine.newSkip()
-            .setDefinitionId(definition.getId())
-            .setNowNodeCode(startNode.getNodeCode())
-            .setNowNodeType(startNode.getNodeType())
-            .setNextNodeCode(betweenOneNode.getNodeCode())
-            .setNextNodeType(betweenOneNode.getNodeType())
-            .setSkipType(SkipType.PASS.getKey())
-            .setCoordinate("280,200;370,200"));
-
-        skipList.add(FlowEngine.newSkip()
-            .setDefinitionId(definition.getId())
-            .setNowNodeCode(betweenOneNode.getNodeCode())
-            .setNowNodeType(betweenOneNode.getNodeType())
-            .setNextNodeCode(betweenTwoNode.getNodeCode())
-            .setNextNodeType(betweenTwoNode.getNodeType())
-            .setSkipType(SkipType.PASS.getKey())
-            .setCoordinate("470,200;550,200"));
-
-        skipList.add(FlowEngine.newSkip()
-            .setDefinitionId(definition.getId())
-            .setNowNodeCode(betweenTwoNode.getNodeCode())
-            .setNowNodeType(betweenTwoNode.getNodeType())
-            .setNextNodeCode(endNode.getNodeCode())
-            .setNextNodeType(endNode.getNodeType())
-            .setSkipType(SkipType.PASS.getKey())
-            .setCoordinate("650,200;740,200"));
-        FlowEngine.nodeService().saveBatch(nodeList);
-        FlowEngine.skipService().saveBatch(skipList);
-        return save(definition);
-    }
-
-    @Override
     public boolean checkAndSave(Definition definition) {
         return save(definition.setVersion(getNewVersion(definition)));
     }
@@ -213,6 +135,11 @@ public class DefServiceImpl extends WarmServiceImpl<FlowDefinitionDao<Definition
 
         // 保存流程节点和跳转
         List<Node> allNodes = flowCombine.getAllNodes();
+        allNodes.forEach(node -> {
+            if(StringUtils.isEmpty(node.getNodeRatio())) {
+                node.setNodeRatio(StringUtils.ZERO);
+            }
+        });
         // 所有的流程连线
         List<Skip> allSkips = flowCombine.getAllSkips();
 
