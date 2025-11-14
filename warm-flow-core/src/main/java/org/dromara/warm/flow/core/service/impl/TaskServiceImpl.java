@@ -720,8 +720,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
         // 会签并且当前人退回直接返回
         if (CooperateType.isCountersign(nodeRatio) && SkipType.isReject(flowParams.getSkipType())) {
-            FlowEngine.userService().removeByIds(StreamUtils.toList(restList, User::getId));
-            return false;
+            return removeRestList(restList);
         }
 
         // 查询会签票签已办列表
@@ -729,7 +728,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         doneList = CollUtil.emptyDefault(doneList);
 
         // 总人数
-        BigDecimal allNum = BigDecimal.ZERO.add(BigDecimal.valueOf(todoList.size())).add(BigDecimal.valueOf(doneList.size()));
+        int allNum = todoList.size() + doneList.size();
 
         // 通过历史记录
         List<HisTask> donePassList = StreamUtils.filter(doneList
@@ -747,53 +746,41 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             variable.put("passNum", donePassList.size());
             variable.put("rejectNum", doneRejectList.size());
             variable.put("todoNum", todoList.size());
+            variable.put("allNum", allNum);
             variable.put("passList", donePassList);
             variable.put("rejectList", doneRejectList);
             variable.put("todoList", todoList);
             if (ExpressionUtil.evalVoteSign(nodeRatio, variable)) {
-                // 删除剩余办理人
-                FlowEngine.userService().removeByIds(StreamUtils.toList(restList, User::getId));
-                return false;
+                return removeRestList(restList);
             }
         } else {
             // 计算通过率
             BigDecimal passRatio = (isPass ? BigDecimal.ONE : BigDecimal.ZERO)
                 .add(BigDecimal.valueOf(donePassList.size()))
-                .divide(allNum, 4, RoundingMode.HALF_UP).multiply(MathUtil.ONE_HUNDRED);
-            // 判断是否是票签中的固定通过人数，如果是则判断是否达到该人数
-            if (isPass && CooperateType.isVoteSignPassCount(nodeRatio)) {
-                String passCount = StringUtils.substring(nodeRatio, nodeRatio.indexOf("="));
-                if (donePassList.size() + 1 >= Integer.parseInt(passCount)) {
-                    // 删除剩余办理人
-                    FlowEngine.userService().removeByIds(StreamUtils.toList(restList, User::getId));
-                    return false;
-                }
-            }
-
+                .divide(BigDecimal.valueOf(allNum), 4, RoundingMode.HALF_UP).multiply(MathUtil.ONE_HUNDRED);
             // 计算驳回率
             BigDecimal rejectRatio = (isPass ? BigDecimal.ZERO : BigDecimal.ONE)
                 .add(BigDecimal.valueOf(doneRejectList.size()))
-                .divide(allNum, 4, RoundingMode.HALF_UP).multiply(MathUtil.ONE_HUNDRED);
-            // 判断是否是票签中的固定驳回人数，如果是则判断是否达到该人数
-            if (!isPass && CooperateType.isVoteSignRejectCount(nodeRatio)) {
-                String rejectCount = StringUtils.substring(nodeRatio, nodeRatio.indexOf("="));
-                if (donePassList.size() + 1 >= Integer.parseInt(rejectCount)) {
-                    // 删除剩余办理人
-                    FlowEngine.userService().removeByIds(StreamUtils.toList(restList, User::getId));
-                    return false;
+                .divide(BigDecimal.valueOf(allNum), 4, RoundingMode.HALF_UP).multiply(MathUtil.ONE_HUNDRED);
+
+            // 判断是否是票签中的固定通过人数，如果是则判断是否达到该人数
+            if (CooperateType.isVoteSignPassCount(nodeRatio)) {
+                String passCount = StringUtils.substring(nodeRatio, nodeRatio.indexOf("=") + 1);
+                if ((isPass && donePassList.size() + 1 >= Integer.parseInt(passCount))
+                    || (!isPass && doneRejectList.size() + 1 > allNum - Integer.parseInt(passCount))) {
+                    return removeRestList(restList);
                 }
-            }
-
-            if (!isPass && rejectRatio.compareTo(MathUtil.ONE_HUNDRED.subtract(new BigDecimal(nodeRatio))) > 0) {
-                // 驳回，并且当前是驳回
-                FlowEngine.userService().removeByIds(StreamUtils.toList(restList, User::getId));
-                return false;
-            }
-
-            if (passRatio.compareTo(new BigDecimal(nodeRatio)) >= 0) {
-                // 大于等于 nodeRatio 设置值结束任务
-                FlowEngine.userService().removeByIds(StreamUtils.toList(restList, User::getId));
-                return false;
+            } else if (CooperateType.isVoteSignRejectCount(nodeRatio)) {
+                // 判断是否是票签中的固定驳回人数，如果是则判断是否达到该人数
+                String rejectCount = StringUtils.substring(nodeRatio, nodeRatio.indexOf("=") + 1);
+                if ((!isPass && doneRejectList.size() + 1 >= Integer.parseInt(rejectCount))
+                || (isPass && donePassList.size() + 1 > allNum - Integer.parseInt(rejectCount))) {
+                    return removeRestList(restList);
+                }
+            } else if ((!isPass && rejectRatio.compareTo(MathUtil.ONE_HUNDRED.subtract(new BigDecimal(nodeRatio))) > 0)
+                || (isPass && passRatio.compareTo(new BigDecimal(nodeRatio)) >= 0)) {
+                // 提前不满足通过率或者满足通过率，删除剩余办理人，流程正常流程流转
+                return removeRestList(restList);
             }
         }
 
@@ -809,6 +796,18 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 删掉待办用户
         FlowEngine.userService().removeById(todoUser.getId());
         return true;
+    }
+
+    /**
+     * 删除剩余办理人
+     * @param restList 待办用户列表
+     * @return  boolean
+     */
+    private static boolean removeRestList(List<User> restList) {
+        if (CollUtil.isNotEmpty(restList)) {
+            FlowEngine.userService().removeByIds(StreamUtils.toList(restList, User::getId));
+        }
+        return false;
     }
 
     /**
