@@ -22,9 +22,7 @@ import org.dromara.warm.flow.core.utils.CollUtil;
 import org.dromara.warm.flow.core.utils.StringUtils;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 工作流内置参数
@@ -253,7 +251,11 @@ public class FlowParams implements Serializable {
     }
 
     public FlowParams nextHandler(String... nextHandler) {
-        this.nextHandler = nextHandler;
+        // 如果外部传递 null , 就忽略 , 维持节点本身审批,防止 null 数据变成 [null]
+        if (nextHandler == null) {
+            return this;
+        }
+        this.nextHandler = Arrays.stream(nextHandler).filter(Objects::nonNull).toArray(String[]::new);
         return this;
     }
 
