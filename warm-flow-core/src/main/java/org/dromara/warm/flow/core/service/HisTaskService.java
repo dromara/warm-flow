@@ -33,6 +33,8 @@ import java.util.List;
  */
 public interface HisTaskService extends IWarmService<HisTask> {
 
+    List<HisTask> listByTaskId(Long taskId);
+
     /**
      * 根据任务id和协作类型查询
      *
@@ -107,7 +109,7 @@ public interface HisTaskService extends IWarmService<HisTask> {
      * @param isPass     是否通过
      * @return HisTask 历史任务
      */
-    HisTask setSignHisTask(Task task, FlowParams flowParams, BigDecimal nodeRatio, boolean isPass);
+    HisTask setSignHisTask(Task task, FlowParams flowParams, String nodeRatio, boolean isPass);
 
     /**
      * 设置流程历史任务信息

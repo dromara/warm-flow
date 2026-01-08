@@ -24,6 +24,8 @@ import java.math.BigDecimal;
  */
 public class MathUtil {
 
+    public final static BigDecimal ONE_HUNDRED = BigDecimal.valueOf(100);
+
     private MathUtil() {
     }
 
@@ -58,6 +60,60 @@ public class MathUtil {
         BigDecimal a = new BigDecimal(n1);
         BigDecimal b = new BigDecimal(n2);
         return a.compareTo(b);
+    }
+
+
+    /**
+     * 判断是否为0
+     *
+     * @param str 字符串
+     */
+    public static boolean isZero(String str) {
+        if (StringUtils.isEmpty(str)) {
+            return false;
+        }
+        try {
+            BigDecimal value = new BigDecimal(str.trim());
+            return value.compareTo(BigDecimal.ZERO) == 0;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    /**
+     * 判断字符串是否等于 100
+     *
+     * @param str 字符串
+     * @return true：等于 100；false：不等于
+     */
+    public static boolean isHundred(String str) {
+        if (StringUtils.isEmpty(str)) {
+            return false;
+        }
+        try {
+            BigDecimal value = new BigDecimal(str.trim());
+            return value.compareTo(ONE_HUNDRED) == 0;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    /**
+     * 判断字符串表示的数值是否在 0 到 100 之间（含边界）
+     *
+     * @param str 字符串
+     * @return true：在 [0, 100] 范围内；false：不在范围内
+     */
+    public static boolean isBetweenZeroAndHundred(String str) {
+        if (StringUtils.isEmpty(str)) {
+            return false;
+        }
+        try {
+            BigDecimal value = new BigDecimal(str.trim());
+            return value.compareTo(BigDecimal.ZERO) >= 0 && value.compareTo(ONE_HUNDRED) <= 0;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
 }

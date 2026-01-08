@@ -15,9 +15,13 @@
  */
 package org.dromara.warm.flow.core.handler;
 
+import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.entity.RootEntity;
 import org.dromara.warm.flow.core.utils.IdUtils;
 import org.dromara.warm.flow.core.utils.ObjectUtil;
+import org.dromara.warm.flow.core.utils.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 import java.util.Objects;
@@ -30,31 +34,46 @@ import java.util.Objects;
  */
 public interface DataFillHandler {
 
+    Logger logger = LoggerFactory.getLogger(DataFillHandler.class);
+
     /**
      * id填充
      *
-     * @param object
+     * @param object object
      */
     default void idFill(Object object) {
         RootEntity entity = (RootEntity) object;
-        if (ObjectUtil.isNotNull(entity)) {
-            if (Objects.isNull(entity.getId())) {
-                entity.setId(IdUtils.nextId());
-            }
+        if (ObjectUtil.isNull(entity)) {
+            logger.warn("Insert operation failed - Reason: Entity is null after casting");
+
+            return;
+        }
+        if (Objects.isNull(entity.getId())) {
+            entity.setId(IdUtils.nextId());
         }
     }
 
     /**
      * 新增填充
      *
-     * @param object
+     * @param object object
      */
     default void insertFill(Object object) {
         RootEntity entity = (RootEntity) object;
-        if (ObjectUtil.isNotNull(entity)) {
-            entity.setCreateTime(ObjectUtil.isNotNull(entity.getCreateTime()) ? entity.getCreateTime() : new Date());
-            entity.setUpdateTime(ObjectUtil.isNotNull(entity.getUpdateTime()) ? entity.getUpdateTime() : new Date());
+        if (ObjectUtil.isNull(entity)) {
+            logger.warn("Insert operation failed - Reason: Entity is null after casting");
+            return;
         }
+        entity.setCreateTime(ObjectUtil.isNotNull(entity.getCreateTime()) ? entity.getCreateTime() : new Date());
+        entity.setUpdateTime(ObjectUtil.isNotNull(entity.getUpdateTime()) ? entity.getUpdateTime() : new Date());
+
+        PermissionHandler permissionHandler = FlowEngine.permissionHandler();
+        String handler = null;
+        if (permissionHandler != null) {
+            handler = permissionHandler.getHandler();
+        }
+        entity.setCreateBy(StringUtils.isNotEmpty(handler) ? handler : entity.getCreateBy());
+        entity.setUpdateBy(StringUtils.isNotEmpty(handler) ? handler : entity.getUpdateBy());
     }
 
     /**
@@ -64,8 +83,16 @@ public interface DataFillHandler {
      */
     default void updateFill(Object object) {
         RootEntity entity = (RootEntity) object;
-        if (ObjectUtil.isNotNull(entity)) {
-            entity.setUpdateTime(ObjectUtil.isNotNull(entity.getUpdateTime()) ? entity.getUpdateTime() : new Date());
+        if (ObjectUtil.isNull(entity)) {
+            logger.warn("Insert operation failed - Reason: Entity is null after casting");
+            return;
         }
+        entity.setUpdateTime(ObjectUtil.isNotNull(entity.getUpdateTime()) ? entity.getUpdateTime() : new Date());
+        PermissionHandler permissionHandler = FlowEngine.permissionHandler();
+        String handler = null;
+        if (permissionHandler != null) {
+            handler = permissionHandler.getHandler();
+        }
+        entity.setUpdateBy(StringUtils.isNotEmpty(handler) ? handler : entity.getUpdateBy());
     }
 }

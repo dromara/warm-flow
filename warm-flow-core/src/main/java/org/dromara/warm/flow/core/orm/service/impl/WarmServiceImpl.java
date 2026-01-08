@@ -180,16 +180,18 @@ public abstract class WarmServiceImpl<M extends WarmDao<T>, T> implements IWarmS
 
     public void insertFill(T entity) {
         DataFillHandler dataFillHandler = FlowEngine.dataFillHandler();
-        if (ObjectUtil.isNotNull(dataFillHandler)) {
-            dataFillHandler.idFill(entity);
-            dataFillHandler.insertFill(entity);
+        if (dataFillHandler == null) {
+            return;
         }
+        dataFillHandler.idFill(entity);
+        dataFillHandler.insertFill(entity);
     }
 
     public void updateFill(T entity) {
         DataFillHandler dataFillHandler = FlowEngine.dataFillHandler();
-        if (ObjectUtil.isNotNull(dataFillHandler)) {
-            dataFillHandler.updateFill(entity);
+        if (dataFillHandler == null) {
+            return;
         }
+        dataFillHandler.updateFill(entity);
     }
 }

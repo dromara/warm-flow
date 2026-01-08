@@ -18,6 +18,7 @@ package org.dromara.warm.flow.core.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.constant.ExceptionCons;
+import org.dromara.warm.flow.core.constant.FlowCons;
 import org.dromara.warm.flow.core.dto.FlowCombine;
 import org.dromara.warm.flow.core.dto.PathWayData;
 import org.dromara.warm.flow.core.entity.Definition;
@@ -26,6 +27,7 @@ import org.dromara.warm.flow.core.entity.Skip;
 import org.dromara.warm.flow.core.enums.NodeType;
 import org.dromara.warm.flow.core.enums.PublishStatus;
 import org.dromara.warm.flow.core.enums.SkipType;
+import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.orm.dao.FlowNodeDao;
 import org.dromara.warm.flow.core.orm.service.impl.WarmServiceImpl;
 import org.dromara.warm.flow.core.service.NodeService;
@@ -74,7 +76,7 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
 
     @Override
     public List<Node> previousNodeList(Long definitionId, String nowNodeCode) {
-        return prefixOrSuffixNodes(definitionId, nowNodeCode, "previous");
+        return prefixOrSuffixNodes(definitionId, nowNodeCode, FlowCons.PREVIOUS);
     }
 
     @Override
@@ -85,12 +87,12 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
 
     @Override
     public List<Node> suffixNodeList(Long definitionId, String nowNodeCode) {
-        return prefixOrSuffixNodes(definitionId, nowNodeCode, "suffix");
+        return prefixOrSuffixNodes(definitionId, nowNodeCode, FlowCons.SUFFIX);
     }
 
     @Override
     public List<Node> suffixNodeList(String nowNodeCode, FlowCombine flowCombine) {
-        return prefixOrSuffixNodes(nowNodeCode, "suffix", flowCombine);
+        return prefixOrSuffixNodes(nowNodeCode, FlowCons.SUFFIX, flowCombine);
     }
 
     @Override
@@ -137,12 +139,12 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
     public List<Node> prefixOrSuffixNodes(String nowNodeCode, String type, FlowCombine flowCombine) {
         Map<String, Node> nodeMap = StreamUtils.toMap(flowCombine.getAllNodes(), Node::getNodeCode, node -> node);
         Map<String, List<Skip>> skipMap = flowCombine.getAllSkips().stream().filter(skip -> SkipType.isPass(skip.getSkipType()))
-            .collect(Collectors.groupingBy("previous".equals(type) ? Skip::getNextNodeCode : Skip::getNowNodeCode
+            .collect(Collectors.groupingBy(FlowCons.PREVIOUS.equals(type) ? Skip::getNextNodeCode : Skip::getNowNodeCode
                 , LinkedHashMap::new, Collectors.toList()));
 
         List<Node> prefixOrSuffixNodes = new ArrayList<>();
         List<String> prefixOrSuffixCode = prefixOrSuffixCodes(skipMap, nowNodeCode
-            , "previous".equals(type) ? Skip::getNowNodeCode : Skip::getNextNodeCode);
+            , FlowCons.PREVIOUS.equals(type) ? Skip::getNowNodeCode : Skip::getNextNodeCode);
         for (String nodeCode : prefixOrSuffixCode) {
             Node node = nodeMap.get(nodeCode);
             if (!NodeType.isGateWay(node.getNodeType())) {
@@ -201,13 +203,11 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
             pathWayData.getPathWayNodes().add(nowNode);
         }
         Node nextNode = null;
-        // 如果指定了跳转节点，直接获取节点
         if (StringUtils.isNotEmpty(anyNodeCode)) {
+            // 如果指定了跳转节点，直接获取节点
             nextNode = StreamUtils.filterOne(flowCombine.getAllNodes(), node -> anyNodeCode.equals(node.getNodeCode()));
-        }
-
-        // 如果配置了任意跳转节点，直接获取节点
-        if (StringUtils.isNotEmpty(nowNode.getAnyNodeSkip()) && SkipType.isReject(skipType)) {
+        } else if (StringUtils.isNotEmpty(nowNode.getAnyNodeSkip()) && SkipType.isReject(skipType)) {
+            // 如果配置了任意跳转节点，直接获取节点
             nextNode = StreamUtils.filterOne(flowCombine.getAllNodes(), node -> nowNode.getAnyNodeSkip().equals(node.getNodeCode()));
         }
 
@@ -222,7 +222,7 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
         Skip nextSkip = getSkipByCheck(skips, skipType);
 
         // 根据跳转查询出跳转到的那个节点
-        nextNode = StreamUtils.filterOne(flowCombine.getAllNodes(), node -> nextSkip.getNextNodeCode().equals(node.getNodeCode()));
+        nextNode = StreamUtils.filterOne(flowCombine.getAllNodes(), node -> nextSkip != null && nextSkip.getNextNodeCode().equals(node.getNodeCode()));
         AssertUtil.isNull(nextNode, ExceptionCons.NULL_NODE_CODE);
         AssertUtil.isTrue(NodeType.isStart(nextNode.getNodeType()), ExceptionCons.FIRST_FORBID_BACK);
         if (pathWayData != null) {
@@ -242,8 +242,9 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
             if (CollUtil.isEmpty(skipsGateway)) {
                 return null;
             }
-            if (!NodeType.isStart(nextNode.getNodeType()) && NodeType.isGateWaySerial(nextNode.getNodeType())) {
-                //  如果满足跳转条件，则取任意一条，否则取跳转条件为空的任意一条
+
+            //如果是互斥网关，跳转条件匹配的，则取任意第一条，否则取跳转条件为空的任意一条
+            if (NodeType.isGateWaySerial(nextNode.getNodeType())) {
                 Skip skipOne = null;
                 for (Skip skip : skipsGateway) {
                     if (StringUtils.isNotEmpty(skip.getSkipCondition())) {
@@ -256,7 +257,12 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
                     }
                 }
                 skipsGateway = skipOne == null ? null : CollUtil.toList(skipOne);
+            } else if (NodeType.isGateWayInclusive(nextNode.getNodeType())) {
+                //如果是包含网关，有跳转条件的分支，但是跳转条件不匹配的不执行，没跳转条件为空的分支默认执行
+                skipsGateway.removeIf(skip -> StringUtils.isNotEmpty(skip.getSkipCondition())
+                    && !ExpressionUtil.evalCondition(skip.getSkipCondition(), variable));
             }
+
             AssertUtil.isEmpty(skipsGateway, ExceptionCons.NULL_CONDITION_VALUE_NODE);
             List<String> nextNodeCodes = StreamUtils.toList(skipsGateway, Skip::getNextNodeCode);
             List<Node> nextNodes = StreamUtils.filter(flowCombine.getAllNodes()
@@ -289,7 +295,8 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
 
     private List<String> prefixOrSuffixCodes(Map<String, List<Skip>> skipMap, String nodeCode,
                                              Function<Skip, String> supplier) {
-        Set<String> visited = new HashSet<>(); // 记录已访问节点，防止循环
+        // 记录已访问节点，防止循环
+        Set<String> visited = new HashSet<>();
         List<String> result = new ArrayList<>();
         prefixOrSuffixCodesRecursive(skipMap, nodeCode, supplier, visited, result);
         return result;
@@ -298,7 +305,8 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
     private void prefixOrSuffixCodesRecursive(Map<String, List<Skip>> skipMap, String nodeCode,
                                               Function<Skip, String> supplier, Set<String> visited, List<String> result) {
         if (visited.contains(nodeCode)) {
-            return; // 防止循环访问
+            // 防止循环访问
+            return;
         }
 
         visited.add(nodeCode);
@@ -308,7 +316,8 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
             for (Skip skip : skipList) {
                 if (SkipType.isPass(skip.getSkipType())) {
                     String nextNodeCode = supplier.apply(skip);
-                    if (!result.contains(nextNodeCode)) { // 避免重复添加
+                    // 避免重复添加
+                    if (!result.contains(nextNodeCode)) {
                         result.add(nextNodeCode);
                     }
                     prefixOrSuffixCodesRecursive(skipMap, nextNodeCode, supplier, visited, result);
@@ -328,17 +337,11 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
      * @since 2024/8/21 11:32
      */
     private Skip getSkipByCheck(List<Skip> skips, String skipType) {
-        if (CollUtil.isEmpty(skips)) {
-            return null;
-        }
-        skips = skips.stream().filter(t -> {
-            if (StringUtils.isNotEmpty(t.getSkipType())) {
-                return skipType.equals(t.getSkipType());
-            }
-            return true;
-        }).collect(Collectors.toList());
-        AssertUtil.isEmpty(skips, ExceptionCons.NULL_SKIP_TYPE);
-        return skips.get(0);
+        return Optional.ofNullable(skips)
+            .orElse(Collections.emptyList())
+            .stream()
+            .filter(t -> StringUtils.isEmpty(t.getSkipType()) || skipType.equals(t.getSkipType()))
+            .findFirst()
+            .orElseThrow(() -> new FlowException(ExceptionCons.NULL_SKIP_TYPE));
     }
-
 }

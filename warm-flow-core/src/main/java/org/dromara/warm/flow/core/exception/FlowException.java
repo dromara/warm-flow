@@ -15,6 +15,8 @@
  */
 package org.dromara.warm.flow.core.exception;
 
+import lombok.Getter;
+
 /**
  * 流程异常
  *
@@ -26,6 +28,7 @@ public final class FlowException extends RuntimeException {
     /**
      * 错误码
      */
+    @Getter
     private Integer code;
 
     /**
@@ -36,6 +39,7 @@ public final class FlowException extends RuntimeException {
     /**
      * 错误明细，内部调试错误
      */
+    @Getter
     private String detailMessage;
 
     /**
@@ -58,10 +62,6 @@ public final class FlowException extends RuntimeException {
         this.code = code;
     }
 
-    public String getDetailMessage() {
-        return detailMessage;
-    }
-
     public FlowException setDetailMessage(String detailMessage) {
         this.detailMessage = detailMessage;
         return this;
@@ -77,7 +77,4 @@ public final class FlowException extends RuntimeException {
         return this;
     }
 
-    public Integer getCode() {
-        return code;
-    }
 }

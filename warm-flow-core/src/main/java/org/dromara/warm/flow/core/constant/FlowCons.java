@@ -29,8 +29,8 @@ public class FlowCons {
      */
     public static final String SPLIT_AT = "@@";
     public static final String SPLIT_VERTICAL = "\\|";
-    public static final String SPLIT_AND = "and";
-    public static final String SPLIT_OR = "or";
+    public static final String DEFAULT = "default";
+    public static final String SPEL = "spel";
 
     public static final Pattern LISTENER_PATTERN = Pattern.compile("^([^()]*)(.*)$");
 
@@ -74,4 +74,9 @@ public class FlowCons {
      * 表单数据
      */
     public static final String FORM_DATA = "formData";
+
+
+    public static final String PREVIOUS = "previous";
+
+    public static final String SUFFIX = "suffix";
 }

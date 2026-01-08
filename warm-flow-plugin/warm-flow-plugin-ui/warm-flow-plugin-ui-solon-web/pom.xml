@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.dromara.warm</groupId>
         <artifactId>warm-flow-plugin-ui</artifactId>
-        <version>1.8.1</version>
+        <version>1.8.4</version>
     </parent>
 
     <name>warm-flow-plugin-ui-solon-web</name>
@@ -26,11 +26,12 @@
 
         <dependency>
             <groupId>org.noear</groupId>
-            <artifactId>solon.data</artifactId>
+            <artifactId>solon-data</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.noear</groupId>
-            <artifactId>solon.web.staticfiles</artifactId>
+            <artifactId>solon-web-staticfiles</artifactId>
         </dependency>
     </dependencies>
 

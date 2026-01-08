@@ -30,12 +30,24 @@ import java.io.Serializable;
 @Setter
 public class FlowDto implements Serializable {
 
+    /**
+     * ID
+     */
     private Long id;
 
+    /**
+     * 表单内容
+     */
     private String formContent;
 
+    /**
+     * 表单数据
+     */
     private Form form;
 
+    /**
+     * 数据
+     */
     private Object data;
 
 }

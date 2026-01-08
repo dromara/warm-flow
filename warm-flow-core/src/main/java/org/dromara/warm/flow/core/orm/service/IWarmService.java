@@ -32,7 +32,7 @@ import java.util.List;
  */
 public interface IWarmService<T> {
 
-    public <M extends WarmDao<T>> M getDao();
+    <M extends WarmDao<T>> M getDao();
 
     /**
      * 根据id查询

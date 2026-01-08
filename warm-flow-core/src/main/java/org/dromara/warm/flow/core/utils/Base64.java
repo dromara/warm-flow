@@ -202,7 +202,8 @@ public final class Base64 {
         }
 
         if (!isData((d1 = base64Data[dataIndex++])) || !isData((d2 = base64Data[dataIndex++]))) {
-            return null;// if found "no data" just return null
+            // if found "no data" just return null
+            return null;
         }
 
         b1 = base64Alphabet[d1];
@@ -210,9 +211,11 @@ public final class Base64 {
 
         d3 = base64Data[dataIndex++];
         d4 = base64Data[dataIndex++];
-        if (!isData((d3)) || !isData((d4))) {// Check if they are PAD characters
+        // Check if they are PAD characters
+        if (!isData((d3)) || !isData((d4))) {
             if (isPad(d3) && isPad(d4)) {
-                if ((b2 & 0xf) != 0)// last 4 bits should be zero
+                // last 4 bits should be zero
+                if ((b2 & 0xf) != 0)
                 {
                     return null;
                 }
@@ -222,7 +225,8 @@ public final class Base64 {
                 return tmp;
             } else if (!isPad(d3) && isPad(d4)) {
                 b3 = base64Alphabet[d3];
-                if ((b3 & 0x3) != 0)// last 2 bits should be zero
+                // last 2 bits should be zero
+                if ((b3 & 0x3) != 0)
                 {
                     return null;
                 }

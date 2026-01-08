@@ -15,6 +15,8 @@
  */
 package org.dromara.warm.flow.core.orm.agent;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.dromara.warm.flow.core.orm.service.IWarmService;
 import org.dromara.warm.flow.core.utils.CollUtil;
 import org.dromara.warm.flow.core.utils.ObjectUtil;
@@ -34,6 +36,7 @@ public class WarmQuery<T> implements OrderBy {
     /**
      * 排序字段
      */
+    @Setter
     private String orderBy;
 
     /**
@@ -41,6 +44,8 @@ public class WarmQuery<T> implements OrderBy {
      */
     private String isAsc = "ASC";
 
+    @Setter
+    @Getter
     private IWarmService<T> warmService;
 
     public WarmQuery(IWarmService<T> warmService) {
@@ -161,10 +166,6 @@ public class WarmQuery<T> implements OrderBy {
         return orderBy;
     }
 
-    public void setOrderBy(String orderBy) {
-        this.orderBy = orderBy;
-    }
-
     @Override
     public String getIsAsc() {
         return isAsc;
@@ -173,13 +174,5 @@ public class WarmQuery<T> implements OrderBy {
     public WarmQuery<T> setIsAsc(String isAsc) {
         this.isAsc = isAsc;
         return this;
-    }
-
-    public IWarmService<T> getWarmService() {
-        return warmService;
-    }
-
-    public void setWarmService(IWarmService<T> warmService) {
-        this.warmService = warmService;
     }
 }

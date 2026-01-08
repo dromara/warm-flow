@@ -178,9 +178,7 @@ public class FlowEngine {
     }
 
     public static void initDataFillHandler(String handlerPath) {
-        dataFillHandler = initBean(DataFillHandler.class, handlerPath, () -> new DataFillHandler() {
-        });
-        ;
+        dataFillHandler = initBean(DataFillHandler.class, handlerPath, () -> new DataFillHandler() {});
     }
 
     public static void initTenantHandler(String handlerPath) {

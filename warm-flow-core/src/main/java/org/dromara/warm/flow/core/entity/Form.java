@@ -24,6 +24,7 @@ import java.util.Date;
  * @since 2024/8/19 9:59
  */
 public interface Form extends RootEntity {
+
     @Override
     Long getId();
 
@@ -43,6 +44,18 @@ public interface Form extends RootEntity {
     Form setUpdateTime(Date updateTime);
 
     @Override
+    String getCreateBy();
+
+    @Override
+    Form setCreateBy(String createBy);
+
+    @Override
+    String getUpdateBy();
+
+    @Override
+    Form setUpdateBy(String updateBy);
+
+    @Override
     String getTenantId();
 
     @Override
@@ -54,7 +67,10 @@ public interface Form extends RootEntity {
     @Override
     Form setDelFlag(String delFlag);
 
-
+    /**
+     * 获取表单编码
+     * @return 表单编码
+     */
     String getFormCode();
 
     Form setFormCode(String formCode);

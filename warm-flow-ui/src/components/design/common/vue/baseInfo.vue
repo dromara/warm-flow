@@ -25,24 +25,48 @@
             :props="{ value: 'id', label: 'name', children: 'children' }"
             value-key="id"
             placeholder="请选择流程类别"
-            check-strictly
-        />
+            check-strictly/>
       </el-form-item>
 
-      <el-form-item label="审批表单是否自定义" prop="formCustom">
+      <el-form-item label="自定义表单" prop="formCustom">
         <el-radio-group v-model="form.formCustom">
-          <el-radio label="N">表单路径</el-radio>
+          <el-radio label="N">
+              <span class="flex-hc">
+                  否
+                  <el-tooltip class="box-item" effect="dark" placement="top"
+                              content="填写页面地址：如system/process/approve">
+                    <el-icon :size="14" class="ml5">
+                      <WarningFilled />
+                    </el-icon>
+                  </el-tooltip>
+                </span>
+              </el-radio>
+          <el-radio label="Y">
+              <span class="flex-hc">
+                  是
+                  <el-tooltip class="box-item" effect="dark" placement="top"
+                              content="填写自定义表单的唯一标识：如formCode+version">
+                    <el-icon :size="14" class="ml5">
+                      <WarningFilled />
+                    </el-icon>
+                  </el-tooltip>
+                </span>
+          </el-radio>
         </el-radio-group>
       </el-form-item>
 
-      <el-form-item label="审批表单路径" prop="formPath" v-if="form.formCustom === 'N'">
-        <el-input v-model="form.formPath" placeholder="请输入审批表单路径" maxlength="100" show-word-limit />
+      <el-form-item label="表单路径" prop="formPath" v-if="form.formCustom === 'N'">
+        <el-input v-model="form.formPath" placeholder="请输入审批表单路径" maxlength="100" show-word-limit/>
       </el-form-item>
 
-      <el-form-item label="审批流程表单" prop="formPath" v-else-if="form.formCustom === 'Y'">
-        <el-select v-model="form.formPath">
-          <el-option v-for="item in definitionList" :key="item.id" :label="`${item.formName} - v${item.version}`" :value="item.id"></el-option>
-        </el-select>
+      <el-form-item label="自定义表单唯一标识" prop="formPath" v-else-if="form.formCustom === 'Y'">
+          <el-tree-select
+              v-model="form.formPath"
+              :data="formPathList"
+              :props="{ value: 'id', label: 'name', children: 'children' }"
+              value-key="id"
+              placeholder="请选择流程类别"
+              check-strictly/>
       </el-form-item>
 
       <el-form-item prop="listenerRows" class="listenerItem">
@@ -100,6 +124,12 @@ const props = defineProps({
     default () {
       return []
     }
+  },
+  formPathList: {
+      type: Array,
+      default () {
+          return []
+      }
   },
   definitionId: {
     type: String,

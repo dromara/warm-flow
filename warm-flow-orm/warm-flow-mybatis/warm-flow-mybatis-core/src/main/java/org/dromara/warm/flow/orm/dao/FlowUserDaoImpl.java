@@ -55,13 +55,13 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser> implements FlowUserDa
     }
 
     @Override
-    public List<FlowUser> listByAssociatedAndTypes(List<Long> associateds, String[] types) {
+    public List<FlowUser> listByAssociatedAndTypes(List<Long> associatedList, String[] types) {
         String dataSourceType = FlowEngine.dataSourceType();
-        if (CollUtil.isNotEmpty(associateds) && associateds.size() == 1) {
+        if (CollUtil.isNotEmpty(associatedList) && associatedList.size() == 1) {
             return getMapper().listByAssociatedAndTypes(types, null
-                , TenantDeleteUtil.getEntity(newEntity()).setAssociated(associateds.get(0)), dataSourceType);
+                , TenantDeleteUtil.getEntity(newEntity()).setAssociated(associatedList.get(0)), dataSourceType);
         }
-        return getMapper().listByAssociatedAndTypes(types, associateds
+        return getMapper().listByAssociatedAndTypes(types, associatedList
             , TenantDeleteUtil.getEntity(newEntity()), dataSourceType);
     }
 

@@ -57,6 +57,8 @@ public class ExceptionCons {
 
     public static final String NULL_LISTENER_STRATEGY = "办理人表达式策略不能为空!";
 
+    public static final String NULL_VOTESIGN_STRATEGY = "票签表达式策略不能为空!";
+
     public static final String FIRST_FORBID_BACK = "禁止退回到第一个节点";
 
     public static final String NULL_ROLE_NODE = "无法跳转到该节点,请检查当前用户是否有权限!";
@@ -145,7 +147,7 @@ public class ExceptionCons {
 
     public static final String NOT_FOUNT_LAST_TASK = "未找到前置任务!";
 
-    public static final String NOT_FOUNT_HANDLED_TASK = "为找到您已办理过的任务!";
+    public static final String NOT_FOUNT_HANDLED_TASK = "未找到您已办理过的任务!";
 
     public static final String NOT_FOUNT_HANDLED_TASK_HANDLER = "拿回的任务未办理!";
 

@@ -49,6 +49,16 @@ public class FlowTask implements Task {
     private Date updateTime;
 
     /**
+     * 创建人
+     */
+    private String createBy;
+
+    /**
+     * 更新人
+     */
+    private String updateBy;
+
+    /**
      * 租户ID
      */
     private String tenantId;
@@ -95,6 +105,7 @@ public class FlowTask implements Task {
 
     /**
      * 流程状态（0待提交 1审批中 2审批通过 4终止 5作废 6撤销 8已完成 9已退回 10失效 11拿回）
+     * @see org.dromara.warm.flow.core.enums.FlowStatus
      */
     private String flowStatus;
 
@@ -109,7 +120,7 @@ public class FlowTask implements Task {
     private List<User> userList;
 
     /**
-     * 审批表单是否自定义（Y是 2否）
+     * 审批表单是否自定义（Y=是 N=否）
      */
     private String formCustom;
 

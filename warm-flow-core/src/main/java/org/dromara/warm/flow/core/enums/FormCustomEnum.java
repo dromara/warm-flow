@@ -28,6 +28,13 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum FormCustomEnum {
 
-    // 表单路径
+    /**
+     * 表单路径
+     */
     N,
+
+    /**
+     * 表单路径
+     */
+    Y,
 }

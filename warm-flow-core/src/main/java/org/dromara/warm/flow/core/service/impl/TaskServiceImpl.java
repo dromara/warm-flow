@@ -31,7 +31,9 @@ import org.dromara.warm.flow.core.utils.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 /**
  * 待办任务Service业务层处理
@@ -197,9 +199,10 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         List<Node> nextNodes = FlowEngine.nodeService().getNextByCheckGateway(flowParams.getVariable()
             , nextNode, pathWayData, flowCombine);
 
-        // 判断并行网关节点前置跳转线是否都完成，才能生成新的代办任务
-        filterCanNewTask(pathWayData, r.instance, nextNodes);
+        // 判断并行网关和包容网关节点只剩一个前置代办任务，才能生成新的代办任务
+        isGenerateNewTask(pathWayData, r.instance, nextNodes);
         pathWayData.getTargetNodes().addAll(nextNodes);
+
         // 设置流程图元数据
         r.instance.setDefJson(FlowEngine.chartService().skipMetadata(pathWayData));
 
@@ -367,7 +370,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         handUndoneTask(r.instance);
         // 最后判断是否存在节点监听器，存在执行节点监听器
         ListenerUtil.executeListener(new ListenerVariable(r.definition, r.instance, r.nowNode, flowParams.getVariable()
-            , task), Listener.LISTENER_FINISH);
+            , task).setFlowParams(flowParams), Listener.LISTENER_FINISH);
         return r.instance;
     }
 
@@ -384,9 +387,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     @Override
     public boolean transfer(Long taskId, FlowParams flowParams) {
-        AssertUtil.isNotNull(taskId, ExceptionCons.NULL_TASK_ID);
-        AssertUtil.isNotNull(flowParams.getHandler(), ExceptionCons.HANDLER_NOT_EMPTY);
-        AssertUtil.isNotNull(flowParams.getAddHandlers(), ExceptionCons.NULL_TRANSFER_HANDLER);
+        AssertUtil.isNull(taskId, ExceptionCons.NULL_TASK_ID);
+        AssertUtil.isNull(flowParams.getHandler(), ExceptionCons.HANDLER_NOT_EMPTY);
+        AssertUtil.isNull(flowParams.getAddHandlers(), ExceptionCons.NULL_TRANSFER_HANDLER);
         List<User> users = FlowEngine.userService().getByProcessedBys(taskId, flowParams.getAddHandlers(), UserType.TRANSFER.getKey());
         AssertUtil.isNotEmpty(users, ExceptionCons.IS_ALREADY_TRANSFER);
         flowParams.cooperateType(CooperateType.TRANSFER.getKey())
@@ -397,9 +400,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     @Override
     public boolean depute(Long taskId, FlowParams flowParams) {
-        AssertUtil.isNotNull(taskId, ExceptionCons.NULL_TASK_ID);
-        AssertUtil.isNotNull(flowParams.getHandler(), ExceptionCons.HANDLER_NOT_EMPTY);
-        AssertUtil.isNotNull(flowParams.getAddHandlers(), ExceptionCons.NULL_DEPUTE_HANDLER);
+        AssertUtil.isNull(taskId, ExceptionCons.NULL_TASK_ID);
+        AssertUtil.isNull(flowParams.getHandler(), ExceptionCons.HANDLER_NOT_EMPTY);
+        AssertUtil.isNull(flowParams.getAddHandlers(), ExceptionCons.NULL_DEPUTE_HANDLER);
         List<User> users = FlowEngine.userService().getByProcessedBys(taskId, flowParams.getAddHandlers(), UserType.DEPUTE.getKey());
         AssertUtil.isNotEmpty(users, ExceptionCons.IS_ALREADY_DEPUTE);
         flowParams.cooperateType(CooperateType.DEPUTE.getKey())
@@ -410,9 +413,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     @Override
     public boolean addSignature(Long taskId, FlowParams flowParams) {
-        AssertUtil.isNotNull(taskId, ExceptionCons.NULL_TASK_ID);
-        AssertUtil.isNotNull(flowParams.getHandler(), ExceptionCons.HANDLER_NOT_EMPTY);
-        AssertUtil.isNotNull(flowParams.getAddHandlers(), ExceptionCons.NULL_ADD_SIGNATURE_HANDLER);
+        AssertUtil.isNull(taskId, ExceptionCons.NULL_TASK_ID);
+        AssertUtil.isNull(flowParams.getHandler(), ExceptionCons.HANDLER_NOT_EMPTY);
+        AssertUtil.isNull(flowParams.getAddHandlers(), ExceptionCons.NULL_ADD_SIGNATURE_HANDLER);
         List<User> users = FlowEngine.userService().getByProcessedBys(taskId, flowParams.getAddHandlers(), UserType.APPROVAL.getKey());
         AssertUtil.isNotEmpty(users, ExceptionCons.IS_ALREADY_SIGN);
         flowParams.cooperateType(CooperateType.ADD_SIGNATURE.getKey());
@@ -422,9 +425,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     @Override
     public boolean reductionSignature(Long taskId, FlowParams flowParams) {
-        AssertUtil.isNotNull(taskId, ExceptionCons.NULL_TASK_ID);
-        AssertUtil.isNotNull(flowParams.getHandler(), ExceptionCons.HANDLER_NOT_EMPTY);
-        AssertUtil.isNotNull(flowParams.getReductionHandlers(), ExceptionCons.NULL_REDUCTION_SIGNATURE_HANDLER);
+        AssertUtil.isNull(taskId, ExceptionCons.NULL_TASK_ID);
+        AssertUtil.isNull(flowParams.getHandler(), ExceptionCons.HANDLER_NOT_EMPTY);
+        AssertUtil.isNull(flowParams.getReductionHandlers(), ExceptionCons.NULL_REDUCTION_SIGNATURE_HANDLER);
         List<User> users = FlowEngine.userService().listByAssociatedAndTypes(taskId
             , UserType.APPROVAL.getKey(), UserType.TRANSFER.getKey());
         AssertUtil.isTrue(CollUtil.isEmpty(users) || users.size() == 1, ExceptionCons.REDUCTION_SIGN_ONE_ERROR);
@@ -493,6 +496,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     @Override
     public Task addTask(Node node, Instance instance, Definition definition, FlowParams flowParams) {
         Task addTask = FlowEngine.newTask();
+        Date now = new Date();
         FlowEngine.dataFillHandler().idFill(addTask);
         addTask.setDefinitionId(instance.getDefinitionId())
             .setInstanceId(instance.getId())
@@ -501,7 +505,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             .setNodeType(node.getNodeType())
             .setFlowStatus(StringUtils.emptyDefault(flowParams.getFlowStatus(),
                 setFlowStatus(node.getNodeType(), flowParams.getSkipType())))
-            .setCreateTime(new Date())
+            .setCreateTime(now)
             .setPermissionList(StringUtils.str2List(node.getPermissionFlag(), FlowCons.SPLIT_AT));
 
         if (StringUtils.isNotEmpty(node.getFormCustom()) && StringUtils.isNotEmpty(node.getFormPath())) {
@@ -629,7 +633,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     private R getAndCheck(Long taskId) {
-        AssertUtil.isNotNull(taskId, ExceptionCons.NULL_TASK_ID);
+        AssertUtil.isNull(taskId, ExceptionCons.NULL_TASK_ID);
         return getAndCheck(getById(taskId));
     }
 
@@ -696,7 +700,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
      * @return boolean
      */
     private boolean cooperate(Node nowNode, Task task, FlowParams flowParams) {
-        BigDecimal nodeRatio = nowNode.getNodeRatio();
+        String nodeRatio = nowNode.getNodeRatio();
         // 或签，直接返回
         if (CooperateType.isOrSign(nodeRatio)) {
             return false;
@@ -711,58 +715,77 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         User todoUser = CollUtil.getOne(StreamUtils.filter(todoList, u -> Objects.equals(u.getProcessedBy(), flowParams.getHandler())));
         AssertUtil.isNull(todoUser, ExceptionCons.NOT_AUTHORITY);
 
-        // 当只剩一位待办用户时，由当前用户决定走向
-        if (todoList.size() == 1) {
-            return false;
-        }
-
         // 除当前办理人外剩余办理人列表
         List<User> restList = StreamUtils.filter(todoList, u -> !Objects.equals(u.getProcessedBy(), flowParams.getHandler()));
 
         // 会签并且当前人退回直接返回
         if (CooperateType.isCountersign(nodeRatio) && SkipType.isReject(flowParams.getSkipType())) {
-            FlowEngine.userService().removeByIds(StreamUtils.toList(restList, User::getId));
-            return false;
+            return removeRestList(restList);
         }
 
         // 查询会签票签已办列表
-
-        List<HisTask> doneList = FlowEngine.hisTaskService().listByTaskIdAndCooperateTypes(task.getId()
-            , CooperateType.isCountersign(nodeRatio) ? CooperateType.COUNTERSIGN.getKey() : CooperateType.VOTE.getKey());
+        List<HisTask> doneList = FlowEngine.hisTaskService().listByTaskId(task.getId());
         doneList = CollUtil.emptyDefault(doneList);
 
-        // TODO 这里处理 cooperation handler 获取下面的 passRatio rejectRatio all 值，能获取使用 handler的值，不能获取使用以下全自动计算代码
+        // 总人数
+        int allNum = todoList.size() + doneList.size();
 
-        // 所有人
-        BigDecimal all = BigDecimal.ZERO.add(BigDecimal.valueOf(todoList.size())).add(BigDecimal.valueOf(doneList.size()));
-
+        // 通过历史记录
         List<HisTask> donePassList = StreamUtils.filter(doneList
             , hisTask -> Objects.equals(hisTask.getSkipType(), SkipType.PASS.getKey()));
 
+        // 驳回历史记录
         List<HisTask> doneRejectList = StreamUtils.filter(doneList
             , hisTask -> Objects.equals(hisTask.getSkipType(), SkipType.REJECT.getKey()));
 
         boolean isPass = SkipType.isPass(flowParams.getSkipType());
+        // 如果是票签默认或者spel表达式策略，则执行表达式
+        if (CooperateType.isVoteSignDefault(nodeRatio) || CooperateType.isVoteSignRejectSpel(nodeRatio)) {
+            Map<String, Object> variable = MapUtil.clone(flowParams.getVariable());
+            variable.put("skipType", flowParams.getSkipType());
+            variable.put("passNum", donePassList.size());
+            variable.put("rejectNum", doneRejectList.size());
+            variable.put("todoNum", todoList.size());
+            variable.put("allNum", allNum);
+            variable.put("passList", donePassList);
+            variable.put("rejectList", doneRejectList);
+            variable.put("todoList", todoList);
+            if (ExpressionUtil.evalVoteSign(nodeRatio, variable)) {
+                return removeRestList(restList);
+            }
+        } else {
+            // 计算通过率
+            BigDecimal passRatio = (isPass ? BigDecimal.ONE : BigDecimal.ZERO)
+                .add(BigDecimal.valueOf(donePassList.size()))
+                .divide(BigDecimal.valueOf(allNum), 4, RoundingMode.HALF_UP).multiply(MathUtil.ONE_HUNDRED);
+            // 计算驳回率
+            BigDecimal rejectRatio = (isPass ? BigDecimal.ZERO : BigDecimal.ONE)
+                .add(BigDecimal.valueOf(doneRejectList.size()))
+                .divide(BigDecimal.valueOf(allNum), 4, RoundingMode.HALF_UP).multiply(MathUtil.ONE_HUNDRED);
 
-        // 计算通过率
-        BigDecimal passRatio = (isPass ? BigDecimal.ONE : BigDecimal.ZERO)
-            .add(BigDecimal.valueOf(donePassList.size()))
-            .divide(all, 4, RoundingMode.HALF_UP).multiply(CooperateType.ONE_HUNDRED);
-
-        // 计算驳回率
-        BigDecimal rejectRatio = (isPass ? BigDecimal.ZERO : BigDecimal.ONE)
-            .add(BigDecimal.valueOf(doneRejectList.size()))
-            .divide(all, 4, RoundingMode.HALF_UP).multiply(CooperateType.ONE_HUNDRED);
-
-        if (!isPass && rejectRatio.compareTo(CooperateType.ONE_HUNDRED.subtract(nodeRatio)) > 0) {
-            // 驳回，并且当前是驳回
-            FlowEngine.userService().removeByIds(StreamUtils.toList(restList, User::getId));
-            return false;
+            // 判断是否是票签中的固定通过人数，如果是则判断是否达到该人数
+            if (CooperateType.isVoteSignPassCount(nodeRatio)) {
+                String passCount = StringUtils.substring(nodeRatio, nodeRatio.indexOf("=") + 1);
+                if ((isPass && donePassList.size() + 1 >= Integer.parseInt(passCount))
+                    || (!isPass && doneRejectList.size() + 1 > allNum - Integer.parseInt(passCount))) {
+                    return removeRestList(restList);
+                }
+            } else if (CooperateType.isVoteSignRejectCount(nodeRatio)) {
+                // 判断是否是票签中的固定驳回人数，如果是则判断是否达到该人数
+                String rejectCount = StringUtils.substring(nodeRatio, nodeRatio.indexOf("=") + 1);
+                if ((!isPass && doneRejectList.size() + 1 >= Integer.parseInt(rejectCount))
+                || (isPass && donePassList.size() + 1 > allNum - Integer.parseInt(rejectCount))) {
+                    return removeRestList(restList);
+                }
+            } else if ((!isPass && rejectRatio.compareTo(MathUtil.ONE_HUNDRED.subtract(new BigDecimal(nodeRatio))) > 0)
+                || (isPass && passRatio.compareTo(new BigDecimal(nodeRatio)) >= 0)) {
+                // 提前不满足通过率或者满足通过率，删除剩余办理人，流程正常流程流转
+                return removeRestList(restList);
+            }
         }
 
-        if (passRatio.compareTo(nodeRatio) >= 0) {
-            // 大于等于 nodeRatio 设置值结束任务
-            FlowEngine.userService().removeByIds(StreamUtils.toList(restList, User::getId));
+        // 当只剩一位待办用户时，由当前用户决定走向
+        if (todoList.size() == 1) {
             return false;
         }
 
@@ -776,63 +799,67 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
     }
 
     /**
-     * 判断并行网关节点前置跳转线是否都完成，才能生成新的代办任务
+     * 删除剩余办理人
+     * @param restList 待办用户列表
+     * @return  boolean
+     */
+    private static boolean removeRestList(List<User> restList) {
+        if (CollUtil.isNotEmpty(restList)) {
+            FlowEngine.userService().removeByIds(StreamUtils.toList(restList, User::getId));
+        }
+        return false;
+    }
+
+    /**
+     * 判断并行网关和包容网关节点只剩一个前置代办任务，才能生成新的代办任务
      *
      * @param pathWayData 办理过程中途径数据
      * @param instance    实例
-     * @param nextNodes   目标节点集合
      */
-    private void filterCanNewTask(PathWayData pathWayData, Instance instance, List<Node> nextNodes) {
+    private void isGenerateNewTask(PathWayData pathWayData, Instance instance, List<Node> nextNodes) {
         if (SkipType.isReject(pathWayData.getSkipType())) {
             return;
         }
 
-        Map<String, List<Skip>> skipLastMap = StreamUtils.groupByKey(pathWayData.getPathWaySkips(), Skip::getNextNodeCode);
         DefJson defJson = FlowEngine.jsonConvert.strToBean(instance.getDefJson(), DefJson.class);
         Map<String, NodeJson> nodeJsonMap = StreamUtils.toMap(defJson.getNodeList(), NodeJson::getNodeCode, node -> node);
-        List<SkipJson> skipList = StreamUtils.toListAll(defJson.getNodeList(), NodeJson::getSkipList);
-        Map<String, List<SkipJson>> skipJsonLastMap = StreamUtils.groupByKey(skipList, SkipJson::getNextNodeCode);
-
-        nextNodes.removeIf(targetNode -> {
-            List<Skip> skips = skipLastMap.get(targetNode.getNodeCode());
-            // 如果没有跳转线，说明没有并行网关，直接生成新任务
-            if (CollUtil.isEmpty(skips)) {
-                return false;
-            }
-            // 获取目标节点途径最近的并行网关集合
-            if (!NodeType.isGateWayParallel(skips.get(0).getNowNodeType())) {
-                return false;
-            }
-            NodeJson lastGateWayParallel = nodeJsonMap.get(skips.get(0).getNowNodeCode());
-            // 如果是空说明中间没有并行网关，直接生成新任务
-            if (lastGateWayParallel == null) {
-                return false;
-            }
-            List<NodeJson> noGateWayParallelNodes = noGateWayParallel(lastGateWayParallel.getNodeCode(), nodeJsonMap, skipJsonLastMap);
-            // 如果已办数量=总数量-1，说明可以生成新任务
-            long statusTwoCount = noGateWayParallelNodes.stream()
-                .filter(node -> node.getStatus() == 2)
+        // 遍历目标节点，获取目标节点中第一个互斥或者包含网关，并且判断只剩一个前置代办任务，才能生成新的代办任务
+        List<Node> parallelOrInclusiveList = Optional.of(pathWayData)
+            .map(PathWayData::getPathWayNodes)
+            .orElse(Collections.emptyList())
+            .stream()
+            .filter(t -> NodeType.isGateWayParallel(t.getNodeType()) || NodeType.isGateWayInclusive(t.getNodeType()))
+            .collect(Collectors.toList());
+        if (CollUtil.isNotEmpty(parallelOrInclusiveList)) {
+            List<Node> previousNodeList = FlowEngine.nodeService().previousNodeList(instance.getDefinitionId()
+                , parallelOrInclusiveList.get(parallelOrInclusiveList.size() - 1).getNodeCode());
+            // 获取前置节点中代办节点的数量
+            long statusOneCount = previousNodeList.stream()
+                .map(Node::getNodeCode)
+                .map(nodeJsonMap::get)
+                .filter(Objects::nonNull)
+                .filter(nodeJson -> nodeJson.getStatus() == 1)
                 .count();
-            return !(statusTwoCount == noGateWayParallelNodes.size() - 1);
-        });
-    }
-
-    /**
-     * 获取并行网关最近的非并行网关节点集合
-     */
-    private List<NodeJson> noGateWayParallel(String nodeCode, Map<String, NodeJson> nodeMap
-        , Map<String, List<SkipJson>> skipLastMap) {
-        List<NodeJson> noGateWayParallelList = new ArrayList<>();
-        List<SkipJson> skipJsonList = skipLastMap.get(nodeCode);
-        for (SkipJson skipJson : skipJsonList) {
-            NodeJson nextNodeJson = nodeMap.get(skipJson.getNowNodeCode());
-            if (!NodeType.isGateWayParallel(nextNodeJson.getNodeType())) {
-                noGateWayParallelList.add(nextNodeJson);
-            } else {
-                noGateWayParallelList.addAll(noGateWayParallel(nextNodeJson.getNodeCode(), nodeMap, skipLastMap));
+            // 并行网关和包容网关节点超过一个前置代办任务，说明可以不可生成新任务,
+            if (statusOneCount > 1) {
+                nextNodes.clear();
+                AtomicBoolean flag = new AtomicBoolean(false);
+                pathWayData.getPathWayNodes().removeIf(nodeJson -> {
+                    if (nodeJson.getNodeCode().equals(parallelOrInclusiveList.get(0).getNodeCode())) {
+                        flag.set(true);
+                        return false;
+                    }
+                    return flag.get();
+                });
+                flag.set(false);
+                pathWayData.getPathWaySkips().removeIf(nodeJson -> {
+                    if (nodeJson.getNowNodeCode().equals(parallelOrInclusiveList.get(0).getNodeCode())) {
+                        flag.set(true);
+                    }
+                    return flag.get();
+                });
             }
         }
-        return noGateWayParallelList;
     }
 
     /**

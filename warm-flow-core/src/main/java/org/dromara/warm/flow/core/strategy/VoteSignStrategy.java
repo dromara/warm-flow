@@ -13,22 +13,22 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.dromara.warm.flow.core.listener;
+package org.dromara.warm.flow.core.strategy;
 
-import org.dromara.warm.flow.core.strategy.ExpressionStrategy;
+import org.dromara.warm.flow.core.constant.FlowCons;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 监听器表达式策略接口
+ * 票签表达式接口
  *
- * @author warm,battcn
+ * @author warm
  */
-public interface ListenerStrategy extends ExpressionStrategy<Boolean> {
+public interface VoteSignStrategy extends ExpressionStrategy<Boolean> {
 
     /**
-     * 监听器表达式策略实现类集合
+     * 票签表达式策略实现类集合
      */
     List<ExpressionStrategy<Boolean>> EXPRESSION_STRATEGY_LIST = new ArrayList<>();
 
@@ -37,4 +37,8 @@ public interface ListenerStrategy extends ExpressionStrategy<Boolean> {
         EXPRESSION_STRATEGY_LIST.add(expressionStrategy);
     }
 
+    @Override
+    default String interceptStr() {
+        return FlowCons.SPLIT_AT;
+    }
 }

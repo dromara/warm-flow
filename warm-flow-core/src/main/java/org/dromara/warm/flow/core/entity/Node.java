@@ -48,6 +48,18 @@ public interface Node extends RootEntity {
     Node setUpdateTime(Date updateTime);
 
     @Override
+    String getCreateBy();
+
+    @Override
+    Node setCreateBy(String createBy);
+
+    @Override
+    String getUpdateBy();
+
+    @Override
+    Node setUpdateBy(String updateBy);
+
+    @Override
     String getTenantId();
 
     @Override
@@ -75,9 +87,9 @@ public interface Node extends RootEntity {
 
     Node setNodeName(String nodeName);
 
-    BigDecimal getNodeRatio();
+    String getNodeRatio();
 
-    Node setNodeRatio(BigDecimal nodeRatio);
+    Node setNodeRatio(String nodeRatio);
 
     String getPermissionFlag();
 
@@ -98,14 +110,6 @@ public interface Node extends RootEntity {
     String getListenerPath();
 
     Node setListenerPath(String listenerPath);
-
-    String getHandlerType();
-
-    Node setHandlerType(String listenerType);
-
-    String getHandlerPath();
-
-    Node setHandlerPath(String listenerPath);
 
     String getFormCustom();
 
@@ -150,8 +154,6 @@ public interface Node extends RootEntity {
             .setAnyNodeSkip(this.getAnyNodeSkip())
             .setListenerType(this.getListenerType())
             .setListenerPath(this.getListenerPath())
-            .setHandlerType(this.getHandlerType())
-            .setHandlerPath(this.getHandlerPath())
             .setFormCustom(this.getFormCustom())
             .setFormPath(this.getFormPath())
             .setExt(this.getExt());

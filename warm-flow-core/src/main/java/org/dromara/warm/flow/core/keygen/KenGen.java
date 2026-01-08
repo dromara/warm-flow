@@ -27,6 +27,6 @@ public interface KenGen {
      *
      * @return SnowflakeId
      */
-    public long nextId();
+    long nextId();
 
 }

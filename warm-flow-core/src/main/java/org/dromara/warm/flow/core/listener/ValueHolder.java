@@ -15,48 +15,25 @@
  */
 package org.dromara.warm.flow.core.listener;
 
+import lombok.Data;
+
 /**
- *
+ * @author warm
  */
+@Data
 public class ValueHolder {
+
+    /**
+     * 路径
+     */
     private String path;
+    /**
+     * 监听器
+     */
     private Listener listener;
+    /**
+     * 参数
+     */
     private String params;
 
-
-    public ValueHolder() {
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public Listener getListener() {
-        return listener;
-    }
-
-    public void setListener(Listener listener) {
-        this.listener = listener;
-    }
-
-    public String getParams() {
-        return params;
-    }
-
-    public void setParams(String params) {
-        this.params = params;
-    }
-
-    @Override
-    public String toString() {
-        return "ValueHolder{" +
-            "path='" + path + '\'' +
-            ", listener=" + listener + '\'' +
-            ", params='" + params + '\'' +
-            '}';
-    }
 }

@@ -47,6 +47,18 @@ public interface Instance extends RootEntity {
     Instance setUpdateTime(Date updateTime);
 
     @Override
+    String getCreateBy();
+
+    @Override
+    Instance setCreateBy(String createBy);
+
+    @Override
+    String getUpdateBy();
+
+    @Override
+    Instance setUpdateBy(String updateBy);
+
+    @Override
     String getTenantId();
 
     @Override
@@ -58,18 +70,34 @@ public interface Instance extends RootEntity {
     @Override
     Instance setDelFlag(String delFlag);
 
+    /**
+     * flow_definition.id
+     * @return flow_definition.id
+     */
     Long getDefinitionId();
 
     Instance setDefinitionId(Long definitionId);
 
+    /**
+     * 流程名称
+     * @return 流程名称
+     */
     String getFlowName();
 
     Instance setFlowName(String flowName);
 
+    /**
+     * 业务ID
+     * @return 业务ID
+     */
     String getBusinessId();
 
     Instance setBusinessId(String businessId);
 
+    /**
+     * @see org.dromara.warm.flow.core.enums.NodeType
+     * @return 节点类型
+     */
     Integer getNodeType();
 
     Instance setNodeType(Integer nodeType);
@@ -78,10 +106,18 @@ public interface Instance extends RootEntity {
 
     Instance setNodeCode(String nodeCode);
 
+    /**
+     * 流程节点名称
+     * @return 节点名称
+     */
     String getNodeName();
 
     Instance setNodeName(String nodeName);
 
+    /**
+     * 流程变量
+     * @return 流程变量
+     */
     String getVariable();
 
     Instance setVariable(String variable);
@@ -90,14 +126,18 @@ public interface Instance extends RootEntity {
         return FlowEngine.jsonConvert.strToMap(getVariable());
     }
 
+    /**
+     * @see org.dromara.warm.flow.core.enums.FlowStatus
+     * @return 流程状态
+     */
     String getFlowStatus();
 
     Instance setFlowStatus(String flowStatus);
 
-    String getCreateBy();
-
-    Instance setCreateBy(String createBy);
-
+    /**
+     * 审批表单是否自定义（Y是 N否）
+     * @return  （Y是 N否）
+     */
     String getFormCustom();
 
     Instance setFormCustom(String formCustom);
@@ -114,6 +154,10 @@ public interface Instance extends RootEntity {
 
     Instance setExt(String ext);
 
+    /**
+     * @see org.dromara.warm.flow.core.enums.ActivityStatus
+     * @return 激活状态
+     */
     Integer getActivityStatus();
 
     Instance setActivityStatus(Integer activityStatus);

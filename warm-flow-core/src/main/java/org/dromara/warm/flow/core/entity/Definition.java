@@ -27,6 +27,7 @@ import java.util.List;
  * @since 2023-03-29
  */
 public interface Definition extends RootEntity {
+
     @Override
     Long getId();
 
@@ -46,6 +47,18 @@ public interface Definition extends RootEntity {
     Definition setUpdateTime(Date updateTime);
 
     @Override
+    String getCreateBy();
+
+    @Override
+    Definition setCreateBy(String createBy);
+
+    @Override
+    String getUpdateBy();
+
+    @Override
+    Definition setUpdateBy(String updateBy);
+
+    @Override
     String getTenantId();
 
     @Override
@@ -57,14 +70,37 @@ public interface Definition extends RootEntity {
     @Override
     Definition setDelFlag(String delFlag);
 
+    /**
+     * 获取流程编码
+     * @return 流程编码
+     */
     String getFlowCode();
 
+    /**
+     * 设置流程编码
+     * @param flowCode flowCode
+     * @return Definition
+     */
     Definition setFlowCode(String flowCode);
 
+    /**
+     * 获取流程名称
+     * @return 流程名称
+     */
     String getFlowName();
 
+    /**
+     * 设置流程名称
+     * @param flowName flowName
+     * @return Definition
+     */
     Definition setFlowName(String flowName);
 
+    /**
+     * 设计器模型（CLASSICS经典模型 MIMIC仿钉钉模型）
+     * @see org.dromara.warm.flow.core.enums.ModelEnum
+     * @return  设计器模型
+     */
     String getModelValue();
 
     Definition setModelValue(String modelValue);
@@ -73,14 +109,26 @@ public interface Definition extends RootEntity {
 
     Definition setCategory(String category);
 
+    /**
+     * 获取流程定义的版本号
+     * @return 版本号
+     */
     String getVersion();
 
     Definition setVersion(String version);
 
+    /**
+     * 获取是否发布状态 (0未发布 1已发布 9已失效)
+     * @return 发布状态
+     */
     Integer getIsPublish();
 
     Definition setIsPublish(Integer isPublish);
 
+    /**
+     * 审批表单是否自定义（Y=是 N=否）
+     * @return 是否自定义
+     */
     String getFormCustom();
 
     Definition setFormCustom(String formCustom);
@@ -101,14 +149,27 @@ public interface Definition extends RootEntity {
 
     Definition setUserList(List<User> userList);
 
+    /**
+     * 流程激活状态（0=挂起 1=激活）
+     * @see org.dromara.warm.flow.core.enums.ActivityStatus
+     * @return 流程激活状态
+     */
     Integer getActivityStatus();
 
     Definition setActivityStatus(Integer activityStatus);
 
+    /**
+     * 获取监听器类型
+     * @return 监听器类型
+     */
     String getListenerType();
 
     Definition setListenerType(String listenerType);
 
+    /**
+     * 获取监听器路径
+     * @return 监听器路径
+     */
     String getListenerPath();
 
     Definition setListenerPath(String listenerPath);
@@ -126,7 +187,9 @@ public interface Definition extends RootEntity {
             .setFormPath(this.getFormPath())
             .setListenerType(this.getListenerType())
             .setListenerPath(this.getListenerPath())
-            .setExt(this.getExt());
+            .setExt(this.getExt())
+            .setCreateBy(this.getCreateBy())
+            .setUpdateBy(this.getUpdateBy());
 
     }
 }

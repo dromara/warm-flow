@@ -177,7 +177,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         Instance instance = FlowEngine.newIns();
         Date now = new Date();
         FlowEngine.dataFillHandler().idFill(instance);
-        // 关联业务id,起始后面可以不用到业务id,传业务id目前来看只是为了批量创建流程的时候能创建出有区别化的流程,也是为了后期需要用到businessId。
+        // 关联业务id,其实后面可以不用到业务id,传业务id目前来看只是为了批量创建流程的时候能创建出有区别化的流程,也是为了后期需要用到businessId。
         instance.setDefinitionId(firstBetweenNode.getDefinitionId())
             .setBusinessId(businessId)
             .setNodeType(firstBetweenNode.getNodeType())
@@ -189,6 +189,7 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
             .setCreateTime(now)
             .setUpdateTime(now)
             .setCreateBy(flowParams.getHandler())
+            .setUpdateBy(flowParams.getHandler())
             .setExt(flowParams.getExt());
         return instance;
     }

@@ -142,8 +142,8 @@ public interface NodeService extends IWarmService<Node> {
     Node getEndNode(Long definitionId);
 
     /**
-     * 根据流程定义和当前节点code获取下一节点,如是网关跳过取下一节点,并行网关返回多个节点
-     * anyNodeCode不为空，则可跳转anyNodeCode节点
+     * 根据流程定义和当前节点code获取下一节点集合,如是网关跳过取下一节点,并行网关返回多个节点
+     * 不一定是后置节点，如果是通过就是后置，如果是驳回就取前置节点
      *
      * @param definitionId 流程定义id
      * @param nowNodeCode  当前节点code
@@ -159,7 +159,7 @@ public interface NodeService extends IWarmService<Node> {
 
     /**
      * 根据当前节点获取下一节点
-     * anyNodeCode不为空，则可跳转anyNodeCode节点
+     * 不一定是后置节点，如果是通过就是后置，如果是驳回就取前置节点
      *
      * @param definitionId 流程定义id
      * @param nowNodeCode  当前节点code
@@ -171,8 +171,8 @@ public interface NodeService extends IWarmService<Node> {
 
 
     /**
-     * 当前节点获取下一节点,如是网关跳过取下一节点,并行网关返回多个节点
-     * anyNodeCode不为空，则可跳转anyNodeCode节点
+     * 当前节点获取下一节点集合,如是网关跳过取下一节点,并行网关返回多个节点
+     * 不一定是后置节点，如果是通过就是后置，如果是驳回就取前置节点
      *
      * @param nowNode     当前节点
      * @param anyNodeCode anyNodeCode不为空，则可跳转anyNodeCode节点（优先级最高）
@@ -187,7 +187,7 @@ public interface NodeService extends IWarmService<Node> {
 
     /**
      * 根据当前节点获取下一节点
-     * anyNodeCode不为空，则可跳转anyNodeCode节点
+     * 不一定是后置节点，如果是通过就是后置，如果是驳回就取前置节点
      *
      * @param nowNode     当前节点
      * @param anyNodeCode anyNodeCode不为空，则可跳转anyNodeCode节点（优先级最高）

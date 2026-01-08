@@ -56,6 +56,16 @@ public class FlowDefinition implements Definition {
     private Date updateTime;
 
     /**
+     * 创建人
+     */
+    private String createBy;
+
+    /**
+     * 更新人
+     */
+    private String updateBy;
+
+    /**
      * 租户ID
      */
     private String tenantId;
@@ -97,12 +107,12 @@ public class FlowDefinition implements Definition {
     private Integer isPublish;
 
     /**
-     * 审批表单是否自定义（Y是 2否）
+     * 审批表单是否自定义（Y是 N否）
      */
     private String formCustom;
 
     /**
-     * 审批表单是否自定义（Y是 2否）
+     * 审批表单路径
      */
     private String formPath;
 

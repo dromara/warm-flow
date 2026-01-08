@@ -40,12 +40,14 @@ import StartC from "@/components/design/classics/js/start";
 import BetweenC from "@/components/design/classics/js/between";
 import SerialC from "@/components/design/classics/js/serial";
 import ParallelC from "@/components/design/classics/js/parallel";
+import InclusiveC from "@/components/design/classics/js/inclusive";
 import EndC from "@/components/design/classics/js/end";
 import SkipC from "@/components/design/classics/js/skip";
 import StartM from "@/components/design/mimic/js/start";
 import BetweenM from "@/components/design/mimic/js/between";
 import SerialM from "@/components/design/mimic/js/serial";
 import ParallelM from "@/components/design/mimic/js/parallel";
+import InclusiveM from "@/components/design/mimic/js/inclusive";
 import EndM from "@/components/design/mimic/js/end";
 import SkipM from "@/components/design/mimic/js/skip";
 import useAppStore from "@/store/app";
@@ -95,6 +97,7 @@ const register = () => {
     lf.value.register(BetweenC);
     lf.value.register(SerialC);
     lf.value.register(ParallelC);
+    lf.value.register(InclusiveC);
     lf.value.register(EndC);
     lf.value.register(SkipC);
   } else {
@@ -102,6 +105,7 @@ const register = () => {
     lf.value.register(BetweenM);
     lf.value.register(SerialM);
     lf.value.register(ParallelM);
+    lf.value.register(InclusiveM);
     lf.value.register(EndM);
     lf.value.register(SkipM);
   }
@@ -242,6 +246,9 @@ onMounted(async () => {
               plugins: [Snapshot],
               isSilentMode: true,
               textEdit: false,
+              hoverOutline: isClassics(defJson.value.modelValue),   // 鼠标 hover 的时候是否显示节点的外框。
+              nodeSelectedOutline: isClassics(defJson.value.modelValue),    // 节点被选中时是否显示节点的外框。
+              edgeSelectedOutline: isClassics(defJson.value.modelValue),    //	边被选中时是否显示边的外框。
               grid: {
                 size: 20,
                 visible: 'true' === appParams.value.showGrid,

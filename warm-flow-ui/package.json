@@ -1,6 +1,6 @@
 {
-  "name": "ruoyi",
-  "version": "1.2.7",
+  "name": "Warm-Flow",
+  "version": "1.8.2",
   "description": "Warm-Flow设计器",
   "author": "warm",
   "license": "MIT",
@@ -23,7 +23,6 @@
     "axios": "0.27.2",
     "element-plus": "2.4.3",
     "file-saver": "2.0.5",
-    "js-cookie": "3.0.5",
     "pinia": "2.1.7",
     "vue": "3.3.9",
     "vue-router": "4.2.5"

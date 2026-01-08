@@ -53,6 +53,16 @@ public class FlowNode implements Node {
     private Date updateTime;
 
     /**
+     * 创建人
+     */
+    private String createBy;
+
+    /**
+     * 更新人
+     */
+    private String updateBy;
+
+    /**
      * 租户ID
      */
     private String tenantId;
@@ -85,7 +95,7 @@ public class FlowNode implements Node {
     /**
      * 流程签署比例值
      */
-    private BigDecimal nodeRatio;
+    private String nodeRatio;
     /**
      * 流程节点坐标
      */
@@ -110,16 +120,7 @@ public class FlowNode implements Node {
      */
     private String listenerPath;
     /**
-     * 处理器类型
-     */
-    private String handlerType;
-    /**
-     * 处理器路径
-     */
-    private String handlerPath;
-
-    /**
-     * 审批表单是否自定义（Y是 2否）
+     * 审批表单是否自定义（Y=是 N=否）
      */
     private String formCustom;
 

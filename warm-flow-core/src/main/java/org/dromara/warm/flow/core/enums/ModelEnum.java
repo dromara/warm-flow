@@ -28,9 +28,13 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ModelEnum {
 
-    // 经典模型
+    /**
+     * 经典模型
+     */
     CLASSICS,
 
-    // 仿钉钉模型
+    /**
+     * 仿钉钉模型
+     */
     MIMIC
 }

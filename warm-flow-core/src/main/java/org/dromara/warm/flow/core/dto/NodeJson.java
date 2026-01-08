@@ -60,7 +60,7 @@ public class NodeJson {
     /**
      * 流程签署比例值
      */
-    private BigDecimal nodeRatio;
+    private String nodeRatio;
     /**
      * 流程节点坐标
      */
@@ -78,21 +78,12 @@ public class NodeJson {
      */
     private String listenerPath;
     /**
-     * 处理器类型
-     */
-    private String handlerType;
-    /**
-     * 处理器路径
-     */
-    private String handlerPath;
-
-    /**
-     * 审批表单是否自定义（Y是 2否）
+     * 审批表单是否自定义（Y=是 N=否）
      */
     private String formCustom;
 
     /**
-     * 审批表单是否自定义（Y是 2否）
+     * 审批表单是否自定义（Y=是 N=否）
      */
     private String formPath;
 
@@ -120,6 +111,10 @@ public class NodeJson {
      * 跳转条件
      */
     private List<SkipJson> skipList = new ArrayList<>();
+
+    private String createBy;
+
+    private String updateBy;
 
     public Map<String, Object> getExtMap() {
         if (MapUtil.isEmpty(extMap)) {

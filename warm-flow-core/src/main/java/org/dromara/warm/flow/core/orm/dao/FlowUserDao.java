@@ -40,11 +40,11 @@ public interface FlowUserDao<T extends User> extends WarmDao<T> {
     /**
      * 根据(待办任务，实例，历史表，节点等)id查询权限人或者处理人
      *
-     * @param associateds (待办任务，实例，历史表，节点等)id集合
+     * @param associatedList (待办任务，实例，历史表，节点等)id集合
      * @param types       用户表类型
-     * @return
+     * @return 查询结果
      */
-    List<T> listByAssociatedAndTypes(List<Long> associateds, String[] types);
+    List<T> listByAssociatedAndTypes(List<Long> associatedList, String[] types);
 
     /**
      * 根据办理人查询
@@ -52,7 +52,7 @@ public interface FlowUserDao<T extends User> extends WarmDao<T> {
      * @param associated   待办任务id
      * @param processedBys 办理人id集合
      * @param types        用户表类型
-     * @return
+     * @return 查询结果
      */
     List<T> listByProcessedBys(Long associated, List<String> processedBys, String[] types);
 }

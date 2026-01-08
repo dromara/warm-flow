@@ -6,6 +6,6 @@ body:
   - type: textarea
     id: feature-detail
     attributes:
-      label: 功能描述
+      label: 功能描述（请尽量详细描述，如果需要最好提供代码、截图或者流程定json等）
     validations:
       required: false

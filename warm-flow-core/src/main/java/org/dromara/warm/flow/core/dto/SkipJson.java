@@ -78,4 +78,8 @@ public class SkipJson {
      */
     private List<String> promptContent;
 
+    private String createBy;
+
+    private String updateBy;
+
 }
