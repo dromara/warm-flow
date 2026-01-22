@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.dromara.warm</groupId>
+        <artifactId>warm-flow-easy-query</artifactId>
+        <version>1.8.5-m1</version>
+    </parent>
+
+    <name>warm-flow-easy-query-core</name>
+    <artifactId>warm-flow-easy-query-core</artifactId>
+    <url>https://github.com/dromara/warm-flow</url>
+
+    <dependencies>
+      <dependency>
+        <groupId>org.dromara.warm</groupId>
+        <artifactId>warm-flow-core</artifactId>
+      </dependency>
+
+      <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <scope>provided</scope>
+      </dependency>
+
+      <!-- entity-query的api包 -->
+      <dependency>
+        <groupId>com.easy-query</groupId>
+        <artifactId>sql-api-proxy</artifactId>
+      </dependency>
+      <!-- entity-query的apt包 如果你是多模块只需要在生成apt的对象模块处需要引入 -->
+      <dependency>
+        <groupId>com.easy-query</groupId>
+        <artifactId>sql-processor</artifactId>
+      </dependency>
+    </dependencies>
+</project>
