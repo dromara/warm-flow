@@ -19,7 +19,9 @@ import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.config.WarmFlow;
 import org.dromara.warm.flow.core.utils.IdUtils;
 import org.dromara.warm.flow.orm.keygen.MybatisPlusIdGen;
+import org.dromara.warm.plugin.modes.solon.config.BeanConfig;
 import org.noear.solon.annotation.Bean;
+import org.noear.solon.annotation.Condition;
 import org.noear.solon.annotation.Configuration;
 
 /**
@@ -29,7 +31,8 @@ import org.noear.solon.annotation.Configuration;
  * @since 2023/6/5 23:01
  */
 @Configuration
-public class FlowAutoConfig {
+@Condition(onProperty = "${warm-flow.enabled:true} = true")
+public class FlowAutoConfig extends BeanConfig {
     @Bean
     public WarmFlow after() {
         // 设置Mybatis-Plus默认主键生成器

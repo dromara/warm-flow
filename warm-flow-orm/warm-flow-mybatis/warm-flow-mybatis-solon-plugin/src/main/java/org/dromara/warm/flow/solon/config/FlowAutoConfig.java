@@ -18,6 +18,7 @@ package org.dromara.warm.flow.solon.config;
 import org.apache.ibatis.solon.annotation.Db;
 import org.dromara.warm.flow.core.config.WarmFlow;
 import org.dromara.warm.flow.orm.utils.CommonUtil;
+import org.dromara.warm.plugin.modes.solon.config.BeanConfig;
 import org.noear.solon.annotation.Bean;
 import org.noear.solon.annotation.Condition;
 import org.noear.solon.annotation.Configuration;
@@ -30,7 +31,7 @@ import org.noear.solon.annotation.Configuration;
  */
 @Configuration
 @Condition(onProperty = "${warm-flow.enabled:true} = true")
-public class FlowAutoConfig {
+public class FlowAutoConfig extends BeanConfig {
 
     @Bean
     public WarmFlow initFlow(@Db org.apache.ibatis.session.Configuration db1Cfg, WarmFlow flowConfig) {

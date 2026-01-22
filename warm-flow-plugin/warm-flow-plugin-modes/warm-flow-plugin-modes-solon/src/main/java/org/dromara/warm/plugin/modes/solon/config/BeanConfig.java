@@ -26,7 +26,6 @@ import org.dromara.warm.flow.orm.entity.*;
 import org.noear.solon.Solon;
 import org.noear.solon.annotation.Bean;
 import org.noear.solon.annotation.Condition;
-import org.noear.solon.annotation.Configuration;
 import org.noear.solon.annotation.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +37,6 @@ import org.slf4j.LoggerFactory;
  * @since 2023/6/5 23:01
  */
 @SuppressWarnings("rawtypes unchecked")
-@Configuration
 @Condition(onProperty = "${warm-flow.enabled:true} = true")
 public class BeanConfig {
 
