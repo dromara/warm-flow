@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.dromara.warm</groupId>
         <artifactId>warm-flow</artifactId>
-        <version>1.8.4</version>
+        <version>1.8.5-m1</version>
     </parent>
 
     <name>warm-flow-orm</name>
@@ -17,6 +17,7 @@
     <modules>
         <module>warm-flow-mybatis</module>
         <module>warm-flow-mybatis-plus</module>
+        <module>warm-flow-easy-query</module>
     </modules>
 
 </project>

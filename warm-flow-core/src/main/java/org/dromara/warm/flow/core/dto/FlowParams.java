@@ -73,7 +73,7 @@ public class FlowParams implements Serializable {
      * 流程变量
      */
     @Getter
-    private Map<String, Object> variable;
+    private Map<String, Object> variable = new HashMap<>();
 
     /**
      * 流程实例状态
