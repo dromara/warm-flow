@@ -28,19 +28,20 @@ import org.springframework.expression.ParserContext;
 import org.springframework.expression.common.TemplateParserContext;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.lang.NonNull;
 
 import java.util.Map;
 
 /**
- * 条件表达式spel
+ * 条件表达式 spel
  *
- * @author warm
+ * @author warm,battcn
  */
 @Configuration
 public class SpelHelper implements ApplicationContextAware {
 
-    private static final ExpressionParser parser = new SpelExpressionParser();
-    private final static ParserContext parserContext = new TemplateParserContext();
+    private static final ExpressionParser PARSER = new SpelExpressionParser();
+    private final static ParserContext PARSER_CONTEXT = new TemplateParserContext();
 
     private static ApplicationContext applicationContext;
 
@@ -57,18 +58,18 @@ public class SpelHelper implements ApplicationContextAware {
     }
 
     /**
-     * @param expression
-     * @return
+     * @param expression expression
+     * @return  Object
      */
     public static Object parseExpression(String expression, Map<String, Object> variable) {
         StandardEvaluationContext context = new StandardEvaluationContext();
         context.setBeanResolver(beanResolver());
         context.setVariables(variable);
-        return parser.parseExpression(expression, parserContext).getValue(context, Object.class);
+        return PARSER.parseExpression(expression, PARSER_CONTEXT).getValue(context, Object.class);
     }
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
         if (SpelHelper.applicationContext == null) {
             SpelHelper.applicationContext = applicationContext;
         }

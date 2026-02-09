@@ -18,6 +18,7 @@ package org.dromara.warm.plugin.modes.sb.utils;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 /**
@@ -31,21 +32,21 @@ public class SpringUtil implements ApplicationContextAware {
     /**
      * 获取applicationContext，应用上下文
      *
-     * @return
+     * @return ApplicationContext
      */
     public static ApplicationContext getApplicationContext() {
         return applicationContext;
     }
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
         if (SpringUtil.applicationContext == null) {
             SpringUtil.applicationContext = applicationContext;
         }
     }
 
     /**
-     * 通过class获取Bean
+     * 通过 class 获取 Bean
      */
     public static <M> M getBean(Class<M> clazz) {
         return getApplicationContext().getBean(clazz);
