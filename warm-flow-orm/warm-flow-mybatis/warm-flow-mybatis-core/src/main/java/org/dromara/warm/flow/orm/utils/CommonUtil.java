@@ -23,6 +23,9 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 
+/**
+ * @author 笨小孩
+ */
 public class CommonUtil {
 
     private CommonUtil() {
@@ -34,21 +37,17 @@ public class CommonUtil {
         if (StringUtils.isEmpty(dataSourceType)) {
             DataSource dataSource = configuration.getEnvironment().getDataSource();
             DatabaseMetaData metaData;
-            Connection connection = null;
-            try {
-                connection = dataSource.getConnection();
-                metaData = connection.getMetaData();
-                dataSourceType = metaData.getDatabaseProductName().toLowerCase();
-            } catch (Exception e) {
-                // 不能因为一个字段的取值, 影响到框架自身运行环境
-                // throw new RuntimeException(e);
-            } finally {
+            try (Connection connection = dataSource.getConnection()) {
                 try {
-                    connection.close();
+                    metaData = connection.getMetaData();
+                    dataSourceType = metaData.getDatabaseProductName().toLowerCase();
                 } catch (Exception e) {
                     // 不能因为一个字段的取值, 影响到框架自身运行环境
                     // throw new RuntimeException(e);
                 }
+            } catch (Exception e) {
+                // 不能因为一个字段的取值, 影响到框架自身运行环境
+                // throw new RuntimeException(e);
             }
         }
 
