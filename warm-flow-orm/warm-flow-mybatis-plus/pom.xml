@@ -18,6 +18,7 @@
         <module>warm-flow-mybatis-plus-core</module>
         <module>warm-flow-mybatis-plus-sb-starter</module>
         <module>warm-flow-mybatis-plus-sb3-starter</module>
+        <module>warm-flow-mybatis-plus-sb4-starter</module>
         <module>warm-flow-mybatis-plus-solon-plugin</module>
     </modules>
 
