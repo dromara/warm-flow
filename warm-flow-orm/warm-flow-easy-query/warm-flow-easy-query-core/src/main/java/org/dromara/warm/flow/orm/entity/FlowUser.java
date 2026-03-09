@@ -15,13 +15,13 @@
  */
 package org.dromara.warm.flow.orm.entity;
 
-import com.easy.query.core.annotation.*;
-import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
+import com.easy.query.core.annotation.Column;
+import com.easy.query.core.annotation.EntityProxy;
+import com.easy.query.core.annotation.Table;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.dromara.warm.flow.core.entity.User;
-import org.dromara.warm.flow.orm.strategy.WarmFlowLogicDeleteStrategy;
 import org.dromara.warm.flow.orm.entity.proxy.FlowUserProxy;
 
 import java.util.Date;
@@ -62,7 +62,6 @@ public class FlowUser implements User, ProxyEntityAvailable<FlowUser, FlowUserPr
     private String tenantId;
 
     /** 删除标记 */
-    @LogicDelete(strategy = LogicDeleteStrategyEnum.CUSTOM,strategyName = WarmFlowLogicDeleteStrategy.NAME)
     private String delFlag;
 
     /** 人员类型（1代办任务的审批人权限 2代办任务的转办人权限 3待办任务的委托人权限） */

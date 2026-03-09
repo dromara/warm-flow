@@ -41,8 +41,6 @@ public class FlowSkipDaoImpl extends WarmDaoImpl<FlowSkip, FlowSkipProxy> implem
 
         return (int) deletable()
             .where(proxy -> proxy.definitionId().in((Collection<? extends Long>) defIds))
-            .useLogicDelete(isLogicDelete())
-            .allowDeleteStatement(!isLogicDelete())
             .executeRows();
     }
 
@@ -50,8 +48,6 @@ public class FlowSkipDaoImpl extends WarmDaoImpl<FlowSkip, FlowSkipProxy> implem
     public int delete(FlowSkip entity) {
         return (int) deletable()
             .where(buildWhereCondition(entity))
-            .useLogicDelete(isLogicDelete())
-            .allowDeleteStatement(!isLogicDelete())
             .executeRows();
     }
 

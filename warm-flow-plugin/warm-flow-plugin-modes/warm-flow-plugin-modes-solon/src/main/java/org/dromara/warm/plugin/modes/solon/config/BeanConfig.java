@@ -128,10 +128,13 @@ public class BeanConfig {
     }
 
     @Bean
-    public WarmFlow initFlow(@Inject("${warm-flow}") WarmFlow warmFlow) {
+    public WarmFlow initFlow(@Inject(value = "${warm-flow}", required = false) WarmFlow warmFlow) {
         setNewEntity();
         FrameInvoker.setCfgFunction((key) -> Solon.cfg().get(key));
         FrameInvoker.setBeanFunction(Solon.context()::getBean);
+        if (warmFlow == null) {
+            warmFlow = new WarmFlow();
+        }
         warmFlow.init();
         FlowEngine.setFlowConfig(warmFlow);
         log.info("【warm-flow】，加载完成");

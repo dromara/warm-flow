@@ -15,8 +15,10 @@
  */
 package org.dromara.warm.flow.orm.entity;
 
-import com.easy.query.core.annotation.*;
-import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
+import com.easy.query.core.annotation.Column;
+import com.easy.query.core.annotation.ColumnIgnore;
+import com.easy.query.core.annotation.EntityProxy;
+import com.easy.query.core.annotation.Table;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -24,7 +26,6 @@ import org.dromara.warm.flow.core.entity.Definition;
 import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.entity.User;
 import org.dromara.warm.flow.orm.entity.proxy.FlowDefinitionProxy;
-import org.dromara.warm.flow.orm.strategy.WarmFlowLogicDeleteStrategy;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -66,7 +67,6 @@ public class FlowDefinition implements Definition,ProxyEntityAvailable<FlowDefin
     private String tenantId;
 
     /** 删除标记 */
-    @LogicDelete(strategy = LogicDeleteStrategyEnum.CUSTOM,strategyName = WarmFlowLogicDeleteStrategy.NAME)
     private String delFlag;
 
     /** 流程编码 */

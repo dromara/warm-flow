@@ -15,14 +15,14 @@
  */
 package org.dromara.warm.flow.orm.entity;
 
-import com.easy.query.core.annotation.*;
-import com.easy.query.core.basic.extension.logicdel.LogicDeleteStrategyEnum;
+import com.easy.query.core.annotation.Column;
+import com.easy.query.core.annotation.EntityProxy;
+import com.easy.query.core.annotation.Table;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.dromara.warm.flow.core.entity.Form;
 import org.dromara.warm.flow.orm.entity.proxy.FlowFormProxy;
-import org.dromara.warm.flow.orm.strategy.WarmFlowLogicDeleteStrategy;
 
 import java.util.Date;
 
@@ -109,7 +109,6 @@ public class FlowForm implements Form, ProxyEntityAvailable<FlowForm, FlowFormPr
     /**
      * 删除标记
      */
-    @LogicDelete(strategy = LogicDeleteStrategyEnum.CUSTOM,strategyName = WarmFlowLogicDeleteStrategy.NAME)
     private String delFlag;
 
 }
