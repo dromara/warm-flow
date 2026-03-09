@@ -27,7 +27,6 @@ import com.easy.query.core.expression.builder.core.NotNullOrEmptyValueFilter;
 import com.easy.query.core.expression.lambda.SQLActionExpression1;
 import com.easy.query.core.proxy.ProxyEntity;
 import com.easy.query.core.proxy.ProxyEntityAvailable;
-import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.entity.RootEntity;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.orm.agent.WarmQuery;
@@ -118,7 +117,6 @@ public abstract class WarmDaoImpl<T extends RootEntity & ProxyEntityAvailable<T,
     @Override
     public T selectById(Serializable id) {
         return queryable()
-                .useLogicDelete(isLogicDelete())
             .whereById(id)
             .singleOrNull();
     }
@@ -126,7 +124,6 @@ public abstract class WarmDaoImpl<T extends RootEntity & ProxyEntityAvailable<T,
     @Override
     public List<T> selectByIds(Collection<? extends Serializable> ids) {
         return queryable()
-            .useLogicDelete(isLogicDelete())
             .whereByIds(ids)
             .toList();
     }
@@ -136,7 +133,6 @@ public abstract class WarmDaoImpl<T extends RootEntity & ProxyEntityAvailable<T,
         UISort objectSort = UISort.of(page);
         EasyPageResult<T> pageResult = queryable()
                 .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
-                .useLogicDelete(isLogicDelete())
                 .where(buildWhereCondition(entity))
                 .orderByObject(Objects.nonNull(objectSort), objectSort)
                 .toPageResult(page.getPageNum(), page.getPageSize());
@@ -152,7 +148,6 @@ public abstract class WarmDaoImpl<T extends RootEntity & ProxyEntityAvailable<T,
         UISort uiSort = UISort.of(query);
         return queryable()
             .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
-            .useLogicDelete(isLogicDelete())
             .where(buildWhereCondition(entity))
             .orderByObject(Objects.nonNull(uiSort),uiSort)
             .toList();
@@ -162,7 +157,6 @@ public abstract class WarmDaoImpl<T extends RootEntity & ProxyEntityAvailable<T,
     public long selectCount(T entity) {
         return queryable()
             .filterConfigure(NotNullOrEmptyValueFilter.DEFAULT)
-            .useLogicDelete(isLogicDelete())
             .where(buildWhereCondition(entity))
             .count();
     }
@@ -177,7 +171,6 @@ public abstract class WarmDaoImpl<T extends RootEntity & ProxyEntityAvailable<T,
     @Override
     public int updateById(T entity) {
         return (int) updatable(entity)
-            .useLogicDelete(isLogicDelete())
             .setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS)
             .executeRows();
     }
@@ -186,8 +179,6 @@ public abstract class WarmDaoImpl<T extends RootEntity & ProxyEntityAvailable<T,
     @Override
     public int deleteById(Serializable id) {
         return (int) deletable()
-            .useLogicDelete(isLogicDelete())
-            .allowDeleteStatement(!isLogicDelete())
             .whereById(id)
             .executeRows();
     }
@@ -195,8 +186,6 @@ public abstract class WarmDaoImpl<T extends RootEntity & ProxyEntityAvailable<T,
     @Override
     public int deleteByIds(Collection<? extends Serializable> ids) {
         return (int) deletable()
-            .useLogicDelete(isLogicDelete())
-            .allowDeleteStatement(!isLogicDelete())
             .whereByIds(ids)
             .executeRows();
     }
@@ -214,16 +203,10 @@ public abstract class WarmDaoImpl<T extends RootEntity & ProxyEntityAvailable<T,
     public void updateBatch(List<T> list) {
         entityQuery().updatable(list)
                 .setSQLStrategy(SQLExecuteStrategyEnum.ONLY_NOT_NULL_COLUMNS)
-                .useLogicDelete(isLogicDelete())
                 .batch()
                 .executeRows();
 
     }
 
     public abstract SQLActionExpression1<P> buildWhereCondition(T entity);
-
-    public boolean isLogicDelete() {
-        return FlowEngine.getFlowConfig().isLogicDelete();
-    }
-
 }

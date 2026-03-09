@@ -39,8 +39,6 @@ public class FlowInstanceDaoImpl extends WarmDaoImpl<FlowInstance, FlowInstanceP
     @Override
     public int delete(FlowInstance entity) {
         return (int) deletable()
-            .useLogicDelete(isLogicDelete())
-            .allowDeleteStatement(!isLogicDelete())
             .where(buildWhereCondition(entity))
             .executeRows();
     }
@@ -48,7 +46,6 @@ public class FlowInstanceDaoImpl extends WarmDaoImpl<FlowInstance, FlowInstanceP
     @Override
     public List<FlowInstance> getByDefIds(List<Long> defIds) {
         return queryable()
-            .useLogicDelete(isLogicDelete())
             .where(proxy -> proxy.definitionId().in(defIds)).toList();
     }
 

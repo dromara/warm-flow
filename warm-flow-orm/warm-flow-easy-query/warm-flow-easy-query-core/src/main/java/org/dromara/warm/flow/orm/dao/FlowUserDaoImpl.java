@@ -43,8 +43,6 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser, FlowUserProxy> implem
             .where(proxy -> {
                 proxy.associated().in(taskIdList);
             })
-            .useLogicDelete(isLogicDelete())
-            .allowDeleteStatement(!isLogicDelete())
             .executeRows();
 
     }
@@ -53,7 +51,6 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser, FlowUserProxy> implem
     public List<FlowUser> listByAssociatedAndTypes(List<Long> associatedList, String[] types) {
 
         return queryable()
-            .useLogicDelete(isLogicDelete())
             .where(proxy -> {
                 proxy.associated().in(EasyCollectionUtil.isNotEmpty(associatedList), associatedList);
                 proxy.type().in(EasyArrayUtil.isNotEmpty(types), types);
@@ -64,7 +61,6 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser, FlowUserProxy> implem
     @Override
     public List<FlowUser> listByProcessedBys(Long associated, List<String> processedBys, String[] types) {
         return  queryable()
-            .useLogicDelete(isLogicDelete())
             .where(proxy -> {
                 proxy.associated().eq(Objects.nonNull(associated), associated);
                 proxy.processedBy().in(EasyCollectionUtil.isNotEmpty(processedBys), processedBys);
@@ -77,8 +73,6 @@ public class FlowUserDaoImpl extends WarmDaoImpl<FlowUser, FlowUserProxy> implem
     public int delete(FlowUser entity) {
         // 没有使用逻辑删除， 直接物理删除
         return (int) deletable()
-            .useLogicDelete(isLogicDelete())
-            .allowDeleteStatement(!isLogicDelete())
             .where(buildWhereCondition(entity))
             .executeRows();
     }
