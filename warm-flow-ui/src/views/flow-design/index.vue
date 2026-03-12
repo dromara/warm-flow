@@ -686,7 +686,8 @@ async function downJson() {
 .container {
   flex: 1;
   width: 100%;
-  height: 800px; /* 根据实际需求调整高度 */
+    height: calc(100vh - 100px); /* 占满视口高度减去顶部区域的高度 */
+    min-height: 400px; /* 设置最小高度 */
 }
 
 .logo-text {
