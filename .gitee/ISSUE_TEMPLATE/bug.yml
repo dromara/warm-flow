@@ -32,7 +32,13 @@ body:
   - type: textarea
     attributes:
       label: 问题描述和复现
-      description: 请详细告诉问题描述，如何复现你遇到的问题，如有必要请提供提供【代码、截图或者流程定json等】。
+      description: 请详细告诉问题描述，如何复现你遇到的问题，如有必要请提供提供【代码、截图】。
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: 流程定义json
+      description: 如需要请提供流程定义json，否则请输入[无]。
     validations:
       required: true
   - type: textarea
