@@ -152,7 +152,7 @@ function handleLeave() {
   width: 100%;
   height: 80px;
   box-sizing: border-box;
-  border-radius: 5px; /* 添加圆角 */
+  border-radius: 10px; /* 添加圆角 */
 }
 
 .top-section {
