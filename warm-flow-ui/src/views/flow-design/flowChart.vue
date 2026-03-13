@@ -1,5 +1,5 @@
 <template>
-  <div style="width: 100%; height: 100%">
+  <div style="width: 100%; height: 100%" :style="headerDiv">
     <div class="top-text" v-if="defJson.topTextShow">{{defJson.topText}}</div>
     <el-header :style="headerStyle">
       <div style="padding: 5px 0; display: flex; align-items: center;">
@@ -75,13 +75,17 @@ const statusColors = ref({
 });
 
 const isDark = ref(false);
+const headerDiv = computed(() => {
+    return {
+        backgroundColor: isDark.value ? "#141414" : "#fff"
+    };
+});
 const headerStyle = computed(() => {
   return {
     top: "5px",
     right: "50px",
     zIndex: "2",
     height: "auto",
-    backgroundColor: isDark.value ? "#333" : "#fff"
   };
 });
 
@@ -279,7 +283,7 @@ onMounted(async () => {
 watch(isDark, (v) => {
   if (!lf.value) return;
   lf.value.graphModel.background = {
-    background: v ? "#333" : "#fff"
+    background: v ? "#141414" : "#fff"
   };
 });
 
