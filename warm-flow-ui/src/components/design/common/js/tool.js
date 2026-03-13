@@ -209,7 +209,9 @@ export const logicFlowJsonToWarmFlow = (data) => {
     node.listenerType = anyNode.properties.listenerType
     node.listenerPath = anyNode.properties.listenerPath
     node.formCustom = anyNode.properties.formCustom
-    node.formPath = anyNode.properties.formPath
+    if (anyNode.properties.formPath && String(anyNode.properties.formPath).trim()) {
+      node.formPath = anyNode.properties.formPath.trim()
+    }
     node.ext = [];
     for (const key in anyNode.properties.ext) {
       if (Object.prototype.hasOwnProperty.call(anyNode.properties.ext, key)) {
