@@ -75,6 +75,16 @@ public class WarmFlow implements Serializable {
     private String tenantHandlerPath;
 
     /**
+     * 办理人权限处理器类路径
+     */
+    private String permissionHandlerPath;
+
+    /**
+     * 全局监听器类路径
+     */
+    private String globalListenerPath;
+
+    /**
      * 数据源类型, mybatis模块对orm进一步的封装, 由于各数据库分页语句存在差异,
      * 当配置此参数时, 以此参数结果为基准, 未配置时, 取DataSource中数据源类型,
      * 兜底为mysql数据库
@@ -119,10 +129,10 @@ public class WarmFlow implements Serializable {
         FlowEngine.initDataFillHandler(this.getDataFillHandlerPath());
 
         // 设置办理人权限处理类
-        FlowEngine.initPermissionHandler();
+        FlowEngine.initPermissionHandler(this.getPermissionHandlerPath());
 
         // 设置全局监听器
-        FlowEngine.initGlobalListener();
+        FlowEngine.initGlobalListener(this.getGlobalListenerPath());
 
         // 打印banner图
         printBanner();
