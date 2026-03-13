@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :style="headerDiv">
     <!-- 流程名称和步骤条容器 -->
     <div :style="headerContainer" v-if="!onlyDesignShow">
       <!-- 流程名称 -->
@@ -136,7 +136,7 @@ const headerStyle = computed(() => {
     right: "50px",
     zIndex: "2",
     height: "auto",
-    backgroundColor: isDark.value ? "#333" : "#fff",
+    backgroundColor: isDark.value ? "#141414" : "#fff",
     border: "1px solid #ddd", /* 添加边框 */
     borderRadius: "6px", /* 添加圆角 */
     margin: "5px",
@@ -145,8 +145,14 @@ const headerStyle = computed(() => {
 const baseInfoStyle = computed(() => {
   return {
     margin: "5px",
-    backgroundColor: isDark.value ? "#333" : "#fff",
+    backgroundColor: isDark.value ? "#141414" : "#fff",
   };
+});
+
+const headerDiv = computed(() => {
+    return {
+        backgroundColor: isDark.value ? "#141414" : "#fff",
+    };
 });
 
 const headerContainer = computed(() => {
@@ -156,7 +162,6 @@ const headerContainer = computed(() => {
     border: "1px solid #ddd", /* 添加边框 */
     borderRadius: "6px", /* 添加圆角 */
     height: "100%", /* 占满父容器高度 */
-    backgroundColor: isDark.value ? "#333" : "#fff",
     top: "5px",
     margin: "0px 5px",
   };
@@ -307,7 +312,7 @@ watch(isDark, (v) => {
     return;
   }
   lf.value.graphModel.background = {
-    background: v ? "#333" : "#fff",
+    background: v ? "#141414" : "#fff",
   };
 });
 
