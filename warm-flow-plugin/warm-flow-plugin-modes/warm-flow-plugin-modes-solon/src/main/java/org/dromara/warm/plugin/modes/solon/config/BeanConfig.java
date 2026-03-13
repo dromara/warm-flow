@@ -17,7 +17,11 @@ package org.dromara.warm.plugin.modes.solon.config;
 
 import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.config.WarmFlow;
+import org.dromara.warm.flow.core.handler.DataFillHandler;
+import org.dromara.warm.flow.core.handler.PermissionHandler;
+import org.dromara.warm.flow.core.handler.TenantHandler;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
+import org.dromara.warm.flow.core.listener.GlobalListener;
 import org.dromara.warm.flow.core.orm.dao.*;
 import org.dromara.warm.flow.core.service.*;
 import org.dromara.warm.flow.core.service.impl.*;
@@ -128,7 +132,9 @@ public class BeanConfig {
     }
 
     @Bean
-    public WarmFlow initFlow(@Inject(value = "${warm-flow}", required = false) WarmFlow warmFlow) {
+    public WarmFlow initFlow(@Inject(value = "${warm-flow}", required = false) WarmFlow warmFlow
+        , @Inject(required = false) DataFillHandler dataFillHandler, @Inject(required = false)  TenantHandler tenantHandler
+        , @Inject(required = false) PermissionHandler permissionHandler, @Inject(required = false) GlobalListener globalListener) {
         setNewEntity();
         FrameInvoker.setCfgFunction((key) -> Solon.cfg().get(key));
         FrameInvoker.setBeanFunction(Solon.context()::getBean);
