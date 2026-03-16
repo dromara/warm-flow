@@ -6,7 +6,7 @@
 
     <groupId>org.dromara.warm</groupId>
     <artifactId>warm-flow</artifactId>
-    <version>1.8.5-m1</version>
+    <version>1.8.5-m2</version>
     <packaging>pom</packaging>
 
     <name>warm-flow</name>
@@ -86,6 +86,7 @@
         <snack3.version>3.2.139</snack3.version>
         <snack4.version>4.0.8</snack4.version>
         <jackson.version>2.13.5</jackson.version>
+        <jackson3.version>3.0.4</jackson3.version>
         <fastjson.version>2.0.43</fastjson.version>
         <gson.version>2.9.0</gson.version>
 
@@ -214,6 +215,12 @@
                 <version>${easy-query.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.easy-query</groupId>
+                <artifactId>sql-springboot4-starter</artifactId>
+                <version>${easy-query.version}</version>
+            </dependency>
+
             <!-- entity-query的api包 -->
             <dependency>
                 <groupId>com.easy-query</groupId>
@@ -245,6 +252,12 @@
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
                 <version>${jackson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>tools.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson3.version}</version>
             </dependency>
 
             <dependency>
@@ -299,6 +312,12 @@
 
             <dependency>
                 <groupId>org.dromara.warm</groupId>
+                <artifactId>warm-flow-mybatis-sb4-starter</artifactId>
+                <version>${warm-flow}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-mybatis-solon-plugin</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
@@ -323,6 +342,12 @@
 
             <dependency>
                 <groupId>org.dromara.warm</groupId>
+                <artifactId>warm-flow-mybatis-plus-sb4-starter</artifactId>
+                <version>${warm-flow}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-mybatis-plus-solon-plugin</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
@@ -336,6 +361,18 @@
             <dependency>
                 <groupId>org.dromara.warm</groupId>
                 <artifactId>warm-flow-easy-query-sb-starter</artifactId>
+                <version>${warm-flow}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.dromara.warm</groupId>
+                <artifactId>warm-flow-easy-query-sb3-starter</artifactId>
+                <version>${warm-flow}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.dromara.warm</groupId>
+                <artifactId>warm-flow-easy-query-sb4-starter</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
 
@@ -359,7 +396,13 @@
 
             <dependency>
                 <groupId>org.dromara.warm</groupId>
-                <artifactId>warm-flow-plugin-json</artifactId>
+                <artifactId>warm-flow-plugin-json-v1</artifactId>
+                <version>${warm-flow}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.dromara.warm</groupId>
+                <artifactId>warm-flow-plugin-json-jackson3</artifactId>
                 <version>${warm-flow}</version>
             </dependency>
 

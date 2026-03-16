@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.dromara.warm</groupId>
         <artifactId>warm-flow-mybatis-plus</artifactId>
-        <version>1.8.5-m1</version>
+        <version>1.8.5-m2</version>
     </parent>
 
     <name>warm-flow-mybatis-plus-sb4-starter</name>
@@ -16,10 +16,14 @@
 
     <properties>
         <mybatis-plus.version>3.5.15</mybatis-plus.version>
-        <jackson3.version>3.0.4</jackson3.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.dromara.warm</groupId>
+            <artifactId>warm-flow-plugin-json-jackson3</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.dromara.warm</groupId>
             <artifactId>warm-flow-mybatis-plus-sb-starter</artifactId>
@@ -56,14 +60,6 @@
             <artifactId>mybatis-plus-extension</artifactId>
             <version>${mybatis-plus.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>tools.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson3.version}</version>
-            <optional>true</optional>
-        </dependency>
-
     </dependencies>
 
     <dependencyManagement>
