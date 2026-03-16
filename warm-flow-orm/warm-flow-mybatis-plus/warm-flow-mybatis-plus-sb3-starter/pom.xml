@@ -31,6 +31,10 @@
                     <groupId>com.baomidou</groupId>
                     <artifactId>mybatis-plus-boot-starter</artifactId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>mybatis-plus-jsqlparser-4.9</artifactId>
+                    <groupId>com.baomidou</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
 
