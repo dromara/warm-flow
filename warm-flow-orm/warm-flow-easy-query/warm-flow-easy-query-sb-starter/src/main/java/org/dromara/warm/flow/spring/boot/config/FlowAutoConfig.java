@@ -18,8 +18,6 @@ package org.dromara.warm.flow.spring.boot.config;
 import com.easy.query.api.proxy.client.EasyEntityQuery;
 import org.dromara.warm.flow.core.config.WarmFlow;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
-import org.dromara.warm.flow.orm.interceptor.TenantInterceptor;
-import org.dromara.warm.flow.orm.strategy.WarmFlowLogicDeleteStrategy;
 import org.dromara.warm.plugin.modes.sb.config.BeanConfig;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -42,7 +40,5 @@ public class FlowAutoConfig extends BeanConfig {
         if (entityQuery == null) {
             throw new BeanCreationException("EasyEntityQuery is not found, please check the configuration");
         }
-        entityQuery.getRuntimeContext().getQueryConfiguration().applyLogicDeleteStrategy(new WarmFlowLogicDeleteStrategy());
-        entityQuery.getRuntimeContext().getQueryConfiguration().applyInterceptor(new TenantInterceptor());
     }
 }

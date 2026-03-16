@@ -25,7 +25,6 @@ public class FlowFormDaoImpl extends WarmDaoImpl<FlowForm, FlowFormProxy> implem
     @Override
     public List<FlowForm> queryByCodeList(List<String> formCodeList) {
         return queryable()
-                .useLogicDelete(isLogicDelete())
                 .where(proxy -> proxy.formCode().in(formCodeList)).toList();
     }
 
@@ -33,8 +32,6 @@ public class FlowFormDaoImpl extends WarmDaoImpl<FlowForm, FlowFormProxy> implem
     public int delete(FlowForm entity) {
         // 没有启用逻辑删除， 执行物理删除
         return (int) deletable()
-            .useLogicDelete(isLogicDelete())
-            .allowDeleteStatement(!isLogicDelete())
             .where(buildWhereCondition(entity))
             .executeRows();
     }

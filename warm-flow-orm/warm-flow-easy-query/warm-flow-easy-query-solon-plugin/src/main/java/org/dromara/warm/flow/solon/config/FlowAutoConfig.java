@@ -21,7 +21,6 @@ import com.easy.query.solon.annotation.Db;
 import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.config.WarmFlow;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
-import org.dromara.warm.flow.orm.strategy.WarmFlowLogicDeleteStrategy;
 import org.dromara.warm.plugin.modes.solon.config.BeanConfig;
 import org.noear.solon.Solon;
 import org.noear.solon.annotation.Bean;
@@ -47,7 +46,6 @@ public class FlowAutoConfig extends BeanConfig {
             return Solon.context().getBean(clazz);
         });
 
-        entityQuery.getRuntimeContext().getQueryConfiguration().applyLogicDeleteStrategy(new WarmFlowLogicDeleteStrategy());
         return FlowEngine.getFlowConfig();
     }
 }

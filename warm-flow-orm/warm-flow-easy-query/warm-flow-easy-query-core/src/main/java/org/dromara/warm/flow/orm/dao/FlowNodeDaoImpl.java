@@ -41,7 +41,6 @@ public class FlowNodeDaoImpl extends WarmDaoImpl<FlowNode, FlowNodeProxy> implem
     @Override
     public List<FlowNode> getByNodeCodes(List<String> nodeCodes, Long definitionId) {
         return queryable()
-            .useLogicDelete(isLogicDelete())
             .where(proxy -> {
                 proxy.definitionId().eq(definitionId);
                 proxy.nodeCode().in(EasyCollectionUtil.isNotEmpty(nodeCodes), nodeCodes);
@@ -53,8 +52,6 @@ public class FlowNodeDaoImpl extends WarmDaoImpl<FlowNode, FlowNodeProxy> implem
     public int deleteNodeByDefIds(Collection<? extends Serializable> defIds) {
         // 没有使用逻辑删除， 直接物理删除
        return (int) deletable()
-           .useLogicDelete(isLogicDelete())
-           .allowDeleteStatement(!isLogicDelete())
             .where(proxy -> {
                 //noinspection unchecked
                 proxy.definitionId().in((Collection<? extends Long>) defIds);
@@ -65,8 +62,6 @@ public class FlowNodeDaoImpl extends WarmDaoImpl<FlowNode, FlowNodeProxy> implem
     @Override
     public int delete(FlowNode entity) {
         return (int) deletable()
-            .useLogicDelete(isLogicDelete())
-            .allowDeleteStatement(!isLogicDelete())
             .where(buildWhereCondition(entity))
             .executeRows();
     }

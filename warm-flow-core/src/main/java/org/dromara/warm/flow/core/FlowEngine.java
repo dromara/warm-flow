@@ -185,12 +185,12 @@ public class FlowEngine {
         tenantHandler = initBean(TenantHandler.class, handlerPath, null);
     }
 
-    public static void initPermissionHandler() {
-        permissionHandler = initBean(PermissionHandler.class, null, null);
+    public static void initPermissionHandler(String handlerPath) {
+        permissionHandler = initBean(PermissionHandler.class, handlerPath, null);
     }
 
-    public static void initGlobalListener() {
-        globalListener = initBean(GlobalListener.class, null, null);
+    public static void initGlobalListener(String handlerPath) {
+        globalListener = initBean(GlobalListener.class, handlerPath, null);
     }
 
     /**

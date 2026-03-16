@@ -37,7 +37,6 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask, FlowHisTaskProx
     @Override
     public List<FlowHisTask> getNoReject(Long instanceId) {
         return queryable()
-            .useLogicDelete(isLogicDelete())
             .where(proxy -> {
                 proxy.instanceId().eq(instanceId);
                 proxy.skipType().eq(SkipType.PASS.getKey());
@@ -48,7 +47,6 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask, FlowHisTaskProx
     @Override
     public List<FlowHisTask> getByInsAndNodeCodes(Long instanceId, List<String> nodeCodes) {
         return queryable()
-            .useLogicDelete(isLogicDelete())
             .where(proxy -> {
                 proxy.instanceId().eq(instanceId);
                 proxy.nodeCode().in(CollUtil.isNotEmpty(nodeCodes), nodeCodes);
@@ -59,8 +57,6 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask, FlowHisTaskProx
     @Override
     public int deleteByInsIds(List<Long> instanceIds) {
         return (int) deletable()
-            .useLogicDelete(isLogicDelete())
-            .allowDeleteStatement(!isLogicDelete())
             .where(proxy -> proxy.instanceId().in(instanceIds))
             .executeRows();
     }
@@ -68,7 +64,6 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask, FlowHisTaskProx
     @Override
     public List<FlowHisTask> listByTaskIdAndCooperateTypes(Long taskId, Integer[] cooperateTypes) {
         return queryable()
-            .useLogicDelete(isLogicDelete())
             .where(proxy -> {
                 proxy.taskId().eq(Objects.nonNull(proxy.taskId()), taskId);
                 proxy.cooperateType().in(EasyArrayUtil.isNotEmpty(cooperateTypes), cooperateTypes);
@@ -85,8 +80,6 @@ public class FlowHisTaskDaoImpl extends WarmDaoImpl<FlowHisTask, FlowHisTaskProx
     public int delete(FlowHisTask entity) {
         // 没有启用逻辑删除， 执行物理删除
         return (int) deletable()
-            .useLogicDelete(isLogicDelete())
-            .allowDeleteStatement(!isLogicDelete())
             .where(buildWhereCondition(entity))
             .executeRows();
 

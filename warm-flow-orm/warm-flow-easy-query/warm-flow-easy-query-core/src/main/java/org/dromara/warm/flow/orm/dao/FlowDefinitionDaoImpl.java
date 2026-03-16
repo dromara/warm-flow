@@ -39,7 +39,6 @@ public class FlowDefinitionDaoImpl extends WarmDaoImpl<FlowDefinition, FlowDefin
     @Override
     public List<FlowDefinition> queryByCodeList(List<String> flowCodeList) {
         return queryable()
-                .useLogicDelete(isLogicDelete())
                 .useInterceptor()
                 .where(proxy -> proxy.flowCode().in(flowCodeList)).toList();
     }
@@ -47,7 +46,6 @@ public class FlowDefinitionDaoImpl extends WarmDaoImpl<FlowDefinition, FlowDefin
     @Override
     public void updatePublishStatus(List<Long> ids, Integer publishStatus) {
         updatable()
-                .useLogicDelete(isLogicDelete())
                 .where(flowDefinition-> flowDefinition.id().in(ids))
                 .setColumns(proxy -> proxy.isPublish().set(publishStatus))
                 .executeRows();
@@ -56,8 +54,6 @@ public class FlowDefinitionDaoImpl extends WarmDaoImpl<FlowDefinition, FlowDefin
     @Override
     public int delete(FlowDefinition entity) {
         return (int) deletable()
-            .useLogicDelete(isLogicDelete())
-            .allowDeleteStatement(!isLogicDelete())
             .where(buildWhereCondition(entity))
             .executeRows();
     }

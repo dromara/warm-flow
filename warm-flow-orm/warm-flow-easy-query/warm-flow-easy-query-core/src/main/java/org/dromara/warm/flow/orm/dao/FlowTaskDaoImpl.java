@@ -41,8 +41,6 @@ public class FlowTaskDaoImpl extends WarmDaoImpl<FlowTask, FlowTaskProxy> implem
             .where(proxy -> {
                 proxy.instanceId().in(instanceIds);
             })
-            .useLogicDelete(isLogicDelete())
-            .allowDeleteStatement(!isLogicDelete())
             .executeRows();
 
     }
@@ -50,8 +48,6 @@ public class FlowTaskDaoImpl extends WarmDaoImpl<FlowTask, FlowTaskProxy> implem
     @Override
     public int delete(FlowTask entity) {
         return (int) deletable()
-            .useLogicDelete(isLogicDelete())
-            .allowDeleteStatement(!isLogicDelete())
             .where(buildWhereCondition(entity))
             .executeRows();
 
@@ -60,7 +56,6 @@ public class FlowTaskDaoImpl extends WarmDaoImpl<FlowTask, FlowTaskProxy> implem
     @Override
     public List<FlowTask> getByInsIdAndNodeCodes(Long instanceId, List<String> nodeCodes) {
         return queryable()
-                .useLogicDelete(isLogicDelete())
                 .where(proxy -> {
                     proxy.instanceId().eq(instanceId);
                     proxy.nodeCode().in(nodeCodes);
