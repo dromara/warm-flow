@@ -451,7 +451,10 @@ async function saveJsonModel() {
   saveJson(jsonString, onlyDesignShow.value).then(response => {
     if (response.code === 200) {
       proxy.$modal.msgSuccess("保存成功");
-      close();
+      // 延迟500ms后关闭页面
+        setTimeout(() => {
+            close()
+        }, 500)
     }
   }).finally(() => {
     nextTick(() => {
