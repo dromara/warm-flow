@@ -13,7 +13,7 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.dromara.warm.flow.orm.jackson3;
+package org.dromara.warm.plugin.json;
 
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.json.JsonConvert;

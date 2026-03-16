@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.dromara.warm</groupId>
+        <artifactId>warm-flow-easy-query</artifactId>
+        <version>1.8.5-m2</version>
+    </parent>
+
+    <name>warm-flow-easy-query-sb4-starter</name>
+    <artifactId>warm-flow-easy-query-sb4-starter</artifactId>
+    <url>https://github.com/dromara/warm-flow</url>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.dromara.warm</groupId>
+            <artifactId>warm-flow-plugin-json-jackson3</artifactId>
+        </dependency>
+
+        <dependency>
+          <groupId>org.dromara.warm</groupId>
+          <artifactId>warm-flow-easy-query-sb-starter</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>sql-springboot-starter</artifactId>
+                    <groupId>com.easy-query</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.easy-query</groupId>
+            <artifactId>sql-springboot4-starter</artifactId>
+        </dependency>
+    </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${springboot4.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>${java17.version}</source>
+                    <target>${java17.version}</target>
+                    <fork>true</fork>
+                    <executable>${java17.path}\javac</executable>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Build-Jdk-Spec>${java17.version}</Build-Jdk-Spec>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
