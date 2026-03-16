@@ -16,6 +16,7 @@
 
     <properties>
         <mybatis-plus.version>3.5.15</mybatis-plus.version>
+        <jackson3.version>3.0.4</jackson3.version>
     </properties>
 
     <dependencies>
@@ -31,6 +32,10 @@
                     <groupId>com.baomidou</groupId>
                     <artifactId>mybatis-plus-boot-starter</artifactId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>mybatis-plus-jsqlparser-4.9</artifactId>
+                    <groupId>com.baomidou</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -44,6 +49,19 @@
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-jsqlparser</artifactId>
             <version>${mybatis-plus.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-extension</artifactId>
+            <version>${mybatis-plus.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson3.version}</version>
+            <optional>true</optional>
         </dependency>
 
     </dependencies>
@@ -69,8 +87,6 @@
                 <configuration>
                     <source>${java17.version}</source>
                     <target>${java17.version}</target>
-                    <fork>true</fork>
-                    <executable>${java17.path}\javac</executable>
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
