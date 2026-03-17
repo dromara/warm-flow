@@ -22,7 +22,6 @@ import org.dromara.warm.flow.core.entity.Task;
 import org.dromara.warm.flow.core.entity.User;
 import org.dromara.warm.flow.core.orm.service.IWarmService;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -83,12 +82,18 @@ public interface HisTaskService extends IWarmService<HisTask> {
      * 设置协作历史记录
      *
      * @param task          当前任务
-     * @param node          当然任务节点
      * @param flowParams    参数
      * @param collaborators 协作人
      */
-    HisTask setCooperateHis(Task task, Node node, FlowParams flowParams
+    HisTask setCooperateHis(Task task, FlowParams flowParams
         , List<String> collaborators);
+
+    /**
+     * 设置暂存历史记录
+     * @param task 当前任务
+     * @param flowParams 参数
+     */
+    HisTask notSkip(Task task, FlowParams flowParams);
 
     /**
      * 委派历史任务

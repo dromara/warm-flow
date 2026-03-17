@@ -78,7 +78,7 @@ public class ObjectUtil {
      * @param <T>                  对象类型
      * @throws NullPointerException {@code defaultValueSupplier == null} 时，抛出
      */
-    public static <T> T defaultIfNull(T source, Supplier<? extends T> defaultValueSupplier) {
+    public static <T> T defaultNull(T source, Supplier<? extends T> defaultValueSupplier) {
         if (isNull(source)) {
             return defaultValueSupplier.get();
         }

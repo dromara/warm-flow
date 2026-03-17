@@ -87,7 +87,7 @@ public class ServiceLoaderUtil {
      * @return 服务接口实现列表
      */
     public static <T> ServiceLoader<T> load(Class<T> clazz, ClassLoader loader) {
-        return ServiceLoader.load(clazz, ObjectUtil.defaultIfNull(loader, ServiceLoaderUtil::getClassLoader));
+        return ServiceLoader.load(clazz, ObjectUtil.defaultNull(loader, ServiceLoaderUtil::getClassLoader));
     }
 
     /**

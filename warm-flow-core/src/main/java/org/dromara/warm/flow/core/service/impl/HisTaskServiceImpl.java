@@ -97,25 +97,50 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
 
 
     @Override
-    public HisTask setCooperateHis(Task task, Node node, FlowParams flowParams
+    public HisTask setCooperateHis(Task task, FlowParams flowParams
         , List<String> collaborators) {
         String flowStatus = getFlowStatus(flowParams);
         HisTask hisTask = FlowEngine.newHisTask()
             .setTaskId(task.getId())
             .setInstanceId(task.getInstanceId())
-            .setCooperateType(ObjectUtil.isNotNull(flowParams.getCooperateType())
-                ? flowParams.getCooperateType() : CooperateType.APPROVAL.getKey())
+            .setCooperateType(ObjectUtil.defaultNull(flowParams.getCooperateType(), CooperateType.APPROVAL.getKey()))
             .setCollaborator(StreamUtils.join(collaborators, c -> c))
             .setNodeCode(task.getNodeCode())
             .setNodeName(task.getNodeName())
             .setNodeType(task.getNodeType())
             .setDefinitionId(task.getDefinitionId())
-            .setTargetNodeCode(node.getNodeCode())
-            .setTargetNodeName(node.getNodeName())
+            .setTargetNodeCode(task.getNodeCode())
+            .setTargetNodeName(task.getNodeName())
             .setApprover(flowParams.getHandler())
             .setSkipType(flowParams.getSkipType())
-            .setFlowStatus(StringUtils.isNotEmpty(flowStatus)
-                ? flowStatus : FlowStatus.APPROVAL.getKey())
+            .setFlowStatus(StringUtils.emptyDefault(flowStatus, FlowStatus.APPROVAL.getKey()))
+            .setFormCustom(task.getFormCustom())
+            .setFormPath(task.getFormPath())
+            .setMessage(flowParams.getMessage())
+            .setVariable(flowParams.getVariableStr())
+            //业务详情添加至历史记录
+            .setExt(flowParams.getHisTaskExt())
+            .setCreateTime(task.getCreateTime());
+        FlowEngine.dataFillHandler().idFill(hisTask);
+        return hisTask;
+    }
+
+    @Override
+    public HisTask notSkip(Task task, FlowParams flowParams) {
+        String flowStatus = getFlowStatus(flowParams);
+        HisTask hisTask = FlowEngine.newHisTask()
+            .setTaskId(task.getId())
+            .setInstanceId(task.getInstanceId())
+            .setCooperateType(ObjectUtil.defaultNull(flowParams.getCooperateType(), CooperateType.APPROVAL.getKey()))
+            .setNodeCode(task.getNodeCode())
+            .setNodeName(task.getNodeName())
+            .setNodeType(task.getNodeType())
+            .setDefinitionId(task.getDefinitionId())
+            .setTargetNodeCode(task.getNodeCode())
+            .setTargetNodeName(task.getNodeName())
+            .setApprover(flowParams.getHandler())
+            .setSkipType(SkipType.NONE.getKey())
+            .setFlowStatus(flowStatus)
             .setFormCustom(task.getFormCustom())
             .setFormPath(task.getFormPath())
             .setMessage(flowParams.getMessage())
@@ -195,8 +220,7 @@ public class HisTaskServiceImpl extends WarmServiceImpl<FlowHisTaskDao<HisTask>,
         HisTask hisTask = FlowEngine.newHisTask()
             .setTaskId(task.getId())
             .setInstanceId(task.getInstanceId())
-            .setCooperateType(ObjectUtil.isNotNull(flowParams.getCooperateType())
-                ? flowParams.getCooperateType() : CooperateType.APPROVAL.getKey())
+            .setCooperateType(ObjectUtil.defaultNull(flowParams.getCooperateType(), CooperateType.APPROVAL.getKey()))
             .setNodeCode(task.getNodeCode())
             .setNodeName(task.getNodeName())
             .setNodeType(task.getNodeType())
