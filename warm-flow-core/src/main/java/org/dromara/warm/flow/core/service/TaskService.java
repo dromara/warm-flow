@@ -425,6 +425,51 @@ public interface TaskService extends IWarmService<Task> {
     boolean updateHandler(Long taskId, FlowParams flowParams);
 
     /**
+     * 根据流程实例id暂存任务
+     * 只修改主要修改任务状态和新增历史记录，流程不流转
+     *
+     * @param instanceId 流程实例id[必传]
+     * @param flowParams 包含流程相关参数的对象
+     *                   - handler 当前办理人唯一标识，如用户id，用于记录历史表; 如果通过办理人权限处理器{@link PermissionHandler#getHandler()}传入了，就不需要传 [按需传输]
+     *                   - permissionFlag 办理人权限标识，比如用户，角色，部门等，用于校验是否有权限办理 [按需传输]；满足以下任一情况可以不传
+     *                   流程设计时未设置办理人、ignore为true、实现了办理人权限处理器{@link PermissionHandler#permissions()}
+     *                   - flowStatus 流程状态，自定义流程状态 [按需传输]
+     *                   - message 审批意见[按需传输]
+     *                   - ignore 转办忽略权限校验,默认忽略（true：忽略，false：不忽略）[按需传输]
+     */
+    Instance pendingByInsId(Long instanceId, FlowParams flowParams);
+
+    /**
+     * 根据任务实例id暂存任务
+     * 只修改主要修改任务状态和新增历史记录，流程不流转
+     *
+     * @param taskId     修改的任务id [必传]
+     * @param flowParams 包含流程相关参数的对象
+     *                   - handler 当前办理人唯一标识，如用户id，用于记录历史表; 如果通过办理人权限处理器{@link PermissionHandler#getHandler()}传入了，就不需要传 [按需传输]
+     *                   - permissionFlag 办理人权限标识，比如用户，角色，部门等，用于校验是否有权限办理 [按需传输]；满足以下任一情况可以不传
+     *                   流程设计时未设置办理人、ignore为true、实现了办理人权限处理器{@link PermissionHandler#permissions()}
+     *                   - flowStatus 流程状态，自定义流程状态 [按需传输]
+     *                   - message 审批意见[按需传输]
+     *                   - ignore 转办忽略权限校验,默认忽略（true：忽略，false：不忽略）[按需传输]
+     */
+    Instance pending(Long taskId, FlowParams flowParams);
+
+    /**
+     * 根据任务实例暂存任务
+     * 只修改主要修改任务状态和新增历史记录，流程不流转
+     *
+     * @param task     修改的任务 [必传]
+     * @param flowParams 包含流程相关参数的对象
+     *                   - handler 当前办理人唯一标识，如用户id，用于记录历史表; 如果通过办理人权限处理器{@link PermissionHandler#getHandler()}传入了，就不需要传 [按需传输]
+     *                   - permissionFlag 办理人权限标识，比如用户，角色，部门等，用于校验是否有权限办理 [按需传输]；满足以下任一情况可以不传
+     *                   流程设计时未设置办理人、ignore为true、实现了办理人权限处理器{@link PermissionHandler#permissions()}
+     *                   - flowStatus 流程状态，自定义流程状态 [按需传输]
+     *                   - message 审批意见[按需传输]
+     *                   - ignore 转办忽略权限校验,默认忽略（true：忽略，false：不忽略）[按需传输]
+     */
+    Instance pending(Task task, FlowParams flowParams);
+
+    /**
      * 设置流程待办任务对象
      *
      * @param node       节点

@@ -55,7 +55,9 @@ public enum FlowStatus {
 
     TASK_BACK("11", "拿回"),
 
-    RE_START("12", "重启");
+    RE_START("12", "重启"),
+
+    PENDING("13", "暂存");
 
     private final String key;
     private final String value;

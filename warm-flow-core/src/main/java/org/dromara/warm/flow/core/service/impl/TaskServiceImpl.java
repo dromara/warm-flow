@@ -464,8 +464,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
                 FlowEngine.userService().remove(FlowEngine.newUser().setAssociated(taskId)
                     .setProcessedBy(reductionHandler));
             }
-            hisTask = FlowEngine.hisTaskService().setCooperateHis(r.task, r.nowNode
-                , flowParams, flowParams.getReductionHandlers());
+            hisTask = FlowEngine.hisTaskService().setCooperateHis(r.task, flowParams, flowParams.getReductionHandlers());
         }
 
         // 新增权限人
@@ -481,8 +480,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             FlowEngine.userService().saveBatch(StreamUtils.toList(flowParams.getAddHandlers(), permission ->
                 FlowEngine.userService().structureUser(taskId, permission
                     , type, flowParams.getHandler())));
-            hisTask = FlowEngine.hisTaskService().setCooperateHis(r.task, r.nowNode
-                , flowParams, flowParams.getAddHandlers());
+            hisTask = FlowEngine.hisTaskService().setCooperateHis(r.task, flowParams, flowParams.getAddHandlers());
         }
         if (ObjectUtil.isNotNull(hisTask)) {
             FlowEngine.hisTaskService().save(hisTask);
@@ -491,6 +489,44 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         ListenerUtil.executeListener(new ListenerVariable(r.definition, r.instance, r.nowNode, flowParams.getVariable()
             , r.task), Listener.LISTENER_FINISH);
         return true;
+    }
+
+    @Override
+    public Instance pendingByInsId(Long instanceId, FlowParams flowParams) {
+        return pending(getTask(instanceId), flowParams);
+    }
+
+    @Override
+    public Instance pending(Long taskId, FlowParams flowParams) {
+        // 获取待办任务
+        Task task = getById(taskId);
+        return pending(task, flowParams);
+    }
+
+    @Override
+    public Instance pending(Task task, FlowParams flowParams) {
+        // TODO min 后续考虑并发问题，待办任务和实例表不同步，可给待办任务id加锁，抽取所接口，方便后续兼容分布式锁
+        // 流程开启前正确性校验
+        R r = getAndCheck(task);
+        flowParams.flowStatus(StringUtils.emptyDefault(flowParams.getFlowStatus(), FlowStatus.PENDING.getKey()));
+        // 执行开始监听器
+        ListenerUtil.executeListener(new ListenerVariable(r.definition, r.instance, r.nowNode, flowParams.getVariable()
+            , r.task).setFlowParams(flowParams), Listener.LISTENER_START);
+
+        // 判断当前处理人是否有权限处理
+        checkAuth(r.task, flowParams);
+
+        // 设置流程历史任务信息
+        HisTask insHis = FlowEngine.hisTaskService().notSkip(r.task, flowParams);
+        FlowEngine.hisTaskService().save(insHis);
+
+        FlowEngine.insService().updateById(r.instance.setFlowStatus(flowParams.getFlowStatus()));
+
+        // 执行任务完成监听器
+        ListenerUtil.executeListener(new ListenerVariable(r.definition, r.instance, r.nowNode
+            , flowParams.getVariable(), r.task), Listener.LISTENER_FINISH);
+
+        return r.instance;
     }
 
     @Override
