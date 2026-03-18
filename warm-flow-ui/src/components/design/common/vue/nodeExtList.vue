@@ -40,16 +40,16 @@
                 </el-checkbox-group>
             </div>
             <div v-else-if="item.type === 5">
-            <span
-                v-for="(row, rowIndex) in permissionRows[item.code]"
-                :key="rowIndex"
-                class="el-tag is-closable el-tag--light"
-                style="margin-right: 10px; margin-bottom: 5px;">
-                <span class="el-tag__content">{{ row.handlerName }}</span>
-                <i class="el-icon el-tag__close" @click="delPermission(item.code, row)" style="cursor: pointer;">
-                    <svg-icon :icon-class="'close'"/>
-                </i>
-            </span>
+                <span
+                    v-for="(row, rowIndex) in permissionRows[item.code]"
+                    :key="rowIndex"
+                    class="el-tag is-closable el-tag--light"
+                    style="margin-right: 10px; margin-bottom: 5px;">
+                    <span class="el-tag__content">{{ row.handlerName }}</span>
+                    <i class="el-icon el-tag__close" @click="delPermission(item.code, row)" style="cursor: pointer;">
+                        <svg-icon :icon-class="'close'"/>
+                    </i>
+                </span>
                 <el-button type="primary" @click="openSelectDialog(item.code)">选择</el-button>
             </div>
         </el-form-item>
