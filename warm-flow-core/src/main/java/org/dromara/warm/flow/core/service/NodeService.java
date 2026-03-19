@@ -218,4 +218,11 @@ public interface NodeService extends IWarmService<Node> {
      */
     int deleteNodeByDefIds(Collection<? extends Serializable> defIds);
 
+    /**
+     * 获取节点扩展信息
+     *
+     * @param node 节点
+     * @return 节点扩展信息
+     */
+    Map<String, String> getExt(Node node);
 }

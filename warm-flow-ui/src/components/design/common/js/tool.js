@@ -219,6 +219,11 @@ export const logicFlowJsonToWarmFlow = (data) => {
         node.ext.push({ code: key, value: Array.isArray(e) ? e.join(",") : e });
       }
     }
+    // node.ext中value为空则移除这条记录
+    node.ext = node.ext.filter(item => {
+      const value = item.value
+      return value !== undefined && value !== null && value !== '' && value !== 'null' && value !== 'undefined'
+    });
     node.ext = JSON.stringify(node.ext);
     node.coordinate = anyNode.x + ',' + anyNode.y
     if (anyNode.text && anyNode.text.x && anyNode.text.y) {

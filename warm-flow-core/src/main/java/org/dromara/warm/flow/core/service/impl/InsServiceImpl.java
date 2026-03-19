@@ -25,7 +25,6 @@ import org.dromara.warm.flow.core.enums.ActivityStatus;
 import org.dromara.warm.flow.core.enums.FlowStatus;
 import org.dromara.warm.flow.core.enums.NodeType;
 import org.dromara.warm.flow.core.enums.SkipType;
-import org.dromara.warm.flow.core.listener.Listener;
 import org.dromara.warm.flow.core.listener.ListenerVariable;
 import org.dromara.warm.flow.core.orm.dao.FlowInstanceDao;
 import org.dromara.warm.flow.core.orm.service.impl.WarmServiceImpl;
@@ -70,8 +69,8 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         flowParams.skipType(SkipType.PASS.getKey());
 
         // 执行开始监听器
-        ListenerUtil.executeListener(new ListenerVariable(definition, null, startNode, flowParams.getVariable())
-            .setFlowParams(flowParams), Listener.LISTENER_START);
+        ListenerUtil.executeStart(new ListenerVariable(definition, null, startNode, flowParams.getVariable())
+            .setFlowParams(flowParams));
 
 
         // 获取下一个节点，如果是网关节点，则重新获取后续节点
@@ -98,8 +97,8 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
         instance.setDefJson(FlowEngine.chartService().startMetadata(pathWayData));
 
         // 执行分派监听器
-        ListenerUtil.executeListener(new ListenerVariable(definition, instance, startNode, flowParams.getVariable()
-            , null, nextNodes, addTasks).setFlowParams(flowParams), Listener.LISTENER_ASSIGNMENT);
+        ListenerUtil.executeAssignment(new ListenerVariable(definition, instance, startNode, flowParams.getVariable()
+            , null, nextNodes, addTasks).setFlowParams(flowParams));
 
         // 开启流程，保存流程信息
         saveFlowInfo(instance, addTasks, hisTask, flowParams);

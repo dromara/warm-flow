@@ -293,6 +293,26 @@ public class NodeServiceImpl extends WarmServiceImpl<FlowNodeDao<Node>, Node> im
         return getDao().deleteNodeByDefIds(defIds);
     }
 
+    @Override
+    public Map<String, String> getExt(Node node) {
+        Map<String, String> map = new HashMap<>();
+        String ext = node.getExt();
+        if (StringUtils.isNotEmpty(ext)) {
+            List<Map<String, Object>> extList = FlowEngine.jsonConvert.strToList(ext);
+            if (CollUtil.isNotEmpty(extList)) {
+                for (Map<String, Object> extMap : extList) {
+                    String code = ObjectUtil.defaultNull(extMap.get("code"), "").toString();
+                    String value = ObjectUtil.defaultNull(extMap.get("value"), "").toString();
+                    if (StringUtils.isAllNotEmpty(code, value)) {
+                        map.put(code, value);
+                    }
+                }
+            }
+        }
+
+        return map;
+    }
+
     private List<String> prefixOrSuffixCodes(Map<String, List<Skip>> skipMap, String nodeCode,
                                              Function<Skip, String> supplier) {
         // 记录已访问节点，防止循环
