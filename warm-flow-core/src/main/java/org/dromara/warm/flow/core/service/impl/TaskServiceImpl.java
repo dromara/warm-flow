@@ -176,8 +176,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         FlowCombine flowCombine = FlowEngine.defService().getFlowCombineNoDef(r.definition.getId());
 
         // 执行开始监听器
-        ListenerUtil.executeListener(new ListenerVariable(r.definition, r.instance, r.nowNode, flowParams.getVariable()
-            , task).setFlowParams(flowParams), Listener.LISTENER_START);
+        ListenerUtil.executeStart(new ListenerVariable(r.definition, r.instance, r.nowNode, flowParams.getVariable()
+            , task).setFlowParams(flowParams));
 
         // 如果是受托人在处理任务，需要处理一条委派记录，并且更新委托人，回到计划审批人,然后直接返回流程实例
         if (!flowParams.isIgnoreDepute() && handleDepute(task, flowParams)) {
@@ -213,8 +213,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         ExpressionUtil.evalVariable(addTasks, flowParams.variable(MapUtil.mergeAll(r.instance.getVariableMap(), flowParams.getVariable())));
 
         // 执行分派监听器
-        ListenerUtil.executeListener(new ListenerVariable(r.definition, r.instance, r.nowNode, flowParams.getVariable()
-            , task, nextNodes, addTasks).setFlowParams(flowParams), Listener.LISTENER_ASSIGNMENT);
+        ListenerUtil.executeAssignment(new ListenerVariable(r.definition, r.instance, r.nowNode, flowParams.getVariable()
+            , task, nextNodes, addTasks).setFlowParams(flowParams));
 
         // 更新流程信息
         updateFlowInfo(task, r.instance, addTasks, flowParams, nextNodes);
@@ -254,9 +254,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         FlowCombine flowCombine = FlowEngine.defService().getFlowCombine(definition);
         Map<String, Node> nodeMap = StreamUtils.toMap(flowCombine.getAllNodes(), Node::getNodeCode, node -> node);
         // 执行开始监听器
-        taskList.forEach(task -> ListenerUtil.executeListener(new ListenerVariable(definition, instance
-                , nodeMap.get(task.getNodeCode()), flowParams.getVariable(), task).setFlowParams(flowParams)
-            , Listener.LISTENER_START));
+        taskList.forEach(task -> ListenerUtil.executeStart(new ListenerVariable(definition, instance
+                , nodeMap.get(task.getNodeCode()), flowParams.getVariable(), task).setFlowParams(flowParams)));
 
         // 验证权限是不是当前任务的发起人
         if (!flowParams.isIgnore()) {
@@ -287,9 +286,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         ExpressionUtil.evalVariable(addTasks, flowParams.variable(MapUtil.mergeAll(instance.getVariableMap(), flowParams.getVariable())));
 
         // 执行分派监听器
-        taskList.forEach(task -> ListenerUtil.executeListener(new ListenerVariable(definition, instance,
+        taskList.forEach(task -> ListenerUtil.executeAssignment(new ListenerVariable(definition, instance,
             nodeMap.get(task.getNodeCode()), flowParams.getVariable(), task, nextNodes, addTasks)
-            .setFlowParams(flowParams), Listener.LISTENER_ASSIGNMENT));
+            .setFlowParams(flowParams)));
 
         // 设置流程历史任务信息
         List<HisTask> insHisList = FlowEngine.hisTaskService().setSkipHisList(curTaskList, nextNodes, flowParams);
@@ -332,8 +331,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         R r = getAndCheck(task);
         flowParams.skipType(SkipType.PASS.getKey());
         flowParams.variable(MapUtil.mergeAll(r.instance.getVariableMap(), flowParams.getVariable()));
-        ListenerUtil.executeListener(new ListenerVariable(r.definition, r.instance, r.nowNode, flowParams.getVariable()
-            , task).setFlowParams(flowParams), Listener.LISTENER_START);
+        ListenerUtil.executeStart(new ListenerVariable(r.definition, r.instance, r.nowNode, flowParams.getVariable()
+            , task).setFlowParams(flowParams));
 
         // 判断当前处理人是否有权限处理
         task.setUserList(FlowEngine.userService().listByAssociatedAndTypes(task.getId()));
@@ -369,8 +368,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         // 处理未完成的任务，当流程完成，还存在待办任务未完成，转历史任务，状态完成。
         handUndoneTask(r.instance);
         // 最后判断是否存在节点监听器，存在执行节点监听器
-        ListenerUtil.executeListener(new ListenerVariable(r.definition, r.instance, r.nowNode, flowParams.getVariable()
-            , task).setFlowParams(flowParams), Listener.LISTENER_FINISH);
+        ListenerUtil.executeFinish(new ListenerVariable(r.definition, r.instance, r.nowNode, flowParams.getVariable()
+            , task).setFlowParams(flowParams));
         return r.instance;
     }
 
@@ -442,8 +441,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         R r = getAndCheck(taskId);
         flowParams.variable(MapUtil.mergeAll(r.instance.getVariableMap(), flowParams.getVariable()));
         // 执行开始监听器
-        ListenerUtil.executeListener(new ListenerVariable(r.definition, r.instance, r.nowNode, null, r.task)
-            , Listener.LISTENER_START);
+        ListenerUtil.executeStart(new ListenerVariable(r.definition, r.instance, r.nowNode, null, r.task));
 
         // 获取给谁的权限
         if (!flowParams.isIgnore()) {
@@ -486,8 +484,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
             FlowEngine.hisTaskService().save(hisTask);
         }
         // 最后判断是否存在节点监听器，存在执行节点监听器
-        ListenerUtil.executeListener(new ListenerVariable(r.definition, r.instance, r.nowNode, flowParams.getVariable()
-            , r.task), Listener.LISTENER_FINISH);
+        ListenerUtil.executeFinish(new ListenerVariable(r.definition, r.instance, r.nowNode, flowParams.getVariable()
+            , r.task));
         return true;
     }
 
@@ -510,8 +508,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         R r = getAndCheck(task);
         flowParams.flowStatus(StringUtils.emptyDefault(flowParams.getFlowStatus(), FlowStatus.PENDING.getKey()));
         // 执行开始监听器
-        ListenerUtil.executeListener(new ListenerVariable(r.definition, r.instance, r.nowNode, flowParams.getVariable()
-            , r.task).setFlowParams(flowParams), Listener.LISTENER_START);
+        ListenerUtil.executeStart(new ListenerVariable(r.definition, r.instance, r.nowNode, flowParams.getVariable()
+            , r.task).setFlowParams(flowParams));
 
         // 判断当前处理人是否有权限处理
         checkAuth(r.task, flowParams);
@@ -523,8 +521,8 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
         FlowEngine.insService().updateById(r.instance.setFlowStatus(flowParams.getFlowStatus()));
 
         // 执行任务完成监听器
-        ListenerUtil.executeListener(new ListenerVariable(r.definition, r.instance, r.nowNode
-            , flowParams.getVariable(), r.task), Listener.LISTENER_FINISH);
+        ListenerUtil.executeFinish(new ListenerVariable(r.definition, r.instance, r.nowNode
+            , flowParams.getVariable(), r.task));
 
         return r.instance;
     }

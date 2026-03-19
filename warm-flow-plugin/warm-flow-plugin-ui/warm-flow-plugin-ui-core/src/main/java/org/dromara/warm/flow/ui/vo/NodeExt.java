@@ -46,6 +46,11 @@ public class NodeExt implements Serializable {
         private int type;
         private boolean must;
         private boolean multiple;
+        private int precision;
+        private String step;
+        private String min;
+        private String dateType;
+        private String dateFormat;
         private List<DictItem> dict;
 
     }

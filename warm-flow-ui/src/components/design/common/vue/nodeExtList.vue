@@ -1,7 +1,7 @@
 <template>
-    <el-form ref="nodeExtRef" class="nodeExtForm" :model="form" label-width="120px" size="small" :disabled="disabled"
+    <el-form ref="nodeExtRef" class="nodeExtForm" :model="form" label-width="150px" size="small" :disabled="disabled"
              label-position="left">
-        <el-form-item :label="`${item.label}：`" :prop="item.code" v-for="(item, index) in formList" :key="index"
+        <el-form-item :label="`${item.label}：`" :prop="item.code" v-for="(item, index) in formList" 10key="index"
                       :rules="[{ required: item.must, message: `${item.label}不能为空`, trigger: ['blur', 'change'] }]">
             <template #label>
                 <span>{{ item.label }}</span>
@@ -17,7 +17,7 @@
                       :placeholder="item.desc"/>
             <el-select v-else-if="item.type === 3" v-model="form[item.code]" clearable
                        :multiple="item.multiple || false"
-                       :placeholder="item.desc" style="width: 300px">
+                       :placeholder="item.desc" style="width: 400px">
                 <el-option v-for="dItem in item.dict" :key="dItem.value" :label="dItem.label"
                            :value="dItem.value"></el-option>
             </el-select>
@@ -51,6 +51,30 @@
                     </i>
                 </span>
                 <el-button type="primary" @click="openSelectDialog(item.code)">选择</el-button>
+            </div>
+            <el-input-number
+                v-else-if="item.type === 6"
+                v-model="form[item.code]"
+                :placeholder="item.desc"
+                :precision="item.precision ? item.precision : 0"
+                :step="item.step ? Number(item.step) : 1"
+                :min="item.min ? Number(item.min) : 0"
+                style="width: 400px; margin-right: 10px; margin-bottom: 5px;"/>
+            <div v-else-if="item.type === 7">
+                <el-time-picker
+                    v-if="['timepicker', 'timepickerrange'].includes(item.dateType)"
+                    :is-range="item.dateType === 'timepickerrange'"
+                    v-model="form[item.code]"
+                    :value-format="item.dateFormat"
+                    :placeholder="item.desc"/>
+                <el-date-picker
+                    v-else
+                    clearable
+                    v-model="form[item.code]"
+                    :type="item.dateType ? item.dateType : 'datetime'"
+                    :value-format="item.dateFormat"
+                    :placeholder="item.desc"/>
+
             </div>
         </el-form-item>
     </el-form>
@@ -120,7 +144,6 @@ function handleUserSelect(checkedItemList, code) {
 
 // 删除用户
 function delPermission(code, row) {
-    debugger
     if (permissionRows.value[code] && permissionRows.value[code].length > 0) {
         permissionRows.value[code] = permissionRows.value[code].filter(e => e.storageId !== row.storageId);
 
@@ -151,6 +174,23 @@ function getHandlerFeedback() {
     }
 }
 
+// 初始化表单数据，确保数字类型字段为正确的类型
+function initFormData() {
+    props.formList.forEach(item => {
+        const value = form.value[item.code];
+        // 处理 null、undefined、"null"、"undefined"、空字符串等情况
+        if (value !== undefined && value !== null && value !== '' && value !== 'null' && value !== 'undefined') {
+            if (item.type === 6) {
+                const numValue = Number(value);
+                if (!isNaN(numValue)) {
+                    form.value[item.code] = numValue;
+                }
+            }
+        }
+    });
+}
+
+initFormData();
 getHandlerFeedback()
 
 defineExpose({

@@ -49,7 +49,7 @@ public class ListenerUtil {
      */
     public static void endCreateListener(ListenerVariable listenerVariable) {
         // 执行任务完成监听器
-        executeListener(listenerVariable, Listener.LISTENER_FINISH);
+        executeFinish(listenerVariable);
         // 执行任务创建监听器
         List<Task> tasks = listenerVariable.getNextTasks();
         listenerVariable.getNextNodes().forEach(node -> {
@@ -59,11 +59,26 @@ public class ListenerUtil {
                     .setNextNodes(null)
                     .setTask(nextTask)
                     .setNextTasks(null);
-                executeListener(listenerVariable, Listener.LISTENER_CREATE);
+                executeCreate(listenerVariable);
             }
         });
     }
 
+    public static void executeStart(ListenerVariable listenerVariable) {
+        executeListener(listenerVariable, Listener.LISTENER_START);
+    }
+
+    public static void executeAssignment(ListenerVariable listenerVariable) {
+        executeListener(listenerVariable, Listener.LISTENER_ASSIGNMENT);
+    }
+
+    public static void executeFinish(ListenerVariable listenerVariable) {
+        executeListener(listenerVariable, Listener.LISTENER_FINISH);
+    }
+
+    public static void executeCreate(ListenerVariable listenerVariable) {
+        executeListener(listenerVariable, Listener.LISTENER_CREATE);
+    }
 
     public static void executeListener(ListenerVariable listenerVariable, String type) {
         // 执行监听器

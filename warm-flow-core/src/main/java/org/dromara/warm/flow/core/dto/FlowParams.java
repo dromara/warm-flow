@@ -267,7 +267,10 @@ public class FlowParams implements Serializable {
         if (StringUtils.isEmpty(handler)) {
             PermissionHandler permissionHandler = FlowEngine.permissionHandler();
             if (permissionHandler != null) {
-                handler = permissionHandler.getHandler();
+                try {
+                    handler = permissionHandler.getHandler();
+                } catch (Exception ignored) {
+                }
             }
         }
         return handler;
@@ -277,7 +280,10 @@ public class FlowParams implements Serializable {
         if (CollUtil.isEmpty(permissionFlag)) {
             PermissionHandler permissionHandler = FlowEngine.permissionHandler();
             if (permissionHandler != null) {
-                permissionFlag = permissionHandler.permissions();
+                try {
+                    permissionFlag = permissionHandler.permissions();
+                } catch (Exception ignored) {
+                }
             }
         }
         return permissionFlag;

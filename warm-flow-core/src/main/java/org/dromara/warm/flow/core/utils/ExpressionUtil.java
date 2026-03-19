@@ -99,7 +99,10 @@ public class ExpressionUtil {
             // 转换办理人，比如设计器中预设了能办理的人，如果其中包含角色或者部门id等，可以通过此接口进行转换成用户id
             PermissionHandler permissionHandler = FlowEngine.permissionHandler();
             if (permissionHandler != null) {
-                permissions = permissionHandler.convertPermissions(permissions);
+                try {
+                    permissions = permissionHandler.convertPermissions(permissions);
+                } catch (Exception ignored) {
+                }
             }
             // 自定义下个任务的处理人 下个任务处理人配置类型 和 执行的下个任务的办理人
             permissions = nextHandle(flowParams.isNextHandlerAppend(), flowParams.getNextHandler(), permissions);

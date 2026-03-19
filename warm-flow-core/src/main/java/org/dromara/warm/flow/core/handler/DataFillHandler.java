@@ -70,7 +70,10 @@ public interface DataFillHandler {
         PermissionHandler permissionHandler = FlowEngine.permissionHandler();
         String handler = null;
         if (permissionHandler != null) {
-            handler = permissionHandler.getHandler();
+            try {
+                handler = permissionHandler.getHandler();
+            } catch (Exception ignored) {
+            }
         }
         entity.setCreateBy(StringUtils.isNotEmpty(handler) ? handler : entity.getCreateBy());
         entity.setUpdateBy(StringUtils.isNotEmpty(handler) ? handler : entity.getUpdateBy());
@@ -91,7 +94,10 @@ public interface DataFillHandler {
         PermissionHandler permissionHandler = FlowEngine.permissionHandler();
         String handler = null;
         if (permissionHandler != null) {
-            handler = permissionHandler.getHandler();
+            try {
+                handler = permissionHandler.getHandler();
+            } catch (Exception ignored) {
+            }
         }
         entity.setUpdateBy(StringUtils.isNotEmpty(handler) ? handler : entity.getUpdateBy());
     }
