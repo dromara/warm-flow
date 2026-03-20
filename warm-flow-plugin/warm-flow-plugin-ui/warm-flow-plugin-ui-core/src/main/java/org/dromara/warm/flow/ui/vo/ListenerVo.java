@@ -15,39 +15,38 @@
  */
 package org.dromara.warm.flow.ui.vo;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
- * 字典
+ * 监听器列表-设计器页面，监听器列表下拉选使用
  *
  * @author warm
  */
 @Getter
 @Setter
 @NoArgsConstructor
-public class Dict implements Serializable {
+@AllArgsConstructor
+public class ListenerVo implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 字典标签
+     * 监听器类型，如：start、assignment、finish、create，如果未设置，选择监听器后，监听器类型不联动
      */
-    private String label;
+    private String type;
 
     /**
-     * 字典值
+     * 监听器全限定类路径
      */
-    private String value;
+    private String path;
 
-    private List<Dict> childList;
-
-    public Dict(String label, String value) {
-        this.label = label;
-        this.value = value;
-    }
+    /**
+     * 监听器描述
+     */
+    private String description;
 
 }

@@ -84,3 +84,11 @@ export function nodeExt() {
     method: 'get'
   })
 }
+
+// 获取监听器列表
+export function listenerList() {
+  return request({
+    url: urlPrefix + 'warm-flow/listener-list',
+    method: 'get'
+  })
+}

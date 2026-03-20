@@ -23,10 +23,7 @@ import org.dromara.warm.flow.core.entity.Instance;
 import org.dromara.warm.flow.ui.dto.HandlerFeedBackDto;
 import org.dromara.warm.flow.ui.dto.HandlerQuery;
 import org.dromara.warm.flow.ui.service.WarmFlowService;
-import org.dromara.warm.flow.ui.vo.Dict;
-import org.dromara.warm.flow.ui.vo.HandlerFeedBackVo;
-import org.dromara.warm.flow.ui.vo.HandlerSelectVo;
-import org.dromara.warm.flow.ui.vo.NodeExt;
+import org.dromara.warm.flow.ui.vo.*;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -204,6 +201,16 @@ public class WarmFlowController {
     @GetMapping("/node-ext")
     public ApiResult<List<NodeExt>> nodeExt() {
         return WarmFlowService.nodeExt();
+    }
+
+    /**
+     * 获取节点扩展属性
+     *
+     * @return List<NodeExt>
+     */
+    @GetMapping("/listener-list")
+    public ApiResult<List<ListenerVo>> listenerList() {
+        return WarmFlowService.listenerList();
     }
 
 }

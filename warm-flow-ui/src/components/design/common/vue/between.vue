@@ -150,10 +150,24 @@
                 </el-form-item>
               </template>
             </el-table-column>
-            <el-table-column prop="listenerPath" label="路径">
+            <el-table-column prop="listenerPath" label="监听器（可输入类路径）">
               <template #default="scope">
                 <el-form-item :prop="'listenerRows.' + scope.$index + '.listenerPath'" :rules="rules.listenerPath">
-                  <el-input v-model="scope.row.listenerPath" placeholder="请输入"></el-input>
+                    <el-select
+                        v-model="scope.row.listenerPath"
+                        placeholder="请输入或选择"
+                        allow-create
+                        filterable
+                        clearable
+                        style="width: 100%"
+                        @change="(value) => handleListenerPathChange(value, scope.row)">
+                        <el-option
+                            v-for="item in ListenerVo"
+                            :key="item.path"
+                            :label="item.description"
+                            :value="item.path"/>
+                    </el-select>
+<!--                  <el-input v-model="scope.row.listenerPath" placeholder="请输入"></el-input>-->
                 </el-form-item>
               </template>
             </el-table-column>
@@ -181,7 +195,7 @@
 <script setup name="Between">
 import selectUser from "./selectUser";
 import { Delete } from '@element-plus/icons-vue'
-import {publishedList, handlerDict, nodeExt, handlerFeedback} from "@/api/flow/definition";
+import {publishedList, handlerDict, nodeExt, handlerFeedback, listenerList} from "@/api/flow/definition";
 import nodeExtList from "./nodeExtList";
 import {getPreviousNodes} from "@/components/design/common/js/tool.js";
 const { proxy } = getCurrentInstance();
@@ -235,6 +249,11 @@ const userVisible = ref(false);
 const baseList = ref([]);
 //按钮权限
 const buttonList = ref({});
+const definitionList = ref([]); // 流程表单列表
+const dictList = ref(); // 办理人选项
+const permissionRows = ref([]); // 办理人表格
+const ListenerVo = ref([]); // 监听器列表
+const emit = defineEmits(['update:modelValue']);
 
 const rules = reactive({
     nodeRatio: computed(() => {
@@ -269,11 +288,6 @@ const rules = reactive({
     listenerType: [{required: true, message: '监听器类型不能为空', trigger: 'change'}],
     listenerPath: [{required: true, message: '监听器路径不能为空', trigger: 'blur'}]
 });
-
-const definitionList = ref([]); // 流程表单列表
-const dictList = ref(); // 办理人选项
-const permissionRows = ref([]); // 办理人表格
-const emit = defineEmits(['update:modelValue']);
 
 watch(() => form.value, n => {
   if (n) {
@@ -393,10 +407,11 @@ function handleTabChange(activeTabName) {
             break;
         case '2':
             // 办理人设置 tab
-            getHandlerFeedback();
+            getHandlerFeedback()
             break;
         case '3':
             // 监听器 tab
+            getListenerList()
             break;
         default:
             // 自定义 tab
@@ -443,6 +458,35 @@ async function getHandlerFeedback() {
       }
     });
   }
+}
+
+/** 获取监听器列表 */
+async function getListenerList() {
+    listenerList().then(response => {
+        if (response.code === 200 && response.data) {
+            ListenerVo.value = response.data;
+        }
+    });
+}
+
+
+// 处理监听器路径变化，级联更新类型
+function handleListenerPathChange(path, row) {
+    if (!path) {
+        // 清空时，也清空类型
+        row.listenerType = '';
+        return;
+    }
+
+    // 在下拉选项中查找匹配的项
+    const matchedItem = ListenerVo.value.find(item => item.path === path);
+    if (matchedItem && matchedItem.type) {
+        // 如果找到了匹配项且有 type，则更新 listenerType
+        row.listenerType = matchedItem.type;
+    } else {
+        // 如果是手动输入的，清空类型（或者保持原值，根据需求决定）
+        row.listenerType = '';
+    }
 }
 
 /** 查询节点扩展属性 */
