@@ -167,7 +167,6 @@
                             :label="item.description"
                             :value="item.path"/>
                     </el-select>
-<!--                  <el-input v-model="scope.row.listenerPath" placeholder="请输入"></el-input>-->
                 </el-form-item>
               </template>
             </el-table-column>
