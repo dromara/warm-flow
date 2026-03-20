@@ -13,41 +13,23 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.dromara.warm.flow.ui.vo;
+package org.dromara.warm.flow.ui.service;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.dromara.warm.flow.ui.vo.ListenerVo;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
- * 字典
+ * 流程设计器-获取监听器列表
  *
  * @author warm
  */
-@Getter
-@Setter
-@NoArgsConstructor
-public class Dict implements Serializable {
-    private static final long serialVersionUID = 1L;
+public interface ListenerListService {
 
     /**
-     * 字典标签
+     * 获取监听器列表
+     *
+     * @return 结果
      */
-    private String label;
-
-    /**
-     * 字典值
-     */
-    private String value;
-
-    private List<Dict> childList;
-
-    public Dict(String label, String value) {
-        this.label = label;
-        this.value = value;
-    }
-
+    List<ListenerVo> listenerList();
 }

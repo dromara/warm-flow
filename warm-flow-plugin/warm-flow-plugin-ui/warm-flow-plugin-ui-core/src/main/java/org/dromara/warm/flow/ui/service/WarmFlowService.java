@@ -25,7 +25,6 @@ import org.dromara.warm.flow.core.enums.FormCustomEnum;
 import org.dromara.warm.flow.core.enums.ModelEnum;
 import org.dromara.warm.flow.core.exception.FlowException;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
-import org.dromara.warm.flow.core.utils.CollUtil;
 import org.dromara.warm.flow.core.utils.ExceptionUtil;
 import org.dromara.warm.flow.core.utils.StreamUtils;
 import org.dromara.warm.flow.core.utils.StringUtils;
@@ -349,6 +348,26 @@ public class WarmFlowService {
         } catch (Exception e) {
             log.error("获取节点扩展属性", e);
             throw new FlowException(ExceptionUtil.handleMsg("获取节点扩展属性失败", e));
+        }
+    }
+
+    /**
+     * 获取监听器列表
+     *
+     * @return List<NodeExt>
+     */
+    public static ApiResult<List<ListenerVo>> listenerList() {
+        try {
+            // 需要业务系统实现该接口
+            ListenerListService listenerListService = FrameInvoker.getBean(ListenerListService.class);
+            if (listenerListService == null) {
+                return ApiResult.ok(Collections.emptyList());
+            }
+            List<ListenerVo> listenerList = listenerListService.listenerList();
+            return ApiResult.ok(listenerList);
+        } catch (Exception e) {
+            log.error("获取监听器列表", e);
+            throw new FlowException(ExceptionUtil.handleMsg("获取监听器列表失败", e));
         }
     }
 
