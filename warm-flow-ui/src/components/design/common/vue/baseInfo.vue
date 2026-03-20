@@ -84,10 +84,23 @@
             </template>
           </el-table-column>
 
-          <el-table-column prop="listenerPath" label="路径">
+          <el-table-column prop="listenerPath" label="监听器（可输入类路径）">
             <template #default="scope">
               <el-form-item :prop="`listenerRows.${scope.$index}.listenerPath`" :rules="rules.listenerPath">
-                <el-input v-model="scope.row.listenerPath" placeholder="请输入路径" />
+                  <el-select
+                      v-model="scope.row.listenerPath"
+                      placeholder="请输入或选择"
+                      allow-create
+                      filterable
+                      clearable
+                      style="width: 100%"
+                      @change="(value) => handleListenerPathChange(value, scope.row)">
+                      <el-option
+                          v-for="item in ListenerVo"
+                          :key="item.path"
+                          :label="item.description"
+                          :value="item.path"/>
+                  </el-select>
               </el-form-item>
             </template>
           </el-table-column>
@@ -106,6 +119,7 @@
 
 <script setup name="BaseInfo">
 import { ref } from "vue";
+import {listenerList} from "@/api/flow/definition.js";
 
 const { proxy } = getCurrentInstance();
 const props = defineProps({
@@ -160,6 +174,9 @@ watch(() => props.logicJson, newValue => {
 });
 
 const definitionList = ref([]);
+const ListenerVo = ref([]); // 监听器列表
+
+
 const rules = {
   modelValue: [
     { required: true, message: "设计器模型不能为空", trigger: "blur" }
@@ -239,8 +256,37 @@ function getFormData() {
   return form.value;
 }
 
+/** 获取监听器列表 */
+function getListenerList() {
+    listenerList().then(response => {
+        if (response.code === 200 && response.data) {
+            ListenerVo.value = response.data;
+        }
+    });
+}
+
+// 处理监听器路径变化，级联更新类型
+function handleListenerPathChange(path, row) {
+    if (!path) {
+        // 清空时，也清空类型
+        row.listenerType = '';
+        return;
+    }
+
+    // 在下拉选项中查找匹配的项
+    const matchedItem = ListenerVo.value.find(item => item.path === path);
+    if (matchedItem && matchedItem.type) {
+        // 如果找到了匹配项且有 type，则更新 listenerType
+        row.listenerType = matchedItem.type;
+    } else {
+        // 如果是手动输入的，清空类型（或者保持原值，根据需求决定）
+        row.listenerType = '';
+    }
+}
+
 defineExpose({ getFormData, validate });
 
+getListenerList()
 </script>
 
 <style scoped lang="scss">
