@@ -17,6 +17,7 @@ package org.dromara.warm.plugin.modes.sb.config;
 
 import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.config.WarmFlow;
+import org.dromara.warm.flow.core.enums.FrameworkType;
 import org.dromara.warm.flow.core.invoker.FrameInvoker;
 import org.dromara.warm.flow.core.orm.dao.*;
 import org.dromara.warm.flow.core.service.*;
@@ -143,6 +144,7 @@ public class BeanConfig {
         FrameInvoker.setBeanFunction(SpringUtil::getBean);
         WarmFlowProperties warmFlow = SpringUtil.getBean(WarmFlowProperties.class);
         warmFlow.init();
+        warmFlow.setFramework(FrameworkType.SPRING_BOOT);
         FlowEngine.setFlowConfig(warmFlow);
         setExpression();
         after(warmFlow);

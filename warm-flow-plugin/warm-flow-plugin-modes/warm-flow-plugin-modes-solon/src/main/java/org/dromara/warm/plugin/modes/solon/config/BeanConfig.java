@@ -17,6 +17,7 @@ package org.dromara.warm.plugin.modes.solon.config;
 
 import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.config.WarmFlow;
+import org.dromara.warm.flow.core.enums.FrameworkType;
 import org.dromara.warm.flow.core.handler.DataFillHandler;
 import org.dromara.warm.flow.core.handler.PermissionHandler;
 import org.dromara.warm.flow.core.handler.TenantHandler;
@@ -25,8 +26,13 @@ import org.dromara.warm.flow.core.listener.GlobalListener;
 import org.dromara.warm.flow.core.orm.dao.*;
 import org.dromara.warm.flow.core.service.*;
 import org.dromara.warm.flow.core.service.impl.*;
+import org.dromara.warm.flow.core.utils.ExpressionUtil;
 import org.dromara.warm.flow.orm.dao.*;
 import org.dromara.warm.flow.orm.entity.*;
+import org.dromara.warm.plugin.modes.solon.expression.ConditionStrategySnEl;
+import org.dromara.warm.plugin.modes.solon.expression.HandlerStrategySnEl;
+import org.dromara.warm.plugin.modes.solon.expression.ListenerStrategySnEl;
+import org.dromara.warm.plugin.modes.solon.expression.VoteSignStrategySnEl;
 import org.noear.solon.Solon;
 import org.noear.solon.annotation.Bean;
 import org.noear.solon.annotation.Condition;
@@ -46,7 +52,7 @@ public class BeanConfig {
 
     private static final Logger log = LoggerFactory.getLogger(BeanConfig.class);
 
-    @Bean(injected = true)
+    @Bean(autoInject = true)
     public FlowDefinitionDao definitionDao() {
         return new FlowDefinitionDaoImpl();
     }
@@ -61,7 +67,7 @@ public class BeanConfig {
         return new ChartServiceImpl();
     }
 
-    @Bean(injected = true)
+    @Bean(autoInject = true)
     public FlowNodeDao nodeDao() {
         return new FlowNodeDaoImpl();
     }
@@ -71,7 +77,7 @@ public class BeanConfig {
         return new NodeServiceImpl().setDao(nodeDao);
     }
 
-    @Bean(injected = true)
+    @Bean(autoInject = true)
     public FlowSkipDao skipDao() {
         return new FlowSkipDaoImpl();
     }
@@ -81,7 +87,7 @@ public class BeanConfig {
         return new SkipServiceImpl().setDao(skipDao);
     }
 
-    @Bean(injected = true)
+    @Bean(autoInject = true)
     public FlowInstanceDao instanceDao() {
         return new FlowInstanceDaoImpl();
     }
@@ -91,7 +97,7 @@ public class BeanConfig {
         return new InsServiceImpl().setDao(instanceDao);
     }
 
-    @Bean(injected = true)
+    @Bean(autoInject = true)
     public FlowTaskDao taskDao() {
         return new FlowTaskDaoImpl();
     }
@@ -101,7 +107,7 @@ public class BeanConfig {
         return new TaskServiceImpl().setDao(taskDao);
     }
 
-    @Bean(injected = true)
+    @Bean(autoInject = true)
     public FlowHisTaskDao hisTaskDao() {
         return new FlowHisTaskDaoImpl();
     }
@@ -111,7 +117,7 @@ public class BeanConfig {
         return new HisTaskServiceImpl().setDao(hisTaskDao);
     }
 
-    @Bean(injected = true)
+    @Bean(autoInject = true)
     public FlowUserDao flowUserDao() {
         return new FlowUserDaoImpl();
     }
@@ -126,7 +132,7 @@ public class BeanConfig {
         return new FlowFormDaoImpl();
     }
 
-    @Bean(injected = true)
+    @Bean(autoInject = true)
     public FormService flowFormService(FlowFormDao formDao) {
         return new FormServiceImpl().setDao(formDao);
     }
@@ -142,11 +148,19 @@ public class BeanConfig {
             warmFlow = new WarmFlow();
         }
         warmFlow.init();
+        warmFlow.setFramework(FrameworkType.SOLON);
+        setExpression();
         FlowEngine.setFlowConfig(warmFlow);
         log.info("【warm-flow】，加载完成");
         return warmFlow;
     }
 
+    private void setExpression() {
+        ExpressionUtil.setExpression(new ConditionStrategySnEl());
+        ExpressionUtil.setExpression(new ListenerStrategySnEl());
+        ExpressionUtil.setExpression(new HandlerStrategySnEl());
+        ExpressionUtil.setExpression(new VoteSignStrategySnEl());
+    }
     public void setNewEntity() {
         FlowEngine.setNewDef(FlowDefinition::new);
         FlowEngine.setNewIns(FlowInstance::new);

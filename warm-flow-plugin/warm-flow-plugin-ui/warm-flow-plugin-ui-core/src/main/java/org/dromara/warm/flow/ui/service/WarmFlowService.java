@@ -52,6 +52,7 @@ public class WarmFlowService {
     public static ApiResult<WarmFlowVo> config() {
         WarmFlowVo warmFlowVo = new WarmFlowVo();
         WarmFlow warmFlow = FlowEngine.getFlowConfig();
+        warmFlowVo.setFramework(warmFlow.getFramework().name());
         // 获取tokenName
         String tokenName = warmFlow.getTokenName();
         if (StringUtils.isEmpty(tokenName)) {

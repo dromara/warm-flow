@@ -17,17 +17,17 @@ package org.dromara.warm.plugin.modes.sb.expression;
 
 
 import org.dromara.warm.flow.core.constant.FlowCons;
-import org.dromara.warm.flow.core.strategy.VoteSignStrategy;
 import org.dromara.warm.plugin.modes.sb.helper.SpelHelper;
 
 import java.util.Map;
 
 /**
- * 默认条件表达式 default@@${flag == 5 && flag > 4}
+ * 默认会签表达式 default@@${flag == 5 && flag > 4}
+ * 实际上是基于spring的spel表达式简化使用，会把flag替换成#flag，然后由spel执行#flag == 5 && #flag > 4
  *
  * @author warm
  */
-public class VoteSignStrategyDefault implements VoteSignStrategy {
+public class VoteSignStrategyDefault extends VoteSignStrategySpel {
 
     @Override
     public String getType() {
@@ -36,12 +36,6 @@ public class VoteSignStrategyDefault implements VoteSignStrategy {
 
     @Override
     public Boolean eval(String expression, Map<String, Object> variable) {
-        expression = expression.replace("$", "#");
-        for (Map.Entry<String, Object> entry : variable.entrySet()) {
-            if (expression.contains(entry.getKey())) {
-                expression = expression.replace(entry.getKey(), "#" + entry.getKey());
-            }
-        }
-        return Boolean.TRUE.equals(SpelHelper.parseExpression(expression, variable));
+        return super.eval(SpelHelper.replace(expression,  variable), variable);
     }
 }

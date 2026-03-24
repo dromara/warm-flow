@@ -13,32 +13,28 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.dromara.warm.flow.ui.vo;
+package org.dromara.warm.plugin.modes.solon.expression;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+import org.dromara.warm.flow.core.constant.FlowCons;
+import org.dromara.warm.flow.core.strategy.VoteSignStrategy;
+import org.dromara.warm.plugin.modes.solon.helper.SnElHelper;
 
-import java.util.List;
+import java.util.Map;
 
 /**
- * 流程配置vo
+ * snel会签表达式 snel@@#{@user.eval()}
  *
  * @author warm
  */
-@Getter
-@Setter
-@Accessors(chain = true)
-public class WarmFlowVo {
+public class VoteSignStrategySnEl implements VoteSignStrategy {
 
-    /**
-     * 如果需要工作流共享业务系统权限，默认Authorization
-     */
-    private List<String> tokenNameList;
+    @Override
+    public String getType() {
+        return FlowCons.SNEL;
+    }
 
-    /**
-     * 框架类型: springboot、solon
-     */
-    private String framework;
-
+    @Override
+    public Boolean eval(String expression, Map<String, Object> variable) {
+        return Boolean.TRUE.equals(SnElHelper.parseExpression(expression, variable));
+    }
 }

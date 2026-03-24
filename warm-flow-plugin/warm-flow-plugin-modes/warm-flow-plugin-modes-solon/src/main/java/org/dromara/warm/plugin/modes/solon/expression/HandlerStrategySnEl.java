@@ -13,32 +13,27 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.dromara.warm.flow.ui.vo;
+package org.dromara.warm.plugin.modes.solon.expression;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+import org.dromara.warm.flow.core.strategy.HandlerStrategy;
+import org.dromara.warm.plugin.modes.solon.helper.SnElHelper;
 
-import java.util.List;
+import java.util.Map;
 
 /**
- * 流程配置vo
+ * 办理人表达式snel: @@snel@@|#{@user.evalVar()}
  *
  * @author warm
  */
-@Getter
-@Setter
-@Accessors(chain = true)
-public class WarmFlowVo {
+public class HandlerStrategySnEl implements HandlerStrategy {
 
-    /**
-     * 如果需要工作流共享业务系统权限，默认Authorization
-     */
-    private List<String> tokenNameList;
+    @Override
+    public String getType() {
+        return "#";
+    }
 
-    /**
-     * 框架类型: springboot、solon
-     */
-    private String framework;
-
+    @Override
+    public Object preEval(String expression, Map<String, Object> variable) {
+        return SnElHelper.parseExpression(expression, variable);
+    }
 }
