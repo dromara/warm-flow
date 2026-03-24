@@ -85,13 +85,7 @@ public class ExpressionUtil {
         Map<String, Object> variable = flowParams.getVariable();
         addTasks.forEach(addTask -> {
             List<String> permissions = addTask.getPermissionList().stream()
-                    .map(s -> {
-                        List<String> result = evalVariable(s, variable);
-                        if (CollUtil.isNotEmpty(result)) {
-                            return result;
-                        }
-                        return Collections.singletonList(s);
-                    }).filter(Objects::nonNull)
+                    .map(s -> evalVariable(s, variable)).filter(Objects::nonNull)
                     .flatMap(List::stream)
                     .distinct()
                     .collect(Collectors.toList());
@@ -119,8 +113,12 @@ public class ExpressionUtil {
      * @return List<String>
      */
     public static List<String> evalVariable(String expression, Map<String, Object> variable) {
-        return getValue(HandlerStrategy.EXPRESSION_STRATEGY_LIST, expression, variable
-                , ExceptionCons.NULL_VARIABLE_STRATEGY);
+        List<String> value = getValue(HandlerStrategy.EXPRESSION_STRATEGY_LIST, expression, variable
+            , ExceptionCons.NULL_VARIABLE_STRATEGY);
+        if (CollUtil.isNotEmpty(value)) {
+            return value;
+        }
+        return Collections.singletonList(expression);
     }
 
     /**

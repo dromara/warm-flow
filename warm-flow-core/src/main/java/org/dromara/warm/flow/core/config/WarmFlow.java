@@ -19,6 +19,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.enums.ChartStatus;
+import org.dromara.warm.flow.core.enums.FrameworkType;
 import org.dromara.warm.flow.core.json.JsonConvert;
 import org.dromara.warm.flow.core.utils.ServiceLoaderUtil;
 
@@ -38,6 +39,11 @@ public class WarmFlow implements Serializable {
      * 开关
      */
     private boolean enabled = true;
+
+    /**
+     * 框架类型: springboot、solon
+     */
+    private FrameworkType framework;
 
     /**
      * 启动banner

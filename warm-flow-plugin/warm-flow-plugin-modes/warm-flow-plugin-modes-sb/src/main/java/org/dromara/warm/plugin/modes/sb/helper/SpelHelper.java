@@ -83,5 +83,14 @@ public class SpelHelper implements ApplicationContextAware {
         }
     }
 
+    public static String replace(String expression, Map<String, Object> variable) {
+        expression = expression.replace("$", "#");
+        for (Map.Entry<String, Object> entry : variable.entrySet()) {
+            if (expression.contains(entry.getKey())) {
+                expression = expression.replace(entry.getKey(), "#" + entry.getKey());
+            }
+        }
+        return expression;
+    }
 
 }

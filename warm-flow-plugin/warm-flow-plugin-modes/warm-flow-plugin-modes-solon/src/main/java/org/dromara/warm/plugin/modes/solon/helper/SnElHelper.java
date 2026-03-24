@@ -13,32 +13,32 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.dromara.warm.flow.ui.vo;
+package org.dromara.warm.plugin.modes.solon.helper;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+import org.noear.solon.Solon;
+import org.noear.solon.expression.context.EnhanceContext;
+import org.noear.solon.expression.snel.SnEL;
 
-import java.util.List;
+import java.util.Map;
 
 /**
- * 流程配置vo
+ * 条件表达式 snel
  *
- * @author warm
+ * @author warm,battcn
  */
-@Getter
-@Setter
-@Accessors(chain = true)
-public class WarmFlowVo {
+public class SnElHelper {
 
     /**
-     * 如果需要工作流共享业务系统权限，默认Authorization
+     * @param expression expression
+     * @return  Object
      */
-    private List<String> tokenNameList;
+    public static Object parseExpression(String expression, Map<String, Object> variable) {
+        String result = expression.replace("#{", "").replace("}", "");
+        EnhanceContext context = new EnhanceContext(variable);
+        context.forBeans(k -> Solon.context().getBean( (String)k));
+        return SnEL.eval(result, context);
+    }
 
-    /**
-     * 框架类型: springboot、solon
-     */
-    private String framework;
+
 
 }

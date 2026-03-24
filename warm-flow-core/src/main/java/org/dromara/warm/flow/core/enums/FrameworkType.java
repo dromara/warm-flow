@@ -13,32 +13,23 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.dromara.warm.flow.ui.vo;
+package org.dromara.warm.flow.core.enums;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
-
-import java.util.List;
 
 /**
- * 流程配置vo
+ * 框架类型: springboot、solon
  *
  * @author warm
+ * @since 2026/3/24
  */
 @Getter
-@Setter
-@Accessors(chain = true)
-public class WarmFlowVo {
+@AllArgsConstructor
+public enum FrameworkType {
 
-    /**
-     * 如果需要工作流共享业务系统权限，默认Authorization
-     */
-    private List<String> tokenNameList;
+    SPRING_BOOT,
 
-    /**
-     * 框架类型: springboot、solon
-     */
-    private String framework;
+    SOLON;
 
 }

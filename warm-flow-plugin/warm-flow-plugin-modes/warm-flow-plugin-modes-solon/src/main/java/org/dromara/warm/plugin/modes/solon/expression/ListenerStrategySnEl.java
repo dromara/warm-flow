@@ -13,32 +13,29 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package org.dromara.warm.flow.ui.vo;
+package org.dromara.warm.plugin.modes.solon.expression;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+import org.dromara.warm.flow.core.strategy.ListenerStrategy;
+import org.dromara.warm.plugin.modes.solon.helper.SnElHelper;
 
-import java.util.List;
+import java.util.Map;
 
 /**
- * 流程配置vo
+ * snel监听器表达式 #{@user.eval()}
  *
  * @author warm
  */
-@Getter
-@Setter
-@Accessors(chain = true)
-public class WarmFlowVo {
+public class ListenerStrategySnEl implements ListenerStrategy {
 
-    /**
-     * 如果需要工作流共享业务系统权限，默认Authorization
-     */
-    private List<String> tokenNameList;
+    @Override
+    public String getType() {
+        return "#";
+    }
 
-    /**
-     * 框架类型: springboot、solon
-     */
-    private String framework;
-
+    @Override
+    public Boolean eval(String expression, Map<String, Object> variable) {
+        SnElHelper.parseExpression(expression, variable);
+        // 恒返回true，说明匹配上监听器表达式，扩展策略也一定要返回true
+        return true;
+    }
 }

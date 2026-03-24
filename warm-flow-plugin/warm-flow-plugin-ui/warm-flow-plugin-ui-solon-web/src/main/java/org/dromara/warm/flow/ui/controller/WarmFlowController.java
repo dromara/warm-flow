@@ -23,12 +23,9 @@ import org.dromara.warm.flow.core.entity.Instance;
 import org.dromara.warm.flow.ui.dto.HandlerFeedBackDto;
 import org.dromara.warm.flow.ui.dto.HandlerQuery;
 import org.dromara.warm.flow.ui.service.WarmFlowService;
-import org.dromara.warm.flow.ui.vo.Dict;
-import org.dromara.warm.flow.ui.vo.HandlerFeedBackVo;
-import org.dromara.warm.flow.ui.vo.HandlerSelectVo;
-import org.dromara.warm.flow.ui.vo.NodeExt;
+import org.dromara.warm.flow.ui.vo.*;
 import org.noear.solon.annotation.*;
-import org.noear.solon.data.annotation.Tran;
+import org.noear.solon.data.annotation.Transaction;
 
 import java.util.List;
 import java.util.Map;
@@ -53,7 +50,7 @@ public class WarmFlowController {
      */
     @Post
     @Mapping("/save-json")
-    @Tran
+    @Transaction
     public ApiResult<Void> saveJson(DefJson defJson, @Header("onlyNodeSkip") boolean onlyNodeSkip) throws Exception {
         return WarmFlowService.saveJson(defJson, onlyNodeSkip);
     }
@@ -147,7 +144,7 @@ public class WarmFlowController {
      */
     @Get
     @Mapping("/published-form")
-    @Tran
+    @Transaction
     public ApiResult<List<Form>> publishedForm() {
         return WarmFlowService.publishedForm();
     }
@@ -172,7 +169,7 @@ public class WarmFlowController {
      */
     @Post
     @Mapping("/form-content")
-    @Tran
+    @Transaction
     public ApiResult<Void> saveFormContent(FlowDto flowDto) {
         return WarmFlowService.saveFormContent(flowDto);
     }
@@ -214,7 +211,7 @@ public class WarmFlowController {
      * @param nodeCode
      * @return
      */
-    @Tran
+    @Transaction
     @Post
     @Mapping(value = "/execute/handle/{taskId}")
     public ApiResult<Instance> handle(Map<String, Object> formData, @Path("taskId") Long taskId, String skipType
@@ -231,5 +228,16 @@ public class WarmFlowController {
     @Mapping("/node-ext")
     public ApiResult<List<NodeExt>> nodeExt() {
         return WarmFlowService.nodeExt();
+    }
+
+    /**
+     * 获取节点扩展属性
+     *
+     * @return List<NodeExt>
+     */
+    @Get
+    @Mapping("/listener-list")
+    public ApiResult<List<ListenerVo>> listenerList() {
+        return WarmFlowService.listenerList();
     }
 }

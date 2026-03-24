@@ -54,8 +54,9 @@
               <el-option label="通过率" value="passRatio"/>
               <el-option label="固定通过人数" value="passCount"/>
               <el-option label="固定驳回人数" value="rejectCount"/>
-              <el-option label="默认表达式" value="default"/>
-              <el-option label="spel表达式" value="spel"/>
+              <el-option label="默认表达式" value="default" v-if="framework ==='SPRING_BOOT'"/>
+              <el-option label="spel表达式" value="spel" v-if="framework ==='SPRING_BOOT'"/>
+              <el-option label="snel表达式" value="snel" v-if="framework ==='SOLON'"/>
           </el-select>
           <el-input v-model="form.nodeRatioValue" :placeholder="getNodeRatioDescription()" style="width: 74%; margin-left: 1%"/>
         </el-form-item>
@@ -197,6 +198,7 @@ import { Delete } from '@element-plus/icons-vue'
 import {publishedList, handlerDict, nodeExt, handlerFeedback, listenerList} from "@/api/flow/definition";
 import nodeExtList from "./nodeExtList";
 import {getPreviousNodes} from "@/components/design/common/js/tool.js";
+import {getFramework} from "@/utils/auth.js";
 const { proxy } = getCurrentInstance();
 
 const props = defineProps({
@@ -243,7 +245,7 @@ const tabsList = ref([
 ]);
 const form = ref(props.modelValue);
 const userVisible = ref(false);
-
+const framework = getFramework()
 //基础设置扩展属性
 const baseList = ref([]);
 //按钮权限
@@ -280,6 +282,11 @@ const rules = reactive({
                 {required: true, message: "请输入", trigger: "change"},
                 {validator: validateSpel, trigger: ["change", "blur"]}
             ];
+        }  else if (type === 'snel') {
+            return [
+                {required: true, message: "请输入", trigger: "change"},
+                {validator: validateSnel, trigger: ["change", "blur"]}
+            ];
         }
         // 其他类型不作限制
         return [];
@@ -296,7 +303,7 @@ watch(() => form.value, n => {
       let nodeRatio = '';
       if (/^passCount|rejectCount/.test(n.nodeRatioType)) {
           nodeRatio = n.nodeRatioType + "=";
-      } else if (/^spel|default/.test(n.nodeRatioType)) {
+      } else if (/^spel|default|snel/.test(n.nodeRatioType)) {
           nodeRatio = n.nodeRatioType + "@@";
       }
       n.nodeRatio = nodeRatio + (n.nodeRatioValue ? n.nodeRatioValue : '')
@@ -357,6 +364,17 @@ function validateSpel(rule, value, callback) {
     }
 }
 
+function validateSnel(rule, value, callback) {
+    value = value.replace('snel@@', '').replace('=', '').trim();
+    if (value === '' || value === undefined || value === null) {
+        callback(new Error('请输入snel表达式'));
+    } else if (!/^\#\{.*\}$/.test(value)) {
+        callback(new Error('snel表达式必须以#{开头，以}结尾'));
+    } else {
+        callback();
+    }
+}
+
 function getNodeRatioDescription() {
     const type = form.value.nodeRatioType;
     switch (type) {
@@ -370,6 +388,8 @@ function getNodeRatioDescription() {
             return '请输入默认表达式,格式如: ${flag > 4}';
         case 'spel':
             return '请输入spel表达式，格式如: #{@user.eval(#flag)}';
+        case 'snel':
+            return '请输入snel表达式，格式如: #{@user.eval(flag)}';
         default:
             return '请输入';
     }
@@ -451,10 +471,11 @@ function getHandlerDict() {
 /** 办理人权限名称回显 */
 async function getHandlerFeedback() {
   if (form.value.permissionFlag) {
-    handlerFeedback({storageIds: form.value.permissionFlag}).then(response => {
-      if (response.code === 200 && response.data) {
-        permissionRows.value = response.data;
-      }
+      let permissionFlag = form.value.permissionFlag.join(",");
+      handlerFeedback({storageIds: permissionFlag}).then(response => {
+          if (response.code === 200 && response.data) {
+            permissionRows.value = response.data;
+          }
     });
   }
 }
