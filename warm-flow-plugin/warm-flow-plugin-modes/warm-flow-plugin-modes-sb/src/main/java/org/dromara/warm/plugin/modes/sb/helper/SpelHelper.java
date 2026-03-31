@@ -62,8 +62,25 @@ public class SpelHelper implements ApplicationContextAware {
      * @return  Object
      */
     public static Object parseExpression(String expression, Map<String, Object> variable) {
+
+        // 创建带沙箱保护的评估上下文
         StandardEvaluationContext context = new StandardEvaluationContext();
+
+        // 设置 Bean 解析器（支持 @beanName 引用）
         context.setBeanResolver(beanResolver());
+
+        // 设置变量
+        context.setVariables(variable);
+
+        // 设置沙箱：限制类型访问（白名单机制）
+        context.setTypeLocator(new SafeTypeLocator());
+
+        // 设置沙箱：限制方法调用
+        context.addMethodResolver(new SafeMethodResolver());
+
+
+        context.setBeanResolver(beanResolver());
+        context.setTypeLocator(new SafeTypeLocator());
         context.setVariables(variable);
         return PARSER.parseExpression(expression, PARSER_CONTEXT).getValue(context, Object.class);
     }
