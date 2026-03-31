@@ -314,6 +314,7 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
 
     @Override
     public Instance terminationByInsId(Long instanceId, FlowParams flowParams) {
+        AssertUtil.isNull(instanceId, ExceptionCons.NULL_INSTANCE_ID);
         // 获取待办任务
         List<Task> taskList = FlowEngine.taskService().getByInsId(instanceId);
         AssertUtil.isEmpty(taskList, ExceptionCons.NOT_FOUNT_TASK);
