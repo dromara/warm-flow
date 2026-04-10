@@ -735,6 +735,9 @@ public class TaskServiceImpl extends WarmServiceImpl<FlowTaskDao<Task>, Task> im
      * @return boolean
      */
     private boolean cooperate(Node nowNode, Task task, FlowParams flowParams) {
+        if (flowParams.isIgnore()) {
+            return false;
+        }
         String nodeRatio = nowNode.getNodeRatio();
         // 或签，直接返回
         if (CooperateType.isOrSign(nodeRatio)) {
