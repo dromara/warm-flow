@@ -38,11 +38,11 @@ public enum ChartStatus {
     /**
      * 流程图状态
      */
-    NOT_DONE(0, "未办理", new Color(166, 178, 189)),
+    NOT_DONE(0, "未办理", new Color(107,114,128)),
 
-    TO_DO(1, "待办理", new Color(255, 197, 90)),
+    TO_DO(1, "待办理", new Color(245,158,11)),
 
-    DONE(2, "已办理", new Color(135, 206, 250));
+    DONE(2, "已办理", new Color(56,161,105));
 
     private final Integer key;
     private final String value;

@@ -138,7 +138,7 @@
           <el-input v-model="form.formPath"></el-input>
         </el-form-item>
         <el-form-item label="自定义表单唯一标识：" prop="formPath" v-else-if="form.formCustom === 'Y'">
-            <tree-select
+            <el-tree-select
                 v-model="form.formPath"
                 :data="formPathList"
                 :props="{ value: 'id', label: 'name', children: 'children' }"
@@ -368,7 +368,6 @@ const rules = reactive({
         const type = form.value.nodeRatioType;
         if (!type) return [];
         if (type === 'passRatio') {
-            console.log('passRatio')
             return [
                 {required: true, message: "请输入", trigger: "change"},
                 {validator: validatePassRatio, trigger: ["change", "blur"]}

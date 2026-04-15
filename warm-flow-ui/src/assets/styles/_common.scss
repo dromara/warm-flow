@@ -7,15 +7,24 @@
 /* ========== 现代化页签 ========== */
 @mixin modern-tabs {
   .modern-tabs-wrapper {
+    position: relative;
     background: var(--wf-bg-white, #fff);
     border-radius: var(--wf-radius-lg, 12px);
-    padding: 5px;
-    box-shadow: var(--wf-shadow-sm, 0 1px 4px rgba(0, 0, 0, 0.04));
+    padding: 6px;
     margin-bottom: 0;
-    html.dark & { background: var(--wf-bg-color, #141414); }
+    /* 现代化边框：外层包裹线 + 内部柔和阴影 */
+    box-shadow:
+      0 0 0 1.5px rgba(64, 158, 255, 0.10),
+      inset 0 1px 3px rgba(0, 0, 0, 0.03);
+    html.dark & {
+      background: rgba(20, 22, 28, 0.8);
+      box-shadow:
+        0 0 0 1.5px rgba(64, 158, 255, 0.14),
+        inset 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
   }
   .modern-tabs {
-    display: flex; align-items: center; gap: 3px;
+    display: flex; align-items: center; gap: 4px;
     overflow-x: auto; &::-webkit-scrollbar { height: 0; display: none; }
   }
   .modern-tab-item {
@@ -27,18 +36,78 @@
     color: var(--wf-text-secondary, #909399);
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     user-select: none; white-space: nowrap; flex-shrink: 0;
+    /* 非激活项：淡边框 + 悬浮效果 */
+    border: 1.5px solid transparent;
 
     &:hover {
       color: var(--wf-primary, #409eff);
       background: var(--wf-primary-lighter, #f0f7ff);
+      border-color: rgba(64, 158, 255, 0.18);
       html.dark & { background: rgba(64,158,255,.08); }
     }
+
     &.is-active {
       color: #fff;
       background: linear-gradient(135deg, var(--wf-primary,#409eff) 0%, var(--wf-primary-dark,#2b7de9) 100%);
-      box-shadow: 0 2px 6px rgba(64,158,255,.3);
-      font-weight: 600; transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(64,158,255,.35), 0 1px 3px rgba(0,0,0,.08);
+      font-weight: 600;
+      transform: translateY(-1px);
+      border-color: transparent;
+
+      /* 扩展页签：绿色激活态 */
+      &.is-ext-tab {
+        background: linear-gradient(135deg, #67c23a 0%, #529b2e 100%);
+        box-shadow: 0 2px 8px rgba(103,194,58,.35), 0 1px 3px rgba(0,0,0,.08);
+
+        html.dark & {
+          box-shadow: 0 2px 8px rgba(103,194,58,.45), 0 1px 3px rgba(0,0,0,.15);
+        }
+
+        .tab-ext-tag {
+          background: rgba(255,255,255,0.25);
+          color: #fff;
+          border-color: transparent;
+        }
+      }
     }
+
+    /* ========== 扩展页签专属样式（非激活态） ========== */
+    &.is-ext-tab {
+      /* 非激活：淡绿底色 + 绿色文字 + 可见边框 */
+      color: var(--wf-success, #529b2e);
+      background: rgba(103, 194, 58, 0.06);
+      border-color: rgba(103, 194, 58, 0.18);
+      html.dark & { 
+        color: #85ce61; 
+        background: rgba(103, 194, 58, 0.10); 
+        border-color: rgba(103, 194, 58, 0.22);
+      }
+
+      &:hover {
+        background: rgba(103, 194, 58, 0.12);
+        border-color: rgba(103, 194, 58, 0.32);
+        html.dark & { 
+          background: rgba(103, 194, 58, 0.18); 
+        }
+      }
+
+      .tab-ext-tag {
+        font-size: 10px;
+        padding: 1px 6px;
+        margin-left: 6px;
+        background: rgba(103, 194, 58, 0.12);
+        color: var(--wf-success, #67c23a);
+        border-radius: 4px;
+        font-weight: 600;
+        line-height: 1.4;
+        vertical-align: middle;
+        html.dark & {
+          background: rgba(103, 194, 58, 0.18);
+          color: #85ce61;
+        }
+      }
+    }
+
     .tab-label { position: relative; z-index: 1; }
   }
 

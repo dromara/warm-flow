@@ -248,7 +248,7 @@ onMounted(async () => {
               statusColors.value.notDone,
             ]  = (res.data.chartStatusColor &&
                 res.data.chartStatusColor.length === 3) ? res.data.chartStatusColor :
-                ["82,196,26", "255,173,20", isClassics(defJson.value.modelValue) ? "0,0,0" : "144,147,153"]; // 提供默认值
+                ["56,161,105", "245,158,11", "107,114,128"]; // 提供默认值
 
             const data = json2LogicFlowJson(defJson.value);
             document.body.style.overflow = 'hidden';

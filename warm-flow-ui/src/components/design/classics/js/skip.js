@@ -13,7 +13,17 @@ class SkipModel extends PolylineEdgeModel {
 
   getTextStyle() {
     const style = super.getTextStyle();
-    style.background = {fill: "#fff"};
+    // 动态适配亮/暗模式的文本标签背景色
+    const isDark = document.documentElement.classList.contains('dark');
+    style.background = { fill: isDark ? '#1e1e1e' : '#ffffff' };
+    style.fill = isDark ? '#cbd5e1' : '#374151';
+    style.fontSize = 12;
+    style.fontWeight = 400;
+    // 胶囊式圆角
+    if (!style.style) {
+      style.style = {};
+    }
+    style.style.padding = '2px 8px';
     return style;
   }
 

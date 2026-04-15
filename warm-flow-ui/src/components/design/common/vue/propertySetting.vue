@@ -8,7 +8,8 @@
       direction="rtl"
       size="37%"
       :append-to-body="true"
-      :before-close="handleClose">
+      :before-close="handleClose"
+      class="property-drawer-modern">
       <component :ref="componentType.name" :is="componentType" v-model="form" :disabled="disabled" :skipConditionShow="skipConditionShow"
                  :nodes="nodes" :skips="skips" :form-path-list="formPathList">
         <template v-slot:[key]="data" v-for="(item, key) in $slots">
@@ -336,28 +337,43 @@ defineExpose({
 }
 </style>
 
-<!-- 全局样式：抽屉 append-to-body 后需要全局穿透 -->
+<!-- 全局样式：抽屉 append-to-body 后需要全局穿透（scoped 无法命中 teleport 到 body 的元素） -->
 <style lang="scss">
-/* ========== 暗黑模式：el-drawer 抽屉背景适配 ========== */
+/* ========== 现代化属性面板抽屉 ========== */
+.property-drawer-modern {
+  /* 让 el-drawer 自带 header 透明，完全由 #header 插槽内容控制背景 */
+  .el-drawer__header {
+    background: transparent !important;
+  }
+
+  .el-drawer__close-btn {
+    color: #909399 !important;
+    transition: all .25s ease !important;
+    &:hover { color: #409eff !important; transform: rotate(90deg); }
+  }
+}
+
+/* ========== 暗黑模式：el-drawer 抽屉完整适配（全局生效） ========== */
 html.dark {
-  .el-drawer {
-    background-color: var(--wf-bg-color, #141414) !important;
-
-    &__body {
+  .property-drawer-modern {
+    /* 整体抽屉 */
+    .el-drawer {
       background-color: var(--wf-bg-color, #141414) !important;
-    }
 
-    &__header {
-      background-color: var(--wf-bg-white, #1f1f1f);
-      border-bottom: 1px solid var(--wf-border-color, #333333);
-      color: var(--wf-text-primary, #e0e0e0);
+      &__body {
+        background-color: var(--wf-bg-color, #141414) !important;
+      }
 
-      > span { color: var(--wf-text-primary, #e0e0e0); }
-    }
+      /* header 背景已由 JS 内联样式控制，这里只需确保透明 + 关闭按钮颜色 */
+      &__header {
+        background: transparent !important;
+      }
 
-    &__close-btn {
-      color: var(--wf-text-secondary, #888888);
-      &:hover { color: var(--wf-text-primary, #e0e0e0); }
+      /* 关闭按钮 */
+      &__close-btn {
+        color: var(--wf-text-secondary, #888888) !important;
+        &:hover { color: #409eff !important; }
+      }
     }
   }
 
