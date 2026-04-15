@@ -53,6 +53,7 @@ import SkipM from "@/components/design/mimic/js/skip";
 import useAppStore from "@/store/app";
 import {isClassics, json2LogicFlowJson} from "@/components/design/common/js/tool";
 import { queryFlowChart } from "@/api/flow/definition";
+import { useDark } from '@/composables/useDark';
 
 const appStore = useAppStore();
 const appParams = computed(() => useAppStore().appParams);
@@ -74,10 +75,11 @@ const statusColors = ref({
   notDone: ""
 });
 
-const isDark = ref(false);
+// 使用统一的暗黑模式 composable
+const { isDark, initFromUrl, applyDarkTheme, setupMessageListener, cleanupMessageListener } = useDark();
 const headerDiv = computed(() => {
     return {
-        backgroundColor: isDark.value ? "#141414" : "#fff"
+        backgroundColor: "var(--wf-bg-white, #fff)",
     };
 });
 const headerStyle = computed(() => {
@@ -229,15 +231,11 @@ onMounted(async () => {
   if (!appParams.value) await appStore.fetchTokenName();
   instanceId.value = appParams.value.id;
 
-  // 从 URL 参数读取主题，支持通过地址栏 ?theme=dark 传入
-  const urlTheme = appParams.value.theme;
-  if (urlTheme === 'theme-dark') {
-    isDark.value = true;
-    document.documentElement.classList.add('dark');
-  } else if (urlTheme === 'theme-light') {
-    isDark.value = false;
-    document.documentElement.classList.remove('dark');
-  }
+  // 从 URL 参数初始化暗黑模式（统一使用 composable）
+  initFromUrl();
+
+  // 注册 postMessage 主题切换监听
+  setupMessageListener();
 
   if (instanceId.value) {
     queryFlowChart(instanceId.value)
@@ -281,15 +279,7 @@ onMounted(async () => {
             lf.value.render(data);
             // 初始化完成后，如果当前是暗黑模式，显式应用一次主题
             if (isDark.value && lf.value) {
-              lf.value.graphModel.background = {
-                background: "#141414",
-              };
-              if (lf.value.graphModel.grid) {
-                lf.value.graphModel.grid.config = {
-                  ...lf.value.graphModel.grid.config,
-                  color: '#404040',
-                };
-              }
+              applyDarkTheme(lf.value, true);
             }
             if (isClassics(defJson.value.modelValue)) {
               lf.value.translateCenter();
@@ -304,9 +294,7 @@ onMounted(async () => {
 
 watch(isDark, (v) => {
   if (!lf.value) return;
-  lf.value.graphModel.background = {
-    background: v ? "#141414" : "#fff"
-  };
+  applyDarkTheme(lf.value, v);
 });
 
 /**
@@ -315,48 +303,25 @@ watch(isDark, (v) => {
 function downLoad() {
   lf.value.getSnapshot(defJson.value.flowName, {
     fileType: 'png',
-    backgroundColor: '#f5f5f5',
+    backgroundColor: isDark.value ? '#141414' : '#f5f5f5',
     padding: 30,
     partial: false,
     quality: 0.92
   });
 }
 
-/**
- * 监听消息
- */
-function listeningMessage(e) {
-  const { data } = e;
-  switch (data.type) {
-    case "theme-dark": {
-      isDark.value = true;
-      document.documentElement.classList.add('dark');
-      return;
-    }
-    case "theme-light": {
-      isDark.value = false;
-      document.documentElement.classList.remove('dark');
-      return;
-    }
-  }
-}
-
-onMounted(() => {
-  window.addEventListener("message", listeningMessage);
-  // 初始化时检测父页面暗黑模式状态
-  if (window.parent !== window) {
-    window.parent.postMessage({ method: "getTheme" }, "*");
-  }
-});
+/** 组件卸载时清理 message 监听 */
 onUnmounted(() => {
-  window.removeEventListener("message", listeningMessage);
+  cleanupMessageListener();
 });
 </script>
 
 <style scoped>
-/* ========== 暗黑模式根背景 ========== */
-html.dark .containerView,
-html.dark body {
+/* ========== 暗黑模式根背景（使用 :global 确保可靠穿透） ========== */
+:global(html.dark) .containerView {
+  background-color: #141414 !important;
+}
+:global(html.dark) body {
   background-color: #141414 !important;
 }
 
@@ -365,23 +330,27 @@ html.dark body {
   height: 100%;
 }
 
-html.dark .containerView {
-  background-color: #141414 !important;
-}
-
 .top-text {
   position: absolute;
   font-weight: bold;
   left: 500px;
   top: 2px;
-  border: 1px solid #d1e9ff;
-  background-color: #e8f4ff;
+  border: 1px solid var(--wf-border-light, #d1e9ff);
+  background-color: var(--wf-primary-lighter, #e8f4ff);
   padding: 4px 8px;
   border-radius: 4px;
   max-width: 300px;
   font-size: 15px;
-  color: #333;
+  color: var(--wf-text-primary, #333);
   z-index: 1;
+
+  /* 暗黑模式适配 */
+  html.dark &,
+  :global(html.dark) & {
+    color: var(--wf-text-primary, #e0e0e0);
+    border-color: var(--wf-border-color, #333333);
+    background-color: rgba(64, 158, 255, 0.08);
+  }
 }
 
 .log-text {
@@ -390,7 +359,13 @@ html.dark .containerView {
   right: 10px;
   bottom: 10px;
   font-size: 15px;
-  color: #333;
+  color: var(--wf-text-primary, #333);
   z-index: 1;
+
+  /* 暗黑模式适配 */
+  html.dark &,
+  :global(html.dark) & {
+    color: var(--wf-text-secondary, #888888);
+  }
 }
 </style>

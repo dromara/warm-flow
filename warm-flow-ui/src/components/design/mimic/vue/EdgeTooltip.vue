@@ -11,6 +11,9 @@
 
 <script setup name="EdgeTooltip">
 import { computed } from 'vue';
+import { useDark } from '@/composables/useDark';
+
+const { isDark } = useDark();
 
 const props = defineProps({
   position: Object,
@@ -24,33 +27,35 @@ const options = [
   { icon: 'inclusive', label: '包含网关' },
 ]
 
-const emit = defineEmits(['option-click', 'close-tooltip']); // 新增 close-tooltip 事件
+const emit = defineEmits(['option-click', 'close-tooltip']);
 
+/** 动态计算 tooltip 样式，根据暗黑模式切换颜色 */
 const tooltipStyle = computed(() => ({
   top: `${props.position.y}px`,
   left: `${props.position.x + 20}px`,
-  position: 'absolute', /* 绝对定位，基于最近的定位祖先元素（如 container） */
-  pointerEvents: 'auto', // ✅ 允许 tooltip 捕获鼠标事件
-  backgroundColor: "#fff", /* 背景色为白色 */
-  border: "1px solid #ccc", /* 灰色边框 */
-  borderRadius: "4px", /* 添加圆角 */
-  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)", /* 阴影效果（轻微立体感） */
-  padding: "4px 5px", /* 内边距（内容与边框的间距） */
-  fontSize: "15px", /* 字体大小 */
-  zIndex: 1000, /* 层级高于其他元素，确保提示框可见 */
-  color: "#333", /* 深色文字 */
-  display: "flex",
-  width: "350px"
+  position: 'absolute',
+  pointerEvents: 'auto',
+  backgroundColor: isDark.value ? '#1f1f1f' : '#fff',
+  border: `1px solid ${isDark.value ? '#333333' : '#ccc'}`,
+  borderRadius: '4px',
+  boxShadow: isDark.value
+    ? '0 2px 12px rgba(0, 0, 0, 0.4)'
+    : '0 2px 8px rgba(0, 0, 0, 0.15)',
+  padding: '4px 5px',
+  fontSize: '15px',
+  zIndex: 1000,
+  color: isDark.value ? '#e0e0e0' : '#333',
+  display: 'flex',
+  width: '350px'
 }));
 
 function handleTooltipEnter() {
-  // 鼠标进入提示框时，阻止 hide 事件触发
   window.isTooltipHovered = true;
 }
 
 function handleTooltipLeave() {
   window.isTooltipHovered = false;
-  emit('close-tooltip'); // 主动通知父组件关闭
+  emit('close-tooltip');
 }
 
 const handleClick = (item) => {
@@ -75,10 +80,18 @@ const handleClick = (item) => {
     cursor: pointer;
     border-radius: 4px;
     transition: background-color 0.2s;
-}
 
-.tooltip-item:hover {
-    background-color: #f0f0f0;
+    &:hover {
+      background-color: #f0f0f0;
+    }
+
+    /* 暗黑模式 hover */
+    html.dark &,
+    :global(html.dark) & {
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.08);
+      }
+    }
 }
 
 .tooltip-icon {
@@ -91,6 +104,23 @@ const handleClick = (item) => {
     border-radius: 50%;
     margin-right: 10px;
     color: #666;
-}
+    transition: all 0.2s ease;
 
+    /* 暗黑模式适配 */
+    html.dark &,
+    :global(html.dark) & {
+      border-color: #444444;
+      color: #b0b0b0;
+
+      &:hover {
+        border-color: var(--wf-primary, #409eff);
+        color: var(--wf-primary, #409eff);
+      }
+    }
+
+    &:hover {
+      border-color: var(--wf-primary, #409eff);
+      color: var(--wf-primary, #409eff);
+    }
+}
 </style>

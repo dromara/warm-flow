@@ -1,0 +1,137 @@
+/* ============================================
+ * 设计器子组件公共样式 (SCSS Partials)
+ * 被 start / skip / gateway / end / between 等组件 @import 引入
+ * 包含: 现代化页签、基础配置卡片、监听器/办理人卡片
+ * ============================================ */
+
+/* ========== 现代化页签 ========== */
+@mixin modern-tabs {
+  .modern-tabs-wrapper {
+    background: var(--wf-bg-white, #fff);
+    border-radius: var(--wf-radius-lg, 12px);
+    padding: 5px;
+    box-shadow: var(--wf-shadow-sm, 0 1px 4px rgba(0, 0, 0, 0.04));
+    margin-bottom: 0;
+    html.dark & { background: var(--wf-bg-color, #141414); }
+  }
+  .modern-tabs {
+    display: flex; align-items: center; gap: 3px;
+    overflow-x: auto; &::-webkit-scrollbar { height: 0; display: none; }
+  }
+  .modern-tab-item {
+    position: relative;
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: var(--wf-radius, 8px);
+    font-size: 13px; font-weight: 500;
+    color: var(--wf-text-secondary, #909399);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none; white-space: nowrap; flex-shrink: 0;
+
+    &:hover {
+      color: var(--wf-primary, #409eff);
+      background: var(--wf-primary-lighter, #f0f7ff);
+      html.dark & { background: rgba(64,158,255,.08); }
+    }
+    &.is-active {
+      color: #fff;
+      background: linear-gradient(135deg, var(--wf-primary,#409eff) 0%, var(--wf-primary-dark,#2b7de9) 100%);
+      box-shadow: 0 2px 6px rgba(64,158,255,.3);
+      font-weight: 600; transform: translateY(-1px);
+    }
+    .tab-label { position: relative; z-index: 1; }
+  }
+
+  .tabPane {
+    padding: 16px 2px 8px 2px;
+    border: none; background: transparent;
+    animation: fadeIn .2s ease;
+  }
+  .tabPane-full { padding: 16px 2px 8px 2px; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
+/* ========== 基础配置卡片 ========== */
+@mixin base-settings-card {
+  .base-settings-section {
+    border-radius: var(--wf-radius-lg, 12px);
+    overflow: hidden;
+    border: 1px solid var(--wf-border-light, #e4e7ed);
+    background: var(--wf-bg-white, #fff);
+    box-shadow: var(--wf-shadow-sm, 0 1px 4px rgba(0, 0, 0, 0.04));
+    transition: all 0.3s ease;
+    html.dark & {
+      border-color: var(--wf-border-color, #333333);
+      background: var(--wf-bg-color, #141414);
+    }
+    &:hover {
+      box-shadow: var(--wf-shadow, 0 2px 12px rgba(0, 0, 0, 0.06));
+      html.dark & { box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3); }
+    }
+  }
+  .base-settings-header {
+    display: flex; align-items: center; gap: 8px; padding: 12px 16px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #f0f2f5 100%);
+    border-bottom: 1px solid var(--wf-border-lighter, #ebeef5);
+    html.dark & {
+      background: linear-gradient(135deg, rgba(120,128,140,.06) 0%, rgba(80,88,100,.04) 100%);
+      border-bottom-color: var(--wf-border-color, #333333);
+    }
+  }
+  .ext-icon-base { color: var(--wf-text-regular, #606266); svg { width: 16px; height: 16px; } }
+  .base-settings-title { font-size: 13px; font-weight: 600; color: var(--wf-text-primary, #303133); letter-spacing: .3px; }
+  .base-settings-content {
+    padding: 14px 16px;
+    background: var(--wf-bg-color, #fafbfc);
+    html.dark & { background: var(--wf-bg-color, #141414); }
+  }
+}
+
+/* ========== 监听器/办理人 通用卡片 ========== */
+@mixin section-card {
+  .section-card {
+    border-radius: var(--wf-radius-lg, 12px);
+    overflow: hidden;
+    border: 1px solid var(--wf-border-light, #e4e7ed);
+    background: var(--wf-bg-white, #fff);
+    box-shadow: var(--wf-shadow-sm, 0 1px 4px rgba(0, 0, 0, 0.04));
+    transition: all 0.3s ease;
+    html.dark & {
+      border-color: var(--wf-border-color, #333333);
+      background: var(--wf-bg-color, #141414);
+    }
+    &:hover {
+      box-shadow: var(--wf-shadow, 0 2px 12px rgba(0, 0, 0, 0.06));
+      html.dark & { box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3); }
+    }
+  }
+  .section-card-header {
+    display: flex; align-items: center; gap: 8px; padding: 12px 16px;
+    border-bottom: 1px solid var(--wf-border-lighter, #ebeef5);
+    html.dark & { border-bottom-color: var(--wf-border-color, #333333); }
+  }
+  .section-card-icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; svg { width: 16px; height: 16px; } }
+  .section-card-title { font-size: 13px; font-weight: 600; color: var(--wf-text-primary, #303133); letter-spacing: .3px; }
+  .section-card-body {
+    padding: 14px 16px;
+    background: var(--wf-bg-color, #fafbfc);
+    html.dark & { background: var(--wf-bg-color, #141414); }
+  }
+  .action-buttons { display: flex; gap: 8px; margin-top: 12px; }
+}
+
+/* ========== 表格内表单左对齐（穿透 el-table 内的 form-item） ========== */
+@mixin table-form-align {
+  ::v-deep(.el-table .el-form-item) {
+    margin-bottom: 0;
+    .el-form-item__label {
+      display: none !important; width: 0 !important; min-width: 0 !important;
+      padding-right: 0 !important; overflow: hidden !important; visibility: hidden !important;
+      height: 0 !important;
+    }
+    .el-form-item__content { display: block !important; margin-left: 0 !important; }
+  }
+}

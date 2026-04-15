@@ -432,41 +432,8 @@ defineExpose({
   }
 }
 
-/* ========== 10. 暗黑模式 ========== */
-:deep(html.dark) .nodeExtForm,
-html.dark .nodeExtForm {
-  /* 输入框背景 */
-  :deep(.el-input__wrapper),
-  :deep(.el-textarea__inner) {
-    background: var(--wf-bg-white, #1f1f1f);
-  }
-
-  /* Radio/Checkbox 卡片暗色 */
-  :deep(.el-radio),
-  :deep(.el-checkbox) {
-    background: var(--wf-bg-white, #1f1f1f);
-    border-color: var(--wf-border-color, #333333);
-
-    &.is-checked {
-      background: var(--wf-primary-light, #1a2744);
-      border-color: var(--wf-primary, #409eff);
-      box-shadow: 0 0 8px rgba(64, 158, 255, 0.25);
-    }
-  }
-
-  /* 标签暗蓝色 */
-  :deep(.el-tag) {
-    background: var(--wf-primary-light, #1a2744);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  }
-
-  /* 选择框多选标签 */
-  :deep(.el-select .el-select__tags .el-tag) {
-    background: var(--wf-primary-light, #1a2744);
-  }
-}
-
-/* 暗黑模式 - 使用全局选择器确保生效 */
+/* ========== 10. 暗黑模式（统一使用 ::global 兜底） ========== */
+/* 注意：冗余的 ::deep(html.dark) 嵌套已清理，下方 ::global(html.dark) 规则可覆盖所有场景 */
 :global(html.dark) .nodeExtForm :deep(.el-input__wrapper),
 :global(html.dark) .nodeExtForm :deep(.el-textarea__inner) {
   background: var(--wf-bg-white);

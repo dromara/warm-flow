@@ -727,20 +727,7 @@ defineExpose({
 </script>
 
 <style scoped lang="scss">
-.dialogSelect {
-  display: none;
-}
-.placeholder {
-  color: #828f9e;
-  font-size: 12px;
-}
-.mt5 { margin-top: 5px; }
-.mr5 { margin-right: 5px; }
-.ml5 { margin-left: 5px; }
-.flex-hc {
-  display: flex;
-  align-items: center;
-}
+@import '@/assets/styles/_common.scss';
 
 /* ========== 容器布局 ========== */
 .between {
@@ -755,186 +742,17 @@ defineExpose({
   width: 100%;
 }
 
-/* ========== 现代化页签 ========== */
-.modern-tabs-wrapper {
-  background: var(--wf-bg-white, #fff);
-  border-radius: var(--wf-radius-lg, 12px);
-  padding: 5px;
-  box-shadow: var(--wf-shadow-sm, 0 1px 4px rgba(0, 0, 0, 0.04));
-  margin-bottom: 0;
+/* 引入公共样式：现代化页签 + 基础配置卡片 + 监听器/办理人卡片 + 表格表单左对齐 */
+@include modern-tabs;
+@include base-settings-card;
+@include section-card;
+@include table-form-align;
 
-  html.dark & { background: var(--wf-bg-color, #141414); }
-}
-.modern-tabs {
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  overflow-x: auto;
-  &::-webkit-scrollbar { height: 0; display: none; }
-}
-.modern-tab-item {
-  position: relative;
-  padding: 8px 16px;
-  cursor: pointer;
-  border-radius: var(--wf-radius, 8px);
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--wf-text-secondary, #909399);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  user-select: none;
-  white-space: nowrap;
-  flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  line-height: 1.4;
-  &:hover {
-    color: var(--wf-primary, #409eff);
-    background: var(--wf-primary-lighter, #f0f7ff);
-    html.dark & { background: rgba(64, 158, 255, 0.08); }
-  }
-  &.is-active {
-    color: #fff;
-    background: linear-gradient(135deg, var(--wf-primary, #409eff) 0%, var(--wf-primary-dark, #2b7de9) 100%);
-    box-shadow: 0 2px 6px rgba(64, 158, 255, 0.3);
-    font-weight: 600;
-    transform: translateY(-1px);
-    &.is-ext-tab {
-      background: linear-gradient(135deg, #67c23a 0%, #529b2e 100%);
-      box-shadow: 0 2px 6px rgba(103, 194, 58, 0.3);
-    }
-  }
-
-  &.is-ext-tab .tab-ext-tag {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1px 6px;
-    font-size: 10px;
-    background: rgba(255, 255, 255, 0.25);
-    border-radius: 4px;
-    color: inherit;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-  }
-  &:not(.is-active).is-ext-tab:hover {
-    background: rgba(103, 194, 58, 0.08); color: #67c23a;
-  }
-  &:not(.is-active).is-ext-tab {
-    color: #67c23a; background: rgba(103, 194, 58, 0.06);
-  }
-  .tab-label { position: relative; z-index: 1; }
-  .tab-ext-tag { display: none; }
-}
-
-.tabPane {
-  padding: 16px 2px 8px 2px;
-  border: none;
-  background: transparent;
-  animation: fadeIn 0.2s ease;
-}
-.tabPane-full {
-  padding: 16px 2px 8px 2px;
-}
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* ========== 基础配置卡片 ========== */
-.base-settings-section {
-  border-radius: var(--wf-radius-lg, 12px);
-  overflow: hidden;
-  border: 1px solid var(--wf-border-light, #e4e7ed);
-  background: var(--wf-bg-white, #fff);
-  box-shadow: var(--wf-shadow-sm, 0 1px 4px rgba(0, 0, 0, 0.04));
-  transition: all 0.3s ease;
-  html.dark & {
-    border-color: var(--wf-border-color, #333333);
-    background: var(--wf-bg-color, #141414);
-  }
-  &:hover {
-    box-shadow: var(--wf-shadow, 0 2px 12px rgba(0, 0, 0, 0.06));
-    html.dark & { box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3); }
-  }
-}
-.base-settings-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
-  background: linear-gradient(135deg, #f5f7fa 0%, #f0f2f5 100%);
-  border-bottom: 1px solid var(--wf-border-lighter, #ebeef5);
-  html.dark & {
-    background: linear-gradient(135deg, rgba(120, 128, 140, 0.06) 0%, rgba(80, 88, 100, 0.04) 100%);
-    border-bottom-color: var(--wf-border-color, #333333);
-  }
-}
-.ext-icon-base {
-  color: var(--wf-text-regular, #606266);
-  svg { width: 16px; height: 16px; }
-}
-.base-settings-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--wf-text-primary, #303133);
-  letter-spacing: 0.3px;
-}
-.base-settings-content {
-  padding: 14px 16px;
-  background: var(--wf-bg-color, #fafbfc);
-  html.dark & { background: var(--wf-bg-color, #141414); }
-}
-
-/* ========== 通用卡片（办理人/监听器） ========== */
-.section-card {
-  border-radius: var(--wf-radius-lg, 12px);
-  overflow: hidden;
-  border: 1px solid var(--wf-border-light, #e4e7ed);
-  background: var(--wf-bg-white, #fff);
-  box-shadow: var(--wf-shadow-sm, 0 1px 4px rgba(0, 0, 0, 0.04));
-  transition: all 0.3s ease;
-  html.dark & {
-    border-color: var(--wf-border-color, #333333);
-    background: var(--wf-bg-color, #141414);
-  }
-  &:hover {
-    box-shadow: var(--wf-shadow, 0 2px 12px rgba(0, 0, 0, 0.06));
-    html.dark & { box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3); }
-  }
-}
-.section-card-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--wf-border-lighter, #ebeef5);
-  html.dark & { border-bottom-color: var(--wf-border-color, #333333); }
-}
-.section-card-icon {
-  width: 20px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  svg { width: 16px; height: 16px; }
-}
-.section-card-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--wf-text-primary, #303133);
-  letter-spacing: 0.3px;
-}
-.section-card-body {
-  padding: 14px 16px;
-  background: var(--wf-bg-color, #fafbfc);
-  html.dark & { background: var(--wf-bg-color, #141414); }
-}
-.action-buttons {
-  display: flex;
-  gap: 8px;
-  margin-top: 12px;
-}
+.placeholder { color: #828f9e; font-size: 12px; }
+.mt5 { margin-top: 5px; }
+.mr5 { margin-right: 5px; }
+.ml5 { margin-left: 5px; }
+.flex-hc { display: flex; align-items: center; }
 
 /* ========== 虚线增加行按钮（与 baseInfo 风格一致） ========== */
 .add-row-btn {

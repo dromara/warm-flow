@@ -125,6 +125,7 @@ import initClassicsData from "@/components/design/classics/initClassicsData.json
 import initMimicData from "@/components/design/mimic/initMimicData.json";
 import {addBetweenNode, addGatewayNode, gatewayAddNode, removeNode} from "@/components/design/mimic/js/mimic.js";
 import EdgeTooltip from "@/components/design/mimic/vue/EdgeTooltip.vue";
+import { useDark } from '@/composables/useDark';
 
 const appStore = useAppStore();
 const appParams = computed(() => useAppStore().appParams);
@@ -143,7 +144,8 @@ const nodes = ref([]);
 const skips = ref([]);
 const categoryList = ref([]);
 const formPathList = ref([]);
-const isDark = ref(false);
+// 使用统一的暗黑模式 composable
+const { isDark, initFromUrl, applyDarkTheme, setupMessageListener, cleanupMessageListener } = useDark();
 const activeStep = ref(0); // 初始化当前步骤为0（开始）
 const onlyDesignShow = ref(false);
 
@@ -154,24 +156,24 @@ const headerStyle = computed(() => {
     left: isClassics(logicJson.value.modelValue) ? "60px" : "50px",
     zIndex: "2",
     height: "auto",
-    backgroundColor: isDark.value ? "#141414" : "#fff",
-    border: isDark.value ? "1px solid #333" : "1px solid #ddd",
+    backgroundColor: "var(--wf-bg-white, #fff)",
+    border: "1px solid var(--wf-border-light, #e2e8f0)",
     borderRadius: "6px",
     margin: "5px",
-    color: isDark.value ? "#e0e0e0" : "#303133",
+    color: "var(--wf-text-primary, #303133)",
     transition: "left 0.3s ease",
   };
 });
 const baseInfoStyle = computed(() => {
   return {
     margin: "5px",
-    backgroundColor: isDark.value ? "#141414" : "#fff",
+    backgroundColor: "var(--wf-bg-white, #fff)",
   };
 });
 
 const headerDiv = computed(() => {
     return {
-        backgroundColor: isDark.value ? "#141414" : "#fff",
+        backgroundColor: "var(--wf-bg-white, #fff)",
     };
 });
 
@@ -218,15 +220,11 @@ onMounted(() => {
     onlyDesignShow.value = appParams.value.onlyDesignShow === 'true' ||
         appParams.value.onlyDesignShow === true;
 
-    // 从 URL 参数读取主题，支持通过地址栏 ?theme=dark 传入
-    const urlTheme = appParams.value.theme;
-    if (urlTheme === 'theme-dark') {
-      isDark.value = true;
-      document.documentElement.classList.add('dark');
-    } else if (urlTheme === 'theme-light') {
-      isDark.value = false;
-      document.documentElement.classList.remove('dark');
-    }
+    // 从 URL 参数初始化暗黑模式（统一使用 composable）
+    initFromUrl();
+
+    // 注册 postMessage 主题切换监听
+    setupMessageListener();
 
     queryDef(definitionId.value).then(res => {
     jsonString.value = res.data;
@@ -329,28 +327,6 @@ function initLogicFlow() {
   }
 }
 
-/** 应用/取消暗黑主题到 LogicFlow 画布 */
-function applyDarkTheme(lfInstance, isDarkMode) {
-  lfInstance.graphModel.background = {
-    background: isDarkMode ? "#141414" : "#fff",
-  };
-  if (lfInstance.graphModel.grid) {
-    lfInstance.graphModel.grid.config = {
-      ...lfInstance.graphModel.grid.config,
-      color: isDarkMode ? '#404040' : '#ccc',
-    };
-  }
-  lfInstance.setTheme({
-    edgeText: {
-      fontSize: 13,
-      strokeWidth: 1,
-      background: {
-        fill: isDarkMode ? "#141414" : "#fff",
-      },
-    },
-  });
-}
-
 watch(isDark, (v) => {
   if (!lf.value) {
     return;
@@ -358,36 +334,9 @@ watch(isDark, (v) => {
   applyDarkTheme(lf.value, v);
 });
 
-/**
- * data为 {type: string, data?: any}
- * data为 {type: string, data?: any}
- * @param e
- */
-function listeningMessage(e) {
-  const { data } = e;
-  switch (data.type) {
-    case "theme-dark": {
-      isDark.value = true;
-      document.documentElement.classList.add('dark');
-      return;
-    }
-    case "theme-light": {
-      isDark.value = false;
-      document.documentElement.classList.remove('dark');
-      return;
-    }
-  }
-}
-
-onMounted(() => {
-  window.addEventListener("message", listeningMessage);
-  // 初始化时检测父页面暗黑模式状态
-  if (window.parent !== window) {
-    window.parent.postMessage({ method: "getTheme" }, "*");
-  }
-});
+/** 组件卸载时清理 message 监听 */
 onUnmounted(() => {
-  window.removeEventListener("message", listeningMessage);
+  cleanupMessageListener();
 });
 
 /**
@@ -929,39 +878,30 @@ html.dark .steps-tabs {
   height: 16px;
 }
 
-/* ========== 暗黑模式适配 ========== */
+/* ========== 暗黑模式适配（CSS 变量驱动） ========== */
 html.dark .design-header {
-  background: var(--wf-bg-white, #1e293b);
-  border-bottom-color: #334155;
+  background: var(--wf-bg-white);
+  border-bottom-color: var(--wf-border-color);
 }
 
-html.dark .flow-name {
-  color: #e2e8f0;
-  background: #1e293b;
-  border-color: #475569;
-}
-
-html.dark .flow-name:hover {
-  border-color: #60a5fa;
-  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.15);
-}
+/* flow-name 的暗黑样式已在 L830-832 通过 CSS 变量 + !important 处理 */
 
 html.dark .steps-tabs {
-  background: #1e293b;
+  background: var(--wf-bg-color);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 html.dark .step-tab {
-  color: #94a3b8;
+  color: var(--wf-text-regular);
 }
 
 html.dark .step-tab:hover {
-  color: #60a5fa;
+  color: var(--wf-primary);
   background: rgba(96, 165, 250, 0.1);
 }
 
 html.dark .logo-text {
-  color: var(--wf-text-secondary, #888888);
+  color: var(--wf-text-secondary);
 }
 
 /* ========== 工具栏分组 ========== */
