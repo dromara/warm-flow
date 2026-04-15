@@ -1,50 +1,67 @@
 <template>
   <div :style="headerDiv">
-    <!-- 流程名称和步骤条容器 -->
-    <div :style="headerContainer" v-if="!onlyDesignShow">
-      <!-- 流程名称 -->
-      <el-tooltip :content="logicJson.flowName" placement="top">
-        <div class="flow-name">
-          <svg-icon icon-class="flowName" style="margin-right: 5px"/>
-          {{ logicJson.flowName }}
+    <!-- 顶部导航栏 -->
+    <div class="design-header" v-if="!onlyDesignShow">
+      <!-- 左侧：流程名称 -->
+      <div class="header-left">
+        <div class="flow-name-wrapper">
+          <el-tooltip :content="logicJson.flowName" placement="bottom" :show-after="500">
+            <div class="flow-name">
+                <svg-icon icon-class="flowName" style="margin-right: 5px"/>
+                {{ logicJson.flowName }}
+            </div>
+          </el-tooltip>
         </div>
-      </el-tooltip>
-      <!-- 自定义步骤按钮 -->
-      <div class="steps-container">
-        <div class="steps">
+      </div>
+
+      <!-- 中间：步骤切换 -->
+      <div class="header-center">
+        <div class="steps-tabs">
           <div
               v-for="(step, index) in steps"
               :key="index"
-              class="step-item"
+              class="step-tab"
               :class="{ 'active': activeStep === index }"
               @click="handleStepClick(index)"
           >
-            <svg-icon :icon-class="step.icon" style="margin-right: 5px"/>
-            <span>{{ step.title }}</span>
+            <svg-icon :icon-class="step.icon" class="tab-icon"/>
+            <span class="tab-text">{{ step.title }}</span>
           </div>
         </div>
+      </div>
+
+      <!-- 右侧：保存按钮 -->
+      <div class="header-right">
+        <el-button class="save-btn" size="default" @click="saveJsonModel" v-if="!disabled">
+          <svg-icon icon-class="save" class="save-icon"/>
+          <span>保存</span>
+        </el-button>
       </div>
     </div>
 
     <el-header :style="headerStyle">
       <div style="padding: 5px 0; text-align: right;">
         <div v-if="activeStep === 1">
-          <el-button size="small" icon="ZoomOut" @click="zoomViewport(false)">缩小</el-button>
-          <el-button size="small" v-if="'CLASSICS' === logicJson.modelValue" icon="Rank" @click="zoomViewport(1)">自适应</el-button>
-          <el-button size="small" icon="ZoomIn" @click="zoomViewport(true)">放大</el-button>
-          <el-button size="small" icon="DArrowLeft" @click="undoOrRedo(true)">上一步</el-button>
-          <el-button size="small" icon="DArrowRight" @click="undoOrRedo(false)">下一步</el-button>
-          <el-button size="small" icon="Delete" @click="clear()">清空</el-button>
-          <el-button size="small" icon="Download" @click="downLoad">下载流程图</el-button>
-          <el-button size="small" icon="Download" @click="downJson">下载json</el-button>
-          <el-button size="small" style="background-color: #48D1CC;"  @click="saveJsonModel" v-if="!disabled">
-            <svg-icon icon-class="save" style="margin-right: 5px;"/>保存
-          </el-button>
-        </div>
-        <div v-else>
-          <el-button size="small" style="background-color: #48D1CC;" @click="saveJsonModel" v-if="!disabled">
-            <svg-icon icon-class="save" style="margin-right: 5px;"/>保存
-          </el-button>
+          <span class="toolbar-group">
+            <el-button size="small" icon="ZoomOut" @click="zoomViewport(false)">缩小</el-button>
+            <el-button size="small" v-if="'CLASSICS' === logicJson.modelValue" icon="Rank" @click="zoomViewport(1)">自适应</el-button>
+            <el-button size="small" icon="ZoomIn" @click="zoomViewport(true)">放大</el-button>
+          </span>
+          <span class="toolbar-group">
+            <el-button size="small" icon="DArrowLeft" @click="undoOrRedo(true)">上一步</el-button>
+            <el-button size="small" icon="DArrowRight" @click="undoOrRedo(false)">下一步</el-button>
+            <el-button size="small" icon="Delete" @click="clear()">清空</el-button>
+          </span>
+          <span class="toolbar-group">
+            <el-button size="small" icon="Download" @click="downLoad">下载流程图</el-button>
+            <el-button size="small" icon="Download" @click="downJson">下载json</el-button>
+          </span>
+          <span class="toolbar-group" v-if="onlyDesignShow && !disabled">
+            <el-button size="small" class="toolbar-save-btn" @click="saveJsonModel">
+              <svg-icon icon-class="save" style="margin-right: 4px; width: 14px; height: 14px;"/>
+              <span>保存</span>
+            </el-button>
+          </span>
         </div>
       </div>
 
@@ -61,16 +78,16 @@
       </div>
       <div class="logo-text" v-if="activeStep === 1">Warm-Flow</div>
     </el-header>
-  </div>
 
-  <!-- 弹框组件 -->
-  <EdgeTooltip
-      v-if="tooltipVisible"
-      :position="tooltipPosition"
-      :tooltipEdge="tooltipEdge"
-      @option-click="handleOptionClick"
-      @close-tooltip="tooltipVisible = false"
-  />
+    <!-- 弹框组件 -->
+    <EdgeTooltip
+        v-if="tooltipVisible"
+        :position="tooltipPosition"
+        :tooltipEdge="tooltipEdge"
+        @option-click="handleOptionClick"
+        @close-tooltip="tooltipVisible = false"
+    />
+  </div>
 </template>
 
 <script setup name="Design">
@@ -134,12 +151,15 @@ const headerStyle = computed(() => {
   return {
     top: "5px",
     right: "50px",
+    left: isClassics(logicJson.value.modelValue) ? "60px" : "50px",
     zIndex: "2",
     height: "auto",
     backgroundColor: isDark.value ? "#141414" : "#fff",
-    border: "1px solid #ddd", /* 添加边框 */
-    borderRadius: "6px", /* 添加圆角 */
+    border: isDark.value ? "1px solid #333" : "1px solid #ddd",
+    borderRadius: "6px",
     margin: "5px",
+    color: isDark.value ? "#e0e0e0" : "#303133",
+    transition: "left 0.3s ease",
   };
 });
 const baseInfoStyle = computed(() => {
@@ -153,18 +173,6 @@ const headerDiv = computed(() => {
     return {
         backgroundColor: isDark.value ? "#141414" : "#fff",
     };
-});
-
-const headerContainer = computed(() => {
-  return {
-    display: "flex",
-    alignItems: "center", /* 垂直居中对齐 */
-    border: "1px solid #ddd", /* 添加边框 */
-    borderRadius: "6px", /* 添加圆角 */
-    height: "100%", /* 占满父容器高度 */
-    top: "5px",
-    margin: "0px 5px",
-  };
 });
 
 // 步骤数据
@@ -209,6 +217,16 @@ onMounted(() => {
     }
     onlyDesignShow.value = appParams.value.onlyDesignShow === 'true' ||
         appParams.value.onlyDesignShow === true;
+
+    // 从 URL 参数读取主题，支持通过地址栏 ?theme=dark 传入
+    const urlTheme = appParams.value.theme;
+    if (urlTheme === 'theme-dark') {
+      isDark.value = true;
+      document.documentElement.classList.add('dark');
+    } else if (urlTheme === 'theme-light') {
+      isDark.value = false;
+      document.documentElement.classList.remove('dark');
+    }
 
     queryDef(definitionId.value).then(res => {
     jsonString.value = res.data;
@@ -260,11 +278,11 @@ function initLogicFlow() {
         visible: 'true' === appParams.value.showGrid,
         type: 'dot',
         config: {
-          color: '#ccc',
+          color: isDark.value ? '#404040' : '#ccc',
           thickness: 1,
         },
         background: {
-          backgroundColor: "#fff",
+          backgroundColor: isDark.value ? "#141414" : "#fff",
         },
       },
       keyboard: isClassics(logicJson.value.modelValue) ? {
@@ -291,7 +309,7 @@ function initLogicFlow() {
         fontSize: 13,
         strokeWidth: 1,
         background: {
-          fill: "#fff",
+          fill: isDark.value ? "#141414" : "#fff",
         },
       },
     });
@@ -302,21 +320,46 @@ function initLogicFlow() {
     initEvent();
     if (logicJson.value) {
       lf.value.render(logicJson.value);
-      zoomViewport(1); // 在可见状态下调用自适应
+      zoomViewport(1);
+    }
+    // 初始化完成后，如果当前是暗黑模式，显式应用一次主题（解决 URL 参数初始化时序问题）
+    if (isDark.value && lf.value) {
+      applyDarkTheme(lf.value, true);
     }
   }
+}
+
+/** 应用/取消暗黑主题到 LogicFlow 画布 */
+function applyDarkTheme(lfInstance, isDarkMode) {
+  lfInstance.graphModel.background = {
+    background: isDarkMode ? "#141414" : "#fff",
+  };
+  if (lfInstance.graphModel.grid) {
+    lfInstance.graphModel.grid.config = {
+      ...lfInstance.graphModel.grid.config,
+      color: isDarkMode ? '#404040' : '#ccc',
+    };
+  }
+  lfInstance.setTheme({
+    edgeText: {
+      fontSize: 13,
+      strokeWidth: 1,
+      background: {
+        fill: isDarkMode ? "#141414" : "#fff",
+      },
+    },
+  });
 }
 
 watch(isDark, (v) => {
   if (!lf.value) {
     return;
   }
-  lf.value.graphModel.background = {
-    background: v ? "#141414" : "#fff",
-  };
+  applyDarkTheme(lf.value, v);
 });
 
 /**
+ * data为 {type: string, data?: any}
  * data为 {type: string, data?: any}
  * @param e
  */
@@ -325,10 +368,12 @@ function listeningMessage(e) {
   switch (data.type) {
     case "theme-dark": {
       isDark.value = true;
+      document.documentElement.classList.add('dark');
       return;
     }
     case "theme-light": {
       isDark.value = false;
+      document.documentElement.classList.remove('dark');
       return;
     }
   }
@@ -336,6 +381,10 @@ function listeningMessage(e) {
 
 onMounted(() => {
   window.addEventListener("message", listeningMessage);
+  // 初始化时检测父页面暗黑模式状态
+  if (window.parent !== window) {
+    window.parent.postMessage({ method: "getTheme" }, "*");
+  }
 });
 onUnmounted(() => {
   window.removeEventListener("message", listeningMessage);
@@ -656,7 +705,7 @@ const clear = async () => {
 function downLoad() {
   lf.value.getSnapshot(logicJson.value.flowName, {
     fileType: 'png',        // 可选：'png'、'webp'、'jpeg'、'svg'
-    backgroundColor: '#fff',
+    backgroundColor: isDark.value ? '#141414' : '#fff',
   })
 }
 
@@ -691,58 +740,268 @@ async function downJson() {
 </script>
 
 <style>
+
+
+/* ========== 画布容器 ========== */
 .container {
   flex: 1;
   width: 100%;
-    height: calc(100vh - 100px); /* 占满视口高度减去顶部区域的高度 */
-    min-height: 400px; /* 设置最小高度 */
+  height: calc(100vh - 100px);
+  min-height: 400px;
+  border-radius: var(--wf-radius, 8px);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
 }
 
+html.dark .container {
+  background-color: #141414 !important;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+  border: 1px solid #333333 !important;
+}
+
+/* ========== Logo 水印 ========== */
 .logo-text {
   position: absolute;
   font-weight: bold;
   right: 50px;
   bottom: 10px;
-  font-size: 15px; /* 可以根据需要调整字体大小 */
-  color: #333; /* 可以根据需要调整颜色 */
-  z-index: 1; /* 确保文本在其他内容之上显示 */
+  font-size: 14px;
+  color: var(--wf-text-placeholder, #c0c4cc);
+  opacity: 0.5;
+  z-index: 1;
+  letter-spacing: 1px;
+  user-select: none;
+}
+
+/* ========== 顶部导航栏 ========== */
+.design-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: var(--wf-bg-white, #fff);
+  border-bottom: 1px solid #e2e8f0;
+  min-height: 56px;
+}
+
+.header-left {
+  flex: 0 0 auto;
+  min-width: 180px;
+}
+
+.header-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+}
+
+.header-right {
+  flex: 0 0 auto;
+  min-width: 120px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ========== 流程名称 ========== */
+.flow-name-wrapper {
+  display: flex;
+  align-items: center;
 }
 
 .flow-name {
-  font-weight: bold;
-  padding-left: 40px;
-  padding-right: 200px;
-  width: 500px;
-  max-width: 500px;
+  font-weight: 600;
+  font-size: 15px;
+  max-width: 300px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: #333; /* 可以根据需要调整颜色 */
+  color: #1e293b;
+  padding: 8px 16px;
+  background: var(--wf-bg-white, #fff);
+  border-radius: 8px;
+  border: 1px solid var(--wf-border-light, #e2e8f0);
+  cursor: default;
+  transition: all 0.2s ease;
 }
 
-.steps-container {
+html.dark .flow-name {
+  color: var(--wf-text-primary, #e0e0e0) !important;
+}
+
+.flow-name:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* ========== 步骤切换标签 ========== */
+.steps-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--wf-bg-white, #fff);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+html.dark .steps-tabs {
+  background: var(--wf-bg-color, #141414) !important;
+}
+
+.step-tab {
   display: flex;
   align-items: center;
-  height: 35px;
-  justify-content: space-between; /* 确保内容在水平方向上两端对齐 */
-}
-
-.steps {
-  display: flex;
-}
-
-.step-item {
-  display: flex;
-  align-items: center;
-  margin-right: 100px;
+  gap: 8px;
+  padding: 10px 28px;
   cursor: pointer;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #64748b;
+  background: transparent;
+  border: none;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
 }
 
-.step-item i {
-  margin-right: 5px;
+.step-tab:hover {
+  color: #3b82f6;
+  background: rgba(59, 130, 246, 0.06);
 }
 
-.step-item.active {
-  color: #409eff; /* 选中时为深色 */
+.step-tab .tab-icon {
+  width: 18px;
+  height: 18px;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.step-tab:hover .tab-icon {
+  opacity: 1;
+}
+
+.step-tab.active {
+  color: #fff;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
+}
+
+.step-tab.active .tab-icon {
+  opacity: 1;
+}
+
+.step-tab.active:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+}
+
+/* ========== 保存按钮 ========== */
+.save-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  border: none !important;
+  color: #fff !important;
+  font-weight: 500;
+  font-size: 14px;
+  padding: 10px 24px !important;
+  border-radius: 10px !important;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  transition: all 0.25s ease !important;
+}
+
+.save-btn:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4) !important;
+  transform: translateY(-1px);
+}
+
+.save-btn:active {
+  transform: translateY(0);
+}
+
+.save-btn .save-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* ========== 暗黑模式适配 ========== */
+html.dark .design-header {
+  background: var(--wf-bg-white, #1e293b);
+  border-bottom-color: #334155;
+}
+
+html.dark .flow-name {
+  color: #e2e8f0;
+  background: #1e293b;
+  border-color: #475569;
+}
+
+html.dark .flow-name:hover {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.15);
+}
+
+html.dark .steps-tabs {
+  background: #1e293b;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+html.dark .step-tab {
+  color: #94a3b8;
+}
+
+html.dark .step-tab:hover {
+  color: #60a5fa;
+  background: rgba(96, 165, 250, 0.1);
+}
+
+html.dark .logo-text {
+  color: var(--wf-text-secondary, #888888);
+}
+
+/* ========== 工具栏分组 ========== */
+.toolbar-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding-right: 12px;
+  margin-right: 12px;
+  border-right: 1px solid #e2e8f0;
+}
+
+html.dark .toolbar-group {
+  border-right-color: #475569;
+}
+
+.toolbar-group:last-child {
+  border-right: none;
+  padding-right: 0;
+  margin-right: 0;
+}
+
+/* ========== 工具栏内保存按钮 ========== */
+.toolbar-save-btn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  border: none !important;
+  color: #fff !important;
+  font-weight: 500;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
+  transition: all 0.25s ease !important;
+}
+
+.toolbar-save-btn:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35) !important;
+  transform: translateY(-1px);
+}
+
+.toolbar-save-btn:active {
+  transform: translateY(0);
 }
 </style>

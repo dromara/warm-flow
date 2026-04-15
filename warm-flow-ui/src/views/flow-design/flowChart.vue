@@ -229,6 +229,16 @@ onMounted(async () => {
   if (!appParams.value) await appStore.fetchTokenName();
   instanceId.value = appParams.value.id;
 
+  // 从 URL 参数读取主题，支持通过地址栏 ?theme=dark 传入
+  const urlTheme = appParams.value.theme;
+  if (urlTheme === 'theme-dark') {
+    isDark.value = true;
+    document.documentElement.classList.add('dark');
+  } else if (urlTheme === 'theme-light') {
+    isDark.value = false;
+    document.documentElement.classList.remove('dark');
+  }
+
   if (instanceId.value) {
     queryFlowChart(instanceId.value)
         .then((res) => {
@@ -258,17 +268,29 @@ onMounted(async () => {
                 visible: 'true' === appParams.value.showGrid,
                 type: 'dot',
                 config: {
-                  color: "#ccc",
+                  color: isDark.value ? "#404040" : "#ccc",
                   thickness: 1,
                 },
               },
               background: {
-                backgroundColor: "#fff",
+                backgroundColor: isDark.value ? "#141414" : "#fff",
               },
             });
             register();
             initEvent();
             lf.value.render(data);
+            // 初始化完成后，如果当前是暗黑模式，显式应用一次主题
+            if (isDark.value && lf.value) {
+              lf.value.graphModel.background = {
+                background: "#141414",
+              };
+              if (lf.value.graphModel.grid) {
+                lf.value.graphModel.grid.config = {
+                  ...lf.value.graphModel.grid.config,
+                  color: '#404040',
+                };
+              }
+            }
             if (isClassics(defJson.value.modelValue)) {
               lf.value.translateCenter();
             }
@@ -308,10 +330,12 @@ function listeningMessage(e) {
   switch (data.type) {
     case "theme-dark": {
       isDark.value = true;
+      document.documentElement.classList.add('dark');
       return;
     }
     case "theme-light": {
       isDark.value = false;
+      document.documentElement.classList.remove('dark');
       return;
     }
   }
@@ -319,6 +343,10 @@ function listeningMessage(e) {
 
 onMounted(() => {
   window.addEventListener("message", listeningMessage);
+  // 初始化时检测父页面暗黑模式状态
+  if (window.parent !== window) {
+    window.parent.postMessage({ method: "getTheme" }, "*");
+  }
 });
 onUnmounted(() => {
   window.removeEventListener("message", listeningMessage);
@@ -326,9 +354,19 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+/* ========== 暗黑模式根背景 ========== */
+html.dark .containerView,
+html.dark body {
+  background-color: #141414 !important;
+}
+
 .containerView {
   width: 100%;
   height: 100%;
+}
+
+html.dark .containerView {
+  background-color: #141414 !important;
 }
 
 .top-text {

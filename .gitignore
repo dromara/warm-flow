@@ -32,3 +32,4 @@ build/
 
 ### Mac OS ###
 .DS_Store
+/warm-flow-ui/.qoder/

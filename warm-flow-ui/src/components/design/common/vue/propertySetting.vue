@@ -329,8 +329,55 @@ defineExpose({
 })
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+/* 抽屉容器隐藏滚动条（组件内部生效） */
 .el-drawer__container ::-webkit-scrollbar {
   display: none;
+}
+</style>
+
+<!-- 全局样式：抽屉 append-to-body 后需要全局穿透 -->
+<style lang="scss">
+/* ========== 暗黑模式：el-drawer 抽屉背景适配 ========== */
+html.dark {
+  .el-drawer {
+    background-color: var(--wf-bg-color, #141414) !important;
+
+    &__body {
+      background-color: var(--wf-bg-color, #141414) !important;
+    }
+
+    &__header {
+      background-color: var(--wf-bg-white, #1f1f1f);
+      border-bottom: 1px solid var(--wf-border-color, #333333);
+      color: var(--wf-text-primary, #e0e0e0);
+
+      > span { color: var(--wf-text-primary, #e0e0e0); }
+    }
+
+    &__close-btn {
+      color: var(--wf-text-secondary, #888888);
+      &:hover { color: var(--wf-text-primary, #e0e0e0); }
+    }
+  }
+
+  /* el-dialog 对话框暗黑适配（selectUser 等弹窗） */
+  .el-dialog {
+    --el-dialog-bg-color: var(--wf-bg-white, #1f1f1f);
+
+    &__header {
+      background: linear-gradient(135deg, rgba(64,158,255,.08), rgba(43,125,233,.04));
+      border-bottom: 1px solid var(--wf-border-color, #333333);
+    }
+
+    &__title { color: var(--wf-text-primary, #e0e0e0); }
+
+    &__body { color: var(--wf-text-regular, #b0b0b0); }
+
+    &__headerbtn {
+      color: var(--wf-text-secondary, #888888);
+      &:hover { color: var(--wf-text-primary, #e0e0e0); }
+    }
+  }
 }
 </style>
