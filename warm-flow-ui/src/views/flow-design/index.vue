@@ -44,7 +44,8 @@
         <div v-if="activeStep === 1">
           <span class="toolbar-group">
             <el-tooltip content="缩小" placement="bottom"><el-button size="small" icon="ZoomOut" @click="zoomViewport(false)"></el-button></el-tooltip>
-            <el-tooltip v-if="'CLASSICS' === logicJson.modelValue" content="自适应" placement="bottom"><el-button size="small" icon="Rank" @click="zoomViewport(1)"></el-button></el-tooltip>
+            <!-- PC端：原有 zoom(1)+居中；移动端/平板：fitView 自适应显示全部节点 -->
+            <el-tooltip content="自适应" placement="bottom"><el-button size="small" icon="Rank" @click="isMobileDevice() ? zoomViewport('fit') : zoomViewport(1)"></el-button></el-tooltip>
             <el-tooltip content="放大" placement="bottom"><el-button size="small" icon="ZoomIn" @click="zoomViewport(true)"></el-button></el-tooltip>
           </span>
           <span class="toolbar-group">
@@ -145,7 +146,24 @@ const categoryList = ref([]);
 const formPathList = ref([]);
 // 使用统一的暗黑模式 composable
 const { isDark, initFromUrl, applyDarkTheme, setupMessageListener, cleanupMessageListener } = useDark();
-const activeStep = ref(0); // 初始化当前步骤为0（开始）
+
+/**
+ * 判断当前是否为移动端/平板设备
+ * 通过屏幕宽度 + 触摸能力综合判断（PC 端不生效自动 fitView）
+ */
+const isMobileDevice = () => {
+  // 屏幕宽度 <= 1024px（覆盖平板横屏及以下）或支持触摸且有窄屏
+  return window.innerWidth <= 1024 || ('ontouchstart' in window && window.innerWidth <= 1280);
+};
+
+/** 仅在移动端/平板执行 fitView，PC 端不干预 */
+function fitViewIfMobile() {
+  if (isMobileDevice() && lf.value?.fitView) {
+    lf.value.fitView(40, 20);
+  }
+}
+
+const activeStep = ref(0);
 const onlyDesignShow = ref(false);
 
 const headerStyle = computed(() => {
@@ -320,7 +338,8 @@ function initLogicFlow() {
     initTouchEventBridge();
     if (logicJson.value) {
       lf.value.render(logicJson.value);
-      zoomViewport(1);
+      // 移动端/平板端：自适应显示全部节点；PC 端保持默认行为不干预
+      fitViewIfMobile();
     }
     // 初始化完成后，如果当前是暗黑模式，显式应用一次主题（解决 URL 参数初始化时序问题）
     if (isDark.value && lf.value) {
@@ -333,38 +352,43 @@ function initLogicFlow() {
 }
 
 /**
- * 真机兼容：延迟触发 LogicFlow resize + 重绘
- * 解决移动端容器初始高度为0导致 SVG 不可见的问题
+ * 真机兼容：延迟触发 LogicFlow resize + fitView（仅移动端/平板端生效）
+ * PC 端不执行自动 fitView，保持用户手动缩放行为
  */
 function scheduleMobileResize() {
-  const doResize = () => {
+  const doFit = () => {
     if (lf.value && lf.value.resize) {
       lf.value.resize();
-      // 再次确保画布自适应
-      nextTick(() => {
-        if (lf.value && lf.value.getGraphSize) {
-          zoomViewport(1);
-        }
-      });
+      // 仅在移动设备上才执行自动 fitView
+      requestAnimationFrame(fitViewIfMobile);
     }
   };
-  // 使用多重延迟策略覆盖各种移动端浏览器时序差异
-  setTimeout(doResize, 100);
-  setTimeout(doResize, 300);
-  setTimeout(doResize, 600);
+  // 多重延迟策略覆盖各种场景：移动端/v-show切换/iframe嵌入
+  setTimeout(doFit, 50);
+  setTimeout(doFit, 150);
+  setTimeout(doFit, 300);
+  setTimeout(doFit, 600);
+  // 最后一次保底（覆盖极端慢速场景如低端手机首次加载）
+  setTimeout(doFit, 1000);
 }
 
-// 真机关键修复：监听步骤切换，v-show 切换后容器需要重新计算尺寸
+/**
+ * 监听步骤切换：从"基础信息"切到"流程设计"时（仅移动端/平板端生效）
+ * PC 端不执行自动 fitView，保持用户手动缩放行为
+ */
 watch(activeStep, (newVal) => {
   if (newVal === 1 && lf.value) {
-    nextTick(() => {
-      if (lf.value && lf.value.resize) {
+    const doFit = () => {
+      if (lf.value?.resize) {
         lf.value.resize();
-        setTimeout(() => {
-          if (lf.value && lf.value.resize) lf.value.resize();
-        }, 200);
+        requestAnimationFrame(fitViewIfMobile);
       }
-    });
+    };
+    // 多次延迟确保在各种时序下移动端能正确适配
+    nextTick(doFit);
+    setTimeout(doFit, 150);
+    setTimeout(doFit, 400);
+    setTimeout(doFit, 800);
   }
 });
 
@@ -774,11 +798,35 @@ function close() {
   window.parent.postMessage({ method: "close" }, "*");
 }
 
+/**
+ * 缩放视口：放大/缩小/自适应
+ * @param {boolean|string|number} zoom - true=放大(内置刻度), false=缩小(内置刻度), 'fit'=fitView自适应全部节点, number=直接设置缩放比例
+ */
 const zoomViewport = async (zoom) => {
-  lf.value.zoom(zoom);
-  // 将内容平移至画布中心
-  if (isClassics(logicJson.value.modelValue)) {
-    lf.value.translateCenter();
+  if (zoom === true) {
+    // 放大（使用 LogicFlow 内置刻度，每次按固定比例放大）
+    lf.value.zoom(true);
+  } else if (zoom === false) {
+    // 缩小（使用 LogicFlow 内置刻度，每次按固定比例缩小）
+    lf.value.zoom(false);
+  } else if (zoom === 1) {
+    // PC 端自适应：zoom(1) 重置缩放 + translateCenter 居中
+    lf.value.zoom(1);
+    if (lf.value.translateCenter) {
+      lf.value.translateCenter();
+    }
+  } else if (zoom === 'fit') {
+    // 移动端/平板端自适应：fitView 将所有节点缩放并居中到画布可视区域
+    if (lf.value.fitView) {
+      lf.value.fitView(40, 20);
+    } else {
+      // fallback
+      if (lf.value.translateCenter) lf.value.translateCenter();
+      lf.value.resetZoom ? lf.value.resetZoom() : lf.value.zoom(1);
+    }
+  } else if (typeof zoom === 'number') {
+    // 直接设置缩放比例
+    lf.value.zoom(zoom);
   }
 };
 
