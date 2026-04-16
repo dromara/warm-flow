@@ -56,6 +56,7 @@
 
       /* 扩展页签：绿色激活态 */
       &.is-ext-tab {
+        color: #fff;
         background: linear-gradient(135deg, #67c23a 0%, #529b2e 100%);
         box-shadow: 0 2px 8px rgba(103,194,58,.35), 0 1px 3px rgba(0,0,0,.08);
 
@@ -63,6 +64,8 @@
           box-shadow: 0 2px 8px rgba(103,194,58,.45), 0 1px 3px rgba(0,0,0,.15);
         }
 
+        /* 激活态：文字和角标统一白色 */
+        .tab-label { color: #fff; }
         .tab-ext-tag {
           background: rgba(255,255,255,0.25);
           color: #fff;
@@ -84,10 +87,26 @@
       }
 
       &:hover {
+        color: #3d8b2a;
         background: rgba(103, 194, 58, 0.12);
-        border-color: rgba(103, 194, 58, 0.32);
-        html.dark & { 
-          background: rgba(103, 194, 58, 0.18); 
+        border-color: rgba(103, 194, 58, 0.35);
+
+        /* 亮模式：深绿字 + 淡绿底 */
+        .tab-label { color: #3d8b2a; }
+        .tab-ext-tag {
+          background: rgba(103, 194, 58, 0.18);
+          color: #3d8b2a;
+        }
+
+        /* 暗黑模式：才用白色（深色背景下白字清晰） */
+        html.dark & {
+          color: #fff;
+          background: rgba(103, 194, 58, 0.22);
+          .tab-label { color: #fff; }
+          .tab-ext-tag {
+            background: rgba(255,255,255,0.18);
+            color: #fff;
+          }
         }
       }
 

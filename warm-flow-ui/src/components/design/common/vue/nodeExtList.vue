@@ -233,6 +233,14 @@ defineExpose({
   transition: all 0.3s ease;
 }
 
+/* 禁用态暗黑模式覆盖 — html.dark 必须作为外层 */
+html.dark .nodeExtForm .nodeExtForm :deep(.el-input__wrapper.is-disabled),
+html.dark .nodeExtForm .nodeExtForm :deep(.el-textarea__inner.is-disabled) {
+  background-color: #2a2d35 !important;
+  box-shadow: none !important;
+  border-color: #3a3e48 !important;
+}
+
 .nodeExtForm :deep(.el-input__wrapper:hover),
 .nodeExtForm :deep(.el-textarea__inner:hover) {
   box-shadow: 0 0 0 1px var(--wf-primary, #409eff) inset;

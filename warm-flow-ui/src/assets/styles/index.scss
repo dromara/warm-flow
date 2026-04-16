@@ -303,6 +303,11 @@ aside {
 
 /* ========== Element Plus 暗黑模式适配 ========== */
 html.dark {
+  /* --- 覆盖 EP 内部禁用态变量（根因修复）--- */
+  --el-input-disabled-bg-color: #2a2d35;
+  --el-disabled-bg-color: #2a2d35;
+  --el-fill-color: #2a2d35;
+
   /* --- el-input 输入框 --- */
   .el-input__wrapper {
     background-color: var(--wf-bg-color, #141414);
@@ -314,6 +319,12 @@ html.dark {
 
     &.is-focus {
       box-shadow: 0 0 0 1px var(--wf-primary, #409eff) inset, 0 0 0 3px rgba(64, 158, 255, 0.15);
+    }
+
+    /* 禁用态（已发布/失效状态）— 覆盖 Element Plus 默认浅色背景 */
+    &.is-disabled {
+      background-color: var(--wf-bg-color, #2a2d35) !important;
+      box-shadow: none !important;
     }
   }
 
@@ -374,6 +385,11 @@ html.dark {
     &:focus {
       box-shadow: 0 0 0 1px var(--wf-primary, #409eff) inset, 0 0 0 3px rgba(64, 158, 255, 0.15);
     }
+
+    /* 禁用态 */
+    &.is-disabled {
+      background-color: var(--wf-bg-color, #2a2d35) !important;
+    }
   }
 
   /* --- el-select 选择框 --- */
@@ -398,6 +414,11 @@ html.dark {
 
     &.is-focused {
       box-shadow: 0 0 0 1px var(--wf-primary, #409eff) inset, 0 0 0 3px rgba(64, 158, 255, 0.15);
+    }
+
+    /* 禁用态 */
+    &.is-disabled {
+      background-color: var(--wf-bg-color, #2a2d35) !important;
     }
 
     .el-select__selected-item,

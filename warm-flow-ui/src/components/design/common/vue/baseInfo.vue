@@ -442,6 +442,16 @@ getListenerList()
   &:focus {
     box-shadow: 0 0 0 1px var(--wf-primary, #409eff) inset, 0 0 0 3px rgba(64, 158, 255, 0.12);
   }
+
+}
+
+/* 禁用态暗黑模式覆盖（已发布/失效状态）— 完全全局选择器，避开 scoped 编译 */
+:global(html.dark .dialogForm .el-form-item .el-input__wrapper.is-disabled),
+:global(html.dark .dialogForm .el-form-item .el-textarea__inner.is-disabled),
+:global(html.dark .dialogForm .el-form-item .el-select .el-input__wrapper.is-disabled) {
+  background-color: #2a2d35 !important;
+  box-shadow: none !important;
+  border-color: #3a3e48 !important;
 }
 
 /* 输入框底部渐变线（hover） */
@@ -571,6 +581,12 @@ getListenerList()
       border-color: var(--wf-border-light, #e4e7ed);
       transform: none;
     }
+  }
+
+  /* 禁用态暗黑模式覆盖 — html.dark 必须作为外层 */
+  :global(html.dark) .radio-card.is-disabled {
+    background: #2a2d35 !important;
+    border-color: #3a3e48 !important;
   }
 }
 

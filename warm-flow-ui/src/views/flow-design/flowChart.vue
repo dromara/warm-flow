@@ -1,5 +1,5 @@
 <template>
-  <div style="width: 100%; height: 100%" :style="headerDiv">
+  <div class="flow-chart-root" :style="headerDiv">
     <div class="top-text" v-if="defJson.topTextShow">{{defJson.topText}}</div>
     <el-header :style="headerStyle">
       <div style="padding: 5px 0; display: flex; align-items: center;">
@@ -325,9 +325,16 @@ onUnmounted(() => {
   background-color: #141414 !important;
 }
 
-.containerView {
+/* ========== 根容器：flex 纵向布局，防止溢出 ========== */
+.flow-chart-root {
   width: 100%;
   height: 100%;
+}
+
+.containerView {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
 }
 
 .top-text {
