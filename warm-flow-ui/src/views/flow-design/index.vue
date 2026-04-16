@@ -541,103 +541,210 @@ async function saveJsonModel() {
 }
 
 /**
- * 触摸事件桥接：将 touch 事件转换为 mouse 事件
- * LogicFlow v2 的 StepDrag 只处理 mousedown/mousemove/mouseup，
- * 手机/平板触摸时需要手动转换才能拖动画布。
+ * 移动端触摸事件桥接：确保手机/平板上 LogicFlow 节点/边的点击、拖拽正常工作
+ *
+ * 核心问题：
+ * LogicFlow v2 内部使用 mousedown/mousemove/mouseup + click/dblclick 事件，
+ * 移动端浏览器不会自动将 touch 事件转换为 mouse 事件（除非设置了兼容模式）。
+ *
+ * 解决方案：
+ * 使用统一的 Pointer Events API（pointerdown/pointermove/pointerup），
+ * 它能同时覆盖鼠标、触摸、触控笔三种输入方式，
+ * 并且自动映射为浏览器原生的 mousedown/mousemove/mouseup/click 事件链。
  */
 function initTouchEventBridge() {
   const container = proxy.$refs.containerRef;
   if (!container) return;
 
+  // 对容器及其所有后代元素启用 pointer-events 全局拦截
+  // 这确保所有触摸输入都能正确转换为 mouse/click 事件
+  setupPointerEventCapture(container);
+
+  // 同时绑定到 canvas-overlay（确保画布拖拽也正常）
   const canvasOverlay = container.querySelector('.lf-canvas-overlay');
   if (canvasOverlay) {
-    setupTouchBridge(canvasOverlay);
-    return;
+    setupPointerEventCapture(canvasOverlay, { forDrag: true });
+  } else {
+    // 如果 CanvasOverlay 还未渲染，延迟绑定
+    const observer = new MutationObserver(() => {
+      const overlay = container.querySelector('.lf-canvas-overlay');
+      if (overlay) {
+        setupPointerEventCapture(overlay, { forDrag: true });
+        observer.disconnect();
+      }
+    });
+    observer.observe(container, { childList: true, subtree: true });
   }
-  // 如果 CanvasOverlay 还未渲染（render 之后），延迟绑定
-  const observer = new MutationObserver(() => {
-    const overlay = container.querySelector('.lf-canvas-overlay');
-    if (overlay) {
-      setupTouchBridge(overlay);
-      observer.disconnect();
-    }
-  });
-  observer.observe(container, { childList: true, subtree: true });
 }
 
-function setupTouchBridge(el) {
-  let lastTouchTime = 0;
-  const TAP_THRESHOLD = 300; // 点击判定阈值
+/**
+ * 使用 Pointer Events API 建立移动端触摸→鼠标事件的完整桥接
+ *
+ * Pointer Events 是 W3C 标准，现代浏览器均支持：
+ * - pointerdown → 自动触发 mousedown（含 touches[0] 坐标）
+ * - pointermove → 自动触发 mousemove
+ * - pointerup   → 自动触发 mouseup + click
+ * - pointercancel → 自动触发 mouseup（中断场景）
+ *
+ * 我们在此基础上额外补充：
+ * 1. 阻止浏览器的默认手势行为（滚动/缩放）
+ * 2. 长按模拟 contextmenu 右键菜单
+ * 3. 双击检测并分发 dblclick
+ *
+ * @param {Element} el 目标 DOM 元素
+ * @param {Object} options 配置项
+ */
+function setupPointerEventCapture(el) {
+  // --- 双击检测状态 ---
+  let tapCount = 0;
+  let lastTapTime = 0;
+  let doubleTapTimer = null;
+  const DOUBLE_TAP_GAP = 350;
 
-  el.addEventListener('touchstart', (e) => {
-    if (e.touches.length !== 1) return;
-    const touch = e.touches[0];
-    // 阻止浏览器默认行为（滚动/缩放）
-    e.preventDefault();
-    lastTouchTime = Date.now();
-    // 转换为 mousedown 事件并分发到同一元素
-    const mouseEvent = new MouseEvent('mousedown', {
-      clientX: touch.clientX,
-      clientY: touch.clientY,
+  // --- 长按右键菜单状态 ---
+  let longPressTimer = null;
+  let isLongPressFired = false;
+
+  // --- 拖动检测 ---
+  let startX = 0, startY = 0;
+  let hasSignificantMove = false;
+
+  /**
+   * 统一获取坐标参数（用于构造 MouseEvent）
+   */
+  function getEventOpts(pointerEvent) {
+    return {
+      clientX: pointerEvent.clientX,
+      clientY: pointerEvent.clientY,
       button: 0,
       bubbles: true,
       cancelable: true,
-    });
-    el.dispatchEvent(mouseEvent);
-  }, { passive: false });
+      view: window,
+    };
+  }
 
-  el.addEventListener('touchmove', (e) => {
-    if (e.touches.length !== 1) return;
+  // ========== pointerdown ==========
+  el.addEventListener('pointerdown', (e) => {
+    // 只处理主指针（手指/鼠标左键/触控笔）
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+
+    startX = e.clientX;
+    startY = e.clientY;
+    hasSignificantMove = false;
+    isLongPressFired = false;
+
+    // 阻止浏览器默认的触摸行为（滚动/缩放/选择）
+    // 但不调用 stopPropagation()，让事件继续冒泡到 LogicFlow
     e.preventDefault();
-    const touch = e.touches[0];
-    const mouseEvent = new MouseEvent('mousemove', {
-      clientX: touch.clientX,
-      clientY: touch.clientY,
-      button: 0,
-      bubbles: true,
-      cancelable: true,
-    });
-    el.dispatchEvent(mouseEvent);
-  }, { passive: false });
 
-  el.addEventListener('touchend', (e) => {
-    e.preventDefault();
-    const touch = e.changedTouches[0];
-    const mouseEvent = new MouseEvent('mouseup', {
-      clientX: touch.clientX,
-      clientY: touch.clientY,
-      button: 0,
-      bubbles: true,
-      cancelable: true,
-    });
-    el.dispatchEvent(mouseEvent);
+    // 启动长按计时器（500ms 无显著移动则视为右键菜单）
+    longPressTimer = setTimeout(() => {
+      if (hasSignificantMove) return; // 已移动，取消长按
+      isLongPressFired = true;
+      el.dispatchEvent(new MouseEvent('contextmenu', getEventOpts(e)));
+    }, 500);
 
-    // 如果是快速点击，补充 click 事件（用于空白区域取消选中等）
-    if (Date.now() - lastTouchTime < TAP_THRESHOLD) {
-      const clickEvent = new MouseEvent('click', {
-        clientX: touch.clientX,
-        clientY: touch.clientY,
-        button: 0,
-        bubbles: true,
-        cancelable: true,
-      });
-      el.dispatchEvent(clickEvent);
+    // 对于 touch 类型：主动分发一次 mousedown 确保 LogicFlow 收到
+    // （部分浏览器对 touch→mouse 的转换不够及时）
+    if (e.pointerType === 'touch') {
+      el.dispatchEvent(new MouseEvent('mousedown', getEventOpts(e)));
     }
   }, { passive: false });
 
-  // 兼容：touchcancel 时也触发 mouseup，防止卡在拖动状态
-  el.addEventListener('touchcancel', (e) => {
-    e.preventDefault();
-    const touch = e.changedTouches[0];
-    const mouseEvent = new MouseEvent('mouseup', {
-      clientX: touch.clientX,
-      clientY: touch.clientY,
-      button: 0,
-      bubbles: true,
-      cancelable: true,
-    });
-    el.dispatchEvent(mouseEvent);
+  // ========== pointermove ==========
+  el.addEventListener('pointermove', (e) => {
+    if (hasSignificantMove) return; // 已经标记过就不再重复计算
+
+    const dx = Math.abs(e.clientX - startX);
+    const dy = Math.abs(e.clientY - startY);
+    if (dx > 8 || dy > 8) {
+      hasSignificantMove = true;
+      // 有明显移动，取消长按
+      if (longPressTimer) {
+        clearTimeout(longPressTimer);
+        longPressTimer = null;
+      }
+    }
+
+    // 触摸时阻止默认滚动行为
+    if (e.pointerType === 'touch') {
+      e.preventDefault();
+    }
   }, { passive: false });
+
+  // ========== pointerup / pointercancel ==========
+  function handlePointerEnd(e) {
+    // 清理长按计时器
+    if (longPressTimer) {
+      clearTimeout(longPressTimer);
+      longPressTimer = null;
+    }
+
+    // 长按已触发（右键菜单），不再处理 click/dblclick
+    if (isLongPressFired) {
+      resetTapState();
+      return;
+    }
+
+    // 有明显移动 = 拖拽操作，不处理 click/dblclick
+    if (hasSignificantMove) {
+      resetTapState();
+      return;
+    }
+
+    // ---- 点击/双击检测 ----
+    const now = Date.now();
+    tapCount++;
+
+    if (tapCount === 1) {
+      // 第一次点击：立即触发 click
+      lastTapTime = now;
+      el.dispatchEvent(new MouseEvent('click', getEventOpts(e)));
+
+      // 设置双击等待窗口
+      doubleTapTimer = setTimeout(() => {
+        tapCount = 0;
+        doubleTapTimer = null;
+      }, DOUBLE_TAP_GAP);
+
+    } else if (tapCount >= 2 && (now - lastTapTime < DOUBLE_TAP_GAP)) {
+      // 第二次快速点击：触发 dblclick
+      if (doubleTapTimer) {
+        clearTimeout(doubleTapTimer);
+        doubleTapTimer = null;
+      }
+      tapCount = 0;
+      el.dispatchEvent(new MouseEvent('dblclick', getEventOpts(e)));
+    } else {
+      // 超出双击间隔，重新开始计数
+      tapCount = 1;
+      lastTapTime = now;
+      el.dispatchEvent(new MouseEvent('click', getEventOpts(e)));
+
+      doubleTapTimer = setTimeout(() => {
+        tapCount = 0;
+        doubleTapTimer = null;
+      }, DOUBLE_TAP_GAP);
+    }
+  }
+
+  el.addEventListener('pointerup', handlePointerEnd);
+  el.addEventListener('pointercancel', () => {
+    // 中断时只清理状态，不触发 click
+    if (longPressTimer) {
+      clearTimeout(longPressTimer);
+      longPressTimer = null;
+    }
+    resetTapState();
+  });
+
+  function resetTapState() {
+    if (doubleTapTimer) {
+      clearTimeout(doubleTapTimer);
+      doubleTapTimer = null;
+    }
+    tapCount = 0;
+  }
 }
 
 /**
