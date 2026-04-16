@@ -61,9 +61,6 @@
                   <div class="radio-card-desc">填写页面路径</div>
                 </div>
               </div>
-              <el-tooltip class="box-item" effect="dark" placement="top" content="填写页面地址：如system/process/approve">
-                <el-icon :size="14" class="radio-card-tip"><WarningFilled /></el-icon>
-              </el-tooltip>
             </el-radio>
             <el-radio label="Y" class="radio-card radio-card--sm">
               <div class="radio-card-content">
@@ -75,9 +72,6 @@
                   <div class="radio-card-desc">选择自定义表单</div>
                 </div>
               </div>
-              <el-tooltip class="box-item" effect="dark" placement="top" content="填写自定义表单的唯一标识：如formCode+version">
-                <el-icon :size="14" class="radio-card-tip"><WarningFilled /></el-icon>
-              </el-tooltip>
             </el-radio>
           </el-radio-group>
         </el-form-item>
@@ -86,7 +80,7 @@
           <el-input v-model="form.formPath" placeholder="请输入审批表单路径" maxlength="100" show-word-limit/>
         </el-form-item>
 
-        <el-form-item label="自定义表单唯一标识" prop="formPath" v-else-if="form.formCustom === 'Y'">
+        <el-form-item label="表单唯一标识" prop="formPath" v-else-if="form.formCustom === 'Y'">
             <el-tree-select
                 v-model="form.formPath"
                 :data="formPathList"
@@ -101,7 +95,7 @@
         <div class="section-title">监听器配置</div>
         <el-form-item prop="listenerRows" class="listenerItem">
           <el-table :data="form.listenerRows" style="width: 100%">
-            <el-table-column prop="listenerType" width="150" label="类型">
+            <el-table-column prop="listenerType" :width="isMobile ? 60 : 150" label="类型">
               <template #default="scope">
                 <el-form-item :prop="`listenerRows.${scope.$index}.listenerType`" :rules="rules.listenerType">
                   <el-select v-model="scope.row.listenerType" placeholder="请选择类型">
@@ -149,10 +143,26 @@
 </template>
 
 <script setup name="BaseInfo">
-import { ref } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import {listenerList} from "@/api/flow/definition.js";
 
 const { proxy } = getCurrentInstance();
+
+// 响应式屏幕检测
+const isMobile = ref(false);
+
+function checkMobile() {
+  isMobile.value = window.innerWidth <= 768;
+}
+
+onMounted(() => {
+  checkMobile();
+  window.addEventListener('resize', checkMobile);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkMobile);
+});
 const props = defineProps({
   disabled: { // 是否禁止
     type: Boolean,
@@ -425,6 +435,23 @@ getListenerList()
   font-weight: 600;
   color: var(--wf-text-primary, #303133);
   letter-spacing: 0.5px;
+  /* 固定 label 宽度，按最长"表单唯一标识"(6字)对齐 */
+  width: 110px !important;
+  min-width: 110px !important;
+
+/* 错误提示增加上下间距 - PC端/平板端 */
+::deep(.el-form-item__error) {
+  padding-top: 6px;
+  padding-bottom: 4px;
+}
+  text-align: right;
+  justify-content: flex-end;
+}
+
+/* 右侧内容区：统一左对齐 */
+::deep(.el-form-item__content) {
+  text-align: left;
+  justify-content: flex-start;
 }
 
 :deep(.el-input__wrapper),
@@ -639,19 +666,6 @@ getListenerList()
   margin-top: 2px;
 }
 
-.radio-card-tip {
-  position: absolute;
-  top: 10px;
-  right: 30px;
-  color: var(--wf-text-secondary, #909399);
-  cursor: help;
-  transition: color 0.2s ease;
-
-  &:hover {
-    color: var(--wf-primary, #409eff);
-  }
-}
-
 /* ========== 6. 监听器表格 ========== */
 :deep(.el-table) {
   border-radius: var(--wf-radius-lg, 12px);
@@ -850,6 +864,376 @@ getListenerList()
   &::-webkit-scrollbar-thumb:hover {
     background: rgba(144, 147, 153, 0.7);
     width: 8px;
+  }
+}
+
+/* ========== 响应式适配：平板端 (<= 1024px) ========== */
+@media (max-width: 1024px) {
+  .dialogForm {
+    margin: 12px auto;
+  }
+
+  .form-section {
+    padding: 16px 20px 16px 22px;
+    margin-bottom: 12px;
+
+    &:hover {
+      transform: none;
+    }
+  }
+}
+
+/* ========== 响应式适配：手机端 (<= 768px) ========== */
+@media (max-width: 768px) {
+  .dialogForm {
+    margin: 8px 4px;
+  }
+
+  .app-container {
+    overflow-x: hidden;
+  }
+
+  .form-section {
+    padding: 14px 12px 14px 16px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+
+    &:hover {
+      transform: none;
+      box-shadow: var(--wf-shadow, 0 2px 12px rgba(0, 0, 0, 0.06));
+    }
+
+    &::before {
+      width: 2.5px;
+    }
+  }
+
+  .section-title {
+    font-size: 14px;
+    padding-bottom: 10px;
+    margin-bottom: 16px;
+
+    &::before {
+      height: 15px;
+      margin-right: 6px;
+    }
+  }
+
+  :deep(.dialogForm .el-form-item__label),
+  :deep(.el-form-item__label) {
+    /* 手机端保持固定宽度，统一对齐 */
+    width: 90px !important;
+    min-width: 90px !important;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: right;
+    justify-content: flex-end;
+  }
+
+  /* 手机端错误提示间距 */
+  ::deep(.el-form-item__error) {
+    padding-top: 10px;
+    padding-bottom: 8px;
+    line-height: 1.4;
+  }
+
+  :deep(.el-form-item) {
+    margin-bottom: 18px;
+  }
+
+  :deep(.el-input__inner),
+  :deep(.el-textarea__inner) {
+    font-size: 13px !important;
+  }
+
+  /* Radio 卡片组：手机端全部纵向紧凑排列 */
+  .radio-card-group {
+    flex-direction: column;
+    gap: 8px;
+    width: 100% !important;
+  }
+
+  /* 确保表单项内容区不限制宽度 */
+  :deep(.el-form-item__content) {
+    max-width: 100% !important;
+    overflow: visible !important;
+  }
+
+  .radio-card-group--compact {
+    flex-direction: column; /* 手机端纵向排列，与设计器模型一致 */
+    gap: 8px;
+  }
+
+  /* 设计器模型卡片：手机端占满行，显示小字提示 */
+  :deep(.radio-card) {
+    width: 100% !important;
+    max-width: none !important;
+    padding: 10px 14px;
+    box-sizing: border-box !important;
+
+    &:hover {
+      transform: none;
+    }
+
+    .radio-card-desc {
+      display: block; /* 显示描述文字在标题下方 */
+      font-size: 10px !important;
+      line-height: 1.2 !important;
+      margin-top: 2px;
+      color: var(--wf-text-placeholder, #c0c4cc);
+    }
+
+    .radio-card-icon {
+      width: 28px;
+      height: 28px;
+    }
+
+    .radio-card-title {
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: visible;
+    }
+  }
+
+  /* 自定义表单小卡片：与设计器模型一致，纵向+小字提示 */
+  :deep(.radio-card--sm) {
+    width: 100% !important;
+    max-width: none !important;
+    padding: 10px 12px !important;
+    box-sizing: border-box !important;
+
+    .radio-card-desc {
+      display: block !important; /* 小字提示显示在标题下方 */
+      font-size: 10px !important;
+      line-height: 1.2 !important;
+      margin-top: 2px;
+      color: var(--wf-text-placeholder, #c0c4cc);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+  }
+
+  .radio-card-content {
+    gap: 8px;
+  }
+
+  .radio-card-icon {
+    width: 32px;
+    height: 32px;
+
+    .el-icon {
+      font-size: 18px !important;
+    }
+  }
+
+  .radio-card-icon--sm {
+    width: 28px;
+    height: 28px;
+  }
+
+  .radio-card-title {
+    font-size: 13px;
+  }
+
+  .radio-card-desc {
+    font-size: 10px;
+  }
+
+  :deep(.el-form-item) {
+    .radio-card-warning {
+      margin-top: 4px;
+      padding: 5px 8px;
+      font-size: 11px;
+    }
+  }
+
+  /* 监听器表格横向滚动 */
+  :deep(.listenerItem) {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+
+    &::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: rgba(144, 147, 153, 0.3);
+      border-radius: 2px;
+    }
+  }
+
+  :deep(.el-table) {
+    /* 手机端去掉固定最小宽度，让表格自适应容器 */
+    min-width: unset !important;
+
+    .el-table__header-wrapper th {
+      font-size: 12px;
+    }
+
+    /* 类型列：手机端紧凑 */
+    .el-table__header-wrapper th:first-child,
+    td:first-child {
+      min-width: 60px !important;
+      width: 60px !important;
+
+      .cell {
+        padding-left: 4px !important;
+        padding-right: 4px !important;
+      }
+
+      .el-select,
+      .el-select .el-input {
+        width: 100% !important;
+      }
+    }
+
+    /* 操作列确保可见 */
+    .el-table__header-wrapper th:last-child:not(:first-child),
+    td:last-child:not(:first-child) {
+      min-width: 45px !important;
+      width: 45px !important;
+      padding: 0 !important;
+
+      .cell {
+        padding: 2px !important;
+      }
+    }
+
+    /* 监听器列自适应占满剩余空间 */
+    .el-table__header-wrapper th:nth-child(2),
+    td:nth-child(2) {
+      min-width: 100px;
+      width: auto;
+    }
+  }
+
+  .add-row-btn {
+    height: 34px;
+    font-size: 13px;
+    letter-spacing: 1px;
+    margin-top: 8px;
+  }
+}
+
+/* ========== 响应式适配：超小屏 (<= 480px) ========== */
+@media (max-width: 480px) {
+  .dialogForm {
+    margin: 4px 2px;
+  }
+
+  .form-section {
+    padding: 10px 8px 10px 12px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+  }
+
+  .section-title {
+    font-size: 13px;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+
+    &::before {
+      height: 14px;
+      margin-right: 5px;
+      width: 3px;
+    }
+  }
+
+  :deep(.dialogForm .el-form-item__label),
+  :deep(.el-form-item__label) {
+    /* 超小屏保持固定宽度 */
+    width: 80px !important;
+    min-width: 80px !important;
+    font-size: 12px;
+    line-height: 1.3;
+    text-align: right;
+    justify-content: flex-end;
+  }
+
+  /* 超小屏错误提示间距 */
+  ::deep(.el-form-item__error) {
+    padding-top: 6px;
+    padding-bottom: 4px;
+  }
+
+  :deep(.el-form-item) {
+    margin-bottom: 12px;
+  }
+
+  :deep(.el-input__inner),
+  :deep(.el-textarea__inner) {
+    font-size: 12px !important;
+  }
+
+  .radio-card-group--compact {
+    flex-direction: column; /* 纵向排列 */
+    gap: 6px;
+  }
+
+  :deep(.radio-card) {
+    padding: 8px 10px;
+
+    .radio-card-desc {
+      display: block !important;
+      font-size: 9px !important;
+      line-height: 1.2 !important;
+      margin-top: 1px;
+    }
+  }
+
+  :deep(.radio-card--sm) {
+    width: 100% !important;
+    padding: 8px 10px !important;
+
+    .radio-card-desc {
+      display: block !important;
+      font-size: 9px !important;
+      line-height: 1.2 !important;
+      margin-top: 1px;
+    }
+  }
+
+  .radio-card-content {
+    gap: 6px;
+  }
+
+  .radio-card-icon {
+    width: 26px;
+    height: 26px;
+
+    .el-icon {
+      font-size: 16px !important;
+    }
+  }
+
+  .radio-card-icon--sm {
+    width: 24px;
+    height: 24px;
+  }
+
+  .radio-card-title {
+    font-size: 12px;
+  }
+
+  .radio-card-desc {
+    display: none;
+  }
+
+  :deep(.el-table) {
+    min-width: 450px;
+    font-size: 12px;
+
+    th,
+    td {
+      padding: 4px 0 !important;
+    }
+  }
+
+  .add-row-btn {
+    height: 30px;
+    font-size: 12px;
   }
 }
 </style>

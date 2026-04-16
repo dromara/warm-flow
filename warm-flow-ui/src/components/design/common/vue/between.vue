@@ -137,7 +137,7 @@
         <el-form-item label="表单路径：" prop="formPath" v-if="form.formCustom === 'N'">
           <el-input v-model="form.formPath"></el-input>
         </el-form-item>
-        <el-form-item label="自定义表单唯一标识：" prop="formPath" v-else-if="form.formCustom === 'Y'">
+        <el-form-item label="表单唯一标识：" prop="formPath" v-else-if="form.formCustom === 'Y'">
             <el-tree-select
                 v-model="form.formPath"
                 :data="formPathList"
@@ -731,8 +731,8 @@ defineExpose({
 /* ========== 容器布局 ========== */
 .between {
   width: 100%;
-  html.dark & { 
-    background: var(--wf-bg-color, #141414); 
+  html.dark & {
+    background: var(--wf-bg-color, #141414);
     border-radius: var(--wf-radius-lg, 12px);
   }
 }

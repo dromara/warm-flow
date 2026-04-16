@@ -43,24 +43,23 @@
       <div style="padding: 5px 0; text-align: right;">
         <div v-if="activeStep === 1">
           <span class="toolbar-group">
-            <el-button size="small" icon="ZoomOut" @click="zoomViewport(false)">缩小</el-button>
-            <el-button size="small" v-if="'CLASSICS' === logicJson.modelValue" icon="Rank" @click="zoomViewport(1)">自适应</el-button>
-            <el-button size="small" icon="ZoomIn" @click="zoomViewport(true)">放大</el-button>
+            <el-tooltip content="缩小" placement="bottom"><el-button size="small" icon="ZoomOut" @click="zoomViewport(false)"></el-button></el-tooltip>
+            <el-tooltip v-if="'CLASSICS' === logicJson.modelValue" content="自适应" placement="bottom"><el-button size="small" icon="Rank" @click="zoomViewport(1)"></el-button></el-tooltip>
+            <el-tooltip content="放大" placement="bottom"><el-button size="small" icon="ZoomIn" @click="zoomViewport(true)"></el-button></el-tooltip>
           </span>
           <span class="toolbar-group">
-            <el-button size="small" icon="DArrowLeft" @click="undoOrRedo(true)">上一步</el-button>
-            <el-button size="small" icon="DArrowRight" @click="undoOrRedo(false)">下一步</el-button>
-            <el-button size="small" icon="Delete" @click="clear()">清空</el-button>
+            <el-tooltip content="上一步" placement="bottom"><el-button size="small" icon="DArrowLeft" @click="undoOrRedo(true)"></el-button></el-tooltip>
+            <el-tooltip content="下一步" placement="bottom"><el-button size="small" icon="DArrowRight" @click="undoOrRedo(false)"></el-button></el-tooltip>
+            <el-tooltip content="清空" placement="bottom"><el-button size="small" icon="Delete" @click="clear()"></el-button></el-tooltip>
           </span>
           <span class="toolbar-group">
-            <el-button size="small" icon="Download" @click="downLoad">下载流程图</el-button>
-            <el-button size="small" icon="Download" @click="downJson">下载json</el-button>
+            <el-tooltip content="下载流程图" placement="bottom"><el-button size="small" icon="Picture" @click="downLoad"></el-button></el-tooltip>
+            <el-tooltip content="下载JSON" placement="bottom"><el-button size="small" icon="Download" @click="downJson"></el-button></el-tooltip>
           </span>
           <span class="toolbar-group" v-if="onlyDesignShow && !disabled">
-            <el-button size="small" class="toolbar-save-btn" @click="saveJsonModel">
-              <svg-icon icon-class="save" style="margin-right: 4px; width: 14px; height: 14px;"/>
-              <span>保存</span>
-            </el-button>
+            <el-tooltip content="保存" placement="bottom"><el-button size="small" class="toolbar-save-btn" @click="saveJsonModel">
+              <svg-icon icon-class="save" style="width: 14px; height: 14px;"/>
+            </el-button></el-tooltip>
           </span>
         </div>
       </div>
@@ -316,6 +315,9 @@ function initLogicFlow() {
     register();
     initMenu()
     initEvent();
+    // 画布触摸事件桥接：LogicFlow v2 不支持原生 touch 事件，
+    // 将触摸事件转换为鼠标事件以支持手机/平板端拖动画布
+    initTouchEventBridge();
     if (logicJson.value) {
       lf.value.render(logicJson.value);
       zoomViewport(1);
@@ -324,8 +326,47 @@ function initLogicFlow() {
     if (isDark.value && lf.value) {
       applyDarkTheme(lf.value, true);
     }
+    // 真机修复：延迟触发一次 resize 确保 SVG 画布正确渲染尺寸
+    // 移动端 v-show 切换后容器可能还未完成布局计算
+    scheduleMobileResize();
   }
 }
+
+/**
+ * 真机兼容：延迟触发 LogicFlow resize + 重绘
+ * 解决移动端容器初始高度为0导致 SVG 不可见的问题
+ */
+function scheduleMobileResize() {
+  const doResize = () => {
+    if (lf.value && lf.value.resize) {
+      lf.value.resize();
+      // 再次确保画布自适应
+      nextTick(() => {
+        if (lf.value && lf.value.getGraphSize) {
+          zoomViewport(1);
+        }
+      });
+    }
+  };
+  // 使用多重延迟策略覆盖各种移动端浏览器时序差异
+  setTimeout(doResize, 100);
+  setTimeout(doResize, 300);
+  setTimeout(doResize, 600);
+}
+
+// 真机关键修复：监听步骤切换，v-show 切换后容器需要重新计算尺寸
+watch(activeStep, (newVal) => {
+  if (newVal === 1 && lf.value) {
+    nextTick(() => {
+      if (lf.value && lf.value.resize) {
+        lf.value.resize();
+        setTimeout(() => {
+          if (lf.value && lf.value.resize) lf.value.resize();
+        }, 200);
+      }
+    });
+  }
+});
 
 watch(isDark, (v) => {
   if (!lf.value) {
@@ -337,7 +378,21 @@ watch(isDark, (v) => {
 /** 组件卸载时清理 message 监听 */
 onUnmounted(() => {
   cleanupMessageListener();
+  window.removeEventListener('resize', handleMobileResize);
 });
+
+/** 移动端屏幕尺寸变化（含旋转）时重绘画布 */
+function handleMobileResize() {
+  if (lf.value && lf.value.resize) {
+    // 使用 requestAnimationFrame 确保 DOM 布局完成后再 resize
+    requestAnimationFrame(() => {
+      lf.value.resize();
+    });
+  }
+}
+
+// 监听窗口变化，真机旋转屏幕时重绘
+window.addEventListener('resize', handleMobileResize);
 
 /**
  * 初始化拖拽面板
@@ -459,6 +514,106 @@ async function saveJsonModel() {
       loadingInstance.close();
     });
   });
+}
+
+/**
+ * 触摸事件桥接：将 touch 事件转换为 mouse 事件
+ * LogicFlow v2 的 StepDrag 只处理 mousedown/mousemove/mouseup，
+ * 手机/平板触摸时需要手动转换才能拖动画布。
+ */
+function initTouchEventBridge() {
+  const container = proxy.$refs.containerRef;
+  if (!container) return;
+
+  const canvasOverlay = container.querySelector('.lf-canvas-overlay');
+  if (canvasOverlay) {
+    setupTouchBridge(canvasOverlay);
+    return;
+  }
+  // 如果 CanvasOverlay 还未渲染（render 之后），延迟绑定
+  const observer = new MutationObserver(() => {
+    const overlay = container.querySelector('.lf-canvas-overlay');
+    if (overlay) {
+      setupTouchBridge(overlay);
+      observer.disconnect();
+    }
+  });
+  observer.observe(container, { childList: true, subtree: true });
+}
+
+function setupTouchBridge(el) {
+  let lastTouchTime = 0;
+  const TAP_THRESHOLD = 300; // 点击判定阈值
+
+  el.addEventListener('touchstart', (e) => {
+    if (e.touches.length !== 1) return;
+    const touch = e.touches[0];
+    // 阻止浏览器默认行为（滚动/缩放）
+    e.preventDefault();
+    lastTouchTime = Date.now();
+    // 转换为 mousedown 事件并分发到同一元素
+    const mouseEvent = new MouseEvent('mousedown', {
+      clientX: touch.clientX,
+      clientY: touch.clientY,
+      button: 0,
+      bubbles: true,
+      cancelable: true,
+    });
+    el.dispatchEvent(mouseEvent);
+  }, { passive: false });
+
+  el.addEventListener('touchmove', (e) => {
+    if (e.touches.length !== 1) return;
+    e.preventDefault();
+    const touch = e.touches[0];
+    const mouseEvent = new MouseEvent('mousemove', {
+      clientX: touch.clientX,
+      clientY: touch.clientY,
+      button: 0,
+      bubbles: true,
+      cancelable: true,
+    });
+    el.dispatchEvent(mouseEvent);
+  }, { passive: false });
+
+  el.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    const touch = e.changedTouches[0];
+    const mouseEvent = new MouseEvent('mouseup', {
+      clientX: touch.clientX,
+      clientY: touch.clientY,
+      button: 0,
+      bubbles: true,
+      cancelable: true,
+    });
+    el.dispatchEvent(mouseEvent);
+
+    // 如果是快速点击，补充 click 事件（用于空白区域取消选中等）
+    if (Date.now() - lastTouchTime < TAP_THRESHOLD) {
+      const clickEvent = new MouseEvent('click', {
+        clientX: touch.clientX,
+        clientY: touch.clientY,
+        button: 0,
+        bubbles: true,
+        cancelable: true,
+      });
+      el.dispatchEvent(clickEvent);
+    }
+  }, { passive: false });
+
+  // 兼容：touchcancel 时也触发 mouseup，防止卡在拖动状态
+  el.addEventListener('touchcancel', (e) => {
+    e.preventDefault();
+    const touch = e.changedTouches[0];
+    const mouseEvent = new MouseEvent('mouseup', {
+      clientX: touch.clientX,
+      clientY: touch.clientY,
+      button: 0,
+      bubbles: true,
+      cancelable: true,
+    });
+    el.dispatchEvent(mouseEvent);
+  }, { passive: false });
 }
 
 /**
@@ -695,11 +850,41 @@ async function downJson() {
 .container {
   flex: 1;
   width: 100%;
-  height: calc(100vh - 100px);
+  /* 真机兼容：使用 dvh（动态视口高度）+ vh 兜底，解决移动端地址栏导致 100vh 不准确的问题 */
+  height: calc(100dvh - 100px);
   min-height: 400px;
   border-radius: var(--wf-radius, 8px);
   box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.04);
   overflow: hidden;
+  /* 关键：禁止浏览器默认触摸手势，让 LogicFlow 接管画布拖动 */
+  touch-action: none;
+  /* 确保容器有明确的定位上下文和尺寸 */
+  position: relative;
+}
+
+@supports not (height: 100dvh) {
+  .container {
+    /* 浏览器不支持 dvh 时回退到标准 vh */
+    height: calc(100vh - 100px);
+    height: calc(-webkit-fill-available - 100px);
+  }
+}
+
+/* LogicFlow 内部 SVG 画布层 */
+.container :deep(.lf-canvas-overlay),
+.container :deep(.lf-graph) {
+  touch-action: none;
+}
+
+/* 确保 SVG 画布在移动端可见且有正确尺寸（真机关键修复） */
+.container :deep(svg) {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.container :deep(.lf-container-bg) {
+  display: block !important;
 }
 
 html.dark .container {
@@ -914,6 +1099,11 @@ html.dark .logo-text {
   border-right: 1px solid #e2e8f0;
 }
 
+/* 纯图标按钮紧凑化 */
+.toolbar-group .el-button {
+  padding: 6px 8px;
+}
+
 html.dark .toolbar-group {
   border-right-color: #475569;
 }
@@ -943,5 +1133,291 @@ html.dark .toolbar-group {
 
 .toolbar-save-btn:active {
   transform: translateY(0);
+}
+
+/* ========== 响应式适配：平板端 (<= 1024px) ========== */
+@media (max-width: 1024px) {
+  .design-header {
+    padding: 10px 12px;
+    min-height: 50px;
+  }
+
+  .header-left {
+    min-width: 120px;
+  }
+
+  .header-right {
+    min-width: 80px;
+  }
+
+  /* 步骤标签缩小 */
+  .step-tab {
+    padding: 8px 18px;
+    font-size: 13px;
+    gap: 6px;
+  }
+
+  .step-tab .tab-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .steps-tabs {
+    gap: 2px;
+    padding: 3px;
+  }
+
+  /* 流程名称缩短 */
+  .flow-name {
+    max-width: 180px;
+    font-size: 14px;
+    padding: 6px 12px;
+  }
+
+  /* 保存按钮缩小 */
+  .save-btn {
+    padding: 8px 16px !important;
+    font-size: 13px;
+  }
+
+  .toolbar-group {
+    gap: 2px;
+    padding-right: 8px;
+    margin-right: 8px;
+  }
+
+  /* Logo 水印隐藏，避免遮挡 */
+  .logo-text {
+    display: none;
+  }
+}
+
+/* ========== 响应式适配：手机端 (<= 768px) ========== */
+@media (max-width: 768px) {
+  .design-header {
+    padding: 6px 8px;
+    min-height: 44px;
+    /* 不换行，三栏强制一行 */
+  }
+
+  /* 步骤标签独占一行居中 */
+  .header-left {
+    min-width: auto;
+    flex: 0 0 auto;
+    overflow: hidden;
+    max-width: 30%;
+  }
+
+  .header-center {
+    position: static;
+    left: auto;
+    transform: none;
+    flex: 1 1 auto; /* 占据中间剩余空间，不换行 */
+    justify-content: center;
+  }
+
+  .header-right {
+    min-width: auto;
+    flex: 0 0 auto;
+    justify-content: flex-end;
+  }
+
+  /* 步骤标签紧凑模式：纯图标+短文字 */
+  .steps-tabs {
+    gap: 2px;
+    border-radius: 8px;
+  }
+
+  .step-tab {
+    padding: 6px 12px;
+    font-size: 12px;
+    gap: 4px;
+    border-radius: 6px;
+  }
+
+  .step-tab .tab-icon {
+    width: 15px;
+    height: 15px;
+  }
+
+  .step-tab.active {
+    box-shadow: 0 2px 6px rgba(59, 130, 246, 0.25);
+  }
+
+  /* 流程名称进一步压缩 */
+  .flow-name {
+    max-width: 120px;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 6px;
+  }
+
+  /* 保存按钮更小 */
+  .save-btn {
+    padding: 6px 10px !important;
+    font-size: 12px;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 6px rgba(16, 185, 129, 0.2);
+  }
+
+  .save-btn .save-icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* 工具栏单行显示 + 横向滚动 */
+  .toolbar-group {
+    display: inline-flex;
+    flex-wrap: nowrap;
+    gap: 3px;
+    padding-right: 6px;
+    margin-right: 6px;
+    border-right-color: #cbd5e1;
+  }
+
+  /* 工具栏容器可横向滚动 */
+  .el-header > div {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox 隐藏滚动条 */
+  }
+  .el-header > div::-webkit-scrollbar {
+    display: none; /* Safari/Chrome 隐藏滚动条 */
+  }
+
+  html.dark .toolbar-group {
+    border-right-color: #334155;
+  }
+
+  /* 画布容器高度调整 */
+  .container {
+    height: calc(100dvh - 90px);
+    min-height: 300px;
+  }
+
+  /* DndPanel 缩窄 + 图标文字紧凑 */
+  .lf-dndpanel {
+    width: 44px !important;
+    left: 4px !important;
+    top: 8px !important;
+    border-radius: 6px !important;
+    overflow-y: auto !important;
+    max-height: calc(100vh - 160px) !important;
+  }
+
+  .lf-dndpanel .lf-dnd-item {
+    padding: 4px !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+  }
+
+  /* DndPanel 节点图标缩小 */
+  .lf-dndpanel .lf-dnd-icon {
+    width: 28px !important;
+    height: 28px !important;
+  }
+
+  /* DndPanel 文字缩小并限制换行 */
+  .lf-dndpanel .lf-dnd-text {
+    font-size: 10px !important;
+    line-height: 1.2 !important;
+    word-break: break-all;
+    white-space: normal;
+    max-width: 42px;
+    text-align: center;
+    padding: 0 1px !important;
+  }
+}
+
+/* ========== 响应式适配：超小屏 (<= 480px) ========== */
+@media (max-width: 480px) {
+  .design-header {
+    padding: 4px 6px;
+    min-height: 36px;
+  }
+
+  /* 步骤标签极简模式：更紧凑 */
+  .step-tab {
+    padding: 4px 10px;
+    font-size: 11px;
+    gap: 2px;
+    border-radius: 5px;
+  }
+
+  .step-tab .tab-icon {
+    width: 13px;
+    height: 13px;
+  }
+
+  /* 流程名称极短 */
+  .flow-name {
+    max-width: 70px;
+    font-size: 11px;
+    padding: 3px 5px;
+    border-radius: 4px;
+  }
+
+  .flow-name svg {
+    display: none; /* 超小屏隐藏图标省空间 */
+  }
+
+  /* 保存按钮极小 */
+  .save-btn {
+    padding: 4px 7px !important;
+    font-size: 11px;
+    gap: 2px;
+    border-radius: 6px !important;
+  }
+
+  .save-btn .save-icon {
+    width: 12px;
+    height: 12px;
+  }
+
+  /* 隐藏工具栏分隔线，节省空间 */
+  .toolbar-group {
+    padding-right: 2px;
+    margin-right: 2px;
+    border-right: none;
+    gap: 2px;
+  }
+
+  /* DndPanel 极窄模式：图标为主 */
+  .lf-dndpanel {
+    width: 38px !important;
+    left: 2px !important;
+    top: 4px !important;
+    max-height: calc(100vh - 150px) !important;
+    padding: 2px !important;
+  }
+
+  .lf-dndpanel .lf-dnd-item {
+    padding: 3px 1px !important;
+  }
+
+  .lf-dndpanel .lf-dnd-icon {
+    width: 26px !important;
+    height: 26px !important;
+  }
+
+  .lf-dndpanel .lf-dnd-text {
+    font-size: 9px !important;
+    line-height: 1.1 !important;
+    max-width: 36px;
+  }
+
+  /* 工具栏 el-header 缩进减少，给画布更多空间 */
+  .el-header[style*="right"] {
+    right: 8px !important;
+    left: 48px !important;
+  }
+
+  /* 画布容器更矮 */
+  .container {
+    height: calc(100dvh - 75px);
+    min-height: 220px;
+  }
 }
 </style>
