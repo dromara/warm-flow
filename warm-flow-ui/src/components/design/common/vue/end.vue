@@ -61,4 +61,5 @@ function nodeNameChange() {
 
 /* 引入公共样式：基础配置卡片 */
 @include base-settings-card;
+@include responsive-adaption;
 </style>

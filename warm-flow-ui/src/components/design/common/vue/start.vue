@@ -158,6 +158,7 @@ function handleDeleteRow(index) {
 @include modern-tabs;
 @include base-settings-card;
 @include section-card;
+@include responsive-adaption;
 
 /* 紫色主题 - 监听器 */
 .section-purple {

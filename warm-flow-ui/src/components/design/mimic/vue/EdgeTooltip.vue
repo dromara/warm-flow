@@ -123,4 +123,34 @@ const handleClick = (item) => {
       color: var(--wf-primary, #409eff);
     }
 }
+
+/* ========== 手机端响应式适配 ========== */
+@media (max-width: 768px) {
+  .tooltip-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+
+  .tooltip-item {
+    padding: 6px 8px;
+    font-size: 13px;
+  }
+
+  .tooltip-icon {
+    width: 26px;
+    height: 26px;
+    margin-right: 6px;
+
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .tooltip-container {
+    grid-template-columns: 1fr;
+  }
+}
 </style>

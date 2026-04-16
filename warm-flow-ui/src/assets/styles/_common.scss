@@ -223,3 +223,211 @@
     .el-form-item__content { display: block !important; margin-left: 0 !important; }
   }
 }
+
+/* ========== 响应式适配（手机端/平板端） ========== */
+/* 注意：此 mixin 需要在每个引用它的组件 <style> 中通过 @include responsive-adaption 触发 */
+@mixin responsive-adaption {
+  /* 平板端 (768px - 1024px) */
+  @media (max-width: 1024px) and (min-width: 769px) {
+    /* 页签区域更紧凑 */
+    .modern-tabs-wrapper {
+      padding: 4px;
+    }
+    .modern-tab-item {
+      padding: 7px 12px;
+      font-size: 12px;
+    }
+    /* 基础配置卡片 */
+    .base-settings-header {
+      padding: 10px 12px;
+    }
+    .base-settings-content {
+      padding: 10px 12px;
+    }
+    .base-settings-title {
+      font-size: 12px;
+    }
+    /* section 卡片 */
+    .section-card-header {
+      padding: 10px 12px;
+    }
+    .section-card-body {
+      padding: 10px 12px;
+    }
+    .section-card-title {
+      font-size: 12px;
+    }
+    /* tab 内容区 */
+    .tabPane {
+      padding: 12px 2px 6px 2px;
+    }
+    .tabPane-full {
+      padding: 12px 2px 6px 2px;
+    }
+  }
+
+  /* 手机端 (<=768px) */
+  @media (max-width: 768px) {
+    /* ===== 页签：紧凑 + 可横滑 ===== */
+    .modern-tabs-wrapper {
+      padding: 4px;
+      border-radius: var(--wf-radius, 8px);
+    }
+    .modern-tabs {
+      gap: 3px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+    .modern-tab-item {
+      padding: 6px 10px;
+      font-size: 12px;
+      border-radius: var(--wf-radius-sm, 6px);
+    }
+
+    /* ===== 基础配置卡片 ===== */
+    .base-settings-section {
+      border-radius: var(--wf-radius, 8px);
+    }
+    .base-settings-header {
+      padding: 8px 10px;
+      gap: 6px;
+    }
+    .ext-icon-base svg {
+      width: 14px;
+      height: 14px;
+    }
+    .base-settings-title {
+      font-size: 12px;
+    }
+    .base-settings-content {
+      padding: 10px;
+    }
+
+    /* ===== Section 卡片（监听器/办理人） ===== */
+    .section-card {
+      border-radius: var(--wf-radius, 8px);
+    }
+    .section-card-header {
+      padding: 8px 10px;
+      gap: 6px;
+    }
+    .section-card-icon svg {
+      width: 14px;
+      height: 14px;
+    }
+    .section-card-title {
+      font-size: 12px;
+    }
+    .section-card-body {
+      padding: 10px;
+    }
+    .action-buttons {
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    /* ===== tabPane 内容区 ===== */
+    .tabPane {
+      padding: 10px 2px 4px 2px;
+    }
+    .tabPane-full {
+      padding: 10px 2px 4px 2px;
+    }
+
+    /* ===== 表单 label 缩减宽度 ===== */
+    ::v-deep(.el-form-item__label) {
+      width: auto !important;
+      min-width: 70px !important;
+      max-width: 90px !important;
+      padding-right: 6px !important;
+      font-size: 12px !important;
+      line-height: 1.4 !important;
+      word-break: break-word !important;
+    }
+
+    /* ===== 表格横向滚动 ===== */
+    ::v-deep(.el-table) {
+      font-size: 12px;
+      &::before {
+        background-color: transparent;
+      }
+    }
+    ::v-deep(.el-table .el-table__header-wrapper),
+    ::v-deep(.el-table .el-table__body-wrapper) {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    ::v-deep(.el-table th),
+    ::v-deep(.el-table td) {
+      padding: 6px 4px;
+    }
+    ::v-deep(.el-table-column--selection .cell),
+    ::v-deep(.el-table .cell) {
+      min-width: 60px;
+    }
+
+    /* 输入框/选择器统一缩小 */
+    ::v-deep(.el-input),
+    ::v-deep(.el-select),
+    ::v-deep(.el-textarea) {
+      --el-input-height: 32px;
+    }
+    ::v-deep(.el-input__inner),
+    ::v-deep(.el-textarea__inner) {
+      font-size: 12px;
+    }
+
+    /* 按钮缩小 */
+    ::v-deep(.el-button--small) {
+      padding: 5px 8px;
+      font-size: 12px;
+    }
+
+    /* 扩展属性区域 */
+    .ext-attributes-header {
+      padding: 8px 10px;
+      gap: 6px;
+    }
+    .ext-attributes-title {
+      font-size: 12px;
+    }
+    .ext-attributes-content {
+      padding: 10px;
+    }
+    .ext-attributes-icon svg {
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  /* 超小屏 (<=480px) */
+  @media (max-width: 480px) {
+    .modern-tab-item {
+      padding: 5px 8px;
+      font-size: 11px;
+    }
+    .base-settings-header,
+    .section-card-header,
+    .ext-attributes-header {
+      padding: 6px 8px;
+    }
+    .base-settings-content,
+    .section-card-body,
+    .ext-attributes-content {
+      padding: 8px;
+    }
+    ::v-deep(.el-form-item__label) {
+      min-width: 60px !important;
+      font-size: 11px !important;
+    }
+    ::v-deep(.el-input__inner),
+    ::v-deep(.el-textarea__inner) {
+      font-size: 11px;
+    }
+  }
+}

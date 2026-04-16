@@ -184,9 +184,26 @@ function getConditionDescription() {
 
 /* 引入公共样式：基础配置卡片 */
 @include base-settings-card;
+@include responsive-adaption;
 
 /* skip 特有图标 */
 .ext-icon-skip {
   color: var(--wf-text-regular, #606266); svg { width: 16px; height: 16px; }
+}
+
+/* skip 特有：手机端跳转条件区域输入框堆叠 */
+@media (max-width: 768px) {
+  .skip-wrapper ::v-deep(.el-form-item) {
+    .el-form-item__content {
+      flex-wrap: wrap;
+    }
+    /* 条件名 + 条件方式 + 值，手机端换行显示 */
+    .el-input,
+    .el-select {
+      width: 100% !important;
+      margin-left: 0 !important;
+      margin-bottom: 4px;
+    }
+  }
 }
 </style>

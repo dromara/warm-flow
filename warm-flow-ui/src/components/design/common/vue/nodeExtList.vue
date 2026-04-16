@@ -128,7 +128,7 @@ async function validate() {
 // 打开选择弹窗
 function openSelectDialog(code) {
     itemCode.value = code
-    userVisible.value = true;
+    userVisible = true;
 }
 
 
@@ -442,13 +442,13 @@ html.dark .nodeExtForm .nodeExtForm :deep(.el-textarea__inner.is-disabled) {
 
 /* ========== 10. 暗黑模式（统一使用 ::global 兜底） ========== */
 /* 注意：冗余的 ::deep(html.dark) 嵌套已清理，下方 ::global(html.dark) 规则可覆盖所有场景 */
-:global(html.dark) .nodeExtForm :deep(.el-input__wrapper),
-:global(html.dark) .nodeExtForm :deep(.el-textarea__inner) {
+::global(html.dark) .nodeExtForm :deep(.el-input__wrapper),
+::global(html.dark) .nodeExtForm :deep(.el-textarea__inner) {
   background: var(--wf-bg-white);
 }
 
-:global(html.dark) .nodeExtForm :deep(.el-radio),
-:global(html.dark) .nodeExtForm :deep(.el-checkbox) {
+::global(html.dark) .nodeExtForm :deep(.el-radio),
+::global(html.dark) .nodeExtForm :deep(.el-checkbox) {
   background: var(--wf-bg-white);
   border-color: var(--wf-border-color);
 
@@ -459,34 +459,89 @@ html.dark .nodeExtForm .nodeExtForm :deep(.el-textarea__inner.is-disabled) {
   }
 }
 
-:global(html.dark) .nodeExtForm :deep(.el-tag) {
+::global(html.dark) .nodeExtForm :deep(.el-tag) {
   background: var(--wf-primary-light);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
-:global(html.dark) .nodeExtForm :deep(.el-select .el-select__tags .el-tag) {
+::global(html.dark) .nodeExtForm :deep(.el-select .el-select__tags .el-tag) {
   background: var(--wf-primary-light);
 }
 
 /* ========== 11. 用户选择对话框 ========== */
-:deep(.el-dialog__header) {
+::deep(.el-dialog__header) {
   background: linear-gradient(135deg, var(--wf-primary-light, #ecf5ff), var(--wf-primary-lighter, #f0f7ff));
   border-bottom: 1px solid var(--wf-border-lighter, #ebeef5);
   padding: 16px 20px;
   border-radius: var(--wf-radius-lg, 12px) var(--wf-radius-lg, 12px) 0 0;
 }
 
-:deep(.el-dialog__title) {
+::deep(.el-dialog__title) {
   font-weight: 600;
   color: var(--wf-primary, #409eff);
   letter-spacing: 0.5px;
 }
 
-:deep(.el-dialog__body) {
+::deep(.el-dialog__body) {
   padding: 16px 20px;
 }
 
-:global(html.dark) :deep(.el-dialog__header) {
+::global(html.dark) :deep(.el-dialog__header) {
   background: linear-gradient(135deg, var(--wf-primary-light), #1a2744);
+}
+
+/* ========== 12. 手机端响应式适配 ========== */
+@media (max-width: 768px) {
+  .nodeExtForm {
+    padding: 6px 10px !important;
+  }
+
+  .nodeExtForm :deep(.el-form-item) {
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+  }
+
+  .nodeExtForm :deep(.el-form-item__label) {
+    min-width: 70px !important;
+    max-width: 90px !important;
+    font-size: 12px !important;
+    word-break: break-word !important;
+  }
+
+  /* 下拉/数字输入框100%宽度 */
+  .nodeExtForm :deep(.el-select),
+  .nodeExtForm :deep(.el-input-number) {
+    width: 100% !important;
+  }
+
+  /* radio/checkbox 卡片缩小间距 */
+  .nodeExtForm :deep(.el-radio-group .el-col),
+  .nodeExtForm :deep(.el-checkbox-group .el-col) {
+    min-width: 100%;
+  }
+
+  /* tag 标签紧凑 */
+  .nodeExtForm :deep(.el-tag) {
+    font-size: 11px;
+    padding: 2px 8px;
+  }
+
+  /* 对话框全屏 */
+  .nodeExtForm :deep(.el-dialog) {
+    width: 95% !important;
+    margin: 10px auto !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .nodeExtForm :deep(.el-form-item__label) {
+    min-width: 60px !important;
+    font-size: 11px !important;
+  }
+  .nodeExtForm :deep(.el-radio),
+  .nodeExtForm :deep(.el-checkbox) {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
 }
 </style>

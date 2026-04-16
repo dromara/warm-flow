@@ -165,9 +165,9 @@
                 <el-checkbox v-model="scope.row.isChecked" @change="handleCheck(scope.row)"></el-checkbox>
               </template>
             </el-table-column>
-            <el-table-column label="入库主键" align="center" key="storageId" prop="storageId" v-if="columns[0].visible" />
-            <el-table-column label="权限编码" align="center" key="handlerCode" prop="handlerCode" v-if="columns[1].visible" :show-overflow-tooltip="true" />
             <el-table-column label="权限名称" align="center" key="handlerName" prop="handlerName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
+            <el-table-column label="权限编码" align="center" key="handlerCode" prop="handlerCode" v-if="columns[1].visible" :show-overflow-tooltip="true" />
+            <el-table-column label="入库主键" align="center" key="storageId" prop="storageId" v-if="columns[0].visible" />
             <el-table-column label="权限分组" align="center" key="groupName" prop="groupName" v-if="columns[3].visible" :show-overflow-tooltip="true" />
             <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[4].visible" width="160">
               <template #default="scope">

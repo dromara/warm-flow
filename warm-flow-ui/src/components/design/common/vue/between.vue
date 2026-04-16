@@ -544,10 +544,12 @@ function handleTabChange(activeTabName) {
 
 /** 选择角色权限范围触发 */
 function getPermissionFlag() {
-  form.value.permissionFlag = form.value.permissionFlag ? form.value.permissionFlag.split("@@") : [""];
-  if (form.value.listenerType) {
+  const pf = form.value.permissionFlag;
+  form.value.permissionFlag = (typeof pf === 'string' && pf) ? pf.split("@@") : [""];
+  if (form.value.listenerType && typeof form.value.listenerType === 'string') {
     const listenerTypes = form.value.listenerType.split(",");
-    const listenerPaths = form.value.listenerPath.split("@@");
+    const lp = form.value.listenerPath;
+    const listenerPaths = (typeof lp === 'string' && lp) ? lp.split("@@") : [];
     form.value.listenerRows = listenerTypes.map((type, index) => ({
       listenerType: type,
       listenerPath: listenerPaths[index]
@@ -746,6 +748,60 @@ defineExpose({
 @include base-settings-card;
 @include section-card;
 @include table-form-align;
+@include responsive-adaption;
+
+/* ========== 手机端特有适配（between 独有） ========== */
+@media (max-width: 768px) {
+  /* 协作方式 radio-card：手机端纵向排列 */
+  .radio-card-group {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .radio-card-item {
+    padding: 8px 12px;
+  }
+
+  /* 票签策略：select + input 堆叠显示 */
+  .betweenForm::v-deep(.el-form-item) {
+    .el-form-item__content {
+      display: flex !important;
+      flex-wrap: wrap !important;
+      gap: 6px;
+    }
+    .el-select,
+    .el-input {
+      width: 100% !important;
+      margin-left: 0 !important;
+      min-width: 100%;
+    }
+  }
+
+  /* 驳回节点 select 缩小 */
+  .betweenForm::v-deep(.el-form-item .el-select[style*="width: 80%"]) {
+    width: 100% !important;
+  }
+
+  /* 办理人表格：隐藏入库主键列 */
+  .inputGroup::v-deep(.el-table__header-wrapper th:nth-child(1)) { display: none; }
+  .inputGroup::v-deep(.el-table__body-wrapper td:nth-child(1)) {
+    .cell { display: none; }
+  }
+
+  /* 扩展属性区域紧凑 */
+  .ext-attributes-section { margin-top: 8px; }
+
+  /* 添加行按钮全宽 */
+  .add-row-btn { font-size: 12px; height: 34px; letter-spacing: 1px; }
+}
+
+@media (max-width: 480px) {
+  .radio-card-text {
+    font-size: 12px;
+  }
+  .radio-card-tip {
+    display: none;
+  }
+}
 
 .placeholder { color: #828f9e; font-size: 12px; }
 .mt5 { margin-top: 5px; }
@@ -1032,7 +1088,7 @@ defineExpose({
   }
 }
 
-::deep(.permissionItem) {
+::v-deep(.permissionItem) {
   display: inline-block;
   width: 100%;
   .el-form-item__content { display: block; }
@@ -1043,7 +1099,7 @@ defineExpose({
   }
 }
 
-::deep(.listenerItem) {
+::v-deep(.listenerItem) {
   display: inline-block;
   width: 100%;
   .el-form-item__label { display:none!important;width:0!important;min-height:0!important;height:0!important;overflow:hidden!important;padding-right:0!important; }

@@ -6,7 +6,7 @@
       destroy-on-close
       v-model="drawer"
       direction="rtl"
-      size="37%"
+      :size="drawerSize"
       :append-to-body="true"
       :before-close="handleClose"
       class="property-drawer-modern">
@@ -31,6 +31,12 @@ import skip from '@/components/design/common/vue/skip.vue'
 import BaseInfo from "@/components/design/common/vue/baseInfo.vue";
 
 const { proxy } = getCurrentInstance();
+
+// 抽屉宽度：手机端全屏，桌面端 37%
+const drawerSize = computed(() => {
+  if (typeof window !== 'undefined' && window.innerWidth <= 768) return '100%';
+  return '37%';
+});
 
 const COMPONENT_LIST = {
   start,

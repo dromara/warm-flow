@@ -633,22 +633,21 @@ function setupPointerEventCapture(el) {
     hasSignificantMove = false;
     isLongPressFired = false;
 
-    // 阻止浏览器默认的触摸行为（滚动/缩放/选择）
-    // 但不调用 stopPropagation()，让事件继续冒泡到 LogicFlow
-    e.preventDefault();
+    // 仅对触摸事件阻止浏览器默认手势（滚动/缩放/选择）
+    // 鼠标事件不干预，让 LogicFlow 正常处理拖拽/双击
+    if (e.pointerType === 'touch') {
+      e.preventDefault();
+      // 主动分发一次 mousedown 确保 LogicFlow 收到
+      // （部分浏览器对 touch→mouse 的转换不够及时）
+      el.dispatchEvent(new MouseEvent('mousedown', getEventOpts(e)));
+    }
 
-    // 启动长按计时器（500ms 无显著移动则视为右键菜单）
+    // 启动长按计时器（500ms 无显著移动则视为右键菜单，仅触摸有效）
     longPressTimer = setTimeout(() => {
       if (hasSignificantMove) return; // 已移动，取消长按
       isLongPressFired = true;
       el.dispatchEvent(new MouseEvent('contextmenu', getEventOpts(e)));
     }, 500);
-
-    // 对于 touch 类型：主动分发一次 mousedown 确保 LogicFlow 收到
-    // （部分浏览器对 touch→mouse 的转换不够及时）
-    if (e.pointerType === 'touch') {
-      el.dispatchEvent(new MouseEvent('mousedown', getEventOpts(e)));
-    }
   }, { passive: false });
 
   // ========== pointermove ==========
@@ -858,7 +857,7 @@ function initEvent() {
     })
   } else {
     // 中间节点双击事件
-    eventCenter.on('node:dbclick', (args) => {
+    eventCenter.on('node:click', (args) => {
       nodeClick.value = args.data
       let graphData = lf.value.getGraphData()
       nodes.value = graphData['nodes']
@@ -869,7 +868,7 @@ function initEvent() {
     })
 
     // 边双击事件
-    eventCenter.on('edge:dbclick  ', (args) => {
+    eventCenter.on('edge:click  ', (args) => {
       nodeClick.value = args.data
       const nodeModel = lf.value.getNodeModelById(nodeClick.value.sourceNodeId);
       skipConditionShow.value = ['serial', 'inclusive'].includes(nodeModel['type'])
