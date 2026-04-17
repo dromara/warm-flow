@@ -17,7 +17,7 @@
         <!-- 右侧：工具栏（仅图标，tooltip悬浮显示） -->
         <div class="toolbar-right">
           <el-tooltip content="放大" placement="bottom"><el-button size="small" icon="ZoomIn" @click="zoomViewport(true)"/></el-tooltip>
-          <el-tooltip content="自适应" placement="bottom" v-if="isClassics(defJson.modelValue)"><el-button size="small" icon="Rank" @click="zoomViewport('fit')"/></el-tooltip>
+          <el-tooltip content="自适应" placement="bottom"><el-button size="small" icon="Rank" @click="isMobileDevice() ? zoomViewport('fit') : zoomViewport(1)"/></el-tooltip>
           <el-tooltip content="缩小" placement="bottom"><el-button size="small" icon="ZoomOut" @click="zoomViewport(false)"/></el-tooltip>
           <el-tooltip content="下载流程图" placement="bottom"><el-button size="small" icon="Download" @click="downLoad"/></el-tooltip>
         </div>
@@ -226,10 +226,10 @@ watch(
     { deep: true, immediate: true }
 );
 
-/** 检测是否移动端/平板设备 */
+/** 检测是否移动端/平板设备（与 index.vue 保持一致） */
 const isMobileDevice = () => {
-  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
-    || window.innerWidth <= 768;
+  // 屏幕宽度 <= 1024px（覆盖平板横屏及以下）或支持触摸且有窄屏
+  return window.innerWidth <= 1024 || ('ontouchstart' in window && window.innerWidth <= 1280);
 };
 
 /**
@@ -249,18 +249,45 @@ const zoomViewport = async (mode) => {
   }
 };
 
-/** 默认初始化自适应：PC端zoom(1)+居中，移动端/平板fitView */
-const autoFitViewport = () => {
-  if (!lf.value) return;
-  if (isMobileDevice()) {
-    // 移动端/平板：fitView 将所有节点缩放并居中到可视区域
-    lf.value.fitView(40, [20, 60, 20, 80]);
-  } else {
-    // PC 端：重置缩放 + 居中
-    lf.value.zoom(1);
-    lf.value.translateCenter();
-  }
-};
+/** 仅在移动端/平板执行 fitView，PC 端不干预（与 index.vue 保持一致） */
+function fitViewIfMobile() {
+  if (!isMobileDevice() || !lf.value?.fitView) return;
+
+  // 容器尺寸为 0 或过小时跳过
+  const container = containerRef.value;
+  if (!container) return;
+  const w = container.clientWidth;
+  const h = container.clientHeight;
+  if (!w || !h || w < 10 || h < 10) return;
+
+  // 检查 LogicFlow 内部图形模型是否已初始化（避免 SVG transform NaN）
+  const graphModel = lf.value?.graphModel;
+  if (!graphModel || !graphModel.width || !graphModel.height) return;
+
+  lf.value.fitView(40, [20, 60, 20, 80]);
+}
+
+/**
+ * 真机兼容：延迟触发 LogicFlow resize + fitView（仅移动端/平板端生效）
+ * PC 端不执行自动 fitView，保持用户手动缩放行为
+ */
+function scheduleMobileResize() {
+  const doFit = () => {
+    if (!lf.value || !lf.value.resize || !lf.value.graphModel) return;
+    // 容器未就绪则跳过
+    const container = containerRef.value;
+    if (!container || !container.clientWidth || !container.clientHeight) return;
+    // LogicFlow 图形模型未就绪则跳过
+    if (!lf.value.graphModel.width || !lf.value.graphModel.height) return;
+    lf.value.resize();
+    requestAnimationFrame(fitViewIfMobile);
+  };
+  setTimeout(doFit, 50);
+  setTimeout(doFit, 150);
+  setTimeout(doFit, 300);
+  setTimeout(doFit, 600);
+  setTimeout(doFit, 1000);
+}
 
 onMounted(async () => {
   if (!appParams.value) await appStore.fetchTokenName();
@@ -311,14 +338,20 @@ onMounted(async () => {
             });
             register();
             initEvent();
+            // 画布触摸事件桥接：LogicFlow v2 不支持原生 touch 事件，
+            // 将触摸事件转换为鼠标事件以支持手机/平板端拖动画布
+            initTouchEventBridge();
             lf.value.render(data);
             // 初始化完成后，如果当前是暗黑模式，显式应用一次主题
             if (isDark.value && lf.value) {
               applyDarkTheme(lf.value, true);
             }
             if (isClassics(defJson.value.modelValue)) {
-              autoFitViewport();
+              // 移动端/平板端：自适应显示全部节点；PC 端保持默认行为不干预
+              fitViewIfMobile();
             }
+            // 真机修复：延迟触发 resize 确保 SVG 画布正确渲染尺寸（仅移动端/平板端生效）
+            scheduleMobileResize();
           }
         })
         .catch(() => {
@@ -331,6 +364,79 @@ watch(isDark, (v) => {
   if (!lf.value) return;
   applyDarkTheme(lf.value, v);
 });
+
+/**
+ * 移动端触摸事件桥接：确保手机/平板上 LogicFlow 节点/边的点击、拖拽正常工作
+ * 使用 Pointer Events API 将触摸事件转换为鼠标事件
+ */
+function initTouchEventBridge() {
+  const container = containerRef.value;
+  if (!container) return;
+
+  setupPointerEventCapture(container);
+
+  const canvasOverlay = container.querySelector('.lf-canvas-overlay');
+  if (canvasOverlay) {
+    setupPointerEventCapture(canvasOverlay, { forDrag: true });
+  } else {
+    const observer = new MutationObserver(() => {
+      const overlay = container.querySelector('.lf-canvas-overlay');
+      if (overlay) {
+        setupPointerEventCapture(overlay, { forDrag: true });
+        observer.disconnect();
+      }
+    });
+    observer.observe(container, { childList: true, subtree: true });
+  }
+}
+
+function setupPointerEventCapture(el) {
+  let startX = 0, startY = 0;
+  let isDragging = false;
+  const DOUBLE_TAP_GAP = 350;
+  let tapCount = 0, lastTapTime = 0, doubleTapTimer = null;
+
+  function getEventOpts(e) {
+    return { clientX: e.clientX, clientY: e.clientY, button: 0, bubbles: true, cancelable: true, view: window };
+  }
+
+  function resetTapState() {
+    tapCount = 0;
+    if (doubleTapTimer) { clearTimeout(doubleTapTimer); doubleTapTimer = null; }
+  }
+
+  el.addEventListener('pointerdown', (e) => {
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    startX = e.clientX; startY = e.clientY; isDragging = false;
+    if (e.pointerType === 'touch') {
+      e.preventDefault();
+      el.dispatchEvent(new MouseEvent('mousedown', getEventOpts(e)));
+    }
+  }, { passive: false });
+
+  el.addEventListener('pointermove', (e) => {
+    if (!isDragging && (Math.abs(e.clientX - startX) > 5 || Math.abs(e.clientY - startY) > 5)) isDragging = true;
+    if (isDragging && e.pointerType === 'touch') { e.preventDefault(); el.dispatchEvent(new MouseEvent('mousemove', getEventOpts(e))); }
+    else if (e.pointerType === 'touch') e.preventDefault();
+  }, { passive: false });
+
+  function handleEnd(e) {
+    if (isDragging && e.pointerType === 'touch') { el.dispatchEvent(new MouseEvent('mouseup', getEventOpts(e))); resetTapState(); return; }
+    const now = Date.now(); tapCount++;
+    if (tapCount === 1) {
+      lastTapTime = now; el.dispatchEvent(new MouseEvent('click', getEventOpts(e)));
+      doubleTapTimer = setTimeout(() => { tapCount = 0; doubleTapTimer = null; }, DOUBLE_TAP_GAP);
+    } else if (tapCount >= 2 && now - lastTapTime < DOUBLE_TAP_GAP) {
+      if (doubleTapTimer) { clearTimeout(doubleTapTimer); doubleTapTimer = null; }
+      tapCount = 0; el.dispatchEvent(new MouseEvent('dblclick', getEventOpts(e)));
+    } else {
+      tapCount = 1; lastTapTime = now; el.dispatchEvent(new MouseEvent('click', getEventOpts(e)));
+      doubleTapTimer = setTimeout(() => { tapCount = 0; doubleTapTimer = null; }, DOUBLE_TAP_GAP);
+    }
+  }
+  el.addEventListener('pointerup', handleEnd);
+  el.addEventListener('pointercancel', () => { if (isDragging) { isDragging = false; } resetTapState(); });
+}
 
 /**
  * 下载流程图
@@ -461,6 +567,11 @@ html.dark .flow-name-badge,
   .toolbar-right {
     gap: 2px;
     margin-right: 6px;
+  }
+
+  /* 移动端/平板：隐藏状态按钮区域（仅 PC 端显示） */
+  .chart-toolbar-mobile-status {
+    display: none !important;
   }
 }
 </style>
