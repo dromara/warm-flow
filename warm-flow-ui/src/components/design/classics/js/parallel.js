@@ -60,11 +60,11 @@ class ParallelView extends PolygonNode {
           points,
           filter: `url(#gw-shadow-p-${model.id})`,
         }),
-        // + 图标（加粗 + 四臂末端圆角装饰）
+        // + 图标（加粗 + 四臂末端圆角装饰，与菱形边缘保持间距）
         h('g', {},
           // 横线（两端带圆角端点）
           h('path', {
-            d: 'M12 25 L38 25',
+            d: 'M16 25 L34 25',
             fill: 'none',
             stroke: style.stroke || '#666',
             strokeWidth: 3,
@@ -72,17 +72,17 @@ class ParallelView extends PolygonNode {
           }),
           // 竖线
           h('path', {
-            d: 'M25 12 L25 38',
+            d: 'M25 16 L25 34',
             fill: 'none',
             stroke: style.stroke || '#666',
             strokeWidth: 3,
             strokeLinecap: 'round',
           }),
-          // 四臂末端装饰圆点
-          h('circle', { cx: 25, cy: 10.5, r: 1.5, fill: style._statusHex || '#666' }),
-          h('circle', { cx: 39.5, cy: 25, r: 1.5, fill: style._statusHex || '#666' }),
-          h('circle', { cx: 25, cy: 39.5, r: 1.5, fill: style._statusHex || '#666' }),
-          h('circle', { cx: 10.5, cy: 25, r: 1.5, fill: style._statusHex || '#666' }),
+          // 四臂末端装饰圆点（跟随线段端点外侧）
+          h('circle', { cx: 25, cy: 14, r: 1.5, fill: style._statusHex || '#666' }),
+          h('circle', { cx: 36, cy: 25, r: 1.5, fill: style._statusHex || '#666' }),
+          h('circle', { cx: 25, cy: 36, r: 1.5, fill: style._statusHex || '#666' }),
+          h('circle', { cx: 14, cy: 25, r: 1.5, fill: style._statusHex || '#666' }),
         ),
       ]
     )

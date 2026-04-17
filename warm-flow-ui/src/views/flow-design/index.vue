@@ -70,6 +70,13 @@
                 :definition-id="definitionId" :disabled="disabled"
                 @update:flow-name="handleFlowNameUpdate" @update:model-value="handleModelValueUpdate"/>
 
+      <!-- 自定义拖拽侧边栏：放在 .container 外部 + 延迟显示，避免与 LogicFlow DOM 冲突 -->
+      <DiagramSidebar
+        v-if="sidebarVisible"
+        class="diagram-sidebar"
+        @dragInNode="handleDragInNode"
+      />
+
       <div class="container" ref="containerRef" v-show="activeStep === 1">
         <PropertySetting ref="propertySettingRef" :node="nodeClick" :lf="lf" :disabled="disabled"
                          :skipConditionShow="skipConditionShow" :nodes="nodes" :skips="skips"
@@ -93,7 +100,7 @@
 <script setup name="Design">
 import LogicFlow from "@logicflow/core";
 import "@logicflow/core/lib/style/index.css";
-import {DndPanel, InsertNodeInPolyline, Menu, Snapshot} from '@logicflow/extension';
+import {InsertNodeInPolyline, Menu, Snapshot} from '@logicflow/extension';
 import '@logicflow/extension/lib/style/index.css'
 import { ElLoading } from 'element-plus'
 import PropertySetting from '@/components/design/common/vue/propertySetting.vue'
@@ -125,6 +132,7 @@ import initClassicsData from "@/components/design/classics/initClassicsData.json
 import initMimicData from "@/components/design/mimic/initMimicData.json";
 import {addBetweenNode, addGatewayNode, gatewayAddNode, removeNode} from "@/components/design/mimic/js/mimic.js";
 import EdgeTooltip from "@/components/design/mimic/vue/EdgeTooltip.vue";
+import DiagramSidebar from "@/components/design/common/vue/DiagramSidebar.vue";
 import { useDark } from '@/composables/useDark';
 
 const appStore = useAppStore();
@@ -144,6 +152,8 @@ const nodes = ref([]);
 const skips = ref([]);
 const categoryList = ref([]);
 const formPathList = ref([]);
+// 控制侧边栏显示：延迟到 initLogicFlow 完成后显示，避免与 LogicFlow DOM 初始化冲突
+const sidebarVisible = ref(false);
 // 使用统一的暗黑模式 composable
 const { isDark, initFromUrl, applyDarkTheme, setupMessageListener, cleanupMessageListener } = useDark();
 
@@ -331,7 +341,6 @@ function initLogicFlow() {
       },
     });
 
-    initDndPanel();
     register();
     initMenu()
     initEvent();
@@ -350,6 +359,11 @@ function initLogicFlow() {
     // 真机修复：延迟触发一次 resize 确保 SVG 画布正确渲染尺寸
     // 移动端 v-show 切换后容器可能还未完成布局计算
     scheduleMobileResize();
+
+    // LogicFlow 完全初始化后，再显示自定义拖拽侧边栏（避免 DOM 操作冲突）
+    if (isClassics(logicJson.value.modelValue)) {
+      sidebarVisible.value = true;
+    }
   }
 }
 
@@ -445,53 +459,15 @@ window._markDrawerClosed = () => {
 };
 
 /**
- * 初始化拖拽面板
+ * 自定义拖拽面板：监听子组件 dragInNode 事件，调用 lf.dnd.startDrag
  */
-function initDndPanel() {
-  // 只有经典模式才有拖拽面板
-  if (isClassics(logicJson.value.modelValue)) {
-    lf.value.extension.dndPanel.setPatternItems([
-      {
-        type: 'start',
-        text: '开始',
-        label: '开始节点',
-        icon: 'data:image/svg+xml;charset=utf-8;base64,PHN2ZyB0PSIxNzQ4MTc1OTQ3Mzg4IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjIwODA5IiB3aWR0aD0iMzYiIGhlaWdodD0iMzYiPjxwYXRoIGQ9Ik01MTIgMTAyNEMyMjkuMjMwNDMxIDEwMjQgMCA3OTQuNzY5NTY5IDAgNTEyUzIyOS4yMzA0MzEgMCA1MTIgMHM1MTIgMjI5LjIzMDQzMSA1MTIgNTEyLTIyOS4yMzA0MzEgNTEyLTUxMiA1MTJ6IG0wLTk1MC4zNzkwODVDMjY5Ljg4OTI1NSA3My42MjA5MTUgNzMuNjIwOTE1IDI2OS44ODkyNTUgNzMuNjIwOTE1IDUxMnMxOTYuMjY4MzQgNDM4LjM3OTA4NSA0MzguMzc5MDg1IDQzOC4zNzkwODUgNDM4LjM3OTA4NS0xOTYuMjY4MzQgNDM4LjM3OTA4NS00MzguMzc5MDg1Uzc1NC4xMTA3NDUgNzMuNjIwOTE1IDUxMiA3My42MjA5MTV6IiBmaWxsPSIjMDAwMDAwIiBwLWlkPSIyMDgxMCI+PC9wYXRoPjwvc3ZnPg==',
-      },
-      {
-        type: 'between',
-        text: '中间节点',
-        label: '中间节点',
-        icon: 'data:image/svg+xml;charset=utf-8;base64,PHN2ZyB0PSIxNzQ4MTc1Mzc1ODI3IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjgzMTkiIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiI+PHBhdGggZD0iTTMzNS43NTE4MDQgMjQ0Ljc4MzE0N0MyODMuNjA3MDI5IDI0NC43ODMxNDcgMjQ2LjMwMzg5OSAyODQuODY5MDYgMjQ2LjE5OTI3IDMzMC41Mjk2NDJsMCAwLjAxMzIwNyAwIDAuMDEyNjQ4YzAuMDAzMjk0IDEzLjgwODQ2NSAzLjczOTc0MyAyOC4zODE3NDcgOS41Nzc0MzEgNDEuNTI2MzQyIDQuMjE1MTMyIDkuNDkxMTE1IDkuNDU1Nzk4IDE4LjIxNjY3NiAxNS44NDE3NDQgMjUuMjA2NjE0QzIzMy42NjU1ODggNDEwLjI3Mjg1MyAxODkuMjAxOTQ5IDQzMS42NDI4ODMgMTY2LjcyOCA0NzMuNzgxNTNMMTY1LjUxNjk2IDQ3Ni4wNTI1MTRsMCAxMzYuNDA4NDgyIDM0MC40Njk2ODkgMCAwLTEzNi40MDg0ODItMS4yMTEwNDMtMi4yNzA5ODRjLTIyLjE1MDcwOC00MS41MzI1NjYtNjUuNjUyMjA0LTYyLjg3Mjg0OC0xMDMuMjM4MjA0LTc1LjkxMTExNiAxOC4zNDg0MTktMTguNjU4MjE4IDIzLjc2MTA0OS00Mi43NDA1NzMgMjMuNzY2OTMyLTY3LjMxNDkybDAtMC4wMTI2NDggMC0wLjAxMzIwN0M0MjUuMTk5NzA3IDI4NC44NjkwNjMgMzg3Ljg5NjU4MyAyNDQuNzgzMTQ3IDMzNS43NTE4MDQgMjQ0Ljc4MzE0N1pNMzAwLjE0ODUyMyAyOTMuNDA0NTIxYzIuNDEwMzI4IDAuMDA2MDU5IDUuMDU2NjUgMC4wODY1NzIgNy45NzQwMTUgMC4yNTg1MjIgMjMuMjQ0MDI5IDEuMzcwMDI5IDMxLjA2Njk5NiA1LjU1NDA1OSAzNy4wODAzMjMgOS41MjIyODMgNi4wMTMyOTggMy45NjgyMjMgMTAuMjUyNDE3IDcuNzQ1Njk5IDI2LjE0NDE4OSA4LjIwODk4MmwwLjAwNDcwNiAwIDAuMDA1Mjk1IDBjMTIuMzgzODktMC40NjMyMTUgMTguMzM5NTA2LTIuNjcxMTM1IDIyLjYxMDQ1Mi01LjE3MjE5MiAxLjczMDY0NS0xLjAxMzQ1MyAzLjE4MzgyNS0yLjA2NzAwMyA0LjY3Mjk1LTMuMDcyOTg0IDMuOTM2MDM2IDguNDM2NjY4IDYuMDQ5NjU0IDE3Ljc2MjkzOCA2LjA3MzU5NyAyNy40MTQ5ODEtMC4wMDgyMzYgMjcuNDg0NjUyLTQuNzMzMzA4IDQ2LjczMjMwMi0yOS45MzQxNTQgNjIuNDgyODNsMi40NjUxNzcgMTguNTgwOTQ0YzUuMjQ1MzUxIDEuNTkyODg5IDEwLjY2NzMwNSAzLjM0MDY3MSAxNi4xNzAzNTQgNS4yNTcyMiAwLjc2ODUzNSAzLjIwNjE4MyAxLjY1NjQ5MiA3LjQxMTMwNiAyLjI1Mzc0OCAxMS44ODE3MzkgMC42MjU2NyA0LjY4MzQ1NCAwLjg3MTc0OSA5LjU1NjMzMyAwLjQ4NjAxMSAxMy4yMTUxMzktMC4zODU3MzggMy42NTg4MDYtMS41MjE3MTYgNS42MzM5NzItMS43MjExNzQgNS44MzM0NTktMTIuODA4OTg0IDEyLjgwODk1NS0zNS41NDYwMzYgMjAuMjc5MTM5LTU4LjYwODQzOCAyMC4yNzkxMzktMjMuMDYyMzkzIDAtNDUuNzk5NDQ0LTcuNDcwMTg0LTU4LjYwODQyMy0yMC4yNzkxMzktMC4xOTk0NjEtMC4xOTk0ODctMS4zMzU0NTYtMi4xNzQ2NTMtMS43MjExOTQtNS44MzM0NTktMC4zODU3MzUtMy42NTg4MDYtMC4xMzk2NjItOC41MzE2ODUgMC40ODYwMjYtMTMuMjE1MTM5IDAuNjAwNTI3LTQuNDk1MTE1IDEuNDk1NTUyLTguNzI1MDI4IDIuMjY2OTYzLTExLjkzNzQ2NyA1LjQ0ODA4Ni0xLjg5NDYwNiAxMC44MTU1NDctMy42MjQwNDIgMTYuMDEwMDczLTUuMjAxNDkxbDEuNDY5NTYxLTE5LjkwOTc1NmMtMS4xOTY1NzEtMS41MzQ1NjQtMi40MTU3ODItMi41NTExNjctMy44NzA5NTktMy42NDI4ODQtNS42MjQzNzctNC4yMTk1NjUtMTIuNDQ1MTQyLTEzLjUwMjI0NS0xNy4yNjMwNDktMjQuMzUwNjEzLTQuODE2MTg5LTEwLjg0NDQ5OS03LjgwMDAzOC0yMy4yNDAwMjMtNy44MDQ1MzYtMzMuMTYyODE4IDAuMDI5OTI2LTExLjg5NjM4MiAzLjIzMTM3OS0yMy4yOTkzMDQgOS4xMTE1MTYtMzMuMTQ5MDMyIDEuMDUyMTE1LTAuMzkxNjE4IDIuMTYxNTY2LTAuODA1NTE3IDMuNDA4NDg4LTEuMjE1NjM0IDQuMzg1MDE3LTEuNDQyMjUgMTAuMzkzOTczLTIuODE4ODg5IDIwLjgzODcxNi0yLjc5MjYyOHpNMjU1LjYzMDc4IDQyNS42MzgxMzZjLTAuMDE4NTAyIDAuMTM0OTYxLTAuMDM5MzUzIDAuMjY2NjgxLTAuMDU3NDQ5IDAuNDAyMTQ4LTAuNzYwOTE0IDUuNjk1NjM2LTEuMjA4MDMxIDExLjg5NTI3My0wLjU1MzgxNyAxOC4xMDA2NzUgMC42NTQyMTQgNi4yMDU0MDIgMi4yOTE1NjggMTIuODg2NDMyIDcuNjM4NTA3IDE4LjIzMzM1IDE4LjI1MDg2MSAxOC4yNTA4ODEgNDUuODcxNzU5IDI2LjMxMDIzMyA3My4xNjczMTggMjYuMzEwMjMzIDI3LjI5NTU1MSAwIDU0LjkxNjQ1Mi04LjA1OTM1MSA3My4xNjczMDQtMjYuMzEwMjMzIDUuMzQ2OTQ4LTUuMzQ2OTE4IDYuOTg0MzItMTIuMDI3OTQ4IDcuNjM4NTIyLTE4LjIzMzM1IDAuNjU0MjAyLTYuMjA1NDMxIDAuMjA3MTA2LTEyLjQwNTAzOS0wLjU1MzgxMS0xOC4xMDA2NzUtMC4wMTUwMDEtMC4xMTIyNDgtMC4wMzI0MTQtMC4yMjEzMDctMC4wNDc2OC0wLjMzMzIxIDI3Ljc0NzUzIDEyLjE2ODM2IDU0LjU2Nzc0NiAyOS41OTUyNjEgNjkuMzY3MDE1IDU1LjYxNDczNGwwIDExMC41NDkyMjgtNDkuMjY4ODMyIDAgMC03Ny45NDc3MDQtMjAuNTg5OTYgMCAwIDc3Ljk0NzcwNC0xNjAuMDEzNCAwIDAtNzcuOTQ3NzA0LTIwLjU4OTk2IDAgMCA3Ny45NDc3MDQtNDguODI3NjE4IDAgMC0xMTAuNTQ5MjI4YzE0LjgyNzE1Ni0yNi4wNjg1MzYgNDEuNzIwNTQ3LTQzLjUxMjIzMiA2OS41MjM4Ni01NS42ODM2NzJ6TTIxOS45ODEgMTA3LjUxOTU3NWMtMTA5LjkzNDgyNCAwLTE5OS41MDEgODkuMTg4MzQ1LTE5OS41MDEgMTk4LjkxMTk5OWwwIDQxMS4xMzU5ODljMCAxMDkuNzIzNjU5IDg5LjU2NjE3NiAxOTguOTEyMDExIDE5OS41MDEgMTk4LjkxMjAxMWw1ODQuMDM3OTg5IDBjMTA5LjkzNDg1MyAwIDE5OS41MDEwMDEtODkuMTg4MzUxIDE5OS41MDEwMDEtMTk4LjkxMjAxMWwwLTQxMS4xMzU5ODljMC0xMDkuNzIzNjUzLTg5LjU2NjE0OC0xOTguOTExOTk5LTE5OS41MDEwMDEtMTk4LjkxMTk5OWwtNTg0LjAzNzk4OSAwem0wIDYxLjQ0MDAwMWw1ODQuMDM3OTg5IDBjNzcuMDc0OTU1IDAgMTM4LjA2MTAwMyA2MC44Mzg5MTUgMTM4LjA2MTAwMyAxMzcuNDcxOTk4bDAgNDExLjEzNTk4OWMwIDc2LjYzMzA5NC02MC45ODYwNDggMTM3LjQ3MjAxMi0xMzguMDYxMDAzIDEzNy40NzIwMTJsLTU4NC4wMzc5ODkgMGMtNzcuMDc0OTYgMC0xMzguMDYxLTYwLjgzODkxOC0xMzguMDYxLTEzNy40NzIwMTJsMC00MTEuMTM1OTg5YzAtNzYuNjMzMDgyIDYwLjk4NjA0LTEzNy40NzE5OTggMTM4LjA2MS0xMzcuNDcxOTk4eiIgcC1pZD0iODMyMCI+PC9wYXRoPjwvc3ZnPg==',
-        properties: {collaborativeWay: '1'},
-      },
-      {
-        type: 'serial',
-        text: '',
-        label: '互斥网关',
-        properties: {},
-        icon: 'data:image/svg+xml;charset=utf-8;base64,PHN2ZyB0PSIxNzQ4MTc1NTgyNzMwIiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjkzNjciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PHBhdGggZD0iTTAgMGgxMDI0djEwMjRIMHoiIGZpbGw9IiNGRkZGRkYiIGZpbGwtb3BhY2l0eT0iMCIgcC1pZD0iOTM2OCI+PC9wYXRoPjxwYXRoIGQ9Ik00NjUuMjI3Mjk0IDE0Mi4yNDU2NDdMMTQyLjI0NTY0NyA0NjUuMjI3Mjk0YTYxLjUwMDIzNSA2MS41MDAyMzUgMCAwIDAgMCA4Ni45Nzk3NjVsMzIyLjk4MTY0NyAzMjIuOTgxNjQ3YzI0LjAzMzg4MiAyNC4wMzM4ODIgNjIuOTQ1ODgyIDI0LjAzMzg4MiA4Ni45Nzk3NjUgMGwzMjIuOTgxNjQ3LTMyMi45ODE2NDdhNjEuNTAwMjM1IDYxLjUwMDIzNSAwIDAgMCAwLTg2Ljk3OTc2NUw1NTIuMjA3MDU5IDE0Mi4yNDU2NDdhNjEuNTAwMjM1IDYxLjUwMDIzNSAwIDAgMC04Ni45Nzk3NjUgMHogbTQ5LjY5NDExOCAzNy4yNTU1MjlsMzIzLjAxMTc2NCAzMjMuMDExNzY1YTguNzk0MzUzIDguNzk0MzUzIDAgMCAxIDAgMTIuNDA4NDcxTDUxNC45MjE0MTIgODM3LjkzMzE3NmE4Ljc5NDM1MyA4Ljc5NDM1MyAwIDAgMS0xMi40MDg0NzEgMEwxNzkuNTAxMTc2IDUxNC45MjE0MTJhOC43OTQzNTMgOC43OTQzNTMgMCAwIDEgMC0xMi40MDg0NzFMNTAyLjUxMjk0MSAxNzkuNTAxMTc2YTguNzk0MzUzIDguNzk0MzUzIDAgMCAxIDEyLjQwODQ3MSAweiIgZmlsbD0iIzAwMDAwMCIgcC1pZD0iOTM2OSI+PC9wYXRoPjxwYXRoIGQ9Ik01OTIuNTM0NTg4IDM4NS4wODQyMzVhMjYuMzUyOTQxIDI2LjM1Mjk0MSAwIDAgMSAzOS41NzQ1ODggMzQuNjM1Mjk0bC0yLjM3OTI5NCAyLjcxMDU4OS0yMTAuODIzNTI5IDIxMC4xMzA4MjNhMjYuMzUyOTQxIDI2LjM1Mjk0MSAwIDAgMS0zOS41NDQ0NzEtMzQuNjM1Mjk0bDIuMzQ5MTc3LTIuNzEwNTg4IDIxMC44MjM1MjktMjEwLjEzMDgyNHoiIGZpbGw9IiMwMDAwMDAiIHAtaWQ9IjkzNzAiPjwvcGF0aD48cGF0aCBkPSJNMzgxLjg2MTY0NyAzODQuOTMzNjQ3YTI2LjM1Mjk0MSAyNi4zNTI5NDEgMCAwIDEgMzQuNTQ0OTQxLTIuMzQ5MTc2bDIuNzEwNTg4IDIuMzQ5MTc2IDIxMC40OTIyMzYgMjEwLjUyMjM1M2EyNi4zNTI5NDEgMjYuMzUyOTQxIDAgMCAxLTM0LjU3NTA1OSAzOS42MDQ3MDZsLTIuNzEwNTg4LTIuMzQ5MTc3LTIxMC40NjIxMTgtMjEwLjUyMjM1M2EyNi4zNTI5NDEgMjYuMzUyOTQxIDAgMCAxIDAtMzcuMjU1NTI5eiIgZmlsbD0iIzAwMDAwMCIgcC1pZD0iOTM3MSI+PC9wYXRoPjwvc3ZnPg==',
-      },
-      {
-        type: 'parallel',
-        text: '',
-        label: '并行网关',
-        properties: {},
-        icon: 'data:image/svg+xml;charset=utf-8;base64,PHN2ZyB0PSIxNzQ4MTc1NjIwMDAyIiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjEwNDQxIiB3aWR0aD0iNDUiIGhlaWdodD0iNDUiPjxwYXRoIGQ9Ik0wIDBoMTAyNHYxMDI0SDB6IiBmaWxsPSIjRkZGRkZGIiBmaWxsLW9wYWNpdHk9IjAiIHAtaWQ9IjEwNDQyIj48L3BhdGg+PHBhdGggZD0iTTQ2NS4yMjcyOTQgMTQyLjI0NTY0N0wxNDIuMjQ1NjQ3IDQ2NS4yMjcyOTRhNjEuNTAwMjM1IDYxLjUwMDIzNSAwIDAgMCAwIDg2Ljk3OTc2NWwzMjIuOTgxNjQ3IDMyMi45ODE2NDdjMjQuMDMzODgyIDI0LjAzMzg4MiA2Mi45NDU4ODIgMjQuMDMzODgyIDg2Ljk3OTc2NSAwbDMyMi45ODE2NDctMzIyLjk4MTY0N2E2MS41MDAyMzUgNjEuNTAwMjM1IDAgMCAwIDAtODYuOTc5NzY1TDU1Mi4yMDcwNTkgMTQyLjI0NTY0N2E2MS41MDAyMzUgNjEuNTAwMjM1IDAgMCAwLTg2Ljk3OTc2NSAweiBtNDkuNjk0MTE4IDM3LjI1NTUyOWwzMjMuMDExNzY0IDMyMy4wMTE3NjVhOC43OTQzNTMgOC43OTQzNTMgMCAwIDEgMCAxMi40MDg0NzFMNTE0LjkyMTQxMiA4MzcuOTMzMTc2YTguNzk0MzUzIDguNzk0MzUzIDAgMCAxLTEyLjQwODQ3MSAwTDE3OS41MDExNzYgNTE0LjkyMTQxMmE4Ljc5NDM1MyA4Ljc5NDM1MyAwIDAgMSAwLTEyLjQwODQ3MUw1MDIuNTEyOTQxIDE3OS41MDExNzZhOC43OTQzNTMgOC43OTQzNTMgMCAwIDEgMTIuNDA4NDcxIDB6IiBmaWxsPSIjMDAwMDAwIiBwLWlkPSIxMDQ0MyI+PC9wYXRoPjxwYXRoIGQ9Ik01MDUuNzM1NTI5IDMzMy42NDMyOTRjMTMuNDMyNDcxIDAgMjQuNTE1NzY1IDEwLjA1OTI5NCAyNi4xNDIxMTggMjMuMDRsMC4yMTA4MjQgMy4zMTI5NDF2Mjk3LjY1MjcwNmEyNi4zNTI5NDEgMjYuMzUyOTQxIDAgMCAxLTUyLjQ5NTA1OSAzLjMxMjk0MWwtMC4yMTA4MjQtMy4zMTI5NDF2LTI5Ny42NTI3MDZjMC0xNC41NzY5NDEgMTEuNzc2LTI2LjM1Mjk0MSAyNi4zNTI5NDEtMjYuMzUyOTQxeiIgZmlsbD0iIzAwMDAwMCIgcC1pZD0iMTA0NDQiPjwvcGF0aD48cGF0aCBkPSJNNjU0LjU3Njk0MSA0ODIuNDg0NzA2YTI2LjM1Mjk0MSAyNi4zNTI5NDEgMCAwIDEgMy4zMTI5NDEgNTIuNDk1MDU5bC0zLjMxMjk0MSAwLjIxMDgyM0gzNTYuODk0MTE4YTI2LjM1Mjk0MSAyNi4zNTI5NDEgMCAwIDEtMy4zMTI5NDItNTIuNTI1MTc2bDMuMzEyOTQyLTAuMTgwNzA2aDI5Ny42ODI4MjN6IiBmaWxsPSIjMDAwMDAwIiBwLWlkPSIxMDQ0NSI+PC9wYXRoPjwvc3ZnPg==',
-      },
-      {
-          type: 'inclusive',
-          text: '',
-          label: '包含网关',
-          properties: {},
-          icon: 'data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiIgdmlld0JveD0iMCAwIDEwMCAxMDAiPgogIDxwYXRoIGQ9Ik01MCwwIEwxMDAsNTAgTDUwLDEwMCBMMCw1MCBaIiAKICAgICAgICBzdHJva2U9IiMwMDAwMDAiIHN0cm9rZS13aWR0aD0iNiIgZmlsbD0ibm9uZSIgLz4KICA8Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSIyNSIgCiAgICAgICAgICBzdHJva2U9IiMwMDAwMDAiIHN0cm9rZS13aWR0aD0iNiIgZmlsbD0ibm9uZSIgLz4KPC9zdmc+Cg==',
-      },
-      {
-        type: 'end',
-        text: '结束',
-        label: '结束节点',
-        icon: "data:image/svg+xml;charset=utf-8;base64,PHN2ZyB0PSIxNzUwMzg4OTY4OTA4IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIg0KICAgICB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjY5MTciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIg0KICAgICB3aWR0aD0iMzYiIGhlaWdodD0iMzYiPg0KICA8cGF0aCBkPSJNNTEyLjAwNTExNyA5NTguNzA4OTcxQzI2NS42ODMwMzUgOTU4LjcwODk3MSA2NS4yOTAwMDUgNzU4LjMxNjk2NSA2NS4yOTAwMDUgNTExLjk5Mzg2YzAtMjQ2LjMxMDgyNSAyMDAuMzkzMDMtNDQ2LjcwMzg1NSA0NDYuNzE1MTExLTQ0Ni43MDM4NTUgMjQ2LjMxMDgyNSAwIDQ0Ni43MDM4NTUgMjAwLjM5MzAzIDQ0Ni43MDM4NTUgNDQ2LjcwMzg1NUM5NTguNzA4OTcxIDc1OC4zMTY5NjUgNzU4LjMxNjk2NSA5NTguNzA4OTcxIDUxMi4wMDUxMTcgOTU4LjcwODk3MXpNNTEyLjAwNTExNyAxNjkuNzE2MzU2Yy0xODguNzM4NTk1IDAtMzQyLjI4OTc4NCAxNTMuNTQ1MDQ4LTM0Mi4yODk3ODQgMzQyLjI3NzUwNCAwIDE4OC43Mzg1OTUgMTUzLjU1MTE4OCAzNDIuMjg5Nzg0IDM0Mi4yODk3ODQgMzQyLjI4OTc4NCAxODguNzMzNDc5IDAgMzQyLjI3ODUyNy0xNTMuNTUxMTg4IDM0Mi4yNzg1MjctMzQyLjI4OTc4NEM4NTQuMjgzNjQ0IDMyMy4yNjE0MDUgNzAwLjczODU5NSAxNjkuNzE2MzU2IDUxMi4wMDUxMTcgMTY5LjcxNjM1NnoiIHAtaWQ9IjY5MTgiPjwvcGF0aD4NCjwvc3ZnPg=="
-      },
-    ]);
+function handleDragInNode(type, properties = {}, text) {
+  if (lf.value) {
+    lf.value.dnd.startDrag({
+      text,
+      type,
+      properties,
+    })
   }
 }
 
@@ -518,6 +494,8 @@ function handleModelValueUpdate() {
   const modeNew = logicJson.value.modelValue;
 
   if (!lf.value || modeOrg !== modeNew) {
+    // 先隐藏侧边栏，等 initLogicFlow 完成后再显示
+    sidebarVisible.value = false;
     nextTick(() => {
       if (!jsonString.value.nodeList || jsonString.value.nodeList.length === 0) {
         // 读取本地文件/initData.json文件，并将数据转换json对象
@@ -865,9 +843,8 @@ function register() {
  * 添加扩展
  */
 function use() {
-  // 只有经典模式才有拖拽面板
+  // 只有经典模式才有拖拽面板（已使用自定义 DiagramSidebar 替代内置 DndPanel）
   if (isClassics(logicJson.value.modelValue)) {
-    LogicFlow.use(DndPanel);
     LogicFlow.use(InsertNodeInPolyline)
   }
   LogicFlow.use(Menu);
@@ -1094,6 +1071,11 @@ async function downJson() {
   position: relative;
 }
 
+/* 自定义拖拽侧边栏为浮动卡片，不再需要画布偏移 */
+.container:has(.diagram-sidebar) {
+  /* 浮动式侧边栏覆盖在画布上方，无需左侧 padding 偏移 */
+}
+
 @supports not (height: 100dvh) {
   .container {
     /* 浏览器不支持 dvh 时回退到标准 vh */
@@ -1301,6 +1283,45 @@ html.dark .design-header {
   border-bottom-color: var(--wf-border-color);
 }
 
+/* 暗黑模式：保存按钮降低饱和度，避免刺眼 */
+html.dark .save-btn,
+html.dark .toolbar-save-btn {
+  background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%) !important;
+  box-shadow: 0 2px 8px rgba(13, 148, 136, 0.25) !important;
+}
+html.dark .save-btn:hover,
+html.dark .toolbar-save-btn:hover {
+  background: linear-gradient(135deg, #0f766e 0%, #115e59 100%) !important;
+  box-shadow: 0 4px 12px rgba(13, 148, 136, 0.35) !important;
+}
+
+/* 工具栏区域（el-header 第二行）暗黑模式 */
+html.dark .el-header {
+  --el-bg-color: var(--wf-bg-white, #1f1f1f);
+  background-color: var(--wf-bg-white, #1f1f1f);
+}
+
+html.dark .toolbar-group {
+  border-right-color: var(--wf-border-color, #333333);
+
+  /* 工具栏内按钮暗黑模式 */
+  .el-button {
+    --el-button-bg-color: var(--wf-bg-color, #141414);
+    --el-button-text-color: var(--wf-text-primary, #e0e0e0);
+    --el-border-color: var(--wf-border-color, #333333);
+    color: var(--wf-text-primary, #e0e0e0);
+    background-color: transparent;
+    border-color: var(--wf-border-color, #333333);
+
+    &:hover,
+    &:focus {
+      color: var(--wf-primary, #409eff);
+      background-color: rgba(64,158,255,.12);
+      border-color: var(--wf-primary, #409eff);
+    }
+  }
+}
+
 /* flow-name 的暗黑样式已在 L830-832 通过 CSS 变量 + !important 处理 */
 
 html.dark .steps-tabs {
@@ -1336,9 +1357,6 @@ html.dark .logo-text {
   padding: 6px 8px;
 }
 
-html.dark .toolbar-group {
-  border-right-color: #475569;
-}
 
 .toolbar-group:last-child {
   border-right: none;
@@ -1517,49 +1535,10 @@ html.dark .toolbar-group {
     display: none; /* Safari/Chrome 隐藏滚动条 */
   }
 
-  html.dark .toolbar-group {
-    border-right-color: #334155;
-  }
-
   /* 画布容器高度调整 */
   .container {
     height: calc(100dvh - 90px);
     min-height: 300px;
-  }
-
-  /* DndPanel 缩窄 + 图标文字紧凑 */
-  .lf-dndpanel {
-    width: 44px !important;
-    left: 4px !important;
-    top: 8px !important;
-    border-radius: 6px !important;
-    overflow-y: auto !important;
-    max-height: calc(100vh - 160px) !important;
-  }
-
-  .lf-dndpanel .lf-dnd-item {
-    padding: 4px !important;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1px;
-  }
-
-  /* DndPanel 节点图标缩小 */
-  .lf-dndpanel .lf-dnd-icon {
-    width: 28px !important;
-    height: 28px !important;
-  }
-
-  /* DndPanel 文字缩小并限制换行 */
-  .lf-dndpanel .lf-dnd-text {
-    font-size: 10px !important;
-    line-height: 1.2 !important;
-    word-break: break-all;
-    white-space: normal;
-    max-width: 42px;
-    text-align: center;
-    padding: 0 1px !important;
   }
 }
 
@@ -1616,34 +1595,10 @@ html.dark .toolbar-group {
     gap: 2px;
   }
 
-  /* DndPanel 极窄模式：图标为主 */
-  .lf-dndpanel {
-    width: 38px !important;
-    left: 2px !important;
-    top: 4px !important;
-    max-height: calc(100vh - 150px) !important;
-    padding: 2px !important;
-  }
-
-  .lf-dndpanel .lf-dnd-item {
-    padding: 3px 1px !important;
-  }
-
-  .lf-dndpanel .lf-dnd-icon {
-    width: 26px !important;
-    height: 26px !important;
-  }
-
-  .lf-dndpanel .lf-dnd-text {
-    font-size: 9px !important;
-    line-height: 1.1 !important;
-    max-width: 36px;
-  }
-
   /* 工具栏 el-header 缩进减少，给画布更多空间 */
   .el-header[style*="right"] {
     right: 8px !important;
-    left: 48px !important;
+    left: 44px !important;
   }
 
   /* 画布容器更矮 */

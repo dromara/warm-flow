@@ -803,35 +803,50 @@ defineExpose({
   /* 驳回节点 select 缩小 */
   .ext-attributes-section { margin-top: 8px; }
 
-  /* 办理人表格：三列平分宽度（入库主键44%+名称44%+操作12%），无横向滚动条 */
+  /* 办理人表格：隐藏滚动条，操作列固定宽度 */
   .handler-table-mobile {
     :deep(.el-table) {
       table-layout: fixed !important;
       width: 100% !important;
+      overflow: hidden;
     }
     :deep(.el-table__header-wrapper),
     :deep(.el-table__body-wrapper) {
-      th:nth-child(1),
-      td:nth-child(1) {
-        width: 44% !important;
-        min-width: 0 !important;
-        max-width: none !important;
-        & .cell { width: 100%; }
+      overflow: hidden !important;
+    }
+
+    /* ====== 手机端：三列百分比布局，操作列固定52px ====== */
+    :deep(.el-table__header-wrapper) {
+      th:nth-child(1) { width: calc(50% - 26px) !important; min-width: 0 !important; & .cell { width: 100%; } }
+      th:nth-child(2) { width: calc(50% - 26px) !important; min-width: 0 !important; & .cell { width: 100%; } }
+      th:nth-child(3) { width: 52px !important; min-width: 0 !important; max-width: none !important; & .cell { width: 100%; text-align: center; justify-content: center; } }
+    }
+    :deep(.el-table__body-wrapper) {
+      td:nth-child(1) { width: calc(50% - 26px) !important; min-width: 0 !important; & .cell { width: 100%; } }
+      td:nth-child(2) { width: calc(50% - 26px) !important; min-width: 0 !important; & .cell { width: 100%; } }
+      td:nth-child(3) { width: 52px !important; min-width: 0 !important; max-width: none !important; & .cell { width: 100%; display: flex; justify-content: center; align-items: center; padding-left: 4px; padding-right: 4px; box-sizing: border-box; } }
+    }
+
+    /* ====== PC端：前两列自适应，操作列锁定42px ====== */
+    &:not(.is-mobile) {
+      :deep(.el-table) {
+        table-layout: auto !important;
       }
-      th:nth-child(2),
-      td:nth-child(2) {
-        width: 44% !important;
-        min-width: 0 !important;
-        max-width: none !important;
-        & .cell { width: 100%; }
-      }
-      th:nth-child(3),
-      td:nth-child(3) {
-        width: 12% !important;
-        min-width: 0 !important;
-        max-width: none !important;
-        & .cell {
-          width: 100%;
+      :deep(.el-table__header-wrapper),
+      :deep(.el-table__body-wrapper) {
+        overflow-x: hidden !important;
+
+        /* PC端操作列强制42px */
+        th:nth-child(3), td:nth-child(3) {
+          width: 42px !important;
+          min-width: 42px !important;
+          max-width: 42px !important;
+        }
+        th:nth-child(3) .cell {
+          text-align: center;
+          justify-content: center;
+        }
+        td:nth-child(3) .cell {
           display: flex;
           justify-content: center;
           align-items: center;
@@ -840,17 +855,6 @@ defineExpose({
           box-sizing: border-box;
         }
       }
-    :deep(.el-table__header-wrapper) {
-      th:nth-child(3) .cell {
-        text-align: center;
-        justify-content: center;
-      }
-    }
-    }
-    :deep(.el-table__header colgroup) {
-      col:nth-child(1) { width: 44% !important; }
-      col:nth-child(2) { width: 44% !important; }
-      col:nth-child(3) { width: 12% !important; }
     }
   }
 

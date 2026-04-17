@@ -59,22 +59,22 @@ class SerialView extends PolygonNode {
           points,
           filter: `url(#gw-shadow-${model.id})`,
         }),
-        // X 图标（加粗 + 两端圆点装饰）
+        // X 图标（居中 + 加粗 + 两端圆点装饰）
         h('g', {},
-          // 主 X 形
+          // 主 X 形：以节点中心 (25, 25) 对称绘制，端点距菱形边缘留充足内边距
           h('path', {
-            d: 'M14.5 13 L22 21 M22 13 L14.5 21',
+            d: 'M17 17 L33 33 M33 17 L17 33',
             fill: 'none',
             stroke: style.stroke || '#666',
             strokeWidth: 2.5,
             strokeLinecap: 'round',
             strokeLinejoin: 'round',
           }),
-          // 四端小装饰圆点
-          h('circle', { cx: 13, cy: 11.5, r: 1.3, fill: style._statusHex || '#666' }),
-          h('circle', { cx: 23.5, cy: 11.5, r: 1.3, fill: style._statusHex || '#666' }),
-          h('circle', { cx: 23.5, cy: 22.5, r: 1.3, fill: style._statusHex || '#666' }),
-          h('circle', { cx: 13, cy: 22.5, r: 1.3, fill: style._statusHex || '#666' }),
+          // 四端小装饰圆点（跟随 X 端点外侧）
+          h('circle', { cx: 15.5, cy: 15.5, r: 1.3, fill: style._statusHex || '#666' }),
+          h('circle', { cx: 34.5, cy: 15.5, r: 1.3, fill: style._statusHex || '#666' }),
+          h('circle', { cx: 34.5, cy: 34.5, r: 1.3, fill: style._statusHex || '#666' }),
+          h('circle', { cx: 15.5, cy: 34.5, r: 1.3, fill: style._statusHex || '#666' }),
         ),
       ]
     )

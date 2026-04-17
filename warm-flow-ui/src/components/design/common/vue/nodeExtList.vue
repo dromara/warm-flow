@@ -473,6 +473,26 @@ html.dark .nodeExtForm .nodeExtForm :deep(.el-textarea__inner.is-disabled) {
   background: var(--wf-primary-light);
 }
 
+/* el-input-number 加减按钮暗黑适配 */
+html.dark .nodeExtForm :deep(.el-input-number__decrease),
+html.dark .nodeExtForm :deep(.el-input-number__increase) {
+  background-color: var(--wf-bg-white, #1f1f1f);
+  color: var(--wf-text-primary, #e0e0e0);
+  border-left-color: var(--wf-border-color, #333333);
+}
+
+html.dark .nodeExtForm :deep(.el-input-number__decrease):hover,
+html.dark .nodeExtForm :deep(.el-input-number__increase):hover {
+  background-color: var(--wf-primary-light, rgba(64,158,255,.15));
+  color: var(--wf-primary, #409eff);
+}
+
+html.dark .nodeExtForm :deep(.el-input-number__decrease.is-disabled),
+html.dark .nodeExtForm :deep(.el-input-number__increase.is-disabled) {
+  background-color: var(--wf-bg-white, #1f1f1f);
+  color: var(--wf-text-placeholder, #666);
+}
+
 /* ========== 11. 用户选择对话框 ========== */
 ::deep(.el-dialog__header) {
   background: linear-gradient(135deg, var(--wf-primary-light, #ecf5ff), var(--wf-primary-lighter, #f0f7ff));

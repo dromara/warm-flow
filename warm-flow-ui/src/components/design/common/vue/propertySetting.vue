@@ -379,24 +379,42 @@ defineExpose({
 /* ========== 暗黑模式：el-drawer 抽屉完整适配（全局生效） ========== */
 html.dark {
   .property-drawer-modern {
-    /* 整体抽屉 */
+    /* 整体抽屉：覆盖 Element Plus 默认白色变量 + 直接设色双重保险 */
     .el-drawer {
+      --el-drawer-bg-color: var(--wf-bg-color, #141414) !important;
+      --el-bg-color: var(--wf-bg-color, #141414) !important;
       background-color: var(--wf-bg-color, #141414) !important;
+
+      /* 消除 header 和 body 之间的白色缝隙 */
+      &__header {
+        margin-bottom: 0 !important;
+        padding-bottom: 12px !important;
+        background: var(--wf-bg-color, #141414) !important;
+        border-bottom: 1px solid var(--wf-border-color, #2a2a2a) !important;
+
+        > span {
+          color: var(--wf-text-primary, #e0e0e0) !important;
+          font-weight: 600;
+        }
+      }
 
       &__body {
         background-color: var(--wf-bg-color, #141414) !important;
+        margin-top: 0 !important;
       }
 
-      /* header 背景已由 JS 内联样式控制，这里只需确保透明 + 关闭按钮颜色 */
-      &__header {
-        background: transparent !important;
-      }
-
-      /* 关闭按钮 */
       &__close-btn {
         color: var(--wf-text-secondary, #888888) !important;
         &:hover { color: #409eff !important; }
       }
+    }
+
+    /* 抽屉容器本身也要深色（防止 append-to-body 后外层残留白色） */
+    &.el-drawer,
+    &.el-drawer__wrapper,
+    .v-modal + .el-overlay .el-drawer {
+      --el-drawer-bg-color: var(--wf-bg-color, #141414) !important;
+      background-color: var(--wf-bg-color, #141414) !important;
     }
   }
 

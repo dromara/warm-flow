@@ -570,17 +570,6 @@ html.dark {
     }
   }
 
-  /* --- LogicFlow DndPanel 左侧拖拽面板暗黑适配 --- */
-  .lf-dndpanel {
-    background: var(--wf-bg-white, #1f1f1f);
-    box-shadow: none;
-    border: 1px solid var(--wf-border-color, #333333);
-
-    .lf-dnd-text {
-      color: var(--wf-text-primary, #e0e0e0) !important;
-    }
-  }
-
   /* --- LogicFlow Control 顶部控制栏暗黑适配 --- */
   .lf-control {
     background: var(--wf-bg-white, #1f1f1f);
