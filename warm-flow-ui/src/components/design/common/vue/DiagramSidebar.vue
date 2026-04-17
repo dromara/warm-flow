@@ -261,6 +261,11 @@ html.dark .item-icon-wrap {
   background: var(--wf-bg-color, #222) !important;
 }
 
+/* 暗黑模式下 SVG 图标内部背景色切换 */
+html.dark .diagram-sidebar {
+  --wf-icon-bg: #1e2028;
+}
+
 html.dark .sidebar-item:hover {
   background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(99, 102, 241, 0.1));
 }

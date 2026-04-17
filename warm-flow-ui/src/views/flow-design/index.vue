@@ -332,6 +332,12 @@ function initLogicFlow() {
         stroke: '#1E90FF',
         strokeWidth: 2,
       },
+      nodeText: {
+        color: isDark.value ? '#e0e0e0' : '#303133',
+        fill: isDark.value ? '#e0e0e0' : '#303133',
+        fontSize: 13,
+        fontWeight: 500,
+      },
       edgeText: {
         fontSize: 13,
         strokeWidth: 1,

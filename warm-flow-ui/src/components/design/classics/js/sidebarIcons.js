@@ -9,6 +9,9 @@ const SC = '166,178,189' // status color RGB
 const STROKE = `rgb(${SC})`
 const STROKE_RGBA = (a) => `rgba(${SC},${a})`
 
+/** 图标背景色 — 用 CSS 变量支持暗黑模式自动切换 */
+const ICON_BG = 'var(--wf-icon-bg, #ffffff)'
+
 /**
  * 开始节点：圆环 + 内核实心渐变圆（与 start.js 一致）
  */
@@ -20,7 +23,7 @@ export const startIcon = `
       <stop offset="70%" stop-color="${STROKE_RGBA(0.4)}"/>
     </radialGradient>
   </defs>
-  <circle cx="50" cy="50" r="42" fill="white" stroke="${STROKE}" stroke-width="2.5"/>
+  <circle cx="50" cy="50" r="42" fill="${ICON_BG}" stroke="${STROKE}" stroke-width="2.5"/>
   <circle cx="50" cy="50" r="30" fill="url(#si-core)"/>
 </svg>`
 
@@ -29,7 +32,7 @@ export const startIcon = `
  */
 export const betweenIcon = `
 <svg viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
-  <rect x="5" y="5" width="90" height="70" rx="8" fill="white" stroke="${STROKE}" stroke-width="1.5"/>
+  <rect x="5" y="5" width="90" height="70" rx="8" fill="${ICON_BG}" stroke="${STROKE}" stroke-width="1.5"/>
   <!-- 左上角审批小图标（放大，偏右下） -->
   <rect x="12" y="10" width="32" height="26" rx="5" ry="5" fill="${STROKE_RGBA(0.08)}" stroke="${STROKE}" stroke-width="1.2"/>
   <circle cx="28" cy="23" r="5.5" fill="${STROKE_RGBA(0.15)}" stroke="${STROKE}" stroke-width="1"/>
@@ -41,21 +44,21 @@ export const betweenIcon = `
  */
 export const endIcon = `
 <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-  <circle cx="50" cy="50" r="42" fill="white" stroke="${STROKE}" stroke-width="3.5"/>
+  <circle cx="50" cy="50" r="42" fill="${ICON_BG}" stroke="${STROKE}" stroke-width="3.5"/>
   <circle cx="50" cy="50" r="30" fill="none" stroke="${STROKE_RGBA(0.25)}" stroke-width="1"/>
 </svg>`
 
 // ========== 网关节点公共部分 ==========
 
 /** 正方形外框（50x50 坐标系），绕中心点旋转45度，尺寸确保旋转后四角不超出viewBox */
-const gwRect = '<rect x="8" y="8" width="34" height="34" rx="5" transform="rotate(45 25 25)"'
+const gwRect = `<rect x="8" y="8" width="34" height="34" rx="5" transform="rotate(45 25 25)"`
 
 /**
  * 互斥网关：正方形 + X + 四端圆点
  */
 export const serialIcon = `
 <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-  ${gwRect} fill="white" stroke="${STROKE}" stroke-width="2"/>
+  ${gwRect} fill="${ICON_BG}" stroke="${STROKE}" stroke-width="2"/>
   <!-- X 图标（直线，无圆角端点） -->
   <path d="M17 17 L33 33 M33 17 L17 33" fill="none" stroke="${STROKE}" stroke-width="2.5" stroke-linecap="square" stroke-linejoin="miter"/>
   <!-- 四端装饰圆点 -->
@@ -70,7 +73,7 @@ export const serialIcon = `
  */
 export const parallelIcon = `
 <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-  ${gwRect} fill="white" stroke="${STROKE}" stroke-width="2"/>
+  ${gwRect} fill="${ICON_BG}" stroke="${STROKE}" stroke-width="2"/>
   <!-- 十字图标（直线） -->
   <path d="M15 25 L35 25" fill="none" stroke="${STROKE}" stroke-width="3" stroke-linecap="square"/>
   <path d="M25 15 L25 35" fill="none" stroke="${STROKE}" stroke-width="3" stroke-linecap="square"/>
@@ -86,7 +89,7 @@ export const parallelIcon = `
  */
 export const inclusiveIcon = `
 <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-  ${gwRect} fill="white" stroke="${STROKE}" stroke-width="2"/>
+  ${gwRect} fill="${ICON_BG}" stroke="${STROKE}" stroke-width="2"/>
   <!-- 同心双圆 -->
   <circle cx="25" cy="25" r="11" fill="none" stroke="${STROKE}" stroke-width="2"/>
   <circle cx="25" cy="25" r="5.5" fill="${STROKE_RGBA(0.15)}" stroke="${STROKE}" stroke-width="1.5"/>

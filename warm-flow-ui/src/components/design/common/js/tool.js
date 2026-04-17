@@ -259,12 +259,13 @@ export const setCommonStyle = (style, properties, nodeType, type) => {
       ["56,161,105", "245,158,11", "107,114,128"]; // 工作流语义色
 
   let currentColor = notDoneColor;
+  // 检测暗黑模式
+  const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
 
   if (properties.status === 2) {
     // 使用活跃状态的 RGB 颜色
     if (nodeType === 'node' && type !== "mimic") {
-      style.fill = `rgba(${doneColor}, 0.08)`;
-    }
+      style.fill = `rgba(${doneColor}, 0.08)`;}
     style.stroke = `rgb(${doneColor})`;
     currentColor = doneColor;
   } else if (properties.status === 1) {
@@ -276,9 +277,9 @@ export const setCommonStyle = (style, properties, nodeType, type) => {
     style.strokeDasharray = "5 4";
     currentColor = todoColor;
   } else {
-    // 默认状态
+    // 默认状态（暗黑模式适配：深色背景替代纯白）
     if (nodeType === 'node' && type !== "mimic") {
-      style.fill = `rgba(255, 255, 255, 0.95)`;
+      style.fill = isDark ? `rgba(${notDoneColor}, 0.04)` : 'rgba(255, 255, 255, 0.95)';
     }
     style.stroke = `rgb(${notDoneColor})`;
     currentColor = notDoneColor;

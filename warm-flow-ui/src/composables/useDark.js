@@ -52,6 +52,12 @@ export function useDark() {
       }
     }
     lfInstance.setTheme({
+      nodeText: {
+        color: isDarkMode ? '#e0e0e0' : '#303133',
+        fill: isDarkMode ? '#e0e0e0' : '#303133',
+        fontSize: 13,
+        fontWeight: 500,
+      },
       edgeText: {
         fontSize: 13,
         strokeWidth: 1,
