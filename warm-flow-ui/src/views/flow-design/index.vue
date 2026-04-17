@@ -40,7 +40,7 @@
     </div>
 
     <el-header :style="headerStyle">
-      <div style="padding: 5px 0; text-align: right;">
+      <div class="design-toolbar" style="padding: 5px 0; text-align: right;">
         <div v-if="activeStep === 1">
           <span class="toolbar-group">
             <el-tooltip content="缩小" placement="bottom"><el-button size="small" icon="ZoomOut" @click="zoomViewport(false)"></el-button></el-tooltip>
@@ -1442,6 +1442,13 @@ html.dark .logo-text {
     margin-right: 8px;
   }
 
+  /* 平板端工具栏也居右显示 */
+  .design-toolbar {
+    text-align: right !important;
+    padding-right: 8px !important;
+    padding-left: 0 !important;
+  }
+
   /* Logo 水印隐藏，避免遮挡 */
   .logo-text {
     display: none;
@@ -1521,24 +1528,35 @@ html.dark .logo-text {
     height: 14px;
   }
 
-  /* 工具栏单行显示 + 横向滚动 */
-  .toolbar-group {
-    display: inline-flex;
-    flex-wrap: nowrap;
-    gap: 3px;
-    padding-right: 6px;
-    margin-right: 6px;
-    border-right-color: #cbd5e1;
-  }
-
-  /* 工具栏容器可横向滚动 */
-  .el-header > div {
+  /* 工具栏：单行显示，居右布局 */
+  .design-toolbar {
+    text-align: right !important;
+    white-space: nowrap !important;
+    display: block !important;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none; /* Firefox 隐藏滚动条 */
+    -ms-overflow-style: none;
+    padding-right: 16px !important;
+    padding-left: 0 !important;
   }
-  .el-header > div::-webkit-scrollbar {
+  .design-toolbar::-webkit-scrollbar {
     display: none; /* Safari/Chrome 隐藏滚动条 */
+  }
+
+  /* 工具栏按钮组：去掉右边框分隔线，紧凑排列，强制不换行 */
+  .toolbar-group {
+    display: inline-flex;
+    flex-wrap: nowrap;
+    gap: 0;
+    padding-right: 0;
+    margin-right: 0;
+    border-right: none;
+    vertical-align: middle;
+  }
+
+  .toolbar-group .el-button {
+    padding: 4px 4px !important;
   }
 
   /* 画布容器高度调整 */
