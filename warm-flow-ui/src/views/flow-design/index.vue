@@ -70,9 +70,9 @@
                 :definition-id="definitionId" :disabled="disabled"
                 @update:flow-name="handleFlowNameUpdate" @update:model-value="handleModelValueUpdate"/>
 
-      <!-- 自定义拖拽侧边栏：放在 .container 外部 + 延迟显示，避免与 LogicFlow DOM 冲突 -->
+      <!-- 自定义拖拽侧边栏：仅流程设计页签显示 + 延迟显示避免与 LogicFlow DOM 冲突 -->
       <DiagramSidebar
-        v-if="sidebarVisible"
+        v-if="sidebarVisible && activeStep === 1"
         class="diagram-sidebar"
         @dragInNode="handleDragInNode"
       />
