@@ -339,11 +339,11 @@
       padding: 10px 2px 4px 2px;
     }
 
-    /* ===== 表单 label 缩减宽度 ===== */
+    /* ===== 表单 label 缩减宽度（统一 label-width=120px） ===== */
     ::v-deep(.el-form-item__label) {
       width: auto !important;
-      min-width: 70px !important;
-      max-width: 90px !important;
+      min-width: 95px !important;
+      max-width: 115px !important;
       padding-right: 6px !important;
       font-size: 12px !important;
       line-height: 1.4 !important;
@@ -422,7 +422,7 @@
       padding: 8px;
     }
     ::v-deep(.el-form-item__label) {
-      min-width: 60px !important;
+      min-width: 80px !important;
       font-size: 11px !important;
     }
     ::v-deep(.el-input__inner),

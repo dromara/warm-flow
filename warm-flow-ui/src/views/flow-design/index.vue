@@ -212,6 +212,8 @@ const handleOptionClick = (item) => {
     addGatewayNode(lf.value, item.tooltipEdge, item.icon);
   }
   tooltipVisible.value = false;
+  // 移动端/平板端：新增节点后自适应画布，确保所有节点可见
+  proxy.$nextTick(() => { fitViewIfMobile(); });
 };
 
 async function handleStepClick(index) {
@@ -405,18 +407,42 @@ onUnmounted(() => {
   window.removeEventListener('resize', handleMobileResize);
 });
 
-/** 移动端屏幕尺寸变化（含旋转）时重绘画布 */
+// 监听窗口变化，真机旋转屏幕时重绘（带防抖 + 标志位屏蔽抽屉操作干扰）
+let _resizeTimer = null;
+let _drawerActive = false; // 抽屉操作期间禁止 resize 重绘画布 + 阻止触摸事件桥接
+let _lastCanvasSize = { w: 0, h: 0 };
 function handleMobileResize() {
-  if (lf.value && lf.value.resize) {
-    // 使用 requestAnimationFrame 确保 DOM 布局完成后再 resize
-    requestAnimationFrame(() => {
-      lf.value.resize();
-    });
-  }
+  if (_drawerActive) return; // 抽屉操作期间跳过
+  clearTimeout(_resizeTimer);
+  _resizeTimer = setTimeout(() => {
+    const container = proxy.$refs.containerRef;
+    if (!container || !lf.value?.resize) return;
+    const w = container.clientWidth;
+    const h = container.clientHeight;
+    // 容器尺寸无显著变化（<5px 容差）则跳过，过滤掉抽屉/overlay 导致的微调
+    if (Math.abs(w - _lastCanvasSize.w) < 5 && Math.abs(h - _lastCanvasSize.h) < 5 && _lastCanvasSize.w > 0) return;
+    _lastCanvasSize = { w, h };
+    lf.value.resize();
+  }, 300); // 提高到 300ms 确保布局稳定后再判断
 }
-
-// 监听窗口变化，真机旋转屏幕时重绘
 window.addEventListener('resize', handleMobileResize);
+
+// 抽屉打开时标记
+window._markDrawerOpen = () => { _drawerActive = true; };
+// 抽屉关闭动画完成后解除标记，并触发一次移动端画布适配
+// 延迟 350ms：Element Plus drawer 关闭 transition 默认 300ms，加 50ms 缓冲
+window._markDrawerClosed = () => {
+  setTimeout(() => {
+    _drawerActive = false;
+    // 抽屉关闭后一次性适配画布（仅移动端/平板），替代 propertySetting 中分散的 fitView 调用
+    if (isMobileDevice() && lf.value?.resize) {
+      lf.value.resize();
+      requestAnimationFrame(() => {
+        if (lf.value?.fitView) lf.value.fitView(40, 20);
+      });
+    }
+  }, 350);
+};
 
 /**
  * 初始化拖拽面板
@@ -607,7 +633,28 @@ function setupPointerEventCapture(el) {
 
   // --- 拖动检测 ---
   let startX = 0, startY = 0;
-  let hasSignificantMove = false;
+  let isDragging = false;
+  let lastMoveX = 0, lastMoveY = 0;
+
+  /**
+   * 检查抽屉是否处于打开状态（打开期间禁止向 LogicFlow 转发触摸事件）
+   *
+   * 三级判断：
+   * 1. _drawerActive 标志位 — 代码显式标记的打开/关闭窗口期
+   * 2. .el-drawer__open — Element Plus drawer 打开时的 DOM class
+   * 3. 排除 .el-drawer__close — 抽屉正在执行关闭动画（此时不应拦截用户对画布的操作）
+   */
+  function isDrawerOpen() {
+    if (_drawerActive) return true;
+    const drawerEl = document.querySelector('.el-drawer');
+    if (!drawerEl) return false;
+    // 有 __open 且无 __close → 确实是打开状态
+    if (drawerEl.classList.contains('el-drawer__open') &&
+        !drawerEl.classList.contains('el-drawer__close')) {
+      return true;
+    }
+    return false;
+  }
 
   /**
    * 统一获取坐标参数（用于构造 MouseEvent）
@@ -628,9 +675,17 @@ function setupPointerEventCapture(el) {
     // 只处理主指针（手指/鼠标左键/触控笔）
     if (e.pointerType === 'mouse' && e.button !== 0) return;
 
+    // 【修复】抽屉打开期间：阻止触摸事件转发给 LogicFlow，防止画布被意外拖拽
+    if (isDrawerOpen() && e.pointerType === 'touch') {
+      e.preventDefault();
+      return;
+    }
+
     startX = e.clientX;
     startY = e.clientY;
-    hasSignificantMove = false;
+    lastMoveX = e.clientX;
+    lastMoveY = e.clientY;
+    isDragging = false;
     isLongPressFired = false;
 
     // 仅对触摸事件阻止浏览器默认手势（滚动/缩放/选择）
@@ -638,13 +693,12 @@ function setupPointerEventCapture(el) {
     if (e.pointerType === 'touch') {
       e.preventDefault();
       // 主动分发一次 mousedown 确保 LogicFlow 收到
-      // （部分浏览器对 touch→mouse 的转换不够及时）
       el.dispatchEvent(new MouseEvent('mousedown', getEventOpts(e)));
     }
 
     // 启动长按计时器（500ms 无显著移动则视为右键菜单，仅触摸有效）
     longPressTimer = setTimeout(() => {
-      if (hasSignificantMove) return; // 已移动，取消长按
+      if (isDragging) return; // 已在拖动，取消长按
       isLongPressFired = true;
       el.dispatchEvent(new MouseEvent('contextmenu', getEventOpts(e)));
     }, 500);
@@ -652,31 +706,57 @@ function setupPointerEventCapture(el) {
 
   // ========== pointermove ==========
   el.addEventListener('pointermove', (e) => {
-    if (hasSignificantMove) return; // 已经标记过就不再重复计算
+    // 【修复】抽屉打开期间：完全拦截触摸移动事件
+    if (isDrawerOpen() && e.pointerType === 'touch') {
+      e.preventDefault();
+      return;
+    }
 
     const dx = Math.abs(e.clientX - startX);
     const dy = Math.abs(e.clientY - startY);
-    if (dx > 8 || dy > 8) {
-      hasSignificantMove = true;
-      // 有明显移动，取消长按
+
+    if (!isDragging && (dx > 5 || dy > 5)) {
+      // 首次超过阈值：进入拖动模式
+      isDragging = true;
       if (longPressTimer) {
         clearTimeout(longPressTimer);
         longPressTimer = null;
       }
     }
 
-    // 触摸时阻止默认滚动行为
-    if (e.pointerType === 'touch') {
+    if (isDragging && e.pointerType === 'touch') {
+      // 触摸拖动中：持续分发 mousemove 给 LogicFlow
+      e.preventDefault();
+      el.dispatchEvent(new MouseEvent('mousemove', getEventOpts(e)));
+      lastMoveX = e.clientX;
+      lastMoveY = e.clientY;
+    } else if (e.pointerType === 'touch') {
+      // 触摸微移动：阻止默认滚动行为
       e.preventDefault();
     }
   }, { passive: false });
 
   // ========== pointerup / pointercancel ==========
   function handlePointerEnd(e) {
+    // 【修复】抽屉打开期间：拦截触摸释放事件
+    if (isDrawerOpen() && e.pointerType === 'touch') {
+      resetTapState();
+      isDragging = false;
+      return;
+    }
+
     // 清理长按计时器
     if (longPressTimer) {
       clearTimeout(longPressTimer);
       longPressTimer = null;
+    }
+
+    // 拖动结束：分发 mouseup 给 LogicFlow 完成拖拽链路
+    if (isDragging && e.pointerType === 'touch') {
+      el.dispatchEvent(new MouseEvent('mouseup', getEventOpts(e)));
+      resetTapState();
+      isDragging = false;
+      return;
     }
 
     // 长按已触发（右键菜单），不再处理 click/dblclick
@@ -685,13 +765,7 @@ function setupPointerEventCapture(el) {
       return;
     }
 
-    // 有明显移动 = 拖拽操作，不处理 click/dblclick
-    if (hasSignificantMove) {
-      resetTapState();
-      return;
-    }
-
-    // ---- 点击/双击检测 ----
+    // ---- 点击/双击检测（仅非拖动） ----
     const now = Date.now();
     tapCount++;
 
@@ -728,8 +802,12 @@ function setupPointerEventCapture(el) {
   }
 
   el.addEventListener('pointerup', handlePointerEnd);
-  el.addEventListener('pointercancel', () => {
-    // 中断时只清理状态，不触发 click
+  el.addEventListener('pointercancel', (e) => {
+    // 中断：如果正在拖动需要补发 mouseup
+    if (isDragging && e.pointerType === 'touch') {
+      el.dispatchEvent(new MouseEvent('mouseup', getEventOpts(e)));
+      isDragging = false;
+    }
     if (longPressTimer) {
       clearTimeout(longPressTimer);
       longPressTimer = null;

@@ -1,6 +1,6 @@
 <template>
   <div class="between">
-    <el-form ref="formRef" class="betweenForm" :model="form" label-width="110px" size="small" :rules="rules" :disabled="disabled" label-position="left">
+    <el-form ref="formRef" class="betweenForm" :model="form" label-width="120px" size="small" :rules="rules" :disabled="disabled" label-position="left">
       <!-- 页签区域 -->
       <div class="modern-tabs-wrapper">
         <div class="modern-tabs">
@@ -185,8 +185,10 @@
             <span class="section-card-title">办理人设置</span>
           </div>
           <div class="section-card-body">
-              <el-table :data="permissionRows" style="width: 100%;" class="inputGroup">
-                  <el-table-column prop="storageId" label="入库主键" width="250">
+              <el-table :data="permissionRows" style="width: 100%;" class="inputGroup handler-table-mobile"
+                  :table-layout="isMobile ? 'fixed' : 'auto'"
+              >
+                  <el-table-column prop="storageId" label="入库主键" :width="isMobile ? undefined : 250">
                       <template #default="scope">
                           <el-form-item prop="storageId">
                               <el-input v-model="scope.row.storageId" style="width: 100%;" @blur="event => inputBlur(event, scope.$index)"></el-input>
@@ -194,7 +196,7 @@
                       </template>
                   </el-table-column>
                   <el-table-column prop="handlerName" label="权限名称"></el-table-column>
-                  <el-table-column label="操作" width="55" v-if="!disabled">
+                  <el-table-column label="操作" :width="isMobile ? undefined : 42" v-if="!disabled">
                       <template #default="scope">
                           <el-button type="danger" v-if="!disabled" :icon="Delete" @click="delPermission(scope.$index)"/>
                       </template>
@@ -286,7 +288,9 @@
     </el-form>
 
     <!-- 权限标识：会签票签选择用户 -->
-    <el-dialog title="人员选择" v-if="userVisible" v-model="userVisible" width="80%" append-to-body>
+    <el-dialog title="人员选择" v-if="userVisible" v-model="userVisible" :width="isMobile ? '96%' : '80%'" append-to-body
+      :class="{ 'mobile-user-dialog': isMobile }"
+    >
       <selectUser v-model:selectUser="form.permissionFlag" v-model:userVisible="userVisible" :permissionRows="permissionRows" @handleUserSelect="handleUserSelect"></selectUser>
     </el-dialog>
   </div>
@@ -686,6 +690,12 @@ const filteredNodes = computed(() => {
   return previousNodes.filter(node => !["start", "serial", "parallel", 'inclusive'].includes(node.type));
 });
 
+// 移动端/平板检测
+const isMobile = computed(() => {
+  if (typeof window === 'undefined') return false;
+  return window.innerWidth <= 768;
+});
+
 getPermissionFlag();
 // TODO form 开发中
 // getDefinition();
@@ -752,13 +762,27 @@ defineExpose({
 
 /* ========== 手机端特有适配（between 独有） ========== */
 @media (max-width: 768px) {
-  /* 协作方式 radio-card：手机端纵向排列 */
+  /* 协作方式/自定义表单 radio-card：手机端保持一行横向排列，缩小间距 */
   .radio-card-group {
-    flex-direction: column;
-    gap: 8px;
+    gap: 6px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    &::-webkit-scrollbar { display: none; }
   }
   .radio-card-item {
-    padding: 8px 12px;
+    padding: 6px 12px;
+    font-size: 12px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* 基础设置表单 label 缩减（匹配 label-width=120px） */
+  .betweenForm::v-deep(.el-form-item__label) {
+    min-width: 95px !important;
+    max-width: 115px !important;
+    font-size: 12px !important;
+    white-space: normal !important;
+    word-break: break-word !important;
   }
 
   /* 票签策略：select + input 堆叠显示 */
@@ -777,24 +801,90 @@ defineExpose({
   }
 
   /* 驳回节点 select 缩小 */
-  .betweenForm::v-deep(.el-form-item .el-select[style*="width: 80%"]) {
-    width: 100% !important;
-  }
-
-  /* 办理人表格：隐藏入库主键列 */
-  .inputGroup::v-deep(.el-table__header-wrapper th:nth-child(1)) { display: none; }
-  .inputGroup::v-deep(.el-table__body-wrapper td:nth-child(1)) {
-    .cell { display: none; }
-  }
-
-  /* 扩展属性区域紧凑 */
   .ext-attributes-section { margin-top: 8px; }
 
-  /* 添加行按钮全宽 */
-  .add-row-btn { font-size: 12px; height: 34px; letter-spacing: 1px; }
+  /* 办理人表格：三列平分宽度（入库主键44%+名称44%+操作12%），无横向滚动条 */
+  .handler-table-mobile {
+    :deep(.el-table) {
+      table-layout: fixed !important;
+      width: 100% !important;
+    }
+    :deep(.el-table__header-wrapper),
+    :deep(.el-table__body-wrapper) {
+      th:nth-child(1),
+      td:nth-child(1) {
+        width: 44% !important;
+        min-width: 0 !important;
+        max-width: none !important;
+        & .cell { width: 100%; }
+      }
+      th:nth-child(2),
+      td:nth-child(2) {
+        width: 44% !important;
+        min-width: 0 !important;
+        max-width: none !important;
+        & .cell { width: 100%; }
+      }
+      th:nth-child(3),
+      td:nth-child(3) {
+        width: 12% !important;
+        min-width: 0 !important;
+        max-width: none !important;
+        & .cell {
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding-left: 4px;
+          padding-right: 4px;
+          box-sizing: border-box;
+        }
+      }
+    :deep(.el-table__header-wrapper) {
+      th:nth-child(3) .cell {
+        text-align: center;
+        justify-content: center;
+      }
+    }
+    }
+    :deep(.el-table__header colgroup) {
+      col:nth-child(1) { width: 44% !important; }
+      col:nth-child(2) { width: 44% !important; }
+      col:nth-child(3) { width: 12% !important; }
+    }
+  }
+
+  /* 添加行 + 选择 */
+  .action-buttons {
+    margin-top: 10px;
+  }
+
+  /* 手机端：人员选择弹框占满行宽（用非 scoped 覆盖 append-to-body 弹框） */
+  :global(.mobile-user-dialog) {
+    width: 96% !important;
+    max-width: 100vw !important;
+    margin: 0 auto !important;
+
+    .el-dialog__header {
+      padding: 14px 16px;
+      .el-dialog__title { font-size: 16px; }
+      .el-dialog__headerbtn { top: 12px; right: 10px; }
+    }
+
+    .el-dialog__body {
+      padding: 12px;
+      max-height: calc(100vh - 56px);
+      overflow-y: auto;
+    }
+  }
 }
 
 @media (max-width: 480px) {
+  .betweenForm::v-deep(.el-form-item__label) {
+    min-width: 80px !important;
+    font-size: 11px !important;
+    white-space: normal !important;
+  }
   .radio-card-text {
     font-size: 12px;
   }
@@ -810,6 +900,10 @@ defineExpose({
 .flex-hc { display: flex; align-items: center; }
 
 /* ========== 虚线增加行按钮（与 baseInfo 风格一致） ========== */
+.action-buttons {
+  margin-top: 12px;
+}
+
 .add-row-btn {
   width: 100%;
   border: 1.5px dashed var(--wf-primary, #409eff) !important;

@@ -16,6 +16,9 @@
 - [api/flow/definition.js](file://warm-flow-ui/src/api/flow/definition.js)
 - [assets/styles/index.scss](file://warm-flow-ui/src/assets/styles/index.scss)
 - [utils/auth.js](file://warm-flow-ui/src/utils/auth.js)
+- [composables/useDark.js](file://warm-flow-ui/src/composables/useDark.js)
+- [components/design/common/vue/baseInfo.vue](file://warm-flow-ui/src/components/design/common/vue/baseInfo.vue)
+- [components/design/common/vue/between.vue](file://warm-flow-ui/src/components/design/common/vue/between.vue)
 </cite>
 
 ## 目录
@@ -39,6 +42,7 @@ warm-flow-ui 采用 Vite + Vue3 + Element Plus + LogicFlow 的现代化前端工
   - api：后端接口封装
   - assets：静态资源与样式
   - components：通用组件（如 SvgIcon）
+  - composables：可复用逻辑模块（如 useDark）
   - plugins：插件注册
   - store：Pinia 状态管理
   - utils：工具模块（请求、鉴权等）
@@ -60,10 +64,11 @@ B --> B2["App.vue"]
 B --> B3["api/"]
 B --> B4["assets/"]
 B --> B5["components/"]
-B --> B6["plugins/"]
-B --> B7["store/"]
-B --> B8["utils/"]
-B --> B9["views/"]
+B --> B6["composables/"]
+B --> B7["plugins/"]
+B --> B8["store/"]
+B --> B9["utils/"]
+B --> B10["views/"]
 ```
 
 **图表来源**
@@ -89,6 +94,8 @@ B --> B9["views/"]
   - components/SvgIcon/index.vue：SVG 图标组件，支持传入 iconClass、className、color，自动拼接 #icon- 前缀。
 - 流程设计视图
   - views/flow-design/index.vue：集成 LogicFlow，提供流程设计、属性设置、主题切换、下载与保存等功能；通过 API 模块与后端交互。
+- 暗黑模式主题定制
+  - composables/useDark.js：全局暗黑模式 composable，统一管理 isDark 状态、URL 参数初始化、postMessage 监听、LogicFlow 画布主题适配。
 
 **章节来源**
 - [main.js:1-42](file://warm-flow-ui/src/main.js#L1-L42)
@@ -97,10 +104,11 @@ B --> B9["views/"]
 - [store/app.js:1-42](file://warm-flow-ui/src/store/app.js#L1-L42)
 - [utils/request.js:1-105](file://warm-flow-ui/src/utils/request.js#L1-L105)
 - [components/SvgIcon/index.vue:1-54](file://warm-flow-ui/src/components/SvgIcon/index.vue#L1-L54)
-- [views/flow-design/index.vue:1-901](file://warm-flow-ui/src/views/flow-design/index.vue#L1-L901)
+- [views/flow-design/index.vue:1-948](file://warm-flow-ui/src/views/flow-design/index.vue#L1-L948)
+- [composables/useDark.js:1-87](file://warm-flow-ui/src/composables/useDark.js#L1-L87)
 
 ## 架构总览
-前端采用“入口应用 → 视图组件 → API 层 → 后端服务”的分层架构；请求通过 axios 拦截器统一处理；状态通过 Pinia 管理；UI 组件基于 Element Plus；流程图能力由 LogicFlow 提供。
+前端采用"入口应用 → 视图组件 → API 层 → 后端服务"的分层架构；请求通过 axios 拦截器统一处理；状态通过 Pinia 管理；UI 组件基于 Element Plus；流程图能力由 LogicFlow 提供；暗黑模式通过 useDark composable 统一管理。
 
 ```mermaid
 graph TB
@@ -112,6 +120,8 @@ REQ["utils/request.js"]
 API_DEF["api/flow/definition.js"]
 SVG["components/SvgIcon/index.vue"]
 VIEW["views/flow-design/index.vue"]
+DARK["composables/useDark.js"]
+END["组件样式适配"]
 end
 subgraph "后端"
 CTRL["后端控制器(warm-flow-ui)"]
@@ -120,6 +130,8 @@ M --> APP
 APP --> VIEW
 VIEW --> API_DEF
 VIEW --> REQ
+VIEW --> DARK
+DARK --> END
 STORE --> API_DEF
 REQ --> CTRL
 SVG --> VIEW
@@ -132,7 +144,8 @@ SVG --> VIEW
 - [utils/request.js:1-105](file://warm-flow-ui/src/utils/request.js#L1-L105)
 - [api/flow/definition.js:1-95](file://warm-flow-ui/src/api/flow/definition.js#L1-L95)
 - [components/SvgIcon/index.vue:1-54](file://warm-flow-ui/src/components/SvgIcon/index.vue#L1-L54)
-- [views/flow-design/index.vue:1-901](file://warm-flow-ui/src/views/flow-design/index.vue#L1-L901)
+- [views/flow-design/index.vue:1-948](file://warm-flow-ui/src/views/flow-design/index.vue#L1-L948)
+- [composables/useDark.js:1-87](file://warm-flow-ui/src/composables/useDark.js#L1-L87)
 
 ## 详细组件分析
 
@@ -246,6 +259,41 @@ Resolve --> End
 **章节来源**
 - [components/SvgIcon/index.vue:1-54](file://warm-flow-ui/src/components/SvgIcon/index.vue#L1-L54)
 
+### 暗黑模式主题定制（composables/useDark.js）
+- 功能要点
+  - 全局暗黑模式管理：统一管理 isDark 状态、URL 参数初始化、postMessage 监听
+  - URL 参数初始化：支持 theme-dark、theme-light 参数
+  - postMessage 通信：监听父页面主题切换消息
+  - LogicFlow 画布适配：自动应用/取消暗黑主题到画布背景、网格、边文字
+  - 组件样式适配：通过 CSS 变量系统实现组件级别的暗黑模式
+- 关键行为
+  - 模块级单例：sharedIsDark 共享响应式引用
+  - initFromUrl：从 URL 参数初始化主题状态
+  - listeningMessage：监听 postMessage 主题切换
+  - applyDarkTheme：应用 LogicFlow 画布暗黑主题
+
+```mermaid
+sequenceDiagram
+participant U as "用户"
+participant URL as "URL参数"
+participant PM as "postMessage"
+participant WD as "useDark模块"
+participant LF as "LogicFlow画布"
+U->>URL : 访问页面并携带theme参数
+URL->>WD : initFromUrl()
+WD->>WD : 设置isDark状态
+WD->>LF : applyDarkTheme()
+PM->>WD : 监听message事件
+WD->>WD : 处理主题切换
+WD->>LF : 应用新主题
+```
+
+**图表来源**
+- [composables/useDark.js:1-87](file://warm-flow-ui/src/composables/useDark.js#L1-L87)
+
+**章节来源**
+- [composables/useDark.js:1-87](file://warm-flow-ui/src/composables/useDark.js#L1-L87)
+
 ### 流程设计视图（views/flow-design/index.vue）
 - 功能要点
   - 步骤条：基础信息、流程设计、表单设计（当前仅启用前两步）
@@ -257,6 +305,7 @@ Resolve --> End
   - 初始化 LogicFlow：根据 modelValue 决定节点注册与 DndPanel 显示
   - 保存流程：收集表单与画布数据，转换为后端可用 JSON 并调用保存接口
   - 下载：调用快照生成图片或导出 JSON 文件
+  - 暗黑模式集成：使用 useDark composable 管理主题切换
 
 ```mermaid
 sequenceDiagram
@@ -278,12 +327,12 @@ V-->>V : 成功提示/关闭窗口
 ```
 
 **图表来源**
-- [views/flow-design/index.vue:1-901](file://warm-flow-ui/src/views/flow-design/index.vue#L1-L901)
+- [views/flow-design/index.vue:1-948](file://warm-flow-ui/src/views/flow-design/index.vue#L1-L948)
 - [api/flow/definition.js:1-95](file://warm-flow-ui/src/api/flow/definition.js#L1-L95)
 - [utils/request.js:1-105](file://warm-flow-ui/src/utils/request.js#L1-L105)
 
 **章节来源**
-- [views/flow-design/index.vue:1-901](file://warm-flow-ui/src/views/flow-design/index.vue#L1-L901)
+- [views/flow-design/index.vue:1-948](file://warm-flow-ui/src/views/flow-design/index.vue#L1-L948)
 - [api/flow/definition.js:1-95](file://warm-flow-ui/src/api/flow/definition.js#L1-L95)
 - [utils/request.js:1-105](file://warm-flow-ui/src/utils/request.js#L1-L105)
 
@@ -293,6 +342,7 @@ V-->>V : 成功提示/关闭窗口
   - 导入 mixin、过渡、Element Plus 适配、侧边栏、按钮、RuoYi 主题等模块
   - 适配 Element Plus 暗黑模式下的输入框、表格、树形选择等组件
   - LogicFlow 控件的暗黑适配（DndPanel、Control）
+  - 组件级别的暗黑模式适配（baseInfo、between 等组件）
 - 关键行为
   - :root 定义默认变量
   - html.dark 定义暗色变量覆盖
@@ -300,6 +350,8 @@ V-->>V : 成功提示/关闭窗口
 
 **章节来源**
 - [assets/styles/index.scss:1-587](file://warm-flow-ui/src/assets/styles/index.scss#L1-L587)
+- [components/design/common/vue/baseInfo.vue:330-529](file://warm-flow-ui/src/components/design/common/vue/baseInfo.vue#L330-L529)
+- [components/design/common/vue/between.vue:730-929](file://warm-flow-ui/src/components/design/common/vue/between.vue#L730-L929)
 
 ## 依赖关系分析
 - 依赖与版本
@@ -347,8 +399,7 @@ VC --> OUT["rollup 输出命名规则"]
 - 渲染优化
   - LogicFlow 按需启用 DndPanel 与扩展，避免不必要的 DOM 与事件
   - 暗色主题切换通过主题变量与 setTheme，减少重绘成本
-
-[本节为通用性能建议，无需特定文件引用]
+  - useDark composable 使用模块级单例，避免重复的暗黑模式逻辑
 
 ## 故障排查指南
 - 请求失败
@@ -363,16 +414,22 @@ VC --> OUT["rollup 输出命名规则"]
 - 流程图异常
   - 检查 LogicFlow 初始化参数（modelValue 决定节点注册与 DndPanel）
   - 确认保存接口返回 code 为 200，否则查看后端日志
+- 暗黑模式问题
+  - 检查 URL 参数 theme-dark/theme-light 是否正确传递
+  - 确认 postMessage 通信是否正常工作（window.parent.postMessage）
+  - 验证 CSS 变量系统是否正确应用（:root 与 html.dark）
+  - 确认 LogicFlow 画布主题是否正确适配
 
 **章节来源**
 - [utils/request.js:1-105](file://warm-flow-ui/src/utils/request.js#L1-L105)
 - [utils/auth.js:1-38](file://warm-flow-ui/src/utils/auth.js#L1-L38)
 - [vite.config.js:1-71](file://warm-flow-ui/vite.config.js#L1-L71)
 - [components/SvgIcon/index.vue:1-54](file://warm-flow-ui/src/components/SvgIcon/index.vue#L1-L54)
-- [views/flow-design/index.vue:1-901](file://warm-flow-ui/src/views/flow-design/index.vue#L1-L901)
+- [views/flow-design/index.vue:1-948](file://warm-flow-ui/src/views/flow-design/index.vue#L1-L948)
+- [composables/useDark.js:1-87](file://warm-flow-ui/src/composables/useDark.js#L1-L87)
 
 ## 结论
-Warm-Flow Vue3 前端通过清晰的分层架构与完善的工具链（Vite、axios、LogicFlow、Element Plus、Pinia）实现了流程设计与表单设计的高效集成。借助统一的请求拦截器与状态管理，前端能够灵活适配多框架与多 token 场景；通过可定制的主题变量与样式模块，满足不同主题需求。建议在生产环境中结合 CDN 与缓存策略进一步优化加载性能，并持续关注浏览器兼容性与安全策略。
+Warm-Flow Vue3 前端通过清晰的分层架构与完善的工具链（Vite、axios、LogicFlow、Element Plus、Pinia）实现了流程设计与表单设计的高效集成。借助统一的请求拦截器与状态管理，前端能够灵活适配多框架与多 token 场景；通过可定制的主题变量与样式模块，满足不同主题需求。新增的 useDark composable 模块提供了统一的暗黑模式管理，包括 URL 参数初始化、postMessage 通信、CSS 变量系统使用等，确保了跨组件的一致性体验。建议在生产环境中结合 CDN 与缓存策略进一步优化加载性能，并持续关注浏览器兼容性与安全策略。
 
 ## 附录
 
@@ -384,11 +441,20 @@ Warm-Flow Vue3 前端通过清晰的分层架构与完善的工具链（Vite、a
 - 样式定制
   - 通过 CSS 变量（:root 与 html.dark）调整主题色与阴影
   - 按需导入样式模块（mixin、transition、element-ui、sidebar、btn、ruoyi）
+  - 组件级别暗黑模式适配：使用 html.dark 选择器或 CSS 变量
 - 图标使用
   - 在 assets/icons/svg 放置 SVG 文件，组件通过 iconClass 引用
   - 使用 SvgIcon 组件统一渲染，支持 className 与 color
+- 暗黑模式集成
+  - URL 参数初始化：在 URL 中添加 theme-dark 或 theme-light 参数
+  - postMessage 通信：通过 window.parent.postMessage({method: 'getTheme'}) 查询父页面主题状态
+  - 组件适配：使用 useDark composable 管理 isDark 状态与主题切换
+  - LogicFlow 画布适配：通过 applyDarkTheme 方法自动适配画布背景、网格、边文字
 
 **章节来源**
 - [vite.config.js:1-71](file://warm-flow-ui/vite.config.js#L1-L71)
 - [assets/styles/index.scss:1-587](file://warm-flow-ui/src/assets/styles/index.scss#L1-L587)
 - [components/SvgIcon/index.vue:1-54](file://warm-flow-ui/src/components/SvgIcon/index.vue#L1-L54)
+- [composables/useDark.js:1-87](file://warm-flow-ui/src/composables/useDark.js#L1-L87)
+- [components/design/common/vue/baseInfo.vue:330-529](file://warm-flow-ui/src/components/design/common/vue/baseInfo.vue#L330-L529)
+- [components/design/common/vue/between.vue:730-929](file://warm-flow-ui/src/components/design/common/vue/between.vue#L730-L929)

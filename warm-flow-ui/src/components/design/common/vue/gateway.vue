@@ -1,6 +1,6 @@
 <template>
   <div class="gateway-wrapper">
-    <el-form ref="formRef" class="gatewayForm" :model="form" label-width="120px" size="small" :disabled="disabled">
+    <el-form ref="formRef" class="gatewayForm" :model="form" label-width="90px" size="small" :disabled="disabled">
       <div class="base-settings-section">
         <div class="base-settings-header">
           <span class="ext-attributes-icon ext-icon-base">

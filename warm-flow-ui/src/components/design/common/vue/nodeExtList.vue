@@ -1,5 +1,5 @@
 <template>
-    <el-form ref="nodeExtRef" class="nodeExtForm" :model="form" label-width="150px" size="small" :disabled="disabled"
+    <el-form ref="nodeExtRef" class="nodeExtForm" :model="form" label-width="140px" size="small" :disabled="disabled"
              label-position="left">
         <el-form-item :label="`${item.label}：`" :prop="item.code" v-for="(item, index) in formList" 10key="index"
                       :rules="[{ required: item.must, message: `${item.label}不能为空`, trigger: ['blur', 'change'] }]">
@@ -224,6 +224,11 @@ defineExpose({
   color: var(--wf-text-primary, #303133);
   letter-spacing: 0.3px;
   padding-right: 8px;
+  /* 固定宽度，统一对齐，长标签不换行 */
+  width: 132px !important;
+  min-width: 132px !important;
+  max-width: 132px !important;
+  white-space: nowrap;
 }
 
 /* ========== 3. 输入框 / 文本域 (type 1, 2) ========== */
@@ -502,10 +507,11 @@ html.dark .nodeExtForm .nodeExtForm :deep(.el-textarea__inner.is-disabled) {
   }
 
   .nodeExtForm :deep(.el-form-item__label) {
-    min-width: 70px !important;
-    max-width: 90px !important;
+    min-width: 100px !important;
+    max-width: 120px !important;
     font-size: 12px !important;
     word-break: break-word !important;
+    white-space: normal !important;
   }
 
   /* 下拉/数字输入框100%宽度 */
@@ -514,10 +520,12 @@ html.dark .nodeExtForm .nodeExtForm :deep(.el-textarea__inner.is-disabled) {
     width: 100% !important;
   }
 
-  /* radio/checkbox 卡片缩小间距 */
+  /* radio/checkbox 卡片：手机端保持一行横向排列，紧凑间距 */
   .nodeExtForm :deep(.el-radio-group .el-col),
   .nodeExtForm :deep(.el-checkbox-group .el-col) {
-    min-width: 100%;
+    flex: 0 0 auto;
+    min-width: unset;
+    max-width: none;
   }
 
   /* tag 标签紧凑 */
@@ -535,8 +543,9 @@ html.dark .nodeExtForm .nodeExtForm :deep(.el-textarea__inner.is-disabled) {
 
 @media (max-width: 480px) {
   .nodeExtForm :deep(.el-form-item__label) {
-    min-width: 60px !important;
+    min-width: 90px !important;
     font-size: 11px !important;
+    white-space: normal !important;
   }
   .nodeExtForm :deep(.el-radio),
   .nodeExtForm :deep(.el-checkbox) {

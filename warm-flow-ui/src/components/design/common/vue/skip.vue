@@ -1,6 +1,6 @@
 <template>
   <div class="skip-wrapper">
-    <el-form ref="formRef" class="skipForm" :model="form" label-width="110px" size="small" :rules="rules" :disabled="disabled">
+    <el-form ref="formRef" class="skipForm" :model="form" label-width="90px" size="small" :rules="rules" :disabled="disabled">
       <div class="base-settings-section">
         <div class="base-settings-header">
           <span class="ext-attributes-icon ext-icon-skip">

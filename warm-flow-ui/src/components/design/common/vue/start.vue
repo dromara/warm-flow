@@ -17,7 +17,7 @@
 
     <!-- 基础设置 -->
     <div v-show="tabsValue === '1'" class="tabPane">
-      <el-form ref="formRef" class="startForm" :model="form" label-width="110px" size="small" :disabled="disabled">
+      <el-form ref="formRef" class="startForm" :model="form" label-width="90px" size="small" :disabled="disabled">
         <div class="base-settings-section">
           <div class="base-settings-header">
             <span class="ext-attributes-icon ext-icon-base">

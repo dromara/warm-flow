@@ -171,13 +171,8 @@ function handleLeave() {
   right: 8px;
   top: 50%;
   transform: translateY(-50%);
-  display: none;
-  color: #000;
-}
-
-/* 悬停时显示删除按钮 */
-.base-node:hover .delete-btn {
   display: block;
+  color: #000;
 }
 
 .bottom-section {

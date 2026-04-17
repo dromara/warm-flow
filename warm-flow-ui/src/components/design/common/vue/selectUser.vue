@@ -62,8 +62,16 @@
 
       <!-- 右侧列表数据 -->
       <el-col :span="groupOptions ? 19 : 24" :xs="24">
-        <!-- 搜索卡片 -->
-        <div class="section-card search-card" v-show="showSearch">
+        <!-- 工具栏：筛选 + 确定（移动端） -->
+        <div class="search-toggle-row mobile-only">
+          <button class="search-toggle-btn" @click="searchCollapsed = !searchCollapsed" :class="{ 'is-expanded': !searchCollapsed }">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="search-icon"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="currentColor"/></svg>
+            <span>筛选{{ searchCollapsed ? '' : '条件' }}</span>
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="toggle-arrow-sm" :class="{ 'is-rotated': !searchCollapsed }"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" fill="currentColor"/></svg>
+          </button>
+          <button class="btn-confirm btn-confirm-inline mobile-only" @click="submitForm">确 定</button>
+        </div>
+        <div class="section-card search-card" v-show="showSearch && !searchCollapsed">
           <div class="search-card-body">
             <el-form :model="queryParams" ref="queryRef" :inline="true" label-width="88px">
               <el-form-item label="权限编码" prop="handlerCode">
@@ -94,11 +102,14 @@
                   end-placeholder="结束日期"
                 ></el-date-picker>
               </el-form-item>
-              <el-form-item>
-                <button class="btn-action btn-primary" @click="handleQuery">搜索</button>
-                <button class="btn-action btn-default" @click="resetQuery">重置</button>
-              </el-form-item>
             </el-form>
+            <div class="search-action-row">
+              <div class="search-action-left">
+                <button type="button" class="btn-action btn-primary" @click="handleQuery">搜索</button>
+                <button type="button" class="btn-action btn-default" @click="resetQuery">重置</button>
+              </div>
+              <button class="btn-confirm btn-confirm-search" @click="submitForm">确 定</button>
+            </div>
           </div>
         </div>
 
@@ -150,9 +161,48 @@
           <el-button link type="danger" size="small" class="clear-all-btn" @click="clearAllSelected">清空</el-button>
         </div>
 
-        <!-- 数据表格卡片 -->
-        <div class="section-card table-card">
-          <el-table v-loading="loading" :data="tableList" @row-click="handleCheck">
+        <!-- 移动端：卡片式列表 -->
+        <div class="mobile-card-list mobile-only" v-loading="loading" @scroll="onMobileScroll">
+          <div
+            v-for="item in tableList"
+            :key="item.storageId"
+            class="mobile-card-item"
+            :class="{ 'is-checked': item.isChecked }"
+            @click="handleCheck(item)"
+          >
+            <div class="card-left">
+              <el-checkbox :model-value="item.isChecked" @change.stop="handleCheck(item)" />
+              <div class="card-info">
+                <div class="card-name-row">
+                  <span class="card-name">{{ item.handlerName || '-' }}</span>
+                  <span class="card-time" v-if="item.createTime">{{ item.createTime }}</span>
+                </div>
+                <div class="card-sub">
+                  <span class="card-code">{{ item.handlerCode || '-' }}</span>
+                  <span class="card-group" v-if="item.groupName">{{ item.groupName }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="card-check-icon" v-if="item.isChecked">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" fill="#67c23a"/></svg>
+            </div>
+          </div>
+          <!-- 加载更多 / 没有更多提示 -->
+          <div class="mobile-load-more">
+            <template v-if="tableList.length > 0">
+              <span v-if="mobileLoadingMore" class="load-text">加载中...</span>
+              <span v-else-if="mobileNoMore || tableList.length >= total.value" class="load-text load-end">— 已加载全部 —</span>
+            </template>
+          </div>
+          <!-- 空状态 -->
+          <div v-if="!loading && tableList.length === 0" class="mobile-empty">
+            暂无数据
+          </div>
+        </div>
+
+        <!-- PC端：数据表格卡片（固定10条数据高度） -->
+        <div class="section-card table-card pc-only">
+          <el-table v-loading="loading" :data="tableList" :max-height="570" @row-click="handleCheck">
             <el-table-column width="50" align="center">
               <template #header>
                 <el-checkbox
@@ -167,16 +217,16 @@
             </el-table-column>
             <el-table-column label="权限名称" align="center" key="handlerName" prop="handlerName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
             <el-table-column label="权限编码" align="center" key="handlerCode" prop="handlerCode" v-if="columns[1].visible" :show-overflow-tooltip="true" />
-            <el-table-column label="入库主键" align="center" key="storageId" prop="storageId" v-if="columns[0].visible" />
-            <el-table-column label="权限分组" align="center" key="groupName" prop="groupName" v-if="columns[3].visible" :show-overflow-tooltip="true" />
-            <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[4].visible" width="160">
+            <el-table-column label="入库主键" align="center" key="storageId" prop="storageId" v-if="columns[0].visible" class-name="mobile-hide-col" />
+            <el-table-column label="权限分组" align="center" key="groupName" prop="groupName" v-if="columns[3].visible" :show-overflow-tooltip="true" class-name="mobile-hide-col" />
+            <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[4].visible" width="160" class-name="mobile-hide-col">
               <template #default="scope">
                 <span>{{ parseTime(scope.row.createTime) }}</span>
               </template>
             </el-table-column>
           </el-table>
 
-          <!-- 底部操作栏：分页 + 确定 -->
+          <!-- 底部操作栏：分页 -->
           <div class="table-footer">
             <el-pagination
               v-show="total > 0"
@@ -187,7 +237,6 @@
               @size-change="getList"
               @current-change="getList"
             />
-            <button class="btn-confirm" @click="submitForm">确 定</button>
           </div>
         </div>
       </el-col>
@@ -222,7 +271,13 @@ let dateRange = ref([]);
 const groupName = ref("");
 const groupOptions = ref(undefined);
 // 树形区域折叠状态（默认展开，数据加载后根据高度自动判断）
-const treeCollapsed = ref(false);
+const treeCollapsed = ref(window.innerWidth <= 768);
+// 搜索区域折叠状态（移动端默认折叠）
+const searchCollapsed = ref(window.innerWidth <= 768);
+// 移动端分页：每页10条，滚动加载更多
+const MOBILE_PAGE_SIZE = 10;
+const mobileLoadingMore = ref(false);
+const mobileNoMore = ref(false);
 const tabsList = ref([]);
 // 列显隐信息
 const columns = ref([
@@ -284,15 +339,25 @@ function getTabsType() {
     if(res.data && res.data.length > 0) {
         tabsValue.value = res.data[0]
     }
+    // 移动端初始加载使用10条分页
+    if (window.innerWidth <= 768 && !queryParams.value.pageSize) {
+      queryParams.value.pageSize = MOBILE_PAGE_SIZE;
+      queryParams.value.pageNum = 1;
+    }
     getList();
   });
 }
 
 /** 查询用户列表 */
-function getList() {
-  loading.value = true;
+function getList(append = false) {
+  if (append) {
+    mobileLoadingMore.value = true;
+  } else {
+    loading.value = true;
+  }
   if (!tabsValue.value) {
     loading.value = false;
+    mobileLoadingMore.value = false;
     return;
   }
   queryParams.value.handlerType = tabsValue.value;
@@ -301,11 +366,16 @@ function getList() {
   queryParams.value.endTime = dateRange.value[1]
   handlerResult(queryParams.value).then(res => {
     loading.value = false;
+    mobileLoadingMore.value = false;
     let handlerAuths = res.data.handlerAuths;
     handlerAuths.rows.forEach(item => {
       item.isChecked = checkedItemList.value.findIndex(e => e.storageId === item.storageId) !== -1;
     });
-    tableList.value = handlerAuths.rows;
+    if (append && window.innerWidth <= 768) {
+      tableList.value = [...tableList.value, ...handlerAuths.rows];
+    } else {
+      tableList.value = handlerAuths.rows;
+    }
     total.value = handlerAuths.total;
     groupOptions.value = res.data.treeSelections;
     proxy.$nextTick(() => {
@@ -313,6 +383,38 @@ function getList() {
     });
     isCheckedAll();
   });
+}
+
+/** 移动端滚动加载更多 */
+function loadMoreMobile() {
+  if (mobileLoadingMore.value || mobileNoMore.value || loading.value) return;
+  if (tableList.value.length >= total.value) {
+    mobileNoMore.value = true;
+    return;
+  }
+  queryParams.value.pageNum++;
+  queryParams.value.pageSize = MOBILE_PAGE_SIZE;
+  getList(true);
+}
+
+/** 移动端卡片列表滚动事件 */
+function onMobileScroll(e) {
+  const el = e.target;
+  if (!el) return;
+  // 距离底部 60px 时触发加载
+  if (el.scrollTop + el.clientHeight >= el.scrollHeight - 60) {
+    loadMoreMobile();
+  }
+}
+
+/** 重置移动端分页状态 */
+function resetMobilePagination() {
+  mobileLoadingMore.value = false;
+  mobileNoMore.value = false;
+  queryParams.value.pageNum = 1;
+  if (window.innerWidth <= 768) {
+    queryParams.value.pageSize = MOBILE_PAGE_SIZE;
+  }
 }
 /** 节点单击事件 */
 function handleNodeClick(data) {
@@ -328,7 +430,7 @@ function tabChange() {
 
 /** 搜索按钮操作 */
 function handleQuery() {
-  queryParams.value.pageNum = 1;
+  resetMobilePagination();
   getList();
 }
 
@@ -498,7 +600,11 @@ getTabsType();
 .tree-card {
   padding-bottom: 0;
   display: flex; flex-direction: column;
-  max-height: calc(100vh - 180px);
+
+  /* PC端（>768px）固定高度 */
+  @media (min-width: 769px) {
+    height: 560px;
+  }
 
   /* 折叠状态：只显示标题头 */
   &.tree-collapsed {
@@ -660,6 +766,31 @@ getTabsType();
       box-shadow: 0 0 0 2px rgba(64,158,255,.15);
     }
   }
+
+  /* PC端：第二行操作按钮（搜索/重置 左 + 确定 右） */
+  .search-action-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+    padding-top: 12px;
+    border-top: 1px solid var(--wf-border-lighter, #ebeef5);
+    html.dark & { border-top-color: var(--wf-border-color, #333); }
+  }
+
+  .search-action-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* 搜索区内的确定按钮：缩小尺寸适配 */
+  .btn-confirm-search {
+    height: 32px;
+    padding: 0 24px;
+    font-size: 13px;
+    letter-spacing: 1px;
+  }
 }
 
 /* 按钮风格 */
@@ -671,6 +802,8 @@ getTabsType();
   font-size: 13px; font-weight: 500;
   cursor: pointer; transition: all .25s ease;
   outline: none;
+
+  & + & { margin-left: 10px; }
 
   &.btn-primary {
     color: #fff;
@@ -869,6 +1002,279 @@ html.dark ::v-deep(.el-pager) li {
   min-width: 28px;
   &.is-active { background: var(--wf-primary, #409eff) !important; color: #fff !important; border-color: transparent; }
   &:hover { color: var(--wf-primary, #409eff) !important; background: rgba(64,158,255,.08) !important; }
+}
+
+/* mobile-only：默认隐藏，仅在移动端显示 */
+.mobile-only { display: none !important; }
+
+/* ========== 手机/平板端适配（≤768px） ========== */
+@media (max-width: 768px) {
+  .user-select-wrapper {
+    /* 移动端专属元素显示（恢复各元素原有display） */
+    .search-toggle-row.mobile-only { display: flex !important; }
+    .mobile-card-list.mobile-only { display: flex !important; }
+    .btn-confirm-inline.mobile-only { display: inline-flex !important; }
+    /* 整体减少内边距 */
+    .content {
+      margin-top: 8px;
+      gap: 10px;
+    }
+
+    /* ===== 工具栏：筛选 + 确认按钮并排 ===== */
+    .search-toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 0 8px;
+      gap: 10px;
+
+      /* 内联确认按钮样式 */
+      .btn-confirm-inline {
+        flex-shrink: 0;
+        height: 36px;
+        padding: 0 20px;
+        font-size: 14px;
+        letter-spacing: 1px;
+      }
+    }
+
+    .search-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      flex: 1;
+      min-width: 0; /* 允许收缩 */
+      padding: 7px 12px;
+      background: linear-gradient(135deg, rgba(64,158,255,.06), rgba(64,158,255,.02));
+      border: 1px solid rgba(64,158,255,.18);
+      border-radius: 20px;
+      color: var(--wf-primary, #409eff);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all .25s ease;
+
+      &:hover { background: rgba(64,158,255,.12); border-color: rgba(64,158,255,.35); }
+      &.is-expanded {
+        background: rgba(103,194,58,.06);
+        border-color: rgba(103,194,58,.22);
+        color: #67c23a;
+      }
+
+      .search-icon { width: 16px; height: 16px; opacity: .75; flex-shrink: 0; }
+      .toggle-arrow-sm { width: 16px; height: 16px; transition: transform .3s ease; flex-shrink: 0; }
+      .toggle-arrow-sm.is-rotated { transform: rotate(180deg); }
+    }
+
+    /* 组织架构树：默认收起，展开时严格限制高度 */
+    .tree-card {
+      border-radius: 10px;
+      overflow: hidden;
+      min-height: 48px; /* 收起时保持与展开时一致的视觉高度 */
+
+      &.tree-collapsed {
+        border-color: var(--wf-border-color, #e4e7ed);
+        background: var(--wf-bg-white, #fff);
+        html.dark & { background: #1a1a1a; border-color: #333; }
+      }
+
+      .tree-header { padding: 10px 14px; font-size: 14px; }
+      .tree-content {
+        max-height: 300px !important;
+        overflow-y: auto;
+        padding: 0 10px 10px;
+        .tree-search { padding: 0 0 6px; }
+      }
+    }
+
+    /* 搜索表单：纵向紧凑堆叠 */
+    .search-card {
+      border-radius: 10px;
+      animation: searchSlideDown .25s ease-out;
+    }
+    .search-card-body {
+      :deep(.el-form) { display: flex; flex-direction: column; gap: 8px; }
+      :deep(.el-form-item) {
+        margin-right: 0; margin-bottom: 0;
+        .el-input, .el-date-editor { width: 100% !important; }
+      }
+      :deep(.el-form-item:last-child) {
+        display: flex; gap: 8px;
+        .btn-action { flex: 1; text-align: center; justify-content: center; }
+      }
+    }
+
+    /* 已选提示栏紧凑化 */
+    .selected-inline-bar {
+      flex-wrap: wrap; gap: 6px; font-size: 13px;
+      padding: 10px 12px; border-radius: 10px;
+    }
+
+    /* ===== 隐藏 PC 端表格和底部栏 ===== */
+    .pc-only { display: none !important; }
+
+    /* ===== 移动端卡片列表 ===== */
+    .mobile-card-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      /* 合理高度范围：卡片更紧凑后显示更多条目 */
+      min-height: calc(3 * (44px + 8px));
+      max-height: calc(60vh);
+      overflow-y: auto;
+      padding: 2px 2px 6px;
+      -webkit-overflow-scrolling: touch;
+
+      &::-webkit-scrollbar { width: 3px; }
+      &::-webkit-scrollbar-thumb { background: rgba(0,0,0,.12); border-radius: 4px; }
+    }
+
+    .mobile-card-item {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: 11px 14px;
+      background: var(--wf-bg-white, #fff);
+      border: 1.5px solid var(--wf-border-lighter, #ebeef5);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all .2s ease;
+      -webkit-tap-highlight-color: transparent;
+
+      html.dark & {
+        background: #1a1a1a;
+        border-color: #333;
+      }
+
+      &:active { transform: scale(.98); }
+
+      &.is-checked {
+        border-color: #67c23a;
+        background: linear-gradient(135deg, rgba(103,194,58,.05), rgba(103,194,58,.02));
+        html.dark & { background: rgba(103,194,58,.08); border-color: rgba(103,194,58,.5); }
+      }
+    }
+
+    .card-left {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .card-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    /* 第一行：名称左（固定9字） + 创建时间右（固定152px） */
+    .card-name-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .card-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--wf-text-primary, #303133);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.3;
+      width: calc(9em);        /* 固定宽度：显示9个中文字 */
+      flex-shrink: 0;
+      html.dark & { color: #e4e7ed; }
+    }
+
+    .card-time {
+      font-size: 11px;
+      color: var(--wf-text-placeholder, #c0c4cc);
+      flex-shrink: 0;
+      white-space: nowrap;
+      width: 152px;          /* 固定宽度，保证完整显示 yyyy-MM-dd HH:mm:ss */
+      text-align: right;     /* 右对齐，紧贴卡片边缘 */
+      overflow: hidden;
+      text-overflow: ellipsis;
+      html.dark & { color: #82848a; }
+    }
+
+    /* 第二行：编码左（固定9字） + 分组右（固定80px） */
+    .card-sub {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .card-code {
+      font-size: 12px;
+      color: var(--wf-text-secondary, #909399);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: calc(9em);        /* 固定宽度：显示9个字符 */
+      flex-shrink: 0;
+    }
+
+    .card-group {
+      font-size: 11px;
+      color: var(--wf-text-placeholder, #c0c4cc);
+      background: rgba(0,0,0,.03);
+      padding: 1px 8px;
+      border-radius: 10px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex-shrink: 0;
+      width: 80px;           /* 固定宽度，与时间右对齐 */
+      text-align: right;     /* 右对齐，紧贴卡片边缘 */
+      box-sizing: border-box;
+      html.dark & { background: rgba(255,255,255,.06); }
+    }
+
+    .card-check-icon {
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+      svg { width: 100%; height: 100%; }
+    }
+
+    /* 加载更多提示 */
+    .mobile-load-more {
+      display: flex;
+      justify-content: center;
+      padding: 10px 0 4px;
+      .load-text {
+        font-size: 11px;
+        color: var(--wf-text-placeholder, #c0c4cc);
+        &.load-end { opacity: .6; }
+        html.dark & { color: #6a6c72; }
+      }
+    }
+
+    .mobile-empty {
+      text-align: center;
+      padding: 36px 16px;
+      color: var(--wf-text-placeholder, #c0c4cc);
+      font-size: 13px;
+    }
+  }
+}
+
+@keyframes searchSlideDown {
+  from { opacity: 0; transform: translateY(-6px); max-height: 0; }
+  to { opacity: 1; transform: translateY(0); max-height: 400px; }
 }
 </style>
 

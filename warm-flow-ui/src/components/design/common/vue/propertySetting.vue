@@ -32,11 +32,19 @@ import BaseInfo from "@/components/design/common/vue/baseInfo.vue";
 
 const { proxy } = getCurrentInstance();
 
+// 响应式窗口宽度：监听 resize 变化
+const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1024);
+if (typeof window !== 'undefined') {
+  window.addEventListener('resize', () => { windowWidth.value = window.innerWidth; });
+}
+
 // 抽屉宽度：手机端全屏，桌面端 37%
 const drawerSize = computed(() => {
-  if (typeof window !== 'undefined' && window.innerWidth <= 768) return '100%';
-  return '37%';
+  return windowWidth.value <= 768 ? '100%' : '37%';
 });
+
+// 节点点击打开抽屉时的防抖标记：防止 blank:click 立即关闭
+let lastOpenTime = 0;
 
 const COMPONENT_LIST = {
   start,
@@ -300,10 +308,16 @@ watch(() => form.value.ext, (n) => {
 }, { deep: true });
 
 function show () {
+  lastOpenTime = Date.now();
+  if (window._markDrawerOpen) window._markDrawerOpen();
   drawer.value = true
 }
 
 async function handleClose () {
+  // 防抖：节点打开后 200ms 内的 blank:click 不执行关闭
+  if (Date.now() - lastOpenTime < 200) return;
+  // 如果抽屉未打开，直接返回
+  if (!drawer.value) return;
   if (!props.disabled && typeof proxy.$refs[componentType.value?.name]?.validate === "function") {
     // 校验表单必填项
     await proxy.$refs[componentType.value.name].validate().then(() => {
@@ -327,6 +341,9 @@ function handleDrawer () {
     }
   }
   drawer.value = false
+  // 延迟解除标志位（由 index.vue 的 _markDrawerClosed + scheduleMobileResize
+  // 统一管理抽屉关闭后的画布适配，避免多处 fitView 时序冲突导致节点跳动）
+  if (window._markDrawerClosed) window._markDrawerClosed();
 }
 
 
