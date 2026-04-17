@@ -1,21 +1,25 @@
 <template>
   <div class="flow-chart-root" :style="headerDiv">
-    <div class="top-text" v-if="defJson.topTextShow">{{defJson.topText}}</div>
     <el-header :style="headerStyle">
-      <div style="padding: 5px 0; display: flex; align-items: center;">
-        <!-- 左侧按钮组 -->
-        <div style="display: flex; align-items: center; margin-left: 50px;">
-          <el-button size="small" :style="`border: 1px solid rgb(${statusColors.notDone})`">未完成</el-button>
-          <el-button size="small" :style="`background-color: rgb(${statusColors.todo}, 0.15); border: 1px solid rgb(${statusColors.todo})`">进行中</el-button>
-          <el-button size="small" :style="`background-color: rgb(${statusColors.done}, 0.15); border: 1px solid rgb(${statusColors.done})`">已完成</el-button>
+      <div class="chart-toolbar">
+        <!-- 左侧：流程名称 -->
+        <div class="toolbar-left">
+          <div class="flow-name-badge" v-if="defJson.topTextShow">{{defJson.topText}}</div>
         </div>
 
-        <!-- 右侧状态按钮组 -->
-        <div style="margin-left: auto; display: flex; align-items: center;">
-          <el-button size="small" icon="ZoomIn" @click="zoomViewport(true)">放大</el-button>
-          <el-button size="small" icon="Rank" v-if="isClassics(defJson.modelValue)" @click="zoomViewport(1)">自适应</el-button>
-          <el-button size="small" icon="ZoomOut" @click="zoomViewport(false)">缩小</el-button>
-          <el-button size="small" icon="Download" @click="downLoad">下载流程图</el-button>
+        <!-- 中间：节点状态演示（居中） -->
+        <div class="toolbar-center">
+          <el-tooltip content="未完成" placement="bottom"><el-button size="small" :style="`border: 1px solid rgb(${statusColors.notDone})`">未完成</el-button></el-tooltip>
+          <el-tooltip content="进行中" placement="bottom"><el-button size="small" :style="`background-color: rgb(${statusColors.todo}, 0.15); border: 1px solid rgb(${statusColors.todo})`">进行中</el-button></el-tooltip>
+          <el-tooltip content="已完成" placement="bottom"><el-button size="small" :style="`background-color: rgb(${statusColors.done}, 0.15); border: 1px solid rgb(${statusColors.done})`">已完成</el-button></el-tooltip>
+        </div>
+
+        <!-- 右侧：工具栏（仅图标，tooltip悬浮显示） -->
+        <div class="toolbar-right">
+          <el-tooltip content="放大" placement="bottom"><el-button size="small" icon="ZoomIn" @click="zoomViewport(true)"/></el-tooltip>
+          <el-tooltip content="自适应" placement="bottom" v-if="isClassics(defJson.modelValue)"><el-button size="small" icon="Rank" @click="zoomViewport('fit')"/></el-tooltip>
+          <el-tooltip content="缩小" placement="bottom"><el-button size="small" icon="ZoomOut" @click="zoomViewport(false)"/></el-tooltip>
+          <el-tooltip content="下载流程图" placement="bottom"><el-button size="small" icon="Download" @click="downLoad"/></el-tooltip>
         </div>
       </div>
     </el-header>
@@ -222,9 +226,40 @@ watch(
     { deep: true, immediate: true }
 );
 
-const zoomViewport = async (zoom) => {
-  lf.value.zoom(zoom);
-  lf.value.translateCenter();
+/** 检测是否移动端/平板设备 */
+const isMobileDevice = () => {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+    || window.innerWidth <= 768;
+};
+
+/**
+ * 自适应画布视图
+ * @param {boolean|number|string} mode - true=放大, false=缩小, 1=PC重置缩放居中, 'fit'=fitView全部节点
+ */
+const zoomViewport = async (mode) => {
+  if (!lf.value) return;
+  if (mode === 'fit') {
+    lf.value.fitView(40, [20, 60, 20, 80]);
+  } else if (mode === 1) {
+    lf.value.zoom(1);
+    lf.value.translateCenter();
+  } else {
+    lf.value.zoom(mode);
+    lf.value.translateCenter();
+  }
+};
+
+/** 默认初始化自适应：PC端zoom(1)+居中，移动端/平板fitView */
+const autoFitViewport = () => {
+  if (!lf.value) return;
+  if (isMobileDevice()) {
+    // 移动端/平板：fitView 将所有节点缩放并居中到可视区域
+    lf.value.fitView(40, [20, 60, 20, 80]);
+  } else {
+    // PC 端：重置缩放 + 居中
+    lf.value.zoom(1);
+    lf.value.translateCenter();
+  }
 };
 
 onMounted(async () => {
@@ -282,7 +317,7 @@ onMounted(async () => {
               applyDarkTheme(lf.value, true);
             }
             if (isClassics(defJson.value.modelValue)) {
-              lf.value.translateCenter();
+              autoFitViewport();
             }
           }
         })
@@ -340,27 +375,50 @@ onUnmounted(() => {
   min-height: 0;
 }
 
-.top-text {
-  position: absolute;
-  font-weight: bold;
-  left: 500px;
-  top: 2px;
+/* ========== 工具栏三栏布局 ========== */
+.chart-toolbar {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 5px 0;
+}
+
+.toolbar-left {
+  flex-shrink: 0;
+}
+
+.toolbar-center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.toolbar-right {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: 12px;
+}
+.flow-name-badge {
+  font-weight: 600;
   border: 1px solid var(--wf-border-light, #d1e9ff);
   background-color: var(--wf-primary-lighter, #e8f4ff);
-  padding: 4px 8px;
+  padding: 4px 12px;
   border-radius: 4px;
-  max-width: 300px;
-  font-size: 15px;
-  color: var(--wf-text-primary, #333);
-  z-index: 1;
+  font-size: 14px;
+  color: var(--wf-primary, #409eff);
+  white-space: nowrap;
+}
 
-  /* 暗黑模式适配 */
-  html.dark &,
-  :global(html.dark) & {
-    color: var(--wf-text-primary, #e0e0e0);
-    border-color: var(--wf-border-color, #333333);
-    background-color: rgba(64, 158, 255, 0.08);
-  }
+/* 暗黑模式适配：流程名称 */
+html.dark .flow-name-badge,
+:global(html.dark) .flow-name-badge {
+  color: var(--wf-primary-light, #79bbff);
+  border-color: rgba(64, 158, 255, 0.2);
+  background-color: rgba(64, 158, 255, 0.08);
 }
 
 .log-text {
@@ -376,6 +434,33 @@ onUnmounted(() => {
   html.dark &,
   :global(html.dark) & {
     color: var(--wf-text-secondary, #888888);
+  }
+}
+
+/* ========== 移动端/平板响应式 ========== */
+@media (max-width: 768px) {
+  .chart-toolbar {
+    flex-wrap: nowrap;
+  }
+
+  .toolbar-left {
+    flex: none;
+  }
+
+  .toolbar-center {
+    flex: 0 auto;
+    justify-content: center;
+    gap: 2px;
+  }
+
+  .toolbar-center :deep(.el-button) {
+    padding: 4px 6px;
+    font-size: 12px;
+  }
+
+  .toolbar-right {
+    gap: 2px;
+    margin-right: 6px;
   }
 }
 </style>
