@@ -13,9 +13,7 @@
           :class="[`item-${item.type}`]"
           @mousedown="handleDragInNode(item)"
         >
-          <div class="item-icon-wrap">
-            <img :src="item.icon" :alt="item.label" class="item-icon" />
-          </div>
+          <div class="item-icon-wrap" v-html="item.icon"></div>
           <span class="item-label">{{ item.label }}</span>
         </div>
       </div>
@@ -37,9 +35,7 @@
           :class="[`item-${item.type}`]"
           @mousedown="handleDragInNode(item)"
         >
-          <div class="item-icon-wrap">
-            <img :src="item.icon" :alt="item.label" class="item-icon" />
-          </div>
+          <div class="item-icon-wrap" v-html="item.icon"></div>
           <span class="item-label">{{ item.label }}</span>
         </div>
       </div>
@@ -48,54 +44,25 @@
 </template>
 
 <script setup>
+import {
+  startIcon, betweenIcon, endIcon,
+  serialIcon, parallelIcon, inclusiveIcon,
+} from '@/components/design/classics/js/sidebarIcons.js'
+
 const emit = defineEmits(['dragInNode'])
 
 // 基础节点（开始/中间/结束）
 const flowNodes = [
-  {
-    type: 'start',
-    text: '开始',
-    label: '开始',
-    icon: 'data:image/svg+xml;charset=utf-8;base64,PHN2ZyB0PSIxNzQ4MTc1OTQ3Mzg4IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjIwODA5IiB3aWR0aD0iMzYiIGhlaWdodD0iMzYiPjxwYXRoIGQ9Ik01MTIgMTAyNEMyMjkuMjMwNDMxIDEwMjQgMCA3OTQuNzY5NTY5IDAgNTEyUzIyOS4yMzA0MzEgMCA1MTIgMHs1MTIgMjI5LjIzMDQzMSA1MTIgNTEyLTIyOS4yMzA0MzEgNTEyLTUxMiA1MTJ6IG0wLTk1MC4zNzkwODVDMjY5Ljg4OTI1NSA3My42MjA5MTUgNzMuNjIwOTE1IDI2OS44ODkyNTUgNzMuNjIwOTE1IDUxMnMxOTYuMjY4MzQgNDM4LjM3OTA4NSA0MzguMzc5MDg1IDQzOC4zNzkwODUgNDM4LjM3OTA4NS0xOTYuMjY4MzQgNDM4LjM3OTA4NS00MzguMzc5MDg1Uzc1NC4xMTA3NDUgNzMuNjIwOTE1IDUxMiA3My42MjA5MTV6IiBmaWxsPSIjMDAwMDAwIiBwLWlkPSIyMDgxMCI+PC9wYXRoPjwvc3ZnPg==',
-  },
-  {
-    type: 'between',
-    text: '中间节点',
-    label: '中间节点',
-    icon: 'data:image/svg+xml;charset=utf-8;base64,PHN2ZyB0PSIxNzQ4MTc1Mzc1ODI3IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjgzMTkiIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiI+PHBhdGggZD0iTTMzNS43NTE4MDQgMjQ0Ljc4MzE0N0MyODMuNjA3MDI5IDI0NC43ODMxNDcgMjQ2LjMwMzg5OSAyODQuODY5MDYgMjQ2LjE5OTI3IDMzMC41Mjk2MmwgMCAwLjAxMzIwNyAwIDAuMDEyNjQ4YzAuMDAzMjk0IDEzLjgwODQ2NSAzLjczOTc0MyAyOC4zODE3NDcgOS41Nzc0MzEgNDEuNTI2MzQyIDQuMjE1MTMyIDkuNDkxMTE1IDkuNDU1Nzk4IDE4LjIxNjY3NiAxNS44NDE3NDQgMjUuMjA2NjE0QzIzMy42NjU1ODggNDEwLjI3Mjg1MyAxODkuMjAxOTQ5IDQzMS42NDI4OCAxNjYuNzI4IDQ3My43ODE1M0wxNjUuNTE2OTYgNDc2LjA1MjU0NGwgMCAxMzYuNDA4NDgyIDM0MC40Njk2ODkgMCAwLTEzNi40MDg0OC0xLjIxMTA0My0yLjI3MDk4NGMtMjIuMTUwNzA4LTQxLjUzMjU2Ni02NS42NTIyMDQtNjIuODcyODQ4LTEwMy4yMzgyMDQtNzUuOTExMTE2IDE4LjM0ODQxOS0xOC42NTgyMTggMjMuNzYxMDQ5LTQyLjc0MDU3MyAyMy43NjY5MzItNjcuMzE0OTJsLTAtMC4wMTI2NDggMC0wLjAxMzIwN0M0MjUuMTk5NzA3IDI4NC44NjkwNjMgMzg3Ljg5NjU4MyAyNDQuNzgzMTQ3IDMzNS43NTE4MDQgMjQ0Ljc4MzE0N1pNMzAwLjE0ODUyMyAyOTMuNDA0NTIxYzIuNDEwMzI4IDAuMDA2MDU5IDUuMDU2NjUgMC4wODY1NzIgNy45NzQwMTUgMC4yNTg1MjIgMjMuMjQ0MDI5IDEuMzcwMDI5IDMxLjA2Njk5NiA1LjU1NDA1OSAzNy4wODAzMjMgOS41MjIyODMgNi4wMTMyOTggMy45NjgyMjMgMTAuMjUyNDE3IDcuNzQ1Njk5IDI2LjE0NDE4OSA4LjIwODk4MmwwLjAwNDcwNiAwIDAuMDA1Mjk1IDBjMTIuMzgzODktMC40NjMyMTUgMTguMzM5NTA2LTIuNjcxMTM1IDIyLjYxMDQ1Mi01LjE3MjE5MiAxLjczMDY0NS0xLjAxMzQ1MyAzLjE4MzgyNS0yLjA2NzAwMyA0LjY3Mjk1LTMuMDcyOTg0IDMuOTM2MDM2IDguNDM2NjY4IDYuMDQ5NjU0IDE3Ljc2MjkzOCA2LjA3MzU5NyAyNy40MTQ5ODEtMC4wODIzMjYgMjcuNDg0NjUyLTQuNzMzMzA4IDQ2LjczMjMwMi0yOS45MzQxNTQgNjIuNDgyODNsMi40NjUxNzcgMTguNTgwOTQ0YzUuMjQ1MzUxIDEuNTkyODg5IDEwLjY2NzMwNSAzLjM0MDY3MSAxNi4xNzAzNTQgNS4yNTcyMiAwLjc2ODUzNSAzLjIwNjE4MyAxLjY1NjQ5MiA3LjQxMTMwNiAyLjI1Mzc0OCAxMS44ODE3MzkgMC42MjU2NyA0LjY4MzQ1NCAwLjg3MTc0OSA5LjU1NjMzMyAwLjQ4NjAxMSAxMy4yMTUxMzktMC4zODU3MzggMy42NTg4MDYtMS41MjE3MTYgNS42MzM5NzItMS43MjExNzQgNS44MzM0NTktMTIuODA4OTg0IDEyLjgwODk1NS0zNS41NDYwMzYgMjAuMjc5MTM5LTU4LjYwODQzOCAyMC4yNzkxMzktMjMuMDYyMzkzIDAtNDUuNzk5NDQ0LTcuNDcwMTg0LTU4LjYwODQyMy0yMC4yNzkxMzktMC4xOTk0NjEtMC4xOTk0ODctMS4zMzU0NTYtMi4xNzQ2NTMtMS43MjExOTQtNS44MzM0NTktMC4zODU3MzUtMy42NTg4MDYtMC4xMzk2NjItOC41MzE2ODUgMC40ODYwMjYtMTMuMjE1MTM5IDAuNjAwNTI3LTQuNDk1MTE1IDEuNDk1NTUyLTguNzI1MDI4IDIuMjY2OTYzLTExLjkzNzQ2NyA1LjQ0ODA4Ni0xLjg5NDYwNiAxMC44MTU1NDctMy42MjQwNDIgMTYuMDEwMDczLTUuMjAxNDkxbDEuNDY5NTYxLTE5LjkwOTc1NmMtMS4xOTY1NzEtMS41MzQ1NjQtMi40MTU3ODItMi41NTExNjctMy44NzA5NTktMy42NDI4ODQtNS42MjQzNzctNC4yMTk1NjUtMTIuNDQ1MTQyLTEzLjUwMjI0NS0xNy4yNjMwNDktMjQuMzUwNjEzLTQuODE2MTg5LTEwLjg0NDQ5OS03LjgwMDAzOC0yMy4yNDAwMjMtNy44MDQ1MzYtMzMuMTYyODE4IDAuMDI5MjYtMTEuODk2MzgyIDMuMjMxMzc5LTIzLjI5OTMwNCA5LjExMTUxNi0zMy4xNDkwMzIgMS4wNTIxMTUtMC4zOTE2MTggMi4xNjE1NjYtMC44MDU1MTcgMy40MDg0ODgtMS4yMTU2MzQgNC4zODUwMTctMS40NDIyNSAxMC4zOTM5NzMtMi44MTg4ODkgMjAuODM4NzE2LTIuNzkyNjI4Wk0yNTUuNjMwNzggNDI1LjYzODEzNmMtMC4wMTg1MDIgMC4xMzQ5NjEtMC4wMzkzNTMgMC4yNjY2ODEtMC4wNTc0NDkgMC40MDIxNDgtMC43NjA5MTQgNS42OTU2MzYtMS4yMDgwMzEgMTEuODk1MjczLTAuNTUzODE3IDE4LjEwMDY3NSAwLjY1NDIxNCA2LjIwNTQwMiAyLjI5MTU2OCAxMi44ODY0MzIgNy42Mzg1MDcgMTguMjMzMzUgMTguMjUwODYxIDE4LjI1MDg4MSA0NS44NzE3NTkgMjYuMzEwMjMzIDczLjE2NzMxOCAyNi4zMTAyMzMgMjcuMjk1NTUxIDAgNTQuOTE2NDUyLTguMDU5MzUxIDczLjE2NzMwNC0yNi4zMTAyMzMgNS4zNDY5NDgtNS4zNDY5MTggNi45ODQzMi0xMi4wMjc5NDggNy42Mzg1MjItMTguMjMzMzUgMC42NTQyMDItNi4yMDU0MzEgMC4yMDcxMDYtMTIuNDA1MDM5LTAuNTUzODExLTE4LjEwMDY3NS0wLjAxNTAwMS0wLjExMjI0OC0wLjAzMjQxNC0wLjIyMTMwNy0wLjA0NzY4LTAuMzMzMjEgMjcuNzQ3NTMxIDEyLjE2ODM2IDU0LjU2Nzc0NiAyOS41OTUyNjEgNjkuMzY3MDE1IDU1LjYxNDczNGwwIDExMC41NDkyMjgtNDkuMjY4ODMyIDAgMC03Ny45NDc3MDQtMjAuNTg5OTYgMCAwIDc3Ljk0NzcwNC0xNjAuMDEzNCAwIDAtNzcuOTQ3NzA0LTIwLjU4OTk2IDAgMCA3Ny45NDc3MDQtNDguODI3NjE4IDAgMC0xMTAuNTQ5MjI4YzE0LjgyNzE1Ni0yNi4wNjg1MzYgNDEuNzIwNTQ3LTQzLjUxMjIzMiA2OS41MjM4Ni01NS42ODM2NzJ6TTIxOS45ODEgMTA3LjUxOTU3NWMtMTA5LjkzNDgyNCAwLTE5OS41MDEgODkuMTg4MzQ1LTE5OS41MDEgMTk4LjkxMTk5OWwwIDQxMS4xMzU5ODljMCAxMDkuNzIzNjU5IDg5LjU2NjE3NiAxOTguOTEyMDExIDE5OS41MDEgMTk4LjkxMjAxMWw1ODQuMDM3OTg5IDBjMTA5LjkzNDg1MyAwIDE5OS50MDEwMDEtODkuMTg4MzUxIDE5OS50MDEwMDEtMTk4LjkxMjAxMWwwLTQxMS4xMzU5ODljMC0xMDkuNzIzNjUzLTg5LjU2NjE0OC0xOTkuOTExOTk5LTE5OS50MDEwMDEtMTk4LjkxMTk5OWwtNTg0LjAzNzk4OSAwem0wIDYxLjQ0MDAwMWw1ODQuMDM3OTg5IDBjNzcuMDc0OTU1IDAgMTM4LjA2MTAwMyA2MC44Mzg5MTUgMTM4LjA2MTAwMyAxMzcuNDcxOTk4bDAgNDExLjEzNTk4OWMwIDc2LjYzMzA5NC02MC45ODYwNDggMTM3LjQ3MjAxMi0xMzguMDYxMDAzIDEzNy40NzIwMTJsLTU4NC4wMzc5ODkgMGMtNzcuMDc0OTYgMC0xMzguMDYxLTYwLjgzODkxOC0xMzguMDYxLTEzNy40NzIwMTJsMC00MTEuMTM1OTg5YzAtNzYuNjMzMDgyIDYwLjk4NjA0LTEzNy40NzE5OTggMTM4LjA2MS0xMzcuNDcxOTk4eiIgcC1pZD0iODMyMCI+PC9wYXRoPjwvc3ZnPg==',
-    properties: { collaborativeWay: '1' },
-  },
-  {
-    type: 'end',
-    text: '结束',
-    label: '结束',
-    icon: "data:image/svg+xml;charset=utf-8;base64,PHN2ZyB0PSIxNzUwMzg4OTY4OTA4IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIg0KICAgICB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9IjY5MTciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIg0KICAgICB3aWR0aD0iMzYiIGhlaWdodD0iMzYiPg0KICA8cGF0aCBkPSJNNTEyLjAwNTExNyA5NTguNzA4OTcxQzI2NS42ODMwMzUgOTU4LjcwODk3MSA2NS4yOTAwMDUgNzU4LjMxNjk2NSA2NS4yOTAwMDUgNTExLjk5Mzg2YzAtMjQ2LjMxMDgyNSAyMDAuMzkzMDMtNDQ2LjcwMzg1NSA0NDYuNzE1MTExLTQ0Ni43MDM4NTUgMjQ2LjMxMDgyNSAwIDQ0Ni43MDM4NTUgMjAwLjM5MzAzIDQ0Ni43MDM4NTUgNDQ2LjcwMzg1Qzk1OC43MDg5NzEgNzU4LjMxNjk2NSA3NTguMzE2OTY1IDk1OC43MDg5NzEgNTEyLjAwNTExNyA5NTguNzA4OTcxeiIgcC1pZD0iNjkxOCI+PC9wYXRoPg0KPC9zdmc+Cg==",
-  },
+  { type: 'start', text: '开始', label: '开始', icon: startIcon },
+  { type: 'between', text: '中间节点', label: '中间节点', icon: betweenIcon, properties: { collaborativeWay: '1' } },
+  { type: 'end', text: '结束', label: '结束', icon: endIcon },
 ]
 
-// 网关节点
+// 网关节点（互斥/并行/包含）
 const gatewayNodes = [
-  {
-    type: 'serial',
-    text: '',
-    label: '互斥网关',
-    icon: 'data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiIgdmlld0JveD0iMCAwIDEwMCAxMDAiPjxwb2x5Z29uIHBvaW50cz0iNTAsNSA5NSw1MCA1MCw1NSA1LDUwIiBmaWxsPSJub25lIiBzdHJva2U9IiM2YjcyODAiIHN0cm9rZS13aWR0aD0iMyIgLz48bGluZSB4MT0iMzAiIHkxPSIzMCIgeDI9IjcwIiB5Mj0iNzAiIHN0cm9rZT0iIzZiNzI4MCIgc3Ryb2tlLXdpZHRoPSIzIiAvPjxsaW5lIHgxPSI3MCIgeTE9IjMwIiB4Mj0iMzAiIHkyPSI3MCIgc3Ryb2tlPSIjNmI3MjgwIiBzdHJva2Utd2lkdGg9IjMiIC8+PC9zdmc+',
-    properties: {},
-  },
-  {
-    type: 'parallel',
-    text: '',
-    label: '并行网关',
-    icon: 'data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiIgdmlld0JveD0iMCAwIDEwMCAxMDAiPjxwb2x5Z29uIHBvaW50cz0iNTAsNSA5NSw1MCA1MCw1NSA1LDUwIiBmaWxsPSJub25lIiBzdHJva2U9IiM2YjcyODAiIHN0cm9rZS13aWR0aD0iMyIgLz48bGluZSB4MT0iNTAiIHkxPSIzMiIgeDI9IjUwIiB5Mj0iNjgiIHN0cm9rZT0iIzZiNzI4MCIgc3Ryb2tlLXdpZHRoPSIzIiAvPjxsaW5lIHgxPSIzMiIgeTE9IjUwIiB4Mj0iNjgiIHkyPSI1MCIgc3Ryb2tlPSIjNmI3MjgwIiBzdHJva2Utd2lkdGg9IjMiIC8+PC9zdmc+',
-    properties: {},
-  },
-  {
-    type: 'inclusive',
-    text: '',
-    label: '包含网关',
-    icon: 'data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiIgdmlld0JveD0iMCAwIDEwMCAxMDAiPjxwb2x5Z29uIHBvaW50cz0iNTAsMTAgOTAsNTAgNTAsOTAgMTAsNTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzZiNzI4MCIgc3Ryb2tlLXdpZHRoPSIzIiAvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNTAiIHI9IjIwIiBmaWxsPSJub25lIiBzdHJva2U9IiM2YjcyODAiIHN0cm9rZS13aWR0aD0iMyIgLz48L3N2Zz4=',
-    properties: {},
-  },
+  { type: 'serial', text: '', label: '互斥网关', icon: serialIcon, properties: {} },
+  { type: 'parallel', text: '', label: '并行网关', icon: parallelIcon, properties: {} },
+  { type: 'inclusive', text: '', label: '包含网关', icon: inclusiveIcon, properties: {} },
 ]
 
 function handleDragInNode(item) {
@@ -231,6 +198,13 @@ function handleDragInNode(item) {
   background: #f8fafc;
   transition: all 0.2s ease;
   position: relative;
+
+  /* v-html 渲染的 SVG 自适应容器 */
+  :deep(svg) {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
 }
 
 /* 各类型节点的图标底色 */
@@ -240,20 +214,6 @@ function handleDragInNode(item) {
 .item-serial .item-icon-wrap  { background: linear-gradient(135deg, #fafafa, #f1f5f9); }
 .item-parallel .item-icon-wrap{ background: linear-gradient(135deg, #fafafa, #f1f5f9); }
 .item-inclusive .item-icon-wrap { background: linear-gradient(135deg, #fafafa, #f1f5f9); }
-
-.item-icon {
-  max-width: 22px;
-  max-height: 22px;
-  object-fit: contain;
-  filter: grayscale(20%);
-  opacity: 0.75;
-  transition: all 0.2s ease;
-}
-
-.sidebar-item:hover .item-icon {
-  filter: grayscale(0%);
-  opacity: 1;
-}
 
 /* ====== 标签文字 ====== */
 .item-label {
@@ -350,11 +310,6 @@ html.dark .sidebar-item:hover .item-label {
     border-radius: 8px;
   }
 
-  .item-icon {
-    max-width: 20px;
-    max-height: 20px;
-  }
-
   .item-label {
     font-size: 11px;
     max-width: 64px;
@@ -401,11 +356,6 @@ html.dark .sidebar-item:hover .item-label {
     width: 28px;
     height: 28px;
     border-radius: 7px;
-  }
-
-  .item-icon {
-    max-width: 18px;
-    max-height: 18px;
   }
 
   .item-label {
