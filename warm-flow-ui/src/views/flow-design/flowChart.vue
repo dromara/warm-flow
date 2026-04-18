@@ -246,7 +246,7 @@ const isMobileDevice = () => {
 const zoomViewport = async (mode) => {
   if (!lf.value) return;
   if (mode === 'fit') {
-    lf.value.fitView(40, [20, 60, 20, 80]);
+    lf.value.fitView(40, 20);
   } else if (mode === 1) {
     lf.value.zoom(1);
     lf.value.translateCenter();
@@ -259,44 +259,60 @@ const zoomViewport = async (mode) => {
 /** 仅在移动端/平板执行 fitView，PC 端不干预（与 index.vue 保持一致） */
 function fitViewIfMobile() {
   if (!isMobileDevice() || !lf.value?.fitView) return;
-
-  // 容器尺寸为 0 或过小时跳过
+  
+  // 确保容器已挂载且有有效尺寸
   const container = containerRef.value;
-  if (!container) return;
-  const w = container.clientWidth;
-  const h = container.clientHeight;
-  if (!w || !h || w < 10 || h < 10) return;
-
-  // 检查 LogicFlow 内部图形模型是否已初始化（避免 SVG transform NaN）
-  const graphModel = lf.value?.graphModel;
-  if (!graphModel || !graphModel.width || !graphModel.height) return;
-
-  lf.value.fitView(40, [20, 60, 20, 80]);
+  if (!container || !container.clientWidth || !container.clientHeight) {
+    console.warn('fitViewIfMobile: 容器尺寸无效，跳过');
+    return;
+  }
+  
+  // 确保图形模型已就绪
+  const graphModel = lf.value.graphModel;
+  if (!graphModel || !graphModel.width || !graphModel.height || 
+      graphModel.width <= 0 || graphModel.height <= 0 ||
+      isNaN(graphModel.width) || isNaN(graphModel.height)) {
+    console.warn('fitViewIfMobile: 图形模型尺寸无效，跳过');
+    return;
+  }
+  
+  lf.value.fitView(40, 20);
 }
 
 /**
  * 真机兼容：延迟触发 LogicFlow resize + fitView（仅移动端/平板端生效）
  * PC 端不执行自动 fitView，保持用户手动缩放行为
  */
+/**
+ * 真机兼容：延迟触发 LogicFlow resize + fitView（仅移动端/平板端生效）
+ * PC 端不执行自动 fitView，保持用户手动缩放行为
+ */
 function scheduleMobileResize() {
   const doFit = () => {
-    if (!lf.value || !lf.value.resize || !lf.value.graphModel) return;
-    // 容器未就绪则跳过
-    const container = containerRef.value;
-    if (!container || !container.clientWidth || !container.clientHeight) return;
-    // LogicFlow 图形模型未就绪则跳过
-    if (!lf.value.graphModel.width || !lf.value.graphModel.height) return;
-    lf.value.resize();
-    requestAnimationFrame(fitViewIfMobile);
+    if (lf.value && lf.value.resize) {
+      lf.value.resize();
+      // 仅在移动设备上才执行自动 fitView
+      requestAnimationFrame(fitViewIfMobile);
+    }
   };
+  // 多重延迟策略覆盖各种场景：移动端/v-show切换/iframe嵌入
   setTimeout(doFit, 50);
   setTimeout(doFit, 150);
   setTimeout(doFit, 300);
   setTimeout(doFit, 600);
+  // 最后一次保底（覆盖极端慢速场景如低端手机首次加载）
   setTimeout(doFit, 1000);
 }
 
 onMounted(async () => {
+
+
+  // 调试信息：设备检测和容器状态
+  console.log('flowChart mounted, isMobileDevice:', isMobileDevice(), 'window.innerWidth:', window.innerWidth, 'container ref:', containerRef.value);
+  if (containerRef.value) {
+    console.log('container size:', containerRef.value.clientWidth, 'x', containerRef.value.clientHeight);
+  }
+  
   if (!appParams.value) await appStore.fetchTokenName();
   instanceId.value = appParams.value.id;
 
@@ -353,10 +369,22 @@ onMounted(async () => {
             if (isDark.value && lf.value) {
               applyDarkTheme(lf.value, true);
             }
-            if (isClassics(defJson.value.modelValue)) {
-              // 移动端/平板端：自适应显示全部节点；PC 端保持默认行为不干预
-              fitViewIfMobile();
-            }
+
+            // 调试：检查工具栏按钮是否存在
+            setTimeout(() => {
+              const toolbarRight = document.querySelector('.toolbar-right');
+              console.log('toolbarRight element:', toolbarRight);
+              if (toolbarRight) {
+                console.log('toolbarRight display:', window.getComputedStyle(toolbarRight).display);
+                const buttons = toolbarRight.querySelectorAll('.el-button');
+                console.log('button count:', buttons.length);
+                buttons.forEach((btn, idx) => {
+                  console.log(`button ${idx}:`, btn.innerHTML, 'visible:', btn.offsetParent !== null);
+                });
+              }
+            }, 100);
+            // 移动端/平板端：自适应显示全部节点；PC 端保持默认行为不干预
+            nextTick(() => { fitViewIfMobile(); });
             // 真机修复：延迟触发 resize 确保 SVG 画布正确渲染尺寸（仅移动端/平板端生效）
             scheduleMobileResize();
           }
@@ -590,10 +618,22 @@ html.dark .flow-name-badge,
     gap: 2px;
     margin-right: 0;
     flex-shrink: 0;
+    background-color: rgba(255,0,0,0.1) !important; /* 调试：确保容器可见 */
   }
 
   .toolbar-right :deep(.el-button) {
     padding: 5px 6px !important;
+    background-color: rgba(0, 255, 0, 0.2) !important; /* 调试：确保按钮可见 */
+    min-width: 36px !important;
+    min-height: 36px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    border: 2px solid red !important;
+    box-shadow: 0 0 5px red !important;
+    z-index: 9999 !important;
   }
 
   /* 第二行：节点状态演示，居中显示 */
