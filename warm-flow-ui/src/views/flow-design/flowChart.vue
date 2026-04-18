@@ -22,6 +22,13 @@
           <el-tooltip content="下载流程图" placement="bottom"><el-button size="small" icon="Download" @click="downLoad"/></el-tooltip>
         </div>
       </div>
+
+      <!-- 移动端/平板：第二行，节点状态演示独占一行 -->
+      <div class="chart-toolbar-mobile-status">
+        <el-tooltip content="未完成" placement="bottom"><el-button size="small" :style="`border: 1px solid rgb(${statusColors.notDone})`">未完成</el-button></el-tooltip>
+        <el-tooltip content="进行中" placement="bottom"><el-button size="small" :style="`background-color: rgb(${statusColors.todo}, 0.15); border: 1px solid rgb(${statusColors.todo})`">进行中</el-button></el-tooltip>
+        <el-tooltip content="已完成" placement="bottom"><el-button size="small" :style="`background-color: rgb(${statusColors.done}, 0.15); border: 1px solid rgb(${statusColors.done})`">已完成</el-button></el-tooltip>
+      </div>
     </el-header>
     <div class="containerView" ref="containerRef"></div>
 
@@ -545,33 +552,68 @@ html.dark .flow-name-badge,
 
 /* ========== 移动端/平板响应式 ========== */
 @media (max-width: 768px) {
+  /* 第一行：流程名称（左）+ 工具栏（右） */
   .chart-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    padding: 0px 8px;
     flex-wrap: nowrap;
+    gap: 24px;
+    padding-left: 0px;
   }
 
   .toolbar-left {
-    flex: none;
+    margin-left: 0px;
   }
 
+  .flow-name-badge {
+    background-color: transparent !important;
+    font-size: 12px !important;
+    padding: 3px 8px !important;
+  }
+
+  html.dark .flow-name-badge,
+  :global(html.dark) .flow-name-badge {
+    background-color: transparent !important;
+  }
+
+  /* 中间状态按钮隐藏（改由第二行显示） */
   .toolbar-center {
-    flex: 0 auto;
-    justify-content: center;
-    gap: 2px;
+    display: none;
   }
 
-  .toolbar-center :deep(.el-button) {
-    padding: 4px 6px;
-    font-size: 12px;
-  }
-
+  /* 右侧工具栏靠右（margin-left:auto 撑开间距） */
   .toolbar-right {
+    margin-left: auto;
     gap: 2px;
-    margin-right: 6px;
+    margin-right: 0;
+    flex-shrink: 0;
   }
 
-  /* 移动端/平板：隐藏状态按钮区域（仅 PC 端显示） */
-  .chart-toolbar-mobile-status {
-    display: none !important;
+  .toolbar-right :deep(.el-button) {
+    padding: 5px 6px !important;
   }
+
+  /* 第二行：节点状态演示，居中显示 */
+  .chart-toolbar-mobile-status {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 0;
+    border-top: 1px solid var(--el-border-color-lighter, #ebeef5);
+  }
+
+  .chart-toolbar-mobile-status :deep(.el-button) {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+}
+
+/* PC 端隐藏第二行状态按钮 */
+.chart-toolbar-mobile-status {
+  display: none;
 }
 </style>
