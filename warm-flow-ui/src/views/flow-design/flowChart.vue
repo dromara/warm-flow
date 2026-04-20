@@ -307,11 +307,6 @@ function scheduleMobileResize() {
 onMounted(async () => {
 
 
-  // 调试信息：设备检测和容器状态
-  console.log('flowChart mounted, isMobileDevice:', isMobileDevice(), 'window.innerWidth:', window.innerWidth, 'container ref:', containerRef.value);
-  if (containerRef.value) {
-    console.log('container size:', containerRef.value.clientWidth, 'x', containerRef.value.clientHeight);
-  }
   
   if (!appParams.value) await appStore.fetchTokenName();
   instanceId.value = appParams.value.id;
@@ -341,8 +336,11 @@ onMounted(async () => {
             lf.value = new LogicFlow({
               container: containerRef.value,
               plugins: [Snapshot],
-              isSilentMode: true,
               textEdit: false,
+              isSilentMode: true,   // 静默模式，可能影响节点渲染
+              snapToGrid: true,   // 是否开启网格吸附，开启后拖动节点会有以网格大小为步长移动
+              hideAnchors: !isClassics(defJson.value.modelValue),   // 是否隐藏节点的锚点，静默模式下默认隐藏。
+              adjustNodePosition: isClassics(defJson.value.modelValue),   // 是否允许拖动节点。
               hoverOutline: isClassics(defJson.value.modelValue),   // 鼠标 hover 的时候是否显示节点的外框。
               nodeSelectedOutline: isClassics(defJson.value.modelValue),    // 节点被选中时是否显示节点的外框。
               edgeSelectedOutline: isClassics(defJson.value.modelValue),    //	边被选中时是否显示边的外框。
@@ -351,16 +349,49 @@ onMounted(async () => {
                 visible: 'true' === appParams.value.showGrid,
                 type: 'dot',
                 config: {
-                  color: isDark.value ? "#404040" : "#ccc",
+                  color: isDark.value ? '#404040' : '#ccc',
                   thickness: 1,
                 },
+                background: {
+                  backgroundColor: isDark.value ? "#141414" : "#fff",
+                },
               },
-              background: {
-                backgroundColor: isDark.value ? "#141414" : "#fff",
-              },
+              keyboard: isClassics(defJson.value.modelValue) ? {
+                enabled: true,
+                shortcuts: [
+                  {
+                    keys: ["delete"],
+                    callback: () => {
+                      const elements = lf.value.getSelectElements(true);
+                      lf.value.clearSelectElements();
+                      elements.edges.forEach((edge) => lf.value.deleteEdge(edge.id));
+                      elements.nodes.forEach((node) => lf.value.deleteNode(node.id));
+                    },
+                  },
+                ],
+              } : {},
             });
             register();
             initEvent();
+            lf.value.setTheme({
+              snapline: {
+                stroke: '#1E90FF',
+                strokeWidth: 2,
+              },
+              nodeText: {
+                color: isDark.value ? '#e0e0e0' : '#303133',
+                fill: isDark.value ? '#e0e0e0' : '#303133',
+                fontSize: 13,
+                fontWeight: 500,
+              },
+              edgeText: {
+                fontSize: 13,
+                strokeWidth: 1,
+                background: {
+                  fill: isDark.value ? "#141414" : "#fff",
+                },
+              },
+            });
             // 画布触摸事件桥接：LogicFlow v2 不支持原生 touch 事件，
             // 将触摸事件转换为鼠标事件以支持手机/平板端拖动画布
             initTouchEventBridge();
@@ -370,19 +401,7 @@ onMounted(async () => {
               applyDarkTheme(lf.value, true);
             }
 
-            // 调试：检查工具栏按钮是否存在
-            setTimeout(() => {
-              const toolbarRight = document.querySelector('.toolbar-right');
-              console.log('toolbarRight element:', toolbarRight);
-              if (toolbarRight) {
-                console.log('toolbarRight display:', window.getComputedStyle(toolbarRight).display);
-                const buttons = toolbarRight.querySelectorAll('.el-button');
-                console.log('button count:', buttons.length);
-                buttons.forEach((btn, idx) => {
-                  console.log(`button ${idx}:`, btn.innerHTML, 'visible:', btn.offsetParent !== null);
-                });
-              }
-            }, 100);
+
             // 移动端/平板端：自适应显示全部节点；PC 端保持默认行为不干预
             nextTick(() => { fitViewIfMobile(); });
             // 真机修复：延迟触发 resize 确保 SVG 画布正确渲染尺寸（仅移动端/平板端生效）
@@ -425,52 +444,178 @@ function initTouchEventBridge() {
   }
 }
 
-function setupPointerEventCapture(el) {
-  let startX = 0, startY = 0;
-  let isDragging = false;
+function setupPointerEventCapture(el, options = {}) {
+  // --- 双击检测状态 ---
+  let tapCount = 0;
+  let lastTapTime = 0;
+  let doubleTapTimer = null;
   const DOUBLE_TAP_GAP = 350;
-  let tapCount = 0, lastTapTime = 0, doubleTapTimer = null;
 
-  function getEventOpts(e) {
-    return { clientX: e.clientX, clientY: e.clientY, button: 0, bubbles: true, cancelable: true, view: window };
+  // --- 长按右键菜单状态 ---
+  let longPressTimer = null;
+  let isLongPressFired = false;
+
+  // --- 拖动检测 ---
+  let startX = 0, startY = 0;
+  let startTime = 0;
+  let isDragging = false;
+  let lastMoveX = 0, lastMoveY = 0;
+
+  /**
+   * 统一获取坐标参数（用于构造 MouseEvent）
+   */
+  function getEventOpts(pointerEvent) {
+    return {
+      clientX: pointerEvent.clientX,
+      clientY: pointerEvent.clientY,
+      button: 0,
+      bubbles: true,
+      cancelable: true,
+      view: window,
+    };
   }
 
-  function resetTapState() {
-    tapCount = 0;
-    if (doubleTapTimer) { clearTimeout(doubleTapTimer); doubleTapTimer = null; }
-  }
-
+  // ========== pointerdown ==========
   el.addEventListener('pointerdown', (e) => {
+    // 只处理主指针（手指/鼠标左键/触控笔）
     if (e.pointerType === 'mouse' && e.button !== 0) return;
-    startX = e.clientX; startY = e.clientY; isDragging = false;
+
+    startX = e.clientX;
+    startY = e.clientY;
+    startTime = Date.now();
+    lastMoveX = e.clientX;
+    lastMoveY = e.clientY;
+    isDragging = false;
+    isLongPressFired = false;
+
+    // 仅对触摸事件阻止浏览器默认手势（滚动/缩放/选择）
+    // 鼠标事件不干预，让 LogicFlow 正常处理拖拽/双击
     if (e.pointerType === 'touch') {
       e.preventDefault();
+      // 主动分发一次 mousedown 确保 LogicFlow 收到
       el.dispatchEvent(new MouseEvent('mousedown', getEventOpts(e)));
     }
+
+    // 启动长按计时器（500ms 无显著移动则视为右键菜单，仅触摸有效）
+    longPressTimer = setTimeout(() => {
+      if (isDragging) return; // 已在拖动，取消长按
+      isLongPressFired = true;
+      el.dispatchEvent(new MouseEvent('contextmenu', getEventOpts(e)));
+    }, 500);
   }, { passive: false });
 
+  // ========== pointermove ==========
   el.addEventListener('pointermove', (e) => {
-    if (!isDragging && (Math.abs(e.clientX - startX) > 5 || Math.abs(e.clientY - startY) > 5)) isDragging = true;
-    if (isDragging && e.pointerType === 'touch') { e.preventDefault(); el.dispatchEvent(new MouseEvent('mousemove', getEventOpts(e))); }
-    else if (e.pointerType === 'touch') e.preventDefault();
+    const dx = Math.abs(e.clientX - startX);
+    const dy = Math.abs(e.clientY - startY);
+    const elapsed = Date.now() - startTime;
+
+    // 拖动检测：增加阈值到10像素，且触摸时间超过50ms才视为拖动（防止触摸抖动误判）
+    if (!isDragging && (dx > 10 || dy > 10) && elapsed > 50) {
+      // 首次超过阈值：进入拖动模式
+      isDragging = true;
+      if (longPressTimer) {
+        clearTimeout(longPressTimer);
+        longPressTimer = null;
+      }
+    }
+
+    if (isDragging && e.pointerType === 'touch') {
+      // 触摸拖动中：持续分发 mousemove 给 LogicFlow
+      e.preventDefault();
+      el.dispatchEvent(new MouseEvent('mousemove', getEventOpts(e)));
+      lastMoveX = e.clientX;
+      lastMoveY = e.clientY;
+    } else if (e.pointerType === 'touch') {
+      // 触摸微移动：阻止默认滚动行为
+      e.preventDefault();
+    }
   }, { passive: false });
 
-  function handleEnd(e) {
-    if (isDragging && e.pointerType === 'touch') { el.dispatchEvent(new MouseEvent('mouseup', getEventOpts(e))); resetTapState(); return; }
-    const now = Date.now(); tapCount++;
+  // ========== pointerup / pointercancel ==========
+  function handlePointerEnd(e) {
+    // 清理长按计时器
+    if (longPressTimer) {
+      clearTimeout(longPressTimer);
+      longPressTimer = null;
+    }
+
+    // 拖动结束：分发 mouseup 给 LogicFlow 完成拖拽链路
+    if (isDragging && e.pointerType === 'touch') {
+      el.dispatchEvent(new MouseEvent('mouseup', getEventOpts(e)));
+      resetTapState();
+      isDragging = false;
+      return;
+    }
+
+    // 长按已触发（右键菜单），不再处理 click/dblclick
+    if (isLongPressFired) {
+      resetTapState();
+      return;
+    }
+
+    // 非拖动触摸结束：先分发 mouseup 完成 mousedown-mouseup 对
+    if (e.pointerType === 'touch') {
+      el.dispatchEvent(new MouseEvent('mouseup', getEventOpts(e)));
+    }
+
+    // ---- 点击/双击检测（仅非拖动） ----
+    const now = Date.now();
+    tapCount++;
+
     if (tapCount === 1) {
-      lastTapTime = now; el.dispatchEvent(new MouseEvent('click', getEventOpts(e)));
-      doubleTapTimer = setTimeout(() => { tapCount = 0; doubleTapTimer = null; }, DOUBLE_TAP_GAP);
-    } else if (tapCount >= 2 && now - lastTapTime < DOUBLE_TAP_GAP) {
-      if (doubleTapTimer) { clearTimeout(doubleTapTimer); doubleTapTimer = null; }
-      tapCount = 0; el.dispatchEvent(new MouseEvent('dblclick', getEventOpts(e)));
+      // 第一次点击：立即触发 click
+      lastTapTime = now;
+      el.dispatchEvent(new MouseEvent('click', getEventOpts(e)));
+
+      // 设置双击等待窗口
+      doubleTapTimer = setTimeout(() => {
+        tapCount = 0;
+        doubleTapTimer = null;
+      }, DOUBLE_TAP_GAP);
+
+    } else if (tapCount >= 2 && (now - lastTapTime < DOUBLE_TAP_GAP)) {
+      // 第二次快速点击：触发 dblclick
+      if (doubleTapTimer) {
+        clearTimeout(doubleTapTimer);
+        doubleTapTimer = null;
+      }
+      tapCount = 0;
+      el.dispatchEvent(new MouseEvent('dblclick', getEventOpts(e)));
     } else {
-      tapCount = 1; lastTapTime = now; el.dispatchEvent(new MouseEvent('click', getEventOpts(e)));
-      doubleTapTimer = setTimeout(() => { tapCount = 0; doubleTapTimer = null; }, DOUBLE_TAP_GAP);
+      // 超出双击间隔，重新开始计数
+      tapCount = 1;
+      lastTapTime = now;
+      el.dispatchEvent(new MouseEvent('click', getEventOpts(e)));
+
+      doubleTapTimer = setTimeout(() => {
+        tapCount = 0;
+        doubleTapTimer = null;
+      }, DOUBLE_TAP_GAP);
     }
   }
-  el.addEventListener('pointerup', handleEnd);
-  el.addEventListener('pointercancel', () => { if (isDragging) { isDragging = false; } resetTapState(); });
+
+  el.addEventListener('pointerup', handlePointerEnd);
+  el.addEventListener('pointercancel', (e) => {
+    // 中断：如果正在拖动需要补发 mouseup
+    if (isDragging && e.pointerType === 'touch') {
+      el.dispatchEvent(new MouseEvent('mouseup', getEventOpts(e)));
+      isDragging = false;
+    }
+    if (longPressTimer) {
+      clearTimeout(longPressTimer);
+      longPressTimer = null;
+    }
+    resetTapState();
+  });
+
+  function resetTapState() {
+    if (doubleTapTimer) {
+      clearTimeout(doubleTapTimer);
+      doubleTapTimer = null;
+    }
+    tapCount = 0;
+  }
 }
 
 /**
@@ -514,6 +659,13 @@ onUnmounted(() => {
   width: 100%;
   flex: 1;
   min-height: 0;
+  /* 关键：禁止浏览器默认触摸手势，让 LogicFlow 接管画布拖动 */
+  touch-action: none;
+}
+
+.containerView :deep(.lf-canvas-overlay),
+.containerView :deep(.lf-graph) {
+  touch-action: none;
 }
 
 /* ========== 工具栏三栏布局 ========== */
@@ -618,22 +770,18 @@ html.dark .flow-name-badge,
     gap: 2px;
     margin-right: 0;
     flex-shrink: 0;
-    background-color: rgba(255,0,0,0.1) !important; /* 调试：确保容器可见 */
+
   }
 
   .toolbar-right :deep(.el-button) {
     padding: 5px 6px !important;
-    background-color: rgba(0, 255, 0, 0.2) !important; /* 调试：确保按钮可见 */
+
     min-width: 36px !important;
     min-height: 36px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    border: 2px solid red !important;
-    box-shadow: 0 0 5px red !important;
-    z-index: 9999 !important;
+
   }
 
   /* 第二行：节点状态演示，居中显示 */
