@@ -130,73 +130,39 @@ const register = () => {
 
 const initEvent = () => {
   const { eventCenter } = lf.value.graphModel;
+  
+  // 延迟关闭提示框，避免移动端 blank:click 与 node:click 竞态
+  let hideTooltipTimer = null;
+  
   eventCenter.on('node:click', (data) => {
+    // 清除待执行的隐藏操作（解决移动端竞态问题）
+    if (hideTooltipTimer) {
+      clearTimeout(hideTooltipTimer);
+      hideTooltipTimer = null;
+    }
+    
     const promptArr = data.data.properties.promptContent;
     if (promptArr) {
       visible.value = true;
 
       nextTick(() => {
         if (tooltipContainerRef.value) {
-          // // 构建 HTML 内容
           promptContent.value = data.data.properties.promptContent
-          // promptContent.value = {
-          //   dialogStyle: { /* 弹框样式 */
-          //     position: 'absolute', /* 绝对定位，基于最近的定位祖先元素（如 container） */
-          //     backgroundColor: "#fff", /* 背景色为白色 */
-          //     maxHeight: "300px",
-          //     overflowY: "auto",
-          //     border: "1px solid #ccc", /* 灰色边框 */
-          //     borderRadius: "4px", /* 添加圆角 */
-          //     boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)", /* 阴影效果（轻微立体感） */
-          //     padding: "8px 12px", /* 内边距（内容与边框的间距） */
-          //     fontSize: "14px", /* 字体大小 */
-          //     zIndex: 1000, /* 层级高于其他元素，确保提示框可见 */
-          //     maxWidth: "500px", /* 最大宽度限制，防止内容过长 */
-          //     color: "#333" /* 深色文字 */
-          //   },
-          //   info: [
-          //     {
-          //       prefix: "任务名称: ",
-          //       prefixStyle: {},
-          //       content: "组长审批",
-          //       contentStyle: {
-          //         border: '1px solid #d1e9ff',
-          //         backgroundColor: "#e8f4ff",
-          //         padding: "4px 8px",
-          //         borderRadius: "4px"
-          //       },
-          //       rowStyle: {
-          //         fontWeight: "bold",
-          //         margin: "0 0 6px 0",
-          //         padding: "0 0 8px 0",
-          //         borderBottom: "1px solid #ccc"
-          //       }
-          //     },
-          //     {
-          //       prefix: "负责人: ",
-          //       prefixStyle: { fontWeight: "bold" },
-          //       content: "李四",
-          //       contentStyle: {},
-          //       rowStyle: {}
-          //     },
-          //     {
-          //       prefix: "状态: ",
-          //       prefixStyle: { fontWeight: "bold" },
-          //       content: "进行中",
-          //       contentStyle: {},
-          //       rowStyle: {}
-          //     }
-          //   ]
-          // };
-          // 获取节点位置
-          tooltipPosition.value = { x: data.e.clientX, y: data.e.clientY - 80 };
+          // 兼容移动端：确保坐标有效（touch 事件转换后 clientX/Y 可能缺失）
+          const clientX = data.e?.clientX ?? data.e?.x ?? window.innerWidth / 2;
+          const clientY = data.e?.clientY ?? data.e?.y ?? window.innerHeight / 3;
+          tooltipPosition.value = { x: clientX, y: clientY - 80 };
         }
       });
     }
   });
 
   eventCenter.on('blank:click', () => {
-    visible.value = false;
+    // 延迟隐藏，给 node:click 时间取消
+    hideTooltipTimer = setTimeout(() => {
+      visible.value = false;
+      hideTooltipTimer = null;
+    }, 50);
   });
 };
 
@@ -337,7 +303,6 @@ onMounted(async () => {
               container: containerRef.value,
               plugins: [Snapshot],
               textEdit: false,
-              isSilentMode: true,   // 静默模式，可能影响节点渲染
               snapToGrid: true,   // 是否开启网格吸附，开启后拖动节点会有以网格大小为步长移动
               hideAnchors: !isClassics(defJson.value.modelValue),   // 是否隐藏节点的锚点，静默模式下默认隐藏。
               adjustNodePosition: isClassics(defJson.value.modelValue),   // 是否允许拖动节点。
@@ -461,13 +426,18 @@ function setupPointerEventCapture(el, options = {}) {
   let isDragging = false;
   let lastMoveX = 0, lastMoveY = 0;
 
+  // --- 移动端兼容：保存初始触摸坐标 ---
+  // pointerdown 时记录坐标，用于后续合成事件（解决 touchend 时坐标丢失问题）
+  let savedClientX = 0, savedClientY = 0;
+
   /**
    * 统一获取坐标参数（用于构造 MouseEvent）
+   * 优先使用当前事件坐标，fallback 到保存的初始触摸坐标
    */
   function getEventOpts(pointerEvent) {
     return {
-      clientX: pointerEvent.clientX,
-      clientY: pointerEvent.clientY,
+      clientX: pointerEvent.clientX || savedClientX,
+      clientY: pointerEvent.clientY || savedClientY,
       button: 0,
       bubbles: true,
       cancelable: true,
@@ -485,6 +455,11 @@ function setupPointerEventCapture(el, options = {}) {
     startTime = Date.now();
     lastMoveX = e.clientX;
     lastMoveY = e.clientY;
+    
+    // 【关键修复】保存初始触摸坐标，用于后续合成事件
+    savedClientX = e.clientX;
+    savedClientY = e.clientY;
+    
     isDragging = false;
     isLongPressFired = false;
 
@@ -510,8 +485,8 @@ function setupPointerEventCapture(el, options = {}) {
     const dy = Math.abs(e.clientY - startY);
     const elapsed = Date.now() - startTime;
 
-    // 拖动检测：增加阈值到10像素，且触摸时间超过50ms才视为拖动（防止触摸抖动误判）
-    if (!isDragging && (dx > 10 || dy > 10) && elapsed > 50) {
+    // 拖动检测：增加阈值到5像素（与index.vue保持一致），且触摸时间超过50ms才视为拖动（防止触摸抖动误判）
+    if (!isDragging && (dx > 5 || dy > 5) && elapsed > 50) {
       // 首次超过阈值：进入拖动模式
       isDragging = true;
       if (longPressTimer) {
@@ -552,11 +527,6 @@ function setupPointerEventCapture(el, options = {}) {
     if (isLongPressFired) {
       resetTapState();
       return;
-    }
-
-    // 非拖动触摸结束：先分发 mouseup 完成 mousedown-mouseup 对
-    if (e.pointerType === 'touch') {
-      el.dispatchEvent(new MouseEvent('mouseup', getEventOpts(e)));
     }
 
     // ---- 点击/双击检测（仅非拖动） ----
@@ -697,21 +667,9 @@ onUnmounted(() => {
 }
 .flow-name-badge {
   font-weight: 600;
-  border: 1px solid var(--wf-border-light, #d1e9ff);
-  background-color: var(--wf-primary-lighter, #e8f4ff);
   padding: 4px 12px;
-  border-radius: 4px;
   font-size: 14px;
-  color: var(--wf-primary, #409eff);
   white-space: nowrap;
-}
-
-/* 暗黑模式适配：流程名称 */
-html.dark .flow-name-badge,
-:global(html.dark) .flow-name-badge {
-  color: var(--wf-primary-light, #79bbff);
-  border-color: rgba(64, 158, 255, 0.2);
-  background-color: rgba(64, 158, 255, 0.08);
 }
 
 .log-text {
@@ -734,54 +692,50 @@ html.dark .flow-name-badge,
 @media (max-width: 768px) {
   /* 第一行：流程名称（左）+ 工具栏（右） */
   .chart-toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    width: 100%;
-    padding: 0px 8px;
-    flex-wrap: nowrap;
-    gap: 24px;
-    padding-left: 0px;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    width: 100% !important;
+    padding: 0px !important;
+    flex-wrap: nowrap !important;
+    gap: 6px !important;  /* 减少工具栏间距 */
+    margin-left: -8px;  /* 整体左移，使流程名称靠左边 */
   }
 
   .toolbar-left {
-    margin-left: 0px;
+    margin-left: 0px !important;
+    padding-left: 0px !important;
   }
 
+  /* 移动端流程名称：移除颜色和背景，纯文本显示 */
   .flow-name-badge {
-    background-color: transparent !important;
     font-size: 12px !important;
-    padding: 3px 8px !important;
+    padding: 2px 6px !important;
+    font-weight: normal !important;
   }
 
-  html.dark .flow-name-badge,
-  :global(html.dark) .flow-name-badge {
-    background-color: transparent !important;
-  }
+
 
   /* 中间状态按钮隐藏（改由第二行显示） */
   .toolbar-center {
-    display: none;
+    display: none !important;
   }
 
   /* 右侧工具栏靠右（margin-left:auto 撑开间距） */
   .toolbar-right {
-    margin-left: auto;
-    gap: 2px;
-    margin-right: 0;
-    flex-shrink: 0;
-
+    margin-left: auto !important;
+    gap: 4px !important;  /* 减少工具栏按钮间距 */
+    margin-right: 0px !important;
+    flex-shrink: 0 !important;
   }
 
   .toolbar-right :deep(.el-button) {
-    padding: 5px 6px !important;
-
-    min-width: 36px !important;
-    min-height: 36px !important;
+    padding: 4px 6px !important;
+    min-width: 30px !important;
+    min-height: 30px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-
   }
 
   /* 第二行：节点状态演示，居中显示 */
@@ -792,6 +746,12 @@ html.dark .flow-name-badge,
     gap: 6px;
     padding: 4px 0;
     border-top: 1px solid var(--el-border-color-lighter, #ebeef5);
+    
+    /* 暗黑模式边框 */
+    html.dark &,
+    :global(html.dark) & {
+      border-top-color: rgba(255, 255, 255, 0.1);
+    }
   }
 
   .chart-toolbar-mobile-status :deep(.el-button) {
