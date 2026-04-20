@@ -12,7 +12,7 @@
         </el-form-item>
 
         <el-form-item label="设计器模型" prop="modelValue">
-          <el-radio-group v-model="form.modelValue" :disabled="!!definitionId" @change="modelValueChange" class="radio-card-group">
+          <el-radio-group v-model="form.modelValue" :disabled="!!definitionId || isMobile" @change="modelValueChange" class="radio-card-group">
             <el-radio label="CLASSICS" class="radio-card">
               <div class="radio-card-content">
                 <div class="radio-card-icon">
@@ -37,6 +37,7 @@
             </el-radio>
           </el-radio-group>
           <div class="radio-card-warning">切换后重置节点，保存后不支持修改！</div>
+          <div class="radio-card-warning radio-card-warning--mobile" v-if="isMobile">移动端不支持选择模型，如果新增默认仿钉钉</div>
         </el-form-item>
 
         <el-form-item label="流程类别" prop="category">
@@ -143,7 +144,7 @@
 </template>
 
 <script setup name="BaseInfo">
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, watch } from "vue";
 import {listenerList} from "@/api/flow/definition.js";
 
 const { proxy } = getCurrentInstance();
@@ -158,6 +159,11 @@ function checkMobile() {
 onMounted(() => {
   checkMobile();
   window.addEventListener('resize', checkMobile);
+  // 移动端新增（无definitionId）时强制默认仿钉钉
+  if (isMobile.value && !props.definitionId) {
+    form.value.modelValue = 'MIMIC';
+    proxy.$emit('update:model-value');
+  }
 });
 
 onUnmounted(() => {
@@ -211,6 +217,10 @@ watch(() => props.logicJson, newValue => {
   if (newValue && Object.keys(newValue).length > 0) {
     Object.assign(form.value, newValue);
     setListenerData();
+    // 移动端新增时强制默认仿钉钉（覆盖logicJson中可能为空的值）
+    if (isMobile.value && !props.definitionId) {
+      form.value.modelValue = 'MIMIC';
+    }
   }
 });
 
@@ -1046,6 +1056,11 @@ getListenerList()
       margin-top: 4px;
       padding: 5px 8px;
       font-size: 11px;
+    }
+    .radio-card-warning--mobile {
+      background: var(--wf-primary-lighter, #f0f7ff);
+      border-color: rgba(64, 158, 255, 0.3);
+      color: var(--wf-primary, #409eff);
     }
   }
 
