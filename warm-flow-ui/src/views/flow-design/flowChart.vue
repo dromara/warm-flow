@@ -130,17 +130,17 @@ const register = () => {
 
 const initEvent = () => {
   const { eventCenter } = lf.value.graphModel;
-  
+
   // 延迟关闭提示框，避免移动端 blank:click 与 node:click 竞态
   let hideTooltipTimer = null;
-  
+
   eventCenter.on('node:click', (data) => {
     // 清除待执行的隐藏操作（解决移动端竞态问题）
     if (hideTooltipTimer) {
       clearTimeout(hideTooltipTimer);
       hideTooltipTimer = null;
     }
-    
+
     const promptArr = data.data.properties.promptContent;
     if (promptArr) {
       visible.value = true;
@@ -225,23 +225,21 @@ const zoomViewport = async (mode) => {
 /** 仅在移动端/平板执行 fitView，PC 端不干预（与 index.vue 保持一致） */
 function fitViewIfMobile() {
   if (!isMobileDevice() || !lf.value?.fitView) return;
-  
+
   // 确保容器已挂载且有有效尺寸
   const container = containerRef.value;
   if (!container || !container.clientWidth || !container.clientHeight) {
-    console.warn('fitViewIfMobile: 容器尺寸无效，跳过');
     return;
   }
-  
+
   // 确保图形模型已就绪
   const graphModel = lf.value.graphModel;
-  if (!graphModel || !graphModel.width || !graphModel.height || 
+  if (!graphModel || !graphModel.width || !graphModel.height ||
       graphModel.width <= 0 || graphModel.height <= 0 ||
       isNaN(graphModel.width) || isNaN(graphModel.height)) {
-    console.warn('fitViewIfMobile: 图形模型尺寸无效，跳过');
     return;
   }
-  
+
   lf.value.fitView(40, 20);
 }
 
@@ -273,7 +271,7 @@ function scheduleMobileResize() {
 onMounted(async () => {
 
 
-  
+
   if (!appParams.value) await appStore.fetchTokenName();
   instanceId.value = appParams.value.id;
 
@@ -455,11 +453,11 @@ function setupPointerEventCapture(el, options = {}) {
     startTime = Date.now();
     lastMoveX = e.clientX;
     lastMoveY = e.clientY;
-    
+
     // 【关键修复】保存初始触摸坐标，用于后续合成事件
     savedClientX = e.clientX;
     savedClientY = e.clientY;
-    
+
     isDragging = false;
     isLongPressFired = false;
 
@@ -746,7 +744,7 @@ onUnmounted(() => {
     gap: 6px;
     padding: 4px 0;
     border-top: 1px solid var(--el-border-color-lighter, #ebeef5);
-    
+
     /* 暗黑模式边框 */
     html.dark &,
     :global(html.dark) & {
