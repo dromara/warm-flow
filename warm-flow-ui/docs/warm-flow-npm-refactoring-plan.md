@@ -1,7 +1,7 @@
 # Warm-Flow UI NPM 包改造完整实施方案
 
 > **双模架构(Vue3 NPM + SPA) + SPA 渐进淘汰路线图**
-> 文档版本: v1.1 | 2026-04-20 | 修复 P1-P15 共 15 个问题
+> 文档版本: v1.2 | 2026-04-20 | 修复 P1-P21 共 21 个问题 (两轮审查)
 
 ---
 
@@ -1785,13 +1785,16 @@ export default defineConfig(({ mode, command }) => {
         ],
         output: {
           globals: {
+            // [P17修正] 仅保留 external 列表中的依赖的 globals 映射
             vue: 'Vue',
             'element-plus': 'ElementPlus',
             axios: 'axios',
             pinia: 'Pinia',
-            '@logicflow/core': 'LogicFlow',
-            '@logicflow/extension': 'LogicFlowExtension',
-            '@element-plus/icons-vue': 'ElementPlusIconsVue',
+            // 以下已移入 bundled, 不需要 UMD globals:
+            // '@logicflow/core': 'LogicFlow',          (bundled)
+            // '@logicflow/extension': 'LogicFlowExtension', (bundled)
+            // '@element-plus/icons-vue': 'ElementPlusIconsVue', (bundled)
+          },
           },
         },
       },
@@ -2040,6 +2043,70 @@ Phase C: 18 月后 ───────────────── 移除 SP
 | ESM 循环引用 | 中 | **已解决** (P3修正), config/request 之间使用 registerRequestInit 注册式解耦 | ✅ 已解决 |
 | 暗黑模式多实例冲突 | 中 | **已解决** (P8修正), sharedIsDark 单例 → 每调用独立 isDark ref + _instances 广播列表 | ✅ 已解决 |
 | CSS 独立文件提取失败 | 低 | Vite Library 模式自动提取 CSS (cssCodeSplit:false), 输出 dist-lib/style.css | ✅ 已确认可行 |
+| Element Plus 样式重复引入 | 低-中 | **[P21补充]** 见下方详细说明和应对方案 | ⚠ 需用户注意 |
+
+---
+
+#### [P21补充] Element Plus CSS 重复引入问题分析
+
+**背景:**
+
+| 模式 | Element Plus 样式引入方式 |
+|------|--------------------------|
+| **SPA** | `main.js` 中 `import 'element-plus/dist/index.css'` — 全量引入 (~300KB 未压缩) |
+| **NPM Library** | Vite 构建自动提取 → `dist-lib/style.css` (含 EP 子集样式) |
+
+**问题场景:**
+```
+宿主项目已安装 Element Plus 并在 main.js 中:
+  import 'element-plus/dist/index.css'    // 宿主: 引入完整 EP 样式
+
+又使用 warm-flow NPM 组件:
+  import '@warm-flow/vue-designer/style'   // warm-flow: 也包含 EP 样式子集
+                                              → 样式重复! 选择器覆盖/优先级冲突风险
+```
+
+**style.css 内容构成:**
+
+| 组成部分 | 预估体积 (gzipped) | 说明 |
+|----------|-------------------|------|
+| warm-flow 业务样式 | ~10-20KB | `.wf-*` / `--wf-*` 变量 / 设计器布局 |
+| Element Plus 子集 | ~30-50KB | 仅设计器用到的组件样式 (el-dialog, el-form, el-button, el-table 等) |
+| LogicFlow 内联样式 | ~5-10KB | 节点/边/工具栏样式 |
+
+> **总计**: ~45-80KB gzipped (不含完整 Element Plus)
+
+**推荐解决方案:**
+
+```javascript
+// 方案 A (推荐): 通过配置项控制是否注入 EP 样式
+import WarmFlowPlugin from '@warm-flow/vue-designer'
+
+app.use(WarmFlowPlugin, {
+  baseURL: '/api',
+  elementPlusInstalled: true,  // [P21] 告诉 warm-flow "宿主已有EP样式, 不要再注入"
+  getToken: () => localStorage.getItem('token')
+})
+// 此时 import '@warm-flow/vue-designer/style' 只导入业务样式, 不包含 EP 子集
+
+// 方案 B: 用户自行选择是否导入 style
+// 只导入 JS (不含样式), 由宿主确保 EP 样式已加载:
+import { WarmFlowDesigner } from '@warm-flow/vue-designer'
+// 不 import style → 用户负责确保 EP 样式已存在
+```
+
+**Vite 配置联动 (实现 elementPlusInstalled):**
+
+```diff
+  // vite.config.js (Library 构建)
++ // 根据 .env.library 中 ELEMENT_PLUS_BUNDLED 变量决定
++ const bundleEpStyle = process.env.ELEMENT_PLUS_BUNDLED !== 'false'   // 默认打包
++
+  build: {
+    lib: { ... },
++   cssExtract: !bundleEpStyle,   // false = 打入 style.css; true = 不提取(由宿主提供)
+  }
+```
 
 ### 7.3 性能预期
 
@@ -2061,36 +2128,65 @@ Phase C: 18 月后 ───────────────── 移除 SP
 
 ---
 
-## 附录 A: v1.0 → v1.1 修订记录
+## 附录 A: 修订记录
 
-> **修订日期**: 2026-04-20 | **审查人**: AI Code Review | **状态**: 15 项问题已全部修复
+### v1.0 → v1.1 (2026-04-20) — 15 项问题修复
 
-### P0 阻塞级 (会导致构建失败或运行时错误) — 已修复 ✅
+> **审查人**: AI Code Review | **状态**: P1-P15 全部已修复 ✅
 
-| 编号 | 问题 | 修复内容 |
-|------|------|---------|
-| **P1** | C11 SVG 图标方案: `import('virtual:svg-icons-register')` 运行时必然失败 | 完全重写为 svg-inline 插件方案 (Library 模式将 SVG 转 data URI 内联) + SvgIcon fallback 双策略 |
-| **P2** | request.js 示例代码: `getToken(tokenNames[i]] )` 多了一个 `]`, 语法错误 | 删除多余 `]` |
-| **P3** | config.js 使用 `require('./request')` — 项目 `"type": "module"` 下不可用 | 改为注册式解耦: config 暴露 `registerRequestInit()`, request.js 加载时反向注册初始化函数 |
-| **P4** | package.json `build:lib`: `vite mode library` 命令不存在, 且引用不存在的 `vite.lib.config.js` | 改为 `vite build --mode library`, 使用同一份 vite.config.js 通过 `env.BUILD_MODE` 切换 |
-
-### P1 重要级 (npm 发布后使用者会遇到的问题) — 已修复 ✅
+#### P0 阻塞级 (4项)
 
 | 编号 | 问题 | 修复内容 |
 |------|------|---------|
-| **P5** | dependencies 与 peerDependencies 冲突: vue/element-plus/pinia/axios 同时出现在两者中 | 彻底分离: dependencies 仅保留 bundled (@form-create/*, @logicflow/*, file-saver), peerDependencies 包含 vue/element-plus/pinia/axios; vue-router 移除; 新增 peerDependenciesMeta |
-| **P6** | CSS 独立文件导出方案缺失: Vite cssCodeSplit:false 是否输出独立 .css 不明确 | 补充说明: Vite Library 模式下 CSS 自动提取为独立文件 dist-lib/style.css |
-| **P7** | FcDesigner 全局注册未处理: main.js 中 `app.use(FcDesigner)` 在 Library 模式下无等效方案 | 新增 3.10.5 节: FcDesigner 作为 bundled 依赖 + 包装组件内 defineAsyncComponent 局部注册 |
-| **P8** | useDark `sharedIsDark` 模块单例: 页面放两个设计器时暗黑模式互相覆盖 | 重写 useDark: sharedIsDark 单例 → 每调用返回独立 isDark ref; SPA 用 _instances 回调列表实现多实例同步 |
+| **P1** | C11 SVG 图标: `import('virtual:svg-icons-register')` 运行时必崩 | svg-inline 插件方案 (Library 模式 SVG→data URI 内联 + fallback) |
+| **P2** | `getToken(tokenNames[i]] )` 多余 `]`, 语法错误 | 删除多余字符 |
+| **P3** | config.js 使用 ESM 不支持的 `require()` | 注册式解耦: `registerRequestInit()` 模式 |
+| **P4** | `vite mode library` 命令不存在 | 改为 `vite build --mode library` |
 
-### P2 完善级 (文档不全或有误导) — 已修复 ✅
+#### P1 重要级 (4项)
 
 | 编号 | 问题 | 修复内容 |
 |------|------|---------|
-| **P9** | App.vue 改造只有标题 "26→35行" 无具体实现代码 | 新增完整改造前后代码对比 + 逐行变更清单 |
-| **P10** | install.js 只有标题 "~30行" 无任何实现代码 | 新增完整的 ~60 行 install 函数实现, 含 app.use() 全局组件注册逻辑 |
-| **P11** | form-design/index.vue 和 formCreate.vue 只写了 "微调" | 补充具体的 diff 改造代码 (defineProps/close双模式/fetchTokenName参数注入/body overflow条件化) |
-| **P12** | WC 部分与实施计划完全脱节: 标题说 WC, 但无任何实施 Phase | 目标矩阵和 2.2 节加 Phase 2 标注; 明确声明本文档仅覆盖 Vue3 NPM + SPA 双模 |
-| **P13** | 触摸事件行号硬编码 L553-L750/L380-L587 易过期 | 改为关键字搜索定位方式 (函数名/变量名搜索), 附验证方法 |
-| **P14** | 文档中混用 `.ts` 和 `.js` 扩展名, 项目实际是纯 JS | 架构图中的 `.ts` 已确认为 `.js` (无需修改); 其余位置已统一为 `.js` |
-| **P15** | 性能表数据偏乐观: "~500KB gzipped ~130KB" 未考虑 LogicFlow 自身体积 | 修正为 "~250-400KB gzipped", 分解 JS 主包/总包, 注明 LogicFlow 约 120-150KB |
+| **P5** | dependencies/peerDependencies 冲突 | 彻底分离 bundled vs peerDep |
+| **P6** | CSS 独立文件导出方案缺失 | 补充 Vite Library 自动提取说明 |
+| **P7** | FcDesigner 全局注册未处理 | 新增 3.10.5 节 (bundled + defineAsyncComponent) |
+| **P8** | useDark 共享单例多实例冲突 | 重写为每实例独立 isDark ref + _instances 广播 |
+
+#### P2 完善级 (7项)
+
+| 编号 | 问题 | 修复内容 |
+|------|------|---------|
+| **P9** | App.vue 无实现代码 | 新增完整改造前后对比 (~35行) |
+| **P10** | install.js 无实现代码 | 新增完整 ~60 行 Vue Plugin 安装函数 |
+| **P11** | form-design 只有 "微调" | 补充 index.vue/formCreate.vue 具体 diff |
+| **P12** | WC 与实施计划脱节 | 加 Phase 2 标注, 明确本文档范围 |
+| **P13** | 触摸事件硬编码行号 | 改为关键字搜索定位方式 |
+| **P14** | .ts/.js 扩展名混用 | 已统一为 .js |
+| **P15** | 性能数据偏乐观 | 修正为 ~250-400KB gzipped |
+
+---
+
+### v1.1 → v1.2 (2026-04-20) — 二审 6 项问题修复
+
+> **审查人**: AI Code Review (第二轮) | **状态**: P16-P21 全部已修复 ✅
+
+#### 阻塞级 (2项 — 会导致运行时错误)
+
+| 编号 | 问题 | 修复内容 |
+|------|------|---------|
+| **P16** | useDark watch 回调引用已删除的 `sharedIsDark` 变量 — P8 遗漏 | 第821行 `sharedIsDark.value = val` → `isDark.value = val` |
+| **P17** | vite.config.js external 含 LogicFlow/icons-vue, 与 P5 bundled 决策矛盾 | 从 external/globals 中移除所有 bundled 依赖; 新增分类注释说明 |
+
+#### 重要级 (1项)
+
+| 编号 | 问题 | 修复内容 |
+|------|------|---------|
+| **P18** | svg-inline 插件用 `process.cwd()` 定位图标目录不可靠 | 增加 `viteRootDir` 参数 + `_rootDir` 变量; `resolve(process.cwd(),...)` → `resolve(_rootDir,...)` |
+
+#### 完善级 (3项)
+
+| 编号 | 问题 | 修复内容 |
+|------|------|---------|
+| **P19** | Phase 5 表格仍用硬编码行号 (L245/L270 等10+个), 与 P13 矛盾 | 移除全部行号, 统一为 ✅ + 搜索关键字定位 |
+| **P20** | 新增文件清单遗漏 `vite/plugins/svg-inline.js` (~35行) | 在 N3 后新增 N3.5 条目 |
+| **P21** | Element Plus CSS 重复引入问题未讨论 | 新增完整分析: 场景/构成/方案A(配置控制)/方案B(自管)/Vite联动 |
