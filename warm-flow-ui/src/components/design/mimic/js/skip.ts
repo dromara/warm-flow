@@ -1,7 +1,6 @@
 import {setCommonStyle} from "../../common/js/tool";
-import {CurvedEdge, CurvedEdgeModel} from "@logicflow/extension";
+import {CurvedEdge, CurvedEdgeModel, getCurvedEdgePath} from "@logicflow/extension";
 import {h} from "@logicflow/core";
-import {getCurvedEdgePath} from "@logicflow/extension/src/materials/curved-edge";
 
 class SkipModel extends CurvedEdgeModel  {
 

@@ -128,7 +128,7 @@ async function validate() {
 // 打开选择弹窗
 function openSelectDialog(code) {
     itemCode.value = code
-    userVisible = true;
+    userVisible.value = true;
 }
 
 
