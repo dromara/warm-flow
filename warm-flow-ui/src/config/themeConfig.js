@@ -4,7 +4,7 @@
  * Single Source of Truth for all theme colors (light + dark).
  * - CSS 变量 (--wf-*) 用于静态样式
  * - JS 运行时颜色用于 LogicFlow 画布 / 动态内联样式 / computed 样式
- * - 外部可通过 useDark().setDarkColors(customColors) 覆盖暗黑模式颜色
+ * - 外部可通过 URL 参数 darkColors=#111827 替换暗黑底色（8 个字段）
  *
  * @module themeConfig
  */
@@ -88,80 +88,107 @@ export const lightColors = {
 // ============================================================
 export const darkColors = {
   // ---- 基础调色板 ----
-  primary: '#409eff',
-  primaryDark: '#2b7de9',
-  primaryLight: '#1a3a5c',
-  primaryLighter: '#1a2e4a',
-  success: '#67c23a',
-  warning: '#f56c6c',           // 暗黑下偏红
-  danger: '#f56c6c',
+  primary: '#409eff',            // 主题色（按钮/链接/高亮）
+  primaryDark: '#2b7de9',        // 主题色深色态（hover/active）
+  primaryLight: '#1a3a5c',       // 主题色浅色背景（选中态/标签）
+  primaryLighter: '#1a2e4a',     // 主题色更浅背景（表头/次要区域）
+  success: '#67c23a',            // 成功状态绿
+  warning: '#f56c6c',            // 警告/提示（暗黑下偏红，增强警示感）
+  danger: '#f56c6c',             // 危险/错误红
 
   // ---- 文字颜色 ----
-  textPrimary: '#e0e0e0',
-  textRegular: '#b0b0b0',
-  textSecondary: '#888888',
-  textPlaceholder: '#5a5a5a',
+  textPrimary: '#e0e0e0',        // 主文字（标题/正文）
+  textRegular: '#b0b0b0',        // 常规文字（说明/描述）
+  textSecondary: '#888888',      // 次要文字（辅助信息/占位符）
+  textPlaceholder: '#5a5a5a',    // 输入框 placeholder 灰
 
   // ---- 边框颜色 ----
-  borderColor: '#333333',
-  borderLight: '#404040',
-  borderLighter: '#4a4a4a',
+  borderColor: '#333333',        // 主边框（输入框/面板边框）
+  borderLight: '#404040',        // 浅边框（分割线/次要边框）
+  borderLighter: '#4a4a4a',      // 更浅边框（卡片内部分隔）
 
   // ---- 背景颜色 ----
-  bgColor: '#141414',
-  bgWhite: '#1f1f1f',
-  bgPage: '#141414',            // 页面/画布背景
-  bgContainer: '#141414',       // 容器背景
+  bgColor: '#141414',            // 全局底色（body/页面主背景）
+  bgWhite: '#141414',            // 白色替代（卡片/弹窗背景）
+  bgPage: '#141414',             // 页面/画布背景（LogicFlow 画布底色）
+  bgContainer: '#141414',        // 容器背景（侧栏/面板容器）
 
   // ---- LogicFlow 专用 ----
-  gridColor: '#404040',
-  nodeTextColor: '#e0e0e0',
-  nodeTextFill: '#e0e0e0',
-  edgeTextBg: '#141414',
-  snaplineStroke: '#1E90FF',
+  gridColor: '#404040',          // 画布网格线颜色
+  nodeTextColor: '#e0e0e0',      // 节点内文字颜色
+  nodeTextFill: '#e0e0e0',       // 节点文字填充色（SVG text fill）
+  edgeTextBg: '#141414',         // 连线文字背景（避免遮挡线段）
+  snaplineStroke: '#1E90FF',     // 对齐辅助线颜色（拖拽对齐时显示）
 
-  // ---- 特殊组件 ----
-  tooltipBg: '#1f1f1f',
-  tooltipBorder: '#333333',
-  tooltipShadow: '0 2px 12px rgba(0, 0, 0, 0.4)',
-  tooltipColor: '#e0e0e0',
+  // ---- 特殊组件（Tooltip / Popover） ----
+  tooltipBg: '#1f1f1f',          // 弹出层背景
+  tooltipBorder: '#333333',      // 弹出层边框
+  tooltipShadow: '0 2px 12px rgba(0, 0, 0, 0.4)',  // 弹出层阴影（暗黑加深）
+  tooltipColor: '#e0e0e0',       // 弹出层文字颜色
 
   // ---- 下载快照 ----
-  snapshotBg: '#141414',
+  snapshotBg: '#141414',         // 导出快照图片的背景色
 
   // ---- 侧边栏 ----
-  sidebarBg: 'rgba(30, 30, 35, 0.92)',
-  sidebarIconBg: '#222',
+  sidebarBg: '#141414',   // 左侧属性栏背景（半透明毛玻璃效果）
+  sidebarIconBg: '#141414',                   // 侧边栏图标按钮背景
 
-  // ---- 步骤标签 ----
-  stepTabColor: '#b0b0b0',
-  stepTabActiveBgStart: '#3b82f6',
-  stepTabActiveBgEnd: '#2563eb',
+  // ---- 步骤标签（流程设计步骤条） ----
+  stepTabColor: '#b0b0b0',                 // 未激活步骤文字颜色
+  stepTabActiveBgStart: '#3b82f6',         // 当前步骤渐变起始色
+  stepTabActiveBgEnd: '#2563eb',           // 当前步骤渐变结束色
 
   // ---- 保存按钮（暗黑降低饱和度） ----
-  saveBtnBgStart: '#0d9488',
-  saveBtnBgEnd: '#0f766e',
-  saveBtnShadow: 'rgba(13, 148, 136, 0.25)',
+  saveBtnBgStart: '#0d9488',               // 保存按钮渐变起始色（青绿色）
+  saveBtnBgEnd: '#0f766e',                 // 保存按钮渐变结束色
+  saveBtnShadow: 'rgba(13, 148, 136, 0.25)',  // 保存按钮阴影
 
   // ---- 流程名称 ----
-  flowNameColor: '#e0e0e0',
+  flowNameColor: '#e0e0e0',                // 流程名称标题文字颜色
 
   // ---- 工具栏分隔线 ----
-  toolbarBorder: '#333333',
+  toolbarBorder: '#333333',                // 顶部工具栏底部边框
 
   // ---- 滚动条 ----
-  scrollbarThumb: '#4a4a4a',
-  scrollbarThumbHover: '#606060',
+  scrollbarThumb: '#4a4a4a',              // 滚动块颜色
+  scrollbarThumbHover: '#606060',         // 滚动块 hover 颜色
 
-  // ---- Drawer ----
-  drawerDisabledBg: '#2a2d35',
+  // ---- Drawer 抽屉 ----
+  drawerDisabledBg: '#2a2d35',            // 抽屉禁用态背景色（已发布不可编辑时）
 }
 
 /**
- * 用户自定义覆盖（运行时可变）
- * 格式：{ dark: { ...partialColors }, light: { ...partialColors } }
+ * 暗黑模式默认底色，darkColors 参数传入新值时替换以下 8 个字段：
+ *   bgColor / bgWhite / bgPage / bgContainer / edgeTextBg / snapshotBg / sidebarBg / sidebarIconBg
  */
-let userOverride = { dark: {}, light: {} }
+export const DARK_BASE_COLOR = '#141414'
+
+/** 需要被 darkColors 参数替换的字段列表 */
+export const DARK_BASE_FIELDS = [
+  'bgColor', 'bgWhite', 'bgPage', 'bgContainer',
+  'edgeTextBg', 'snapshotBg', 'sidebarBg', 'sidebarIconBg',
+]
+
+/**
+ * 根据新底色生成覆盖对象
+ * 将 8 个暗黑底色字段全部替换为新颜色
+ *
+ * @param {string} newColor 新的底色值，如 '#111827'
+ * @returns {Object} 包含 8 个字段的覆盖对象
+ */
+export function replaceDarkBaseColor(newColor) {
+  if (!newColor || typeof newColor !== 'string') return {}
+  const override = {}
+  for (const key of DARK_BASE_FIELDS) {
+    override[key] = newColor
+  }
+  return override
+}
+
+/**
+ * 用户自定义覆盖（运行时可变，仅暗黑模式）
+ */
+let userOverride = {}
 
 /**
  * 获取合并后的主题颜色
@@ -171,45 +198,24 @@ let userOverride = { dark: {}, light: {} }
  */
 export function getThemeColors(mode, skipMerge = false) {
   const base = mode === 'dark' ? { ...darkColors } : { ...lightColors }
-  if (skipMerge || !userOverride || !userOverride[mode]) return base
-  return { ...base, ...userOverride[mode] }
+  if (skipMerge || mode !== 'dark' || !userOverride) return base
+  return { ...base, ...userOverride }
 }
 
 /**
- * 设置外部传入的主题颜色（部分或全部覆盖）
- * 支持仅传暗黑模式颜色（最常用场景），也可同时传亮色
- *
- * @param {{dark?: Object, light?: Object}} customColors
- *
- * @example
- *   // 仅覆盖暗黑模式的几个关键颜色
- *   setCustomThemeColors({
- *     dark: {
- *       bgColor: '#0a0a0a',
- *       bgWhite: '#1a1a1a',
- *       textPrimary: '#cccccc',
- *     }
- *   })
- *
- * @example
- *   // 完全替换所有暗黑颜色
- *   setCustomThemeColors({ dark: myFullDarkPalette })
+ * 设置外部传入的主题颜色覆盖（由 replaceDarkBaseColor 生成）
+ * @param {{dark?: Object}} customColors 覆盖对象，通常为 { dark: replaceDarkBaseColor('#111827') }
  */
 export function setCustomThemeColors(customColors) {
-  if (!customColors) return
-  if (customColors.dark) {
-    userOverride.dark = { ...userOverride.dark, ...customColors.dark }
-  }
-  if (customColors.light) {
-    userOverride.light = { ...userOverride.light, ...customColors.light }
-  }
+  if (!customColors?.dark) return
+  userOverride = { ...userOverride, ...customColors.dark }
 }
 
 /**
  * 重置用户覆盖为空（恢复全部默认值）
  */
 export function resetThemeColors() {
-  userOverride = { dark: {}, light: {} }
+  userOverride = {}
 }
 
 /**
@@ -288,8 +294,8 @@ export const cssVarMap = {
  * @param {Object} [colors] 颜色对象，不传则自动从 getThemeColors 获取
  *
  * @example
- *   setCustomThemeColors({ dark: { bgColor: '#0a0a0a' } })
- *   applyCssVariables('dark')   // 立即同步到 CSS
+ *   replaceDarkBaseColor('#111827')  // 生成覆盖对象
+ *   applyCssVariables('dark')        // 立即同步到 CSS
  */
 export function applyCssVariables(mode, colors) {
   const root = document.documentElement

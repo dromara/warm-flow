@@ -77,7 +77,7 @@ function handleDragInNode(item) {
   top: 70px;
   width: 76px;
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--wf-sidebar-bg, rgba(255, 255, 255, 0.95));
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--wf-border-light, rgba(226, 232, 240, 0.8));
@@ -230,7 +230,7 @@ function handleDragInNode(item) {
 
 /* ====== 暗黑模式（统一走 wf-* 变量） ====== */
 html.dark .diagram-sidebar {
-  background: rgba(30, 30, 35, 0.92);
+  background: var(--wf-sidebar-bg, rgba(30, 30, 35, 0.92));
   border-color: var(--wf-border-color, rgba(60, 60, 70, 0.6));
   box-shadow:
     0 4px 24px rgba(0, 0, 0, 0.3),

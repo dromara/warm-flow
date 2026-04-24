@@ -6,6 +6,7 @@ import {
   resetThemeColors,
   getUserOverride,
   applyCssVariables,
+  replaceDarkBaseColor,
   lightColors,
   darkColors,
 } from '@/config/themeConfig'
@@ -37,7 +38,7 @@ export function useDark() {
   /** 便捷：亮色模式颜色（常量引用） */
   const light = lightColors
 
-  /** 从 URL 参数初始化主题（支持 darkColors/lightColors JSON 覆盖） */
+  /** 从 URL 参数初始化主题（支持 darkColors 底色替换） */
   function initFromUrl() {
     const params = appParams.value
     const urlTheme = params?.theme
@@ -52,30 +53,25 @@ export function useDark() {
       document.documentElement.classList.remove('dark')
     }
 
-    // 解析外部传入的自定义颜色（JSON 字符串），无自定义时也注入默认颜色到 CSS 变量
+    // 解析 darkColors 参数（如 darkColors=111827），替换 8 个暗黑底色字段
     _applyUrlColorParams(params, mode)
     // 始终同步 CSS 变量（SSOT：JS 颜色 → DOM CSS 变量）
     applyCssVariables(mode)
   }
 
   /**
-   * 解析 URL 中的 darkColors / lightColors JSON 参数并应用
+   * 解析 URL 中的 darkColors 参数
+   * 格式：darkColors=111827（不带#号），替换 8 个底色字段
    * @private
    */
   function _applyUrlColorParams(params, mode) {
-    const colorParam = params?.[mode === 'dark' ? 'darkColors' : 'lightColors']
-    if (!colorParam) return
+    const colorParam = params?.darkColors
+    if (!colorParam || mode !== 'dark') return
 
-    let parsed
-    try {
-      parsed = typeof colorParam === 'string' ? JSON.parse(colorParam) : colorParam
-    } catch (e) {
-      console.warn(`[useDark] Invalid ${mode}Colors param:`, colorParam)
-      return
-    }
-
-    if (parsed && typeof parsed === 'object') {
-      setCustomThemeColors({ [mode]: parsed })
+    // 接受不带#号的十六进制颜色值，如 111827
+    if (typeof colorParam === 'string' && /^[0-9a-fA-F]{3,8}$/.test(colorParam)) {
+      const hex = '#' + colorParam
+      setCustomThemeColors({ dark: replaceDarkBaseColor(hex) })
       applyCssVariables(mode)
     }
   }
@@ -100,16 +96,19 @@ export function useDark() {
   }
 
   /**
-   * 处理 postMessage 中附带的自定义颜色
+   * 处理 postMessage 中附带的 darkColors 参数
+   * 格式：darkColors: '111827'（不带#号），替换 8 个底色字段
    * @private
    */
   function _applyMessageColorParams(data, mode) {
-    // 支持 data.darkColors / data.lightColors 或 data.colors（兼容两种写法）
-    const customColors = data[mode + 'Colors'] || data.colors
-    if (!customColors || typeof customColors !== 'object') return
+    const colorValue = data.darkColors
+    if (!colorValue || mode !== 'dark') return
 
-    setCustomThemeColors({ [mode]: customColors })
-    applyCssVariables(mode)
+    if (typeof colorValue === 'string' && /^[0-9a-fA-F]{3,8}$/.test(colorValue)) {
+      const hex = '#' + colorValue
+      setCustomThemeColors({ dark: replaceDarkBaseColor(hex) })
+      applyCssVariables(mode)
+    }
   }
 
   /**

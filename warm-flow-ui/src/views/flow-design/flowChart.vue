@@ -99,6 +99,11 @@ const headerStyle = computed(() => {
     right: "50px",
     zIndex: "2",
     height: "auto",
+    backgroundColor: "var(--wf-bg-white, #fff)",
+    borderBottom: "1px solid var(--wf-border-light, #e2e8f0)",
+    borderRadius: "6px",
+    margin: "5px",
+    color: "var(--wf-text-primary, #303133)",
   };
 });
 
@@ -686,6 +691,96 @@ onUnmounted(() => {
   }
 }
 
+/* ========== 暗黑模式：工具栏适配（与 index.vue 保持一致） ========== */
+:global(html.dark) .chart-toolbar {
+  background-color: var(--wf-bg-white);
+}
+
+/* 暗黑模式：中间状态按钮（无描边，透明背景，文字+icon 白色） */
+:global(html.dark) .toolbar-center :deep(.el-button) {
+  --el-button-text-color: #ffffff;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-bg-color: transparent;
+  --el-button-hover-bg-color: transparent;
+  --el-button-border-color: transparent;
+  color: #ffffff;
+  background-color: transparent;
+  border-color: transparent;
+
+  /* icon 强制白色 */
+  .el-icon,
+  svg,
+  i {
+    color: #ffffff !important;
+  }
+
+  &:hover,
+  &:focus {
+    color: var(--wf-primary);
+    background-color: rgba(64, 158, 255, 0.08);
+
+    .el-icon,
+    svg,
+    i {
+      color: var(--wf-primary) !important;
+    }
+  }
+}
+
+/* 暗黑模式：右侧工具按钮（细边框 + icon 白色） */
+:global(html.dark) .toolbar-right :deep(.el-button) {
+  --el-button-bg-color: var(--wf-bg-color);
+  --el-button-text-color: #ffffff;
+  --el-border-color: var(--wf-border-color);
+  color: #ffffff;
+  background-color: transparent;
+  border-color: var(--wf-border-color);
+
+  /* icon 强制白色 */
+  .el-icon,
+  svg,
+  i {
+    color: #ffffff !important;
+  }
+
+  &:hover,
+  &:focus {
+    color: var(--wf-primary);
+    background-color: rgba(64, 158, 255, 0.12);
+    border-color: var(--wf-primary);
+
+    .el-icon,
+    svg,
+    i {
+      color: var(--wf-primary) !important;
+    }
+  }
+}
+
+/* 暗黑模式：tooltip 提示信息（弹出层白色文字 + 深色背景） */
+:global(html.dark) .chart-toolbar .el-popper.is-light {
+  background-color: var(--wf-tooltip-bg, #1f1f1f) !important;
+  border-color: var(--wf-tooltip-border, #333333) !important;
+  color: #ffffff !important;
+
+  .el-popper__arrow::before {
+    background-color: var(--wf-tooltip-bg, #1f1f1f) !important;
+    border-color: var(--wf-tooltip-border, #333333) !important;
+  }
+}
+
+/* 暗黑模式：流程名称徽章 */
+:global(html.dark) .flow-name-badge {
+  color: #ffffff;
+}
+
+/* 暗黑模式：el-header 背景色 */
+:global(html.dark) .flow-chart-root :deep(.el-header) {
+  --el-bg-color: var(--wf-bg-white);
+  --el-fill-color-blank: var(--wf-bg-white);
+  background-color: var(--wf-bg-white);
+}
+
 /* ========== 移动端/平板响应式 ========== */
 @media (max-width: 768px) {
   /* 第一行：流程名称（左）+ 工具栏（右） */
@@ -755,6 +850,13 @@ onUnmounted(() => {
   .chart-toolbar-mobile-status :deep(.el-button) {
     font-size: 11px;
     padding: 3px 8px;
+
+    /* 暗黑模式：移动端状态按钮 */
+    html.dark &,
+    :global(html.dark) & {
+      --el-button-text-color: #ffffff;
+      color: #ffffff;
+    }
   }
 }
 
