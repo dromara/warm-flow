@@ -87,7 +87,7 @@ const statusColors = ref({
 });
 
 // 使用统一的暗黑模式 composable
-const { isDark, initFromUrl, applyDarkTheme, setupMessageListener, cleanupMessageListener } = useDark();
+const { isDark, themeColors, initFromUrl, applyDarkTheme, setupMessageListener, cleanupMessageListener } = useDark();
 const headerDiv = computed(() => {
     return {
         backgroundColor: "var(--wf-bg-white, #fff)",
@@ -312,11 +312,11 @@ onMounted(async () => {
                 visible: 'true' === appParams.value.showGrid,
                 type: 'dot',
                 config: {
-                  color: isDark.value ? '#404040' : '#ccc',
+                  color: themeColors.value.gridColor,
                   thickness: 1,
                 },
                 background: {
-                  backgroundColor: isDark.value ? "#141414" : "#fff",
+                  backgroundColor: themeColors.value.bgPage,
                 },
               },
               keyboard: isClassics(defJson.value.modelValue) ? {
@@ -338,12 +338,12 @@ onMounted(async () => {
             initEvent();
             lf.value.setTheme({
               snapline: {
-                stroke: '#1E90FF',
+                stroke: themeColors.value.snaplineStroke,
                 strokeWidth: 2,
               },
               nodeText: {
-                color: isDark.value ? '#e0e0e0' : '#303133',
-                fill: isDark.value ? '#e0e0e0' : '#303133',
+                color: themeColors.value.nodeTextColor,
+                fill: themeColors.value.nodeTextFill,
                 fontSize: 13,
                 fontWeight: 500,
               },
@@ -351,7 +351,7 @@ onMounted(async () => {
                 fontSize: 13,
                 strokeWidth: 1,
                 background: {
-                  fill: isDark.value ? "#141414" : "#fff",
+                  fill: themeColors.value.edgeTextBg,
                 },
               },
             });
@@ -592,7 +592,7 @@ function setupPointerEventCapture(el, options = {}) {
 function downLoad() {
   lf.value.getSnapshot(defJson.value.flowName, {
     fileType: 'png',
-    backgroundColor: isDark.value ? '#141414' : '#f5f5f5',
+    backgroundColor: themeColors.value.snapshotBg,
     padding: 30,
     partial: false,
     quality: 0.92
@@ -608,10 +608,10 @@ onUnmounted(() => {
 <style scoped>
 /* ========== 暗黑模式根背景（使用 :global 确保可靠穿透） ========== */
 :global(html.dark) .containerView {
-  background-color: #141414 !important;
+  background-color: var(--wf-bg-color) !important;
 }
 :global(html.dark) body {
-  background-color: #141414 !important;
+  background-color: var(--wf-bg-color) !important;
 }
 
 /* ========== 根容器：flex 纵向布局，防止溢出 ========== */

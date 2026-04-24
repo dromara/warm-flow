@@ -155,7 +155,7 @@ const formPathList = ref([]);
 // 控制侧边栏显示：延迟到 initLogicFlow 完成后显示，避免与 LogicFlow DOM 初始化冲突
 const sidebarVisible = ref(false);
 // 使用统一的暗黑模式 composable
-const { isDark, initFromUrl, applyDarkTheme, setupMessageListener, cleanupMessageListener } = useDark();
+const { isDark, themeColors, initFromUrl, applyDarkTheme, setupMessageListener, cleanupMessageListener } = useDark();
 
 /**
  * 判断当前是否为移动端/平板设备
@@ -305,11 +305,11 @@ function initLogicFlow() {
         visible: 'true' === appParams.value.showGrid,
         type: 'dot',
         config: {
-          color: isDark.value ? '#404040' : '#ccc',
+          color: themeColors.value.gridColor,
           thickness: 1,
         },
         background: {
-          backgroundColor: isDark.value ? "#141414" : "#fff",
+          backgroundColor: themeColors.value.bgPage,
         },
       },
       keyboard: isClassics(logicJson.value.modelValue) ? {
@@ -329,12 +329,12 @@ function initLogicFlow() {
     });
     lf.value.setTheme({
       snapline: {
-        stroke: '#1E90FF',
+        stroke: themeColors.value.snaplineStroke,
         strokeWidth: 2,
       },
       nodeText: {
-        color: isDark.value ? '#e0e0e0' : '#303133',
-        fill: isDark.value ? '#e0e0e0' : '#303133',
+        color: themeColors.value.nodeTextColor,
+        fill: themeColors.value.nodeTextFill,
         fontSize: 13,
         fontWeight: 500,
       },
@@ -342,7 +342,7 @@ function initLogicFlow() {
         fontSize: 13,
         strokeWidth: 1,
         background: {
-          fill: isDark.value ? "#141414" : "#fff",
+          fill: themeColors.value.edgeTextBg,
         },
       },
     });
@@ -1024,7 +1024,7 @@ const clear = async () => {
 function downLoad() {
   lf.value.getSnapshot(logicJson.value.flowName, {
     fileType: 'png',        // 可选：'png'、'webp'、'jpeg'、'svg'
-    backgroundColor: isDark.value ? '#141414' : '#fff',
+    backgroundColor: themeColors.value.snapshotBg,
   })
 }
 
@@ -1108,9 +1108,9 @@ async function downJson() {
 }
 
 html.dark .container {
-  background-color: #141414 !important;
+  background-color: var(--wf-bg-color) !important;
   box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.25) !important;
-  border: 1px solid #333333 !important;
+  border: 1px solid var(--wf-border-color) !important;
 }
 
 /* ========== Logo 水印 ========== */
@@ -1182,7 +1182,7 @@ html.dark .container {
 }
 
 html.dark .flow-name {
-  color: var(--wf-text-primary, #e0e0e0) !important;
+  color: var(--wf-text-primary) !important;
 }
 
 .flow-name:hover {
@@ -1201,7 +1201,7 @@ html.dark .flow-name {
 }
 
 html.dark .steps-tabs {
-  background: var(--wf-bg-color, #141414) !important;
+  background: var(--wf-bg-color) !important;
 }
 
 .step-tab {
@@ -1292,38 +1292,38 @@ html.dark .design-header {
 /* 暗黑模式：保存按钮降低饱和度，避免刺眼 */
 html.dark .save-btn,
 html.dark .toolbar-save-btn {
-  background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%) !important;
+  background: linear-gradient(135deg, var(--wf-save-dark, #0d9488) 0%, var(--wf-save-dark-end, #0f766e) 100%) !important;
   box-shadow: 0 2px 8px rgba(13, 148, 136, 0.25) !important;
 }
 html.dark .save-btn:hover,
 html.dark .toolbar-save-btn:hover {
-  background: linear-gradient(135deg, #0f766e 0%, #115e59 100%) !important;
+  background: linear-gradient(135deg, var(--wf-save-dark-end, #0f766e) 0%, var(--wf-save-darker, #115e59) 100%) !important;
   box-shadow: 0 4px 12px rgba(13, 148, 136, 0.35) !important;
 }
 
 /* 工具栏区域（el-header 第二行）暗黑模式 */
 html.dark .el-header {
-  --el-bg-color: var(--wf-bg-white, #1f1f1f);
-  background-color: var(--wf-bg-white, #1f1f1f);
+  --el-bg-color: var(--wf-bg-white);
+  background-color: var(--wf-bg-white);
 }
 
 html.dark .toolbar-group {
-  border-right-color: var(--wf-border-color, #333333);
+  border-right-color: var(--wf-border-color);
 
   /* 工具栏内按钮暗黑模式 */
   .el-button {
-    --el-button-bg-color: var(--wf-bg-color, #141414);
-    --el-button-text-color: var(--wf-text-primary, #e0e0e0);
-    --el-border-color: var(--wf-border-color, #333333);
-    color: var(--wf-text-primary, #e0e0e0);
+    --el-button-bg-color: var(--wf-bg-color);
+    --el-button-text-color: var(--wf-text-primary);
+    --el-border-color: var(--wf-border-color);
+    color: var(--wf-text-primary);
     background-color: transparent;
-    border-color: var(--wf-border-color, #333333);
+    border-color: var(--wf-border-color);
 
     &:hover,
     &:focus {
-      color: var(--wf-primary, #409eff);
+      color: var(--wf-primary);
       background-color: rgba(64,158,255,.12);
-      border-color: var(--wf-primary, #409eff);
+      border-color: var(--wf-primary);
     }
   }
 }

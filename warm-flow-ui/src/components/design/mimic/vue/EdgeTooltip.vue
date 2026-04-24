@@ -13,7 +13,7 @@
 import { computed } from 'vue';
 import { useDark } from '@/composables/useDark';
 
-const { isDark } = useDark();
+const { isDark, themeColors } = useDark();
 
 const props = defineProps({
   position: Object,
@@ -35,16 +35,14 @@ const tooltipStyle = computed(() => ({
   left: `${props.position.x + 20}px`,
   position: 'absolute',
   pointerEvents: 'auto',
-  backgroundColor: isDark.value ? '#1f1f1f' : '#fff',
-  border: `1px solid ${isDark.value ? '#333333' : '#ccc'}`,
+  backgroundColor: themeColors.value.tooltipBg,
+  border: `1px solid ${themeColors.value.tooltipBorder}`,
   borderRadius: '4px',
-  boxShadow: isDark.value
-    ? '0 2px 12px rgba(0, 0, 0, 0.4)'
-    : '0 2px 8px rgba(0, 0, 0, 0.15)',
+  boxShadow: themeColors.value.tooltipShadow,
   padding: '4px 5px',
   fontSize: '15px',
   zIndex: 1000,
-  color: isDark.value ? '#e0e0e0' : '#333',
+  color: themeColors.value.tooltipColor,
   display: 'flex',
   width: '350px'
 }));
@@ -95,33 +93,33 @@ const handleClick = (item) => {
 }
 
 .tooltip-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    border: 1px solid #ddd;
-    border-radius: 50%;
-    margin-right: 10px;
-    color: #666;
-    transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--wf-border-light);
+  border-radius: 50%;
+  margin-right: 10px;
+  color: var(--wf-text-secondary);
+  transition: all 0.2s ease;
 
-    /* 暗黑模式适配 */
-    html.dark &,
-    :global(html.dark) & {
-      border-color: #444444;
-      color: #b0b0b0;
-
-      &:hover {
-        border-color: var(--wf-primary, #409eff);
-        color: var(--wf-primary, #409eff);
-      }
-    }
+  /* 暗黑模式适配 */
+  html.dark &,
+  :global(html.dark) & {
+    border-color: var(--wf-border-color);
+    color: var(--wf-text-regular);
 
     &:hover {
-      border-color: var(--wf-primary, #409eff);
-      color: var(--wf-primary, #409eff);
+      border-color: var(--wf-primary);
+      color: var(--wf-primary);
     }
+  }
+
+  &:hover {
+    border-color: var(--wf-primary);
+    color: var(--wf-primary);
+  }
 }
 
 /* ========== 手机端响应式适配 ========== */

@@ -1,58 +1,44 @@
+/* ============================================================
+ * CSS 变量声明（非颜色部分）
+ *
+ * 颜色值（--wf-primary, --wf-bg-color 等）由 themeConfig.js SSOT 统一管理，
+ * 在 initFromUrl() 中通过 applyCssVariables() 动态注入到 DOM。
+ * 此处仅保留：圆角、阴影、过渡动画、warning 变体等非颜色 token。
+ * ============================================================ */
 :root {
-  --wf-primary: #409eff;
-  --wf-primary-dark: #2b7de9;
-  --wf-primary-light: #ecf5ff;
-  --wf-primary-lighter: #f0f7ff;
-  --wf-success: #67c23a;
-  --wf-warning: #e6a23c;
-  --wf-danger: #f56c6c;
-  --wf-text-primary: #303133;
-  --wf-text-regular: #606266;
-  --wf-text-secondary: #909399;
-  --wf-text-placeholder: #c0c4cc;
-  --wf-border-color: #dcdfe6;
-  --wf-border-light: #e4e7ed;
-  --wf-border-lighter: #ebeef5;
-  --wf-bg-color: #f5f7fa;
-  --wf-bg-white: #ffffff;
+  /* ---- 圆角 ---- */
   --wf-radius-sm: 4px;
   --wf-radius: 8px;
   --wf-radius-lg: 12px;
   --wf-radius-round: 20px;
+
+  /* ---- 阴影 ---- */
   --wf-shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.04);
   --wf-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
   --wf-shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.1);
   --wf-shadow-primary: 0 2px 8px rgba(64, 158, 255, 0.3);
+
+  /* ---- 过渡 ---- */
   --wf-transition: all 0.3s ease;
-  --wf-warning: #f56c6c;
+
+  /* ---- warning 变体（不在 themeConfig 色板中） ---- */
   --wf-warning-light: #fef0f0;
   --wf-warning-border: #fbc4c4;
 }
 
 html.dark {
-  --wf-primary: #409eff;
-  --wf-primary-dark: #2b7de9;
-  --wf-primary-light: #1a3a5c;
-  --wf-primary-lighter: #1a2e4a;
-  --wf-success: #67c23a;
-  --wf-danger: #f56c6c;
-  --wf-text-primary: #e0e0e0;
-  --wf-text-regular: #b0b0b0;
-  --wf-text-secondary: #888888;
-  --wf-text-placeholder: #5a5a5a;
-  --wf-border-color: #333333;
-  --wf-border-light: #404040;
-  --wf-border-lighter: #4a4a4a;
-  --wf-bg-color: #141414;
-  --wf-bg-white: #1f1f1f;
-  --wf-warning: #f56c6c;
-  --wf-warning-light: #2e1a1a;
-  --wf-warning-border: #5a2c2c;
+  /* ---- 暗黑模式阴影加深 ---- */
   --wf-shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.2);
   --wf-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
   --wf-shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.4);
   --wf-shadow-primary: 0 2px 8px rgba(64, 158, 255, 0.3);
+
+  /* ---- 过渡不变 ---- */
   --wf-transition: all 0.3s ease;
+
+  /* ---- warning 变体暗黑版 ---- */
+  --wf-warning-light: #2e1a1a;
+  --wf-warning-border: #5a2c2c;
 }
 
 @import './variables.module.scss';
