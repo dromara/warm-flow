@@ -1,7 +1,7 @@
 <template>
     <el-form ref="nodeExtRef" class="nodeExtForm" :model="form" label-width="150px" size="small" :disabled="disabled"
              label-position="left">
-        <el-form-item :label="`${item.label}：`" :prop="item.code" v-for="(item, index) in formList" 10key="index"
+        <el-form-item :label="`${item.label}：`" :prop="item.code" v-for="(item, index) in formList" :key="index"
                       :rules="[{ required: item.must, message: `${item.label}不能为空`, trigger: ['blur', 'change'] }]">
             <template #label>
                 <span>{{ item.label }}</span>
