@@ -182,6 +182,8 @@ CREATE TABLE flow_instance
     variable        text         NULL,
     flow_status     varchar(20)  NOT NULL,
     activity_status int2         NOT NULL DEFAULT 1,
+    form_custom     bpchar(1)    NULL     DEFAULT 'N':: character varying,
+    form_path       varchar(100) NULL,
     def_json        text         NULL,
     create_time     timestamp    NULL,
     create_by       varchar(64)  NULL     DEFAULT '':: character varying,
@@ -203,6 +205,8 @@ COMMENT ON COLUMN flow_instance.node_name IS '流程节点名称';
 COMMENT ON COLUMN flow_instance.variable IS '任务变量';
 COMMENT ON COLUMN flow_instance.flow_status IS '流程状态（0待提交 1审批中 2审批通过 4终止 5作废 6撤销 8已完成 9已退回 10失效 11拿回）';
 COMMENT ON COLUMN flow_instance.activity_status IS '流程激活状态（0挂起 1激活）';
+COMMENT ON COLUMN flow_instance.form_custom IS '审批表单是否自定义（Y是 N否）';
+COMMENT ON COLUMN flow_instance.form_path IS '审批表单路径';
 COMMENT ON COLUMN flow_instance.def_json IS '流程定义json';
 COMMENT ON COLUMN flow_instance.create_time IS '创建时间';
 COMMENT ON COLUMN flow_instance.create_by IS '创建人';
