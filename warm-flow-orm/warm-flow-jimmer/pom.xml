@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.dromara.warm</groupId>
+        <artifactId>warm-flow-orm</artifactId>
+        <version>1.8.7</version>
+    </parent>
+
+    <name>warm-flow-jimmer</name>
+    <artifactId>warm-flow-jimmer</artifactId>
+    <description>warm-flow orm adapter for Jimmer and PostgreSQL</description>
+    <packaging>pom</packaging>
+    <url>https://github.com/dromara/warm-flow</url>
+
+    <modules>
+        <module>warm-flow-jimmer-core</module>
+        <module>warm-flow-jimmer-sb-starter</module>
+        <module>warm-flow-jimmer-sb3-starter</module>
+        <module>warm-flow-jimmer-sb4-starter</module>
+    </modules>
+</project>

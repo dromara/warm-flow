@@ -1,0 +1,88 @@
+/*
+ *    Copyright 2024-2025, Warm-Flow (290631660@qq.com).
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *       https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+package org.dromara.warm.flow.orm.dao;
+
+import org.babyfish.jimmer.sql.ast.Predicate;
+import org.babyfish.jimmer.sql.ast.table.Table;
+import org.babyfish.jimmer.sql.ast.table.spi.TableProxy;
+import org.dromara.warm.flow.core.orm.dao.FlowDefinitionDao;
+import org.dromara.warm.flow.core.utils.CollUtil;
+import org.dromara.warm.flow.orm.entity.FlowDefinition;
+import org.dromara.warm.flow.orm.model.FlowDefinitionModel;
+import org.dromara.warm.flow.orm.model.FlowDefinitionModelTable;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class FlowDefinitionDaoImpl extends WarmDaoImpl<FlowDefinition, FlowDefinitionModel>
+    implements FlowDefinitionDao<FlowDefinition> {
+
+    private static final FlowDefinitionModelTable TABLE = FlowDefinitionModelTable.$;
+
+    public FlowDefinitionDaoImpl() {
+        super(FlowDefinitionModel.class);
+    }
+
+    @Override
+    public FlowDefinition newEntity() {
+        return new FlowDefinition();
+    }
+
+    @Override
+    protected TableProxy<FlowDefinitionModel> table() {
+        return TABLE;
+    }
+
+    @Override
+    protected List<Predicate> predicates(FlowDefinition entity, Table<FlowDefinitionModel> table) {
+        List<Predicate> predicates = basePredicates(entity, table);
+        eqIfNotEmpty(predicates, table, "flowCode", entity.getFlowCode());
+        eqIfNotEmpty(predicates, table, "flowName", entity.getFlowName());
+        eqIfNotEmpty(predicates, table, "modelValue", entity.getModelValue());
+        eqIfNotEmpty(predicates, table, "category", entity.getCategory());
+        eqIfNotEmpty(predicates, table, "version", entity.getVersion());
+        eq(predicates, table, "publishStatus", entity.getIsPublish());
+        eqIfNotEmpty(predicates, table, "formCustom", entity.getFormCustom());
+        eqIfNotEmpty(predicates, table, "formPath", entity.getFormPath());
+        eq(predicates, table, "activityStatus", entity.getActivityStatus());
+        eqIfNotEmpty(predicates, table, "listenerType", entity.getListenerType());
+        eqIfNotEmpty(predicates, table, "listenerPath", entity.getListenerPath());
+        eqIfNotEmpty(predicates, table, "ext", entity.getExt());
+        return predicates;
+    }
+
+    @Override
+    public List<FlowDefinition> queryByCodeList(List<String> flowCodeList) {
+        if (CollUtil.isEmpty(flowCodeList)) {
+            return new ArrayList<>();
+        }
+        return fromModels(sqlClient().createQuery(TABLE)
+            .where(scopedPredicates(TABLE.flowCode().in(flowCodeList)).toArray(new Predicate[0]))
+            .select(TABLE)
+            .execute());
+    }
+
+    @Override
+    public void updatePublishStatus(List<Long> ids, Integer publishStatus) {
+        if (CollUtil.isEmpty(ids)) {
+            return;
+        }
+        sqlClient().createUpdate(TABLE)
+            .where(scopedPredicates(TABLE.id().in(ids)).toArray(new Predicate[0]))
+            .set(TABLE.publishStatus(), publishStatus)
+            .execute();
+    }
+}

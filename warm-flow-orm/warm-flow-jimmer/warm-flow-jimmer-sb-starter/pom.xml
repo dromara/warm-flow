@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.dromara.warm</groupId>
+        <artifactId>warm-flow-jimmer</artifactId>
+        <version>1.8.7</version>
+    </parent>
+
+    <name>warm-flow-jimmer-sb-starter</name>
+    <artifactId>warm-flow-jimmer-sb-starter</artifactId>
+    <description>warm-flow orm为Jimmer的springboot starter</description>
+    <url>https://github.com/dromara/warm-flow</url>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.dromara.warm</groupId>
+            <artifactId>warm-flow-jimmer-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.babyfish.jimmer</groupId>
+            <artifactId>jimmer-spring-boot-starter</artifactId>
+            <version>${jimmer.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.dromara.warm</groupId>
+            <artifactId>warm-flow-plugin-modes-sb</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

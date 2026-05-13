@@ -43,6 +43,43 @@ COMMENT ON COLUMN flow_definition.update_by IS '更新人';
 COMMENT ON COLUMN flow_definition.del_flag IS '删除标志';
 COMMENT ON COLUMN flow_definition.tenant_id IS '租户id';
 
+CREATE TABLE flow_form
+(
+    id           int8         NOT NULL,
+    form_code    varchar(40)  NOT NULL,
+    form_name    varchar(100) NOT NULL,
+    "version"    varchar(20)  NOT NULL,
+    is_publish   int2         NOT NULL DEFAULT 0,
+    form_type    int2         NULL     DEFAULT 0,
+    form_path    varchar(100) NULL,
+    form_content text         NULL,
+    ext          varchar(400) NULL,
+    create_time  timestamp    NULL,
+    create_by    varchar(64)  NULL     DEFAULT '':: character varying,
+    update_time  timestamp    NULL,
+    update_by    varchar(64)  NULL     DEFAULT '':: character varying,
+    del_flag     bpchar(1)    NULL     DEFAULT '0':: character varying,
+    tenant_id    varchar(40)  NULL,
+    CONSTRAINT flow_form_pkey PRIMARY KEY (id)
+);
+COMMENT ON TABLE flow_form IS '流程表单表';
+
+COMMENT ON COLUMN flow_form.id IS '主键id';
+COMMENT ON COLUMN flow_form.form_code IS '表单编码';
+COMMENT ON COLUMN flow_form.form_name IS '表单名称';
+COMMENT ON COLUMN flow_form."version" IS '表单版本';
+COMMENT ON COLUMN flow_form.is_publish IS '是否发布（0未发布 1已发布 9失效）';
+COMMENT ON COLUMN flow_form.form_type IS '表单类型（0内置表单 存 form_content 1外挂表单 存 form_path）';
+COMMENT ON COLUMN flow_form.form_path IS '表单路径';
+COMMENT ON COLUMN flow_form.form_content IS '表单内容';
+COMMENT ON COLUMN flow_form.ext IS '表单扩展，用户自行使用';
+COMMENT ON COLUMN flow_form.create_time IS '创建时间';
+COMMENT ON COLUMN flow_form.create_by IS '创建人';
+COMMENT ON COLUMN flow_form.update_time IS '更新时间';
+COMMENT ON COLUMN flow_form.update_by IS '更新人';
+COMMENT ON COLUMN flow_form.del_flag IS '删除标志';
+COMMENT ON COLUMN flow_form.tenant_id IS '租户id';
+
 CREATE TABLE flow_node
 (
     id              int8          NOT NULL,
@@ -97,6 +134,7 @@ CREATE TABLE flow_skip
 (
     id             int8         NOT NULL,
     definition_id  int8         NOT NULL,
+    node_id        int8         NULL,
     now_node_code  varchar(100) NOT NULL,
     now_node_type  int2         NULL,
     next_node_code varchar(100) NOT NULL,
@@ -117,6 +155,7 @@ COMMENT ON TABLE flow_skip IS '节点跳转关联表';
 
 COMMENT ON COLUMN flow_skip.id IS '主键id';
 COMMENT ON COLUMN flow_skip.definition_id IS '流程定义id';
+COMMENT ON COLUMN flow_skip.node_id IS '当前节点id';
 COMMENT ON COLUMN flow_skip.now_node_code IS '当前流程节点的编码';
 COMMENT ON COLUMN flow_skip.now_node_type IS '当前节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）';
 COMMENT ON COLUMN flow_skip.next_node_code IS '下一个流程节点的编码';
