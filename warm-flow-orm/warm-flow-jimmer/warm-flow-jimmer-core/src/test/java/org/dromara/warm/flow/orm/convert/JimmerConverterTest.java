@@ -32,7 +32,7 @@ public class JimmerConverterTest {
         FlowDefinitionModel model = JimmerConverter.toModel(entity);
         assertEquals(1L, model.id());
         assertEquals("leave", model.flowCode());
-        assertEquals(Integer.valueOf(1), model.publishStatus());
+        assertEquals(1, model.publishStatus());
 
         FlowDefinition copy = JimmerConverter.fromModel(model, FlowDefinition::new);
         assertEquals(entity.getId(), copy.getId());

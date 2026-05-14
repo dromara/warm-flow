@@ -46,20 +46,16 @@ public interface FlowHisTaskModel {
     String delFlag();
 
     @Column(name = "definition_id")
-    @org.jetbrains.annotations.Nullable
-    Long definitionId();
+    long definitionId();
 
     @Column(name = "instance_id")
-    @org.jetbrains.annotations.Nullable
-    Long instanceId();
+    long instanceId();
 
     @Column(name = "task_id")
-    @org.jetbrains.annotations.Nullable
-    Long taskId();
+    long taskId();
 
     @Column(name = "cooperate_type")
-    @org.jetbrains.annotations.Nullable
-    Integer cooperateType();
+    int cooperateType();
 
     @Column(name = "node_code")
     @org.jetbrains.annotations.Nullable
@@ -92,7 +88,6 @@ public interface FlowHisTaskModel {
     String skipType();
 
     @Column(name = "flow_status")
-    @org.jetbrains.annotations.Nullable
     String flowStatus();
 
     @org.jetbrains.annotations.Nullable

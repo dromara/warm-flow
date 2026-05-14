@@ -54,15 +54,13 @@ public interface FlowSkipModel {
     String delFlag();
 
     @Column(name = "definition_id")
-    @org.jetbrains.annotations.Nullable
-    Long definitionId();
+    long definitionId();
 
     @Column(name = "node_id")
     @org.jetbrains.annotations.Nullable
     Long nodeId();
 
     @Column(name = "now_node_code")
-    @org.jetbrains.annotations.Nullable
     String nowNodeCode();
 
     @Column(name = "now_node_type")
@@ -70,7 +68,6 @@ public interface FlowSkipModel {
     Integer nowNodeType();
 
     @Column(name = "next_node_code")
-    @org.jetbrains.annotations.Nullable
     String nextNodeCode();
 
     @Column(name = "next_node_type")

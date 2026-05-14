@@ -30,20 +30,16 @@ public interface FlowFormModel {
     long id();
 
     @Column(name = "form_code")
-    @org.jetbrains.annotations.Nullable
     String formCode();
 
     @Column(name = "form_name")
-    @org.jetbrains.annotations.Nullable
     String formName();
 
     @Column(name = "\"version\"")
-    @org.jetbrains.annotations.Nullable
     String version();
 
     @Column(name = "is_publish")
-    @org.jetbrains.annotations.Nullable
-    Integer publishStatus();
+    int publishStatus();
 
     @Column(name = "form_type")
     @org.jetbrains.annotations.Nullable

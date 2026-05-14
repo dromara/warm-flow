@@ -54,15 +54,12 @@ public interface FlowNodeModel {
     String delFlag();
 
     @Column(name = "node_type")
-    @org.jetbrains.annotations.Nullable
-    Integer nodeType();
+    int nodeType();
 
     @Column(name = "definition_id")
-    @org.jetbrains.annotations.Nullable
-    Long definitionId();
+    long definitionId();
 
     @Column(name = "node_code")
-    @org.jetbrains.annotations.Nullable
     String nodeCode();
 
     @Column(name = "node_name")
@@ -104,7 +101,6 @@ public interface FlowNodeModel {
     String ext();
 
     @Column(name = "\"version\"")
-    @org.jetbrains.annotations.Nullable
     String version();
 
 }

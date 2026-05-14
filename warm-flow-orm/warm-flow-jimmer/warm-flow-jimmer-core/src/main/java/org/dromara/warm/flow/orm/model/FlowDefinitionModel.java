@@ -54,27 +54,22 @@ public interface FlowDefinitionModel {
     String delFlag();
 
     @Column(name = "flow_code")
-    @org.jetbrains.annotations.Nullable
     String flowCode();
 
     @Column(name = "flow_name")
-    @org.jetbrains.annotations.Nullable
     String flowName();
 
     @Column(name = "model_value")
-    @org.jetbrains.annotations.Nullable
     String modelValue();
 
     @org.jetbrains.annotations.Nullable
     String category();
 
     @Column(name = "\"version\"")
-    @org.jetbrains.annotations.Nullable
     String version();
 
     @Column(name = "is_publish")
-    @org.jetbrains.annotations.Nullable
-    Integer publishStatus();
+    int publishStatus();
 
     @Column(name = "form_custom")
     @org.jetbrains.annotations.Nullable
@@ -85,8 +80,7 @@ public interface FlowDefinitionModel {
     String formPath();
 
     @Column(name = "activity_status")
-    @org.jetbrains.annotations.Nullable
-    Integer activityStatus();
+    int activityStatus();
 
     @Column(name = "listener_type")
     @org.jetbrains.annotations.Nullable

@@ -59,6 +59,7 @@
         <module>warm-flow-core</module>
         <module>warm-flow-orm</module>
         <module>warm-flow-plugin</module>
+        <module>warm-flow-demo</module>
     </modules>
 
     <properties>

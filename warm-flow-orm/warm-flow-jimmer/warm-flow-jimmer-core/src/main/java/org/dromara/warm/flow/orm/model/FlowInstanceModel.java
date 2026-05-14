@@ -54,19 +54,15 @@ public interface FlowInstanceModel {
     String delFlag();
 
     @Column(name = "definition_id")
-    @org.jetbrains.annotations.Nullable
-    Long definitionId();
+    long definitionId();
 
     @Column(name = "business_id")
-    @org.jetbrains.annotations.Nullable
     String businessId();
 
     @Column(name = "node_type")
-    @org.jetbrains.annotations.Nullable
-    Integer nodeType();
+    int nodeType();
 
     @Column(name = "node_code")
-    @org.jetbrains.annotations.Nullable
     String nodeCode();
 
     @Column(name = "node_name")
@@ -77,12 +73,10 @@ public interface FlowInstanceModel {
     String variable();
 
     @Column(name = "flow_status")
-    @org.jetbrains.annotations.Nullable
     String flowStatus();
 
     @Column(name = "activity_status")
-    @org.jetbrains.annotations.Nullable
-    Integer activityStatus();
+    int activityStatus();
 
     @Column(name = "form_custom")
     @org.jetbrains.annotations.Nullable

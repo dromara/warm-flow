@@ -54,14 +54,12 @@ public interface FlowUserModel {
     String delFlag();
 
     @Column(name = "\"type\"")
-    @org.jetbrains.annotations.Nullable
     String type();
 
     @Column(name = "processed_by")
     @org.jetbrains.annotations.Nullable
     String processedBy();
 
-    @org.jetbrains.annotations.Nullable
-    Long associated();
+    long associated();
 
 }

@@ -1,0 +1,28 @@
+server:
+  port: ${SERVER_PORT:18080}
+
+spring:
+  application:
+    name: warm-flow-jimmer-postgres-demo
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${WARM_FLOW_DB_URL:jdbc:postgresql://localhost:5432/warm_flow}
+    username: ${WARM_FLOW_DB_USERNAME:warm_flow}
+    password: ${WARM_FLOW_DB_PASSWORD:}
+
+jimmer:
+  language: java
+  dialect: org.babyfish.jimmer.sql.dialect.PostgresDialect
+  # Keep strict validation enabled so Jimmer models fail fast when they drift
+  # from the PostgreSQL schema used by the deployable demo.
+  database-validation-mode: ${JIMMER_DATABASE_VALIDATION_MODE:ERROR}
+  show-sql: ${JIMMER_SHOW_SQL:false}
+  pretty-sql: ${JIMMER_PRETTY_SQL:false}
+
+warm-flow:
+  enabled: true
+  ui: true
+  logic-delete: true
+  logic-delete-value: '2'
+  logic-not-delete-value: '0'
+  token-name: Authorization
