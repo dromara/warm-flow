@@ -41,7 +41,7 @@ spring:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/warm_flow
     username: warm_flow
-    password: change-me
+    password: ${WARM_FLOW_DB_PASSWORD}
 
 jimmer:
   dialect: org.babyfish.jimmer.sql.dialect.PostgresDialect
