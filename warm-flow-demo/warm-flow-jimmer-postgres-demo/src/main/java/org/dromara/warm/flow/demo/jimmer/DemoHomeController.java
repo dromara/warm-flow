@@ -19,16 +19,19 @@ public class DemoHomeController {
 
     @GetMapping("/")
     public void index(HttpServletResponse response) throws IOException {
-        response.sendRedirect("/warm-flow-ui/index.html");
+        response.sendRedirect("/admin/index.html");
     }
 
     @GetMapping("/demo/health")
     public ApiResult<Map<String, Object>> health() {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("status", "UP");
+        data.put("admin", "/admin/index.html");
         data.put("ui", "/warm-flow-ui/index.html");
         data.put("config", "/warm-flow-ui/config");
+        data.put("adminApi", "/demo/admin/api/overview");
         data.put("demo", "/demo/workflow/e2e");
+        data.put("auth", "anonymous demo admin; handler=admin, permission=approver");
         return ApiResult.ok(data);
     }
 }

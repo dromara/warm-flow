@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Warm Flow 管理后台</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f7fb;
+      --panel: #ffffff;
+      --text: #172033;
+      --muted: #667085;
+      --line: #e6eaf2;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --danger: #dc2626;
+      --warning: #d97706;
+      --success: #16a34a;
+      --shadow: 0 14px 30px rgba(15, 23, 42, .08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 14px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    a { color: var(--primary); text-decoration: none; }
+    .layout { min-height: 100vh; display: grid; grid-template-columns: 250px minmax(0, 1fr); }
+    .sidebar {
+      background: #0f172a;
+      color: #dbeafe;
+      padding: 24px 18px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: auto;
+    }
+    .brand { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    .subbrand { color: #93a4bf; font-size: 12px; margin-bottom: 26px; }
+    .nav button {
+      width: 100%; border: 0; border-radius: 12px; background: transparent; color: #cbd5e1;
+      padding: 12px 14px; margin: 4px 0; text-align: left; cursor: pointer; font-weight: 650;
+    }
+    .nav button:hover, .nav button.active { background: #1e293b; color: #fff; }
+    .side-footer {
+      margin-top: 28px; padding: 14px; border-radius: 14px; background: rgba(255,255,255,.06);
+      color: #cbd5e1; font-size: 12px;
+    }
+    .main { padding: 24px 28px 44px; min-width: 0; }
+    .topbar { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 22px; }
+    h1 { margin: 0; font-size: 26px; }
+    .hint { color: var(--muted); margin-top: 6px; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+    button, .btn {
+      border: 1px solid var(--line); background: #fff; color: var(--text); padding: 8px 12px;
+      border-radius: 10px; cursor: pointer; font-weight: 650; display: inline-flex; align-items: center; gap: 6px;
+    }
+    button.primary, .btn.primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+    button.primary:hover { background: var(--primary-dark); }
+    button.danger { color: var(--danger); border-color: #fecaca; }
+    button.warning { color: var(--warning); border-color: #fed7aa; }
+    button.success { color: var(--success); border-color: #bbf7d0; }
+    button:disabled { opacity: .55; cursor: not-allowed; }
+    .cards { display: grid; grid-template-columns: repeat(5, minmax(120px, 1fr)); gap: 14px; margin-bottom: 18px; }
+    .card, .panel {
+      background: var(--panel); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow);
+    }
+    .card { padding: 18px; }
+    .card .label { color: var(--muted); font-size: 12px; }
+    .card .value { font-size: 28px; font-weight: 850; margin-top: 4px; }
+    .panel { padding: 18px; margin-bottom: 18px; overflow: hidden; }
+    .panel-head { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 14px; }
+    .panel-title { font-size: 18px; font-weight: 800; }
+    .panel-desc { color: var(--muted); font-size: 12px; }
+    .grid-2 { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(320px, .75fr); gap: 16px; }
+    .table-wrap { width: 100%; overflow: auto; border: 1px solid var(--line); border-radius: 14px; }
+    table { width: 100%; border-collapse: collapse; min-width: 860px; background: #fff; }
+    th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: middle; white-space: nowrap; }
+    th { background: #f8fafc; color: #475569; font-size: 12px; }
+    tr:last-child td { border-bottom: 0; }
+    .actions { display: flex; gap: 6px; flex-wrap: wrap; }
+    .badge { display: inline-flex; border-radius: 999px; padding: 3px 8px; font-size: 12px; font-weight: 750; background: #eef2ff; color: #3730a3; }
+    .badge.green { background: #dcfce7; color: #166534; }
+    .badge.red { background: #fee2e2; color: #991b1b; }
+    .badge.orange { background: #ffedd5; color: #9a3412; }
+    .badge.gray { background: #f1f5f9; color: #475569; }
+    .status { position: fixed; right: 18px; bottom: 18px; z-index: 10; max-width: 520px; }
+    .toast { padding: 12px 14px; border-radius: 14px; box-shadow: var(--shadow); margin-top: 8px; background: #fff; border: 1px solid var(--line); }
+    .toast.ok { border-color: #86efac; }
+    .toast.err { border-color: #fca5a5; }
+    .json {
+      background: #0f172a; color: #e2e8f0; border-radius: 14px; padding: 14px; overflow: auto;
+      min-height: 220px; max-height: 540px; font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+    .empty { padding: 28px; color: var(--muted); text-align: center; }
+    .section { display: none; }
+    .section.active { display: block; }
+    input, textarea, select {
+      border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; font: inherit; width: 100%;
+    }
+    textarea { min-height: 92px; resize: vertical; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .form-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; align-items: end; }
+    .field label { display: block; color: var(--muted); font-size: 12px; margin-bottom: 5px; font-weight: 700; }
+    @media (max-width: 1100px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { position: relative; height: auto; }
+      .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .grid-2 { grid-template-columns: 1fr; }
+      .form-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand">Warm Flow</div>
+    <div class="subbrand">Jimmer + PostgreSQL 管理后台</div>
+    <nav class="nav" id="nav"></nav>
+    <div class="side-footer">
+      <div><strong>演示身份</strong></div>
+      <div>handler：admin</div>
+      <div>permission：approver</div>
+      <div style="margin-top:8px">当前环境为匿名 demo 后台；生产接入应替换认证和权限。</div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <h1 id="pageTitle">工作台</h1>
+        <div class="hint" id="pageHint">统一查看流程定义、实例、待办、历史、处理人和运行状态。</div>
+      </div>
+      <div class="toolbar">
+        <button class="primary" data-api="POST /demo/workflow/seed">初始化演示流程</button>
+        <button data-api="POST /demo/workflow/start">发起演示实例</button>
+        <button data-api="POST /demo/workflow/e2e">执行 E2E</button>
+        <a class="btn" href="/warm-flow-ui/index.html" target="_blank">打开设计器</a>
+        <button id="refreshBtn">刷新</button>
+      </div>
+    </div>
+
+    <section id="dashboard" class="section active">
+      <div class="cards" id="cards"></div>
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-head"><div><div class="panel-title">最近待办</div><div class="panel-desc">可直接通过或退回当前任务</div></div></div>
+          <div id="recentTasks"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><div><div class="panel-title">运行信息</div><div class="panel-desc">Jimmer/PostgreSQL demo runtime</div></div></div>
+          <pre class="json" id="runtimeJson">加载中...</pre>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><div><div class="panel-title">最近流程实例</div><div class="panel-desc">点击查看可展开详情和流程图</div></div></div>
+        <div id="recentInstances"></div>
+      </div>
+    </section>
+
+    <section id="definitions" class="section">
+      <div class="panel">
+        <div class="panel-head">
+          <div><div class="panel-title">流程定义</div><div class="panel-desc">发布、取消发布、激活、挂起、复制、删除，并跳转设计器维护流程图</div></div>
+          <a class="btn primary" href="/warm-flow-ui/index.html" target="_blank">新增/设计流程</a>
+        </div>
+        <div id="definitionsTable"></div>
+      </div>
+    </section>
+
+    <section id="instances" class="section">
+      <div class="panel">
+        <div class="panel-head"><div><div class="panel-title">发起流程实例</div><div class="panel-desc">默认使用 demo_leave_jimmer / admin / approver</div></div></div>
+        <div class="form-grid">
+          <div class="field"><label>流程编码</label><input id="startFlowCode" value="demo_leave_jimmer"></div>
+          <div class="field"><label>业务 ID</label><input id="startBusinessId" placeholder="留空自动生成"></div>
+          <div class="field"><label>变量 JSON</label><input id="startVariable" value='{"days":3}'></div>
+          <button class="primary" id="startInstanceBtn">发起实例</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><div><div class="panel-title">流程实例</div><div class="panel-desc">激活、挂起、删除实例，查看流程图和实例详情</div></div></div>
+        <div id="instancesTable"></div>
+      </div>
+    </section>
+
+    <section id="tasks" class="section">
+      <div class="panel">
+        <div class="panel-head"><div><div class="panel-title">待办任务</div><div class="panel-desc">当前未完成任务，可直接审批通过或退回</div></div></div>
+        <div id="tasksTable"></div>
+      </div>
+    </section>
+
+    <section id="history" class="section">
+      <div class="panel">
+        <div class="panel-head"><div><div class="panel-title">历史任务</div><div class="panel-desc">流程流转审计记录</div></div></div>
+        <div id="historyTable"></div>
+      </div>
+    </section>
+
+    <section id="users" class="section">
+      <div class="panel">
+        <div class="panel-head"><div><div class="panel-title">处理人 / 权限</div><div class="panel-desc">flow_user 关联表，展示任务审批人、转办、委派等权限记录</div></div></div>
+        <div id="usersTable"></div>
+      </div>
+    </section>
+
+    <section id="monitor" class="section">
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-head"><div><div class="panel-title">运行监控</div><div class="panel-desc">健康检查、配置和接口状态</div></div></div>
+          <div class="actions" style="margin-bottom:12px">
+            <button data-detail="/demo/health">健康检查</button>
+            <button data-detail="/warm-flow-ui/config">设计器配置</button>
+            <button data-detail="/demo/admin/api/runtime">后台运行信息</button>
+            <button data-detail="/demo/workflow/status">演示流程状态</button>
+          </div>
+          <pre class="json" id="monitorJson">点击上方按钮查看。</pre>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><div><div class="panel-title">快捷入口</div><div class="panel-desc">后台与 Warm Flow 自带设计器并存</div></div></div>
+          <p><a href="/admin/index.html" target="_blank">管理后台 /admin/index.html</a></p>
+          <p><a href="/warm-flow-ui/index.html" target="_blank">流程设计器 /warm-flow-ui/index.html</a></p>
+          <p><a href="/demo/health" target="_blank">健康检查 /demo/health</a></p>
+          <p class="hint">本后台是 demo 级匿名管理台；生产系统应接入业务账号、菜单权限、操作审计和 CSRF/鉴权保护。</p>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+<div class="status" id="status"></div>
+
+<script>
+const tabs = [
+  ['dashboard', '工作台', '统一查看流程定义、实例、待办、历史、处理人和运行状态。'],
+  ['definitions', '流程定义', '维护流程定义，进入设计器编辑流程图。'],
+  ['instances', '流程实例', '发起、查看和控制流程实例。'],
+  ['tasks', '待办任务', '审批当前未完成任务。'],
+  ['history', '历史任务', '查看流转审计记录。'],
+  ['users', '处理人/权限', '查看任务处理人与权限关联。'],
+  ['monitor', '运行监控', '检查健康、配置和运行信息。']
+];
+const state = { overview: null, definitions: [], instances: [], tasks: [], history: [], users: [] };
+const $ = (id) => document.getElementById(id);
+const esc = (v) => String(v ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+
+function initNav() {
+  $('nav').innerHTML = tabs.map(([id, label], i) => `<button class="${i === 0 ? 'active' : ''}" data-tab="${id}">${label}</button>`).join('');
+  $('nav').addEventListener('click', e => {
+    const btn = e.target.closest('button[data-tab]');
+    if (!btn) return;
+    showTab(btn.dataset.tab);
+  });
+}
+function showTab(id) {
+  document.querySelectorAll('.nav button').forEach(b => b.classList.toggle('active', b.dataset.tab === id));
+  document.querySelectorAll('.section').forEach(s => s.classList.toggle('active', s.id === id));
+  const tab = tabs.find(t => t[0] === id);
+  $('pageTitle').textContent = tab[1];
+  $('pageHint').textContent = tab[2];
+}
+async function api(path, options = {}) {
+  const res = await fetch(path, { headers: { 'Content-Type': 'application/json', ...(options.headers || {}) }, ...options });
+  const text = await res.text();
+  let json;
+  try { json = text ? JSON.parse(text) : {}; } catch (e) { json = { code: res.status, msg: text }; }
+  if (!res.ok || json.code >= 400) throw new Error(json.msg || `HTTP ${res.status}`);
+  return json.data ?? json;
+}
+async function refresh() {
+  try {
+    const [overview, definitions, instances, tasks, history, users, runtime] = await Promise.all([
+      api('/demo/admin/api/overview'),
+      api('/demo/admin/api/definitions'),
+      api('/demo/admin/api/instances'),
+      api('/demo/admin/api/tasks'),
+      api('/demo/admin/api/history'),
+      api('/demo/admin/api/users'),
+      api('/demo/admin/api/runtime')
+    ]);
+    Object.assign(state, { overview, definitions, instances, tasks, history, users });
+    renderAll();
+    $('runtimeJson').textContent = JSON.stringify(runtime, null, 2);
+    toast('数据已刷新', 'ok');
+  } catch (e) {
+    toast(e.message, 'err');
+  }
+}
+function renderAll() {
+  renderCards();
+  $('recentTasks').innerHTML = renderTasks(state.overview?.recent?.tasks || state.tasks.slice(0, 5), true);
+  $('recentInstances').innerHTML = renderInstances(state.overview?.recent?.instances || state.instances.slice(0, 5), true);
+  $('definitionsTable').innerHTML = renderDefinitions(state.definitions);
+  $('instancesTable').innerHTML = renderInstances(state.instances);
+  $('tasksTable').innerHTML = renderTasks(state.tasks);
+  $('historyTable').innerHTML = renderHistory(state.history);
+  $('usersTable').innerHTML = renderUsers(state.users);
+}
+function renderCards() {
+  const s = state.overview?.summary || {};
+  const cards = [
+    ['流程定义', s.definitions, `已发布 ${s.publishedDefinitions ?? 0}`],
+    ['流程实例', s.instances, `已完成 ${s.finishedInstances ?? 0}`],
+    ['待办任务', s.tasks, '当前待处理'],
+    ['历史任务', s.history, '审计记录'],
+    ['权限记录', s.permissionRows, '处理人关联']
+  ];
+  $('cards').innerHTML = cards.map(([label, value, sub]) => `<div class="card"><div class="label">${label}</div><div class="value">${value ?? 0}</div><div class="hint">${sub}</div></div>`).join('');
+}
+function badge(label, kind = '') { return `<span class="badge ${kind}">${esc(label)}</span>`; }
+function publishBadge(row) { return badge(row.publishLabel, row.isPublish === 1 ? 'green' : row.isPublish === 9 ? 'orange' : 'gray'); }
+function activeBadge(row) { return badge(row.activityLabel, row.activityStatus === 1 ? 'green' : 'orange'); }
+function flowBadge(row) { return badge(row.flowStatusLabel, row.flowStatus === '8' ? 'green' : row.flowStatus === '9' ? 'red' : 'gray'); }
+function empty(label) { return `<div class="empty">暂无${label}</div>`; }
+function table(headers, rows) {
+  if (!rows) return empty('数据');
+  return `<div class="table-wrap"><table><thead><tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+function renderDefinitions(rows) {
+  if (!rows.length) return empty('流程定义');
+  return table(['ID','名称','编码','版本','发布','状态','节点/实例','时间','操作'], rows.map(r => `<tr>
+    <td>${r.id}</td><td>${esc(r.flowName)}</td><td>${esc(r.flowCode)}</td><td>${esc(r.version)}</td>
+    <td>${publishBadge(r)}</td><td>${activeBadge(r)}</td><td>${r.nodes}/${r.instances}</td><td>${esc(r.createTime)}</td>
+    <td><div class="actions">
+      <a class="btn" href="${r.designerUrl}" target="_blank">设计</a>
+      <button data-detail="/demo/admin/api/definitions/${r.id}">详情</button>
+      <button class="success" data-api="POST /demo/admin/api/definitions/${r.id}/publish">发布</button>
+      <button data-api="POST /demo/admin/api/definitions/${r.id}/unpublish">取消发布</button>
+      <button data-api="POST /demo/admin/api/definitions/${r.id}/active">激活</button>
+      <button class="warning" data-api="POST /demo/admin/api/definitions/${r.id}/suspend">挂起</button>
+      <button data-api="POST /demo/admin/api/definitions/${r.id}/copy">复制</button>
+      <button class="danger" data-api="DELETE /demo/admin/api/definitions/${r.id}">删除</button>
+    </div></td>
+  </tr>`).join(''));
+}
+function renderInstances(rows) {
+  if (!rows.length) return empty('流程实例');
+  return table(['ID','流程','业务ID','节点','状态','激活','待办/历史','时间','操作'], rows.map(r => `<tr>
+    <td>${r.id}</td><td>${esc(r.flowName)}</td><td>${esc(r.businessId)}</td><td>${esc(r.nodeName || r.nodeCode)}</td>
+    <td>${flowBadge(r)}</td><td>${activeBadge(r)}</td><td>${r.tasks}/${r.history}</td><td>${esc(r.createTime)}</td>
+    <td><div class="actions">
+      <a class="btn" href="${r.chartUrl}" target="_blank">流程图</a>
+      <button data-detail="/demo/admin/api/instances/${r.id}">详情</button>
+      <button data-api="POST /demo/admin/api/instances/${r.id}/active">激活</button>
+      <button class="warning" data-api="POST /demo/admin/api/instances/${r.id}/suspend">挂起</button>
+      <button class="danger" data-api="DELETE /demo/admin/api/instances/${r.id}">删除</button>
+    </div></td>
+  </tr>`).join(''));
+}
+function renderTasks(rows) {
+  if (!rows.length) return empty('待办任务');
+  return table(['ID','流程','业务ID','节点','状态','审批人','时间','操作'], rows.map(r => `<tr>
+    <td>${r.id}</td><td>${esc(r.flowName)}</td><td>${esc(r.businessId)}</td><td>${esc(r.nodeName || r.nodeCode)}</td>
+    <td>${flowBadge(r)}</td><td>${esc((r.approvalUsers || []).map(u => u.processedBy).join(', ') || '-')}</td><td>${esc(r.createTime)}</td>
+    <td><div class="actions">
+      <button data-detail="/demo/admin/api/tasks/${r.id}">详情</button>
+      <button class="success" data-api="POST /demo/admin/api/tasks/${r.id}/pass" data-body='{"message":"admin approved","variable":{"approved":true}}'>通过</button>
+      <button class="danger" data-api="POST /demo/admin/api/tasks/${r.id}/reject" data-body='{"message":"admin rejected","variable":{"approved":false}}'>退回</button>
+    </div></td>
+  </tr>`).join(''));
+}
+function renderHistory(rows) {
+  if (!rows.length) return empty('历史任务');
+  return table(['ID','流程','业务ID','节点','目标节点','动作','状态','审批人','意见','时间'], rows.map(r => `<tr>
+    <td>${r.id}</td><td>${esc(r.flowName)}</td><td>${esc(r.businessId)}</td><td>${esc(r.nodeName || r.nodeCode)}</td>
+    <td>${esc(r.targetNodeName || r.targetNodeCode || '-')}</td><td>${esc(r.skipTypeLabel)}</td><td>${flowBadge(r)}</td>
+    <td>${esc(r.approver || '-')}</td><td>${esc(r.message || '-')}</td><td>${esc(r.createTime)}</td>
+  </tr>`).join(''));
+}
+function renderUsers(rows) {
+  if (!rows.length) return empty('处理人/权限');
+  return table(['ID','关联ID','处理人/权限','类型','时间'], rows.map(r => `<tr>
+    <td>${r.id}</td><td>${r.associated}</td><td>${esc(r.processedBy)}</td><td>${esc(r.typeLabel)}</td><td>${esc(r.createTime)}</td>
+  </tr>`).join(''));
+}
+async function runApi(spec, bodyText) {
+  const [method, path] = spec.split(' ');
+  const options = { method };
+  if (bodyText) options.body = bodyText;
+  await api(path, options);
+  toast('操作成功：' + spec, 'ok');
+  await refresh();
+}
+async function showDetail(path) {
+  try {
+    const data = await api(path);
+    $('monitorJson').textContent = JSON.stringify(data, null, 2);
+    showTab('monitor');
+  } catch (e) { toast(e.message, 'err'); }
+}
+function toast(message, type) {
+  const node = document.createElement('div');
+  node.className = `toast ${type || ''}`;
+  node.textContent = message;
+  $('status').appendChild(node);
+  setTimeout(() => node.remove(), 4200);
+}
+document.addEventListener('click', async (e) => {
+  const action = e.target.closest('[data-api]');
+  if (action) {
+    action.disabled = true;
+    try { await runApi(action.dataset.api, action.dataset.body); }
+    catch (err) { toast(err.message, 'err'); }
+    finally { action.disabled = false; }
+  }
+  const detail = e.target.closest('[data-detail]');
+  if (detail) await showDetail(detail.dataset.detail);
+});
+$('refreshBtn').addEventListener('click', refresh);
+$('startInstanceBtn').addEventListener('click', async () => {
+  let variable = {};
+  try { variable = JSON.parse($('startVariable').value || '{}'); } catch (e) { toast('变量 JSON 格式错误', 'err'); return; }
+  const payload = { flowCode: $('startFlowCode').value, businessId: $('startBusinessId').value, variable };
+  try { await api('/demo/admin/api/instances/start', { method: 'POST', body: JSON.stringify(payload) }); toast('流程实例已发起', 'ok'); await refresh(); }
+  catch (e) { toast(e.message, 'err'); }
+});
+initNav();
+refresh();
+</script>
+</body>
+</html>
