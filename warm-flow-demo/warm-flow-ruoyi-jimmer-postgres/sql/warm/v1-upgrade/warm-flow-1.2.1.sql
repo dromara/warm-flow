@@ -1,0 +1,2 @@
+-- 抄送
+INSERT INTO `sys_menu` (`menu_id`, `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2006, '抄送任务', 1106, 4, 'notice', 'flow/notice/index', NULL, 1, 0, 'C', '0', '0', 'flow:execute:copyPage', 'email', 'admin', '2024-06-27 09:18:06', '', NULL, '');

@@ -1,0 +1,398 @@
+package ${packageName}.mapper;
+
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.List;
+
+import ${packageName}.domain.${ClassName};
+#if($table.sub)
+import ${packageName}.domain.${subClassName};
+#end
+import com.ruoyi.common.utils.StringUtils;
+import ${packageName}.jimmer.model.${ClassName}Model;
+import com.ruoyi.system.jimmer.JimmerRepositorySupport;
+import org.springframework.stereotype.Repository;
+
+/**
+ * ${functionName}Jimmer数据层
+ *
+ * <p>由若依代码生成器生成。保留原 Mapper 方法名以兼容 Controller/Service，
+ * 实际持久化通过 Jimmer 连接管理下的 JDBC 完成，不再依赖 MyBatis XML。</p>
+ *
+ * @author ${author}
+ * @date ${datetime}
+ */
+@Repository
+public class ${ClassName}Mapper extends JimmerRepositorySupport<${ClassName}, ${ClassName}Model>
+{
+    private static final String TABLE_NAME = "${tableName}";
+#foreach($column in $columns)
+    private static final String COL_${column.columnConstant} = "${column.columnName}";
+#end
+#if($table.sub)
+    private static final String SUB_TABLE_NAME = "${subTableName}";
+#foreach($column in $subTable.columns)
+    private static final String SUB_COL_${column.columnConstant} = "${column.columnName}";
+#end
+#end
+
+    public ${ClassName}Mapper()
+    {
+        super(${ClassName}.class, ${ClassName}Model.class, "${pkColumn.javaField}");
+    }
+
+    /**
+     * 查询${functionName}
+     *
+     * @param ${pkColumn.javaField} ${functionName}主键
+     * @return ${functionName}
+     */
+    public ${ClassName} select${ClassName}By${pkColumn.capJavaField}(${pkColumn.javaType} ${pkColumn.javaField})
+    {
+        List<${ClassName}> rows = querySql("select " + selectColumns() + " from " + TABLE_NAME + " where " + COL_${pkColumn.columnConstant} + " = ?", this::map${ClassName}, ${pkColumn.javaField});
+        ${ClassName} entity = rows.isEmpty() ? null : rows.get(0);
+#if($table.sub)
+        if (entity != null)
+        {
+            entity.set${subClassName}List(select${subClassName}List(entity.get${pkColumn.capJavaField}()));
+        }
+#end
+        return entity;
+    }
+
+    /**
+     * 查询${functionName}列表
+     *
+     * @param ${className} ${functionName}
+     * @return ${functionName}集合
+     */
+    public List<${ClassName}> select${ClassName}List(${ClassName} ${className})
+    {
+        StringBuilder sql = new StringBuilder("select ").append(selectColumns()).append(" from ").append(TABLE_NAME).append(" where 1 = 1");
+        List<Object> params = new ArrayList<>();
+        appendFilters(sql, params, ${className});
+        sql.append(" order by ").append(COL_${pkColumn.columnConstant});
+        return queryPagedSql(sql.toString(), this::map${ClassName}, params.toArray());
+    }
+
+    /**
+     * 新增${functionName}
+     *
+     * @param ${className} ${functionName}
+     * @return 结果
+     */
+    public int insert${ClassName}(${ClassName} ${className})
+    {
+        StringBuilder cols = new StringBuilder();
+        StringBuilder values = new StringBuilder();
+        List<Object> params = new ArrayList<>();
+#foreach($column in $columns)
+#if($column.columnName != $pkColumn.columnName || !$pkColumn.increment)
+        addInsert(cols, values, params, COL_${column.columnConstant}, ${className}.get${column.capJavaField}());
+#end
+#end
+        String sql = "insert into " + TABLE_NAME + " (" + cols + ") values (" + values + ")";
+#if($pkColumn.increment)
+        return jdbc(connection -> {
+            try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS))
+            {
+                bind(statement, params);
+                int rows = statement.executeUpdate();
+                try (java.sql.ResultSet keys = statement.getGeneratedKeys())
+                {
+                    if (keys.next())
+                    {
+                        ${className}.set${pkColumn.capJavaField}((${pkColumn.javaType}) convertJdbcValue(keys.getObject(1), ${pkColumn.javaType}.class));
+                    }
+                }
+                return rows;
+            }
+        });
+#else
+        return executeSql(sql, params.toArray());
+#end
+    }
+
+    /**
+     * 修改${functionName}
+     *
+     * @param ${className} ${functionName}
+     * @return 结果
+     */
+    public int update${ClassName}(${ClassName} ${className})
+    {
+        StringBuilder sql = new StringBuilder("update ").append(TABLE_NAME).append(" set ");
+        List<Object> params = new ArrayList<>();
+#foreach($column in $columns)
+#if($column.columnName != $pkColumn.columnName)
+        addUpdate(sql, params, COL_${column.columnConstant}, ${className}.get${column.capJavaField}());
+#end
+#end
+        if (params.isEmpty())
+        {
+            return 0;
+        }
+        trimTrailingComma(sql);
+        sql.append(" where ").append(COL_${pkColumn.columnConstant}).append(" = ?");
+        params.add(${className}.get${pkColumn.capJavaField}());
+        return executeSql(sql.toString(), params.toArray());
+    }
+
+    /**
+     * 删除${functionName}
+     *
+     * @param ${pkColumn.javaField} ${functionName}主键
+     * @return 结果
+     */
+    public int delete${ClassName}By${pkColumn.capJavaField}(${pkColumn.javaType} ${pkColumn.javaField})
+    {
+        return executeSql("delete from " + TABLE_NAME + " where " + COL_${pkColumn.columnConstant} + " = ?", ${pkColumn.javaField});
+    }
+
+    /**
+     * 批量删除${functionName}
+     *
+     * @param ${pkColumn.javaField}s 需要删除的数据主键集合
+     * @return 结果
+     */
+    public int delete${ClassName}By${pkColumn.capJavaField}s(${pkColumn.javaType}[] ${pkColumn.javaField}s)
+    {
+        if (${pkColumn.javaField}s == null || ${pkColumn.javaField}s.length == 0)
+        {
+            return 0;
+        }
+        return executeSql("delete from " + TABLE_NAME + " where " + COL_${pkColumn.columnConstant} + " in " + placeholders(java.util.Arrays.asList(${pkColumn.javaField}s)), (Object[]) ${pkColumn.javaField}s);
+    }
+#if($table.sub)
+
+    /**
+     * 批量删除${subTable.functionName}
+     *
+     * @param ${pkColumn.javaField}s 需要删除的数据主键集合
+     * @return 结果
+     */
+    public int delete${subClassName}By${subTableFkClassName}s(${pkColumn.javaType}[] ${pkColumn.javaField}s)
+    {
+        if (${pkColumn.javaField}s == null || ${pkColumn.javaField}s.length == 0)
+        {
+            return 0;
+        }
+        return executeSql("delete from " + SUB_TABLE_NAME + " where " + SUB_COL_${subTableFkColumnConstant} + " in " + placeholders(java.util.Arrays.asList(${pkColumn.javaField}s)), (Object[]) ${pkColumn.javaField}s);
+    }
+
+    /**
+     * 批量新增${subTable.functionName}
+     *
+     * @param ${subclassName}List ${subTable.functionName}列表
+     * @return 结果
+     */
+    public int batch${subClassName}(List<${subClassName}> ${subclassName}List)
+    {
+        if (${subclassName}List == null || ${subclassName}List.isEmpty())
+        {
+            return 0;
+        }
+        int rows = 0;
+        for (${subClassName} ${subclassName} : ${subclassName}List)
+        {
+            rows += insert${subClassName}(${subclassName});
+        }
+        return rows;
+    }
+
+    /**
+     * 通过${functionName}主键删除${subTable.functionName}信息
+     *
+     * @param ${pkColumn.javaField} ${functionName}ID
+     * @return 结果
+     */
+    public int delete${subClassName}By${subTableFkClassName}(${pkColumn.javaType} ${pkColumn.javaField})
+    {
+        return executeSql("delete from " + SUB_TABLE_NAME + " where " + SUB_COL_${subTableFkColumnConstant} + " = ?", ${pkColumn.javaField});
+    }
+#end
+
+    private String selectColumns()
+    {
+        return "#foreach($column in $columns)${column.columnName}#if($foreach.count != $columns.size()), #end#end";
+    }
+
+    private ${ClassName} map${ClassName}(java.sql.ResultSet rs) throws java.sql.SQLException
+    {
+        ${ClassName} row = new ${ClassName}();
+#foreach($column in $columns)
+        row.set${column.capJavaField}((${column.javaType}) convertJdbcValue(rs.getObject(COL_${column.columnConstant}), ${column.javaType}.class));
+#end
+        return row;
+    }
+
+    private void appendFilters(StringBuilder sql, List<Object> params, ${ClassName} ${className})
+    {
+        if (${className} == null)
+        {
+            return;
+        }
+#foreach($column in $columns)
+#if($column.query)
+#if($column.queryType == "EQ")
+        addWhere(sql, params, COL_${column.columnConstant} + " = ?", ${className}.get${column.capJavaField}());
+#elseif($column.queryType == "NE")
+        addWhere(sql, params, COL_${column.columnConstant} + " <> ?", ${className}.get${column.capJavaField}());
+#elseif($column.queryType == "GT")
+        addWhere(sql, params, COL_${column.columnConstant} + " > ?", ${className}.get${column.capJavaField}());
+#elseif($column.queryType == "GTE")
+        addWhere(sql, params, COL_${column.columnConstant} + " >= ?", ${className}.get${column.capJavaField}());
+#elseif($column.queryType == "LT")
+        addWhere(sql, params, COL_${column.columnConstant} + " < ?", ${className}.get${column.capJavaField}());
+#elseif($column.queryType == "LTE")
+        addWhere(sql, params, COL_${column.columnConstant} + " <= ?", ${className}.get${column.capJavaField}());
+#elseif($column.queryType == "LIKE")
+        addLikeWhere(sql, params, COL_${column.columnConstant}, ${className}.get${column.capJavaField}());
+#elseif($column.queryType == "BETWEEN")
+        addBetweenWhere(sql, params, COL_${column.columnConstant}, ${className}.getParams().get("begin${column.capJavaField}"), ${className}.getParams().get("end${column.capJavaField}"));
+#end
+#end
+#end
+    }
+#if($table.sub)
+
+    private List<${subClassName}> select${subClassName}List(${pkColumn.javaType} ${pkColumn.javaField})
+    {
+        return querySql("select #foreach($column in $subTable.columns)${column.columnName}#if($foreach.count != $subTable.columns.size()), #end#end from " + SUB_TABLE_NAME + " where " + SUB_COL_${subTableFkColumnConstant} + " = ?", this::map${subClassName}, ${pkColumn.javaField});
+    }
+
+    private int insert${subClassName}(${subClassName} ${subclassName})
+    {
+        StringBuilder cols = new StringBuilder();
+        StringBuilder values = new StringBuilder();
+        List<Object> params = new ArrayList<>();
+#foreach($column in $subTable.columns)
+#if(!$column.increment)
+        addInsert(cols, values, params, SUB_COL_${column.columnConstant}, ${subclassName}.get${column.capJavaField}());
+#end
+#end
+        return executeSql("insert into " + SUB_TABLE_NAME + " (" + cols + ") values (" + values + ")", params.toArray());
+    }
+
+    private ${subClassName} map${subClassName}(java.sql.ResultSet rs) throws java.sql.SQLException
+    {
+        ${subClassName} row = new ${subClassName}();
+#foreach($column in $subTable.columns)
+        row.set${column.capJavaField}((${column.javaType}) convertJdbcValue(rs.getObject(SUB_COL_${column.columnConstant}), ${column.javaType}.class));
+#end
+        return row;
+    }
+#end
+
+    private void addInsert(StringBuilder cols, StringBuilder values, List<Object> params, String column, Object value)
+    {
+        if (value != null)
+        {
+            if (cols.length() > 0)
+            {
+                cols.append(", ");
+                values.append(", ");
+            }
+            cols.append(column);
+            values.append('?');
+            params.add(value);
+        }
+    }
+
+    private void addUpdate(StringBuilder sql, List<Object> params, String column, Object value)
+    {
+        if (value != null)
+        {
+            sql.append(column).append(" = ?, ");
+            params.add(value);
+        }
+    }
+
+    private void addWhere(StringBuilder sql, List<Object> params, String condition, Object value)
+    {
+        if (value instanceof String && StringUtils.isBlank((String) value))
+        {
+            return;
+        }
+        if (value != null)
+        {
+            sql.append(" and ").append(condition);
+            params.add(value);
+        }
+    }
+
+    private void addLikeWhere(StringBuilder sql, List<Object> params, String column, Object value)
+    {
+        if (value != null && StringUtils.isNotBlank(String.valueOf(value)))
+        {
+            sql.append(" and lower(").append(column).append(") like lower(?)");
+            params.add("%" + value + "%");
+        }
+    }
+
+    private void addBetweenWhere(StringBuilder sql, List<Object> params, String column, Object begin, Object end)
+    {
+        if (begin != null && StringUtils.isNotBlank(String.valueOf(begin)) && end != null && StringUtils.isNotBlank(String.valueOf(end)))
+        {
+            sql.append(" and ").append(column).append(" between ? and ?");
+            params.add(begin);
+            params.add(end);
+        }
+    }
+
+    private void trimTrailingComma(StringBuilder sql)
+    {
+        int length = sql.length();
+        if (length >= 2 && sql.substring(length - 2).equals(", "))
+        {
+            sql.setLength(length - 2);
+        }
+    }
+
+    private void bind(PreparedStatement statement, List<Object> params) throws java.sql.SQLException
+    {
+        for (int i = 0; i < params.size(); i++)
+        {
+            Object value = params.get(i);
+            if (value == null)
+            {
+                statement.setNull(i + 1, Types.NULL);
+            }
+            else
+            {
+                statement.setObject(i + 1, value);
+            }
+        }
+    }
+
+    private Object convertJdbcValue(Object value, Class<?> targetType)
+    {
+        if (value == null || targetType == null || targetType.isInstance(value))
+        {
+            return value;
+        }
+        if (targetType == Long.class || targetType == Long.TYPE)
+        {
+            return value instanceof Number ? ((Number) value).longValue() : Long.valueOf(String.valueOf(value));
+        }
+        if (targetType == Integer.class || targetType == Integer.TYPE)
+        {
+            return value instanceof Number ? ((Number) value).intValue() : Integer.valueOf(String.valueOf(value));
+        }
+        if (targetType == java.math.BigDecimal.class)
+        {
+            return value instanceof java.math.BigDecimal ? value : new java.math.BigDecimal(String.valueOf(value));
+        }
+        if (targetType == String.class)
+        {
+            return String.valueOf(value);
+        }
+        if (targetType == java.util.Date.class && value instanceof java.sql.Timestamp)
+        {
+            return new java.util.Date(((java.sql.Timestamp) value).getTime());
+        }
+        return value;
+    }
+}

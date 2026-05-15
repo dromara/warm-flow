@@ -16,5 +16,6 @@
 
     <modules>
         <module>warm-flow-jimmer-postgres-demo</module>
+        <module>warm-flow-ruoyi-jimmer-postgres</module>
     </modules>
 </project>

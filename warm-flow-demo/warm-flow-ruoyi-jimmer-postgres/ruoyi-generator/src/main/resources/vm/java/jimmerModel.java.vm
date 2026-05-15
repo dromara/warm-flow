@@ -1,0 +1,39 @@
+package ${packageName}.jimmer.model;
+
+import org.babyfish.jimmer.sql.Column;
+import org.babyfish.jimmer.sql.Entity;
+#if($pkColumn.increment)
+import org.babyfish.jimmer.sql.GeneratedValue;
+import org.babyfish.jimmer.sql.GenerationType;
+#end
+import org.babyfish.jimmer.sql.Id;
+import org.babyfish.jimmer.sql.Table;
+import org.jetbrains.annotations.Nullable;
+
+import java.math.BigDecimal;
+import java.util.Date;
+
+/**
+ * ${functionName}Jimmer实体模型 ${tableName}
+ *
+ * @author ${author}
+ * @date ${datetime}
+ */
+@Entity
+@Table(name = "${tableName}")
+public interface ${ClassName}Model
+{
+#foreach($column in $columns)
+#if($column.pk)
+    @Id
+#if($column.increment)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+#end
+#elseif(!$column.required)
+    @Nullable
+#end
+    @Column(name = "${column.columnName}")
+    ${column.javaType} ${column.javaField}();
+
+#end
+}
