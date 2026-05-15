@@ -538,7 +538,7 @@ public abstract class JimmerRepositorySupport<D, M>
 
     protected Predicate sql(String template, Object... values)
     {
-        return Predicate.sql(template, context -> {
+        return Predicate.sql(jimmerNativeSql(template), context -> {
             if (values != null)
             {
                 for (Object value : flatten(values))
@@ -547,6 +547,48 @@ public abstract class JimmerRepositorySupport<D, M>
                 }
             }
         });
+    }
+
+    /**
+     * Jimmer native SQL uses {@code %v} for value placeholders, while the
+     * migrated RuoYi mappers are intentionally written with JDBC-style
+     * {@code ?} placeholders to keep the PostgreSQL snippets readable and close
+     * to their original SQL. Convert only placeholders outside quoted string
+     * literals so existing mapper snippets bind values reliably.
+     */
+    private static String jimmerNativeSql(String template)
+    {
+        if (template == null || template.indexOf('?') < 0)
+        {
+            return template;
+        }
+        StringBuilder sql = new StringBuilder(template.length() + 8);
+        boolean inQuote = false;
+        for (int i = 0; i < template.length(); i++)
+        {
+            char c = template.charAt(i);
+            if (c == '\'')
+            {
+                sql.append(c);
+                if (inQuote && i + 1 < template.length() && template.charAt(i + 1) == '\'')
+                {
+                    sql.append(template.charAt(++i));
+                }
+                else
+                {
+                    inQuote = !inQuote;
+                }
+            }
+            else if (c == '?' && !inQuote)
+            {
+                sql.append("%v");
+            }
+            else
+            {
+                sql.append(c);
+            }
+        }
+        return sql.toString();
     }
 
     protected Predicate dataScope(D condition)

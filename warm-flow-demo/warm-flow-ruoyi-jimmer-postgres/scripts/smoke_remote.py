@@ -259,6 +259,8 @@ def smoke(args: argparse.Namespace) -> int:
         ("flow.form.list", "GET", "/flow/form/list?pageNum=1&pageSize=1"),
         ("flow.todo.page", "GET", "/flow/execute/toDoPage?pageNum=1&pageSize=1"),
         ("flow.done.page", "GET", "/flow/execute/donePage?pageNum=1&pageSize=1"),
+        ("warm-flow.query-def", "GET", "/warm-flow/query-def"),
+        ("warm-flow.listener-list", "GET", "/warm-flow/listener-list"),
     ]
     for name, method, path in checks:
         status, body = request_json(method, base_url, path, token=token, timeout=args.timeout)

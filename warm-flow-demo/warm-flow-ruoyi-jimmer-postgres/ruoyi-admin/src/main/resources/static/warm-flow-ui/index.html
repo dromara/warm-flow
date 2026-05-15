@@ -210,6 +210,25 @@
       opacity: 0.5;
     }
   </style>
+  <script>
+    (function () {
+      function readCookie(name) {
+        var prefix = name + "=";
+        return document.cookie.split(";").map(function (item) {
+          return item.trim();
+        }).filter(function (item) {
+          return item.indexOf(prefix) === 0;
+        }).map(function (item) {
+          return decodeURIComponent(item.substring(prefix.length));
+        })[0];
+      }
+      var ruoyiToken = readCookie("Admin-Token");
+      if (ruoyiToken) {
+        localStorage.setItem("Warm-TokenName", "Authorization");
+        localStorage.setItem("Warm-Authorization", "Bearer " + ruoyiToken);
+      }
+    })();
+  </script>
   <script type="module" crossorigin src="./js/index-Bb2rKpRD.js"></script>
   <link rel="stylesheet" crossorigin href="./css/index-DfdPwo0U.css">
 </head>
