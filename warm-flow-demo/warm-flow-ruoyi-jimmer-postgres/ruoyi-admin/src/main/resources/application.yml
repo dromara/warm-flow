@@ -111,7 +111,7 @@ token:
 jimmer:
   language: java
   dialect: org.babyfish.jimmer.sql.dialect.PostgresDialect
-  database-validation-mode: WARNING
+  database-validation-mode: ERROR
   show-sql: ${JIMMER_SHOW_SQL:false}
   pretty-sql: ${JIMMER_PRETTY_SQL:false}
 
