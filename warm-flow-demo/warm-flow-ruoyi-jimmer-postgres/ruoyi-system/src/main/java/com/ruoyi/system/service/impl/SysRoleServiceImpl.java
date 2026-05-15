@@ -293,9 +293,14 @@ public class SysRoleServiceImpl implements ISysRoleService
     public int insertRoleMenu(SysRole role)
     {
         int rows = 1;
-        // 新增用户与角色管理
+        Long[] menuIds = role.getMenuIds();
+        if (StringUtils.isEmpty(menuIds))
+        {
+            return rows;
+        }
+        // 角色保存与菜单关联写入处于同一事务；底层 mapper 包装的是 Jimmer repository 适配器。
         List<SysRoleMenu> list = new ArrayList<SysRoleMenu>();
-        for (Long menuId : role.getMenuIds())
+        for (Long menuId : menuIds)
         {
             SysRoleMenu rm = new SysRoleMenu();
             rm.setRoleId(role.getRoleId());
@@ -317,9 +322,14 @@ public class SysRoleServiceImpl implements ISysRoleService
     public int insertRoleDept(SysRole role)
     {
         int rows = 1;
-        // 新增角色与部门（数据权限）管理
+        Long[] deptIds = role.getDeptIds();
+        if (StringUtils.isEmpty(deptIds))
+        {
+            return rows;
+        }
+        // 数据权限采用“先删后插”的事务边界，确保角色部门授权表与角色主表一致。
         List<SysRoleDept> list = new ArrayList<SysRoleDept>();
-        for (Long deptId : role.getDeptIds())
+        for (Long deptId : deptIds)
         {
             SysRoleDept rd = new SysRoleDept();
             rd.setRoleId(role.getRoleId());
@@ -412,7 +422,11 @@ public class SysRoleServiceImpl implements ISysRoleService
     @Override
     public int insertAuthUsers(Long roleId, Long[] userIds)
     {
-        // 新增用户与角色管理
+        if (StringUtils.isEmpty(userIds))
+        {
+            return 1;
+        }
+        // 批量授权仅写 sys_user_role 关联表，角色与用户主表不在此处变更。
         List<SysUserRole> list = new ArrayList<SysUserRole>();
         for (Long userId : userIds)
         {

@@ -248,7 +248,10 @@ public abstract class JimmerRepositorySupport<D, M>
         JimmerPage.PageState page = applyPage ? JimmerPage.current() : null;
         if (page != null)
         {
-            Long total = createQuery(safePredicates, defaultOrders).selectCount().fetchOne();
+            // Count SQL must not inherit page/default orders. PostgreSQL rejects
+            // `select count(1) ... order by ... limit ?`, and count needs only
+            // the same filtering predicates as the data query.
+            Long total = createCountQuery(safePredicates).selectCount().fetchOne();
             JimmerPage.total(total == null ? 0L : total);
         }
         MutableRootQuery<TableProxy<M>> query = createQuery(safePredicates, defaultOrders);
@@ -286,9 +289,20 @@ public abstract class JimmerRepositorySupport<D, M>
         return query;
     }
 
+    protected MutableRootQuery<TableProxy<M>> createCountQuery(List<Predicate> predicates)
+    {
+        MutableRootQuery<TableProxy<M>> query = sqlClient.createQuery(table());
+        List<Predicate> safePredicates = compact(predicates);
+        if (!safePredicates.isEmpty())
+        {
+            query.where(safePredicates.toArray(new Predicate[0]));
+        }
+        return query;
+    }
+
     protected long count(List<Predicate> predicates)
     {
-        Long total = createQuery(predicates, null).selectCount().fetchOne();
+        Long total = createCountQuery(predicates).selectCount().fetchOne();
         return total == null ? 0L : total;
     }
 

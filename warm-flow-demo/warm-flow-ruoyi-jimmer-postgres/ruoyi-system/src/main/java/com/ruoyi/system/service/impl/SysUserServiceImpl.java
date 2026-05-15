@@ -413,7 +413,7 @@ public class SysUserServiceImpl implements ISysUserService
         Long[] posts = user.getPostIds();
         if (StringUtils.isNotEmpty(posts))
         {
-            // 新增用户与岗位管理
+            // 用户主表与岗位关联表在同一事务中落库，保证新增/编辑接口返回后关联已完整可查。
             List<SysUserPost> list = new ArrayList<SysUserPost>(posts.length);
             for (Long postId : posts)
             {
@@ -436,7 +436,7 @@ public class SysUserServiceImpl implements ISysUserService
     {
         if (StringUtils.isNotEmpty(roleIds))
         {
-            // 新增用户与角色管理
+            // 角色关联使用 Jimmer repository 批量插入；调用方负责先清理旧授权以避免重复行。
             List<SysUserRole> list = new ArrayList<SysUserRole>(roleIds.length);
             for (Long roleId : roleIds)
             {
