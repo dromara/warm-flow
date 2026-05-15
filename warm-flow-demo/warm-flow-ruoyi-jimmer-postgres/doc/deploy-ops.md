@@ -50,18 +50,32 @@ RUOYI_TOKEN_SECRET=change-me-long-random-secret
 
 - `sql/postgresql/ruoyi-warm-flow-jimmer-postgres.sql`
 
-首次部署前在 PostgreSQL 所在主机或可访问 PostgreSQL 的机器执行。示例命令会创建/授权演示库用户并导入 RuoYi、Quartz、Warm-Flow 与示例菜单数据；如果目标库已有生产数据，先备份并人工审阅 SQL，禁止直接覆盖执行。
+首次部署前在 PostgreSQL 所在主机或可访问 PostgreSQL 的机器执行。示例命令会创建/授权演示库用户并导入 RuoYi、Quartz、Warm-Flow 与示例菜单数据；`ruoyi-warm-flow-jimmer-postgres.sql` 默认只允许空库/空 `public` schema 初始化，检测到已有表会拒绝继续。确需重置演示库时，必须先备份、人工审阅 SQL，并显式传入 `-v allow_destructive_reset=true`。
 
 ```sh
 # 1) 在维护库创建/确认应用库和用户；app_password 按目标环境替换
 psql "postgresql://postgres@192.168.2.226:5432/postgres" \
   -v ON_ERROR_STOP=1 \
-  -v app_password='change-me' \
+  -v app_password='replace-with-strong-password' \
+  -f sql/postgresql/00-create-database.sql
+
+# 可选：创建一次性验收库时覆盖库名/用户名，避免影响共享演示库
+psql "postgresql://postgres@192.168.2.226:5432/postgres" \
+  -v ON_ERROR_STOP=1 \
+  -v app_db='warm_flow_jimmer_smoke' \
+  -v app_user='warm_flow_jimmer_smoke' \
+  -v app_password='replace-with-strong-password' \
   -f sql/postgresql/00-create-database.sql
 
 # 2) 连接应用库导入完整 RuoYi + Quartz + Warm-Flow + 示例数据
 psql "postgresql://warm_flow_jimmer_demo@192.168.2.226:5432/warm_flow_jimmer_demo" \
   -v ON_ERROR_STOP=1 \
+  -f sql/postgresql/ruoyi-warm-flow-jimmer-postgres.sql
+
+# 只在已备份且确认要重置演示库时使用：
+psql "postgresql://warm_flow_jimmer_demo@192.168.2.226:5432/warm_flow_jimmer_demo" \
+  -v ON_ERROR_STOP=1 \
+  -v allow_destructive_reset=true \
   -f sql/postgresql/ruoyi-warm-flow-jimmer-postgres.sql
 ```
 

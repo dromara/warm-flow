@@ -11,11 +11,19 @@
 -- ruoyi-warm-flow-jimmer-postgres.sql.
 -- ============================================================
 
+\if :{?app_db}
+\else
 \set app_db warm_flow_jimmer_demo
+\endif
+\if :{?app_user}
+\else
 \set app_user warm_flow_jimmer_demo
+\endif
+\set ON_ERROR_STOP on
 \if :{?app_password}
 \else
-\set app_password warm_flow_jimmer_demo
+\echo 'ERROR: app_password is required. Pass -v app_password=<strong-password>.'
+SELECT 1 / 0 AS missing_app_password;
 \endif
 
 SELECT format('CREATE ROLE %I LOGIN PASSWORD %L', :'app_user', :'app_password')

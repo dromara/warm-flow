@@ -47,11 +47,18 @@
 常用命令：
 
 ```sh
-# 首次初始化数据库前请先审阅 SQL，禁止覆盖已有生产数据
+# 首次初始化数据库前请先审阅 SQL；导入脚本默认拒绝在非空 public schema 执行
 psql "postgresql://postgres@192.168.2.226:5432/postgres" -v ON_ERROR_STOP=1 \
-  -v app_password=change-me -f sql/postgresql/00-create-database.sql
+  -v app_password='replace-with-strong-password' \
+  -f sql/postgresql/00-create-database.sql
 psql "postgresql://warm_flow_jimmer_demo@192.168.2.226:5432/warm_flow_jimmer_demo" -v ON_ERROR_STOP=1 \
   -f sql/postgresql/ruoyi-warm-flow-jimmer-postgres.sql
+
+# 临时验收库可覆盖 app_db/app_user/app_password，避免破坏共享演示库
+psql "postgresql://postgres@192.168.2.226:5432/postgres" -v ON_ERROR_STOP=1 \
+  -v app_db=warm_flow_jimmer_smoke -v app_user=warm_flow_jimmer_smoke \
+  -v app_password='replace-with-strong-password' \
+  -f sql/postgresql/00-create-database.sql
 
 # 构建并以容器运行
 mvn -DskipTests clean package
