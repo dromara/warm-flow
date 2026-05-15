@@ -60,6 +60,8 @@ curl -fsS http://192.168.2.226:18080/health
 python3 scripts/smoke_remote.py --base-url http://192.168.2.226:18080/
 ```
 
+烟测会登录默认账号并覆盖 `system`、`monitor`、`tool`、`flow` 四类后台代表性只读接口，避免只验证流程设计器而遗漏完整管理后台。
+
 ## 部署流程
 - 导入[warm-flow-all.sql](https://gitee.com/min290/hh-vue/blob/master/sql/warm/warm-flow-all.sql)
 - 其他按照ruoyi-vue部署流程即可  

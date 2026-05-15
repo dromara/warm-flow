@@ -106,9 +106,21 @@ curl -fsS http://192.168.2.226:18080/health
 - `/getRouters`
 - `/system/user/list`
 - `/system/role/list`
+- `/system/menu/list`
+- `/system/dept/list`
+- `/system/post/list`
+- `/system/dict/type/list`
+- `/system/config/list`
+- `/monitor/server`
+- `/monitor/cache`
+- `/monitor/operlog/list`
+- `/monitor/logininfor/list`
+- `/monitor/job/list`
+- `/tool/gen/list`
 - `/flow/definition/list`
 - `/flow/form/list`
 - `/flow/execute/toDoPage`
+- `/flow/execute/donePage`
 
 验证码开启时，脚本会用 `/captchaImage` 返回的 `uuid` 读取 Redis key `captcha_codes:{uuid}`，自动拿到验证码并登录。脚本优先使用 Python `redis` 包，缺失时回退到 `redis-cli`；两者都不可用或 Redis 不可达时，可使用 `--skip-login` 仅验证匿名接口。
 

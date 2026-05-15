@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Non-destructive smoke test for RuoYi + Warm-Flow Jimmer/PostgreSQL.
 
-Covers health, captcha, login, getInfo, getRouters, and representative system/flow list APIs.
+Covers health, captcha, login, getInfo, getRouters, and representative
+system/monitor/tool/flow list APIs.
 If Redis is reachable, the script reads the captcha answer by uuid and performs login automatically.
 """
 from __future__ import annotations
@@ -81,6 +82,26 @@ def require_success(name: str, status: int, body: Dict[str, Any], allow_codes: I
         raise SmokeError(f"{name} business code {code}: {body}")
 
 
+def normalize_redis_value(value: Optional[str]) -> Optional[str]:
+    """Return the plain captcha code stored by RuoYi's JSON Redis serializer.
+
+    RuoYi writes captcha values through the application RedisTemplate. Depending
+    on the client used for smoke testing, Redis can return either ``1234`` or a
+    JSON encoded string such as ``"1234"``. Login expects the plain code, so the
+    smoke test normalizes both forms before posting to ``/login``.
+    """
+    if not value:
+        return None
+    value = str(value).strip()
+    if not value:
+        return None
+    try:
+        decoded = json.loads(value)
+    except json.JSONDecodeError:
+        return value
+    return str(decoded).strip() if decoded is not None else None
+
+
 def redis_get_captcha(args: argparse.Namespace, uuid: str) -> Optional[str]:
     key = CAPTCHA_KEY_PREFIX + uuid
     try:
@@ -99,7 +120,7 @@ def redis_get_captcha(args: argparse.Namespace, uuid: str) -> Optional[str]:
             )
             value = client.get(key)
             if value:
-                return str(value)
+                return normalize_redis_value(str(value))
         except Exception as exc:  # noqa: BLE001 - fall through to redis-cli
             print(f"WARN python redis captcha read failed: {exc}", file=sys.stderr)
 
@@ -120,8 +141,7 @@ def redis_get_captcha(args: argparse.Namespace, uuid: str) -> Optional[str]:
     if proc.returncode != 0:
         print(f"WARN redis-cli captcha read failed: {proc.stderr.strip()}", file=sys.stderr)
         return None
-    value = proc.stdout.strip()
-    return value or None
+    return normalize_redis_value(proc.stdout)
 
 
 def smoke(args: argparse.Namespace) -> int:
@@ -169,9 +189,21 @@ def smoke(args: argparse.Namespace) -> int:
         ("getRouters", "GET", "/getRouters"),
         ("system.user.list", "GET", "/system/user/list?pageNum=1&pageSize=1"),
         ("system.role.list", "GET", "/system/role/list?pageNum=1&pageSize=1"),
+        ("system.menu.list", "GET", "/system/menu/list"),
+        ("system.dept.list", "GET", "/system/dept/list"),
+        ("system.post.list", "GET", "/system/post/list?pageNum=1&pageSize=1"),
+        ("system.dict.type.list", "GET", "/system/dict/type/list?pageNum=1&pageSize=1"),
+        ("system.config.list", "GET", "/system/config/list?pageNum=1&pageSize=1"),
+        ("monitor.server", "GET", "/monitor/server"),
+        ("monitor.cache", "GET", "/monitor/cache"),
+        ("monitor.operlog.list", "GET", "/monitor/operlog/list?pageNum=1&pageSize=1"),
+        ("monitor.logininfor.list", "GET", "/monitor/logininfor/list?pageNum=1&pageSize=1"),
+        ("monitor.job.list", "GET", "/monitor/job/list?pageNum=1&pageSize=1"),
+        ("tool.gen.list", "GET", "/tool/gen/list?pageNum=1&pageSize=1"),
         ("flow.definition.list", "GET", "/flow/definition/list?pageNum=1&pageSize=1"),
         ("flow.form.list", "GET", "/flow/form/list?pageNum=1&pageSize=1"),
         ("flow.todo.page", "GET", "/flow/execute/toDoPage?pageNum=1&pageSize=1"),
+        ("flow.done.page", "GET", "/flow/execute/donePage?pageNum=1&pageSize=1"),
     ]
     for name, method, path in checks:
         status, body = request_json(method, base_url, path, token=token, timeout=args.timeout)
