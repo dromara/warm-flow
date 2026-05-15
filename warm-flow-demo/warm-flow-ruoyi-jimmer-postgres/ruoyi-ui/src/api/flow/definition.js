@@ -111,7 +111,7 @@ export function unActive(definitionId) {
 // 查询已发布表单定义列表
 export function publishedList() {
   return request({
-    url: '/warm-flow/published-form',
+    url: '/flow/form/publishedList',
     method: 'get'
   })
 }
