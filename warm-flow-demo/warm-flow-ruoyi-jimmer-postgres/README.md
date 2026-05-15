@@ -25,7 +25,7 @@
 - **监听器**‌：提供四种监听器，支持不同作用范围和spel表达式，参数传递灵活，支持动态权限。
 - **流程变量**‌：在整个流程办理过程起到重要的角色，如办理人表达式中，传入变量进行动态指定办理人。
 - **ORM框架支持**‌：当前项目已整体重构为 **Jimmer ORM + PostgreSQL**，后续按需扩展其他 ORM 适配。
-- **数据库支持**‌：支持MySQL、Oracle、PostgreSQL和SQL Server，其他数据库只需要转换表结构即可支持。
+- **数据库支持**‌：当前交付模块默认使用 PostgreSQL；其他数据库需另行转换表结构并重新验证。
 - **多租户与软删除**‌：流程引擎自身维护多租户和软删除实现，也可使用对应ORM框架的实现方式。
 - **兼容性**‌：同时支持Spring和Solon，兼容Java8、Java17、Java21。
 - **实战项目**‌：官方提供基于Ruoyi-Vue封装的实战项目，极具参考价值。
@@ -49,6 +49,8 @@
 ```sh
 # 首次初始化数据库前请先审阅 SQL，禁止覆盖已有生产数据
 psql "postgresql://postgres@192.168.2.226:5432/postgres" -v ON_ERROR_STOP=1 \
+  -v app_password=change-me -f sql/postgresql/00-create-database.sql
+psql "postgresql://warm_flow_jimmer_demo@192.168.2.226:5432/warm_flow_jimmer_demo" -v ON_ERROR_STOP=1 \
   -f sql/postgresql/ruoyi-warm-flow-jimmer-postgres.sql
 
 # 构建并以容器运行
@@ -63,9 +65,8 @@ python3 scripts/smoke_remote.py --base-url http://192.168.2.226:18080/
 烟测会登录默认账号并覆盖 `system`、`monitor`、`tool`、`flow` 四类后台代表性只读接口，避免只验证流程设计器而遗漏完整管理后台。
 
 ## 部署流程
-- 导入[warm-flow-all.sql](https://gitee.com/min290/hh-vue/blob/master/sql/warm/warm-flow-all.sql)
-- 其他按照ruoyi-vue部署流程即可  
-- 导入[官网流程定义案例json](https://gitee.com/dromara/warm-flow-test/tree/master/warm-flow-core-test/src/main/resources)
+
+本 Jimmer/PostgreSQL 交付模块请使用 `doc/deploy-ops.md` 与 `sql/postgresql/` 下脚本部署；`sql/legacy-mysql/` 仅作为 PostgreSQL 初始化脚本生成器的历史输入，不得在本模块直接执行。
 
 
 ## 工作流

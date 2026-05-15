@@ -1,6 +1,6 @@
 # RuoYi + Warm-Flow Jimmer/PostgreSQL 部署与运维说明
 
-本文面向 `warm-flow-ruoyi-jimmer-postgres` 后台的开发/演示环境。默认复用 `192.168.2.226` 上 PostgreSQL 与 Redis，不在部署脚本中删除或重建已有数据。
+本文面向 `warm-flow-jimmer-demo` 后台的开发/演示环境。默认复用 `192.168.2.226` 上 `dev-postgres` 与 `dev-redis`，不在部署脚本中删除或重建已有数据。
 
 ## 默认访问
 
@@ -16,13 +16,14 @@
 | `SERVER_PORT` | `18080` | 宿主机访问端口；容器内固定映射到 `18080`。 |
 | `SPRING_PROFILES_ACTIVE` | `druid` | Spring profile，加载 `application-druid.yml`。 |
 | `RUOYI_PROFILE` | `/home/ruoyi/uploadPath` | 上传文件目录，compose 会挂载为持久化卷。 |
-| `WARM_FLOW_DB_URL` | `jdbc:postgresql://192.168.2.226:5432/warm_flow_admin` | PostgreSQL JDBC URL。 |
-| `WARM_FLOW_DB_USERNAME` | `warm_flow_admin` | PostgreSQL 用户。 |
+| `WARM_FLOW_DB_URL` | `jdbc:postgresql://dev-postgres:5432/warm_flow_jimmer_demo` | PostgreSQL JDBC URL。 |
+| `WARM_FLOW_DB_USERNAME` | `warm_flow_jimmer_demo` | PostgreSQL 用户。 |
 | `WARM_FLOW_DB_PASSWORD` | 空 | PostgreSQL 密码，按目标环境设置。 |
-| `REDIS_HOST` | `192.168.2.226` | Redis 主机。 |
+| `REDIS_HOST` | `dev-redis` | Redis 主机。 |
 | `REDIS_PORT` | `6379` | Redis 端口。 |
 | `REDIS_DATABASE` | `0` | Redis DB。 |
 | `REDIS_PASSWORD` | 空 | Redis 密码，按目标环境设置。 |
+| Docker network | `dev-infra` | 应用、`dev-postgres`、`dev-redis` 共享的外部 Docker 网络。 |
 | `RUOYI_TOKEN_SECRET` | `warm-flow-jimmer-postgres-change-me` | JWT 密钥，非本地环境必须覆盖。 |
 | `RUOYI_TOKEN_EXPIRE_MINUTES` | `120` | token 有效期。 |
 | `JIMMER_SHOW_SQL` | `false` | 是否输出 Jimmer SQL。 |
@@ -33,10 +34,10 @@
 ```sh
 SERVER_PORT=18080
 SPRING_PROFILES_ACTIVE=druid
-WARM_FLOW_DB_URL=jdbc:postgresql://192.168.2.226:5432/warm_flow_admin
-WARM_FLOW_DB_USERNAME=warm_flow_admin
+WARM_FLOW_DB_URL=jdbc:postgresql://dev-postgres:5432/warm_flow_jimmer_demo
+WARM_FLOW_DB_USERNAME=warm_flow_jimmer_demo
 WARM_FLOW_DB_PASSWORD=change-me
-REDIS_HOST=192.168.2.226
+REDIS_HOST=dev-redis
 REDIS_PORT=6379
 REDIS_DATABASE=0
 REDIS_PASSWORD=change-me-if-any
@@ -52,7 +53,14 @@ RUOYI_TOKEN_SECRET=change-me-long-random-secret
 首次部署前在 PostgreSQL 所在主机或可访问 PostgreSQL 的机器执行。示例命令会创建/授权演示库用户并导入 RuoYi、Quartz、Warm-Flow 与示例菜单数据；如果目标库已有生产数据，先备份并人工审阅 SQL，禁止直接覆盖执行。
 
 ```sh
+# 1) 在维护库创建/确认应用库和用户；app_password 按目标环境替换
 psql "postgresql://postgres@192.168.2.226:5432/postgres" \
+  -v ON_ERROR_STOP=1 \
+  -v app_password='change-me' \
+  -f sql/postgresql/00-create-database.sql
+
+# 2) 连接应用库导入完整 RuoYi + Quartz + Warm-Flow + 示例数据
+psql "postgresql://warm_flow_jimmer_demo@192.168.2.226:5432/warm_flow_jimmer_demo" \
   -v ON_ERROR_STOP=1 \
   -f sql/postgresql/ruoyi-warm-flow-jimmer-postgres.sql
 ```
@@ -69,9 +77,10 @@ python3 scripts/generate_pg_init.py
 
 ```sh
 mvn -DskipTests clean package
+docker network inspect dev-infra >/dev/null 2>&1 || docker network create dev-infra
 docker compose -f docker-compose.deploy.yml up -d --build
 docker compose -f docker-compose.deploy.yml ps
-docker logs -f warm-flow-ruoyi-jimmer-postgres
+docker logs -f warm-flow-jimmer-demo
 ```
 
 也可以使用包装脚本：
@@ -83,15 +92,15 @@ bin/deploy_docker.sh
 重启/停止：
 
 ```sh
-docker compose -f docker-compose.deploy.yml restart warm-flow-ruoyi-jimmer-postgres
-docker compose -f docker-compose.deploy.yml stop warm-flow-ruoyi-jimmer-postgres
-docker compose -f docker-compose.deploy.yml up -d warm-flow-ruoyi-jimmer-postgres
+docker compose -f docker-compose.deploy.yml restart warm-flow-jimmer-demo
+docker compose -f docker-compose.deploy.yml stop warm-flow-jimmer-demo
+docker compose -f docker-compose.deploy.yml up -d warm-flow-jimmer-demo
 ```
 
 只查看状态（非破坏性）：
 
 ```sh
-docker ps --filter name=warm-flow-ruoyi-jimmer-postgres
+docker ps --filter name=warm-flow-jimmer-demo
 curl -fsS http://192.168.2.226:18080/health
 ```
 
@@ -100,6 +109,7 @@ curl -fsS http://192.168.2.226:18080/health
 烟测脚本：`scripts/smoke_remote.py`，覆盖：
 
 - `/health`
+- `/warm-flow-ui/index.html`
 - `/captchaImage`
 - `/login`
 - `/getInfo`
@@ -110,6 +120,7 @@ curl -fsS http://192.168.2.226:18080/health
 - `/system/dept/list`
 - `/system/post/list`
 - `/system/dict/type/list`
+- `/system/dict/data/list`
 - `/system/config/list`
 - `/monitor/server`
 - `/monitor/cache`
@@ -123,14 +134,16 @@ curl -fsS http://192.168.2.226:18080/health
 - `/flow/execute/donePage`
 
 验证码开启时，脚本会用 `/captchaImage` 返回的 `uuid` 读取 Redis key `captcha_codes:{uuid}`，自动拿到验证码并登录。脚本优先使用 Python `redis` 包，缺失时回退到 `redis-cli`；两者都不可用或 Redis 不可达时，可使用 `--skip-login` 仅验证匿名接口。
+在部署机只提供 Redis Docker 容器、宿主机没有 `redis-cli` 时，可增加 `--redis-container dev-redis`，脚本会通过 `docker exec dev-redis redis-cli ...` 读取验证码。
 
 ```sh
 python3 scripts/smoke_remote.py \
   --base-url http://192.168.2.226:18080/ \
   --username admin \
   --password admin123 \
-  --redis-host 192.168.2.226 \
-  --redis-port 6379
+  --redis-host dev-redis \
+  --redis-port 6379 \
+  --redis-container dev-redis
 
 # 或
 scripts/smoke_remote.sh --base-url http://192.168.2.226:18080/
@@ -140,8 +153,8 @@ scripts/smoke_remote.sh --base-url http://192.168.2.226:18080/
 
 ### `/health` 不通
 
-1. `docker ps --filter name=warm-flow-ruoyi-jimmer-postgres` 确认容器是否运行。
-2. `docker logs --tail=200 warm-flow-ruoyi-jimmer-postgres` 查看启动异常。
+1. `docker ps --filter name=warm-flow-jimmer-demo` 确认容器是否运行。
+2. `docker logs --tail=200 warm-flow-jimmer-demo` 查看启动异常。
 3. 确认端口映射：`docker compose -f docker-compose.deploy.yml ps`。
 4. 确认服务器防火墙或安全组允许访问 `18080`。
 

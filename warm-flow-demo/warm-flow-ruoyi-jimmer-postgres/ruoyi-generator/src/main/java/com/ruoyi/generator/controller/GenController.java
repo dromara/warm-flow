@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.druid.DbType;
 import com.alibaba.druid.sql.SQLUtils;
 import com.alibaba.druid.sql.ast.SQLStatement;
-import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlCreateTableStatement;
+import com.alibaba.druid.sql.ast.statement.SQLCreateTableStatement;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -132,19 +132,25 @@ public class GenController extends BaseController
         try
         {
             SqlUtil.filterKeyword(sql);
-            List<SQLStatement> sqlStatements = SQLUtils.parseStatements(sql, DbType.mysql);
+            // This deployable demo is PostgreSQL-only. Parse DDL as PostgreSQL so
+            // /tool/gen/createTable accepts the same dialect used by Jimmer runtime
+            // and rejects MySQL-only table options instead of silently normalizing them.
+            List<SQLStatement> sqlStatements = SQLUtils.parseStatements(sql, DbType.postgresql);
             List<String> tableNames = new ArrayList<>();
             for (SQLStatement sqlStatement : sqlStatements)
             {
-                if (sqlStatement instanceof MySqlCreateTableStatement)
+                if (sqlStatement instanceof SQLCreateTableStatement)
                 {
-                    MySqlCreateTableStatement createTableStatement = (MySqlCreateTableStatement) sqlStatement;
-                    if (genTableService.createTable(createTableStatement.toString()))
+                    SQLCreateTableStatement createTableStatement = (SQLCreateTableStatement) sqlStatement;
+                    if (genTableService.createTable(SQLUtils.toSQLString(createTableStatement, DbType.postgresql)))
                     {
-                        String tableName = createTableStatement.getTableName().replaceAll("`", "");
-                        tableNames.add(tableName);
+                        tableNames.add(normalizePostgresTableName(createTableStatement.getTableName()));
                     }
                 }
+            }
+            if (tableNames.isEmpty())
+            {
+                return AjaxResult.error("未解析到PostgreSQL CREATE TABLE语句");
             }
             List<GenTable> tableList = genTableService.selectDbTableListByNames(tableNames.toArray(new String[tableNames.size()]));
             String operName = SecurityUtils.getUsername();
@@ -156,6 +162,25 @@ public class GenController extends BaseController
             logger.error(e.getMessage(), e);
             return AjaxResult.error("创建表结构异常");
         }
+    }
+
+
+    /**
+     * Normalize a Druid PostgreSQL table name for information_schema lookup.
+     *
+     * <p>Druid can return schema-qualified or quoted names such as
+     * {@code public.demo_table} or {@code "demo_table"}; the generator metadata
+     * queries search the current schema by bare table name.</p>
+     */
+    private String normalizePostgresTableName(String tableName)
+    {
+        String normalized = tableName == null ? "" : tableName.replace("\"", "").replace("`", "");
+        int schemaSeparator = normalized.lastIndexOf('.');
+        if (schemaSeparator >= 0)
+        {
+            normalized = normalized.substring(schemaSeparator + 1);
+        }
+        return normalized;
     }
 
     /**

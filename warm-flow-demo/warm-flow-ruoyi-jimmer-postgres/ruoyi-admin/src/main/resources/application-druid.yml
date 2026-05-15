@@ -6,8 +6,8 @@ spring:
         druid:
             # 主库数据源
             master:
-                url: ${WARM_FLOW_DB_URL:jdbc:postgresql://localhost:5432/warm_flow_admin}
-                username: ${WARM_FLOW_DB_USERNAME:warm_flow_admin}
+                url: ${WARM_FLOW_DB_URL:jdbc:postgresql://dev-postgres:5432/warm_flow_jimmer_demo}
+                username: ${WARM_FLOW_DB_USERNAME:warm_flow_jimmer_demo}
                 password: ${WARM_FLOW_DB_PASSWORD:}
             # 从库数据源
             slave:

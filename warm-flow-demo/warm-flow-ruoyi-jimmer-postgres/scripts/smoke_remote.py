@@ -38,6 +38,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--redis-port", type=int, default=int(os.getenv("REDIS_PORT", "6379")))
     parser.add_argument("--redis-db", type=int, default=int(os.getenv("REDIS_DATABASE", "0")))
     parser.add_argument("--redis-password", default=os.getenv("REDIS_PASSWORD", ""))
+    parser.add_argument(
+        "--redis-container",
+        default=os.getenv("REDIS_CONTAINER", ""),
+        help="Optional Docker container name whose redis-cli can read captcha keys",
+    )
     parser.add_argument("--timeout", type=float, default=float(os.getenv("SMOKE_TIMEOUT", "10")))
     parser.add_argument("--skip-login", action="store_true", help="Only test anonymous endpoints")
     return parser.parse_args()
@@ -73,6 +78,24 @@ def request_json(method: str, base_url: str, path: str, *, token: Optional[str] 
     except (urllib.error.URLError, TimeoutError) as exc:
         raise SmokeError(f"{method} {url} failed: {exc}") from exc
 
+
+
+def request_text(method: str, base_url: str, path: str, *, token: Optional[str] = None,
+                 timeout: float = 10) -> Tuple[int, str]:
+    url = urllib.parse.urljoin(base_url, path.lstrip("/"))
+    headers = {"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"}
+    if token:
+        headers["Authorization"] = "Bearer " + token
+    req = urllib.request.Request(url, headers=headers, method=method)
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            raw = resp.read().decode("utf-8", errors="replace")
+            return resp.status, raw
+    except urllib.error.HTTPError as exc:
+        raw = exc.read().decode("utf-8", errors="replace")
+        return exc.code, raw
+    except (urllib.error.URLError, TimeoutError) as exc:
+        raise SmokeError(f"{method} {url} failed: {exc}") from exc
 
 def require_success(name: str, status: int, body: Dict[str, Any], allow_codes: Iterable[int] = (200,)) -> None:
     if status not in allow_codes:
@@ -133,13 +156,38 @@ def redis_get_captcha(args: argparse.Namespace, uuid: str) -> Optional[str]:
     if args.redis_password:
         cmd.extend(["-a", args.redis_password])
     cmd.extend(["--raw", "GET", key])
+    value = None
     try:
         proc = subprocess.run(cmd, check=False, capture_output=True, text=True, timeout=args.timeout)
     except (FileNotFoundError, subprocess.TimeoutExpired) as exc:
         print(f"WARN redis-cli captcha read unavailable: {exc}", file=sys.stderr)
+    else:
+        if proc.returncode != 0:
+            print(f"WARN redis-cli captcha read failed: {proc.stderr.strip()}", file=sys.stderr)
+        else:
+            value = normalize_redis_value(proc.stdout)
+    if value:
+        return value
+
+    if not args.redis_container:
+        return None
+    docker_cmd = [
+        "docker",
+        "exec",
+        args.redis_container,
+        "redis-cli",
+        "-n", str(args.redis_db),
+    ]
+    if args.redis_password:
+        docker_cmd.extend(["-a", args.redis_password])
+    docker_cmd.extend(["--raw", "GET", key])
+    try:
+        proc = subprocess.run(docker_cmd, check=False, capture_output=True, text=True, timeout=args.timeout)
+    except (FileNotFoundError, subprocess.TimeoutExpired) as exc:
+        print(f"WARN docker redis-cli captcha read unavailable: {exc}", file=sys.stderr)
         return None
     if proc.returncode != 0:
-        print(f"WARN redis-cli captcha read failed: {proc.stderr.strip()}", file=sys.stderr)
+        print(f"WARN docker redis-cli captcha read failed: {proc.stderr.strip()}", file=sys.stderr)
         return None
     return normalize_redis_value(proc.stdout)
 
@@ -151,6 +199,11 @@ def smoke(args: argparse.Namespace) -> int:
     status, body = request_json("GET", base_url, "/health", timeout=args.timeout)
     require_success("health", status, body)
     print("OK health")
+
+    status, body = request_text("GET", base_url, "/warm-flow-ui/index.html", timeout=args.timeout)
+    if status != 200 or "Warm-Flow" not in body:
+        raise SmokeError("workflow designer HTML unavailable")
+    print("OK warm-flow-ui.index")
 
     status, captcha = request_json("GET", base_url, "/captchaImage", timeout=args.timeout)
     require_success("captcha", status, captcha)
@@ -171,7 +224,8 @@ def smoke(args: argparse.Namespace) -> int:
         if not code:
             raise SmokeError(
                 "captcha is enabled but answer was not readable from Redis; "
-                "install redis Python package and set REDIS_HOST/REDIS_PASSWORD, or use --skip-login"
+                "install redis Python package, set REDIS_HOST/REDIS_PASSWORD, "
+                "set --redis-container, or use --skip-login"
             )
     else:
         raise SmokeError("captcha enabled but uuid missing")
@@ -193,6 +247,7 @@ def smoke(args: argparse.Namespace) -> int:
         ("system.dept.list", "GET", "/system/dept/list"),
         ("system.post.list", "GET", "/system/post/list?pageNum=1&pageSize=1"),
         ("system.dict.type.list", "GET", "/system/dict/type/list?pageNum=1&pageSize=1"),
+        ("system.dict.data.list", "GET", "/system/dict/data/list?pageNum=1&pageSize=1"),
         ("system.config.list", "GET", "/system/config/list?pageNum=1&pageSize=1"),
         ("monitor.server", "GET", "/monitor/server"),
         ("monitor.cache", "GET", "/monitor/cache"),
