@@ -34,6 +34,32 @@
 >  **工作流地址**： **[gitee地址](https://gitee.com/dromara/warm-flow.git  )** |**[github地址](https://github.com/dromara/warm-flow.git)**
 
 
+
+## Jimmer/PostgreSQL 后台部署快速入口
+
+本目录当前后台已适配 **RuoYi + Warm-Flow + Jimmer ORM + PostgreSQL**。开发/演示环境默认复用 `192.168.2.226` 的 PostgreSQL 与 Redis。
+
+- 默认访问：<http://192.168.2.226:18080/>
+- Health：<http://192.168.2.226:18080/health>
+- 默认账号：`admin/admin123`
+- 完整部署、环境变量、初始化数据库、容器重启、烟测与故障排查见 [`doc/deploy-ops.md`](doc/deploy-ops.md)。
+
+常用命令：
+
+```sh
+# 首次初始化数据库前请先审阅 SQL，禁止覆盖已有生产数据
+psql "postgresql://postgres@192.168.2.226:5432/postgres" -v ON_ERROR_STOP=1 \
+  -f sql/postgresql/ruoyi-warm-flow-jimmer-postgres.sql
+
+# 构建并以容器运行
+mvn -DskipTests clean package
+docker compose -f docker-compose.deploy.yml up -d --build
+
+# 非破坏性状态检查与烟测
+curl -fsS http://192.168.2.226:18080/health
+python3 scripts/smoke_remote.py --base-url http://192.168.2.226:18080/
+```
+
 ## 部署流程
 - 导入[warm-flow-all.sql](https://gitee.com/min290/hh-vue/blob/master/sql/warm/warm-flow-all.sql)
 - 其他按照ruoyi-vue部署流程即可  

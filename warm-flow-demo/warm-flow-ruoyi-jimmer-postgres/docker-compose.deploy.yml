@@ -1,0 +1,38 @@
+services:
+  warm-flow-ruoyi-jimmer-postgres:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: warm-flow-ruoyi-jimmer-postgres:latest
+    container_name: warm-flow-ruoyi-jimmer-postgres
+    restart: unless-stopped
+    ports:
+      - "${SERVER_PORT:-18080}:18080"
+    environment:
+      SERVER_PORT: "18080"
+      SPRING_PROFILES_ACTIVE: "${SPRING_PROFILES_ACTIVE:-druid}"
+      RUOYI_PROFILE: "${RUOYI_PROFILE:-/home/ruoyi/uploadPath}"
+      WARM_FLOW_DB_URL: "${WARM_FLOW_DB_URL:-jdbc:postgresql://192.168.2.226:5432/warm_flow_admin}"
+      WARM_FLOW_DB_USERNAME: "${WARM_FLOW_DB_USERNAME:-warm_flow_admin}"
+      WARM_FLOW_DB_PASSWORD: "${WARM_FLOW_DB_PASSWORD:-}"
+      REDIS_HOST: "${REDIS_HOST:-192.168.2.226}"
+      REDIS_PORT: "${REDIS_PORT:-6379}"
+      REDIS_DATABASE: "${REDIS_DATABASE:-0}"
+      REDIS_PASSWORD: "${REDIS_PASSWORD:-}"
+      RUOYI_TOKEN_SECRET: "${RUOYI_TOKEN_SECRET:-warm-flow-jimmer-postgres-change-me}"
+      RUOYI_TOKEN_EXPIRE_MINUTES: "${RUOYI_TOKEN_EXPIRE_MINUTES:-120}"
+      JIMMER_SHOW_SQL: "${JIMMER_SHOW_SQL:-false}"
+      JIMMER_PRETTY_SQL: "${JIMMER_PRETTY_SQL:-false}"
+    volumes:
+      - warm_flow_uploads:${RUOYI_PROFILE:-/home/ruoyi/uploadPath}
+      - warm_flow_logs:/app/logs
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:18080/health >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      start_period: 60s
+      retries: 5
+
+volumes:
+  warm_flow_uploads:
+  warm_flow_logs:
