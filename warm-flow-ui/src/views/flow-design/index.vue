@@ -201,6 +201,8 @@ const baseInfoStyle = computed(() => {
 const headerDiv = computed(() => {
     return {
         backgroundColor: "var(--wf-bg-white, #fff)",
+        minHeight: "100vh",
+        position: "relative",
     };
 });
 
