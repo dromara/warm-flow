@@ -154,13 +154,13 @@ public class InsServiceImpl extends WarmServiceImpl<FlowInstanceDao<Instance>, I
      */
     private void saveFlowInfo(Instance instance, List<Task> addTasks, HisTask hisTask, FlowParams flowParams) {
         FlowEngine.taskService().setInsFinishInfo(instance, addTasks, flowParams);
+        FlowEngine.hisTaskService().save(hisTask);
         // 待办任务设置处理人
         if (CollUtil.isNotEmpty(addTasks)) {
             List<User> users = FlowEngine.userService().taskAddUsers(addTasks);
             FlowEngine.taskService().saveBatch(addTasks);
             FlowEngine.userService().saveBatch(users);
         }
-        FlowEngine.hisTaskService().save(hisTask);
         save(instance);
     }
 
