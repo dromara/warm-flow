@@ -227,9 +227,9 @@ const zoomViewport = async (mode) => {
   }
 };
 
-/** 仅在移动端/平板执行 fitView，PC 端不干预（与 index.vue 保持一致） */
+/** 自动 fitView 使全部节点可见（移动端/PC 端均生效） */
 function fitViewIfMobile() {
-  if (!isMobileDevice() || !lf.value?.fitView) return;
+  if (!lf.value?.fitView) return;
 
   // 确保容器已挂载且有有效尺寸
   const container = containerRef.value;
@@ -249,22 +249,16 @@ function fitViewIfMobile() {
 }
 
 /**
- * 真机兼容：延迟触发 LogicFlow resize + fitView（仅移动端/平板端生效）
- * PC 端不执行自动 fitView，保持用户手动缩放行为
- */
-/**
- * 真机兼容：延迟触发 LogicFlow resize + fitView（仅移动端/平板端生效）
- * PC 端不执行自动 fitView，保持用户手动缩放行为
+ * 延迟触发 LogicFlow resize + fitView（所有端生效）
  */
 function scheduleMobileResize() {
   const doFit = () => {
     if (lf.value && lf.value.resize) {
       lf.value.resize();
-      // 仅在移动设备上才执行自动 fitView
       requestAnimationFrame(fitViewIfMobile);
     }
   };
-  // 多重延迟策略覆盖各种场景：移动端/v-show切换/iframe嵌入
+  // 多重延迟策略覆盖各种场景：v-show切换/iframe嵌入/移动端慢渲染
   setTimeout(doFit, 50);
   setTimeout(doFit, 150);
   setTimeout(doFit, 300);
