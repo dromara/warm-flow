@@ -678,11 +678,10 @@ onUnmounted(() => {
   color: var(--wf-text-primary, #333);
   z-index: 1;
 
-  /* 暗黑模式适配 */
-  html.dark &,
-  :global(html.dark) & {
-    color: var(--wf-text-secondary, #888888);
-  }
+}
+
+html.dark .log-text {
+  color: var(--wf-text-secondary, #888888);
 }
 
 /* ========== 暗黑模式：工具栏适配（与 index.vue 保持一致） ========== */
@@ -834,23 +833,19 @@ onUnmounted(() => {
     padding: 4px 0;
     border-top: 1px solid var(--el-border-color-lighter, #ebeef5);
 
-    /* 暗黑模式边框 */
-    html.dark &,
-    :global(html.dark) & {
-      border-top-color: rgba(255, 255, 255, 0.1);
-    }
+  html.dark .chart-toolbar-mobile-status {
+    border-top-color: rgba(255, 255, 255, 0.1);
+  }
   }
 
   .chart-toolbar-mobile-status :deep(.el-button) {
     font-size: 11px;
     padding: 3px 8px;
 
-    /* 暗黑模式：移动端状态按钮 */
-    html.dark &,
-    :global(html.dark) & {
-      --el-button-text-color: #ffffff;
-      color: #ffffff;
-    }
+  html.dark .chart-toolbar-mobile-status :deep(.el-button) {
+    --el-button-text-color: #ffffff;
+    color: #ffffff;
+  }
   }
 }
 
