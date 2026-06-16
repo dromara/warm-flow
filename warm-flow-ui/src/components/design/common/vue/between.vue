@@ -581,7 +581,7 @@ function getHandlerDict() {
 /** 办理人权限名称回显 */
 async function getHandlerFeedback() {
   if (form.value.permissionFlag) {
-      let permissionFlag = form.value.permissionFlag.join(",");
+      let permissionFlag = form.value.permissionFlag;
       handlerFeedback({storageIds: permissionFlag}).then(response => {
           if (response.code === 200 && response.data) {
             permissionRows.value = response.data;
