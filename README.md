@@ -23,10 +23,16 @@
 <table>
     <tbody>
         <tr>  
-            <td><img src="https://www.warm-flow.com/ggw/frsimple.png" height="80px"/></td>
-            <td><img src="https://www.warm-flow.com/ggw/easysearch.webp" height="80px"/></td>
-            <td><img src="https://www.warm-flow.com/ggw/ccflow.png" height="80px"/></td>
-            <td><img src="https://www.warm-flow.com/ggw/MaxKey.png" height="80px"/></td>
+            <td><a href="https://ccflow.org/index.html?frm=warmflow"><img src="https://www.warm-flow.com/ggw/ccflow.png" height="80px"/></a></td>
+            <td><a href="https://el.frsimple.com"><img src="https://www.warm-flow.com/ggw/frsimple.png" height="80px"/></a></td>
+            <td><a href="https://easysearch.cn"><img src="https://www.warm-flow.com/ggw/easysearch.webp" height="80px"/></a></td>
+            <td><a href="https://www.maxkey.top"><img src="https://www.warm-flow.com/ggw/MaxKey.png" height="80px"/></a></td>
+        </tr>
+        <tr>  
+            <td><a href="https://shaiwz.com/home"><img src="https://www.warm-flow.com/ggw/shaiwz.jpg" height="80px"/></a></td>
+            <td></td>
+            <td></td>
+            <td></td>
         </tr>
     </tbody>
 </table>
