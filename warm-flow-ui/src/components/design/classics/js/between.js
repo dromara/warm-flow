@@ -1,5 +1,5 @@
 import {RectNode, RectNodeModel, h} from "@logicflow/core";
-import {setCommonStyle} from "@/components/design/common/js/tool.js";
+import {setCommonStyle, applyClassicDesignColor} from "@/components/design/common/js/tool.js";
 
 class BetweenModel extends RectNodeModel {
 
@@ -10,7 +10,9 @@ class BetweenModel extends RectNodeModel {
     this.radius = 8;
   }
   getNodeStyle() {
-    return setCommonStyle(super.getNodeStyle(), this.properties, "node");
+    const style = setCommonStyle(super.getNodeStyle(), this.properties, "node");
+    // 设计态语义色：中间 / 审批节点用品牌蓝
+    return applyClassicDesignColor(style, this.properties, '64,158,255');
   }
 }
 
@@ -91,8 +93,8 @@ class BetweenView extends RectNode {
         ]),
         // 卡片阴影（暗黑模式加深）
         h('filter', { id: `card-shadow-${model.id}`, x: '-20%', y: '-20%', width: '140%', height: '140%' }, [
-          h('feDropShadow', { dx: 0, dy: 3, stdDeviation: 6, floodColor: '#000', floodOpacity: isDark ? 0.4 : 0.08 }),
-          h('feDropShadow', { dx: 0, dy: 1, stdDeviation: 2, floodColor: '#000', floodOpacity: isDark ? 0.2 : 0.04 }),
+          h('feDropShadow', { dx: 0, dy: 3, stdDeviation: 6, floodColor: '#000', floodOpacity: isDark ? 0.4 : 0.05 }),
+          h('feDropShadow', { dx: 0, dy: 1, stdDeviation: 2, floodColor: '#000', floodOpacity: isDark ? 0.2 : 0.025 }),
         ]),
         // 顶部光泽渐变（暗黑模式减弱）
         h('linearGradient', { id: `card-top-${model.id}`, x1: '0%', y1: '0%', x2: '100%', y2: '0%' }, [

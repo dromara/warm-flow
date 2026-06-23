@@ -1,5 +1,5 @@
 import { CircleNode, CircleNodeModel, h } from "@logicflow/core";
-import {setCommonStyle} from "@/components/design/common/js/tool.js";
+import {setCommonStyle, applyClassicDesignColor} from "@/components/design/common/js/tool.js";
 
 class endModel extends CircleNodeModel {
 
@@ -10,6 +10,8 @@ class endModel extends CircleNodeModel {
 
   getNodeStyle() {
     const style = setCommonStyle(super.getNodeStyle(), this.properties, "node");
+    // 设计态语义色：结束节点用红色（终止）
+    applyClassicDesignColor(style, this.properties, '245,108,108');
     style.strokeWidth = 3;
     return style;
   }
@@ -37,15 +39,15 @@ class endView extends CircleNode {
           h('stop', { offset: '0%', stopColor: isDark ? `rgba(${sc}, 0.15)` : `rgba(${sc}, 0.08)` }),
           h('stop', { offset: '100%', stopColor: isDark ? '#181a20' : 'rgba(248,250,252,0.98)' }),
         ]),
-        // 双环阴影/发光
+        // 双环阴影/发光（柔和）
         h('filter', { id: `end-shadow-${model.id}`, x: '-30%', y: '-30%', width: '160%', height: '160%' }, [
-          h('feDropShadow', { dx: 0, dy: 2, stdDeviation: 3, floodColor: `rgb(${sc})`, floodOpacity: isDark ? 0.25 : 0.15 }),
+          h('feDropShadow', { dx: 0, dy: 2, stdDeviation: 3, floodColor: `rgb(${sc})`, floodOpacity: isDark ? 0.18 : 0.1 }),
         ]),
       ]),
-      // 外层光晕
+      // 外层光晕（柔和不抢眼）
       h('circle', {
-        cx: x, cy: y, r: r + 5,
-        fill: `rgba(${sc}, ${isDark ? 0.08 : 0.04})`,
+        cx: x, cy: y, r: r + 4,
+        fill: `rgba(${sc}, ${isDark ? 0.05 : 0.02})`,
       }),
       // 内圈填充（暗黑模式使用深色基底）
       h('circle', {

@@ -1,5 +1,5 @@
 import { h, PolygonNode, PolygonNodeModel } from '@logicflow/core'
-import {setCommonStyle} from "@/components/design/common/js/tool.js";
+import {setCommonStyle, applyClassicDesignColor} from "@/components/design/common/js/tool.js";
 
 class InclusiveModel extends PolygonNodeModel {
   static extendKey = 'InclusiveModel';
@@ -25,6 +25,8 @@ class InclusiveModel extends PolygonNodeModel {
 
   getNodeStyle() {
     const style = setCommonStyle(super.getNodeStyle(), this.properties, "node");
+    // 设计态语义色：包含网关用紫色（包容多选）
+    applyClassicDesignColor(style, this.properties, '146,84,222');
     style.fill = style._statusRgba ? style._statusRgba(0.06) : 'rgba(166,178,189,0.06)';
     style.strokeWidth = 2;
     return style;
@@ -48,7 +50,7 @@ class InclusiveView extends PolygonNode {
         // 定义滤镜
         h('defs', {}, [
           h('filter', { id: `gw-shadow-i-${model.id}`, x: '-30%', y: '-30%', width: '160%', height: '160%' }, [
-            h('feDropShadow', { dx: 0, dy: 2, stdDeviation: 3, floodColor: '#000', floodOpacity: 0.07 }),
+            h('feDropShadow', { dx: 0, dy: 2, stdDeviation: 3, floodColor: '#000', floodOpacity: 0.05 }),
           ]),
         ]),
         // 菱形底座

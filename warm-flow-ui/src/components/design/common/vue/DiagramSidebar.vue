@@ -207,13 +207,13 @@ function handleDragInNode(item) {
   }
 }
 
-/* 各类型节点的图标底色 */
+/* 各类型节点的图标底色（与图标语义色呼应的淡色） */
 .item-start .item-icon-wrap   { background: linear-gradient(135deg, #ecfdf5, #d1fae5); }
 .item-between .item-icon-wrap { background: linear-gradient(135deg, #eff6ff, #dbeafe); }
 .item-end .item-icon-wrap     { background: linear-gradient(135deg, #fef2f2, #fee2e2); }
-.item-serial .item-icon-wrap  { background: linear-gradient(135deg, #fafafa, #f1f5f9); }
-.item-parallel .item-icon-wrap{ background: linear-gradient(135deg, #fafafa, #f1f5f9); }
-.item-inclusive .item-icon-wrap { background: linear-gradient(135deg, #fafafa, #f1f5f9); }
+.item-serial .item-icon-wrap  { background: linear-gradient(135deg, #fffbeb, #fef3c7); }
+.item-parallel .item-icon-wrap{ background: linear-gradient(135deg, #ecfeff, #cffafe); }
+.item-inclusive .item-icon-wrap { background: linear-gradient(135deg, #faf5ff, #f3e8ff); }
 
 /* ====== 标签文字 ====== */
 .item-label {

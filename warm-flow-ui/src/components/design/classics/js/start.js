@@ -1,5 +1,5 @@
 import { CircleNode, CircleNodeModel, h } from "@logicflow/core";
-import {setCommonStyle} from "@/components/design/common/js/tool.js";
+import {setCommonStyle, applyClassicDesignColor} from "@/components/design/common/js/tool.js";
 
 class StartModel extends CircleNodeModel {
 
@@ -9,7 +9,9 @@ class StartModel extends CircleNodeModel {
   }
 
   getNodeStyle() {
-    return setCommonStyle(super.getNodeStyle(), this.properties, "node");
+    const style = setCommonStyle(super.getNodeStyle(), this.properties, "node");
+    // 设计态语义色：开始节点用绿色（起点 / 生效）
+    return applyClassicDesignColor(style, this.properties, '103,194,58');
   }
 }
 
@@ -41,17 +43,17 @@ class StartView extends CircleNode {
           h('stop', { offset: '0%', stopColor: isDark ? '#252830' : '#ffffff' }),
           h('stop', { offset: '100%', stopColor: isDark ? '#181a20' : '#f0f2f5' }),
         ]),
-        // 外发光滤镜
+        // 外发光滤镜（柔和、不抢眼）
         h('filter', { id: `start-glow-${model.id}`, x: '-50%', y: '-50%', width: '200%', height: '200%' }, [
-          h('feGaussianBlur', { stdDeviation: '3', result: 'blur' }),
-          h('feFlood', { floodColor: `rgb(${sc})`, floodOpacity: 0.25, result: 'color' }),
+          h('feGaussianBlur', { stdDeviation: '2', result: 'blur' }),
+          h('feFlood', { floodColor: `rgb(${sc})`, floodOpacity: 0.14, result: 'color' }),
           h('feComposite', { in: 'color', in2: 'blur', operator: 'in' }),
         ]),
       ]),
-      // 外层发光效果（半透明大圆）
+      // 外层发光效果（半透明大圆，柔和不抢眼）
       h('circle', {
-        cx: x, cy: y, r: r + 6,
-        fill: `rgba(${sc}, ${isDark ? 0.10 : 0.06})`,
+        cx: x, cy: y, r: r + 5,
+        fill: `rgba(${sc}, ${isDark ? 0.07 : 0.035})`,
       }),
       // 主外环（渐变描边 + 暗黑适配背景）
       h('circle', {
