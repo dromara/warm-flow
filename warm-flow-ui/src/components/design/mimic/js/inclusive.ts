@@ -17,11 +17,11 @@ class InclusiveView extends GatewayView {
       }, [
         // 单个输入边时的图标
         h('path', {
-          fill: style.fill ? style.fill : '#FFFCEB',
+          fill: style.fill ? style.fill : '#ecf5ff',
           d: 'M85.418667 512L512.021333 85.397333 938.624 512 512.021333 938.602667z',
         }),
         h('path', {
-          fill: style.stroke ? style.stroke : '#FF8B00',
+          fill: style.stroke ? style.stroke : '#409eff',
           d: 'M512 970.24a66.346667 66.346667 0 0 1-47.146667-19.413333L72.96 558.72a66.346667 66.346667 0 0 1 0-94.08L464.853333 72.533333a68.266667 68.266667 0 0 1 94.293334 0l392.106666 392.106667a66.773333 66.773333 0 0 1 0 94.08L559.146667 950.826667a66.346667 66.346667 0 0 1-47.146667 19.413333z m0-853.333333a2.986667 2.986667 0 0 0-1.92 0L118.186667 509.866667a2.56 2.56 0 0 0 0 3.626666l391.893333 392.106667a3.2 3.2 0 0 0 3.84 0l391.893333-392.106667a2.56 2.56 0 0 0 0-3.626666L513.92 117.76a2.986667 2.986667 0 0 0-1.92-0.64z',
         }),
         h('circle', {
@@ -29,7 +29,7 @@ class InclusiveView extends GatewayView {
             cy: 512,
             r: 200,
             fill: 'none',
-            stroke: style.stroke ? style.stroke : '#FF8B00',
+            stroke: style.stroke ? style.stroke : '#409eff',
             strokeWidth: 60,
         }),
       ]),

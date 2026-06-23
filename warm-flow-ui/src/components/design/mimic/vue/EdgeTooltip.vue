@@ -37,14 +37,14 @@ const tooltipStyle = computed(() => ({
   pointerEvents: 'auto',
   backgroundColor: themeColors.value.tooltipBg,
   border: `1px solid ${themeColors.value.tooltipBorder}`,
-  borderRadius: '4px',
+  borderRadius: '12px',
   boxShadow: themeColors.value.tooltipShadow,
-  padding: '4px 5px',
-  fontSize: '15px',
+  padding: '6px',
+  fontSize: '13px',
   zIndex: 1000,
   color: themeColors.value.tooltipColor,
   display: 'flex',
-  width: '350px'
+  width: 'max-content'
 }));
 
 function handleTooltipEnter() {
@@ -66,82 +66,75 @@ const handleClick = (item) => {
 <style scoped>
 .tooltip-container {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
     width: 100%;
 }
 
 .tooltip-item {
     display: flex;
     align-items: center;
-    padding: 4px 5px;
+    gap: 8px;
+    padding: 7px 14px 7px 8px;
     cursor: pointer;
-    border-radius: 4px;
-    transition: background-color 0.2s;
+    border-radius: 8px;
+    white-space: nowrap;
+    transition: background-color 0.18s ease;
 
     &:hover {
-      background-color: #f0f0f0;
+      background-color: var(--wf-primary-lighter, #f0f7ff);
     }
 
     /* 暗黑模式 hover */
     html.dark &,
     :global(html.dark) & {
       &:hover {
-        background-color: rgba(255, 255, 255, 0.08);
+        background-color: rgba(64, 158, 255, 0.12);
       }
     }
 }
 
+.tooltip-item span {
+  font-size: 13px;
+  white-space: nowrap;
+}
+
 .tooltip-icon {
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  border: 1px solid var(--wf-border-light);
+  width: 30px;
+  height: 30px;
+  background: var(--wf-primary-light, #ecf5ff);
   border-radius: 50%;
-  margin-right: 10px;
-  color: var(--wf-text-secondary);
-  transition: all 0.2s ease;
+  transition: all 0.18s ease;
+
+  svg {
+    width: 17px;
+    height: 17px;
+  }
 
   /* 暗黑模式适配 */
   html.dark &,
   :global(html.dark) & {
-    border-color: var(--wf-border-color);
-    color: var(--wf-text-regular);
-
-    &:hover {
-      border-color: var(--wf-primary);
-      color: var(--wf-primary);
-    }
-  }
-
-  &:hover {
-    border-color: var(--wf-primary);
-    color: var(--wf-primary);
+    background: rgba(64, 158, 255, 0.16);
   }
 }
 
 /* ========== 手机端响应式适配 ========== */
 @media (max-width: 768px) {
-  .tooltip-container {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 6px;
-  }
-
   .tooltip-item {
-    padding: 6px 8px;
-    font-size: 13px;
+    padding: 7px 12px 7px 7px;
   }
 
   .tooltip-icon {
-    width: 26px;
-    height: 26px;
-    margin-right: 6px;
+    width: 28px;
+    height: 28px;
 
     svg {
-      width: 14px;
-      height: 14px;
+      width: 15px;
+      height: 15px;
     }
   }
 }

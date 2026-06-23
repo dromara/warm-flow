@@ -55,6 +55,8 @@ class SkipView extends CurvedEdge {
     const { points: pointsStr, isAnimation, arrowConfig, radius = 0 } = model;
     const style = model.getEdgeStyle();
     const animationStyle = model.getEdgeAnimationStyle();
+    // 跳转条件图标底色：设计态用主蓝 chroma，运行态保留状态语义色（chartStatusColor）
+    const condColor = model.properties.chartStatusColor ? style.stroke : '#409eff';
     let points = this.pointFilter(pointsStr.split(' ').map((p) => p.split(',').map((a) => +a)));
 
     // 主路径
@@ -69,7 +71,7 @@ class SkipView extends CurvedEdge {
       // 如果上一个节点是互斥网关，并且网关后节点大于1个，也就是说是互斥网关结束节点时
       if (['serial', 'inclusive'].includes(model.sourceNode.type as string) && nextEdge.length > 1) {
         const midPoint = [points[0][0], points[0][1] + offsetY - 10];
-        plusElements = this.getForeignObject(midPoint, style.stroke, model.text.value);
+        plusElements = this.getForeignObject(midPoint, condColor, model.text.value);
       } else if (!model.properties.chartStatusColor) {
         const midPoint = [points[0][0], points[0][1] + offsetY];
         plusElements = this.getPlusElements(midPoint);
@@ -88,7 +90,7 @@ class SkipView extends CurvedEdge {
       // 判断是否由横线变为竖线，并且是互斥网关
       if (model.sourceNode && ['serial', 'inclusive'].includes(model.sourceNode.type as string) && p0[1] === p1[1] && p0[0] !== p1[0]) {
         const midPoint = [p2[0], p1[1] + offsetY];
-        plusElements = this.getForeignObject(midPoint, style.stroke, model.text.value);
+        plusElements = this.getForeignObject(midPoint, condColor, model.text.value);
       }
     }
 
@@ -190,7 +192,7 @@ class SkipView extends CurvedEdge {
           cx: x,
           cy: y,
           r: 13,
-          fill: 'blue',
+          fill: '#409eff',
         }),
         h('line', {
           x1: x - 8,

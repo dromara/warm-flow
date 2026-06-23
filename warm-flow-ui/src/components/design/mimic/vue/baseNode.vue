@@ -76,16 +76,27 @@ const nodeNameInput = ref(null);
 const editingNodeName = ref(false);
 const emit = defineEmits(['updateNodeName', 'deleteNode', 'editNode']); // 添加 deleteNode 事件
 
+// 运行态（流程实例查看，chartStatusColor 有三原色）保留状态语义色；设计态走钉钉蓝卡片风格
+const isRuntime = computed(() => props.chartStatusColor && props.chartStatusColor.length > 0);
+
 const baseNodeColor = computed(() => {
+  if (isRuntime.value) {
+    return {
+      border: (props.status === 1 ? "2px dashed " : "1px solid ") + (props.stroke || "rgb(166,178,189)"),
+    };
+  }
+  // 设计态：无边框纯白卡片，仅靠柔和阴影区分层次（更现代、更干净）
   return {
-    border: props.stroke ? (props.status === 1 ? "2px dashed " : "1px solid ") + props.stroke : "rgb(166,178,189)",
+    background: "#fff",
   };
 });
 
 const topSectionColor = computed(() => {
-  return {
-    backgroundColor: props.stroke ? props.stroke : "rgb(166,178,189)",
-  };
+  if (isRuntime.value) {
+    return { backgroundColor: props.stroke || "rgb(166,178,189)" };
+  }
+  // 设计态：钉钉蓝渐变头部
+  return { background: "linear-gradient(135deg, #409eff 0%, #2b7de9 100%)" };
 });
 
 const deleteNode = () => {
@@ -152,7 +163,11 @@ function handleLeave() {
   width: 100%;
   height: 80px;
   box-sizing: border-box;
-  border-radius: 10px; /* 添加圆角 */
+  border-radius: 10px;
+  background: #fff;
+  /* 去边框，仅用多层柔和阴影区分层次（现代卡片质感） */
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.10), 0 1px 4px rgba(0, 0, 0, 0.05);
+  overflow: hidden; /* 让头部跟随卡片圆角 */
 }
 
 .top-section {
@@ -162,8 +177,12 @@ function handleLeave() {
   height: 25px;
   display: flex;
   align-items: center;
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
+  color: #fff; /* 彩色头部，文字/图标统一白色 */
+}
+
+/* 头部为彩色底，编辑图标改白色（原 svg 写死黑色） */
+.top-section .edit-icon path {
+  fill: #fff;
 }
 
 .delete-btn {
@@ -172,13 +191,14 @@ function handleLeave() {
   top: 50%;
   transform: translateY(-50%);
   display: block;
-  color: #000;
+  color: #fff;
 }
 
 .bottom-section {
   padding: 10px;
   height: calc(100%);
   font-size: 14px;
+  color: #303133;
 }
 
 .edit-icon {
