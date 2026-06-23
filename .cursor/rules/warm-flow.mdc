@@ -1,0 +1,48 @@
+---
+description: warm-flow 工程编码与协作规则；以根 AGENTS.md 为唯一来源，约束 JDK1.8 兼容、框架解耦、对外契约与多生态/多ORM/多DB
+globs: *
+alwaysApply: true
+---
+
+# warm-flow 工程规则（Cursor）
+
+本规则是 `warm-flow`（Dromara 开源轻量级工作流引擎 / SDK）的编码与协作约束摘要，**以根 [AGENTS.md](mdc:AGENTS.md) 为唯一来源**。开始任务前先读根 `AGENTS.md`；改动所在顶层模块下若有模块级 `AGENTS.md`（`warm-flow-core`/`warm-flow-orm`/`warm-flow-plugin`/`warm-flow-ui`），再读模块级。本文件与 `AGENTS.md` 冲突时以 `AGENTS.md` 为准。
+
+## 规则优先级
+
+1. 用户当前明确指令。
+2. 模块级 `AGENTS.md`（若存在）。
+3. 根 `AGENTS.md`。
+4. 本规则与根 `CLAUDE.md`（与 `AGENTS.md` 冲突以 `AGENTS.md` 为准）。
+5. `.qoder/repowiki` 等领域 / 架构参考。
+
+## 项目性质
+
+被他人依赖的**开源类库 / SDK**（Maven 中央仓库，`groupId=org.dromara.warm`），不是业务应用。三大最高约束：**JDK 1.8 源码级兼容**、**对外契约向后兼容**、**核心与框架 / ORM / JSON 解耦**。
+
+## 模块速览
+
+- `warm-flow-core`：框架 / ORM / JSON 无关的引擎核心（实体、服务、抽象 `WarmDao`、`FlowEngine`、`FrameInvoker`、SPI、表达式 / 监听器策略）。
+- `warm-flow-orm`：ORM 适配，按「ORM(mybatis / mybatis-plus / easy-query) × (sb/sb3/sb4/solon)」矩阵实现 `WarmDao`。
+- `warm-flow-plugin`：可插拔扩展（`modes` 表达式、`json` 序列化、`ui` 设计器后端）。
+- `warm-flow-ui`：Vue3 + Vite 前端设计器，独立于 Maven 反应堆，许可证 MIT。
+- `sql/`：mysql / oracle / postgresql / sqlserver 四套脚本 + MySQL `v1-upgrade/`。
+
+## 核心红线（详见 AGENTS.md）
+
+1. **JDK 8 语法**：主代码禁止 `var`/`record`/switch 表达式/文本块/`List.of`/`Optional.isEmpty`/`Stream.toList`/`String.isBlank` 等 Java 9+ API；优先用 core 的 `utils.*`。
+2. **解耦**：`warm-flow-core` 禁止 import `org.springframework.*` / `org.noear.solon.*` / `com.baomidou.*`；框架差异走 `FrameInvoker` + SPI + 各 starter，ORM 差异走 `WarmDao` 实现。
+3. **门面**：统一通过 `FlowEngine.xxxService()` / `FlowEngine.newXxx()` 取服务和建实体，不绕过门面直接 new 实现类。
+4. **向后兼容**：公共方法签名、`WarmDao` 接口、实体字段、枚举常量（code / 顺序）、`WarmFlow` 配置项是已发布契约，不随意删 / 改签名 / 重排；废弃用 `@Deprecated` 留过渡期。
+5. **多生态对齐**：改某 starter 能力时，确认 `sb`/`sb3`/`sb4`/`solon` 与对应 ORM 模块是否需同步；自动装配按 SB2 `spring.factories`、SB3/4 `AutoConfiguration.imports`、Solon `META-INF/solon/*.properties` 注册。
+6. **SQL 四套同步**：表结构改动同步四库全量脚本 + 新增 `v1-upgrade/warm-flow_x.x.x.sql`，写明各库方言兼容与回滚。
+7. **扩展机制**：新增 JSON 走 `JsonConvert` + `META-INF/services`；新增 ORM / 框架走五件套矩阵 + 对应自动装配。
+8. **状态机**：通过 / 退回 / 跳转 / 转办 / 加减签 / 终止 / 撤回 / 票签 / 网关有副作用，改动前读对应 `service.impl` / `strategy` / `listener` 与状态枚举。
+9. **品牌与协议**：保留每个 Java 文件 Apache 2.0 license header、`@author warm`、`org.dromara.warm` 包名、banner、README 链接与 `LICENSE`，不弱化「永久开源免费」声明。
+
+## 验证与安全边界
+
+- 本仓库无 `src/test`（测试在独立仓库 `warm-flow-test`），用**分模块编译**验证：`mvn -pl <module> -am -DskipTests compile` 或 `mvn clean install -DskipTests`；core 改动至少编译一个下游 orm/plugin 模块。前端用 `yarn dev` / `yarn build:prod`。无法验证时如实报告命令、现象、风险与下一步。
+- 未经用户明确批准：不 `git commit` / `git push`、不 `mvn deploy` / 改版本推送、不改写历史、不执行 `DROP` / 批量 `DELETE`、不降 JDK 基线 / 删编译插件、不输出真实发布凭证。
+
+完整规则见根 [AGENTS.md](mdc:AGENTS.md)。
