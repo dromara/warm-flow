@@ -8,7 +8,7 @@
           <el-tooltip :content="logicJson.flowName" placement="bottom" :show-after="500">
             <div class="flow-name">
                 <svg-icon icon-class="flowName" style="margin-right: 5px"/>
-                {{ logicJson.flowName }}
+                {{ logicJson.flowName || '未命名流程' }}
             </div>
           </el-tooltip>
         </div>
@@ -244,6 +244,8 @@ async function handleStepClick(index) {
 onMounted(() => {
     // 隐藏滚动条
     document.body.style.overflow = 'hidden';
+    // 标记当前处于设计器页面：供经典节点设计态语义色判断（业务侧实例进度图不受影响）
+    window.__WF_FLOW_DESIGN_MODE__ = true;
     if (!appParams.value) appStore.fetchTokenName();
     if (appParams.value.id) {
       definitionId.value = appParams.value.id;
@@ -347,6 +349,15 @@ function initLogicFlow() {
           fill: themeColors.value.edgeTextBg,
         },
       },
+      // 选中/悬浮的包围框：默认是黑色虚线，改成柔和蓝实线（贴近基础信息页 chroma 与 Mac 风格）
+      outline: {
+        stroke: 'rgba(64, 158, 255, 0.7)',
+        strokeWidth: 1,
+        strokeDasharray: '',
+        hover: {
+          stroke: 'rgba(64, 158, 255, 0.35)',
+        },
+      },
     });
 
     register();
@@ -427,6 +438,8 @@ watch(isDark, (v) => {
 onUnmounted(() => {
   cleanupMessageListener();
   window.removeEventListener('resize', handleMobileResize);
+  // 离开设计器页面，复位设计态标记
+  window.__WF_FLOW_DESIGN_MODE__ = false;
 });
 
 // 监听窗口变化，真机旋转屏幕时重绘（带防抖 + 标志位屏蔽抽屉操作干扰）
@@ -1223,8 +1236,8 @@ html.dark .steps-tabs {
 }
 
 .step-tab:hover {
-  color: #3b82f6;
-  background: rgba(59, 130, 246, 0.06);
+  color: var(--wf-primary, #409eff);
+  background: var(--wf-primary-light, #ecf5ff);
 }
 
 .step-tab .tab-icon {
@@ -1240,8 +1253,8 @@ html.dark .steps-tabs {
 
 .step-tab.active {
   color: #fff;
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
+  background: var(--wf-primary, #409eff);
+  box-shadow: 0 2px 8px rgba(64, 158, 255, 0.28);
 }
 
 .step-tab.active .tab-icon {
@@ -1249,9 +1262,7 @@ html.dark .steps-tabs {
 }
 
 .step-tab.active:hover {
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+  background: var(--wf-primary-dark, #2b7de9);
 }
 
 /* ========== 保存按钮 ========== */
@@ -1259,25 +1270,28 @@ html.dark .steps-tabs {
   display: flex;
   align-items: center;
   gap: 6px;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  background: var(--wf-primary, #409eff) !important;
   border: none !important;
   color: #fff !important;
   font-weight: 500;
   font-size: 14px;
-  padding: 10px 24px !important;
+  padding: 9px 22px !important;
   border-radius: 10px !important;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-  transition: all 0.25s ease !important;
+  box-shadow: 0 2px 8px rgba(64, 158, 255, 0.28);
+  transition: all 0.2s ease !important;
 }
 
 .save-btn:hover {
-  background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
-  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4) !important;
-  transform: translateY(-1px);
+  background: var(--wf-primary-dark, #2b7de9) !important;
 }
 
-.save-btn:active {
-  transform: translateY(0);
+/* Element Plus 会把按钮默认插槽内容包进一层 span，
+   导致 .save-btn 上的 gap 作用不到「图标 + 文字」之间。
+   这里让该包裹层成为 flex 容器，恢复图标与文字的间距与垂直居中。 */
+.save-btn > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .save-btn .save-icon {
@@ -1291,16 +1305,15 @@ html.dark .design-header {
   border-bottom-color: var(--wf-border-color);
 }
 
-/* 暗黑模式：保存按钮降低饱和度，避免刺眼 */
+/* 暗黑模式：保存按钮统一主色，扁平 */
 html.dark .save-btn,
 html.dark .toolbar-save-btn {
-  background: linear-gradient(135deg, var(--wf-save-dark, #0d9488) 0%, var(--wf-save-dark-end, #0f766e) 100%) !important;
-  box-shadow: 0 2px 8px rgba(13, 148, 136, 0.25) !important;
+  background: var(--wf-primary, #409eff) !important;
+  box-shadow: none !important;
 }
 html.dark .save-btn:hover,
 html.dark .toolbar-save-btn:hover {
-  background: linear-gradient(135deg, var(--wf-save-dark-end, #0f766e) 0%, var(--wf-save-darker, #115e59) 100%) !important;
-  box-shadow: 0 4px 12px rgba(13, 148, 136, 0.35) !important;
+  background: var(--wf-primary-dark, #2b7de9) !important;
 }
 
 /* 工具栏区域（el-header 第二行）暗黑模式 */
@@ -1374,23 +1387,17 @@ html.dark .logo-text {
 
 /* ========== 工具栏内保存按钮 ========== */
 .toolbar-save-btn {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  background: var(--wf-primary, #409eff) !important;
   border: none !important;
   color: #fff !important;
   font-weight: 500;
   border-radius: 8px !important;
-  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
-  transition: all 0.25s ease !important;
+  box-shadow: none;
+  transition: background-color 0.2s ease !important;
 }
 
 .toolbar-save-btn:hover {
-  background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35) !important;
-  transform: translateY(-1px);
-}
-
-.toolbar-save-btn:active {
-  transform: translateY(0);
+  background: var(--wf-primary-dark, #2b7de9) !important;
 }
 
 /* ========== 响应式适配：平板端 (<= 1024px) ========== */
