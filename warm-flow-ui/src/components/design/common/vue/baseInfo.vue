@@ -4,11 +4,11 @@
       <div class="form-section">
         <div class="section-title">基本配置</div>
         <el-form-item label="流程编码" prop="flowCode">
-          <el-input v-model="form.flowCode" placeholder="请输入流程编码" maxlength="40" show-word-limit />
+          <el-input v-model="form.flowCode" placeholder="请输入流程编码" maxlength="40" />
         </el-form-item>
 
         <el-form-item label="流程名称" prop="flowName">
-          <el-input v-model="form.flowName" placeholder="请输入流程名称" maxlength="100" show-word-limit @input="nameChange" />
+          <el-input v-model="form.flowName" placeholder="请输入流程名称" maxlength="100" @input="nameChange" />
         </el-form-item>
 
         <el-form-item label="设计器模型" prop="modelValue">
@@ -16,7 +16,7 @@
             <el-radio label="CLASSICS" class="radio-card">
               <div class="radio-card-content">
                 <div class="radio-card-icon">
-                  <el-icon :size="22"><Monitor /></el-icon>
+                  <svg-icon icon-class="classic" class="model-icon"/>
                 </div>
                 <div class="radio-card-info">
                   <div class="radio-card-title">经典模型</div>
@@ -27,7 +27,7 @@
             <el-radio label="MIMIC" class="radio-card">
               <div class="radio-card-content">
                 <div class="radio-card-icon">
-                  <el-icon :size="22"><Connection /></el-icon>
+                  <svg-icon icon-class="mimic" class="model-icon"/>
                 </div>
                 <div class="radio-card-info">
                   <div class="radio-card-title">仿钉钉模型</div>
@@ -51,34 +51,18 @@
         </el-form-item>
 
         <el-form-item label="自定义表单" prop="formCustom">
-          <el-radio-group v-model="form.formCustom" class="radio-card-group radio-card-group--compact">
-            <el-radio label="N" class="radio-card radio-card--sm">
-              <div class="radio-card-content">
-                <div class="radio-card-icon radio-card-icon--sm">
-                  <el-icon :size="18"><Document /></el-icon>
-                </div>
-                <div class="radio-card-info">
-                  <div class="radio-card-title">否</div>
-                  <div class="radio-card-desc">填写页面路径</div>
-                </div>
-              </div>
-            </el-radio>
-            <el-radio label="Y" class="radio-card radio-card--sm">
-              <div class="radio-card-content">
-                <div class="radio-card-icon radio-card-icon--sm">
-                  <el-icon :size="18"><EditPen /></el-icon>
-                </div>
-                <div class="radio-card-info">
-                  <div class="radio-card-title">是</div>
-                  <div class="radio-card-desc">选择自定义表单</div>
-                </div>
-              </div>
-            </el-radio>
-          </el-radio-group>
+          <el-switch
+            v-model="form.formCustom"
+            size="large"
+            active-value="Y"
+            inactive-value="N"
+            active-text="是"
+            inactive-text="否" />
+          <span class="form-tip">{{ form.formCustom === 'Y' ? '选择已配置的自定义表单' : '填写审批页面路径' }}</span>
         </el-form-item>
 
         <el-form-item label="表单路径" prop="formPath" v-if="form.formCustom === 'N'">
-          <el-input v-model="form.formPath" placeholder="请输入审批表单路径" maxlength="100" show-word-limit/>
+          <el-input v-model="form.formPath" placeholder="请输入审批表单路径" maxlength="100"/>
         </el-form-item>
 
         <el-form-item label="表单唯一标识" prop="formPath" v-else-if="form.formCustom === 'Y'">
@@ -95,8 +79,8 @@
       <div class="form-section">
         <div class="section-title">监听器配置</div>
         <el-form-item prop="listenerRows" class="listenerItem">
-          <el-table :data="form.listenerRows" style="width: 100%">
-            <el-table-column prop="listenerType" :width="isMobile ? 60 : 150" label="类型">
+          <el-table :data="form.listenerRows" style="width: 100%" empty-text="暂无监听器，点击下方「增加行」添加">
+            <el-table-column prop="listenerType" :width="isMobile ? 60 : 160" label="类型">
               <template #default="scope">
                 <el-form-item :prop="`listenerRows.${scope.$index}.listenerType`" :rules="rules.listenerType">
                   <el-select v-model="scope.row.listenerType" placeholder="请选择类型">
@@ -130,13 +114,13 @@
               </template>
             </el-table-column>
 
-            <el-table-column label="操作" width="65" v-if="!disabled">
+            <el-table-column label="操作" width="65" align="center" v-if="!disabled">
               <template #default="scope">
-                <el-button size="small" type="danger" icon="Delete" @click="handleDeleteRow(scope.$index)" />
+                <el-button link size="small" type="danger" icon="Delete" @click="handleDeleteRow(scope.$index)" />
               </template>
             </el-table-column>
           </el-table>
-          <el-button v-if="!disabled" class="add-row-btn" type="primary" @click="handleAddRow">增加行</el-button>
+          <el-button v-if="!disabled" class="add-row-btn" @click="handleAddRow">增加行</el-button>
         </el-form-item>
       </div>
     </el-form>
@@ -341,23 +325,15 @@ getListenerList()
 </script>
 
 <style scoped lang="scss">
-/* ========== 关键帧动画 ========== */
-@keyframes pulse-soft {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(64, 158, 255, 0.2); }
-  50% { box-shadow: 0 0 0 6px rgba(64, 158, 255, 0); }
-}
-
-@keyframes check-in {
-  0% { transform: scale(0) rotate(-45deg); opacity: 0; }
-  60% { transform: scale(1.2) rotate(-45deg); }
-  100% { transform: scale(1) rotate(-45deg); opacity: 1; }
-}
-
 /* ========== 1. 容器背景层 ========== */
 .app-container {
   padding: 0;
   background-color: var(--wf-bg-white, #fff);
   min-height: 100%;
+  /* iOS / 现代质感：系统字体栈 + 字形平滑 */
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   html.dark & {
     background-color: var(--wf-bg-color, #141414);
   }
@@ -372,90 +348,56 @@ getListenerList()
   border-top: 0;
 }
 
-/* ========== 2. 卡片区块 ========== */
+/* ========== 2. 扁平分区（去内层卡片，外层壳已提供容器） ========== */
 .form-section {
   position: relative;
-  background: var(--wf-bg-white, #fff);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: var(--wf-radius-lg, 12px);
-  box-shadow: var(--wf-shadow, 0 2px 12px rgba(0, 0, 0, 0.06));
-  padding: 24px 32px 24px 35px;
-  margin-bottom: 16px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  overflow: hidden;
+  background: transparent;
+  padding: 0;
+  margin-bottom: 32px;
+  overflow: visible;
 
-  /* 左侧渐变装饰条 */
-  &::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 3px;
-    background: linear-gradient(180deg, var(--wf-primary, #409eff), var(--wf-primary-dark, #2b7de9));
-    border-radius: var(--wf-radius-lg, 12px) 0 0 var(--wf-radius-lg, 12px);
-  }
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--wf-shadow-lg, 0 4px 16px rgba(0, 0, 0, 0.1));
+  &:last-child {
+    margin-bottom: 0;
   }
 }
 
 /* ========== 3. 区块标题 ========== */
 .section-title {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--wf-text-primary, #303133);
-  padding: 0 0 16px 0;
+  letter-spacing: 0.3px;
+  padding: 0 0 14px 0;
   margin-bottom: 24px;
   border-bottom: 1px solid var(--wf-border-lighter, #ebeef5);
   display: flex;
   align-items: center;
-
-  &::before {
-    content: '';
-    display: inline-block;
-    width: 4px;
-    height: 18px;
-    background: linear-gradient(180deg, var(--wf-primary, #409eff), var(--wf-primary-dark, #2b7de9));
-    border-radius: 2px;
-    margin-right: 10px;
-    flex-shrink: 0;
-  }
-
-  &::after {
-    content: '';
-    display: inline-block;
-    margin-left: 10px;
-    padding: 2px 0;
-    flex: 0;
-    height: 20px;
-    border-radius: var(--wf-radius-round, 20px);
-  }
 }
 
 /* ========== 4. 表单项增强 ========== */
 :deep(.el-form-item) {
-  margin-bottom: 22px;
+  margin-bottom: 24px;
 }
 
 :deep(.el-form-item__label) {
   font-weight: 600;
   color: var(--wf-text-primary, #303133);
-  letter-spacing: 0.5px;
-  /* 固定 label 宽度，按最长"表单唯一标识"(6字)对齐 */
+  /* 右对齐：label 贴输入框侧对齐，红星紧贴首字（EP 经典表单样式） */
   width: 110px !important;
   min-width: 110px !important;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  text-align: right;
+  /* 与 el-input 默认高度(32px)对齐，保证 label 与右侧控件垂直居中 */
+  height: 32px;
+}
 
 /* 错误提示增加上下间距 - PC端/平板端 */
-::deep(.el-form-item__error) {
+:deep(.el-form-item__error) {
   padding-top: 6px;
   padding-bottom: 4px;
-}
-  text-align: right;
-  justify-content: flex-end;
 }
 
 /* 右侧内容区：统一左对齐 */
@@ -467,19 +409,33 @@ getListenerList()
 :deep(.el-input__wrapper),
 :deep(.el-select .el-input__wrapper),
 :deep(.el-textarea__inner) {
-  transition: all 0.3s ease;
-  border-radius: var(--wf-radius-sm, 4px);
+  /* 默认白底 + 浅边框：未填写也清爽，不再用发灰的填充底 */
+  transition: background-color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  border-radius: 10px;
+  background-color: var(--wf-bg-white, #fff);
+  box-shadow: none;
+  border: 1px solid var(--wf-border-light, #dcdfe6);
   position: relative;
 
   &:hover {
-    box-shadow: 0 0 0 1px var(--wf-primary, #409eff) inset;
+    border-color: var(--wf-primary, #409eff);
   }
 
+  /* focus：主色描边 + 柔和光环 */
   &.is-focus,
   &:focus {
-    box-shadow: 0 0 0 1px var(--wf-primary, #409eff) inset, 0 0 0 3px rgba(64, 158, 255, 0.12);
+    background-color: var(--wf-bg-white, #fff);
+    border-color: var(--wf-primary, #409eff);
+    box-shadow: 0 0 0 4px rgba(64, 158, 255, 0.12);
   }
+}
 
+/* 校验失败态：统一红边 + 红光环，优先级压过 focus 的蓝色，避免红蓝混色 */
+:deep(.el-form-item.is-error .el-input__wrapper),
+:deep(.el-form-item.is-error .el-input__wrapper.is-focus),
+:deep(.el-form-item.is-error .el-select .el-input__wrapper) {
+  border-color: var(--wf-danger, #f56c6c);
+  box-shadow: 0 0 0 4px rgba(245, 108, 108, 0.12);
 }
 
 /* 禁用态暗黑模式覆盖（已发布/失效状态）— 完全全局选择器，避开 scoped 编译 */
@@ -489,29 +445,6 @@ getListenerList()
   background-color: #2a2d35 !important;
   box-shadow: none !important;
   border-color: #3a3e48 !important;
-}
-
-/* 输入框底部渐变线（hover） */
-:deep(.el-input) {
-  position: relative;
-
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    width: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--wf-primary, #409eff), var(--wf-primary-dark, #2b7de9));
-    border-radius: 0 0 var(--wf-radius-sm, 4px) var(--wf-radius-sm, 4px);
-    transition: width 0.3s ease, left 0.3s ease;
-    z-index: 1;
-  }
-
-  &:hover::after {
-    width: 100%;
-    left: 0;
-  }
 }
 
 /* ========== 5. 卡片式 Radio 选择器 ========== */
@@ -528,12 +461,13 @@ getListenerList()
 :deep(.radio-card) {
   position: relative;
   border: 1.5px solid var(--wf-border-color, #dcdfe6);
-  border-radius: var(--wf-radius, 8px);
-  padding: 14px 18px;
+  border-radius: var(--wf-radius-lg, 12px);
+  padding: 16px;
   margin-right: 0;
   height: auto;
   background: var(--wf-bg-white, #fff);
-  transition: all 0.25s ease;
+  box-shadow: var(--wf-shadow-sm, 0 1px 4px rgba(0, 0, 0, 0.04));
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   flex: 1;
   min-width: 0;
   overflow: hidden;
@@ -541,7 +475,7 @@ getListenerList()
   &:hover {
     border-color: var(--wf-primary, #409eff);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(64, 158, 255, 0.15);
+    box-shadow: var(--wf-shadow, 0 2px 12px rgba(0, 0, 0, 0.06));
   }
 
   /* 隐藏原生 radio 圆点 */
@@ -565,11 +499,10 @@ getListenerList()
     font-weight: normal;
   }
 
-  /* 选中态 */
+  /* 选中态：边框 + 浅底 + 原生 radio 圆点，单一指示，去渐变/发光/角标 */
   &.is-checked {
     border-color: var(--wf-primary, #409eff);
     background: var(--wf-primary-light, #ecf5ff);
-    box-shadow: 0 2px 12px rgba(64, 158, 255, 0.2), inset 0 0 20px rgba(64, 158, 255, 0.06);
 
     .el-radio__input .el-radio__inner {
       background: var(--wf-primary, #409eff);
@@ -583,27 +516,7 @@ getListenerList()
     .radio-card-icon {
       background: var(--wf-primary, #409eff);
       color: #fff;
-      animation: pulse-soft 2s ease-in-out infinite;
     }
-
-    /* 选中对勾 */
-    &::after {
-      content: '';
-      position: absolute;
-      bottom: 8px;
-      right: 10px;
-      width: 10px;
-      height: 6px;
-      border-left: 2px solid var(--wf-primary, #409eff);
-      border-bottom: 2px solid var(--wf-primary, #409eff);
-      transform: rotate(-45deg);
-      animation: check-in 0.35s ease forwards;
-    }
-  }
-
-  /* 非选中态隐藏对勾 */
-  &:not(.is-checked)::after {
-    content: none;
   }
 
   /* 禁用态 */
@@ -648,6 +561,14 @@ getListenerList()
   color: var(--wf-primary, #409eff);
   flex-shrink: 0;
   transition: all 0.25s ease;
+  font-size: 22px;
+}
+
+/* 模型卡线性图标：跟随 radio-card-icon 字号与颜色（选中态自动变白） */
+.model-icon {
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.1em;
 }
 
 .radio-card-icon--sm {
@@ -670,10 +591,10 @@ getListenerList()
 }
 
 .radio-card-desc {
-  font-size: 11px;
-  color: var(--wf-text-placeholder, #c0c4cc);
+  font-size: 12px;
+  color: var(--wf-text-secondary, #909399);
   line-height: 1.4;
-  margin-top: 2px;
+  margin-top: 4px;
 }
 
 /* ========== 6. 监听器表格 ========== */
@@ -683,8 +604,8 @@ getListenerList()
   border: 1px solid var(--wf-border-lighter, #ebeef5);
 
   .el-table__header-wrapper th {
-    background: linear-gradient(135deg, var(--wf-primary-lighter, #f0f7ff), var(--wf-primary-light, #ecf5ff)) !important;
-    color: var(--wf-text-primary, #303133);
+    background: var(--wf-bg-white, #fff) !important;
+    color: var(--wf-text-regular, #606266);
     font-weight: 600;
     font-size: 13px;
   }
@@ -720,16 +641,28 @@ getListenerList()
     }
   }
 
-  /* 删除按钮红色渐变 hover */
-  .el-button--danger {
-    transition: all 0.25s ease;
+  /* 删除按钮：无实底，仅红色图标，hover 浅红圆底 */
+  .el-button--danger.is-link {
+    color: var(--wf-danger, #f56c6c);
+    padding: 5px;
+    height: auto;
+    border: none;
+    transition: all 0.2s ease;
 
     &:hover {
-      background: linear-gradient(135deg, var(--wf-danger, #f56c6c), #e04848) !important;
-      border-color: transparent !important;
-      color: #fff !important;
-      box-shadow: 0 2px 8px rgba(245, 108, 108, 0.35);
+      color: #e04848;
+      background: rgba(245, 108, 108, 0.12) !important;
+      border-radius: 8px;
     }
+  }
+
+  /* 表格内控件默认透明：整行读作干净白底，hover 轻填充、focus 才显白底+蓝环 */
+  .el-input__wrapper,
+  .el-select .el-input__wrapper {
+    background-color: transparent;
+
+    &:hover { background-color: rgba(118, 128, 150, 0.07); }
+    &.is-focus { background-color: var(--wf-bg-white, #fff); }
   }
 }
 
@@ -740,7 +673,7 @@ getListenerList()
   border: 1.5px dashed var(--wf-primary, #409eff) !important;
   color: var(--wf-primary, #409eff) !important;
   background: transparent !important;
-  border-radius: var(--wf-radius, 8px);
+  border-radius: 10px;
   transition: all 0.3s ease;
   height: 40px;
   letter-spacing: 2px;
@@ -788,19 +721,26 @@ getListenerList()
   }
 }
 
-/* 表单项警告提示样式 */
+/* 表单项警示提示样式（amber 级，非错误红） */
 :deep(.el-form-item) {
   .radio-card-warning {
     margin-top: 8px;
-    padding: 8px 12px;
-    background: var(--wf-warning-light, #fef0f0);
-    border: 1px solid var(--wf-warning-border, #fbc4c4);
+    padding: 6px 10px;
+    background: var(--wf-warning-lighter, #fdf6ec);
     border-radius: var(--wf-radius-sm, 4px);
     font-size: 12px;
-    color: var(--wf-danger, #f56c6c);
+    color: var(--wf-warning, #e6a23c);
     line-height: 1.5;
     width: 100%;
   }
+}
+
+/* 开关 / 字段旁的轻提示 */
+.form-tip {
+  margin-left: 12px;
+  font-size: 12px;
+  color: var(--wf-text-secondary, #909399);
+  line-height: 1.5;
 }
 
 /* ========== 8. 暗黑模式增强 ========== */
@@ -811,11 +751,26 @@ getListenerList()
   }
 }
 
+/* iOS 填充式输入框：暗黑覆盖（优先级需高于全局 html.dark .el-input__wrapper） */
+:global(html.dark) :deep(.el-input__wrapper),
+:global(html.dark) :deep(.el-select .el-input__wrapper) {
+  background-color: rgba(255, 255, 255, 0.06);
+  box-shadow: none;
+  border: 1px solid transparent;
+}
+:global(html.dark) :deep(.el-input__wrapper:hover),
+:global(html.dark) :deep(.el-select .el-input__wrapper:hover) {
+  background-color: rgba(255, 255, 255, 0.10);
+}
+:global(html.dark) :deep(.el-input__wrapper.is-focus),
+:global(html.dark) :deep(.el-input__wrapper:focus) {
+  background-color: rgba(255, 255, 255, 0.04);
+  border-color: var(--wf-primary, #409eff);
+  box-shadow: 0 0 0 4px rgba(64, 158, 255, 0.18);
+}
+
 :global(html.dark) .form-section {
-  background: rgba(31, 31, 31, 0.9);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2), inset 0 0 0 1px var(--wf-border-color, #333333);
+  background: transparent;
 }
 
 :global(html.dark) :deep(.el-table) {
@@ -837,7 +792,6 @@ getListenerList()
 
   &.is-checked {
     background: #1a2744;
-    box-shadow: 0 2px 16px rgba(64,158,255,.25), inset 0 0 24px rgba(64,158,255,.08);
     border-color: #409eff;
     .radio-card-icon { background: #409eff; }
     .radio-card-title { color: #409eff; }
@@ -884,12 +838,7 @@ getListenerList()
   }
 
   .form-section {
-    padding: 16px 20px 16px 22px;
-    margin-bottom: 12px;
-
-    &:hover {
-      transform: none;
-    }
+    margin-bottom: 24px;
   }
 }
 
@@ -904,34 +853,18 @@ getListenerList()
   }
 
   .form-section {
-    padding: 14px 12px 14px 16px;
-    margin-bottom: 10px;
-    border-radius: 8px;
-
-    &:hover {
-      transform: none;
-      box-shadow: var(--wf-shadow, 0 2px 12px rgba(0, 0, 0, 0.06));
-    }
-
-    &::before {
-      width: 2.5px;
-    }
+    margin-bottom: 20px;
   }
 
   .section-title {
     font-size: 14px;
     padding-bottom: 10px;
     margin-bottom: 16px;
-
-    &::before {
-      height: 15px;
-      margin-right: 6px;
-    }
   }
 
   :deep(.dialogForm .el-form-item__label),
   :deep(.el-form-item__label) {
-    /* 手机端保持固定宽度，统一对齐 */
+    /* 手机端右对齐，仅收窄宽度 */
     width: 90px !important;
     min-width: 90px !important;
     font-size: 13px;
@@ -1032,10 +965,7 @@ getListenerList()
   .radio-card-icon {
     width: 32px;
     height: 32px;
-
-    .el-icon {
-      font-size: 18px !important;
-    }
+    font-size: 18px;
   }
 
   .radio-card-icon--sm {
@@ -1139,30 +1069,21 @@ getListenerList()
   }
 
   .form-section {
-    padding: 10px 8px 10px 12px;
-    margin-bottom: 8px;
-    border-radius: 6px;
+    margin-bottom: 16px;
   }
 
   .section-title {
     font-size: 13px;
     padding-bottom: 8px;
     margin-bottom: 12px;
-
-    &::before {
-      height: 14px;
-      margin-right: 5px;
-      width: 3px;
-    }
   }
 
   :deep(.dialogForm .el-form-item__label),
   :deep(.el-form-item__label) {
-    /* 超小屏保持固定宽度 */
+    /* 超小屏右对齐 */
     width: 80px !important;
     min-width: 80px !important;
     font-size: 12px;
-    line-height: 1.3;
     text-align: right;
     justify-content: flex-end;
   }
@@ -1217,10 +1138,7 @@ getListenerList()
   .radio-card-icon {
     width: 26px;
     height: 26px;
-
-    .el-icon {
-      font-size: 16px !important;
-    }
+    font-size: 16px;
   }
 
   .radio-card-icon--sm {

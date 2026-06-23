@@ -1,6 +1,6 @@
 <template>
   <div class="between">
-    <el-form ref="formRef" class="betweenForm" :model="form" label-width="120px" size="small" :rules="rules" :disabled="disabled" label-position="left">
+    <el-form ref="formRef" class="betweenForm" :model="form" label-width="110px" :rules="rules" :disabled="disabled">
       <!-- 页签区域 -->
       <div class="modern-tabs-wrapper">
         <div class="modern-tabs">
@@ -11,6 +11,7 @@
             :class="{ 'is-active': tabsValue === item.name, 'is-ext-tab': index >= 3 }"
             @click="tabsValue = item.name; handleTabChange(item.name)"
           >
+            <svg class="tab-icon" viewBox="0 0 24 24"><path :d="item.iconPath || TAB_ICONS.ext" fill="currentColor"/></svg>
             <span class="tab-label">{{ item.label }}</span>
             <span v-if="index >= 3" class="tab-ext-tag">扩展</span>
           </div>
@@ -21,14 +22,6 @@
       <div v-show="tabsValue === '1'" class="tabPane">
         <!-- 基础配置卡片 -->
         <div class="base-settings-section">
-          <div class="base-settings-header">
-            <span class="ext-attributes-icon ext-icon-base">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M19 3H5C3.89 3 3 3.89 3 5V19C3 20.11 3.89 21 5 21H19C20.11 21 21 20.11 21 19V5C21 3.89 20.11 3 19 3ZM12 6C13.93 6 15.5 7.57 15.5 9.5C15.5 11.43 13.93 13 12 13C10.07 13 8.5 11.43 8.5 9.5C8.5 7.57 10.07 6 12 6ZM18 18H6V17C6 14.67 10.33 13.34 12 13.34C13.67 13.34 18 14.67 18 17V18Z" fill="currentColor"/>
-              </svg>
-            </span>
-            <span class="base-settings-title">基础配置</span>
-          </div>
           <div class="base-settings-content">
         <el-form-item label="节点编码：" prop="nodeCode">
           <el-input v-model="form.nodeCode" :disabled="disabled"></el-input>
@@ -176,14 +169,6 @@
       <!-- 办理人设置 -->
       <div v-show="tabsValue === '2'" class="tabPane tabPane-full">
         <div class="section-card section-blue">
-          <div class="section-card-header">
-            <span class="section-card-icon">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" fill="currentColor"/>
-              </svg>
-            </span>
-            <span class="section-card-title">办理人设置</span>
-          </div>
           <div class="section-card-body">
               <el-table :data="permissionRows" style="width: 100%;" class="inputGroup handler-table-mobile"
                   :table-layout="isMobile ? 'fixed' : 'auto'"
@@ -196,9 +181,9 @@
                       </template>
                   </el-table-column>
                   <el-table-column prop="handlerName" label="权限名称"></el-table-column>
-                  <el-table-column label="操作" :width="isMobile ? undefined : 42" v-if="!disabled">
+                  <el-table-column label="操作" :width="isMobile ? undefined : 65" align="center" v-if="!disabled">
                       <template #default="scope">
-                          <el-button type="danger" v-if="!disabled" :icon="Delete" @click="delPermission(scope.$index)"/>
+                          <el-button link size="small" type="danger" v-if="!disabled" :icon="Delete" @click="delPermission(scope.$index)"/>
                       </template>
                   </el-table-column>
               </el-table>
@@ -213,17 +198,9 @@
       <!-- 监听器 -->
       <div v-show="tabsValue === '3'" class="tabPane tabPane-full">
         <div class="section-card section-purple">
-          <div class="section-card-header section-purple-header">
-            <span class="section-card-icon section-purple-icon">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M22 6H16V4C16 2.89 15.11 2 14 2H10C8.89 2 8 2.89 8 4V6H2V8H4V19C4 20.11 4.89 21 6 21H18C19.11 21 20 20.11 20 19V8H22V6ZM10 4H14V6H10V4ZM18 19H6V8H18V19ZM10 10H14V17H10V10Z" fill="currentColor"/>
-              </svg>
-            </span>
-            <span class="section-card-title section-purple-title">监听器配置</span>
-          </div>
           <div class="section-card-body">
             <el-table :data="form.listenerRows" style="width: 100%">
-              <el-table-column prop="listenerType" label="类型" width="90">
+              <el-table-column prop="listenerType" label="类型" :width="isMobile ? 60 : 160">
                 <template #default="scope">
                   <el-form-item :prop="'listenerRows.' + scope.$index + '.listenerType'" :rules="rules.listenerType">
                     <el-select v-model="scope.row.listenerType" placeholder="请选择">
@@ -255,9 +232,9 @@
                   </el-form-item>
                 </template>
               </el-table-column>
-              <el-table-column label="操作" width="55" v-if="!disabled">
+              <el-table-column label="操作" width="65" align="center" v-if="!disabled">
                 <template #default="scope">
-                  <el-button type="danger" :icon="Delete" @click="handleDeleteRow(scope.$index)"/>
+                  <el-button link size="small" type="danger" :icon="Delete" @click="handleDeleteRow(scope.$index)"/>
                 </template>
               </el-table-column>
             </el-table>
@@ -289,7 +266,7 @@
 
     <!-- 权限标识：会签票签选择用户 -->
     <el-dialog title="人员选择" v-if="userVisible" v-model="userVisible" :width="isMobile ? '96%' : '80%'" append-to-body
-      :class="{ 'mobile-user-dialog': isMobile }"
+      class="person-select-dialog" :class="{ 'mobile-user-dialog': isMobile }"
     >
       <selectUser v-model:selectUser="form.permissionFlag" v-model:userVisible="userVisible" :permissionRows="permissionRows" @handleUserSelect="handleUserSelect"></selectUser>
     </el-dialog>
@@ -344,10 +321,17 @@ const props = defineProps({
 const tabsValue = ref("1");
 // 节点扩展属性折叠状态（默认收起）
 const baseExtCollapsed = ref(true);
+// Tab 图标（单路径 SVG，viewBox 0 0 24 24，跟随 tab 文字色 currentColor）
+const TAB_ICONS = {
+  base: 'M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z',
+  handler: 'M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z',
+  listener: 'M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z',
+  ext: 'M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h3.8v-1.5c0-1.49 1.21-2.7 2.7-2.7 1.49 0 2.7 1.21 2.7 2.7V22H17c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5S21.88 11 20.5 11z',
+};
 const tabsList = ref([
-  { label: "基础设置", name: "1" },
-  { label: "办理人设置", name: "2" },
-  { label: "监听器", name: "3" },
+  { label: "基础设置", name: "1", iconPath: TAB_ICONS.base },
+  { label: "办理人设置", name: "2", iconPath: TAB_ICONS.handler },
+  { label: "监听器", name: "3", iconPath: TAB_ICONS.listener },
 ]);
 const form = ref(props.modelValue);
 const userVisible = ref(false);
@@ -913,9 +897,9 @@ defineExpose({
   border: 1.5px dashed var(--wf-primary, #409eff) !important;
   color: var(--wf-primary, #409eff) !important;
   background: transparent !important;
-  border-radius: var(--wf-radius, 8px);
+  border-radius: 10px;
   transition: all 0.3s ease;
-  height: 38px;
+  height: 40px;
   letter-spacing: 2px;
   font-weight: 500;
   display: flex;
@@ -943,36 +927,83 @@ defineExpose({
   }
 }
 
-/* 蓝色主题 - 办理人 */
+/* ========== 人员选择弹窗：iOS 风格外壳 ==========
+   弹窗为 append-to-body，不在组件作用域内，必须用扁平的 :global(完整选择器)。
+   不能写成 :global(.person-select-dialog) { .el-dialog__header {} } 这种「:global 内再嵌套子选择器」，
+   否则 Vue 会给内层注入 scoped 属性而失效，且头部声明会漏到弹窗根节点、把 .el-dialog 默认白底覆盖成透明渐变。 */
+:global(.person-select-dialog) {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 16px 56px rgba(0, 0, 0, 0.18);
+  background-color: var(--el-dialog-bg-color, #fff);
+}
+:global(.person-select-dialog .el-dialog__header) {
+  position: relative;
+  margin: 0;
+  padding: 18px 24px;
+  background-color: var(--el-dialog-bg-color, #fff);
+  border-bottom: 1px solid var(--wf-border-lighter, #ebeef5);
+}
+:global(.person-select-dialog .el-dialog__title) {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--wf-text-primary, #303133);
+}
+/* 关闭按钮：相对头部垂直居中，避免偏下错位 */
+:global(.person-select-dialog .el-dialog__headerbtn) {
+  top: 50%;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  margin: 0;
+  transform: translateY(-50%);
+}
+:global(.person-select-dialog .el-dialog__body) {
+  padding: 20px 24px;
+  background-color: var(--el-dialog-bg-color, #fff);
+}
+/* 表头：覆盖全局 ruoyi 的灰底(#f8f8f9 !important)，统一白底；弹窗 append-to-body 需 :global */
+:global(.person-select-dialog .el-table th.el-table__cell),
+:global(.person-select-dialog .el-table__header-wrapper th) {
+  background-color: var(--el-dialog-bg-color, #fff) !important;
+}
+:global(html.dark .person-select-dialog),
+:global(html.dark .person-select-dialog .el-dialog__header),
+:global(html.dark .person-select-dialog .el-dialog__body) {
+  background: var(--wf-bg-color, #1f1f1f);
+}
+:global(html.dark .person-select-dialog .el-dialog__header) {
+  border-bottom-color: var(--wf-border-color, #333333);
+}
+:global(html.dark .person-select-dialog .el-dialog__title) {
+  color: var(--wf-text-primary, #e0e0e0);
+}
+:global(html.dark .person-select-dialog .el-table th.el-table__cell),
+:global(html.dark .person-select-dialog .el-table__header-wrapper th) {
+  background-color: var(--wf-bg-color, #1f1f1f) !important;
+  color: #c0c4cc !important;
+}
+
+/* 蓝色主题 - 办理人（扁平：保留蓝色标题/图标做语义，去卡片底/边框/渐变头） */
 .section-blue {
-  border-color: rgba(64, 158, 255, 0.25);
-  html.dark & { border-color: rgba(64, 158, 255, 0.2); }
   .section-card-header {
-    background: linear-gradient(135deg, rgba(64, 158, 255, 0.06) 0%, rgba(43, 125, 233, 0.03) 100%);
-    border-bottom-color: rgba(64, 158, 255, 0.12);
-    html.dark & {
-      background: linear-gradient(135deg, rgba(64, 158, 255, 0.08) 0%, rgba(43, 125, 233, 0.05) 100%);
-    }
+    background: transparent;
+    border-bottom-color: var(--wf-border-lighter, #ebeef5);
+    html.dark & { background: transparent; border-bottom-color: var(--wf-border-color, #333333); }
   }
   .section-card-icon { color: var(--wf-primary, #409eff); }
   .section-card-title { color: var(--wf-primary, #409eff); }
-  &:hover { box-shadow: 0 2px 12px rgba(64, 158, 255, 0.1); }
 }
 
-/* 紫色主题 - 监听器 */
+/* 紫色主题 - 监听器（扁平：保留紫色标题/图标做语义，去卡片底/边框/渐变头） */
 .section-purple {
-  border-color: rgba(137, 96, 220, 0.25);
-  html.dark & { border-color: rgba(137, 96, 220, 0.2); }
   .section-purple-header {
-    background: linear-gradient(135deg, rgba(137, 96, 220, 0.06) 0%, rgba(115, 78, 190, 0.03) 100%);
-    border-bottom-color: rgba(137, 96, 220, 0.12);
-    html.dark & {
-      background: linear-gradient(135deg, rgba(137, 96, 220, 0.08) 0%, rgba(115, 78, 190, 0.05) 100%);
-    }
+    background: transparent;
+    border-bottom-color: var(--wf-border-lighter, #ebeef5);
+    html.dark & { background: transparent; border-bottom-color: var(--wf-border-color, #333333); }
   }
   .section-purple-icon { color: #8960dc; }
   .section-purple-title { color: #8960dc; }
-  &:hover { box-shadow: 0 2px 12px rgba(137, 96, 220, 0.1); }
 }
 
 /* ========== 卡片式单选框 ========== */
@@ -1010,7 +1041,7 @@ defineExpose({
   }
   &.is-checked {
     border-color: var(--wf-primary, #409eff);
-    background: linear-gradient(135deg, rgba(64, 158, 255, 0.06) 0%, rgba(64, 158, 255, 0.03) 100%);
+    background: var(--wf-primary-light, #ecf5ff);
     color: var(--wf-primary, #409eff);
     font-weight: 500;
     html.dark & { background: rgba(64, 158, 255, 0.12); }

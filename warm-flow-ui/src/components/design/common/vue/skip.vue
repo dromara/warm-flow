@@ -1,15 +1,7 @@
 <template>
   <div class="skip-wrapper">
-    <el-form ref="formRef" class="skipForm" :model="form" label-width="90px" size="small" :rules="rules" :disabled="disabled">
+    <el-form ref="formRef" class="skipForm" :model="form" label-width="110px" :rules="rules" :disabled="disabled">
       <div class="base-settings-section">
-        <div class="base-settings-header">
-          <span class="ext-attributes-icon ext-icon-skip">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M17.59 3.41L15 6l3.59 3.59 1.42-1.42L15.82 4.83l2.77-1.42zM4.41 3.41L3 4.83l2.77 1.42L4.41 8 8 4.41 6.59 3 4.41 3.41zM12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 6c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" fill="currentColor"/>
-            </svg>
-          </span>
-          <span class="base-settings-title">跳转条件配置</span>
-        </div>
         <div class="base-settings-content">
           <el-form-item label="跳转名称：" v-if="skipConditionShow" prop="skipName">
             <el-input v-model="form.skipName" placeholder="跳转名称"/>

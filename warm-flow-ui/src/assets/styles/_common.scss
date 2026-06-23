@@ -8,106 +8,71 @@
 @mixin modern-tabs {
   .modern-tabs-wrapper {
     position: relative;
-    background: var(--wf-bg-white, #fff);
-    border-radius: var(--wf-radius-lg, 12px);
-    padding: 6px;
-    margin-bottom: 0;
-    /* 现代化边框：外层包裹线 + 内部柔和阴影 */
-    box-shadow:
-      0 0 0 1.5px rgba(64, 158, 255, 0.10),
-      inset 0 1px 3px rgba(0, 0, 0, 0.03);
+    background: transparent;
+    border-radius: 0;
+    padding: 0;
+    margin-bottom: 4px;
+    /* 扁平下划线 tab 栏：底部一条分隔线，与扁平表单/基础信息页协调 */
+    border-bottom: 1px solid var(--wf-border-lighter, #ebeef5);
     html.dark & {
-      background: rgba(20, 22, 28, 0.8);
-      box-shadow:
-        0 0 0 1.5px rgba(64, 158, 255, 0.14),
-        inset 0 1px 3px rgba(0, 0, 0, 0.2);
+      background: transparent;
+      border-bottom-color: var(--wf-border-color, #333333);
     }
   }
   .modern-tabs {
-    display: flex; align-items: center; gap: 4px;
+    display: flex; align-items: center; gap: 24px;
     overflow-x: auto; &::-webkit-scrollbar { height: 0; display: none; }
   }
   .modern-tab-item {
     position: relative;
-    padding: 8px 16px;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 10px 2px;
     cursor: pointer;
-    border-radius: var(--wf-radius, 8px);
-    font-size: 13px; font-weight: 500;
-    color: var(--wf-text-secondary, #909399);
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 0;
+    font-size: 14px; font-weight: 500;
+    color: var(--wf-text-regular, #606266);
+    transition: color 0.2s ease;
     user-select: none; white-space: nowrap; flex-shrink: 0;
-    /* 非激活项：淡边框 + 悬浮效果 */
-    border: 1.5px solid transparent;
+    border: none;
+
+    /* 激活下划线指示条 */
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; bottom: -1px;
+      height: 2px;
+      background: var(--wf-primary, #409eff);
+      border-radius: 2px;
+      transform: scaleX(0);
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
     &:hover {
       color: var(--wf-primary, #409eff);
-      background: var(--wf-primary-lighter, #f0f7ff);
-      border-color: rgba(64, 158, 255, 0.18);
-      html.dark & { background: rgba(64,158,255,.08); }
     }
 
     &.is-active {
-      color: #fff;
-      background: linear-gradient(135deg, var(--wf-primary,#409eff) 0%, var(--wf-primary-dark,#2b7de9) 100%);
-      box-shadow: 0 2px 8px rgba(64,158,255,.35), 0 1px 3px rgba(0,0,0,.08);
+      color: var(--wf-primary, #409eff);
       font-weight: 600;
-      transform: translateY(-1px);
-      border-color: transparent;
+      &::after { transform: scaleX(1); }
 
       /* 扩展页签：绿色激活态 */
       &.is-ext-tab {
-        color: #fff;
-        background: linear-gradient(135deg, #67c23a 0%, #529b2e 100%);
-        box-shadow: 0 2px 8px rgba(103,194,58,.35), 0 1px 3px rgba(0,0,0,.08);
-
-        html.dark & {
-          box-shadow: 0 2px 8px rgba(103,194,58,.45), 0 1px 3px rgba(0,0,0,.15);
-        }
-
-        /* 激活态：文字和角标统一白色 */
-        .tab-label { color: #fff; }
-        .tab-ext-tag {
-          background: rgba(255,255,255,0.25);
-          color: #fff;
-          border-color: transparent;
-        }
+        color: #67c23a;
+        &::after { background: #67c23a; }
+        .tab-label { color: #67c23a; }
       }
     }
 
     /* ========== 扩展页签专属样式（非激活态） ========== */
     &.is-ext-tab {
-      /* 非激活：淡绿底色 + 绿色文字 + 可见边框 */
+      /* 非激活：绿色文字（扁平，无底色无边框） */
       color: var(--wf-success, #529b2e);
-      background: rgba(103, 194, 58, 0.06);
-      border-color: rgba(103, 194, 58, 0.18);
-      html.dark & { 
-        color: #85ce61; 
-        background: rgba(103, 194, 58, 0.10); 
-        border-color: rgba(103, 194, 58, 0.22);
-      }
+      html.dark & { color: #85ce61; }
 
       &:hover {
         color: #3d8b2a;
-        background: rgba(103, 194, 58, 0.12);
-        border-color: rgba(103, 194, 58, 0.35);
-
-        /* 亮模式：深绿字 + 淡绿底 */
-        .tab-label { color: #3d8b2a; }
-        .tab-ext-tag {
-          background: rgba(103, 194, 58, 0.18);
-          color: #3d8b2a;
-        }
-
-        /* 暗黑模式：才用白色（深色背景下白字清晰） */
-        html.dark & {
-          color: #fff;
-          background: rgba(103, 194, 58, 0.22);
-          .tab-label { color: #fff; }
-          .tab-ext-tag {
-            background: rgba(255,255,255,0.18);
-            color: #fff;
-          }
-        }
+        html.dark & { color: #fff; }
       }
 
       .tab-ext-tag {
@@ -127,6 +92,7 @@
       }
     }
 
+    .tab-icon { width: 16px; height: 16px; flex-shrink: 0; display: inline-flex; }
     .tab-label { position: relative; z-index: 1; }
   }
 
@@ -144,69 +110,63 @@
 
 /* ========== 基础配置卡片 ========== */
 @mixin base-settings-card {
+  /* 扁平分区：与「基础信息」页一致（标题 + 底边线，无卡片边框/阴影/灰底） */
   .base-settings-section {
-    border-radius: var(--wf-radius-lg, 12px);
-    overflow: hidden;
-    border: 1px solid var(--wf-border-light, #e4e7ed);
-    background: var(--wf-bg-white, #fff);
-    box-shadow: var(--wf-shadow-sm, 0 1px 4px rgba(0, 0, 0, 0.04));
-    transition: all 0.3s ease;
-    html.dark & {
-      border-color: var(--wf-border-color, #333333);
-      background: var(--wf-bg-color, #141414);
-    }
-    &:hover {
-      box-shadow: var(--wf-shadow, 0 2px 12px rgba(0, 0, 0, 0.06));
-      html.dark & { box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3); }
-    }
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+    overflow: visible;
+    margin-bottom: 4px;
+    html.dark & { border: none; background: transparent; }
   }
   .base-settings-header {
-    display: flex; align-items: center; gap: 8px; padding: 12px 16px;
-    background: linear-gradient(135deg, #f5f7fa 0%, #f0f2f5 100%);
+    display: flex; align-items: center; gap: 8px;
+    padding: 0 0 12px 0;
+    margin-bottom: 20px;
+    background: transparent;
     border-bottom: 1px solid var(--wf-border-lighter, #ebeef5);
     html.dark & {
-      background: linear-gradient(135deg, rgba(120,128,140,.06) 0%, rgba(80,88,100,.04) 100%);
+      background: transparent;
       border-bottom-color: var(--wf-border-color, #333333);
     }
   }
   .ext-icon-base { color: var(--wf-text-regular, #606266); svg { width: 16px; height: 16px; } }
-  .base-settings-title { font-size: 13px; font-weight: 600; color: var(--wf-text-primary, #303133); letter-spacing: .3px; }
+  .base-settings-title { font-size: 15px; font-weight: 600; color: var(--wf-text-primary, #303133); letter-spacing: .3px; }
   .base-settings-content {
-    padding: 14px 16px;
-    background: var(--wf-bg-color, #fafbfc);
-    html.dark & { background: var(--wf-bg-color, #141414); }
+    padding: 0;
+    background: transparent;
+    html.dark & { background: transparent; }
   }
 }
 
 /* ========== 监听器/办理人 通用卡片 ========== */
 @mixin section-card {
+  /* 扁平分区：与「基础信息」页一致（标题 + 底边线，无卡片边框/阴影/灰底），但保留 Tab 切换 */
   .section-card {
-    border-radius: var(--wf-radius-lg, 12px);
-    overflow: hidden;
-    border: 1px solid var(--wf-border-light, #e4e7ed);
-    background: var(--wf-bg-white, #fff);
-    box-shadow: var(--wf-shadow-sm, 0 1px 4px rgba(0, 0, 0, 0.04));
-    transition: all 0.3s ease;
-    html.dark & {
-      border-color: var(--wf-border-color, #333333);
-      background: var(--wf-bg-color, #141414);
-    }
-    &:hover {
-      box-shadow: var(--wf-shadow, 0 2px 12px rgba(0, 0, 0, 0.06));
-      html.dark & { box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3); }
-    }
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+    overflow: visible;
+    margin-bottom: 4px;
+    html.dark & { border: none; background: transparent; }
+    &:hover { box-shadow: none; }
   }
   .section-card-header {
-    display: flex; align-items: center; gap: 8px; padding: 12px 16px;
+    display: flex; align-items: center; gap: 8px;
+    padding: 0 0 12px 0;
+    margin-bottom: 20px;
+    background: transparent;
     border-bottom: 1px solid var(--wf-border-lighter, #ebeef5);
-    html.dark & { border-bottom-color: var(--wf-border-color, #333333); }
+    html.dark & { background: transparent; border-bottom-color: var(--wf-border-color, #333333); }
   }
   .section-card-icon { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; svg { width: 16px; height: 16px; } }
-  .section-card-title { font-size: 13px; font-weight: 600; color: var(--wf-text-primary, #303133); letter-spacing: .3px; }
+  .section-card-title { font-size: 15px; font-weight: 600; color: var(--wf-text-primary, #303133); letter-spacing: .3px; }
   .section-card-body {
-    padding: 14px 16px;
-    background: var(--wf-bg-color, #fafbfc);
-    html.dark & { background: var(--wf-bg-color, #141414); }
+    padding: 0;
+    background: transparent;
+    html.dark & { background: transparent; }
   }
   .action-buttons { display: flex; gap: 8px; margin-top: 12px; }
 }

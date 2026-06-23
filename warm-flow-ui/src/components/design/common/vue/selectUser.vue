@@ -1,7 +1,7 @@
 <template>
   <div class="user-select-wrapper">
-    <!-- 现代化页签 -->
-    <div class="modern-tabs-wrapper">
+    <!-- 现代化页签（无分组数据时隐藏，避免空白条） -->
+    <div class="modern-tabs-wrapper" v-if="tabsList.length > 0">
       <div class="modern-tabs">
         <div
           v-for="item in tabsList"
@@ -203,6 +203,12 @@
         <!-- PC端：数据表格卡片（固定10条数据高度） -->
         <div class="section-card table-card pc-only">
           <el-table v-loading="loading" :data="tableList" :max-height="570" @row-click="handleCheck">
+            <template #empty>
+              <div class="user-empty">
+                <svg viewBox="0 0 24 24" class="user-empty-icon"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/></svg>
+                <span>暂无人员数据</span>
+              </div>
+            </template>
             <el-table-column width="50" align="center">
               <template #header>
                 <el-checkbox
@@ -345,6 +351,10 @@ function getTabsType() {
       queryParams.value.pageNum = 1;
     }
     getList();
+  }).catch(() => {
+    // 接口异常也结束 loading，展示空状态而非一直转圈
+    loading.value = false;
+    mobileLoadingMore.value = false;
   });
 }
 
@@ -382,6 +392,10 @@ function getList(append = false) {
       if (groupName.value) proxy.$refs["groupTreeRef"].filter(groupName.value);
     });
     isCheckedAll();
+  }).catch(() => {
+    // 接口异常也结束 loading，展示空状态而非一直转圈
+    loading.value = false;
+    mobileLoadingMore.value = false;
   });
 }
 
@@ -741,7 +755,7 @@ getTabsType();
 }
 .search-card-body {
   padding: 16px 18px;
-  background: var(--wf-bg-color, #fafbfc);
+  background: var(--wf-bg-white, #fff);
   html.dark & { background: var(--wf-bg-color, #141414); }
 
   .el-form-item {
@@ -756,14 +770,27 @@ getTabsType();
     }
   }
 
-  /* 输入框统一风格 */
-  .el-input__inner,
-  .el-date-editor {
-    border-radius: 6px !important;
-    transition: all .25s ease;
+  /* 输入框统一风格：白底 + 浅边框（未填写也保持白色） */
+  ::v-deep(.el-input__wrapper),
+  ::v-deep(.el-range-editor) {
+    border-radius: 10px;
+    background-color: var(--wf-bg-white, #fff);
+    box-shadow: none !important;
+    border: 1px solid var(--wf-border-color, #dcdfe6);
+    transition: background-color .2s ease, box-shadow .2s ease, border-color .2s ease;
 
-    &:focus {
-      box-shadow: 0 0 0 2px rgba(64,158,255,.15);
+    &:hover { border-color: var(--wf-primary, #409eff); }
+    &.is-focus {
+      background-color: var(--wf-bg-white, #fff);
+      border-color: var(--wf-primary, #409eff);
+      box-shadow: 0 0 0 4px rgba(64, 158, 255, 0.12) !important;
+    }
+  }
+  html.dark & {
+    ::v-deep(.el-input__wrapper),
+    ::v-deep(.el-range-editor) {
+      background-color: rgba(255, 255, 255, 0.06);
+      &.is-focus { background-color: var(--wf-bg-white, #1f1f1f); }
     }
   }
 
@@ -903,10 +930,10 @@ getTabsType();
 .table-card {
   .el-table {
     --el-table-border-color: var(--wf-border-lighter, #ebeef5);
-    --el-table-header-bg-color: var(--wf-bg-color, #fafbfc);
+    --el-table-header-bg-color: var(--wf-bg-white, #fff);
 
     th.el-table__cell {
-      background: var(--wf-bg-color, #fafbfc) !important;
+      background: var(--wf-bg-white, #fff) !important;
       font-weight: 600;
       font-size: 13px;
       color: var(--wf-text-primary, #303133);
@@ -929,7 +956,13 @@ getTabsType();
     }
 
     /* 空状态美化 */
-    .el-table__empty-block { min-height: 200px; }
+    .el-table__empty-block { min-height: 150px; }
+    .user-empty {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 8px; color: var(--wf-text-secondary, #909399);
+      .user-empty-icon { width: 42px; height: 42px; opacity: .3; }
+      span { font-size: 13px; }
+    }
   }
 
   /* 表格外边框圆角 */

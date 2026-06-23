@@ -364,15 +364,117 @@ defineExpose({
 <style lang="scss">
 /* ========== 现代化属性面板抽屉 ========== */
 .property-drawer-modern {
-  /* 让 el-drawer 自带 header 透明，完全由 #header 插槽内容控制背景 */
+  /* 与基础信息页统一：系统字体栈 + 字形平滑 */
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* 表单标签：与基础信息页统一（加粗；右对齐由 EP 默认 label-position 提供） */
+  .el-form-item__label {
+    font-weight: 600;
+    color: var(--wf-text-primary, #303133);
+  }
+
+  /* 抽屉头部：收紧与正文间距（EP 默认 margin 32px 太空）+ 标题加深加粗（默认偏浅灰、不清晰） */
   .el-drawer__header {
     background: transparent !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 14px !important;
+    border-bottom: 1px solid var(--wf-border-lighter, #ebeef5);
+    > span {
+      color: var(--wf-text-primary, #303133);
+      font-weight: 600;
+      font-size: 16px;
+    }
+  }
+
+  /* 正文上内边距收紧，让 tab 紧跟头部 */
+  .el-drawer__body {
+    padding-top: 12px !important;
+  }
+  /* 含 Tab 的面板（开始/中间节点）：tab 栏紧贴抽屉标题，去掉上方间距，对齐更自然 */
+  .el-drawer__body:has(.modern-tabs-wrapper) {
+    padding-top: 0 !important;
   }
 
   .el-drawer__close-btn {
     color: #909399 !important;
     transition: all .25s ease !important;
     &:hover { color: #409eff !important; transform: rotate(90deg); }
+  }
+
+  /* 白底描边输入框：与基础信息表单统一（白底 + 浅边框 + 柔和 focus 光环） */
+  .el-input__wrapper,
+  .el-textarea__inner {
+    border-radius: 10px;
+    background-color: var(--wf-bg-white, #fff);
+    box-shadow: none;
+    border: 1px solid var(--wf-border-light, #dcdfe6);
+    transition: background-color .2s ease, box-shadow .2s ease, border-color .2s ease;
+    &:hover { border-color: var(--wf-primary, #409eff); }
+    &.is-focus,
+    &:focus {
+      background-color: var(--wf-bg-white, #fff);
+      border-color: var(--wf-primary, #409eff);
+      box-shadow: 0 0 0 4px rgba(64, 158, 255, 0.12);
+    }
+  }
+
+  /* 校验失败态：红边 + 红光环，压过 focus 蓝色（与基础信息一致） */
+  .el-form-item.is-error .el-input__wrapper,
+  .el-form-item.is-error .el-input__wrapper.is-focus {
+    border-color: var(--wf-danger, #f56c6c);
+    box-shadow: 0 0 0 4px rgba(245, 108, 108, 0.12);
+  }
+
+  /* 表格：与基础信息页统一（圆角边框 + 中性表头 + hover 蓝条 + 删除按钮红渐变） */
+  .el-table {
+    border-radius: var(--wf-radius-lg, 12px);
+    overflow: hidden;
+    border: 1px solid var(--wf-border-lighter, #ebeef5);
+
+    .el-table__header-wrapper th {
+      background: var(--wf-bg-white, #fff) !important;
+      color: var(--wf-text-regular, #606266);
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .el-table__row {
+      transition: background-color 0.2s ease;
+      & > td:first-child { position: relative; }
+      & > td:first-child::before {
+        content: '';
+        position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+        width: 3px; height: 0;
+        background: var(--wf-primary, #409eff);
+        border-radius: 0 2px 2px 0;
+        transition: height 0.25s ease;
+      }
+      &:hover > td:first-child::before { height: 60%; }
+      &:hover > td { background-color: var(--wf-primary-light, #ecf5ff) !important; }
+    }
+    /* 删除按钮：无实底，仅红色图标，hover 浅红圆底 */
+    .el-button--danger.is-link {
+      color: var(--wf-danger, #f56c6c);
+      padding: 5px;
+      height: auto;
+      border: none;
+      transition: all 0.2s ease;
+      &:hover {
+        color: #e04848;
+        background: rgba(245, 108, 108, 0.12) !important;
+        border-radius: 8px;
+      }
+    }
+
+    /* 表格内控件默认透明：整行读作干净白底，hover 轻填充、focus 才显白底+蓝环。
+       避免「全是下拉/输入的行」被填充底染灰、与「含纯文本列的行」深浅不一致 */
+    .el-input__wrapper,
+    .el-select .el-input__wrapper {
+      background-color: transparent;
+      &:hover { background-color: rgba(118, 128, 150, 0.07); }
+      &.is-focus { background-color: var(--wf-bg-white, #fff); }
+    }
   }
 }
 
@@ -415,6 +517,30 @@ html.dark {
     .v-modal + .el-overlay .el-drawer {
       --el-drawer-bg-color: var(--wf-bg-color, #141414) !important;
       background-color: var(--wf-bg-color, #141414) !important;
+    }
+
+    /* iOS 填充式输入框：暗黑覆盖 */
+    .el-input__wrapper,
+    .el-textarea__inner {
+      background-color: rgba(255, 255, 255, 0.06) !important;
+      box-shadow: none !important;
+      border: 1px solid transparent !important;
+    }
+    .el-input__wrapper.is-focus {
+      border-color: var(--wf-primary, #409eff) !important;
+      box-shadow: 0 0 0 4px rgba(64, 158, 255, 0.18) !important;
+    }
+
+    /* 表格暗黑：中性表头 + 蓝调 hover */
+    .el-table {
+      border-color: var(--wf-border-color, #333333);
+      .el-table__header-wrapper th {
+        background: rgba(255, 255, 255, 0.04) !important;
+        color: var(--wf-text-regular, #b0b0b0);
+      }
+      .el-table__row:hover > td {
+        background-color: rgba(64, 158, 255, 0.12) !important;
+      }
     }
   }
 
