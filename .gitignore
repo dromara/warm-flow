@@ -36,3 +36,7 @@ build/
 
 .soloncode/
 /.qoder/
+/.cursor/rules/qingtian-mcp.mdc
+/.cursor/mcp.json
+/.playwright-cli/
+/output/
