@@ -56,7 +56,8 @@ const install = (app: App, options: WarmFlowDesignerOptions = {}): void => {
   registerWfComponents(app)
   // 注册 v-loading 指令（区域加载遮罩）：由当前 UI 适配器提供（EP 用内置 vLoading、antd 自实现），
   // 使设计器内组件（如 selectUser）的 v-loading 与具体 UI 库解耦。须在 app.use 前先 setUiAdapter。
-  if (hasUiAdapter()) {
+  // 仅在宿主 app 尚未注册同名指令时才注册：避免与消费方 app.use(ElementPlus)（已自带 loading）重复注册告警。
+  if (hasUiAdapter() && !app.directive('loading')) {
     const loadingDirective = getUiAdapter().loadingDirective
     if (loadingDirective) app.directive('loading', loadingDirective)
   }
