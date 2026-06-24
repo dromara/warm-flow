@@ -9,7 +9,7 @@ import createVitePlugins from './vite/plugins'
  * 与默认应用构建（vite.config.js → dist/，供 warm-flow-plugin-vue3-ui 打进 jar）完全隔离：
  *  - 入口为可复用层门面 src/designer/index.js（FlowDesigner + 数据层）
  *  - 产物输出到 dist-lib/，不触碰 dist/ 与 jar 集成链路
- *  - vue / element-plus / logicflow / form-create 等重型库 externalize 为 peerDependencies，
+ *  - vue / element-plus / logicflow 等重型库 externalize 为 peerDependencies，
  *    避免包体膨胀与 Vue / Element Plus 单例重复；第三方 .css（如 LogicFlow 样式）仍打进库合并产物
  *
  * 应用构建仍走 `yarn build:prod`；库构建走 `yarn build:lib`。
@@ -23,9 +23,7 @@ const externalDeps = [
   'pinia',
   'element-plus',
   '@logicflow/core',
-  '@logicflow/extension',
-  '@form-create/designer',
-  '@form-create/element-ui'
+  '@logicflow/extension'
 ]
 
 export default defineConfig(() => {

@@ -11,8 +11,6 @@
   },
   "dependencies": {
     "@dromara/warm-flow-designer": "workspace:*",
-    "@form-create/designer": "^3.2.6",
-    "@form-create/element-ui": "^3.2.10",
     "@logicflow/core": "^2.1.11",
     "@logicflow/extension": "^2.1.15",
     "element-plus": "2.4.3",

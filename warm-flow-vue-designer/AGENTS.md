@@ -18,9 +18,9 @@
 
 - Vue 3.3.9 + Vite 5 + `<script setup>`；**主入口 UI 库无关**：设计器经 `src/ui` 适配层支持 Element Plus 2.4.3 / Ant Design Vue 4，二者均为**可选适配器**，主入口不静态引任何 UI 库（见下）。
 - 图标：**离线 iconify**（`@iconify/vue` + `src/icons` 的 `ep` / `wf` 集），**不再用** `@element-plus/icons-vue` 与 svg sprite。
-- 流程图：`@logicflow/core` / `@logicflow/extension`（必选 peer）。表单设计：`@form-create/designer` / `@form-create/element-ui`（可选 peer，当前孤儿、不进主 bundle）。
+- 流程图：`@logicflow/core` / `@logicflow/extension`（必选 peer）。（旧的 form-create 自定义表单设计器组件已移除，详见「UI 适配层」一节。）
 - 状态管理 Pinia；请求 axios；样式 Sass；`file-saver` 导出。（纯库无独立路由 / 应用壳。）
-- **依赖结构**：库 `package.json` 的 `dependencies` 为空；框架（vue/vue-router/pinia/logicflow）与 UI 库（element-plus/ant-design-vue/form-create）走 `peerDependencies`（UI 库为 optional），bundled 运行时（axios/file-saver/@iconify/vue）走 `devDependencies`。**勿把框架 / UI 库放回 `dependencies`**。
+- **依赖结构**：库 `package.json` 的 `dependencies` 为空；框架（vue/vue-router/pinia/logicflow）与 UI 库（element-plus/ant-design-vue）走 `peerDependencies`（UI 库为 optional），bundled 运行时（axios/file-saver/@iconify/vue）走 `devDependencies`。**勿把框架 / UI 库放回 `dependencies`**。
 - **TypeScript**：`src/` 下 `.js` 已全部转 `.ts`；`.vue` 的 `<script setup>` **渐进**加 `lang="ts"`（逐步优化）。对外发布层（`src/designer`、`src/data`、`src/ui`）产出 `.d.ts`。
 - 包管理 **pnpm（workspace）**；`type: module`；**前端许可证为 MIT**（与后端 Apache 2.0 不同，勿混改 header）。
 
@@ -62,7 +62,7 @@ pnpm build       # 示例生产构建
   - 两者各自 externalize `vue` + 对应 UI 库为 peer；`build:lib` = 主 + ep + antdv **三构建**。消费方：`import { elementPlusAdapter } from '@dromara/warm-flow-designer/element-plus'`（或 `/antdv` 的 `antdvAdapter`）+ `setUiAdapter(...)`。
 - **组件层中性化（Phase 2 已完成）**：全 28 种 `<el-*>` 已包成中性 `Wf*`（`src/ui/components`，注册名 `wf-*`），按当前 adapter 的 `components` 映射渲染。新写 UI 用中性 `<wf-*>`，**不新增直连 `<el-*>` 的耦合**。
 - **新增 UI 库**：实现一份同 `UiAdapter` 契约的适配器（含 28 个 `components` 映射 + 命令式反馈 + `clickOutside`）+ 拆**独立子入口**构建，**不在核心里写 `if (antdv) ... else ...`**。
-- **form-create**：自定义表单（`@form-create/element-ui`）暂留 EP 生态（Q2 待拍板）；当前 `formCreate.vue`/`design.vue` 为孤儿（未接入主入口图），不进主 bundle，故主 bundle 与 EP 完全无关。
+- **form-create（已移除）**：旧的自定义表单设计器组件 `components/form/formCreate.vue` / `design.vue` 在纯库化删 `views/` 后成为孤儿（无任何引用、未接入主入口图），已连同 `@form-create/designer` / `@form-create/element-ui` 依赖与 externalize 一并移除。`api/form/form.ts` 与 `DataProvider` 的表单方法（getFormContent/saveFormContent/executeLoad/executeHandle/hisLoad）暂保留为通用数据契约（不引 @form-create）。若未来需内置表单设计器，按「子入口 + 适配器」模式重新接入，勿直接耦合具体表单库。
 - **样式残留（Phase 4）**：库自带 SCSS 仍有针对 `.el-*` 类名写的选择器（antd 下不命中、属样式 token 双主题对齐范畴），非 EP 运行时依赖。
 - **对外契约**：`src/designer/index.ts` 的导出（`FlowDesigner`、`setDataProvider`、`setUiAdapter`/`getUiAdapter`、`UiAdapter` 类型等）+ `package.json` 的 `exports`（`.` / `./element-plus` / `./antdv` / `./style`）是**已发布 npm API**，向后兼容、优先「加法」。注：`elementPlusAdapter` 已从主入口移除、改由 `/element-plus` 子入口导出（主入口 UI 无关的必要改动；publish 前定型可接受）。
 
@@ -72,7 +72,7 @@ pnpm build       # 示例生产构建
 - **前后端契约**：流程定义 JSON 结构是与后端共享的契约，改动要前后端同步，避免设计器导出的 json 后端解析不了。
 - **npm 对外契约**：`designer/index.ts` 导出、`DataProvider` / `UiAdapter` 接口、`package.json` 的 `exports` / 包名是已发布契约，向后兼容优先用「加法」。
 - **构建**：纯库只有 `build:lib`（`dist-lib/`）；改 `vite.lib.config.js` 的 external / 入口后，跑 `build:lib` + 至少一个 demo `pnpm build` 验证消费正常。
-- **LogicFlow / form-create 版本**：图引擎与表单设计器升级可能破坏既有流程图 / 表单，升级按高风险处理并实际验证。
+- **LogicFlow 版本**：图引擎升级可能破坏既有流程图，升级按高风险处理并实际验证。
 - **依赖版本**：锁定版本不随意升级；新增依赖先评估必要性与体积（尤其会进 `dist-lib` 的运行时依赖）。
 
 ## 验证

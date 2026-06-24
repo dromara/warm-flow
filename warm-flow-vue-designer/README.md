@@ -109,7 +109,7 @@ setDataProvider({
 
 ### 依赖要求（peerDependencies）
 
-宿主需提供：`vue`、`element-plus`、`@logicflow/core`、`@logicflow/extension`、`@form-create/designer`、`@form-create/element-ui`（及 `pinia`、`vue-router`）。图标已内置（iconify 离线集 `ep` + `wf`，随库打包，无需额外依赖）。
+宿主需提供：`vue`、`vue-router`、`pinia`、`@logicflow/core`、`@logicflow/extension`（必选）；UI 库二选一——`element-plus`（配子入口 `@dromara/warm-flow-designer/element-plus`）或 `ant-design-vue@4`（配子入口 `@dromara/warm-flow-designer/antdv`），均为可选 peer，按所选适配器 `setUiAdapter(...)`。图标已内置（iconify 离线集 `ep` + `wf`，随库打包，无需额外依赖）。
 
 ### 本地体验 playground
 

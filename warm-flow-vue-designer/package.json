@@ -57,8 +57,6 @@
   },
   "dependencies": {},
   "peerDependencies": {
-    "@form-create/designer": "^3.2.6",
-    "@form-create/element-ui": "^3.2.10",
     "@logicflow/core": "^2.1.11",
     "@logicflow/extension": "^2.1.15",
     "ant-design-vue": "^4.0.0",
@@ -68,12 +66,6 @@
     "vue-router": "^4.2.5"
   },
   "peerDependenciesMeta": {
-    "@form-create/designer": {
-      "optional": true
-    },
-    "@form-create/element-ui": {
-      "optional": true
-    },
     "ant-design-vue": {
       "optional": true
     },
@@ -82,8 +74,6 @@
     }
   },
   "devDependencies": {
-    "@form-create/designer": "^3.2.6",
-    "@form-create/element-ui": "^3.2.10",
     "@iconify-json/ep": "^1.2.4",
     "@iconify/vue": "^5.0.1",
     "@logicflow/core": "^2.1.11",
