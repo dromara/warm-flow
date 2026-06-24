@@ -14,7 +14,7 @@ import {
 import type { DataProvider } from '@/data'
 import { setUiAdapter, getUiAdapter, hasUiAdapter } from '@/ui/uiAdapter'
 import { elementPlusAdapter } from '@/ui/elementPlusAdapter'
-import type { UiAdapter } from '@/ui/uiAdapter'
+import type { UiAdapter, UiFeedbackType, UiFeedbackOptions, UiLoadingHandle, UiComponents } from '@/ui/uiAdapter'
 import { registerWfComponents } from '@/ui/components'
 
 /**
@@ -70,6 +70,6 @@ export {
   elementPlusAdapter
 }
 export type { DataProvider }
-export type { UiAdapter }
+export type { UiAdapter, UiFeedbackType, UiFeedbackOptions, UiLoadingHandle, UiComponents }
 
 export default WarmFlowDesigner

@@ -7,8 +7,8 @@
 
     <a-alert
       banner
-      type="warning"
-      message="过渡态说明：本 demo 应用外壳已用 Ant Design Vue 4，但设计器内部当前仍由 Element Plus 驱动。Phase 3 接入 antdv 适配器后，将通过 setUiAdapter(antdvAdapter) 切换为 antdv 原生并移除 Element Plus 依赖。"
+      type="success"
+      message="本 demo 通过 setUiAdapter(antdvAdapter) 让设计器 UI 走 Ant Design Vue 4 原生（28 个组件已翻译为 antd）。注：自定义表单设计器(form-create)仍用 Element Plus（Q2 决定）；库 dist-lib 仍内置 EP 默认适配器，bundle 级移除 EP 需库侧拆子入口（后续）。"
     />
 
     <a-layout-content class="demo-content">
