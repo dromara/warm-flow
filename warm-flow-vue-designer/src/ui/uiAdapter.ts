@@ -38,7 +38,7 @@ export interface UiComponents {
  * Warm-Flow 设计器「UI 适配器」契约。
  *
  * 把设计器对具体 UI 库（Element Plus / Ant Design Vue …）的命令式 API（消息 / 通知 / 弹框 / loading）
- * 与指令（clickOutside）依赖收敛到这一层，实现「核心逻辑与 UI 库解耦、可按需切换 UI 库」。
+ * 与指令（clickOutside / loading）依赖收敛到这一层，实现「核心逻辑与 UI 库解耦、可按需切换 UI 库」。
  *
  * 默认实现为 Element Plus（见 elementPlusAdapter）；消费方可 setUiAdapter(antdvAdapter) 切换为其它实现。
  *
@@ -61,6 +61,8 @@ export interface UiAdapter {
   loading(options?: UiFeedbackOptions): UiLoadingHandle
   /** 「点击外部」指令，供自定义节点视图等注册（v-click-outside） */
   clickOutside?: Directive
+  /** 「加载中」遮罩指令（v-loading）：EP 用内置 vLoading，antd 自实现区域遮罩，供设计器内组件解耦使用 */
+  loadingDirective?: Directive
   /** 中性组件注册表：语义名 -> 具体 UI 库组件，供 Wf* 中性组件解析渲染目标 */
   components?: UiComponents
 }

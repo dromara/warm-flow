@@ -12,7 +12,7 @@ import {
   isMockEnabled
 } from '@/data'
 import type { DataProvider } from '@/data'
-import { setUiAdapter, getUiAdapter } from '@/ui/uiAdapter'
+import { setUiAdapter, getUiAdapter, hasUiAdapter } from '@/ui/uiAdapter'
 import type { UiAdapter, UiFeedbackType, UiFeedbackOptions, UiLoadingHandle, UiComponents } from '@/ui/uiAdapter'
 import { registerWfComponents } from '@/ui/components'
 
@@ -44,6 +44,12 @@ const install = (app: App): void => {
   app.component('svg-icon', SvgIcon)
   // 全局注册中性组件 wf-*（设计器视图与 UI 库解耦，渲染时按已注册的适配器映射到具体 UI 库组件）
   registerWfComponents(app)
+  // 注册 v-loading 指令（区域加载遮罩）：由当前 UI 适配器提供（EP 用内置 vLoading、antd 自实现），
+  // 使设计器内组件（如 selectUser）的 v-loading 与具体 UI 库解耦。须在 app.use 前先 setUiAdapter。
+  if (hasUiAdapter()) {
+    const loadingDirective = getUiAdapter().loadingDirective
+    if (loadingDirective) app.directive('loading', loadingDirective)
+  }
 }
 
 const WarmFlowDesigner: Plugin = { install }

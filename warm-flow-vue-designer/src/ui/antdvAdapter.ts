@@ -1,4 +1,4 @@
-import { defineComponent, h, ref, Fragment, createApp } from 'vue'
+import { defineComponent, h, ref, Fragment, createApp, watch } from 'vue'
 import type { Component, Directive, VNode } from 'vue'
 import {
   message, notification, Modal,
@@ -43,6 +43,48 @@ const clickOutside: Directive = {
     document.removeEventListener('click', el.__wfClickOutside__, true)
     el.__wfClickOutside__ = null
   }
+}
+
+// 区域 loading 遮罩指令（antd 无内置 v-loading，自实现：在宿主元素上覆盖 ASpin 遮罩）
+function applyLoading(el: any, value: unknown): void {
+  if (value) {
+    if (el.__wfLoadingApp__) return
+    if (getComputedStyle(el).position === 'static') {
+      el.__wfLoadingPrevPosition__ = el.style.position
+      el.style.position = 'relative'
+    }
+    const mask = document.createElement('div')
+    mask.style.cssText = 'position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.6)'
+    el.appendChild(mask)
+    const app = createApp({ render: () => h(ASpin, { size: 'large' }) })
+    app.mount(mask)
+    el.__wfLoadingApp__ = app
+    el.__wfLoadingEl__ = mask
+  } else {
+    removeLoading(el)
+  }
+}
+function removeLoading(el: any): void {
+  if (el.__wfLoadingApp__) {
+    el.__wfLoadingApp__.unmount()
+    el.__wfLoadingApp__ = null
+  }
+  if (el.__wfLoadingEl__) {
+    el.__wfLoadingEl__.remove()
+    el.__wfLoadingEl__ = null
+  }
+  if (el.__wfLoadingPrevPosition__ !== undefined) {
+    el.style.position = el.__wfLoadingPrevPosition__
+    el.__wfLoadingPrevPosition__ = undefined
+  }
+}
+const loadingDirective: Directive = {
+  mounted(el: any, binding) { applyLoading(el, binding.value) },
+  updated(el: any, binding) {
+    if (binding.value === binding.oldValue) return
+    applyLoading(el, binding.value)
+  },
+  unmounted(el: any) { removeLoading(el) }
 }
 
 // el-button 风格 -> a-button 翻译
@@ -98,10 +140,29 @@ const AntInput: Component = defineComponent({
 })
 
 // el-switch 风格 -> a-switch（v-model + active/inactive-value/text）
+// 兼容修复：el-switch 初始化时若 modelValue 不在 [active-value, inactive-value] 内，会自动 emit
+// inactive-value 归一化；antd a-switch 无此行为，遇到非法值（如 undefined/'')会「视觉为否但绑定值非法」，
+// 导致必填校验误报、依赖该值的 v-if（如表单路径）渲染失效。此处对齐 el-switch：响应式监听 modelValue，
+// 一旦非法即回落 inactive-value（归一后变合法不再触发，无循环）。用 watch+immediate 而非 onMounted，
+// 以覆盖「子组件挂载后父级异步赋非法值」的时序（onMounted 早于父级 onMounted 内的异步赋值，会漏修）。
 const AntSwitch: Component = defineComponent({
   name: 'WfAntSwitch',
   inheritAttrs: false,
   setup(_props, { attrs }) {
+    const at = attrs as Record<string, unknown>
+    watch(
+      () => at.modelValue,
+      (mv) => {
+        const onUpd = at['onUpdate:modelValue'] as ((v: unknown) => void) | undefined
+        if (!onUpd) return
+        const rawChecked = at['active-value'] ?? at.activeValue
+        const rawUnchecked = at['inactive-value'] ?? at.inactiveValue
+        const checkedValue = rawChecked !== undefined ? rawChecked : true
+        const unCheckedValue = rawUnchecked !== undefined ? rawUnchecked : false
+        if (mv !== checkedValue && mv !== unCheckedValue) onUpd(unCheckedValue)
+      },
+      { immediate: true }
+    )
     return () => {
       const a: Record<string, unknown> = { ...attrs }
       const modelValue = a.modelValue
@@ -452,7 +513,47 @@ const AntDrawer: Component = defineComponent({
   }
 })
 
-const AntDatePicker = vModelComp('WfAntDatePicker', ADatePicker, 'value')
+// el-date-picker -> a-date-picker / a-range-picker
+// 关键差异：① EP type=daterange/datetimerange 对应 antd RangePicker（而非 DatePicker[type=...]）；
+//          ② EP value-format 传字符串值，对齐 antd valueFormat（字符串值模式），规避 antd 默认 dayjs 对象、
+//             对空值/字符串调用 date.locale 导致的 "date.locale is not a function" 崩溃；
+//          ③ datetime/datetimerange 加 show-time；④ 空值（含空数组）归一为 undefined，避免喂空值给 dayjs。
+const ARangePicker = (ADatePicker as unknown as { RangePicker: Component }).RangePicker
+const AntDatePicker: Component = defineComponent({
+  name: 'WfAntDatePicker',
+  inheritAttrs: false,
+  setup(_props, { attrs, slots }) {
+    return () => {
+      const a: Record<string, unknown> = { ...attrs }
+      const type = (a.type as string) || 'date'
+      const isRange = type === 'daterange' || type === 'datetimerange' || type === 'monthrange'
+      const showTime = type === 'datetime' || type === 'datetimerange'
+      const mv = a.modelValue
+      const onUpd = a['onUpdate:modelValue'] as ((v: unknown) => void) | undefined
+      const valueFormat = (a['value-format'] ?? a.valueFormat) as string | undefined
+      const startPh = a['start-placeholder']
+      const endPh = a['end-placeholder']
+      ;['modelValue', 'onUpdate:modelValue', 'type', 'value-format', 'valueFormat',
+        'range-separator', 'start-placeholder', 'end-placeholder'].forEach((k) => delete a[k])
+      // range 需完整两端方有效，否则 undefined；single 空串/空值 -> undefined
+      let value: unknown
+      if (isRange) {
+        value = Array.isArray(mv) && mv.length === 2 && mv[0] && mv[1] ? mv : undefined
+      } else {
+        value = mv === '' || mv == null ? undefined : mv
+      }
+      const props: Record<string, unknown> = {
+        ...a,
+        value,
+        valueFormat: valueFormat || (showTime ? 'YYYY-MM-DD HH:mm:ss' : 'YYYY-MM-DD'),
+        'onUpdate:value': (v: unknown) => onUpd?.(v)
+      }
+      if (showTime) props.showTime = true
+      if (isRange && (startPh || endPh)) props.placeholder = [startPh, endPh]
+      return h(isRange ? ARangePicker : (ADatePicker as Component), props, slots)
+    }
+  }
+})
 const AntTimePicker = vModelComp('WfAntTimePicker', ATimePicker, 'value')
 
 // el-tree -> a-tree（data->treeData；props->fieldNames；node-key->无需）
@@ -480,6 +581,27 @@ const AntPagination: Component = defineComponent({
         pageSize,
         'onUpdate:current': (v: unknown) => onCur?.(v)
       })
+    }
+  }
+})
+
+// el-col -> a-col：处理 EP 与 antd 的栅格响应式语义差异。
+// EP 的 xs/sm/... 是「该断点及以下」（如 xs = max-width:768），span 为默认（宽屏）值；
+// antd 的 xs 是移动优先「基准」（min-width:0，恒生效），会盖掉 span 使列在桌面端塌成整宽。
+// 修复：当存在 EP 响应式断点(xs/sm/md/lg/xl)且未显式给 md 时，把 span 落到 antd 的 md(≥768) 断点，
+// 保留 xs 作基准，复刻 EP「窄屏整宽、宽屏按 span」的观感；仅用 span 的列保持原样透传。
+const AntCol: Component = defineComponent({
+  name: 'WfAntCol',
+  inheritAttrs: false,
+  setup(_props, { attrs, slots }) {
+    return () => {
+      const a: Record<string, unknown> = { ...attrs }
+      const hasEpResponsive = ['xs', 'sm', 'md', 'lg', 'xl'].some((k) => a[k] != null)
+      if (hasEpResponsive && a.span != null && a.md == null) {
+        a.md = a.span
+        delete a.span
+      }
+      return h(ACol, a, slots)
     }
   }
 })
@@ -568,6 +690,8 @@ export const antdvAdapter: UiAdapter = {
 
   clickOutside,
 
+  loadingDirective,
+
   components: {
     // 已翻译为 antd
     button: AntButton,
@@ -583,7 +707,7 @@ export const antdvAdapter: UiAdapter = {
     'tree-select': AntTreeSelect,
     tag: AntTag,
     tooltip: AntTooltip,
-    col: ACol,
+    col: AntCol,
     row: ARow,
     divider: ADivider,
     form: AntForm,

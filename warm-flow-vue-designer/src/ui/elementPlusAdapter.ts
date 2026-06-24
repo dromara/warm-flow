@@ -64,6 +64,9 @@ export const elementPlusAdapter: UiAdapter = {
 
   clickOutside: ClickOutside,
 
+  // v-loading 指令直接复用 EP 内置实现（区域遮罩），与 antd 自实现遮罩对齐
+  loadingDirective: ElLoading.directive,
+
   // 中性组件语义名 -> Element Plus 实现（供 Wf* 透传渲染）
   components: {
     'button': ElButton,
