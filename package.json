@@ -1,0 +1,7 @@
+{
+  "name": "warm-flow-vue-workspace",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Warm-Flow 设计器组件库（@dromara/warm-flow-designer）+ 消费示例 的 pnpm 工作区（不含 Maven 模块与 warm-flow-ui）",
+  "packageManager": "pnpm@11.4.0"
+}

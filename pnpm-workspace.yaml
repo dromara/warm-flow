@@ -1,0 +1,18 @@
+packages:
+  - 'warm-flow-vue-designer'
+  - 'warm-flow-designer-demo/*'
+
+allowBuilds:
+  '@logicflow/core': set this to true or false
+  core-js: set this to true or false
+  core-js-pure: set this to true or false
+  esbuild: set this to true or false
+  vue-demi: set this to true or false
+
+# 放行必要的依赖构建脚本（pnpm 默认拦截）；esbuild 为 vite 构建所必需
+onlyBuiltDependencies:
+  - esbuild
+  - '@logicflow/core'
+  - core-js
+  - core-js-pure
+  - vue-demi

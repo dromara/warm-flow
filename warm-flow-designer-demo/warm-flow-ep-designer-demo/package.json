@@ -1,0 +1,28 @@
+{
+  "name": "warm-flow-ep-designer-demo",
+  "version": "1.8.2",
+  "private": true,
+  "description": "Warm-Flow 设计器（@dromara/warm-flow-designer）Element Plus 消费示例",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@dromara/warm-flow-designer": "workspace:*",
+    "@form-create/designer": "^3.2.6",
+    "@form-create/element-ui": "^3.2.10",
+    "@logicflow/core": "^2.1.11",
+    "@logicflow/extension": "^2.1.15",
+    "element-plus": "2.4.3",
+    "pinia": "2.1.7",
+    "vue": "3.3.9",
+    "vue-router": "4.2.5"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "4.5.0",
+    "typescript": "^5.3.3",
+    "vite": "5.0.4"
+  }
+}

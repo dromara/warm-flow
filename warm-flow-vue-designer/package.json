@@ -1,0 +1,84 @@
+{
+  "name": "@dromara/warm-flow-designer",
+  "version": "1.8.2",
+  "description": "Warm-Flow 流程设计器（经典 + 仿钉钉双模式）Vue3 组件库",
+  "author": "warm",
+  "license": "MIT",
+  "keywords": [
+    "warm-flow",
+    "workflow",
+    "flow-designer",
+    "logicflow",
+    "vue3",
+    "dromara"
+  ],
+  "homepage": "https://warm-flow.dromara.org",
+  "bugs": {
+    "url": "https://github.com/dromara/warm-flow/issues"
+  },
+  "type": "module",
+  "module": "./dist-lib/warm-flow-designer.es.js",
+  "types": "./dist-lib/src/designer/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist-lib/src/designer/index.d.ts",
+      "import": "./dist-lib/warm-flow-designer.es.js"
+    },
+    "./style": "./dist-lib/warm-flow-designer.css",
+    "./style.css": "./dist-lib/warm-flow-designer.css"
+  },
+  "files": [
+    "dist-lib"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "dev": "vite build --config vite.lib.config.js --watch",
+    "build:lib": "vite build --config vite.lib.config.js",
+    "mock": "node mock/server.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitee.com/dromara/warm-flow.git"
+  },
+  "dependencies": {
+    "@form-create/designer": "^3.2.6",
+    "@form-create/element-ui": "^3.2.10",
+    "@iconify/vue": "^5.0.1",
+    "@logicflow/core": "^2.1.11",
+    "@logicflow/extension": "^2.1.15",
+    "axios": "0.27.2",
+    "element-plus": "2.4.3",
+    "file-saver": "2.0.5",
+    "pinia": "2.1.7",
+    "vue": "3.3.9",
+    "vue-router": "4.2.5"
+  },
+  "peerDependencies": {
+    "@form-create/designer": "^3.2.6",
+    "@form-create/element-ui": "^3.2.10",
+    "@logicflow/core": "^2.1.11",
+    "@logicflow/extension": "^2.1.15",
+    "element-plus": "^2.4.3",
+    "pinia": "^2.1.7",
+    "vue": "^3.3.9",
+    "vue-router": "^4.2.5"
+  },
+  "devDependencies": {
+    "@iconify-json/ep": "^1.2.4",
+    "@vitejs/plugin-vue": "4.5.0",
+    "@vue/compiler-sfc": "3.3.9",
+    "@vue/language-core": "^3.3.5",
+    "sass": "1.69.5",
+    "typescript": "^6.0.3",
+    "unplugin-auto-import": "0.17.1",
+    "unplugin-vue-setup-extend-plus": "1.0.0",
+    "vite": "5.0.4",
+    "vite-plugin-compression": "0.5.1",
+    "vite-plugin-dts": "^5.0.2"
+  }
+}

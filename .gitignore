@@ -34,6 +34,14 @@ build/
 .DS_Store
 /warm-flow-ui/.qoder/
 
+### Node / pnpm（warm-flow-vue-designer + warm-flow-designer-demo 工作区） ###
+node_modules/
+dist-lib/
+.pnpm-store/
+*.local
+**/*.log
+/.playwright-cli/
+
 .soloncode/
 /.qoder/
 /.cursor/rules/qingtian-mcp.mdc
