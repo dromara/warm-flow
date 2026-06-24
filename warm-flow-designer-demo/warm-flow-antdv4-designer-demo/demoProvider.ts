@@ -119,14 +119,18 @@ export function createDemoProvider(): any {
       return ok(id, '保存成功(demo·已持久化到 localStorage)')
     },
     // 修改 / 预览态：返回保存的定义对象（含 nodeList），可被 json2LogicFlowJson 还原画布；
-    // 新建态（无 id）或未找到：返回空对象，设计器走本地 initData。
-    queryDef(id?: string | number) {
+    // 新建态（无 id）或未找到：仅返回元数据，设计器走本地 initData。
+    // 元数据（流程类别 / 表单标识等下拉项）取自库内置 mock（base.queryDef），与持久化定义合并，
+    // 使「流程类别 / 表单唯一标识」等下拉在 demo 里也有可选数据。
+    async queryDef(id?: string | number) {
+      const metaRes = await base.queryDef(id)
+      const meta = (metaRes && metaRes.data) || {}
       if (!id) {
-        return ok({})
+        return ok(meta)
       }
       const store = readStore()
       const rec = store[String(id)]
-      return rec ? ok(rec.def) : ok({})
+      return rec ? ok({ ...meta, ...rec.def }) : ok(meta)
     }
   }
 }

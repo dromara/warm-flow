@@ -21,24 +21,114 @@ function ok(data?: any, msg?: string): Promise<any> {
 const HANDLER_ROWS: Record<string, any[]> = {
   角色: [
     { storageId: 'role:1', handlerCode: 'admin', handlerName: '系统管理员', groupName: '角色', createTime: '2024-01-01 10:00:00' },
-    { storageId: 'role:2', handlerCode: 'leader', handlerName: '部门主管', groupName: '角色', createTime: '2024-01-02 10:00:00' }
+    { storageId: 'role:2', handlerCode: 'leader', handlerName: '部门主管', groupName: '角色', createTime: '2024-01-02 10:00:00' },
+    { storageId: 'role:3', handlerCode: 'finance', handlerName: '财务专员', groupName: '角色', createTime: '2024-01-03 10:00:00' },
+    { storageId: 'role:4', handlerCode: 'hr', handlerName: '人事专员', groupName: '角色', createTime: '2024-01-04 10:00:00' }
   ],
   部门: [
     { storageId: 'dept:1', handlerCode: 'tech', handlerName: '研发部', groupName: '部门', createTime: '2024-01-01 10:00:00' },
-    { storageId: 'dept:2', handlerCode: 'hr', handlerName: '人事部', groupName: '部门', createTime: '2024-01-02 10:00:00' }
+    { storageId: 'dept:2', handlerCode: 'hr', handlerName: '人事部', groupName: '部门', createTime: '2024-01-02 10:00:00' },
+    { storageId: 'dept:3', handlerCode: 'finance', handlerName: '财务部', groupName: '部门', createTime: '2024-01-03 10:00:00' },
+    { storageId: 'dept:4', handlerCode: 'market', handlerName: '市场部', groupName: '部门', createTime: '2024-01-04 10:00:00' }
   ],
   用户: [
     { storageId: 'user:1', handlerCode: 'zhangsan', handlerName: '张三', groupName: '用户', createTime: '2024-01-01 10:00:00' },
-    { storageId: 'user:2', handlerCode: 'lisi', handlerName: '李四', groupName: '用户', createTime: '2024-01-02 10:00:00' }
+    { storageId: 'user:2', handlerCode: 'lisi', handlerName: '李四', groupName: '用户', createTime: '2024-01-02 10:00:00' },
+    { storageId: 'user:3', handlerCode: 'wangwu', handlerName: '王五', groupName: '用户', createTime: '2024-01-03 10:00:00' },
+    { storageId: 'user:4', handlerCode: 'zhaoliu', handlerName: '赵六', groupName: '用户', createTime: '2024-01-04 10:00:00' },
+    { storageId: 'user:5', handlerCode: 'qianqi', handlerName: '钱七', groupName: '用户', createTime: '2024-01-05 10:00:00' },
+    { storageId: 'user:6', handlerCode: 'sunba', handlerName: '孙八', groupName: '用户', createTime: '2024-01-06 10:00:00' }
   ]
 }
 
-// 左侧组织架构树（对齐 Tree 结构，配合办理人列表）
+// 左侧组织架构树（对齐 Tree 结构，配合办理人列表；两级部门，体验更真实）
 const HANDLER_TREE: any[] = [
   {
     id: '1', name: '总公司', parentId: '0', children: [
-      { id: '2', name: '研发部', parentId: '1', children: [] },
-      { id: '3', name: '人事部', parentId: '1', children: [] }
+      {
+        id: '2', name: '研发中心', parentId: '1', children: [
+          { id: '21', name: '前端组', parentId: '2', children: [] },
+          { id: '22', name: '后端组', parentId: '2', children: [] }
+        ]
+      },
+      {
+        id: '3', name: '职能中心', parentId: '1', children: [
+          { id: '31', name: '人事部', parentId: '3', children: [] },
+          { id: '32', name: '财务部', parentId: '3', children: [] }
+        ]
+      }
+    ]
+  }
+]
+
+// 流程类别（baseInfo「流程类别」tree-select，结构 { id, name, children }）
+const CATEGORY_LIST: any[] = [
+  {
+    id: 'oa', name: 'OA办公', children: [
+      { id: 'oa-leave', name: '请假流程', children: [] },
+      { id: 'oa-reimburse', name: '报销流程', children: [] }
+    ]
+  },
+  {
+    id: 'hr', name: '人事流程', children: [
+      { id: 'hr-entry', name: '入职流程', children: [] },
+      { id: 'hr-quit', name: '离职流程', children: [] }
+    ]
+  },
+  { id: 'finance', name: '财务流程', children: [] }
+]
+
+// 已发布表单唯一标识（baseInfo 自定义表单=是 时的 tree-select，结构 { id, name, children }）
+const FORM_PATH_LIST: any[] = [
+  { id: 'form-leave', name: '请假申请表', children: [] },
+  { id: 'form-reimburse', name: '报销申请表', children: [] },
+  { id: 'form-purchase', name: '采购审批表', children: [] }
+]
+
+// 节点扩展属性（between 节点「扩展属性」面板，分组 type:1→平铺 / type:2→标签页；childs 覆盖全部控件类型 1-7）
+const NODE_EXT: any[] = [
+  {
+    type: 1, name: '扩展属性', code: 'baseExt', childs: [
+      { label: '业务单号', code: 'bizNo', type: 1, must: false, desc: '请输入业务单号' },
+      { label: '备注说明', code: 'remark', type: 2, must: false, desc: '请输入备注（多行）' },
+      {
+        label: '优先级', code: 'priority', type: 3, must: false, desc: '请选择优先级', dict: [
+          { label: '低', value: '1' }, { label: '中', value: '2', selected: true }, { label: '高', value: '3' }
+        ]
+      },
+      {
+        label: '关注标签', code: 'tags', type: 3, multiple: true, must: false, desc: '可多选', dict: [
+          { label: '紧急', value: 'urgent' }, { label: '重要', value: 'important' }, { label: '常规', value: 'normal' }
+        ]
+      },
+      {
+        label: '是否抄送', code: 'cc', type: 4, must: false, desc: '请选择', dict: [
+          { label: '是', value: '1', selected: true }, { label: '否', value: '0' }
+        ]
+      },
+      {
+        label: '通知方式', code: 'notify', type: 4, multiple: true, must: false, desc: '可多选', dict: [
+          { label: '站内信', value: 'site' }, { label: '邮件', value: 'email' }, { label: '短信', value: 'sms' }
+        ]
+      },
+      { label: '抄送人', code: 'ccUsers', type: 5, must: false, desc: '选择抄送人' },
+      { label: '限时(小时)', code: 'limitHours', type: 6, must: false, desc: '审批限时', precision: 0, step: 1, min: 0 },
+      { label: '截止时间', code: 'deadline', type: 7, must: false, desc: '请选择截止时间', dateType: 'datetime', dateFormat: 'YYYY-MM-DD HH:mm:ss' }
+    ]
+  },
+  {
+    type: 2, name: '高级设置', code: 'advanced', childs: [
+      {
+        label: '允许加签', code: 'allowAddSign', type: 4, must: false, desc: '是否允许加签', dict: [
+          { label: '允许', value: '1', selected: true }, { label: '禁止', value: '0' }
+        ]
+      },
+      {
+        label: '允许转办', code: 'allowTransfer', type: 4, must: false, desc: '是否允许转办', dict: [
+          { label: '允许', value: '1', selected: true }, { label: '禁止', value: '0' }
+        ]
+      },
+      { label: '审批意见模板', code: 'commentTpl', type: 2, must: false, desc: '默认审批意见' }
     ]
   }
 ]
@@ -52,9 +142,10 @@ export function createMockProvider(): DataProvider {
     saveJson() {
       return ok(true, '保存成功(mock)')
     },
-    // 新建态：返回空对象，设计器走本地 initData 渲染（res.data 需为对象，避免取属性报错）
+    // 新建态：返回流程类别 / 表单标识等元数据（设计器据此填充「流程类别 / 表单唯一标识」下拉），
+    // 无 nodeList 时设计器仍走本地 initData 渲染初始节点。
     queryDef() {
-      return ok({})
+      return ok({ categoryList: CATEGORY_LIST, formPathList: FORM_PATH_LIST })
     },
     queryFlowChart() {
       return ok({})
@@ -97,9 +188,9 @@ export function createMockProvider(): DataProvider {
         { id: '1002', formName: '报销申请表(mock)' }
       ])
     },
-    // 节点扩展属性（空数组安全：消费方按 e.childs 遍历，留空表示无扩展属性）
+    // 节点扩展属性（覆盖全部控件类型 1-7，使 between 节点「扩展属性 / 高级设置」面板有可演示数据）
     nodeExt() {
-      return ok([])
+      return ok(NODE_EXT)
     },
     // 监听器下拉（对齐 ListenerVo: [{ type, path, description }]）
     listenerList() {
