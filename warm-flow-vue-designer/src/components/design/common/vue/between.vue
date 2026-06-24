@@ -245,21 +245,10 @@
         </div>
       </div>
 
-      <!-- 动态页签（按钮权限等）- 都是节点扩展属性 -->
+      <!-- 动态页签（按钮权限等）- 都是节点扩展属性。tab 已表明当前分组，无需重复标题与卡片背景，直接渲染扩展属性表单 -->
       <div v-show="tabsValue !== '1' && tabsValue !== '2' && tabsValue !== '3'" class="tabPane tabPane-full">
-        <div v-if="buttonList[tabsValue] && buttonList[tabsValue].length > 0" class="ext-attributes-section ext-secondary">
-          <div class="ext-attributes-header ext-secondary-header">
-            <span class="ext-attributes-icon ext-icon-puzzle">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M20 6H16V4C16 2.89 15.11 2 14 2H10C8.89 2 8 2.89 8 4V6H4C2.89 6 2.01 6.89 2.01 8L2 19C2 20.11 2.89 21 4 21H20C21.11 21 22 20.11 22 19V8C22 6.89 21.11 6 20 6ZM10 4H14V6H10V4ZM12 17H6V15H12V17ZM18 13H6V11H18V13Z" fill="currentColor"/>
-              </svg>
-            </span>
-            <span class="ext-attributes-title ext-secondary-title">{{ getCurrentTabLabel() }}</span>
-            <span class="ext-attributes-badge ext-secondary-badge">节点扩展属性 · {{ buttonList[tabsValue].length }}项</span>
-          </div>
-          <div class="ext-attributes-content">
-            <nodeExtList :ref="`nodeExtList_${tabsValue}`" v-model="form.ext" :formList="buttonList[tabsValue]" :disabled="disabled"></nodeExtList>
-          </div>
+        <div v-if="buttonList[tabsValue] && buttonList[tabsValue].length > 0" class="ext-tab-content">
+          <nodeExtList :ref="`nodeExtList_${tabsValue}`" v-model="form.ext" :formList="buttonList[tabsValue]" :disabled="disabled"></nodeExtList>
         </div>
       </div>
     </wf-form>
@@ -344,11 +333,6 @@ const dictList = ref(); // 办理人选项
 const permissionRows = ref([]); // 办理人表格
 const ListenerVo = ref([]); // 监听器列表
 const emit = defineEmits(['update:modelValue']);
-
-function getCurrentTabLabel() {
-  const currentTab = tabsList.value.find(t => t.name === tabsValue.value);
-  return currentTab ? currentTab.label : '节点扩展属性';
-}
 
 const rules = reactive({
     nodeRatio: computed(() => {
@@ -1174,22 +1158,9 @@ defineExpose({
   max-height: 2000px;
 }
 
-/* ========== 绿色主题（动态页签） ========== */
-.ext-secondary {
-  border-color: rgba(103, 194, 58, 0.25);
-  html.dark & { border-color: rgba(103, 194, 58, 0.2); }
-  .ext-secondary-header {
-    background: linear-gradient(135deg, rgba(103, 194, 58, 0.08) 0%, rgba(82, 155, 46, 0.04) 100%);
-    border-bottom-color: rgba(103, 194, 58, 0.12);
-    html.dark & {
-      background: linear-gradient(135deg, rgba(103, 194, 58, 0.1) 0%, rgba(82, 155, 46, 0.06) 100%);
-      border-bottom-color: rgba(103, 194, 58, 0.15);
-    }
-  }
-  .ext-secondary-title { color: #67c23a; }
-  .ext-secondary-badge { color: #67c23a; background: rgba(103, 194, 58, 0.12); html.dark & { background: rgba(103, 194, 58, 0.2); } }
-  .ext-icon-puzzle { color: #67c23a; }
-  &:hover { box-shadow: 0 2px 12px rgba(103, 194, 58, 0.1); html.dark & { box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3); } }
+/* ========== 扩展页签内容（无卡片背景与重复标题，tab 已表明当前分组） ========== */
+.ext-tab-content {
+  padding: 4px 0;
 }
 
 /* ========== 表格内表单元素左对齐（关键修复） ========== */
