@@ -67,32 +67,6 @@ export function createHttpProvider(): DataProvider {
       return request({ url: urlPrefix + 'warm-flow/listener-list', method: 'get' })
     },
 
-    // ===== 表单（原 api/form/form.js） =====
-    // 查询表单定义内容
-    getFormContent(id) {
-      return request({ url: urlPrefix + 'warm-flow/form-content/' + id, method: 'get' })
-    },
-    // 保存表单设计
-    saveFormContent(data) {
-      return request({ url: urlPrefix + 'warm-flow/form-content', method: 'post', data: data })
-    },
-    // 获取表单设计详情及数据
-    executeLoad(id) {
-      return request({ url: urlPrefix + 'warm-flow/execute/load/' + id, method: 'get' })
-    },
-    // 办理OA申请
-    executeHandle(data, taskId, skipType, message) {
-      return request({
-        url: urlPrefix + 'warm-flow/execute/handle?taskId=' + taskId + '&skipType=' + skipType + '&message=' + message,
-        data: data,
-        method: 'post'
-      })
-    },
-    // 查看已办表单详情
-    hisLoad(taskId) {
-      return request({ url: urlPrefix + 'warm-flow/execute/hisLoad/' + taskId, method: 'get' })
-    },
-
     // ===== 匿名 / 配置（原 api/anony.js） =====
     // 获取设计器配置
     config() {

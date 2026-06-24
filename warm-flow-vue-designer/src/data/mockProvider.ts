@@ -201,23 +201,6 @@ export function createMockProvider(): DataProvider {
       ])
     },
 
-    // ===== 表单 =====
-    getFormContent() {
-      return ok({})
-    },
-    saveFormContent() {
-      return ok(true, '保存成功(mock)')
-    },
-    executeLoad() {
-      return ok({})
-    },
-    executeHandle() {
-      return ok(true, '办理成功(mock)')
-    },
-    hisLoad() {
-      return ok({})
-    },
-
     // ===== 配置 =====
     // 设计器启动即调用，返回安全默认（无 token、默认框架 springboot），保证 mock 下可正常初始化
     config() {

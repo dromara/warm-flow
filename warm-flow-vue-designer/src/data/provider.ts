@@ -25,13 +25,6 @@ export interface DataProvider {
   nodeExt(): Promise<any>
   listenerList(): Promise<any>
 
-  // ===== 表单 =====
-  getFormContent(id: string | number): Promise<any>
-  saveFormContent(data: any): Promise<any>
-  executeLoad(id: string | number): Promise<any>
-  executeHandle(data: any, taskId: string | number, skipType: string, message?: string): Promise<any>
-  hisLoad(taskId: string | number): Promise<any>
-
   // ===== 配置 =====
   config(): Promise<any>
 }
