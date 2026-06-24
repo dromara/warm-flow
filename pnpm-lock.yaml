@@ -13,12 +13,6 @@ importers:
       '@dromara/warm-flow-designer':
         specifier: workspace:*
         version: link:../../warm-flow-vue-designer
-      '@form-create/designer':
-        specifier: ^3.2.6
-        version: 3.5.0(vue@3.3.9(typescript@5.3.3))
-      '@form-create/element-ui':
-        specifier: ^3.2.10
-        version: 3.3.1(vue@3.3.9(typescript@5.3.3))
       '@logicflow/core':
         specifier: ^2.1.11
         version: 2.2.3
@@ -28,9 +22,6 @@ importers:
       ant-design-vue:
         specifier: ^4.0.0
         version: 4.0.0(vue@3.3.9(typescript@5.3.3))
-      element-plus:
-        specifier: 2.4.3
-        version: 2.4.3(vue@3.3.9(typescript@5.3.3))
       pinia:
         specifier: 2.1.7
         version: 2.1.7(typescript@5.3.3)(vue@3.3.9(typescript@5.3.3))
@@ -92,13 +83,16 @@ importers:
         version: 5.0.4(sass@1.69.5)
 
   warm-flow-vue-designer:
-    dependencies:
+    devDependencies:
       '@form-create/designer':
         specifier: ^3.2.6
         version: 3.5.0(vue@3.3.9(typescript@6.0.3))
       '@form-create/element-ui':
         specifier: ^3.2.10
         version: 3.3.1(vue@3.3.9(typescript@6.0.3))
+      '@iconify-json/ep':
+        specifier: ^1.2.4
+        version: 1.2.4
       '@iconify/vue':
         specifier: ^5.0.1
         version: 5.0.1(vue@3.3.9(typescript@6.0.3))
@@ -108,28 +102,6 @@ importers:
       '@logicflow/extension':
         specifier: ^2.1.15
         version: 2.2.3(@logicflow/core@2.2.3)
-      axios:
-        specifier: 0.27.2
-        version: 0.27.2
-      element-plus:
-        specifier: 2.4.3
-        version: 2.4.3(vue@3.3.9(typescript@6.0.3))
-      file-saver:
-        specifier: 2.0.5
-        version: 2.0.5
-      pinia:
-        specifier: 2.1.7
-        version: 2.1.7(typescript@6.0.3)(vue@3.3.9(typescript@6.0.3))
-      vue:
-        specifier: 3.3.9
-        version: 3.3.9(typescript@6.0.3)
-      vue-router:
-        specifier: 4.2.5
-        version: 4.2.5(vue@3.3.9(typescript@6.0.3))
-    devDependencies:
-      '@iconify-json/ep':
-        specifier: ^1.2.4
-        version: 1.2.4
       '@vitejs/plugin-vue':
         specifier: 4.5.0
         version: 4.5.0(vite@5.0.4(sass@1.69.5))(vue@3.3.9(typescript@6.0.3))
@@ -142,6 +114,18 @@ importers:
       ant-design-vue:
         specifier: ^4.0.0
         version: 4.0.0(vue@3.3.9(typescript@6.0.3))
+      axios:
+        specifier: 0.27.2
+        version: 0.27.2
+      element-plus:
+        specifier: 2.4.3
+        version: 2.4.3(vue@3.3.9(typescript@6.0.3))
+      file-saver:
+        specifier: 2.0.5
+        version: 2.0.5
+      pinia:
+        specifier: 2.1.7
+        version: 2.1.7(typescript@6.0.3)(vue@3.3.9(typescript@6.0.3))
       sass:
         specifier: 1.69.5
         version: 1.69.5
@@ -163,6 +147,12 @@ importers:
       vite-plugin-dts:
         specifier: ^5.0.2
         version: 5.0.2(@vue/language-core@3.3.5)(esbuild@0.19.3)(rollup@4.62.2)(typescript@6.0.3)(vite@5.0.4(sass@1.69.5))
+      vue:
+        specifier: 3.3.9
+        version: 3.3.9(typescript@6.0.3)
+      vue-router:
+        specifier: 4.2.5
+        version: 4.2.5(vue@3.3.9(typescript@6.0.3))
 
 packages:
 

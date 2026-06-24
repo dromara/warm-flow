@@ -12,19 +12,21 @@ import {
   isMockEnabled
 } from '@/data'
 import type { DataProvider } from '@/data'
-import { setUiAdapter, getUiAdapter, hasUiAdapter } from '@/ui/uiAdapter'
-import { elementPlusAdapter } from '@/ui/elementPlusAdapter'
+import { setUiAdapter, getUiAdapter } from '@/ui/uiAdapter'
 import type { UiAdapter, UiFeedbackType, UiFeedbackOptions, UiLoadingHandle, UiComponents } from '@/ui/uiAdapter'
 import { registerWfComponents } from '@/ui/components'
 
 /**
  * Warm-Flow 设计器「可复用层」统一出口（组件库 / npm 包入口）。
  *
- * 业务方可不经 iframe，直接以组件方式集成流程设计器：
- *   import { WarmFlowDesigner, FlowDesigner, setDataProvider, createMockProvider } from '@dromara/warm-flow-designer'
+ * 主入口 UI 库无关：不静态引入任何 UI 组件库（element-plus / ant-design-vue），
+ * 消费方须显式注册一个 UI 适配器后再渲染设计器：
+ *   import { WarmFlowDesigner, FlowDesigner, setUiAdapter, setDataProvider, createMockProvider } from '@dromara/warm-flow-designer'
+ *   import { elementPlusAdapter } from '@dromara/warm-flow-designer/element-plus'  // 或 import { antdvAdapter } from '@dromara/warm-flow-designer/antdv'
  *   import '@dromara/warm-flow-designer/style'
- *   app.use(WarmFlowDesigner)        // 注册 svg-icon + Element Plus 图标，图标零配置可用
- *   setDataProvider(myProvider)      // 注入自定义后端 / mock，实现数据层与具体后端解耦
+ *   setUiAdapter(elementPlusAdapter)  // 选择 UI 库适配器，须在渲染 FlowDesigner 前调用
+ *   app.use(WarmFlowDesigner)         // 注册 svg-icon + 中性组件 wf-*，图标零配置可用
+ *   setDataProvider(myProvider)       // 注入自定义后端 / mock，实现数据层与具体后端解耦
  *
  * 该入口对外只暴露这一稳定门面，内部目录结构调整不影响下游 import 路径。
  *
@@ -32,18 +34,15 @@ import { registerWfComponents } from '@/ui/components'
  */
 
 /**
- * 安装为 Vue 插件：注册全局 svg-icon 组件。
+ * 安装为 Vue 插件：注册全局 svg-icon 组件与中性组件 wf-*。
  *
- * 图标走离线 iconify 集（ep + wf，见 src/icons），已在本模块加载时注册，
- * 因此 app.use(WarmFlowDesigner) 后设计器内置图标即可零配置渲染，且不依赖 element-plus 图标。
+ * 主入口 UI 库无关，不在此注册任何 UI 适配器；消费方须在渲染前显式 setUiAdapter(...)
+ * 选择 element-plus（@dromara/warm-flow-designer/element-plus）或 antdv（/antdv）适配器。
+ * 图标走离线 iconify 集（ep + wf，见 src/icons），已在本模块加载时注册，零配置渲染，不依赖具体 UI 库图标。
  */
 const install = (app: App): void => {
   app.component('svg-icon', SvgIcon)
-  // 默认注册 Element Plus UI 适配器；消费方若在此之前 setUiAdapter(antdvAdapter) 则不覆盖，实现 UI 库可切换
-  if (!hasUiAdapter()) {
-    setUiAdapter(elementPlusAdapter)
-  }
-  // 全局注册中性组件 wf-*（设计器视图与 UI 库解耦）
+  // 全局注册中性组件 wf-*（设计器视图与 UI 库解耦，渲染时按已注册的适配器映射到具体 UI 库组件）
   registerWfComponents(app)
 }
 
@@ -64,10 +63,11 @@ export {
   createHttpProvider,
   createMockProvider,
   isMockEnabled,
-  // UI 适配层：切换 / 获取 UI 库适配器（默认 Element Plus，可换 antdv 等），默认实现 elementPlusAdapter
+  // UI 适配层：注册 / 获取 UI 库适配器。主入口 UI 无关，消费方须显式注册一个适配器：
+  //   element-plus 适配器 import 自 @dromara/warm-flow-designer/element-plus
+  //   ant-design-vue 适配器 import 自 @dromara/warm-flow-designer/antdv
   setUiAdapter,
-  getUiAdapter,
-  elementPlusAdapter
+  getUiAdapter
 }
 export type { DataProvider }
 export type { UiAdapter, UiFeedbackType, UiFeedbackOptions, UiLoadingHandle, UiComponents }

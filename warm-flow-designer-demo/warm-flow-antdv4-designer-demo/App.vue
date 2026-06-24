@@ -8,7 +8,7 @@
     <a-alert
       banner
       type="success"
-      message="本 demo 通过 setUiAdapter(antdvAdapter) 让设计器 UI 走 Ant Design Vue 4 原生（28 个组件已翻译为 antd）。注：自定义表单设计器(form-create)仍用 Element Plus（Q2 决定）；库 dist-lib 仍内置 EP 默认适配器，bundle 级移除 EP 需库侧拆子入口（后续）。"
+      message="本 demo 完全不引入 Element Plus：通过 setUiAdapter(antdvAdapter) 让设计器全部 28 个组件走 Ant Design Vue 4 原生。库主入口已做到 UI 库无关，EP / antd 均为可选子入口。注：自定义表单设计器(form-create) 暂留 Element Plus 生态（Q2 决定），本 demo 主流程不涉及。"
     />
 
     <a-layout-content class="demo-content">
@@ -19,8 +19,8 @@
 
 <script setup>
 /**
- * Ant Design Vue 4 消费示例（过渡态）：用 antd 外壳承载 Warm-Flow 设计器。
- * 设计器内部 UI 当前为 Element Plus 默认适配器，Phase 3 接入 antdv 适配器后切换。
+ * Ant Design Vue 4 消费示例：用 antd 外壳承载 Warm-Flow 设计器。
+ * 设计器内部 UI 经 setUiAdapter(antdvAdapter) 全量走 Ant Design Vue 4，无 Element Plus 依赖。
  *
  * @author warm
  */

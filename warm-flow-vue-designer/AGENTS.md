@@ -16,10 +16,11 @@
 
 技术栈（以 `package.json` 为准）：
 
-- Vue 3.3.9 + Vite 5 + `<script setup>`；Element Plus 2.4.3（**默认 UI 库，正在解耦为可插拔适配层**，见下）。
+- Vue 3.3.9 + Vite 5 + `<script setup>`；**主入口 UI 库无关**：设计器经 `src/ui` 适配层支持 Element Plus 2.4.3 / Ant Design Vue 4，二者均为**可选适配器**，主入口不静态引任何 UI 库（见下）。
 - 图标：**离线 iconify**（`@iconify/vue` + `src/icons` 的 `ep` / `wf` 集），**不再用** `@element-plus/icons-vue` 与 svg sprite。
-- 流程图：`@logicflow/core` / `@logicflow/extension`。表单设计：`@form-create/designer` / `@form-create/element-ui`。
+- 流程图：`@logicflow/core` / `@logicflow/extension`（必选 peer）。表单设计：`@form-create/designer` / `@form-create/element-ui`（可选 peer，当前孤儿、不进主 bundle）。
 - 状态管理 Pinia；请求 axios；样式 Sass；`file-saver` 导出。（纯库无独立路由 / 应用壳。）
+- **依赖结构**：库 `package.json` 的 `dependencies` 为空；框架（vue/vue-router/pinia/logicflow）与 UI 库（element-plus/ant-design-vue/form-create）走 `peerDependencies`（UI 库为 optional），bundled 运行时（axios/file-saver/@iconify/vue）走 `devDependencies`。**勿把框架 / UI 库放回 `dependencies`**。
 - **TypeScript**：`src/` 下 `.js` 已全部转 `.ts`；`.vue` 的 `<script setup>` **渐进**加 `lang="ts"`（逐步优化）。对外发布层（`src/designer`、`src/data`、`src/ui`）产出 `.d.ts`。
 - 包管理 **pnpm（workspace）**；`type: module`；**前端许可证为 MIT**（与后端 Apache 2.0 不同，勿混改 header）。
 
@@ -49,16 +50,21 @@ pnpm build       # 示例生产构建
 - **数据层解耦**：本库通过 `src/data` 的 `DataProvider` 抽象数据源（内置 http / mock，消费方可 `setDataProvider` 注入）。组件内不要直连具体后端，走 `@/api`（委托 `getDataProvider()`）。
 - 现有组件、路由、Pinia store、axios 封装与公共样式，复用既有模式，不要另起一套风格。
 
-## UI 适配层（Element Plus 解耦）—— 本模块当前主线
+## UI 适配层（UI 库解耦）—— EP 解耦已完成
 
-目标：把设计器对具体 UI 库（Element Plus / Ant Design Vue …）的依赖收敛到 `src/ui` 适配层，做到「核心逻辑与 UI 库解耦、可按需切换」。路线见根 `../.codex/warm-flow-ui-npm-packaging.md` §9（路线 C，分阶段）。
+设计器对具体 UI 库（Element Plus / Ant Design Vue …）的依赖已收敛到 `src/ui` 适配层，**主入口做到 UI 库无关、可按需切换**。背景与路线见根 `../.codex/warm-flow-ui-npm-packaging.md` §9。
 
-- **命令式 UI 一律走适配器**：消息 / 通知 / 弹框 / loading / `clickOutside` 指令统一通过 `src/ui/uiAdapter` 的 `getUiAdapter()`。**核心代码禁止再直接 import element-plus 的 `ElMessage`/`ElMessageBox`/`ElNotification`/`ElLoading`/`ClickOutside`**——只有 `src/ui/elementPlusAdapter.ts` 与少数入口可引 element-plus。
-- **EP 是默认适配器**：`elementPlusAdapter` 实现 `UiAdapter` 契约；`designer/index.ts` 的 `install()`（消费方 `app.use(WarmFlowDesigner)` 时）默认注册它。消费方在 `app.use(WarmFlowDesigner)` 前 `setUiAdapter(antdvAdapter)` 即可换库（已设则不被默认覆盖）。
-- **组件层中性化（Phase 2 进行中）**：`<el-*>` 正分批包成中性 `Wf*` 组件走 adapter 渲染。新写 UI 优先用中性组件，**不新增直连 `<el-*>` 的耦合**；迁移期存量允许暂留但记账，分批迁移每批验证。
-- **新增 UI 库（如 antdv4）**：实现一份同 `UiAdapter` 契约的适配器 + 组件映射，**不在核心里写 `if (antdv) ... else ...`**。
-- **已 ship 的 antd 适配器**：`src/ui/antdvAdapter.ts`，经 `vite.antdv.config.js`（`build:antdv`，已并入 `build:lib`）单独构建为 `dist-lib/antdv.es.js`，对应包导出 `@dromara/warm-flow-designer/antdv`（`vue`/`ant-design-vue` externalize 为可选 peer）。消费方：`import { antdvAdapter } from '@dromara/warm-flow-designer/antdv'; setUiAdapter(antdvAdapter)`。注：form-create 自定义表单暂留 EP（待拍板），主入口 `dist-lib/warm-flow-designer.es.js` 仍内置 EP 默认适配器。
-- **对外契约**：`src/designer/index.ts` 的导出（`FlowDesigner`、`setDataProvider`、`setUiAdapter`/`getUiAdapter`/`elementPlusAdapter`、`UiAdapter` 类型等）是**已发布 npm API**，向后兼容，不随意删 / 改签名。
+- **命令式 UI 一律走适配器**：消息 / 通知 / 弹框 / loading / `clickOutside` 指令统一通过 `src/ui/uiAdapter` 的 `getUiAdapter()`。**核心代码禁止直接 import 任何 UI 库的 `ElMessage`/`ElMessageBox`/`ElNotification`/`ElLoading`/`ClickOutside` 等**——只有 `src/ui/elementPlusAdapter.ts` / `src/ui/antdvAdapter.ts` 可引具体 UI 库（已实测：全 `src/` 仅这两个文件分别引 element-plus / ant-design-vue）。
+- **主入口 UI 库无关**：`designer/index.ts` 的 `install()` 只注册 svg-icon + 中性组件 `wf-*`，**不静态引、也不默认注册任何 UI 适配器**；主 bundle `dist-lib/warm-flow-designer.es.js` **零 element-plus / ant-design-vue import**（已实测 0 处）。消费方**必须**在渲染 `FlowDesigner` 前显式 `setUiAdapter(...)`，否则中性组件 `getUiAdapter()` 抛错。
+- **EP / antd 均为可选子入口（对称）**：
+  - Element Plus：`src/ui/elementPlusAdapter.ts` → `vite.ep.config.js`（`build:ep`）→ `dist-lib/element-plus.es.js` → 包导出 `@dromara/warm-flow-designer/element-plus`。
+  - Ant Design Vue 4：`src/ui/antdvAdapter.ts` → `vite.antdv.config.js`（`build:antdv`）→ `dist-lib/antdv.es.js` → 包导出 `@dromara/warm-flow-designer/antdv`。
+  - 两者各自 externalize `vue` + 对应 UI 库为 peer；`build:lib` = 主 + ep + antdv **三构建**。消费方：`import { elementPlusAdapter } from '@dromara/warm-flow-designer/element-plus'`（或 `/antdv` 的 `antdvAdapter`）+ `setUiAdapter(...)`。
+- **组件层中性化（Phase 2 已完成）**：全 28 种 `<el-*>` 已包成中性 `Wf*`（`src/ui/components`，注册名 `wf-*`），按当前 adapter 的 `components` 映射渲染。新写 UI 用中性 `<wf-*>`，**不新增直连 `<el-*>` 的耦合**。
+- **新增 UI 库**：实现一份同 `UiAdapter` 契约的适配器（含 28 个 `components` 映射 + 命令式反馈 + `clickOutside`）+ 拆**独立子入口**构建，**不在核心里写 `if (antdv) ... else ...`**。
+- **form-create**：自定义表单（`@form-create/element-ui`）暂留 EP 生态（Q2 待拍板）；当前 `formCreate.vue`/`design.vue` 为孤儿（未接入主入口图），不进主 bundle，故主 bundle 与 EP 完全无关。
+- **样式残留（Phase 4）**：库自带 SCSS 仍有针对 `.el-*` 类名写的选择器（antd 下不命中、属样式 token 双主题对齐范畴），非 EP 运行时依赖。
+- **对外契约**：`src/designer/index.ts` 的导出（`FlowDesigner`、`setDataProvider`、`setUiAdapter`/`getUiAdapter`、`UiAdapter` 类型等）+ `package.json` 的 `exports`（`.` / `./element-plus` / `./antdv` / `./style`）是**已发布 npm API**，向后兼容、优先「加法」。注：`elementPlusAdapter` 已从主入口移除、改由 `/element-plus` 子入口导出（主入口 UI 无关的必要改动；publish 前定型可接受）。
 
 ## 高风险点
 
