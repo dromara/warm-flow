@@ -353,9 +353,12 @@ const AntForm: Component = defineComponent({
     return () => {
       const a: Record<string, unknown> = { ...attrs }
       const labelWidth = a['label-width'] ?? a.labelWidth
+      // EP el-form inline -> antd a-form layout="inline"（搜索条件等横向一行排列），否则默认 horizontal
+      const inline = a.inline === true || a.inline === '' || a.inline === 'true'
       delete a['label-width']
       delete a.labelWidth
-      const props: Record<string, unknown> = { ...a, ref: inner, layout: 'horizontal' }
+      delete a.inline
+      const props: Record<string, unknown> = { ...a, ref: inner, layout: inline ? 'inline' : 'horizontal' }
       if (labelWidth != null) {
         const w = /^\d+$/.test(String(labelWidth)) ? `${labelWidth}px` : String(labelWidth)
         props.labelCol = { style: { width: w, textAlign: 'right' } }
@@ -556,10 +559,27 @@ const AntDatePicker: Component = defineComponent({
 })
 const AntTimePicker = vModelComp('WfAntTimePicker', ATimePicker, 'value')
 
-// el-tree -> a-tree（data->treeData；props->fieldNames；node-key->无需）
+// el-tree -> a-tree（data->treeData；props->fieldNames；node-key->key）
+// 关键差异：antd a-tree 节点文本字段是 title（EP 用 label），node-key 对应 fieldNames.key；
+//          直接把 EP 的 { label } 当 fieldNames 会导致节点名取不到而显示空白（---）。
 const AntTree = vModelComp('WfAntTree', ATree, 'checkedKeys', (props, raw) => {
   if (raw.data != null) { props.treeData = raw.data; delete props.data }
-  if (raw.props != null) { props.fieldNames = raw.props; delete props.props }
+  const ep = (raw.props || {}) as Record<string, unknown>
+  props.fieldNames = {
+    title: (ep.label as string) || 'label',
+    key: (raw['node-key'] as string) || (ep.value as string) || 'key',
+    children: (ep.children as string) || 'children'
+  }
+  // EP @node-click(data) -> antd @select(keys, { node })：回传节点原始数据，保持按部门过滤可用
+  const onNodeClick = props.onNodeClick as ((data: unknown) => void) | undefined
+  if (onNodeClick) {
+    props.onSelect = (_keys: unknown, info: { node?: Record<string, unknown> }) => {
+      const node = (info && info.node) || {}
+      onNodeClick((node as { dataRef?: unknown }).dataRef || node)
+    }
+    delete props.onNodeClick
+  }
+  delete props.props
   delete props['node-key']
   return props
 })
