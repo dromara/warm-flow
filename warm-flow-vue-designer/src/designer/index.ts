@@ -15,6 +15,14 @@ import type { DataProvider } from '@/data'
 import { setUiAdapter, getUiAdapter, hasUiAdapter } from '@/ui/uiAdapter'
 import type { UiAdapter, UiFeedbackType, UiFeedbackOptions, UiLoadingHandle, UiComponents } from '@/ui/uiAdapter'
 import { registerWfComponents } from '@/ui/components'
+import { setComponentSize, getComponentSize } from '@/ui/designerOptions'
+import type { ComponentSize } from '@/ui/designerOptions'
+
+/** WarmFlowDesigner 插件安装选项。 */
+export interface WarmFlowDesignerOptions {
+  /** 全局组件尺寸（small / default / large）；等价于安装前调用 setComponentSize(size)。 */
+  size?: ComponentSize
+}
 
 /**
  * Warm-Flow 设计器「可复用层」统一出口（组件库 / npm 包入口）。
@@ -40,7 +48,9 @@ import { registerWfComponents } from '@/ui/components'
  * 选择 element-plus（@dromara/warm-flow-designer/element-plus）或 antdv（/antdv）适配器。
  * 图标走离线 iconify 集（ep + wf，见 src/icons），已在本模块加载时注册，零配置渲染，不依赖具体 UI 库图标。
  */
-const install = (app: App): void => {
+const install = (app: App, options: WarmFlowDesignerOptions = {}): void => {
+  // 全局组件尺寸：安装时可一次性指定（small / default / large），运行期亦可 setComponentSize 调整
+  if (options.size) setComponentSize(options.size)
   app.component('svg-icon', SvgIcon)
   // 全局注册中性组件 wf-*（设计器视图与 UI 库解耦，渲染时按已注册的适配器映射到具体 UI 库组件）
   registerWfComponents(app)
@@ -73,9 +83,13 @@ export {
   //   element-plus 适配器 import 自 @dromara/warm-flow-designer/element-plus
   //   ant-design-vue 适配器 import 自 @dromara/warm-flow-designer/antdv
   setUiAdapter,
-  getUiAdapter
+  getUiAdapter,
+  // 全局 UI 选项：设置 / 获取设计器组件尺寸（small / default / large）
+  setComponentSize,
+  getComponentSize
 }
 export type { DataProvider }
 export type { UiAdapter, UiFeedbackType, UiFeedbackOptions, UiLoadingHandle, UiComponents }
+export type { ComponentSize }
 
 export default WarmFlowDesigner

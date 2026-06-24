@@ -22,5 +22,6 @@ createApp(App)
   // 应用外壳 + 设计器全部组件：Ant Design Vue 4
   .use(Antd)
   // 注册设计器：svg-icon + 中性组件 wf-*（按上面注册的 antd 适配器渲染）
+  // 可选：传 { size: 'small' | 'default' | 'large' } 全局设定组件尺寸
   .use(WarmFlowDesigner)
   .mount('#app')
