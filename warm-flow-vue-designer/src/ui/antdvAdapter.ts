@@ -10,7 +10,7 @@ import {
   Drawer as ADrawer, DatePicker as ADatePicker, TimePicker as ATimePicker,
   Tree as ATree, Pagination as APagination, Spin as ASpin
 } from 'ant-design-vue'
-import type { UiAdapter, UiFeedbackType, UiFeedbackOptions, UiLoadingHandle } from '@dromara/warm-flow-designer'
+import type { UiAdapter, UiFeedbackType, UiFeedbackOptions, UiLoadingHandle } from './uiAdapter'
 
 // 全部组件已翻译为 antd，不再依赖 Element Plus（真 antd 单栈）
 

@@ -24,6 +24,10 @@
       "types": "./dist-lib/src/designer/index.d.ts",
       "import": "./dist-lib/warm-flow-designer.es.js"
     },
+    "./antdv": {
+      "types": "./dist-lib/src/ui/antdvAdapter.d.ts",
+      "import": "./dist-lib/antdv.es.js"
+    },
     "./style": "./dist-lib/warm-flow-designer.css",
     "./style.css": "./dist-lib/warm-flow-designer.css"
   },
@@ -38,7 +42,8 @@
   },
   "scripts": {
     "dev": "vite build --config vite.lib.config.js --watch",
-    "build:lib": "vite build --config vite.lib.config.js",
+    "build:lib": "vite build --config vite.lib.config.js && vite build --config vite.antdv.config.js",
+    "build:antdv": "vite build --config vite.antdv.config.js",
     "mock": "node mock/server.mjs"
   },
   "repository": {
@@ -63,13 +68,20 @@
     "@form-create/element-ui": "^3.2.10",
     "@logicflow/core": "^2.1.11",
     "@logicflow/extension": "^2.1.15",
+    "ant-design-vue": "^4.0.0",
     "element-plus": "^2.4.3",
     "pinia": "^2.1.7",
     "vue": "^3.3.9",
     "vue-router": "^4.2.5"
   },
+  "peerDependenciesMeta": {
+    "ant-design-vue": {
+      "optional": true
+    }
+  },
   "devDependencies": {
     "@iconify-json/ep": "^1.2.4",
+    "ant-design-vue": "^4.0.0",
     "@vitejs/plugin-vue": "4.5.0",
     "@vue/compiler-sfc": "3.3.9",
     "@vue/language-core": "^3.3.5",

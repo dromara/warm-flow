@@ -14,7 +14,8 @@ import '@dromara/warm-flow-designer/style'
 
 import App from './App.vue'
 import { createDemoProvider } from './demoProvider'
-import { antdvAdapter } from './antdvAdapter'
+// 从库子入口消费官方 antd 适配器（正式化，替代 demo 本地副本）
+import { antdvAdapter } from '@dromara/warm-flow-designer/antdv'
 
 setDataProvider(createDemoProvider())
 // P3：切换 UI 适配器为 antdv（须在 app.use(WarmFlowDesigner) 之前，install 检测到已设则不覆盖为 EP）。

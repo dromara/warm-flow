@@ -57,6 +57,7 @@ pnpm build       # 示例生产构建
 - **EP 是默认适配器**：`elementPlusAdapter` 实现 `UiAdapter` 契约；`designer/index.ts` 的 `install()`（消费方 `app.use(WarmFlowDesigner)` 时）默认注册它。消费方在 `app.use(WarmFlowDesigner)` 前 `setUiAdapter(antdvAdapter)` 即可换库（已设则不被默认覆盖）。
 - **组件层中性化（Phase 2 进行中）**：`<el-*>` 正分批包成中性 `Wf*` 组件走 adapter 渲染。新写 UI 优先用中性组件，**不新增直连 `<el-*>` 的耦合**；迁移期存量允许暂留但记账，分批迁移每批验证。
 - **新增 UI 库（如 antdv4）**：实现一份同 `UiAdapter` 契约的适配器 + 组件映射，**不在核心里写 `if (antdv) ... else ...`**。
+- **已 ship 的 antd 适配器**：`src/ui/antdvAdapter.ts`，经 `vite.antdv.config.js`（`build:antdv`，已并入 `build:lib`）单独构建为 `dist-lib/antdv.es.js`，对应包导出 `@dromara/warm-flow-designer/antdv`（`vue`/`ant-design-vue` externalize 为可选 peer）。消费方：`import { antdvAdapter } from '@dromara/warm-flow-designer/antdv'; setUiAdapter(antdvAdapter)`。注：form-create 自定义表单暂留 EP（待拍板），主入口 `dist-lib/warm-flow-designer.es.js` 仍内置 EP 默认适配器。
 - **对外契约**：`src/designer/index.ts` 的导出（`FlowDesigner`、`setDataProvider`、`setUiAdapter`/`getUiAdapter`/`elementPlusAdapter`、`UiAdapter` 类型等）是**已发布 npm API**，向后兼容，不随意删 / 改签名。
 
 ## 高风险点
