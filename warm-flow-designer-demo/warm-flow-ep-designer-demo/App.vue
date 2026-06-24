@@ -4,7 +4,7 @@
     <div v-if="view === 'list'" class="demo-list">
       <header class="demo-header">
         <div class="demo-title">
-          <h1>Warm-Flow Designer <span style="display:inline-block;margin-left:8px;padding:2px 10px;font-size:12px;font-weight:600;color:#fff;background:#409eff;border-radius:10px;vertical-align:middle;">Element Plus</span></h1>
+          <h1>Warm-Flow Designer <span class="ui-badge ui-badge--ep">Element Plus</span></h1>
           <p>npm 组件库消费示例 · UI 库：Element Plus · 保存 / 修改 / 预览</p>
         </div>
         <div class="demo-actions">
@@ -13,6 +13,12 @@
           <el-button type="danger" plain :disabled="!flows.length" @click="onClearAll">清空</el-button>
         </div>
       </header>
+
+      <!-- 用法说明（3 步集成） -->
+      <section class="demo-usage">
+        <div class="demo-usage-title">用法 · 3 步集成（Element Plus）</div>
+        <pre class="demo-usage-code">{{ usageCode }}</pre>
+      </section>
 
       <el-alert type="info" :closable="false" class="demo-tip">
         本页以「第三方 import」方式消费 <code>@dromara/warm-flow-designer</code>（alias → dist-lib 产物），
@@ -69,6 +75,16 @@ import { computed, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { FlowDesigner } from '@dromara/warm-flow-designer'
 import { listFlows, getFlowJsonString, removeFlow, clearFlows } from './demoProvider'
+
+// 顶部「用法」代码片段：演示第三方 3 步集成（与 antd4-demo 仅适配器不同）
+const usageCode = `// main.ts
+import { WarmFlowDesigner, setUiAdapter, setDataProvider } from '@dromara/warm-flow-designer'
+import { elementPlusAdapter } from '@dromara/warm-flow-designer/element-plus'   // ← Element Plus 适配器子入口
+import '@dromara/warm-flow-designer/style'
+
+setUiAdapter(elementPlusAdapter)   // ① 选 UI 适配器（须在渲染 FlowDesigner 前）
+setDataProvider(myProvider)        // ② 注入数据源（自定义后端 / mock）
+app.use(ElementPlus).use(WarmFlowDesigner)   // ③ 注册后模板里直接用 <FlowDesigner />`
 
 const view = ref('list')
 const flows = ref([])
@@ -201,6 +217,43 @@ function onClearAll() {
   margin: 6px 0 0;
   font-size: 13px;
   color: #64748b;
+}
+
+.ui-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  border-radius: 10px;
+  vertical-align: middle;
+}
+.ui-badge--ep { background: #409eff; }
+.ui-badge--antd { background: #1677ff; }
+
+/* 用法代码块（深色） */
+.demo-usage {
+  margin-bottom: 16px;
+  background: #0f172a;
+  border-radius: 10px;
+  padding: 14px 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+.demo-usage-title {
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.demo-usage-code {
+  margin: 0;
+  color: #e2e8f0;
+  font-family: 'SF Mono', Monaco, Menlo, Consolas, monospace;
+  font-size: 12.5px;
+  line-height: 1.7;
+  white-space: pre;
+  overflow-x: auto;
 }
 
 .demo-tip {
