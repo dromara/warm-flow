@@ -253,6 +253,8 @@
 
 <script setup name="User">
 import { handlerResult, handlerType } from "@/api/flow/definition";
+// 库化后不再依赖 ruoyi 全局注册的 parseTime，显式引入供模板格式化「创建时间」列
+import { parseTime } from "@/utils/ruoyi";
 
 const { proxy } = getCurrentInstance();
 

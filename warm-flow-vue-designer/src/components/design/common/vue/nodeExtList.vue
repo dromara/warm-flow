@@ -356,6 +356,53 @@ html.dark .nodeExtForm .nodeExtForm :deep(.el-textarea__inner.is-disabled) {
   }
 }
 
+/* antd 适配：radio/checkbox 卡片化（与上方 EP .el-radio/.el-checkbox 卡片观感对齐）。
+   antd 下 DOM 为 .ant-radio-wrapper/.ant-checkbox-wrapper，EP 选择器不命中，
+   补此块使「高级设置」扩展属性的单选/多选与「基础设置」的卡片风格保持一致。 */
+.nodeExtForm :deep(.ant-radio-group),
+.nodeExtForm :deep(.ant-checkbox-group) {
+  width: 100%;
+}
+
+.nodeExtForm :deep(.ant-radio-wrapper),
+.nodeExtForm :deep(.ant-checkbox-wrapper) {
+  display: inline-flex;
+  align-items: center;
+  border: 1.5px solid var(--wf-border-color, #dcdfe6);
+  border-radius: var(--wf-radius, 8px);
+  padding: 7px 16px;
+  margin: 0;
+  background: var(--wf-bg-white, #ffffff);
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+
+  &::after { display: none; }
+
+  &:hover {
+    border-color: var(--wf-primary, #409eff);
+    box-shadow: var(--wf-shadow-sm, 0 1px 4px rgba(0, 0, 0, 0.04));
+  }
+}
+
+.nodeExtForm :deep(.ant-radio-wrapper-checked),
+.nodeExtForm :deep(.ant-checkbox-wrapper-checked) {
+  border-color: var(--wf-primary, #409eff);
+  background: var(--wf-primary-light, #ecf5ff);
+  box-shadow: var(--wf-shadow-primary, 0 2px 8px rgba(64, 158, 255, 0.3));
+}
+
+::global(html.dark) .nodeExtForm :deep(.ant-radio-wrapper),
+::global(html.dark) .nodeExtForm :deep(.ant-checkbox-wrapper) {
+  background: var(--wf-bg-white);
+  border-color: var(--wf-border-color);
+
+  &.ant-radio-wrapper-checked,
+  &.ant-checkbox-wrapper-checked {
+    background: var(--wf-primary-light);
+    border-color: var(--wf-primary);
+  }
+}
+
 /* ========== 6. 人员选择器 (type 5) ========== */
 .nodeExtForm :deep(.el-tag) {
   border-radius: var(--wf-radius-round, 20px);
