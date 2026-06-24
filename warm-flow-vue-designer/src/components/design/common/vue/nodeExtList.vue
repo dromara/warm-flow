@@ -1,43 +1,43 @@
 <template>
-    <el-form ref="nodeExtRef" class="nodeExtForm" :model="form" label-width="140px" size="small" :disabled="disabled"
+    <wf-form ref="nodeExtRef" class="nodeExtForm" :model="form" label-width="140px" size="small" :disabled="disabled"
              label-position="left">
-        <el-form-item :label="`${item.label}：`" :prop="item.code" v-for="(item, index) in formList" :key="index"
+        <wf-form-item :label="`${item.label}：`" :prop="item.code" v-for="(item, index) in formList" :key="index"
                       :rules="[{ required: item.must, message: `${item.label}不能为空`, trigger: ['blur', 'change'] }]">
             <template #label>
                 <span>{{ item.label }}</span>
-                <el-tooltip v-if="[4, 5].includes(item.type)" effect="dark" :content="item.desc">
-                    <el-icon :size="14" style="margin-left: 2px;margin-top: 4px;">
+                <wf-tooltip v-if="[4, 5].includes(item.type)" effect="dark" :content="item.desc">
+                    <wf-icon :size="14" style="margin-left: 2px;margin-top: 4px;">
                         <svg-icon icon-class="ep:warning-filled" />
-                    </el-icon>
-                </el-tooltip>
+                    </wf-icon>
+                </wf-tooltip>
                 <span>：</span>
             </template>
-            <el-input v-if="item.type === 1" v-model="form[item.code]" :placeholder="item.desc"></el-input>
-            <el-input v-else-if="item.type === 2" v-model="form[item.code]" :rows="2" type="textarea"
+            <wf-input v-if="item.type === 1" v-model="form[item.code]" :placeholder="item.desc"></wf-input>
+            <wf-input v-else-if="item.type === 2" v-model="form[item.code]" :rows="2" type="textarea"
                       :placeholder="item.desc"/>
-            <el-select v-else-if="item.type === 3" v-model="form[item.code]" clearable
+            <wf-select v-else-if="item.type === 3" v-model="form[item.code]" clearable
                        :multiple="item.multiple || false"
                        :placeholder="item.desc" style="width: 400px">
-                <el-option v-for="dItem in item.dict" :key="dItem.value" :label="dItem.label"
-                           :value="dItem.value"></el-option>
-            </el-select>
+                <wf-option v-for="dItem in item.dict" :key="dItem.value" :label="dItem.label"
+                           :value="dItem.value"></wf-option>
+            </wf-select>
             <div v-else-if="item.type === 4">
-                <el-radio-group v-if="!item.multiple" v-model="form[item.code]" placeholder="请输入">
-                    <el-row :gutter="20">
-                        <el-col :span="item.dict.length < 3 ? null :8" v-for="(dItem, dIndex) in item.dict"
+                <wf-radio-group v-if="!item.multiple" v-model="form[item.code]" placeholder="请输入">
+                    <wf-row :gutter="20">
+                        <wf-col :span="item.dict.length < 3 ? null :8" v-for="(dItem, dIndex) in item.dict"
                                 :key="dIndex">
-                            <el-radio :label="String(dItem.value)">{{ dItem.label }}</el-radio>
-                        </el-col>
-                    </el-row>
-                </el-radio-group>
-                <el-checkbox-group v-else v-model="form[item.code]" :placeholder="item.desc">
-                    <el-row :gutter="20">
-                        <el-col :span="item.dict.length < 3 ? null :8" v-for="(dItem, dIndex) in item.dict"
+                            <wf-radio :label="String(dItem.value)">{{ dItem.label }}</wf-radio>
+                        </wf-col>
+                    </wf-row>
+                </wf-radio-group>
+                <wf-checkbox-group v-else v-model="form[item.code]" :placeholder="item.desc">
+                    <wf-row :gutter="20">
+                        <wf-col :span="item.dict.length < 3 ? null :8" v-for="(dItem, dIndex) in item.dict"
                                 :key="dIndex">
-                            <el-checkbox :label="String(dItem.value)">{{ dItem.label }}</el-checkbox>
-                        </el-col>
-                    </el-row>
-                </el-checkbox-group>
+                            <wf-checkbox :label="String(dItem.value)">{{ dItem.label }}</wf-checkbox>
+                        </wf-col>
+                    </wf-row>
+                </wf-checkbox-group>
             </div>
             <div v-else-if="item.type === 5">
                 <span
@@ -50,9 +50,9 @@
                         <svg-icon :icon-class="'close'"/>
                     </i>
                 </span>
-                <el-button type="primary" @click="openSelectDialog(item.code)">选择</el-button>
+                <wf-button type="primary" @click="openSelectDialog(item.code)">选择</wf-button>
             </div>
-            <el-input-number
+            <wf-input-number
                 v-else-if="item.type === 6"
                 v-model="form[item.code]"
                 :placeholder="item.desc"
@@ -61,13 +61,13 @@
                 :min="item.min ? Number(item.min) : 0"
                 style="width: 400px; margin-right: 10px; margin-bottom: 5px;"/>
             <div v-else-if="item.type === 7">
-                <el-time-picker
+                <wf-time-picker
                     v-if="['timepicker', 'timepickerrange'].includes(item.dateType)"
                     :is-range="item.dateType === 'timepickerrange'"
                     v-model="form[item.code]"
                     :value-format="item.dateFormat"
                     :placeholder="item.desc"/>
-                <el-date-picker
+                <wf-date-picker
                     v-else
                     clearable
                     v-model="form[item.code]"
@@ -76,14 +76,14 @@
                     :placeholder="item.desc"/>
 
             </div>
-        </el-form-item>
-    </el-form>
+        </wf-form-item>
+    </wf-form>
     <!-- 权限标识：会签票签选择用户 -->
-    <el-dialog title="人员选择" v-if="userVisible" v-model="userVisible" width="80%" append-to-body>
+    <wf-dialog title="人员选择" v-if="userVisible" v-model="userVisible" width="80%" append-to-body>
         <selectUser v-model:selectUser="form[itemCode]" v-model:userVisible="userVisible"
                     :permissionRows="permissionRows[itemCode]"
                     @handleUserSelect="(checkedItemList) => handleUserSelect(checkedItemList, itemCode)"></selectUser>
-    </el-dialog>
+    </wf-dialog>
 </template>
 
 <script setup name="NodeExtList">

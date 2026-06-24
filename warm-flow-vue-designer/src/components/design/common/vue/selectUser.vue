@@ -16,9 +16,9 @@
     </div>
 
     <!-- 主内容区 -->
-    <el-row :gutter="16" class="content">
+    <wf-row :gutter="16" class="content">
       <!-- 左侧树状选择 -->
-      <el-col :span="5" :xs="24" v-show="groupOptions">
+      <wf-col :span="5" :xs="24" v-show="groupOptions">
         <div class="section-card tree-card" :class="{ 'tree-collapsed': treeCollapsed }">
           <div class="tree-header tree-header-clickable" @click="treeCollapsed = !treeCollapsed">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="tree-icon">
@@ -34,17 +34,17 @@
           <transition name="tree-slide">
             <div class="tree-content" v-show="!treeCollapsed">
               <div class="tree-search">
-            <el-input
+            <wf-input
               v-model="groupName"
               placeholder="搜索部门名称"
               clearable
               size="default"
             >
               <template #prefix><svg-icon icon-class="ep:search"/></template>
-            </el-input>
+            </wf-input>
           </div>
           <div class="tree-body">
-            <el-tree
+            <wf-tree
               :data="groupOptions"
               :props="{ label: 'name', children: 'children' }"
               :expand-on-click-node="false"
@@ -59,10 +59,10 @@
           </div>
           </transition>
         </div>
-      </el-col>
+      </wf-col>
 
       <!-- 右侧列表数据 -->
-      <el-col :span="groupOptions ? 19 : 24" :xs="24">
+      <wf-col :span="groupOptions ? 19 : 24" :xs="24">
         <!-- 工具栏：筛选 + 确定（移动端） -->
         <div class="search-toggle-row mobile-only">
           <button class="search-toggle-btn" @click="searchCollapsed = !searchCollapsed" :class="{ 'is-expanded': !searchCollapsed }">
@@ -74,36 +74,36 @@
         </div>
         <div class="section-card search-card" v-show="showSearch && !searchCollapsed">
           <div class="search-card-body">
-            <el-form :model="queryParams" ref="queryRef" :inline="true" label-width="88px">
-              <el-form-item label="权限编码" prop="handlerCode">
-                <el-input
+            <wf-form :model="queryParams" ref="queryRef" :inline="true" label-width="88px">
+              <wf-form-item label="权限编码" prop="handlerCode">
+                <wf-input
                   v-model="queryParams.handlerCode"
                   placeholder="请输入权限编码"
                   clearable
                   style="width: 200px"
                   @keyup.enter="handleQuery"
                 />
-              </el-form-item>
-              <el-form-item label="权限名称" prop="handlerName">
-                <el-input
+              </wf-form-item>
+              <wf-form-item label="权限名称" prop="handlerName">
+                <wf-input
                   v-model="queryParams.handlerName"
                   placeholder="请输入权限名称"
                   clearable
                   style="width: 200px"
                   @keyup.enter="handleQuery"
                 />
-              </el-form-item>
-              <el-form-item label="创建时间">
-                <el-date-picker
+              </wf-form-item>
+              <wf-form-item label="创建时间">
+                <wf-date-picker
                   v-model="dateRange"
                   value-format="YYYY-MM-DD"
                   type="daterange"
                   range-separator="-"
                   start-placeholder="开始日期"
                   end-placeholder="结束日期"
-                ></el-date-picker>
-              </el-form-item>
-            </el-form>
+                ></wf-date-picker>
+              </wf-form-item>
+            </wf-form>
             <div class="search-action-row">
               <div class="search-action-left">
                 <button type="button" class="btn-action btn-primary" @click="handleQuery">搜索</button>
@@ -121,7 +121,7 @@
           </svg>
           <span>已选择 <strong>{{ checkedItemList.length }}</strong> 项</span>
           <div class="selected-mini-tags" v-if="checkedItemList.length <= 8">
-            <el-tag
+            <wf-tag
               closable
               v-for="tag in checkedItemList"
               :key="tag.storageId"
@@ -130,10 +130,10 @@
               size="small"
             >
               {{ tag.handlerName || tag.storageId }}
-            </el-tag>
+            </wf-tag>
           </div>
           <div class="selected-mini-tags selected-overflow" v-else>
-            <el-tag
+            <wf-tag
               closable
               v-for="tag in visibleTags"
               :key="tag.storageId"
@@ -142,8 +142,8 @@
               size="small"
             >
               {{ tag.handlerName || tag.storageId }}
-            </el-tag>
-            <el-tooltip
+            </wf-tag>
+            <wf-tooltip
               placement="top"
               effect="light"
               :offset="8"
@@ -156,10 +156,10 @@
                   </div>
                 </div>
               </template>
-              <el-tag class="mini-tag more-tag" size="small">+{{ checkedItemList.length - visibleTagsCount }} 更多</el-tag>
-            </el-tooltip>
+              <wf-tag class="mini-tag more-tag" size="small">+{{ checkedItemList.length - visibleTagsCount }} 更多</wf-tag>
+            </wf-tooltip>
           </div>
-          <el-button link type="danger" size="small" class="clear-all-btn" @click="clearAllSelected">清空</el-button>
+          <wf-button link type="danger" size="small" class="clear-all-btn" @click="clearAllSelected">清空</wf-button>
         </div>
 
         <!-- 移动端：卡片式列表 -->
@@ -172,7 +172,7 @@
             @click="handleCheck(item)"
           >
             <div class="card-left">
-              <el-checkbox :model-value="item.isChecked" @change.stop="handleCheck(item)" />
+              <wf-checkbox :model-value="item.isChecked" @change.stop="handleCheck(item)" />
               <div class="card-info">
                 <div class="card-name-row">
                   <span class="card-name">{{ item.handlerName || '-' }}</span>
@@ -203,39 +203,39 @@
 
         <!-- PC端：数据表格卡片（固定10条数据高度） -->
         <div class="section-card table-card pc-only">
-          <el-table v-loading="loading" :data="tableList" :max-height="570" @row-click="handleCheck">
+          <wf-table v-loading="loading" :data="tableList" :max-height="570" @row-click="handleCheck">
             <template #empty>
               <div class="user-empty">
                 <svg viewBox="0 0 24 24" class="user-empty-icon"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/></svg>
                 <span>暂无人员数据</span>
               </div>
             </template>
-            <el-table-column width="50" align="center">
+            <wf-table-column width="50" align="center">
               <template #header>
-                <el-checkbox
+                <wf-checkbox
                   v-model="checkAllInfo.isChecked"
                   :indeterminate="checkAllInfo.isIndeterminate"
                   @change="handleCheckAll"
-                ></el-checkbox>
+                ></wf-checkbox>
               </template>
               <template #default="scope">
-                <el-checkbox v-model="scope.row.isChecked" @change="handleCheck(scope.row)"></el-checkbox>
+                <wf-checkbox v-model="scope.row.isChecked" @change="handleCheck(scope.row)"></wf-checkbox>
               </template>
-            </el-table-column>
-            <el-table-column label="权限名称" align="center" key="handlerName" prop="handlerName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
-            <el-table-column label="权限编码" align="center" key="handlerCode" prop="handlerCode" v-if="columns[1].visible" :show-overflow-tooltip="true" />
-            <el-table-column label="入库主键" align="center" key="storageId" prop="storageId" v-if="columns[0].visible" class-name="mobile-hide-col" />
-            <el-table-column label="权限分组" align="center" key="groupName" prop="groupName" v-if="columns[3].visible" :show-overflow-tooltip="true" class-name="mobile-hide-col" />
-            <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[4].visible" width="160" class-name="mobile-hide-col">
+            </wf-table-column>
+            <wf-table-column label="权限名称" align="center" key="handlerName" prop="handlerName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
+            <wf-table-column label="权限编码" align="center" key="handlerCode" prop="handlerCode" v-if="columns[1].visible" :show-overflow-tooltip="true" />
+            <wf-table-column label="入库主键" align="center" key="storageId" prop="storageId" v-if="columns[0].visible" class-name="mobile-hide-col" />
+            <wf-table-column label="权限分组" align="center" key="groupName" prop="groupName" v-if="columns[3].visible" :show-overflow-tooltip="true" class-name="mobile-hide-col" />
+            <wf-table-column label="创建时间" align="center" prop="createTime" v-if="columns[4].visible" width="160" class-name="mobile-hide-col">
               <template #default="scope">
                 <span>{{ parseTime(scope.row.createTime) }}</span>
               </template>
-            </el-table-column>
-          </el-table>
+            </wf-table-column>
+          </wf-table>
 
           <!-- 底部操作栏：分页 -->
           <div class="table-footer">
-            <el-pagination
+            <wf-pagination
               v-show="total > 0"
               v-model:current-page="queryParams.pageNum"
               v-model:page-size="queryParams.pageSize"
@@ -246,8 +246,8 @@
             />
           </div>
         </div>
-      </el-col>
-    </el-row>
+      </wf-col>
+    </wf-row>
   </div>
 </template>
 

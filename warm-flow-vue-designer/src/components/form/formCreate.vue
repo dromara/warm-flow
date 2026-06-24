@@ -1,5 +1,5 @@
 <template>
-  <el-form ref="form" :model="form" :rules="rules" :disabled="disabled">
+  <wf-form ref="form" :model="form" :rules="rules" :disabled="disabled">
     <form-create
       class="formCreate"
       v-model="formData"
@@ -8,15 +8,15 @@
       :option="option"
       :disabled="disabled"
     ></form-create>
-    <el-divider v-if="showApprovalFields"></el-divider>
-    <el-form-item label="审批意见" prop="message" v-if="showApprovalFields">
-      <el-input v-model="message" type="textarea" placeholder="请输入审批意见" :autosize="{ minRows: 4, maxRows: 4 }" />
-    </el-form-item>
+    <wf-divider v-if="showApprovalFields"></wf-divider>
+    <wf-form-item label="审批意见" prop="message" v-if="showApprovalFields">
+      <wf-input v-model="message" type="textarea" placeholder="请输入审批意见" :autosize="{ minRows: 4, maxRows: 4 }" />
+    </wf-form-item>
     <div style="text-align: right;" v-if="showApprovalFields">
-      <el-button type="primary" @click="handleBtn('PASS')">审批通过</el-button>
-      <el-button @click="handleBtn('REJECT')">退回</el-button>
+      <wf-button type="primary" @click="handleBtn('PASS')">审批通过</wf-button>
+      <wf-button @click="handleBtn('REJECT')">退回</wf-button>
     </div>
-  </el-form>
+  </wf-form>
 </template>
 
 <script setup name="formCreate">

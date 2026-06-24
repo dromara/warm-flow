@@ -18,22 +18,22 @@
 
     <!-- 基础设置 -->
     <div v-show="tabsValue === '1'" class="tabPane">
-      <el-form ref="formRef" class="startForm" :model="form" label-width="110px" :disabled="disabled">
+      <wf-form ref="formRef" class="startForm" :model="form" label-width="110px" :disabled="disabled">
         <div class="base-settings-section">
           <div class="base-settings-content">
             <slot name="form-item-task-name" :model="form" field="nodeCode">
-              <el-form-item label="节点编码：">
-                <el-input v-model="form.nodeCode" :disabled="disabled"></el-input>
-              </el-form-item>
+              <wf-form-item label="节点编码：">
+                <wf-input v-model="form.nodeCode" :disabled="disabled"></wf-input>
+              </wf-form-item>
             </slot>
             <slot name="form-item-task-name" :model="form" field="nodeName">
-              <el-form-item label="节点名称：">
-                <el-input v-model="form.nodeName" ref="nodeInput" :disabled="disabled" @change="nodeNameChange"></el-input>
-              </el-form-item>
+              <wf-form-item label="节点名称：">
+                <wf-input v-model="form.nodeName" ref="nodeInput" :disabled="disabled" @change="nodeNameChange"></wf-input>
+              </wf-form-item>
             </slot>
           </div>
         </div>
-      </el-form>
+      </wf-form>
     </div>
 
     <!-- 监听器 -->
@@ -41,35 +41,35 @@
         <div class="section-card section-purple">
           <div class="section-card-body">
           <slot name="form-item-task-listenerType" :model="form" field="listenerType">
-            <el-table :data="form.listenerRows" style="width: 100%">
-              <el-table-column prop="listenerType" label="类型" :width="isMobile ? 60 : 160">
+            <wf-table :data="form.listenerRows" style="width: 100%">
+              <wf-table-column prop="listenerType" label="类型" :width="isMobile ? 60 : 160">
                 <template #default="scope">
-                  <el-form-item :prop="'listenerRows.' + scope.$index + '.listenerType'">
-                    <el-select v-model="scope.row.listenerType" placeholder="请选择">
-                      <el-option label="开始" value="start"></el-option>
-                      <el-option label="分派" value="assignment"></el-option>
-                      <el-option label="完成" value="finish"></el-option>
-                      <el-option label="创建" value="create"></el-option>
-                    </el-select>
-                  </el-form-item>
+                  <wf-form-item :prop="'listenerRows.' + scope.$index + '.listenerType'">
+                    <wf-select v-model="scope.row.listenerType" placeholder="请选择">
+                      <wf-option label="开始" value="start"></wf-option>
+                      <wf-option label="分派" value="assignment"></wf-option>
+                      <wf-option label="完成" value="finish"></wf-option>
+                      <wf-option label="创建" value="create"></wf-option>
+                    </wf-select>
+                  </wf-form-item>
                 </template>
-              </el-table-column>
-              <el-table-column prop="listenerPath" label="路径（可输入类路径）">
+              </wf-table-column>
+              <wf-table-column prop="listenerPath" label="路径（可输入类路径）">
                 <template #default="scope">
-                  <el-form-item :prop="'listenerRows.' + scope.$index + '.listenerPath'">
-                    <el-input v-model="scope.row.listenerPath" placeholder="请输入"></el-input>
-                  </el-form-item>
+                  <wf-form-item :prop="'listenerRows.' + scope.$index + '.listenerPath'">
+                    <wf-input v-model="scope.row.listenerPath" placeholder="请输入"></wf-input>
+                  </wf-form-item>
                 </template>
-              </el-table-column>
-              <el-table-column label="操作" width="65" align="center" v-if="!disabled">
+              </wf-table-column>
+              <wf-table-column label="操作" width="65" align="center" v-if="!disabled">
                 <template #default="scope">
-                  <el-button link size="small" type="danger" @click="handleDeleteRow(scope.$index)"><svg-icon icon-class="ep:delete"/></el-button>
+                  <wf-button link size="small" type="danger" @click="handleDeleteRow(scope.$index)"><svg-icon icon-class="ep:delete"/></wf-button>
                 </template>
-              </el-table-column>
-            </el-table>
+              </wf-table-column>
+            </wf-table>
           </slot>
           <div class="action-buttons">
-            <el-button v-if="!disabled" class="add-row-btn" @click="handleAddRow">增加行</el-button>
+            <wf-button v-if="!disabled" class="add-row-btn" @click="handleAddRow">增加行</wf-button>
           </div>
         </div>
       </div>

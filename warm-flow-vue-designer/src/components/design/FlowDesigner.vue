@@ -5,12 +5,12 @@
       <!-- 左侧：流程名称 -->
       <div class="header-left">
         <div class="flow-name-wrapper">
-          <el-tooltip :content="logicJson.flowName" placement="bottom" :show-after="500">
+          <wf-tooltip :content="logicJson.flowName" placement="bottom" :show-after="500">
             <div class="flow-name">
                 <svg-icon icon-class="flowName" style="margin-right: 5px"/>
                 {{ logicJson.flowName || '未命名流程' }}
             </div>
-          </el-tooltip>
+          </wf-tooltip>
         </div>
       </div>
 
@@ -32,35 +32,35 @@
 
       <!-- 右侧：保存按钮 -->
       <div class="header-right">
-        <el-button class="save-btn" size="default" @click="saveJsonModel" v-if="!disabled">
+        <wf-button class="save-btn" size="default" @click="saveJsonModel" v-if="!disabled">
           <svg-icon icon-class="save" class="save-icon"/>
           <span>保存</span>
-        </el-button>
+        </wf-button>
       </div>
     </div>
 
-    <el-header :style="headerStyle">
+    <wf-header :style="headerStyle">
       <div class="design-toolbar" style="padding: 5px 0; text-align: right;">
         <div v-if="activeStep === 1">
           <span class="toolbar-group">
-            <el-tooltip content="缩小" placement="bottom"><el-button size="small" @click="zoomViewport(false)"><svg-icon icon-class="ep:zoom-out"/></el-button></el-tooltip>
+            <wf-tooltip content="缩小" placement="bottom"><wf-button size="small" @click="zoomViewport(false)"><svg-icon icon-class="ep:zoom-out"/></wf-button></wf-tooltip>
             <!-- PC端：原有 zoom(1)+居中；移动端/平板：fitView 自适应显示全部节点 -->
-            <el-tooltip content="自适应" placement="bottom"><el-button size="small" @click="isMobileDevice() ? zoomViewport('fit') : zoomViewport(1)"><svg-icon icon-class="ep:rank"/></el-button></el-tooltip>
-            <el-tooltip content="放大" placement="bottom"><el-button size="small" @click="zoomViewport(true)"><svg-icon icon-class="ep:zoom-in"/></el-button></el-tooltip>
+            <wf-tooltip content="自适应" placement="bottom"><wf-button size="small" @click="isMobileDevice() ? zoomViewport('fit') : zoomViewport(1)"><svg-icon icon-class="ep:rank"/></wf-button></wf-tooltip>
+            <wf-tooltip content="放大" placement="bottom"><wf-button size="small" @click="zoomViewport(true)"><svg-icon icon-class="ep:zoom-in"/></wf-button></wf-tooltip>
           </span>
           <span class="toolbar-group">
-            <el-tooltip content="上一步" placement="bottom"><el-button size="small" @click="undoOrRedo(true)"><svg-icon icon-class="ep:d-arrow-left"/></el-button></el-tooltip>
-            <el-tooltip content="下一步" placement="bottom"><el-button size="small" @click="undoOrRedo(false)"><svg-icon icon-class="ep:d-arrow-right"/></el-button></el-tooltip>
-            <el-tooltip content="清空" placement="bottom"><el-button size="small" @click="clear()"><svg-icon icon-class="ep:delete"/></el-button></el-tooltip>
+            <wf-tooltip content="上一步" placement="bottom"><wf-button size="small" @click="undoOrRedo(true)"><svg-icon icon-class="ep:d-arrow-left"/></wf-button></wf-tooltip>
+            <wf-tooltip content="下一步" placement="bottom"><wf-button size="small" @click="undoOrRedo(false)"><svg-icon icon-class="ep:d-arrow-right"/></wf-button></wf-tooltip>
+            <wf-tooltip content="清空" placement="bottom"><wf-button size="small" @click="clear()"><svg-icon icon-class="ep:delete"/></wf-button></wf-tooltip>
           </span>
           <span class="toolbar-group">
-            <el-tooltip content="下载流程图" placement="bottom"><el-button size="small" @click="downLoad"><svg-icon icon-class="ep:picture"/></el-button></el-tooltip>
-            <el-tooltip content="下载JSON" placement="bottom"><el-button size="small" @click="downJson"><svg-icon icon-class="ep:download"/></el-button></el-tooltip>
+            <wf-tooltip content="下载流程图" placement="bottom"><wf-button size="small" @click="downLoad"><svg-icon icon-class="ep:picture"/></wf-button></wf-tooltip>
+            <wf-tooltip content="下载JSON" placement="bottom"><wf-button size="small" @click="downJson"><svg-icon icon-class="ep:download"/></wf-button></wf-tooltip>
           </span>
           <span class="toolbar-group" v-if="onlyDesignShow && !disabled">
-            <el-tooltip content="保存" placement="bottom"><el-button size="small" class="toolbar-save-btn" @click="saveJsonModel">
+            <wf-tooltip content="保存" placement="bottom"><wf-button size="small" class="toolbar-save-btn" @click="saveJsonModel">
               <svg-icon icon-class="save" style="width: 14px; height: 14px;"/>
-            </el-button></el-tooltip>
+            </wf-button></wf-tooltip>
           </span>
         </div>
       </div>
@@ -84,7 +84,7 @@
         </PropertySetting>
       </div>
       <div class="logo-text" v-if="activeStep === 1">Warm-Flow</div>
-    </el-header>
+    </wf-header>
 
     <!-- 弹框组件 -->
     <EdgeTooltip

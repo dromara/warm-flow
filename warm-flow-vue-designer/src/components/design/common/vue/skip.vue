@@ -1,38 +1,38 @@
 <template>
   <div class="skip-wrapper">
-    <el-form ref="formRef" class="skipForm" :model="form" label-width="110px" :rules="rules" :disabled="disabled">
+    <wf-form ref="formRef" class="skipForm" :model="form" label-width="110px" :rules="rules" :disabled="disabled">
       <div class="base-settings-section">
         <div class="base-settings-content">
-          <el-form-item label="跳转名称：" v-if="skipConditionShow" prop="skipName">
-            <el-input v-model="form.skipName" placeholder="跳转名称"/>
-          </el-form-item>
-          <el-form-item label="跳转类型：" prop="skipType">
-            <el-select v-model="form.skipType">
-              <el-option label="审批通过" value="PASS"/>
-              <el-option label="退回" value="REJECT"/>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="跳转条件：" v-if="skipConditionShow" prop="skipCondition">
-            <el-input v-model="form.condition" v-if="!expressFlag" placeholder="条件名" :style="{ width: !expressFlag? '30%' : '0%' }"/>
-            <el-select v-model="form.conditionType" placeholder="请选择条件方式" :style="{ width: expressFlag? '18%' : '25%', 'margin-left': '1%' }"
+          <wf-form-item label="跳转名称：" v-if="skipConditionShow" prop="skipName">
+            <wf-input v-model="form.skipName" placeholder="跳转名称"/>
+          </wf-form-item>
+          <wf-form-item label="跳转类型：" prop="skipType">
+            <wf-select v-model="form.skipType">
+              <wf-option label="审批通过" value="PASS"/>
+              <wf-option label="退回" value="REJECT"/>
+            </wf-select>
+          </wf-form-item>
+          <wf-form-item label="跳转条件：" v-if="skipConditionShow" prop="skipCondition">
+            <wf-input v-model="form.condition" v-if="!expressFlag" placeholder="条件名" :style="{ width: !expressFlag? '30%' : '0%' }"/>
+            <wf-select v-model="form.conditionType" placeholder="请选择条件方式" :style="{ width: expressFlag? '18%' : '25%', 'margin-left': '1%' }"
                        clearable @change="changeOper" @clear="handleClear">
-                <el-option label="大于" value="gt"/>
-                <el-option label="大于等于" value="ge"/>
-                <el-option label="等于" value="eq"/>
-                <el-option label="不等于" value="ne"/>
-                <el-option label="小于" value="lt"/>
-                <el-option label="小于等于" value="le"/>
-                <el-option label="包含" value="like"/>
-                <el-option label="不包含" value="notLike"/>
-                <el-option label="默认" value="default" v-if="framework ==='SPRING_BOOT'"/>
-                <el-option label="spel" value="spel" v-if="framework ==='SPRING_BOOT'"/>
-                <el-option label="snel" value="snel" v-if="framework ==='SOLON'"/>
-            </el-select>
-            <el-input v-model="form.conditionValue" :placeholder="getConditionDescription()" :style="{ width: expressFlag? '80%' : '43%', 'margin-left': '1%' }"/>
-          </el-form-item>
+                <wf-option label="大于" value="gt"/>
+                <wf-option label="大于等于" value="ge"/>
+                <wf-option label="等于" value="eq"/>
+                <wf-option label="不等于" value="ne"/>
+                <wf-option label="小于" value="lt"/>
+                <wf-option label="小于等于" value="le"/>
+                <wf-option label="包含" value="like"/>
+                <wf-option label="不包含" value="notLike"/>
+                <wf-option label="默认" value="default" v-if="framework ==='SPRING_BOOT'"/>
+                <wf-option label="spel" value="spel" v-if="framework ==='SPRING_BOOT'"/>
+                <wf-option label="snel" value="snel" v-if="framework ==='SOLON'"/>
+            </wf-select>
+            <wf-input v-model="form.conditionValue" :placeholder="getConditionDescription()" :style="{ width: expressFlag? '80%' : '43%', 'margin-left': '1%' }"/>
+          </wf-form-item>
         </div>
       </div>
-    </el-form>
+    </wf-form>
   </div>
 </template>
 

@@ -1,19 +1,19 @@
 <template>
   <div class="app-container">
-    <el-form ref="formRef" :model="form" class="dialogForm" :rules="rules" label-width="150px" :disabled="disabled">
+    <wf-form ref="formRef" :model="form" class="dialogForm" :rules="rules" label-width="150px" :disabled="disabled">
       <div class="form-section">
         <div class="section-title">基本配置</div>
-        <el-form-item label="流程编码" prop="flowCode">
-          <el-input v-model="form.flowCode" placeholder="请输入流程编码" maxlength="40" />
-        </el-form-item>
+        <wf-form-item label="流程编码" prop="flowCode">
+          <wf-input v-model="form.flowCode" placeholder="请输入流程编码" maxlength="40" />
+        </wf-form-item>
 
-        <el-form-item label="流程名称" prop="flowName">
-          <el-input v-model="form.flowName" placeholder="请输入流程名称" maxlength="100" @input="nameChange" />
-        </el-form-item>
+        <wf-form-item label="流程名称" prop="flowName">
+          <wf-input v-model="form.flowName" placeholder="请输入流程名称" maxlength="100" @input="nameChange" />
+        </wf-form-item>
 
-        <el-form-item label="设计器模型" prop="modelValue">
-          <el-radio-group v-model="form.modelValue" :disabled="!!definitionId || isMobile" @change="modelValueChange" class="radio-card-group">
-            <el-radio label="CLASSICS" class="radio-card">
+        <wf-form-item label="设计器模型" prop="modelValue">
+          <wf-radio-group v-model="form.modelValue" :disabled="!!definitionId || isMobile" @change="modelValueChange" class="radio-card-group">
+            <wf-radio label="CLASSICS" class="radio-card">
               <div class="radio-card-content">
                 <div class="radio-card-icon">
                   <svg-icon icon-class="classic" class="model-icon"/>
@@ -23,8 +23,8 @@
                   <div class="radio-card-desc">自由拖拽连线，灵活编排流程</div>
                 </div>
               </div>
-            </el-radio>
-            <el-radio label="MIMIC" class="radio-card">
+            </wf-radio>
+            <wf-radio label="MIMIC" class="radio-card">
               <div class="radio-card-content">
                 <div class="radio-card-icon">
                   <svg-icon icon-class="mimic" class="model-icon"/>
@@ -34,24 +34,24 @@
                   <div class="radio-card-desc">类钉钉审批流，上下结构布局</div>
                 </div>
               </div>
-            </el-radio>
-          </el-radio-group>
+            </wf-radio>
+          </wf-radio-group>
           <div class="radio-card-warning">切换后重置节点，保存后不支持修改！</div>
           <div class="radio-card-warning radio-card-warning--mobile" v-if="isMobile">移动端不支持选择模型，如果新增默认仿钉钉</div>
-        </el-form-item>
+        </wf-form-item>
 
-        <el-form-item label="流程类别" prop="category">
-          <el-tree-select
+        <wf-form-item label="流程类别" prop="category">
+          <wf-tree-select
               v-model="form.category"
               :data="categoryList"
               :props="{ value: 'id', label: 'name', children: 'children' }"
               value-key="id"
               placeholder="请选择流程类别"
               check-strictly/>
-        </el-form-item>
+        </wf-form-item>
 
-        <el-form-item label="自定义表单" prop="formCustom">
-          <el-switch
+        <wf-form-item label="自定义表单" prop="formCustom">
+          <wf-switch
             v-model="form.formCustom"
             size="large"
             active-value="Y"
@@ -59,44 +59,44 @@
             active-text="是"
             inactive-text="否" />
           <span class="form-tip">{{ form.formCustom === 'Y' ? '选择已配置的自定义表单' : '填写审批页面路径' }}</span>
-        </el-form-item>
+        </wf-form-item>
 
-        <el-form-item label="表单路径" prop="formPath" v-if="form.formCustom === 'N'">
-          <el-input v-model="form.formPath" placeholder="请输入审批表单路径" maxlength="100"/>
-        </el-form-item>
+        <wf-form-item label="表单路径" prop="formPath" v-if="form.formCustom === 'N'">
+          <wf-input v-model="form.formPath" placeholder="请输入审批表单路径" maxlength="100"/>
+        </wf-form-item>
 
-        <el-form-item label="表单唯一标识" prop="formPath" v-else-if="form.formCustom === 'Y'">
-            <el-tree-select
+        <wf-form-item label="表单唯一标识" prop="formPath" v-else-if="form.formCustom === 'Y'">
+            <wf-tree-select
                 v-model="form.formPath"
                 :data="formPathList"
                 :props="{ value: 'id', label: 'name', children: 'children' }"
                 value-key="id"
                 placeholder="请选择流程类别"
                 check-strictly/>
-        </el-form-item>
+        </wf-form-item>
       </div>
 
       <div class="form-section">
         <div class="section-title">监听器配置</div>
-        <el-form-item prop="listenerRows" class="listenerItem">
-          <el-table :data="form.listenerRows" style="width: 100%" empty-text="暂无监听器，点击下方「增加行」添加">
-            <el-table-column prop="listenerType" :width="isMobile ? 60 : 160" label="类型">
+        <wf-form-item prop="listenerRows" class="listenerItem">
+          <wf-table :data="form.listenerRows" style="width: 100%" empty-text="暂无监听器，点击下方「增加行」添加">
+            <wf-table-column prop="listenerType" :width="isMobile ? 60 : 160" label="类型">
               <template #default="scope">
-                <el-form-item :prop="`listenerRows.${scope.$index}.listenerType`" :rules="rules.listenerType">
-                  <el-select v-model="scope.row.listenerType" placeholder="请选择类型">
-                    <el-option label="开始" value="start"></el-option>
-                    <el-option label="分派" value="assignment"></el-option>
-                    <el-option label="完成" value="finish"></el-option>
-                    <el-option label="创建" value="create"></el-option>
-                  </el-select>
-                </el-form-item>
+                <wf-form-item :prop="`listenerRows.${scope.$index}.listenerType`" :rules="rules.listenerType">
+                  <wf-select v-model="scope.row.listenerType" placeholder="请选择类型">
+                    <wf-option label="开始" value="start"></wf-option>
+                    <wf-option label="分派" value="assignment"></wf-option>
+                    <wf-option label="完成" value="finish"></wf-option>
+                    <wf-option label="创建" value="create"></wf-option>
+                  </wf-select>
+                </wf-form-item>
               </template>
-            </el-table-column>
+            </wf-table-column>
 
-            <el-table-column prop="listenerPath" label="监听器（可输入类路径）">
+            <wf-table-column prop="listenerPath" label="监听器（可输入类路径）">
               <template #default="scope">
-                <el-form-item :prop="`listenerRows.${scope.$index}.listenerPath`" :rules="rules.listenerPath">
-                    <el-select
+                <wf-form-item :prop="`listenerRows.${scope.$index}.listenerPath`" :rules="rules.listenerPath">
+                    <wf-select
                         v-model="scope.row.listenerPath"
                         placeholder="请输入或选择"
                         allow-create
@@ -104,26 +104,26 @@
                         clearable
                         style="width: 100%"
                         @change="(value) => handleListenerPathChange(value, scope.row)">
-                        <el-option
+                        <wf-option
                             v-for="item in ListenerVo"
                             :key="item.path"
                             :label="item.description"
                             :value="item.path"/>
-                    </el-select>
-                </el-form-item>
+                    </wf-select>
+                </wf-form-item>
               </template>
-            </el-table-column>
+            </wf-table-column>
 
-            <el-table-column label="操作" width="65" align="center" v-if="!disabled">
+            <wf-table-column label="操作" width="65" align="center" v-if="!disabled">
               <template #default="scope">
-                <el-button link size="small" type="danger" @click="handleDeleteRow(scope.$index)"><svg-icon icon-class="ep:delete"/></el-button>
+                <wf-button link size="small" type="danger" @click="handleDeleteRow(scope.$index)"><svg-icon icon-class="ep:delete"/></wf-button>
               </template>
-            </el-table-column>
-          </el-table>
-          <el-button v-if="!disabled" class="add-row-btn" @click="handleAddRow">增加行</el-button>
-        </el-form-item>
+            </wf-table-column>
+          </wf-table>
+          <wf-button v-if="!disabled" class="add-row-btn" @click="handleAddRow">增加行</wf-button>
+        </wf-form-item>
       </div>
-    </el-form>
+    </wf-form>
   </div>
 </template>
 
