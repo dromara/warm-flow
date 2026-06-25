@@ -182,6 +182,27 @@
     }
     .el-form-item__content { display: block !important; margin-left: 0 !important; }
   }
+
+  /* antd 适配：表格单元格内的 a-form-item。
+     antd 下 wf-table→.ant-table、wf-form-item→.ant-form-item，上面的 .el-* 选择器不命中，
+     若不处理则 a-form-item 保留默认 margin-bottom(24px) 且单元格不垂直居中，
+     导致「入库主键」输入框与相邻纯文本列（如「权限名称」）垂直错位。此处对齐 EP 行为。 */
+  ::v-deep(.ant-table .ant-form-item) {
+    margin-bottom: 0;
+  }
+  /* 表格内 form-item 无 label，隐藏可能的空 label 占位，内容紧贴左侧、占满列宽 */
+  ::v-deep(.ant-table .ant-form-item .ant-form-item-label) {
+    display: none !important;
+  }
+  ::v-deep(.ant-table .ant-form-item .ant-form-item-control),
+  ::v-deep(.ant-table .ant-form-item-control-input),
+  ::v-deep(.ant-table .ant-form-item-control-input-content) {
+    width: 100%;
+  }
+  /* 单元格垂直居中：让输入框/按钮与纯文本列在同一水平线（对齐 el-table 的 middle 行为） */
+  ::v-deep(.ant-table-tbody > tr > td) {
+    vertical-align: middle;
+  }
 }
 
 /* ========== 响应式适配（手机端/平板端） ========== */

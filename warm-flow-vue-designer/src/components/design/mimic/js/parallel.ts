@@ -1,8 +1,20 @@
 import {GatewayModel} from "./gatewayModel";
 import {GatewayView} from "./gatewayView";
 import {h} from "@logicflow/core";
+import {applyClassicDesignColor} from "../../common/js/tool";
 
-class ParallelModel extends GatewayModel {}
+class ParallelModel extends GatewayModel {
+  // 设计态：并行网关用青色语义色，与经典模式一致；运行态进度图沿用状态色不受影响
+  getNodeStyle() {
+    const style: any = super.getNodeStyle();
+    applyClassicDesignColor(style, this.properties, '19,194,194');
+    const inDesigner = typeof window !== 'undefined' && (window as any).__WF_FLOW_DESIGN_MODE__;
+    if (inDesigner && typeof style._statusRgba === 'function') {
+      style.fill = style._statusRgba(0.12);
+    }
+    return style;
+  }
+}
 
 class ParallelView extends GatewayView {
 
@@ -35,9 +47,9 @@ class ParallelView extends GatewayView {
         x: x - width / 2 + 27,
         y: y - height / 2 + 20,
         fontSize: 13,
-        fill: "#000",
         style: {
           userSelect: 'none',
+          fill: 'var(--wf-text-primary, #303133)',
         }
       }, textValue) : null
     ]);

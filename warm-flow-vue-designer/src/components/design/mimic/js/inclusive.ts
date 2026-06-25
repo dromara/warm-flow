@@ -1,7 +1,19 @@
 import {GatewayModel} from "./gatewayModel";
 import {GatewayView} from "./gatewayView";
 import {h} from "@logicflow/core";
-class InclusiveModel extends GatewayModel {}
+import {applyClassicDesignColor} from "../../common/js/tool";
+class InclusiveModel extends GatewayModel {
+  // 设计态：包容网关用紫色语义色，与经典模式一致；运行态进度图沿用状态色不受影响
+  getNodeStyle() {
+    const style: any = super.getNodeStyle();
+    applyClassicDesignColor(style, this.properties, '146,84,222');
+    const inDesigner = typeof window !== 'undefined' && (window as any).__WF_FLOW_DESIGN_MODE__;
+    if (inDesigner && typeof style._statusRgba === 'function') {
+      style.fill = style._statusRgba(0.12);
+    }
+    return style;
+  }
+}
 
 class InclusiveView extends GatewayView {
 
@@ -38,9 +50,9 @@ class InclusiveView extends GatewayView {
         x: x - width / 2 + 27,
         y: y - height / 2 + 20,
         fontSize: 13,
-        fill: "#000",
         style: {
           userSelect: 'none',
+          fill: 'var(--wf-text-primary, #303133)',
         }
       }, textValue) : null
     ]);
