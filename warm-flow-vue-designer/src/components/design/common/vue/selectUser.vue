@@ -252,34 +252,37 @@
   </div>
 </template>
 
-<script setup name="User">
+<script setup lang="ts">
+import { computed, getCurrentInstance, reactive, ref, toRefs, watch } from 'vue';
 import { handlerResult, handlerType } from "@/api/flow/definition";
 // 库化后不再依赖 ruoyi 全局注册的 parseTime，显式引入供模板格式化「创建时间」列
 import { parseTime } from "@/utils/ruoyi";
 
-const { proxy } = getCurrentInstance();
+defineOptions({ name: 'User' });
 
-const props = defineProps({
-  userVisible: {
-    type: Boolean
-  },
-  selectUser: {
-    type: Array,
-    default: () => []
-  },
-  permissionRows: {
-    type: Array,
-    default: () => []
-  }
+const { proxy } = getCurrentInstance()!;
+
+interface SelectUserProps {
+  /** 弹窗显隐（v-model:userVisible） */
+  userVisible?: boolean;
+  /** 已选用户存储主键集合（v-model:selectUser） */
+  selectUser?: any[];
+  /** 已选办理人行（回显用） */
+  permissionRows?: any[];
+}
+const props = withDefaults(defineProps<SelectUserProps>(), {
+  userVisible: false,
+  selectUser: () => [],
+  permissionRows: () => [],
 });
 const tabsValue = ref("");
-const tableList = ref([]);
+const tableList = ref<any[]>([]);
 const loading = ref(true);
 const showSearch = ref(true);
 const total = ref(0);
-let dateRange = ref([]);
+let dateRange = ref<any[]>([]);
 const groupName = ref("");
-const groupOptions = ref(undefined);
+const groupOptions = ref<any>(undefined);
 // 树形区域折叠状态（默认展开，数据加载后根据高度自动判断）
 const treeCollapsed = ref(window.innerWidth <= 768);
 // 搜索区域折叠状态（移动端默认折叠）
@@ -288,7 +291,7 @@ const searchCollapsed = ref(window.innerWidth <= 768);
 const MOBILE_PAGE_SIZE = 10;
 const mobileLoadingMore = ref(false);
 const mobileNoMore = ref(false);
-const tabsList = ref([]);
+const tabsList = ref<any[]>([]);
 // 列显隐信息
 const columns = ref([
   { key: 0, label: `入库主键`, visible: true },
@@ -297,7 +300,7 @@ const columns = ref([
   { key: 3, label: `权限分组`, visible: true },
   { key: 4, label: `创建时间`, visible: true }
 ]);
-const checkedItemList = ref([]); // 已选的itemList
+const checkedItemList = ref<any[]>([]); // 已选的itemList
 // 已选标签显示策略：超过8个时只显示前3个 + "+N 更多"
 const visibleTagsCount = 8;
 const visibleTags = computed(() => checkedItemList.value.slice(0, visibleTagsCount));
@@ -308,7 +311,7 @@ const data = reactive({
     userName: undefined,
     status: "0",
     groupId: undefined
-  },
+  } as Record<string, any>,
   checkAllInfo: {
     isIndeterminate: false,
     isChecked: false,
@@ -316,10 +319,13 @@ const data = reactive({
 });
 
 const { queryParams, checkAllInfo } = toRefs(data);
-const emit = defineEmits(["update:userVisible", "handleUserSelect"]);
+const emit = defineEmits<{
+  (e: 'update:userVisible', visible: boolean): void;
+  (e: 'handleUserSelect', checkedItemList: any[]): void;
+}>();
 
 /** 通过条件过滤节点  */
-const filterNode = (value, data) => {
+const filterNode = (value: string, data: any) => {
  if (!value) return true;
  return data.name.indexOf(value) !== -1;
 };
@@ -416,7 +422,7 @@ function loadMoreMobile() {
 }
 
 /** 移动端卡片列表滚动事件 */
-function onMobileScroll(e) {
+function onMobileScroll(e: any) {
   const el = e.target;
   if (!el) return;
   // 距离底部 60px 时触发加载
@@ -435,7 +441,7 @@ function resetMobilePagination() {
   }
 }
 /** 节点单击事件 */
-function handleNodeClick(data) {
+function handleNodeClick(data: any) {
   queryParams.value.groupId = data.id;
   handleQuery();
 }
@@ -496,7 +502,7 @@ function handleCheckAll() {
   checkedItemList.value = checkedArr;
 }
 
-function handleCheck(row) {
+function handleCheck(row: any) {
   tableList.value.forEach(e => {
     if (e.storageId === row.storageId) e.isChecked = !e.isChecked;
   });
@@ -511,7 +517,7 @@ function handleCheck(row) {
   isCheckedAll();
 };
 // 删除标签
-function handleClose(storageId) {
+function handleClose(storageId: any) {
   tableList.value.forEach(e => {
     if (e.storageId === storageId) e.isChecked = !e.isChecked;
   });

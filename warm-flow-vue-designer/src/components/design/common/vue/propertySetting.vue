@@ -20,7 +20,8 @@
   </div>
 </template>
 
-<script setup name="PropertySetting">
+<script setup lang="ts">
+import { computed, getCurrentInstance, ref, watch } from 'vue'
 import start from '@/components/design/common/vue/start.vue'
 import between from '@/components/design/common/vue/between.vue'
 import serial from '@/components/design/common/vue/gateway.vue'
@@ -30,7 +31,9 @@ import end from '@/components/design/common/vue/end.vue'
 import skip from '@/components/design/common/vue/skip.vue'
 import BaseInfo from "@/components/design/common/vue/baseInfo.vue";
 
-const { proxy } = getCurrentInstance();
+defineOptions({ name: 'PropertySetting' });
+
+const { proxy } = getCurrentInstance()!;
 
 // 响应式窗口宽度：监听 resize 变化
 const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1024);
@@ -56,51 +59,33 @@ const COMPONENT_LIST = {
   skip
 }
 
-const props = defineProps({
-  value: {
-    type: Object,
-    default () {
-      return {}
-    }
-  },
-  node: {
-    type: Object,
-    default () {
-      return {}
-    }
-  },
-  lf: {
-    type: Object,
-    default () {
-      return null
-    }
-  },
-  disabled: { // 是否禁止
-    type: Boolean,
-    default: false
-  },
-  skipConditionShow: { // 是否显示跳转条件
-    type: Boolean,
-    default: true
-  },
-  nodes: {
-    type: Array,
-    default () {
-      return []
-    }
-  },
-  skips: {
-    type: Array,
-    default () {
-      return []
-    }
-  },
-  formPathList: {
-      type: Array,
-      default () {
-          return []
-      }
-  },
+interface PropertySettingProps {
+  /** 表单值（保留字段） */
+  value?: Record<string, any>;
+  /** 当前选中的节点 / 边 model */
+  node?: Record<string, any>;
+  /** LogicFlow 实例 */
+  lf?: any;
+  /** 是否只读 */
+  disabled?: boolean;
+  /** 是否显示跳转条件 */
+  skipConditionShow?: boolean;
+  /** 画布节点列表 */
+  nodes?: any[];
+  /** 画布边列表 */
+  skips?: any[];
+  /** 自定义表单路径树 */
+  formPathList?: any[];
+}
+const props = withDefaults(defineProps<PropertySettingProps>(), {
+  value: () => ({}),
+  node: () => ({}),
+  lf: null,
+  disabled: false,
+  skipConditionShow: true,
+  nodes: () => [],
+  skips: () => [],
+  formPathList: () => [],
 });
 
 const drawer = ref(false);

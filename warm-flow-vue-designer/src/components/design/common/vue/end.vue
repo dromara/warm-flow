@@ -15,24 +15,25 @@
   </div>
 </template>
 
-<script setup name="End">
+<script setup lang="ts">
+import { getCurrentInstance, ref, watch } from 'vue';
 
-const props = defineProps({
-  modelValue: {
-    type: Object,
-    default () {
-      return {}
-    }
-  },
-  disabled: { // 是否禁止
-    type: Boolean,
-    default: false
-  },
+defineOptions({ name: 'End' });
+
+interface EndProps {
+  /** 节点表单数据（v-model） */
+  modelValue?: Record<string, any>;
+  /** 是否只读 */
+  disabled?: boolean;
+}
+const props = withDefaults(defineProps<EndProps>(), {
+  modelValue: () => ({}),
+  disabled: false,
 });
 
-const form = ref(props.modelValue);
-const emit = defineEmits(["change"]);
-const { proxy } = getCurrentInstance();
+const form = ref<Record<string, any>>(props.modelValue);
+const emit = defineEmits<{ (e: 'change', value: any): void }>();
+const { proxy } = getCurrentInstance()!;
 
 watch(() => form, n => {
   if (n) {

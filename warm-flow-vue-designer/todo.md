@@ -15,8 +15,8 @@
 
 ## 可选优化（未来）
 
-- [ ] `FlowDesigner.vue` 改 `<script setup lang="ts">` 获得精确 props 类型。
-- [ ] 渐进将设计器子组件（属性面板等）TS 化，提升类型精度。
+- [x] `FlowDesigner.vue` 改 `<script setup lang="ts">` 获得精确 props 类型。（已完成）
+- [x] 渐进将设计器子组件（属性面板等）TS 化，提升类型精度。（已完成，见下）
 
 ## 进行中 / 已完成
 
@@ -29,5 +29,7 @@
 - [x] **保存 / 修改 / 预览 demo 闭环**：`playground` 完整 demo（列表 / 新建 / 保存 / 修改 / 预览 / 导出 / 删除）+ `demoProvider` localStorage 持久化（2f），playwright 三态闭环 0 error。
 - [x] **库侧零配置加法**：`FlowDesigner` 加 `emit('saved')` 回传 definitionId + `$modal` 调用降级（脱 ruoyi 不崩），向后兼容（2f）。
 - [x] **预览只读 BUG 修复**：预览态（`disabled+onlyDesignShow`）画布彻底只读——经典 `isSilentMode`、仿钉钉编辑图标 / ✕删除 / 边「+」加号隐藏（`canEdit` + `skip.ts` getPlusElements）、4 个编辑事件 `disabled` 拦截（2g）。playwright 预览态三控件全消失、console 0 报错；`build:lib` exit 0（es.js 304.63KB）。
+
+- [x] **设计器 TS 化**：`FlowDesigner.vue` 及设计器全部 12 个 `.vue` 子组件（属性面板 `baseInfo`/`propertySetting`/`start`/`between`/`end`/`gateway`/`skip`/`nodeExtList`/`selectUser` + `DiagramSidebar`/`EdgeTooltip`/`baseNode`）改 `<script setup lang="ts">`：props 用 `defineProps<泛型>() + withDefaults` 精确化，`defineEmits`/`ref`/事件参数 TS 化，`getCurrentInstance()!` 收敛；新增 `src/types/global.d.ts` 声明 window 运行期标志（`__WF_*` / 抽屉桥接 / tooltip hover）。`build:lib` 三产物 exit 0（es.js 307.97KB），ReadLints 0 报错。
 
 > 详细决策与验证记录见 `.codex/warm-flow-ui-npm-packaging.md`。

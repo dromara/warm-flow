@@ -97,7 +97,7 @@
   </div>
 </template>
 
-<script setup name="FlowDesigner">
+<script setup lang="ts">
 import LogicFlow from "@logicflow/core";
 import "@logicflow/core/lib/style/index.css";
 import {InsertNodeInPolyline, Menu, Snapshot} from '@logicflow/extension';
@@ -125,7 +125,7 @@ import ParallelM from "@/components/design/mimic/js/parallel";
 import InclusiveM from "@/components/design/mimic/js/inclusive";
 import EndM from "@/components/design/mimic/js/end";
 import SkipM from "@/components/design/mimic/js/skip";
-import {computed, onMounted, onUnmounted, ref, watch} from "vue";
+import {computed, getCurrentInstance, nextTick, onMounted, onUnmounted, ref, watch} from "vue";
 import BaseInfo from "@/components/design/common/vue/baseInfo.vue";
 import initClassicsData from "@/components/design/classics/initClassicsData.json";
 import initMimicData from "@/components/design/mimic/initMimicData.json";
@@ -138,32 +138,45 @@ import { useDark } from '@/composables/useDark';
  * 可复用流程设计器组件：画布核心从「直接读 URL/appParams」改为「props 驱动」，
  * 宿主耦合（URL 主题、postMessage、关闭）由外层页面壳负责，组件本身可被业务方直接 import 使用。
  */
-const props = defineProps({
-  // 流程定义 id（新建态传 null，走本地 initData 渲染）
-  definitionId: { type: String, default: null },
-  // 是否只读（已发布定义或宿主显式禁用）
-  disabled: { type: Boolean, default: false },
-  // 仅显示流程设计画布：隐藏顶部步骤栏、跳过基础信息校验直达画布
-  onlyDesignShow: { type: Boolean, default: false },
-  // 是否显示画布网格点
-  showGrid: { type: Boolean, default: false }
+defineOptions({ name: 'FlowDesigner' });
+
+/** 可复用流程设计器组件的 props 定义（props 驱动，宿主耦合由外层页面壳负责）。 */
+interface FlowDesignerProps {
+  /** 流程定义 id（新建态传 null，走本地 initData 渲染） */
+  definitionId?: string | null;
+  /** 是否只读（已发布定义或宿主显式禁用） */
+  disabled?: boolean;
+  /** 仅显示流程设计画布：隐藏顶部步骤栏、跳过基础信息校验直达画布 */
+  onlyDesignShow?: boolean;
+  /** 是否显示画布网格点 */
+  showGrid?: boolean;
+}
+const props = withDefaults(defineProps<FlowDesignerProps>(), {
+  definitionId: null,
+  disabled: false,
+  onlyDesignShow: false,
+  showGrid: false,
 });
-const emit = defineEmits(['close', 'saved']);
+/** 保存成功回传：当前定义 id、后端返回数据（如新建后的 definitionId）与本次保存的流程 json */
+const emit = defineEmits<{
+  (e: 'close'): void;
+  (e: 'saved', payload: { id: string | null; data: any; json: string }): void;
+}>();
 
-const { proxy } = getCurrentInstance();
+const { proxy } = getCurrentInstance()!;
 
-const lf = ref(null);
-const definitionId = ref(props.definitionId);
-const nodeClick = ref(null);
-const disabled = ref(props.disabled);
-const propertySettingRef = ref({});
-const logicJson = ref({});
-const jsonString = ref('');
+const lf = ref<any>(null);
+const definitionId = ref<string | null>(props.definitionId);
+const nodeClick = ref<any>(null);
+const disabled = ref<boolean>(props.disabled);
+const propertySettingRef = ref<any>({});
+const logicJson = ref<Record<string, any>>({});
+const jsonString = ref<any>('');
 const skipConditionShow = ref(true);
-const nodes = ref([]);
-const skips = ref([]);
-const categoryList = ref([]);
-const formPathList = ref([]);
+const nodes = ref<any[]>([]);
+const skips = ref<any[]>([]);
+const categoryList = ref<any[]>([]);
+const formPathList = ref<any[]>([]);
 // 控制侧边栏显示：延迟到 initLogicFlow 完成后显示，避免与 LogicFlow DOM 初始化冲突
 const sidebarVisible = ref(false);
 // 使用统一的暗黑模式 composable
@@ -229,7 +242,7 @@ const tooltipVisible = ref(false);
 const tooltipPosition = ref({ x: 0, y: 0 });
 const tooltipEdge = ref({});
 
-const handleOptionClick = (item) => {
+const handleOptionClick = (item: any) => {
   if (item.icon === "between") {
     addBetweenNode(lf.value, item.tooltipEdge);
   } else {
@@ -240,7 +253,7 @@ const handleOptionClick = (item) => {
   proxy.$nextTick(() => { fitViewIfMobile(); });
 };
 
-async function handleStepClick(index) {
+async function handleStepClick(index: number) {
   if (activeStep.value === 0 && !onlyDesignShow.value) {
     let validate = await proxy.$refs.baseInfoRef.validate();
     if (!validate) return
@@ -445,7 +458,7 @@ onUnmounted(() => {
 });
 
 // 监听窗口变化，真机旋转屏幕时重绘（带防抖 + 标志位屏蔽抽屉操作干扰）
-let _resizeTimer = null;
+let _resizeTimer: ReturnType<typeof setTimeout> | null = null;
 let _drawerActive = false; // 抽屉操作期间禁止 resize 重绘画布 + 阻止触摸事件桥接
 let _lastCanvasSize = { w: 0, h: 0 };
 function handleMobileResize() {
@@ -484,7 +497,7 @@ window._markDrawerClosed = () => {
 /**
  * 自定义拖拽面板：监听子组件 dragInNode 事件，调用 lf.dnd.startDrag
  */
-function handleDragInNode(type, properties = {}, text) {
+function handleDragInNode(type: string, properties: Record<string, any> = {}, text?: string) {
   if (lf.value) {
     lf.value.dnd.startDrag({
       text,
@@ -505,7 +518,7 @@ function getBaseInfo() {
   };
 }
 
-function handleFlowNameUpdate(newName) {
+function handleFlowNameUpdate(newName: string) {
   logicJson.value.flowName = newName; // 更新父组件中的流程名称
 }
 
@@ -627,7 +640,7 @@ function initTouchEventBridge() {
  * @param {Element} el 目标 DOM 元素
  * @param {Object} options 配置项
  */
-function setupPointerEventCapture(el) {
+function setupPointerEventCapture(el: Element) {
   // --- 双击检测状态 ---
   let tapCount = 0;
   let lastTapTime = 0;
@@ -666,7 +679,7 @@ function setupPointerEventCapture(el) {
   /**
    * 统一获取坐标参数（用于构造 MouseEvent）
    */
-  function getEventOpts(pointerEvent) {
+  function getEventOpts(pointerEvent: PointerEvent) {
     return {
       clientX: pointerEvent.clientX,
       clientY: pointerEvent.clientY,
@@ -678,7 +691,7 @@ function setupPointerEventCapture(el) {
   }
 
   // ========== pointerdown ==========
-  el.addEventListener('pointerdown', (e) => {
+  el.addEventListener('pointerdown', (e: PointerEvent) => {
     // 只处理主指针（手指/鼠标左键/触控笔）
     if (e.pointerType === 'mouse' && e.button !== 0) return;
 
@@ -712,7 +725,7 @@ function setupPointerEventCapture(el) {
   }, { passive: false });
 
   // ========== pointermove ==========
-  el.addEventListener('pointermove', (e) => {
+  el.addEventListener('pointermove', (e: PointerEvent) => {
     // 【修复】抽屉打开期间：完全拦截触摸移动事件
     if (isDrawerOpen() && e.pointerType === 'touch') {
       e.preventDefault();
@@ -744,7 +757,7 @@ function setupPointerEventCapture(el) {
   }, { passive: false });
 
   // ========== pointerup / pointercancel ==========
-  function handlePointerEnd(e) {
+  function handlePointerEnd(e: PointerEvent) {
     // 【修复】抽屉打开期间：拦截触摸释放事件
     if (isDrawerOpen() && e.pointerType === 'touch') {
       resetTapState();
@@ -809,7 +822,7 @@ function setupPointerEventCapture(el) {
   }
 
   el.addEventListener('pointerup', handlePointerEnd);
-  el.addEventListener('pointercancel', (e) => {
+  el.addEventListener('pointercancel', (e: PointerEvent) => {
     // 中断：如果正在拖动需要补发 mouseup
     if (isDragging && e.pointerType === 'touch') {
       el.dispatchEvent(new MouseEvent('mouseup', getEventOpts(e)));
@@ -992,7 +1005,7 @@ function initEvent() {
  * 缩放视口：放大/缩小/自适应
  * @param {boolean|string|number} zoom - true=放大(内置刻度), false=缩小(内置刻度), 'fit'=fitView自适应全部节点, number=直接设置缩放比例
  */
-const zoomViewport = async (zoom) => {
+const zoomViewport = async (zoom: boolean | number | string) => {
   if (zoom === true) {
     // 放大（使用 LogicFlow 内置刻度，每次按固定比例放大）
     lf.value.zoom(true);
@@ -1020,7 +1033,7 @@ const zoomViewport = async (zoom) => {
   }
 };
 
-const undoOrRedo = async (undo) => {
+const undoOrRedo = async (undo: boolean) => {
   if(undo){
     lf.value.undo(undo)
   }else{

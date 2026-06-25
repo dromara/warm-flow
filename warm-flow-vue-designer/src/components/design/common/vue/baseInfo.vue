@@ -127,12 +127,17 @@
   </div>
 </template>
 
-<script setup name="BaseInfo">
-import { ref, onMounted, onUnmounted, watch } from "vue";
+<script setup lang="ts">
+import { getCurrentInstance, onMounted, onUnmounted, ref, watch } from "vue";
 import {listenerList} from "@/api/flow/definition";
 
-const { proxy } = getCurrentInstance();
-const emit = defineEmits(['update:flow-name', 'update:model-value']);
+defineOptions({ name: 'BaseInfo' });
+
+const { proxy } = getCurrentInstance()!;
+const emit = defineEmits<{
+  (e: 'update:flow-name', flowName: string): void;
+  (e: 'update:model-value'): void;
+}>();
 
 // 响应式屏幕检测
 const isMobile = ref(false);
@@ -154,35 +159,24 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('resize', checkMobile);
 });
-const props = defineProps({
-  disabled: { // 是否禁止
-    type: Boolean,
-    default: false
-  },
-  logicJson: {
-    type: Object,
-    default () {
-      return {}
-    }
-  },
-  categoryList: {
-    type: Array,
-    default () {
-      return []
-    }
-  },
-  formPathList: {
-      type: Array,
-      default () {
-          return []
-      }
-  },
-  definitionId: {
-    type: String,
-    default () {
-      return null
-    }
-  },
+interface BaseInfoProps {
+  /** 是否只读 */
+  disabled?: boolean;
+  /** 流程基础信息（数据源） */
+  logicJson?: Record<string, any>;
+  /** 流程类别树 */
+  categoryList?: any[];
+  /** 自定义表单路径树 */
+  formPathList?: any[];
+  /** 流程定义 id（新建态为 null） */
+  definitionId?: string | null;
+}
+const props = withDefaults(defineProps<BaseInfoProps>(), {
+  disabled: false,
+  logicJson: () => ({}),
+  categoryList: () => [],
+  formPathList: () => [],
+  definitionId: null,
 });
 
 const form = ref({
@@ -258,7 +252,7 @@ function handleAddRow() {
 }
 
 // 删除行
-function handleDeleteRow(index) {
+function handleDeleteRow(index: number) {
   form.value.listenerRows.splice(index, 1);
 }
 
@@ -277,7 +271,7 @@ function validate() {
   });
 }
 
-function nameChange(flowName) {
+function nameChange(flowName: string) {
   // 可以在这里添加额外的逻辑，比如验证或格式化
   emit('update:flow-name', flowName); // 如果需要通知父组件
 }
@@ -302,7 +296,7 @@ function getListenerList() {
 }
 
 // 处理监听器路径变化，级联更新类型
-function handleListenerPathChange(path, row) {
+function handleListenerPathChange(path: string, row: any) {
     if (!path) {
         // 清空时，也清空类型
         row.listenerType = '';

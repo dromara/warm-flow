@@ -12,22 +12,23 @@
   </div>
 </template>
 
-<script setup name="Gateway">
+<script setup lang="ts">
+import { ref } from 'vue';
 
-const props = defineProps({
-  modelValue: {
-    type: Object,
-    default () {
-      return {}
-    }
-  },
-  disabled: { // 是否禁止
-    type: Boolean,
-    default: false
-  },
+defineOptions({ name: 'Gateway' });
+
+interface GatewayProps {
+  /** 节点表单数据（v-model） */
+  modelValue?: Record<string, any>;
+  /** 是否只读 */
+  disabled?: boolean;
+}
+const props = withDefaults(defineProps<GatewayProps>(), {
+  modelValue: () => ({}),
+  disabled: false,
 });
 
-const form = ref(props.modelValue);
+const form = ref<Record<string, any>>(props.modelValue);
 
 </script>
 

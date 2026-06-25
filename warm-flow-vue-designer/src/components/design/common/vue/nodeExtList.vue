@@ -86,32 +86,30 @@
     </wf-dialog>
 </template>
 
-<script setup name="NodeExtList">
+<script setup lang="ts">
+import { getCurrentInstance, ref } from 'vue';
 import SelectUser from "@/components/design/common/vue/selectUser.vue";
 import {handlerFeedback} from "@/api/flow/definition";
 
-const {proxy} = getCurrentInstance();
+defineOptions({ name: 'NodeExtList' });
 
-const props = defineProps({
-    modelValue: {
-        type: Object,
-        default() {
-            return {}
-        }
-    },
-    formList: { // 表单项列表
-        type: Array,
-        default() {
-            return []
-        }
-    },
-    disabled: { // 是否禁止
-        type: Boolean,
-        default: false
-    },
+const {proxy} = getCurrentInstance()!;
+
+interface NodeExtListProps {
+  /** 扩展属性表单数据（v-model） */
+  modelValue?: Record<string, any>;
+  /** 表单项列表（节点扩展属性定义） */
+  formList?: any[];
+  /** 是否只读 */
+  disabled?: boolean;
+}
+const props = withDefaults(defineProps<NodeExtListProps>(), {
+  modelValue: () => ({}),
+  formList: () => [],
+  disabled: false,
 });
 
-const form = ref(props.modelValue);
+const form = ref<Record<string, any>>(props.modelValue);
 const userVisible = ref(false);
 const permissionRows = ref({}); // 办理人表格
 const itemCode = ref(''); // 办理人表格
@@ -126,14 +124,14 @@ async function validate() {
 }
 
 // 打开选择弹窗
-function openSelectDialog(code) {
+function openSelectDialog(code: string) {
     itemCode.value = code
     userVisible.value = true;
 }
 
 
 // 获取选中用户数据
-function handleUserSelect(checkedItemList, code) {
+function handleUserSelect(checkedItemList: any[], code: string) {
     form.value[code] = checkedItemList.map(e => {
         return e.storageId;
     }).filter(n => n);
@@ -143,7 +141,7 @@ function handleUserSelect(checkedItemList, code) {
 }
 
 // 删除用户
-function delPermission(code, row) {
+function delPermission(code: string, row: any) {
     if (permissionRows.value[code] && permissionRows.value[code].length > 0) {
         permissionRows.value[code] = permissionRows.value[code].filter(e => e.storageId !== row.storageId);
 

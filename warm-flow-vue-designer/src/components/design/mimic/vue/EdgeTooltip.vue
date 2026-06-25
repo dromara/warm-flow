@@ -9,15 +9,23 @@
     </div>
 </template>
 
-<script setup name="EdgeTooltip">
+<script setup lang="ts">
 import { computed } from 'vue';
 import { useDark } from '@/composables/useDark';
 
+defineOptions({ name: 'EdgeTooltip' });
+
 const { isDark, themeColors } = useDark();
 
-const props = defineProps({
-  position: Object,
-  tooltipEdge: Object,
+interface EdgeTooltipProps {
+  /** 浮层位置（画布坐标） */
+  position?: { x: number; y: number };
+  /** 关联的边 model */
+  tooltipEdge?: Record<string, any>;
+}
+const props = withDefaults(defineProps<EdgeTooltipProps>(), {
+  position: () => ({ x: 0, y: 0 }),
+  tooltipEdge: () => ({}),
 });
 
 const options = [
@@ -27,7 +35,10 @@ const options = [
   { icon: 'inclusive', label: '包含网关' },
 ]
 
-const emit = defineEmits(['option-click', 'close-tooltip']);
+const emit = defineEmits<{
+  (e: 'option-click', item: any): void;
+  (e: 'close-tooltip'): void;
+}>();
 
 /** 动态计算 tooltip 样式，根据暗黑模式切换颜色 */
 const tooltipStyle = computed(() => ({
@@ -56,7 +67,7 @@ function handleTooltipLeave() {
   emit('close-tooltip');
 }
 
-const handleClick = (item) => {
+const handleClick = (item: any) => {
   item['tooltipEdge'] = props.tooltipEdge;
   emit('option-click', item);
 };

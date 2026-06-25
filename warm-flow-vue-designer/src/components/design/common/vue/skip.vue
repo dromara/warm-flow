@@ -36,29 +36,29 @@
   </div>
 </template>
 
-<script setup name="Skip">
+<script setup lang="ts">
 
+import { computed, reactive, ref, watch } from 'vue';
 import {getFramework} from "@/utils/auth";
 
-const props = defineProps({
-  modelValue: {
-    type: Object,
-    default() {
-      return {}
-    }
-  },
-  disabled: { // 是否禁止
-    type: Boolean,
-    default: false
-  },
-  skipConditionShow: { // 是否显示跳转条件
-    type: Boolean,
-    default: true
-  },
+defineOptions({ name: 'Skip' });
+
+interface SkipProps {
+  /** 边表单数据（v-model） */
+  modelValue?: Record<string, any>;
+  /** 是否只读 */
+  disabled?: boolean;
+  /** 是否显示跳转条件 */
+  skipConditionShow?: boolean;
+}
+const props = withDefaults(defineProps<SkipProps>(), {
+  modelValue: () => ({}),
+  disabled: false,
+  skipConditionShow: true,
 });
 
 const expressFlag = ref(false)
-const form = ref(props.modelValue)
+const form = ref<Record<string, any>>(props.modelValue)
 const framework = getFramework()
 
 const rules = reactive({
@@ -100,7 +100,7 @@ watch(() => form, n => {
 
 }, {deep: true});
 
-function changeOper(obj) {
+function changeOper(obj: string) {
   expressFlag.value = (['spel', 'default', 'snel'].includes(obj));
 }
 
@@ -118,7 +118,7 @@ if (['spel', 'default', 'snel'].includes(props.modelValue?.conditionType)) {
   expressFlag.value = true;
 }
 
-function validateDefault(rule, value, callback) {
+function validateDefault(rule: any, value: any, callback: (error?: Error) => void) {
     value = value.replace('default@@', '').replace('=', '').trim();
     if (value === '' || value === undefined || value === null) {
         callback(new Error('请输入默认表达式'));
@@ -129,7 +129,7 @@ function validateDefault(rule, value, callback) {
     }
 }
 
-function validateSpel(rule, value, callback) {
+function validateSpel(rule: any, value: any, callback: (error?: Error) => void) {
     value = value.replace('spel@@', '').replace('=', '').trim();
     if (value === '' || value === undefined || value === null) {
         callback(new Error('请输入spel表达式'));
@@ -140,7 +140,7 @@ function validateSpel(rule, value, callback) {
     }
 }
 
-function validateSnel(rule, value, callback) {
+function validateSnel(rule: any, value: any, callback: (error?: Error) => void) {
     value = value.replace('snel@@', '').replace('=', '').trim();
     if (value === '' || value === undefined || value === null) {
         callback(new Error('请输入snel表达式'));

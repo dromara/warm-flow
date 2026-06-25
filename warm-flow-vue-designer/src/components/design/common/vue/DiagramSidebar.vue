@@ -43,13 +43,17 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import {
   startIcon, betweenIcon, endIcon,
   serialIcon, parallelIcon, inclusiveIcon,
 } from '@/components/design/classics/js/sidebarIcons'
 
-const emit = defineEmits(['dragInNode'])
+defineOptions({ name: 'DiagramSidebar' });
+
+const emit = defineEmits<{
+  (e: 'dragInNode', type: string, properties: Record<string, any>, text: any): void;
+}>()
 
 // 基础节点（开始/中间/结束）
 const flowNodes = [
@@ -65,7 +69,7 @@ const gatewayNodes = [
   { type: 'inclusive', text: '', label: '包含网关', icon: inclusiveIcon, properties: {} },
 ]
 
-function handleDragInNode(item) {
+function handleDragInNode(item: any) {
   emit('dragInNode', item.type, item.properties, item.text || {})
 }
 </script>

@@ -262,48 +262,39 @@
   </div>
 </template>
 
-<script setup name="Between">
+<script setup lang="ts">
+import { computed, getCurrentInstance, reactive, ref, watch } from 'vue';
 import selectUser from "./selectUser";
 import {publishedList, handlerDict, nodeExt, handlerFeedback, listenerList} from "@/api/flow/definition";
 import nodeExtList from "./nodeExtList";
 import {getPreviousNodes} from "@/components/design/common/js/tool";
 import {getFramework} from "@/utils/auth";
-const { proxy } = getCurrentInstance();
 
-const props = defineProps({
-  modelValue: {
-    type: Object,
-    default () {
-      return {}
-    }
-  },
-  disabled: { // 是否禁止
-    type: Boolean,
-    default: false
-  },
-  // 是否展示所有协作方式
-  showWays: {
-    type: Boolean,
-    default: true
-  },
-  nodes: {
-    type: Array,
-    default () {
-      return []
-    }
-  },
-  skips: {
-    type: Array,
-    default () {
-      return []
-    }
-  },
-  formPathList: {
-      type: Array,
-      default () {
-          return []
-      }
-  },
+defineOptions({ name: 'Between' });
+
+const { proxy } = getCurrentInstance()!;
+
+interface BetweenProps {
+  /** 节点表单数据（v-model） */
+  modelValue?: Record<string, any>;
+  /** 是否只读 */
+  disabled?: boolean;
+  /** 是否展示所有协作方式 */
+  showWays?: boolean;
+  /** 画布节点列表 */
+  nodes?: any[];
+  /** 画布边列表 */
+  skips?: any[];
+  /** 自定义表单路径树 */
+  formPathList?: any[];
+}
+const props = withDefaults(defineProps<BetweenProps>(), {
+  modelValue: () => ({}),
+  disabled: false,
+  showWays: true,
+  nodes: () => [],
+  skips: () => [],
+  formPathList: () => [],
 });
 
 const tabsValue = ref("1");
@@ -321,18 +312,18 @@ const tabsList = ref([
   { label: "办理人设置", name: "2", iconPath: TAB_ICONS.handler },
   { label: "监听器", name: "3", iconPath: TAB_ICONS.listener },
 ]);
-const form = ref(props.modelValue);
+const form = ref<Record<string, any>>(props.modelValue);
 const userVisible = ref(false);
 const framework = getFramework()
 //基础设置扩展属性
-const baseList = ref([]);
+const baseList = ref<any[]>([]);
 //按钮权限
-const buttonList = ref({});
-const definitionList = ref([]); // 流程表单列表
-const dictList = ref(); // 办理人选项
-const permissionRows = ref([]); // 办理人表格
-const ListenerVo = ref([]); // 监听器列表
-const emit = defineEmits(['update:modelValue']);
+const buttonList = ref<Record<string, any>>({});
+const definitionList = ref<any[]>([]); // 流程表单列表
+const dictList = ref<any>(); // 办理人选项
+const permissionRows = ref<any[]>([]); // 办理人表格
+const ListenerVo = ref<any[]>([]); // 监听器列表
+const emit = defineEmits<{ (e: 'update:modelValue', value: any): void }>();
 
 const rules = reactive({
     nodeRatio: computed(() => {
@@ -386,7 +377,7 @@ watch(() => form.value, n => {
   }
 },{ deep: true });
 
-function validatePassRatio(rule, value, callback) {
+function validatePassRatio(rule: any, value: any, callback: (error?: Error) => void) {
     if (value === '' || value === undefined || value === null) {
         callback(new Error('请输入通过率'));
     } else {
@@ -403,7 +394,7 @@ function validatePassRatio(rule, value, callback) {
     }
 }
 
-function validatePassCount(rule, value, callback) {
+function validatePassCount(rule: any, value: any, callback: (error?: Error) => void) {
     if (value === '' || value === undefined || value === null) {
         callback(new Error('请输入固定人数'));
     } else {
@@ -417,7 +408,7 @@ function validatePassCount(rule, value, callback) {
     }
 }
 
-function validateDefault(rule, value, callback) {
+function validateDefault(rule: any, value: any, callback: (error?: Error) => void) {
     value = value.replace('default@@', '').replace('=', '').trim();
     if (value === '' || value === undefined || value === null) {
         callback(new Error('请输入默认表达式'));
@@ -428,7 +419,7 @@ function validateDefault(rule, value, callback) {
     }
 }
 
-function validateSpel(rule, value, callback) {
+function validateSpel(rule: any, value: any, callback: (error?: Error) => void) {
     value = value.replace('spel@@', '').replace('=', '').trim();
     if (value === '' || value === undefined || value === null) {
         callback(new Error('请输入spel表达式'));
@@ -439,7 +430,7 @@ function validateSpel(rule, value, callback) {
     }
 }
 
-function validateSnel(rule, value, callback) {
+function validateSnel(rule: any, value: any, callback: (error?: Error) => void) {
     value = value.replace('snel@@', '').replace('=', '').trim();
     if (value === '' || value === undefined || value === null) {
         callback(new Error('请输入snel表达式'));
@@ -478,7 +469,7 @@ function handleClear() {
 }
 
 // 删除办理人
-function delPermission(index) {
+function delPermission(index: number) {
   form.value.permissionFlag.splice(index, 1);
   permissionRows.value.splice(index, 1);
 }
@@ -488,12 +479,12 @@ function addPermission() {
   permissionRows.value.push({ storageId: "", handlerName: "" });
 }
 // 办理人手动输入，失焦获取权限名称
-function inputBlur(event, index) {
+function inputBlur(event: any, index: number) {
   form.value.permissionFlag[index] = event.target.value;
 }
 
 // 添加在其他函数后面
-function handleTabChange(activeTabName) {
+function handleTabChange(activeTabName: string) {
     // 可以根据不同的 tab 做相应处理
     switch(activeTabName) {
         case '1':
@@ -568,7 +559,7 @@ async function getListenerList() {
 
 
 // 处理监听器路径变化，级联更新类型
-function handleListenerPathChange(path, row) {
+function handleListenerPathChange(path: string, row: any) {
     if (!path) {
         // 清空时，也清空类型
         row.listenerType = '';
@@ -633,7 +624,7 @@ function initUser() {
 }
 
 // 获取选中用户数据
-function handleUserSelect(checkedItemList) {
+function handleUserSelect(checkedItemList: any[]) {
   form.value.permissionFlag = checkedItemList.map(e => {
     return e.storageId;
   }).filter(n => n);
@@ -648,7 +639,7 @@ function handleAddRow() {
 }
 
 // 删除行
-function handleDeleteRow(index) {
+function handleDeleteRow(index: number) {
   form.value.listenerRows.splice(index, 1);
 }
 
@@ -687,7 +678,7 @@ function validate() {
   });
 }
 
-async function tabsValidate(resolve, reject) {
+async function tabsValidate(resolve: (v: boolean) => void, reject: (v: boolean) => void) {
   let addTabsList = tabsList.value.slice(tabsList.value.length);
   if (addTabsList.length === 0) resolve(true);
   // 切换页签做校验

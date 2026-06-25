@@ -77,18 +77,20 @@
   </div>
 </template>
 
-<script setup name="Start">
-const props = defineProps({
-  modelValue: {
-    type: Object,
-    default () {
-      return {}
-    }
-  },
-  disabled: { // 是否禁止
-    type: Boolean,
-    default: false
-  },
+<script setup lang="ts">
+import { computed, getCurrentInstance, ref, watch } from 'vue';
+
+defineOptions({ name: 'Start' });
+
+interface StartProps {
+  /** 节点表单数据（v-model） */
+  modelValue?: Record<string, any>;
+  /** 是否只读 */
+  disabled?: boolean;
+}
+const props = withDefaults(defineProps<StartProps>(), {
+  modelValue: () => ({}),
+  disabled: false,
 });
 
 // Tab 图标（单路径 SVG，viewBox 0 0 24 24，跟随 tab 文字色 currentColor）
@@ -102,15 +104,15 @@ const tabsList = ref([
 ]);
 
 const tabsValue = ref("1");
-const form = ref(props.modelValue);
-const emit = defineEmits(["change"]);
+const form = ref<Record<string, any>>(props.modelValue);
+const emit = defineEmits<{ (e: 'change', value: any): void }>();
 
 // 移动端/平板检测（与 between / baseInfo 统一）
 const isMobile = computed(() => {
   if (typeof window === 'undefined') return false;
   return window.innerWidth <= 768;
 });
-const { proxy } = getCurrentInstance();
+const { proxy } = getCurrentInstance()!;
 
 watch(() => form, n => {
   if (n) {
@@ -137,7 +139,7 @@ function handleAddRow() {
 }
 
 // 删除行
-function handleDeleteRow(index) {
+function handleDeleteRow(index: number) {
   form.value.listenerRows.splice(index, 1);
 }
 </script>

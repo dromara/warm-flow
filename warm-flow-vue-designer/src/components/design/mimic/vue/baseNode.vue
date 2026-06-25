@@ -19,62 +19,49 @@
   </div>
 </template>
 
-<script setup name="BaseInfo">
-import {computed, ref} from 'vue';
+<script setup lang="ts">
+import {computed, ref, watch} from 'vue';
 import {handlerFeedback} from "@/api/flow/definition";
 
-const props = defineProps({
-  text: {
-    type: String,
-    default () {
-      return ''
-    }
-  },
-  permissionFlag: {
-    type: String,
-    default () {
-      return ''
-    }
-  },
-  chartStatusColor: {
-    type: Array,
-    default () {
-      return []
-    }
-  },
-  status: {
-    type: Number,
-    default () {
-      return null
-    }
-  },
-  type: {
-    type: String,
-    default () {
-      return ''
-    }
-  },
-  fill: {
-    type: String,
-    default () {
-      return ''
-    }
-  },
-  stroke: {
-    type: String,
-    default () {
-      return ''
-    }
-  },
+defineOptions({ name: 'BaseInfo' });
+
+interface BaseNodeProps {
+  /** 节点文本（节点名） */
+  text?: string;
+  /** 办理人权限标识（@@ 分隔） */
+  permissionFlag?: string;
+  /** 实例进度图状态色（有值=运行态） */
+  chartStatusColor?: any[];
+  /** 节点状态 */
+  status?: number | null;
+  /** 节点类型 */
+  type?: string;
+  /** 填充色 */
+  fill?: string;
+  /** 描边色 */
+  stroke?: string;
+}
+const props = withDefaults(defineProps<BaseNodeProps>(), {
+  text: '',
+  permissionFlag: '',
+  chartStatusColor: () => [],
+  status: null,
+  type: '',
+  fill: '',
+  stroke: '',
 });
 
 const showSpan = ref(true);
-const baseNodeDiv = ref(null);
+const baseNodeDiv = ref<any>(null);
 const nodeName = ref('发起人');
 const handler = ref('所有人');
-const nodeNameInput = ref(null);
+const nodeNameInput = ref<any>(null);
 const editingNodeName = ref(false);
-const emit = defineEmits(['updateNodeName', 'deleteNode', 'editNode']); // 添加 deleteNode 事件
+const emit = defineEmits<{
+  (e: 'updateNodeName', nodeName: string): void;
+  (e: 'deleteNode'): void;
+  (e: 'editNode'): void;
+}>(); // 添加 deleteNode 事件
 
 // 运行态（流程实例查看，chartStatusColor 有三原色）保留状态语义色；设计态走钉钉蓝卡片风格
 const isRuntime = computed(() => props.chartStatusColor && props.chartStatusColor.length > 0);
