@@ -9,6 +9,8 @@
           <wf-form-item label="节点名称：" prop="nodeName">
             <wf-input v-model="form.nodeName" ref="nodeInput" :disabled="disabled" @change="nodeNameChange"></wf-input>
           </wf-form-item>
+          <!-- 自定义扩展点：消费方可注入额外表单项（透出 { form, disabled }） -->
+          <slot name="node-form-extra" :form="form" :disabled="disabled" />
         </div>
       </div>
     </wf-form>

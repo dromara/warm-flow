@@ -139,6 +139,8 @@
                 placeholder="请选择流程类别"
                 check-strictly/>
         </wf-form-item>
+        <!-- 自定义扩展点：消费方可注入额外表单项（透出 { form, disabled }） -->
+        <slot name="node-form-extra" :form="form" :disabled="disabled" />
           </div>
         </div>
 

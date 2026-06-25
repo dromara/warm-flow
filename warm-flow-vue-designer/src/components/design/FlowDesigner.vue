@@ -87,6 +87,12 @@
         <PropertySetting ref="propertySettingRef" :node="nodeClick" :lf="lf" :disabled="disabled"
                          :skipConditionShow="skipConditionShow" :nodes="nodes" :skips="skips"
                          :form-path-list="formPathList">
+          <!-- 属性面板插槽透传：FlowDesigner → PropertySetting → 节点属性子组件（start/between/gateway/end/skip）。
+               消费方可用 #node-form-extra（透出 { form, disabled }）等具名插槽往节点属性抽屉注入自定义表单项。
+               透传全部插槽：节点子组件未声明的插槽自动忽略，header-*/logo 等不会渲染到属性面板。 -->
+          <template v-for="(_, name) in $slots" #[name]="slotProps">
+            <slot :name="name" v-bind="slotProps || {}" />
+          </template>
         </PropertySetting>
       </div>
       <div class="logo-text" v-if="activeStep === 1"><slot name="logo">Warm-Flow</slot></div>
