@@ -310,8 +310,8 @@ export const setCommonStyle = (style, properties, nodeType, type) => {
  * 让各类节点一眼可辨，同时把发灰的投影替换成同色系柔和阴影。
  *
  * 安全边界（不破坏既有契约）：
- * - 仅在设计器页面生效（window.__WF_FLOW_DESIGN_MODE__），业务侧渲染的流程实例进度图不受影响；
- * - status 为「在办(1) / 已办(2)」时直接返回，继续沿用后端 chartStatusColor 的状态语义；
+ * - 仅在设计器页面生效（window.__WF_FLOW_DESIGN_MODE__）：设计器内一律用新版语义色，不再判断节点运行状态；
+ * - 业务侧渲染的流程实例进度图（非设计器）不受影响，继续沿用后端 chartStatusColor 的状态语义；
  * - 仅经典模式节点调用本函数，仿钉钉模式不调用、行为完全不变。
  *
  * @param {Object} style setCommonStyle 处理后的样式对象
@@ -321,8 +321,8 @@ export const setCommonStyle = (style, properties, nodeType, type) => {
  */
 export const applyClassicDesignColor = (style, properties, rgb) => {
   const inDesigner = typeof window !== 'undefined' && window.__WF_FLOW_DESIGN_MODE__;
-  // 非设计器页面，或节点已有运行状态：保持 setCommonStyle 的状态语义色不变
-  if (!inDesigner || properties.status === 1 || properties.status === 2) {
+  // 仅设计器页面用新版语义色；非设计器保持 setCommonStyle 的状态语义色不变
+  if (!inDesigner) {
     return style;
   }
   style.stroke = `rgb(${rgb})`;
