@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite'
 import path from 'path'
-import dts from 'vite-plugin-dts'
 import createVitePlugins from './vite/plugins'
 
 /**
@@ -17,14 +16,9 @@ const externalDeps = ['vue', 'element-plus']
 
 export default defineConfig(() => {
   return {
-    plugins: [
-      ...createVitePlugins({}, true),
-      dts({
-        include: ['src/ui/elementPlusAdapter.ts', 'src/ui/uiAdapter.ts'],
-        outDir: 'dist-lib',
-        tsconfigPath: './tsconfig.json'
-      })
-    ],
+    // 仅构建 JS 产物（element-plus.es.js）。dts 由主库构建（vite.lib.config.js）统一产出，
+    // 此处不再重复生成，避免 entryRoot 行为异常导致的 dist-lib/ui/src/ui/** 嵌套错乱。
+    plugins: [...createVitePlugins({}, true)],
     resolve: {
       alias: {
         '~': path.resolve(__dirname, './'),

@@ -26,15 +26,56 @@ const externalDeps = [
   '@logicflow/extension'
 ]
 
+// dts 产物落在 dist-lib/src/**。
+const distLibRoot = path.resolve(__dirname, 'dist-lib')
+const distLibSrcRoot = path.join(distLibRoot, 'src')
+
+/**
+ * 修复 unplugin-dts(vite-plugin-dts) 对「@/ 别名派生」相对 import 的「偏移一级」缺陷。
+ *
+ * 现象：源码用 `@/data`（别名=src）等导入时，插件把目标按 entryRoot=src 映射（无 src 前缀），
+ * 却从带 `src/` 前缀的实际输出目录（dist-lib/src/**）计算相对路径，导致 `../../data` 越出到
+ * dist-lib/data（不存在）→ 消费方解析失败、所有导出类型退化为 any。源码原生 `./xxx` 相对导入不受影响。
+ *
+ * 修法：只重锚定「解析后越出 dist-lib/src」的坏 specifier 回 dist-lib/src/**，正确导入原样保留——
+ * 纯路径运算、确定性强，不依赖 api-extractor 打平（该工具链 bundleTypes/entryRoot 行为均异常）。
+ */
+function fixAliasDtsImports(filePath, content) {
+  const fileDir = path.dirname(filePath)
+  return content.replace(
+    /(\bfrom\s+|\bimport\s*\(\s*|\brequire\s*\(\s*)(['"])(\.\.?\/[^'"]+)\2/g,
+    (full, keyword, quote, spec) => {
+      const resolved = path.resolve(fileDir, spec)
+      // 已在 dist-lib/src 内 → 正确（含源码原生 ./ 相对导入），原样保留
+      if (resolved === distLibSrcRoot || resolved.startsWith(distLibSrcRoot + path.sep)) {
+        return full
+      }
+      // 越出到 dist-lib/<X>（少了一层 src）→ 重锚定为 dist-lib/src/<X>
+      if (resolved.startsWith(distLibRoot + path.sep)) {
+        const corrected = path.join(distLibSrcRoot, path.relative(distLibRoot, resolved))
+        let newSpec = path.relative(fileDir, corrected).split(path.sep).join('/')
+        if (!newSpec.startsWith('.')) newSpec = './' + newSpec
+        return keyword + quote + newSpec + quote
+      }
+      return full
+    }
+  )
+}
+
 export default defineConfig(() => {
   return {
     plugins: [
       ...createVitePlugins({}, true),
-      // 生成 .d.ts 类型声明（仅库出口层：designer + data + 类型 shim）
+      // 生成 .d.ts 类型声明。本库唯一的 dts 产出点：include 放宽到整个 src，覆盖三个入口
+      // （designer/index、ui/elementPlusAdapter、ui/antdvAdapter）及 FlowDesigner 组件链路上的全部传递依赖
+      //（ui / components / composables / data），避免漏产导致 import 悬空。
+      // beforeWriteFile 修复 @/ 别名派生 import 的「偏移一级」缺陷（见 fixAliasDtsImports）。
+      // ep / antdv 子构建不再各自产 dts，统一由本构建产出，避免 entryRoot 导致的 dist-lib/ui/src/ui/** 嵌套错乱。
       dts({
-        include: ['src/designer/**/*.ts', 'src/data/**/*.ts', 'src/types/**/*.d.ts'],
+        include: ['src/**/*.ts', 'src/**/*.tsx', 'src/**/*.vue', 'src/**/*.d.ts'],
         outDir: 'dist-lib',
-        tsconfigPath: './tsconfig.json'
+        tsconfigPath: './tsconfig.json',
+        beforeWriteFile: (filePath, content) => ({ content: fixAliasDtsImports(filePath, content) })
       })
     ],
     resolve: {
