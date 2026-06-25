@@ -48,3 +48,4 @@ dist-lib/
 /.cursor/mcp.json
 /.playwright-cli/
 /output/
+/.codex/
