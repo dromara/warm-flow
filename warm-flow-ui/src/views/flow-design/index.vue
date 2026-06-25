@@ -44,8 +44,8 @@
         <div v-if="activeStep === 1">
           <span class="toolbar-group">
             <el-tooltip content="缩小" placement="bottom"><el-button size="small" icon="ZoomOut" @click="zoomViewport(false)"></el-button></el-tooltip>
-            <!-- PC端：原有 zoom(1)+居中；移动端/平板：fitView 自适应显示全部节点 -->
-            <el-tooltip content="自适应" placement="bottom"><el-button size="small" icon="Rank" @click="isMobileDevice() ? zoomViewport('fit') : zoomViewport(1)"></el-button></el-tooltip>
+            <!-- 自适应：所有端均 fitView 显示全部节点 -->
+            <el-tooltip content="自适应" placement="bottom"><el-button size="small" icon="Rank" @click="zoomViewport('fit')"></el-button></el-tooltip>
             <el-tooltip content="放大" placement="bottom"><el-button size="small" icon="ZoomIn" @click="zoomViewport(true)"></el-button></el-tooltip>
           </span>
           <span class="toolbar-group">
@@ -166,10 +166,24 @@ const isMobileDevice = () => {
   return window.innerWidth <= 1024 || ('ontouchstart' in window && window.innerWidth <= 1280);
 };
 
-/** 仅在移动端/平板执行 fitView，PC 端不干预 */
+/** 仅在移动端/平板执行 fitView（用于新增节点等增量操作，避免 PC 编辑时被打断） */
 function fitViewIfMobile() {
   if (isMobileDevice() && lf.value?.fitView) {
     lf.value.fitView(40, 20);
+  }
+}
+
+/** 自适应显示全部节点（所有端）：打开 / 进入流程设计 / 点击「自适应」按钮时使用 */
+function fitViewAll() {
+  const lfInst = lf.value;
+  if (!lfInst?.fitView) return;
+  lfInst.fitView(40, 20);
+  // fitView 会把节点较少的流程放大到撑满画布，这里限制最大缩放 100%：
+  // 流程大 -> 缩小铺满；流程小 -> 保持原始大小并居中，避免进来就糊脸
+  const scale = lfInst.getTransform ? lfInst.getTransform().SCALE_X : 1;
+  if (scale && scale > 1) {
+    lfInst.resetZoom ? lfInst.resetZoom() : lfInst.zoom(1);
+    if (lfInst.translateCenter) lfInst.translateCenter();
   }
 }
 
@@ -368,8 +382,8 @@ function initLogicFlow() {
     initTouchEventBridge();
     if (logicJson.value) {
       lf.value.render(logicJson.value);
-      // 移动端/平板端：自适应显示全部节点；PC 端保持默认行为不干预
-      fitViewIfMobile();
+      // 打开即自适应显示全部节点（所有端）
+      fitViewAll();
     }
     // 初始化完成后，如果当前是暗黑模式，显式应用一次主题（解决 URL 参数初始化时序问题）
     if (isDark.value && lf.value) {
@@ -387,15 +401,15 @@ function initLogicFlow() {
 }
 
 /**
- * 真机兼容：延迟触发 LogicFlow resize + fitView（仅移动端/平板端生效）
- * PC 端不执行自动 fitView，保持用户手动缩放行为
+ * 延迟触发 LogicFlow resize + fitView（所有端）
+ * 覆盖移动端真机 / v-show 切换 / iframe 嵌入等容器尺寸延迟场景
  */
 function scheduleMobileResize() {
   const doFit = () => {
     if (lf.value && lf.value.resize) {
       lf.value.resize();
-      // 仅在移动设备上才执行自动 fitView
-      requestAnimationFrame(fitViewIfMobile);
+      // resize 后自适应显示全部节点（所有端，覆盖布局/iframe 时序）
+      requestAnimationFrame(fitViewAll);
     }
   };
   // 多重延迟策略覆盖各种场景：移动端/v-show切换/iframe嵌入
@@ -408,15 +422,14 @@ function scheduleMobileResize() {
 }
 
 /**
- * 监听步骤切换：从"基础信息"切到"流程设计"时（仅移动端/平板端生效）
- * PC 端不执行自动 fitView，保持用户手动缩放行为
+ * 监听步骤切换：从"基础信息"切到"流程设计"时，自适应显示全部节点（所有端）
  */
 watch(activeStep, (newVal) => {
   if (newVal === 1 && lf.value) {
     const doFit = () => {
       if (lf.value?.resize) {
         lf.value.resize();
-        requestAnimationFrame(fitViewIfMobile);
+        requestAnimationFrame(fitViewAll);
       }
     };
     // 多次延迟确保在各种时序下移动端能正确适配
@@ -998,9 +1011,9 @@ const zoomViewport = async (zoom) => {
       lf.value.translateCenter();
     }
   } else if (zoom === 'fit') {
-    // 移动端/平板端自适应：fitView 将所有节点缩放并居中到画布可视区域
+    // 自适应：显示全部节点并居中，最大缩放 100%（节点少不放大撑屏）
     if (lf.value.fitView) {
-      lf.value.fitView(40, 20);
+      fitViewAll();
     } else {
       // fallback
       if (lf.value.translateCenter) lf.value.translateCenter();

@@ -17,7 +17,7 @@
         <!-- 右侧：工具栏（仅图标，tooltip悬浮显示） -->
         <div class="toolbar-right">
           <el-tooltip content="放大" placement="bottom"><el-button size="small" icon="ZoomIn" @click="zoomViewport(true)"/></el-tooltip>
-          <el-tooltip content="自适应" placement="bottom"><el-button size="small" icon="Rank" @click="isMobileDevice() ? zoomViewport('fit') : zoomViewport(1)"/></el-tooltip>
+          <el-tooltip content="自适应" placement="bottom"><el-button size="small" icon="Rank" @click="zoomViewport('fit')"/></el-tooltip>
           <el-tooltip content="缩小" placement="bottom"><el-button size="small" icon="ZoomOut" @click="zoomViewport(false)"/></el-tooltip>
           <el-tooltip content="下载流程图" placement="bottom"><el-button size="small" icon="Download" @click="downLoad"/></el-tooltip>
         </div>
@@ -217,7 +217,8 @@ const isMobileDevice = () => {
 const zoomViewport = async (mode) => {
   if (!lf.value) return;
   if (mode === 'fit') {
-    lf.value.fitView(40, 20);
+    // 自适应：显示全部节点并居中，最大缩放 100%
+    fitViewIfMobile();
   } else if (mode === 1) {
     lf.value.zoom(1);
     lf.value.translateCenter();
@@ -246,6 +247,12 @@ function fitViewIfMobile() {
   }
 
   lf.value.fitView(40, 20);
+  // 限制最大缩放 100%：节点少时不放大撑屏，保持原始大小并居中
+  const scale = lf.value.getTransform ? lf.value.getTransform().SCALE_X : 1;
+  if (scale && scale > 1) {
+    lf.value.resetZoom ? lf.value.resetZoom() : lf.value.zoom(1);
+    if (lf.value.translateCenter) lf.value.translateCenter();
+  }
 }
 
 /**
