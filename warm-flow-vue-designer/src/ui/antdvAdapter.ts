@@ -423,7 +423,9 @@ const AntTable: Component = defineComponent({
       const a: Record<string, unknown> = { ...attrs }
       const data = a.data
       const emptyText = a['empty-text'] ?? a.emptyText
-      ;['data', 'empty-text', 'emptyText'].forEach((k) => delete a[k])
+      // EP @row-click(row) -> antd customRow.onClick（antd a-table 无 row-click 事件，整行点击需走 customRow）
+      const onRowClick = a.onRowClick as ((row: unknown) => void) | undefined
+      ;['data', 'empty-text', 'emptyText', 'onRowClick'].forEach((k) => delete a[k])
       const colVNodes = collectByName(slots.default ? slots.default() : [], 'WfTableColumn')
       const columns = colVNodes.map((v, idx) => {
         const p = (v.props || {}) as Record<string, unknown>
@@ -452,6 +454,7 @@ const AntTable: Component = defineComponent({
         rowKey: rowKeyOf,
         pagination: false,
         size: 'small',
+        ...(onRowClick ? { customRow: (record: unknown) => ({ onClick: () => onRowClick(record) }) } : {}),
         locale: emptyText ? { emptyText } : undefined
       })
     }

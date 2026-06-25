@@ -219,7 +219,8 @@
                 ></wf-checkbox>
               </template>
               <template #default="scope">
-                <wf-checkbox v-model="scope.row.isChecked" @change="handleCheck(scope.row)"></wf-checkbox>
+                <!-- 仅展示选中态，选择统一由整行点击(@row-click=handleCheck)驱动，避免与行点击重复触发（EP/antd 一致） -->
+                <wf-checkbox :model-value="scope.row.isChecked"></wf-checkbox>
               </template>
             </wf-table-column>
             <wf-table-column label="权限名称" align="center" key="handlerName" prop="handlerName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
