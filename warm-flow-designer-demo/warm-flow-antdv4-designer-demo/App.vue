@@ -2,57 +2,70 @@
   <div class="demo-root">
     <!-- ========== 列表视图 ========== -->
     <div v-if="view === 'list'" class="demo-list">
-      <header class="demo-header">
-        <div class="demo-title">
-          <h1>Warm-Flow Designer <span class="ui-badge ui-badge--antd">Ant Design Vue 4</span></h1>
-          <p>npm 组件库消费示例 · UI 库：Ant Design Vue 4 · 保存 / 修改 / 预览</p>
-        </div>
-        <div class="demo-actions">
-          <a-button type="primary" @click="onCreate">+ 新建流程</a-button>
-          <a-button @click="refresh">刷新</a-button>
-          <a-button danger :disabled="!flows.length" @click="onClearAll">清空</a-button>
+      <!-- Hero 头部 -->
+      <header class="demo-hero">
+        <div class="demo-hero-inner">
+          <div class="demo-hero-text">
+            <div class="demo-hero-brand">
+              <span class="demo-logo">WF</span>
+              <h1>Warm-Flow Designer<span class="ui-badge ui-badge--antd">Ant Design Vue 4</span></h1>
+            </div>
+            <p class="demo-hero-sub">轻量级工作流设计器 · npm 组件库消费示例 · 经典 + 仿钉钉双模式</p>
+            <div class="demo-hero-chips">
+              <span class="chip">UI 适配器可插拔 · EP / antd</span>
+              <span class="chip">localStorage 持久化</span>
+              <span class="chip">保存 / 修改 / 预览闭环</span>
+            </div>
+          </div>
+          <div class="demo-actions">
+            <a-button type="primary" size="large" @click="onCreate">+ 新建流程</a-button>
+            <a-button size="large" @click="refresh">刷新</a-button>
+            <a-button danger size="large" :disabled="!flows.length" @click="onClearAll">清空</a-button>
+          </div>
         </div>
       </header>
 
-      <!-- 用法说明（3 步集成） -->
-      <section class="demo-usage">
-        <div class="demo-usage-title">用法 · 3 步集成（Ant Design Vue 4）</div>
-        <pre class="demo-usage-code">{{ usageCode }}</pre>
-      </section>
+      <main class="demo-main">
+        <!-- 用法说明（3 步集成） -->
+        <section class="demo-card demo-usage">
+          <div class="demo-card-head"><span class="head-dot"></span>用法 · 3 步集成（Ant Design Vue 4）</div>
+          <pre class="demo-usage-code">{{ usageCode }}</pre>
+        </section>
 
-      <a-alert type="info" show-icon :closable="false" class="demo-tip">
-        <template #message>
-          本页以「第三方 import」方式消费 <code>@dromara/warm-flow-designer</code>（alias → dist-lib 产物），
-          通过 <code>setUiAdapter(antdvAdapter)</code> 选 Ant Design Vue 适配器、<code>setDataProvider(createDemoProvider())</code>
-          注入带 localStorage 持久化的数据源；保存后回传的流程会持久化到浏览器，可再次「修改 / 预览 / 导出」。
-        </template>
-      </a-alert>
+        <!-- 流程列表 -->
+        <section class="demo-card">
+          <div class="demo-card-head">
+            <span class="head-dot"></span>流程列表
+            <span class="demo-count">{{ flows.length }}</span>
+            <span class="demo-card-hint">第三方 import 消费 dist-lib，数据持久化于浏览器 localStorage</span>
+          </div>
 
-      <a-table
-        v-if="flows.length"
-        :data-source="flows"
-        :columns="columns"
-        :pagination="false"
-        :row-key="rowKey"
-        class="demo-table"
-        bordered
-      >
-        <template #bodyCell="{ column, record }">
-          <template v-if="column.key === 'model'">
-            <a-tag :color="isClassics(record.modelValue) ? 'green' : 'blue'">
-              {{ isClassics(record.modelValue) ? '经典模式' : '仿钉钉模式' }}
-            </a-tag>
-          </template>
-          <template v-else-if="column.key === 'action'">
-            <a-button type="link" size="small" @click="onEdit(record)">修改</a-button>
-            <a-button type="link" size="small" @click="onPreview(record)">预览</a-button>
-            <a-button type="link" size="small" @click="onExport(record)">导出JSON</a-button>
-            <a-button type="link" size="small" danger @click="onRemove(record)">删除</a-button>
-          </template>
-        </template>
-      </a-table>
+          <a-table
+            v-if="flows.length"
+            :data-source="flows"
+            :columns="columns"
+            :pagination="false"
+            :row-key="rowKey"
+            class="demo-table"
+          >
+            <template #bodyCell="{ column, record }">
+              <template v-if="column.key === 'model'">
+                <a-tag :color="isClassics(record.modelValue) ? 'green' : 'blue'">
+                  {{ isClassics(record.modelValue) ? '经典模式' : '仿钉钉模式' }}
+                </a-tag>
+              </template>
+              <template v-else-if="column.key === 'action'">
+                <a-button type="link" size="small" @click="onEdit(record)">修改</a-button>
+                <a-button type="link" size="small" @click="onPreview(record)">预览</a-button>
+                <a-button type="link" size="small" @click="onExport(record)">导出JSON</a-button>
+                <a-button type="link" size="small" danger @click="onRemove(record)">删除</a-button>
+              </template>
+            </template>
+          </a-table>
 
-      <a-empty v-else description="暂无流程，点击「新建流程」开始设计" class="demo-empty" />
+          <a-empty v-else description="暂无流程，点击「新建流程」开始设计" class="demo-empty" />
+        </section>
+      </main>
     </div>
 
     <!-- ========== 设计器视图 ========== -->
@@ -216,61 +229,131 @@ function onClearAll() {
 
 /* ========== 列表视图 ========== */
 .demo-list {
-  max-width: 1080px;
-  margin: 0 auto;
-  padding: 32px 24px;
+  --accent: #1677ff;
+  --accent-dark: #0958d9;
+  min-height: 100vh;
   box-sizing: border-box;
+  padding-bottom: 40px;
 }
 
-.demo-header {
+/* Hero 头部 */
+.demo-hero {
+  background:
+    radial-gradient(1100px 280px at 14% -50%, rgba(255, 255, 255, 0.28), transparent 60%),
+    linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+  color: #fff;
+  padding: 40px 24px 34px;
+  box-shadow: 0 10px 30px rgba(9, 88, 217, 0.22);
+}
+.demo-hero-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.demo-hero-brand { display: flex; align-items: center; gap: 14px; }
+.demo-logo {
+  width: 46px;
+  height: 46px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: 0.5px;
 }
-
-.demo-title h1 {
+.demo-hero-text h1 {
   margin: 0;
-  font-size: 24px;
-  font-weight: 700;
-  color: #1e293b;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
-
-.demo-title p {
-  margin: 6px 0 0;
-  font-size: 13px;
-  color: #64748b;
-}
-
-.ui-badge {
-  display: inline-block;
-  margin-left: 8px;
-  padding: 2px 10px;
+.demo-hero-sub { margin: 12px 0 0; font-size: 13.5px; color: rgba(255, 255, 255, 0.9); }
+.demo-hero-chips { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
   font-size: 12px;
-  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   color: #fff;
-  border-radius: 10px;
+}
+.ui-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent-dark);
+  background: #fff;
+  border-radius: 999px;
   vertical-align: middle;
 }
-.ui-badge--ep { background: #409eff; }
-.ui-badge--antd { background: #1677ff; }
+.demo-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* 主体内容 */
+.demo-main {
+  max-width: 1120px;
+  margin: -16px auto 0;
+  padding: 0 24px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+/* 卡片 */
+.demo-card {
+  background: #fff;
+  border: 1px solid #eef1f6;
+  border-radius: 14px;
+  box-shadow: 0 6px 24px rgba(15, 23, 42, 0.06);
+  padding: 18px;
+  margin-bottom: 18px;
+}
+.demo-card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 14px;
+}
+.head-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+}
+.demo-count {
+  min-width: 22px;
+  height: 20px;
+  padding: 0 7px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent-dark);
+  background: rgba(22, 119, 255, 0.12);
+  border-radius: 999px;
+}
+.demo-card-hint { margin-left: auto; font-size: 12px; font-weight: 400; color: #94a3b8; }
 
 /* 用法代码块（深色） */
-.demo-usage {
-  margin-bottom: 16px;
+.demo-usage-code {
+  margin: 0;
   background: #0f172a;
   border-radius: 10px;
   padding: 14px 16px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-}
-.demo-usage-title {
-  color: #94a3b8;
-  font-size: 12px;
-  font-weight: 600;
-  margin-bottom: 8px;
-}
-.demo-usage-code {
-  margin: 0;
   color: #e2e8f0;
   font-family: 'SF Mono', Monaco, Menlo, Consolas, monospace;
   font-size: 12.5px;
@@ -279,26 +362,12 @@ function onClearAll() {
   overflow-x: auto;
 }
 
-.demo-tip {
-  margin-bottom: 18px;
-  border-radius: 10px;
-  line-height: 1.7;
-}
-.demo-tip code {
-  background: rgba(22, 119, 255, 0.12);
-  color: #1677ff;
-  padding: 1px 6px;
-  border-radius: 4px;
-  font-size: 12px;
-}
-
 .demo-table {
-  border-radius: 12px;
+  border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
 }
 .demo-empty {
-  margin-top: 64px;
+  margin: 32px 0;
 }
 
 /* ========== 设计器视图 ========== */

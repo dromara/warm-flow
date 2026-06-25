@@ -205,17 +205,16 @@ defineExpose({
   html.dark & { background: var(--wf-bg-color, #141414); border-radius: var(--wf-radius-lg, 12px); }
 }
 
-/* ========== 2. 表单项通用样式 ========== */
-.nodeExtForm :deep(.el-form-item) {
-  margin-bottom: 20px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--wf-border-lighter, #ebeef5);
+/* ========== 2. 表单项通用样式（与其它 Tab 统一：紧凑、无分隔线，EP/antd 一致） ========== */
+.nodeExtForm :deep(.el-form-item),
+.nodeExtForm :deep(.ant-form-item) {
+  margin-bottom: 18px;
+  padding-bottom: 0;
+  border-bottom: none;
   transition: var(--wf-transition, all 0.3s ease);
 
   &:last-child {
-    border-bottom: none;
     margin-bottom: 0;
-    padding-bottom: 0;
   }
 }
 
