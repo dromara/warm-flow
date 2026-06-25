@@ -32,4 +32,21 @@
 
 - [x] **设计器 TS 化**：`FlowDesigner.vue` 及设计器全部 12 个 `.vue` 子组件（属性面板 `baseInfo`/`propertySetting`/`start`/`between`/`end`/`gateway`/`skip`/`nodeExtList`/`selectUser` + `DiagramSidebar`/`EdgeTooltip`/`baseNode`）改 `<script setup lang="ts">`：props 用 `defineProps<泛型>() + withDefaults` 精确化，`defineEmits`/`ref`/事件参数 TS 化，`getCurrentInstance()!` 收敛；新增 `src/types/global.d.ts` 声明 window 运行期标志（`__WF_*` / 抽屉桥接 / tooltip hover）。`build:lib` 三产物 exit 0（es.js 307.97KB），ReadLints 0 报错。
 
+- [x] **组件库通用化（slot / hook / 命令式 API / 子组件导出）**：让 `FlowDesigner` 从「黑盒页面」升级为可编排组件库。
+  - **slot 扩展点**（全部带回退，不传则行为不变）：`header-left`（流程名区，透出 flowName）、`header-actions`（保存按钮区，透出 save/disabled）、`toolbar-extra`（工具栏追加自定义按钮，透出 lf/disabled）、`logo`（水印）。
+  - **命令式 API**（`defineExpose`）：`save / validate / getGraphData / getFlowJson / getFlowName / getLogicFlow / zoom / zoomIn / zoomOut / fitView / resetZoom / undo / redo / clear / downloadImage / downloadJson`，宿主无需依赖内部按钮即可程序化操控。
+  - **`ready` 事件**：画布初始化完成透出底层 LogicFlow 实例，便于高级定制（自定义事件 / 主题 / 扩展）。
+  - **组合式 hook**：新增 `src/composables/useFlowDesigner.ts`（`{ designerRef, isReady, save, ... }`，空安全包装）；并对外导出既有 `useDark`。
+  - **可组合子组件导出**：`BaseInfo` / `PropertySetting` / `DiagramSidebar`（高级用法，需先 `app.use` + `setUiAdapter`）。
+  - **公共类型集中**：新增 `src/designer/types.ts`（`FlowDesignerProps` / `FlowDesignerInstance` / `FlowDesignerSavedPayload` / `FlowDesignerReadyPayload`），入口统一 re-export；`vite.lib.config.js` dts include 增补 `src/composables/**` 使 hook/类型声明随包产出。
+  - `build:lib` 三产物 exit 0（es.js 311.5KB），ReadLints 0 报错，完全向后兼容（纯增量，未改默认行为）。
+
+## 已知问题 / 待修
+
+- [x] **发布类型在消费方退化为 any（既有缺陷，影响所有导出类型）——已修复**。
+  - **根因（两个叠加问题）**：① `vite-plugin-dts@5.0.2` 实为 `unplugin-dts@1.0.2` 转发，对**`@/` 别名派生**的相对 import 计算偏移一级——产物落在 `dist-lib/src/**`，却把别名目标按 entryRoot=src 锚定（少一层 `src`），生成 `../../data` 越出到 `dist-lib/data`（不存在）→ `tsc` 解析失败、`FlowDesignerInstance`/`DataProvider`/`ComponentSize`/`UiAdapter` 等**全部导出类型在消费方退化为 any**（源码原生 `./xxx` 相对导入不受影响）。② 主入口 UI 无关，不引用 `ui/elementPlusAdapter`、`ui/antdvAdapter` 等，**传递依赖 dts 漏产**（import 悬空，同样退化为 any）。
+  - **排查中排除的歧路**：`rollupTypes` 该版本不存在（被静默忽略）；`bundleTypes:true`（api-extractor 打平）入口识别错误，产物只剩 `export {}`+global；`entryRoot` 行为异常（试出 `dist-lib/ui/src/ui/**` 双层嵌套，与上一轮记录一致）。故均不可用。
+  - **最终修法（确定性、不加依赖、不改发布元信息）**：(1) `vite.lib.config.js` 把 dts `include` 放宽到整个 `src` 并作为**唯一 dts 产出点**；(2) `tsconfig.json` `include` 补 `src/ui`、`src/composables`，使两个适配器与 composables 进入程序图被产出；(3) `beforeWriteFile` 钩子 `fixAliasDtsImports`：**只重锚定「解析后越出 `dist-lib/src`」的坏 specifier** 回 `dist-lib/src/**`，正确导入原样保留；(4) `vite.ep.config.js` / `vite.antdv.config.js` 移除各自 dts 插件（统一由主构建产出，规避 `entryRoot` 嵌套错乱）。`package.json` 四处 types 路径维持 `dist-lib/src/**` 不变。
+  - **验证**：`build:lib` 三产物 exit 0；全量扫描 48 个 `.d.ts` / 25 处相对 import **0 处未解析**；临时 tsc 消费用例对主入口 + `/element-plus` + `/antdv` 五个探针由「退化为 any（TS2578）」转为**全部正确解析（exit 0）**；EP / antdv 两个 demo `vite build` 均 exit 0。
+
 > 详细决策与验证记录见 `.codex/warm-flow-ui-npm-packaging.md`。

@@ -3,6 +3,10 @@ import '@/icons'
 
 import FlowDesigner from '@/components/design/FlowDesigner.vue'
 import SvgIcon from '@/components/SvgIcon/index.vue'
+// 设计器可组合子组件（高级用法：自行编排基础信息 / 节点属性面板 / 拖拽侧边栏）
+import BaseInfo from '@/components/design/common/vue/baseInfo.vue'
+import PropertySetting from '@/components/design/common/vue/propertySetting.vue'
+import DiagramSidebar from '@/components/design/common/vue/DiagramSidebar.vue'
 import {
   setupDataProvider,
   setDataProvider,
@@ -17,6 +21,17 @@ import type { UiAdapter, UiFeedbackType, UiFeedbackOptions, UiLoadingHandle, UiC
 import { registerWfComponents } from '@/ui/components'
 import { setComponentSize, getComponentSize } from '@/ui/designerOptions'
 import type { ComponentSize } from '@/ui/designerOptions'
+// 组合式 API（hooks）
+import { useFlowDesigner } from '@/composables/useFlowDesigner'
+import type { UseFlowDesignerReturn } from '@/composables/useFlowDesigner'
+import { useDark } from '@/composables/useDark'
+// 公共类型（消费方可直接 import 用于模板 ref / 事件回调标注）
+import type {
+  FlowDesignerProps,
+  FlowDesignerInstance,
+  FlowDesignerSavedPayload,
+  FlowDesignerReadyPayload
+} from '@/designer/types'
 
 /** WarmFlowDesigner 插件安装选项。 */
 export interface WarmFlowDesignerOptions {
@@ -87,10 +102,27 @@ export {
   getUiAdapter,
   // 全局 UI 选项：设置 / 获取设计器组件尺寸（small / default / large）
   setComponentSize,
-  getComponentSize
+  getComponentSize,
+  // 组合式 API：命令式操控设计器（save / zoom / getFlowJson 等，空安全包装）
+  useFlowDesigner,
+  // 组合式 API：暗黑模式与主题颜色（isDark / themeColors / setCustomThemeColors 等）
+  useDark,
+  // 设计器可组合子组件（高级用法）：基础信息表单 / 节点属性面板 / 拖拽侧边栏
+  // 需先 app.use(WarmFlowDesigner) + setUiAdapter，依赖全局 wf-* 组件与 svg-icon
+  BaseInfo,
+  PropertySetting,
+  DiagramSidebar
 }
 export type { DataProvider }
 export type { UiAdapter, UiFeedbackType, UiFeedbackOptions, UiLoadingHandle, UiComponents }
 export type { ComponentSize }
+// FlowDesigner 相关公共类型：props / 命令式实例 / 事件 payload / hook 返回值
+export type {
+  FlowDesignerProps,
+  FlowDesignerInstance,
+  FlowDesignerSavedPayload,
+  FlowDesignerReadyPayload,
+  UseFlowDesignerReturn
+}
 
 export default WarmFlowDesigner

@@ -2,16 +2,18 @@
   <div :style="headerDiv">
     <!-- 顶部导航栏 -->
     <div class="design-header" v-if="!onlyDesignShow">
-      <!-- 左侧：流程名称 -->
+      <!-- 左侧：流程名称（slot: header-left 可整体替换，透出 flowName） -->
       <div class="header-left">
-        <div class="flow-name-wrapper">
-          <wf-tooltip :content="logicJson.flowName" placement="bottom" :show-after="500">
-            <div class="flow-name">
-                <svg-icon icon-class="flowName" style="margin-right: 5px"/>
-                {{ logicJson.flowName || '未命名流程' }}
-            </div>
-          </wf-tooltip>
-        </div>
+        <slot name="header-left" :flow-name="logicJson.flowName">
+          <div class="flow-name-wrapper">
+            <wf-tooltip :content="logicJson.flowName" placement="bottom" :show-after="500">
+              <div class="flow-name">
+                  <svg-icon icon-class="flowName" style="margin-right: 5px"/>
+                  {{ logicJson.flowName || '未命名流程' }}
+              </div>
+            </wf-tooltip>
+          </div>
+        </slot>
       </div>
 
       <!-- 中间：步骤切换 -->
@@ -30,12 +32,14 @@
         </div>
       </div>
 
-      <!-- 右侧：保存按钮 -->
+      <!-- 右侧：保存按钮（slot: header-actions 可追加 / 替换操作按钮，透出 save / disabled） -->
       <div class="header-right">
-        <wf-button class="save-btn" size="default" @click="saveJsonModel" v-if="!disabled">
-          <svg-icon icon-class="save" class="save-icon"/>
-          <span>保存</span>
-        </wf-button>
+        <slot name="header-actions" :save="saveJsonModel" :disabled="disabled">
+          <wf-button class="save-btn" size="default" @click="saveJsonModel" v-if="!disabled">
+            <svg-icon icon-class="save" class="save-icon"/>
+            <span>保存</span>
+          </wf-button>
+        </slot>
       </div>
     </div>
 
@@ -44,8 +48,8 @@
         <div v-if="activeStep === 1">
           <span class="toolbar-group">
             <wf-tooltip content="缩小" placement="bottom"><wf-button size="small" @click="zoomViewport(false)"><svg-icon icon-class="ep:zoom-out"/></wf-button></wf-tooltip>
-            <!-- PC端：原有 zoom(1)+居中；移动端/平板：fitView 自适应显示全部节点 -->
-            <wf-tooltip content="自适应" placement="bottom"><wf-button size="small" @click="isMobileDevice() ? zoomViewport('fit') : zoomViewport(1)"><svg-icon icon-class="ep:rank"/></wf-button></wf-tooltip>
+            <!-- 自适应：所有端均 fitView 显示全部节点（最大缩放 100%） -->
+            <wf-tooltip content="自适应" placement="bottom"><wf-button size="small" @click="zoomViewport('fit')"><svg-icon icon-class="ep:rank"/></wf-button></wf-tooltip>
             <wf-tooltip content="放大" placement="bottom"><wf-button size="small" @click="zoomViewport(true)"><svg-icon icon-class="ep:zoom-in"/></wf-button></wf-tooltip>
           </span>
           <span class="toolbar-group">
@@ -62,6 +66,8 @@
               <svg-icon icon-class="save" style="width: 14px; height: 14px;"/>
             </wf-button></wf-tooltip>
           </span>
+          <!-- slot: toolbar-extra 追加自定义工具栏按钮（透出底层 lf / disabled） -->
+          <slot name="toolbar-extra" :lf="lf" :disabled="disabled" />
         </div>
       </div>
 
@@ -83,7 +89,7 @@
                          :form-path-list="formPathList">
         </PropertySetting>
       </div>
-      <div class="logo-text" v-if="activeStep === 1">Warm-Flow</div>
+      <div class="logo-text" v-if="activeStep === 1"><slot name="logo">Warm-Flow</slot></div>
     </wf-header>
 
     <!-- 弹框组件 -->
@@ -133,6 +139,7 @@ import {addBetweenNode, addGatewayNode, gatewayAddNode, removeNode} from "@/comp
 import EdgeTooltip from "@/components/design/mimic/vue/EdgeTooltip.vue";
 import DiagramSidebar from "@/components/design/common/vue/DiagramSidebar.vue";
 import { useDark } from '@/composables/useDark';
+import type { FlowDesignerProps, FlowDesignerSavedPayload, FlowDesignerReadyPayload } from '@/designer/types';
 
 /**
  * 可复用流程设计器组件：画布核心从「直接读 URL/appParams」改为「props 驱动」，
@@ -140,27 +147,23 @@ import { useDark } from '@/composables/useDark';
  */
 defineOptions({ name: 'FlowDesigner' });
 
-/** 可复用流程设计器组件的 props 定义（props 驱动，宿主耦合由外层页面壳负责）。 */
-interface FlowDesignerProps {
-  /** 流程定义 id（新建态传 null，走本地 initData 渲染） */
-  definitionId?: string | null;
-  /** 是否只读（已发布定义或宿主显式禁用） */
-  disabled?: boolean;
-  /** 仅显示流程设计画布：隐藏顶部步骤栏、跳过基础信息校验直达画布 */
-  onlyDesignShow?: boolean;
-  /** 是否显示画布网格点 */
-  showGrid?: boolean;
-}
+/** props 定义见 @/designer/types（公共类型，消费方可直接 import 复用）。 */
 const props = withDefaults(defineProps<FlowDesignerProps>(), {
   definitionId: null,
   disabled: false,
   onlyDesignShow: false,
   showGrid: false,
 });
-/** 保存成功回传：当前定义 id、后端返回数据（如新建后的 definitionId）与本次保存的流程 json */
+/**
+ * 对外事件：
+ * - close：设计器请求关闭（保存成功后自动触发，宿主据此关闭弹窗 / 返回列表）
+ * - saved：保存成功回传当前定义 id、后端返回数据（如新建后的 definitionId）与本次保存的流程 json
+ * - ready：画布初始化完成，透出底层 LogicFlow 实例，便于高级定制（自定义事件 / 主题 / 扩展）
+ */
 const emit = defineEmits<{
   (e: 'close'): void;
-  (e: 'saved', payload: { id: string | null; data: any; json: string }): void;
+  (e: 'saved', payload: FlowDesignerSavedPayload): void;
+  (e: 'ready', payload: FlowDesignerReadyPayload): void;
 }>();
 
 const { proxy } = getCurrentInstance()!;
@@ -191,10 +194,26 @@ const isMobileDevice = () => {
   return window.innerWidth <= 1024 || ('ontouchstart' in window && window.innerWidth <= 1280);
 };
 
-/** 仅在移动端/平板执行 fitView，PC 端不干预 */
+/** 仅在移动端/平板执行 fitView（用于新增节点等增量操作，避免 PC 编辑时被打断） */
 function fitViewIfMobile() {
   if (isMobileDevice() && lf.value?.fitView) {
     lf.value.fitView(40, 20);
+  }
+}
+
+/**
+ * 自适应显示全部节点（所有端）：打开 / 进入流程设计 / resize / 点击「自适应」按钮时使用。
+ * fitView 会把节点较少的流程放大撑满画布，这里限制最大缩放 100%：
+ * 流程大 -> 缩小铺满；流程小 -> 保持原始大小并居中，避免进来就糊脸。(PR#396 评审①)
+ */
+function fitViewAll() {
+  const lfInst: any = lf.value;
+  if (!lfInst?.fitView) return;
+  lfInst.fitView(40, 20);
+  const scale = lfInst.getTransform ? lfInst.getTransform().SCALE_X : 1;
+  if (scale && scale > 1) {
+    lfInst.resetZoom ? lfInst.resetZoom() : lfInst.zoom(1);
+    if (lfInst.translateCenter) lfInst.translateCenter();
   }
 }
 
@@ -384,8 +403,8 @@ function initLogicFlow() {
     window.__WF_DESIGNER_DISABLED__ = disabled.value;
     if (logicJson.value) {
       lf.value.render(logicJson.value);
-      // 移动端/平板端：自适应显示全部节点；PC 端保持默认行为不干预
-      fitViewIfMobile();
+      // 打开即自适应显示全部节点（所有端，最大缩放 100%）
+      fitViewAll();
     }
     // 初始化完成后，如果当前是暗黑模式，显式应用一次主题（解决 URL 参数初始化时序问题）
     if (isDark.value && lf.value) {
@@ -399,19 +418,22 @@ function initLogicFlow() {
     if (isClassics(logicJson.value.modelValue)) {
       sidebarVisible.value = true;
     }
+
+    // 透出底层 LogicFlow 实例：消费方可据此做高级定制（自定义事件 / 主题 / 扩展）
+    emit('ready', { lf: lf.value });
   }
 }
 
 /**
- * 真机兼容：延迟触发 LogicFlow resize + fitView（仅移动端/平板端生效）
- * PC 端不执行自动 fitView，保持用户手动缩放行为
+ * 延迟触发 LogicFlow resize + fitView（所有端）
+ * 覆盖移动端真机 / v-show 切换 / iframe 嵌入等容器尺寸延迟场景
  */
 function scheduleMobileResize() {
   const doFit = () => {
     if (lf.value && lf.value.resize) {
       lf.value.resize();
-      // 仅在移动设备上才执行自动 fitView
-      requestAnimationFrame(fitViewIfMobile);
+      // resize 后自适应显示全部节点（所有端，覆盖布局/iframe 时序）
+      requestAnimationFrame(fitViewAll);
     }
   };
   // 多重延迟策略覆盖各种场景：移动端/v-show切换/iframe嵌入
@@ -424,15 +446,14 @@ function scheduleMobileResize() {
 }
 
 /**
- * 监听步骤切换：从"基础信息"切到"流程设计"时（仅移动端/平板端生效）
- * PC 端不执行自动 fitView，保持用户手动缩放行为
+ * 监听步骤切换：从"基础信息"切到"流程设计"时，自适应显示全部节点（所有端）
  */
 watch(activeStep, (newVal) => {
   if (newVal === 1 && lf.value) {
     const doFit = () => {
       if (lf.value?.resize) {
         lf.value.resize();
-        requestAnimationFrame(fitViewIfMobile);
+        requestAnimationFrame(fitViewAll);
       }
     };
     // 多次延迟确保在各种时序下移动端能正确适配
@@ -1019,9 +1040,9 @@ const zoomViewport = async (zoom: boolean | number | string) => {
       lf.value.translateCenter();
     }
   } else if (zoom === 'fit') {
-    // 移动端/平板端自适应：fitView 将所有节点缩放并居中到画布可视区域
+    // 自适应：显示全部节点并居中，最大缩放 100%（节点少不放大撑屏）
     if (lf.value.fitView) {
-      lf.value.fitView(40, 20);
+      fitViewAll();
     } else {
       // fallback
       if (lf.value.translateCenter) lf.value.translateCenter();
@@ -1091,6 +1112,58 @@ async function downJson() {
     console.error('下载失败:', error);
   }
 }
+
+/**
+ * 校验基础信息表单（命令式 API）。
+ * onlyDesignShow 模式无基础信息页，恒为通过。
+ */
+async function validate(): Promise<boolean> {
+  if (onlyDesignShow.value) return true;
+  return await proxy.$refs.baseInfoRef.validate();
+}
+
+/**
+ * 收集当前可保存的 warm-flow 流程 json 字符串（命令式 API）。
+ * 等价于保存前的数据装配：合并基础信息 + 画布图数据，再转 warm-flow 结构。
+ */
+function getFlowJson(): string {
+  getBaseInfo();
+  if (lf.value) {
+    const graphData = lf.value.getGraphData();
+    logicJson.value['nodes'] = graphData['nodes'];
+    logicJson.value['edges'] = graphData['edges'];
+  }
+  logicJson.value['id'] = definitionId.value;
+  return logicFlowJsonToWarmFlow(logicJson.value);
+}
+
+/**
+ * 对外暴露命令式 API（FlowDesignerInstance）。
+ *
+ * 消费方两种用法：
+ * 1) 模板 ref：<FlowDesigner ref="designerRef" />，designerRef.value.save() ...
+ * 2) 组合式（推荐）：const { designerRef, save, getFlowJson } = useFlowDesigner()
+ *
+ * 让宿主无需依赖内部按钮，即可程序化触发保存 / 缩放 / 导出，并可拿到底层 LogicFlow 做高级定制。
+ */
+defineExpose({
+  save: saveJsonModel,
+  validate,
+  getGraphData: () => (lf.value ? lf.value.getGraphData() : null),
+  getFlowJson,
+  getFlowName: () => logicJson.value.flowName ?? '',
+  getLogicFlow: () => lf.value,
+  zoom: zoomViewport,
+  zoomIn: () => zoomViewport(true),
+  zoomOut: () => zoomViewport(false),
+  fitView: () => zoomViewport('fit'),
+  resetZoom: () => zoomViewport(1),
+  undo: () => undoOrRedo(true),
+  redo: () => undoOrRedo(false),
+  clear,
+  downloadImage: downLoad,
+  downloadJson: downJson,
+});
 
 </script>
 
