@@ -16,12 +16,33 @@ import type LogicFlow from '@logicflow/core'
 export interface FlowDesignerProps {
   /** 流程定义 id（新建态传 null，走本地 initData 渲染） */
   definitionId?: string | null
+  /**
+   * 初始流程 JSON（脱后端驱动）：warm-flow 定义对象或其 JSON 字符串。
+   * 形状与 DataProvider.queryDef 返回的 data、命令式 getFlowJson() / saved 事件输出一致（可直接 round-trip）。
+   * 提供该值时优先于 queryDef：组件不再请求后端，直接用此 JSON 渲染/编辑，实现纯组件用法。
+   */
+  initialJson?: string | Record<string, any> | null
   /** 是否只读（已发布定义或宿主显式禁用） */
   disabled?: boolean
   /** 仅显示流程设计画布：隐藏顶部步骤栏、跳过基础信息校验直达画布 */
   onlyDesignShow?: boolean
   /** 是否显示画布网格点 */
   showGrid?: boolean
+  /**
+   * 自定义节点注册：在内置节点（经典 / 仿钉钉）之后追加 lf.register(...)。
+   * 元素为 LogicFlow 自定义节点定义（{ type, view, model }），可新增节点类型或覆盖内置同名 type。
+   */
+  customNodes?: any[]
+  /**
+   * 自定义 LogicFlow 扩展（插件）：在内置扩展（Menu / Snapshot 等）之后追加 LogicFlow.use(...)。
+   * 如 MiniMap / Control / Group 等官方或自研扩展。
+   */
+  extraExtensions?: any[]
+  /**
+   * 透传并合并到 LogicFlow 初始化选项（顶层覆盖内置默认值，如 grid / keyboard / 交互开关）。
+   * 注意：container 由组件内部管理，请勿在此传入。
+   */
+  lfOptions?: Record<string, any>
 }
 
 /** `saved` 事件回传：当前定义 id、后端返回数据（如新建后的 definitionId）与本次保存的流程 json。 */

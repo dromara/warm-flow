@@ -49,4 +49,30 @@
   - **最终修法（确定性、不加依赖、不改发布元信息）**：(1) `vite.lib.config.js` 把 dts `include` 放宽到整个 `src` 并作为**唯一 dts 产出点**；(2) `tsconfig.json` `include` 补 `src/ui`、`src/composables`，使两个适配器与 composables 进入程序图被产出；(3) `beforeWriteFile` 钩子 `fixAliasDtsImports`：**只重锚定「解析后越出 `dist-lib/src`」的坏 specifier** 回 `dist-lib/src/**`，正确导入原样保留；(4) `vite.ep.config.js` / `vite.antdv.config.js` 移除各自 dts 插件（统一由主构建产出，规避 `entryRoot` 嵌套错乱）。`package.json` 四处 types 路径维持 `dist-lib/src/**` 不变。
   - **验证**：`build:lib` 三产物 exit 0；全量扫描 48 个 `.d.ts` / 25 处相对 import **0 处未解析**；临时 tsc 消费用例对主入口 + `/element-plus` + `/antdv` 五个探针由「退化为 any（TS2578）」转为**全部正确解析（exit 0）**；EP / antdv 两个 demo `vite build` 均 exit 0。
 
+## 组件库扩展性 Roadmap（插拔 / slot / hook）
+
+> 2026-06 盘点：FlowDesigner 已具备基础扩展面，但作为通用组件库仍有缺口。按价值排优先级，逐项落地。
+
+### 已具备 ✓
+- **插拔**：`setUiAdapter`（EP/antdv 内置）、`setDataProvider`（部分覆盖合并）、`setComponentSize`、`setCustomThemeColors` / `useDark`。
+- **slot**：`header-left` / `header-actions` / `toolbar-extra` / `logo`。
+- **hook**：`useFlowDesigner`（命令式 API）、`useDark`（主题）。
+- **事件**：`close` / `saved` / `ready`。
+
+### 实施中 / 计划
+- [x] **① 属性面板插槽透传（断链修复 + 统一扩展点）**：`FlowDesigner` 渲染 `PropertySetting` 时未透传插槽，导致 `propertySetting.vue` 既有的 `v-slot` 转发链对外不可用。
+      已修：FlowDesigner 透传全部插槽 → PropertySetting → 节点属性子组件；并为 5 个节点子组件（start/between/gateway/end/skip）统一新增 `#node-form-extra` 扩展插槽（透出 `{ form, disabled }`），消费方可往任意节点属性抽屉注入自定义表单项；`start.vue` 既有 `form-item-task-*` 插槽保留并随之可用。
+- [ ] **② initialJson / v-model 脱后端驱动**：`onMounted` 恒走 `queryDef(definitionId)`，消费方无法直接用一段流程 JSON 渲染/编辑。计划加 `props.initialJson`（或 `v-model:json`），有值时优先于 `queryDef`，实现脱后端纯组件用法。
+- [ ] **③ 自定义节点 / LogicFlow 扩展注册透传**：`register()`（节点）与 `use()`（扩展）写死。计划开放 `props.customNodes` / `props.extraExtensions` 或 `onRegister(lf)` / `onBeforeUse(LogicFlow)` 钩子，并支持 `props.lfOptions` 透传合并 LogicFlow 初始化选项。
+
+### 待排期（按需）
+- **事件补全**：`change` / `dirty`（未保存离开拦截）、`before-save`（可改写 payload）、`validate-error`。
+- **数据 hook**：`useFlowJson()`（响应式读写流程 JSON）、变更订阅 `onChange` / `onNodeClick`。
+- **拖拽侧边栏可配置**：`DiagramSidebar` 的 `flowNodes` / `gatewayNodes` 写死，开放 `props.paletteNodes` 或 `#sidebar` 插槽。
+- **空 / 加载态插槽**、**步骤区 `header-center` 自定义**。
+- **第三方 UI 库适配器**：补 Naive / Arco / TDesign 示例（接口已具备）。
+- **i18n**：UI 文案目前写死中文，开放语言包。
+- **表单设计步骤**（当前注释）、**流程结构校验钩子**（必须有开始/结束、网关成对等）。
+- **文档**：自定义 `UiAdapter` / `DataProvider` 端到端示例与最佳实践。
+
 > 详细决策与验证记录见 `.codex/warm-flow-ui-npm-packaging.md`。

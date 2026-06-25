@@ -156,9 +156,13 @@ defineOptions({ name: 'FlowDesigner' });
 /** props 定义见 @/designer/types（公共类型，消费方可直接 import 复用）。 */
 const props = withDefaults(defineProps<FlowDesignerProps>(), {
   definitionId: null,
+  initialJson: null,
   disabled: false,
   onlyDesignShow: false,
   showGrid: false,
+  customNodes: () => [],
+  extraExtensions: () => [],
+  lfOptions: () => ({}),
 });
 /**
  * 对外事件：
@@ -296,36 +300,49 @@ onMounted(() => {
     document.body.style.overflow = 'hidden';
     // 标记当前处于设计器页面：供经典节点设计态语义色判断（业务侧实例进度图不受影响）
     window.__WF_FLOW_DESIGN_MODE__ = true;
-    // definitionId / onlyDesignShow / disabled 均由 props 注入（见上方 ref 初始化）；
+    // definitionId / initialJson / onlyDesignShow / disabled 均由 props 注入（见上方 ref 初始化）；
     // URL 主题与 postMessage 监听由外层页面壳负责，组件本身不直接依赖 URL。
 
-    queryDef(definitionId.value).then(res => {
-    jsonString.value = res.data;
-    if (res.data.isPublish && res.data.isPublish !== 0) {
-      disabled.value = true
+    // 数据源优先级：props.initialJson（脱后端，直接喂流程 JSON）> queryDef（走 DataProvider 后端/mock）
+    if (props.initialJson != null && props.initialJson !== '') {
+      const data = typeof props.initialJson === 'string' ? JSON.parse(props.initialJson) : props.initialJson;
+      applyDefinition(data);
+    } else {
+      queryDef(definitionId.value).then(res => applyDefinition(res.data));
     }
-    if (res.data.categoryList && res.data.categoryList.length > 0) {
-      categoryList.value = res.data.categoryList;
-    }
-    if (res.data.formPathList && res.data.formPathList.length > 0) {
-        formPathList.value = res.data.formPathList;
-    }
-    if (jsonString.value) {
-      logicJson.value = json2LogicFlowJson(jsonString.value);
-      if (!logicJson.value.nodes || logicJson.value.nodes.length === 0) {
-        let initData = isClassics(logicJson.value.modelValue) ? initClassicsData: initMimicData
-        // 读取本地文件/initClassicsData.json文件，并将数据转换json对象
-        logicJson.value = {
-          ...logicJson.value,
-          ...initData
-        };
-      }
-      if (onlyDesignShow.value) {
-        handleStepClick(1)
-      }
-    }
-  });
 })
+
+/**
+ * 应用流程定义数据（来源：props.initialJson 或 DataProvider.queryDef）。
+ * 解析发布态/类别/表单路径 → 转换为 LogicFlow json → 空流程回退到内置初始模板。
+ * 抽出为独立函数，使「脱后端 initialJson」与「后端 queryDef」两条入口复用同一套装配逻辑。
+ */
+function applyDefinition(data: any) {
+  jsonString.value = data;
+  if (data?.isPublish && data.isPublish !== 0) {
+    disabled.value = true;
+  }
+  if (data?.categoryList && data.categoryList.length > 0) {
+    categoryList.value = data.categoryList;
+  }
+  if (data?.formPathList && data.formPathList.length > 0) {
+    formPathList.value = data.formPathList;
+  }
+  if (jsonString.value) {
+    logicJson.value = json2LogicFlowJson(jsonString.value);
+    if (!logicJson.value.nodes || logicJson.value.nodes.length === 0) {
+      // 空流程：回退到内置初始模板（经典 / 仿钉钉）
+      let initData = isClassics(logicJson.value.modelValue) ? initClassicsData : initMimicData;
+      logicJson.value = {
+        ...logicJson.value,
+        ...initData
+      };
+    }
+    if (onlyDesignShow.value) {
+      handleStepClick(1);
+    }
+  }
+}
 
 
 // 提取初始化逻辑到单独的函数
@@ -369,6 +386,10 @@ function initLogicFlow() {
           },
         ],
       } : {},
+      // 消费方自定义 LogicFlow 初始化选项（顶层覆盖内置默认值，如 grid / keyboard / 交互开关）
+      ...props.lfOptions,
+      // container 由组件内部管理，强制覆盖，避免消费方误传破坏画布挂载
+      container: proxy.$refs.containerRef,
     });
     lf.value.setTheme({
       snapline: {
@@ -906,6 +927,10 @@ function register() {
     lf.value.register(EndM);
     lf.value.register(SkipM);
   }
+  // 消费方自定义节点：在内置节点之后注册，可新增节点类型或覆盖内置同名 type
+  props.customNodes.forEach((node) => {
+    if (node) lf.value.register(node);
+  });
 }
 
 /**
@@ -918,6 +943,10 @@ function use() {
   }
   LogicFlow.use(Menu);
   LogicFlow.use(Snapshot);
+  // 消费方自定义 LogicFlow 扩展（MiniMap / Control / Group 等），在内置扩展之后注册
+  props.extraExtensions.forEach((ext) => {
+    if (ext) LogicFlow.use(ext);
+  });
 }
 function initEvent() {
   const { eventCenter } = lf.value.graphModel
