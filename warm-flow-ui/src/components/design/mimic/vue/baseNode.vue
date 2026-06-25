@@ -85,18 +85,24 @@ const baseNodeColor = computed(() => {
       border: (props.status === 1 ? "2px dashed " : "1px solid ") + (props.stroke || "rgb(166,178,189)"),
     };
   }
-  // 设计态：无边框纯白卡片，仅靠柔和阴影区分层次（更现代、更干净）
+  // 设计态：无边框卡片，仅靠柔和阴影区分层次；背景跟随主题变量（暗黑模式自动变深）
   return {
-    background: "#fff",
+    background: "var(--wf-bg-white, #fff)",
   };
 });
+
+// 设计态头部按节点类型区分（开始=绿 / 结束=红 / 其余审批=蓝），不再全蓝
+const DESIGN_HEADER_GRADIENT = {
+  start: "linear-gradient(135deg, #67c23a 0%, #5daf34 100%)",
+  end: "linear-gradient(135deg, #f56c6c 0%, #e85c5c 100%)",
+};
 
 const topSectionColor = computed(() => {
   if (isRuntime.value) {
     return { backgroundColor: props.stroke || "rgb(166,178,189)" };
   }
-  // 设计态：钉钉蓝渐变头部
-  return { background: "linear-gradient(135deg, #409eff 0%, #2b7de9 100%)" };
+  // 设计态：按节点类型着色头部，默认审批蓝
+  return { background: DESIGN_HEADER_GRADIENT[props.type] || "linear-gradient(135deg, #409eff 0%, #2b7de9 100%)" };
 });
 
 const deleteNode = () => {
@@ -164,7 +170,7 @@ function handleLeave() {
   height: 80px;
   box-sizing: border-box;
   border-radius: 10px;
-  background: #fff;
+  background: var(--wf-bg-white, #fff);
   /* 去边框，仅用多层柔和阴影区分层次（现代卡片质感） */
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.10), 0 1px 4px rgba(0, 0, 0, 0.05);
   overflow: hidden; /* 让头部跟随卡片圆角 */
@@ -198,7 +204,7 @@ function handleLeave() {
   padding: 10px;
   height: calc(100%);
   font-size: 14px;
-  color: #303133;
+  color: var(--wf-text-primary, #303133);
 }
 
 .edit-icon {
