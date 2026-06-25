@@ -7,7 +7,6 @@
 - 当前 `warm-flow` 仓库的真实模块结构、技术基线与扩展机制。
 - dromara 开源协作约定与 Apache 2.0 开源协议要求。
 - 工作流引擎作为「公共依赖库（SDK）」对外契约稳定与多生态兼容的长期规则。
-- `.qoder/repowiki` 中已沉淀的引擎架构、实体模型、服务层与权限文档。
 - Karpathy 风格 coding-agent 规则：澄清不确定性、保持简单、避免顺手改无关代码、用可验证结果证明行为。
 
 ## 项目概览
@@ -71,7 +70,7 @@
 ## 规则源维护
 
 - `AGENTS.md` 是本仓库 agent 规则主来源。
-- `.qoder/repowiki` 是更细的引擎架构与领域参考（本地文档，不要无故改动，也不要当作必读入口长期新增依赖）。
+- `.qoder/repowiki` 是更细的引擎架构与领域参考（**本地文档，已 gitignore、未纳入仓库**；作者本地可选参考，团队成员默认没有，不要当作必读入口或长期依赖）。
 - 新增、删除或调整长期项目规则时，先更新根 `AGENTS.md`，再按需要同步模块级 `AGENTS.md`、根 `CLAUDE.md` 与 `.cursor/rules`。
 - 如果本文件、其他 agent 规则与用户当前指令冲突，优先遵循用户当前指令，同时说明冲突点、取舍原因与影响。
 - 不要把一次性任务背景写成永久规则。只有能长期约束本仓库开发质量的约定才加入本文件。
@@ -84,7 +83,7 @@
 2. 模块级 `AGENTS.md`（所在顶层模块下若存在）。
 3. 仓库根 `AGENTS.md`（本文件）。
 4. 根 `CLAUDE.md` 与 `.cursor/rules/*`（与 `AGENTS.md` 冲突一律以 `AGENTS.md` 为准）。
-5. `.qoder/repowiki` 等领域 / 架构参考文档。
+5. （可选）本地 `.qoder/repowiki` 等领域 / 架构参考（未纳入仓库，可能不存在）。
 
 ## 模块级 AGENTS.md 与 CLAUDE.md
 
@@ -185,7 +184,7 @@ mvn -f warm-flow-orm/warm-flow-mybatis/warm-flow-mybatis-core/pom.xml -DskipTest
 
 ## 文档与 AI 产物归档
 
-- 面向用户的正式文档以 README 与官网（warm-flow.com）为准；引擎细节参考 `.qoder/repowiki`。
+- 面向用户的正式文档以 README 与官网（warm-flow.com）为准；引擎细节可参考本地 `.qoder/repowiki`（未纳入仓库，仅本地可选）。
 - AI / agent 的一次性调研、决策记录、临时计划放 `.codex/` 或 `docs/`，不要塞进源码包，也不要当作长期必读入口。
 - 临时 / 备份代码、注释掉的旧实现、压测入口不留在源码树，确认无引用后删除（git 历史可追溯）。
 
