@@ -19,6 +19,7 @@
           </div>
           <div class="demo-actions">
             <el-button type="primary" size="large" @click="onCreate">+ 新建流程</el-button>
+            <el-button type="success" plain size="large" @click="onValidateExt">扩展能力验证</el-button>
             <el-button size="large" @click="refresh">刷新</el-button>
             <el-button type="danger" plain size="large" :disabled="!flows.length" @click="onClearAll">清空</el-button>
           </div>
@@ -76,11 +77,22 @@
         <FlowDesigner
           :key="designKey"
           :definition-id="designProps.definitionId"
+          :initial-json="designProps.initialJson"
           :disabled="designProps.disabled"
           :only-design-show="designProps.onlyDesignShow"
+          :custom-nodes="designProps.customNodes"
+          :extra-extensions="designProps.extraExtensions"
+          :lf-options="designProps.lfOptions"
           @saved="onSaved"
           @close="onClose"
-        />
+        >
+          <!-- ① node-form-extra 插槽透传验证：仅扩展验证模式注入，证明 FlowDesigner→PropertySetting→节点子组件 链路打通 -->
+          <template #node-form-extra="{ form, disabled }">
+            <wf-form-item v-if="designMode === 'validate' && form" label="扩展字段(验证)：">
+              <wf-input v-model="form.validateExt" :disabled="disabled" placeholder="node-form-extra 插槽已生效" />
+            </wf-form-item>
+          </template>
+        </FlowDesigner>
       </div>
     </div>
   </div>
@@ -90,6 +102,9 @@
 import { computed, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { FlowDesigner } from '@dromara/warm-flow-designer'
+// 组件库扩展能力验证用：消费方自带的 LogicFlow 基类 / 官方扩展（库已把它们 externalize 为 peer，单实例共享）
+import { RectNode, RectNodeModel } from '@logicflow/core'
+import { Control } from '@logicflow/extension'
 import { listFlows, getFlowJsonString, removeFlow, clearFlows } from './demoProvider'
 
 // 顶部「用法」代码片段：演示第三方 3 步集成（与 antd4-demo 仅适配器不同）
@@ -102,6 +117,33 @@ setUiAdapter(elementPlusAdapter)   // ① 选 UI 适配器（须在渲染 FlowDe
 setDataProvider(myProvider)        // ② 注入数据源（自定义后端 / mock）
 app.use(ElementPlus).use(WarmFlowDesigner)   // ③ 注册后模板里直接用 <FlowDesigner />`
 
+// ===== 组件库扩展能力验证夹具：端到端验证本轮新增的 ①②③ props / slot =====
+// ② initialJson：脱后端直接喂 warm-flow 定义对象（经典模式 开始→部门审批→结束），组件不再调用 queryDef
+const validateInitialJson = {
+  flowName: '扩展能力验证流程（initialJson 脱后端驱动）',
+  modelValue: 'CLASSICS',
+  flowCode: 'validate_ext_flow',
+  version: '1',
+  isPublish: 0,
+  nodeList: [
+    {
+      nodeType: 0, nodeCode: 'node_start', nodeName: '开始', nodeRatio: '0', coordinate: '180,260|180,260',
+      skipList: [{ id: 'skip_1', nowNodeCode: 'node_start', nextNodeCode: 'node_approve', skipName: '', skipType: 'PASS' }]
+    },
+    {
+      nodeType: 1, nodeCode: 'node_approve', nodeName: '部门审批', nodeRatio: '0', coordinate: '430,260|430,260',
+      skipList: [{ id: 'skip_2', nowNodeCode: 'node_approve', nextNodeCode: 'node_end', skipName: '', skipType: 'PASS' }]
+    },
+    { nodeType: 2, nodeCode: 'node_end', nodeName: '结束', nodeRatio: '0', coordinate: '680,260|680,260' }
+  ]
+}
+// ③ customNodes：用消费方自带 @logicflow/core 基类注册自定义节点类型（与库内 LogicFlow 同实例 → 注册不报错）
+const validateCustomNodes = [{ type: 'validate-custom-node', view: RectNode, model: RectNodeModel }]
+// ③ extraExtensions：追加官方 Control 扩展（画布缩放/适配控件），验证 LogicFlow.use 透传
+const validateExtraExtensions = [Control]
+// ③ lfOptions：合并进 new LogicFlow 初始化选项（点状网格），验证顶层选项透传
+const validateLfOptions = { grid: { size: 20, type: 'dot' } }
+
 const view = ref('list')
 const flows = ref([])
 // create | edit | preview
@@ -113,6 +155,7 @@ const designKey = ref(0)
 const designModeText = computed(() => {
   if (designMode.value === 'create') return '新建流程'
   if (designMode.value === 'edit') return '修改流程'
+  if (designMode.value === 'validate') return '扩展能力验证 · initialJson + node-form-extra 插槽 + 自定义节点/扩展/lfOptions'
   return '预览流程（只读）'
 })
 
@@ -142,6 +185,20 @@ function onEdit(row) {
 
 function onPreview(row) {
   openDesigner('preview', { definitionId: row.id, disabled: true, onlyDesignShow: true })
+}
+
+// 扩展能力验证：一次性启用 initialJson(②) + customNodes/extraExtensions/lfOptions(③)，
+// 直达画布（onlyDesignShow）且可编辑（disabled:false），点击节点即可在属性面板看到 node-form-extra 插槽(①)
+function onValidateExt() {
+  openDesigner('validate', {
+    definitionId: null,
+    disabled: false,
+    onlyDesignShow: true,
+    initialJson: validateInitialJson,
+    customNodes: validateCustomNodes,
+    extraExtensions: validateExtraExtensions,
+    lfOptions: validateLfOptions
+  })
 }
 
 function backToList() {
@@ -379,6 +436,11 @@ function onClearAll() {
 .demo-design-mode.preview {
   background: #f0f9eb;
   color: #67c23a;
+}
+
+.demo-design-mode.validate {
+  background: #f3e8ff;
+  color: #7c3aed;
 }
 
 .demo-design-canvas {
