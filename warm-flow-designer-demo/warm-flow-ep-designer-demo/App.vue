@@ -74,15 +74,11 @@
         <span class="demo-design-mode" :class="designMode">{{ designModeText }}</span>
       </div>
       <div class="demo-design-canvas">
+        <!-- 对象式消费：designProps 是细粒度 props 的集合，v-bind 直接摊开绑定到对应 prop，
+             无需组件提供单一 designProps prop —— 仍保留 per-prop 默认值 / 模板类型校验 / DevTools 粒度 -->
         <FlowDesigner
           :key="designKey"
-          :definition-id="designProps.definitionId"
-          :initial-json="designProps.initialJson"
-          :disabled="designProps.disabled"
-          :only-design-show="designProps.onlyDesignShow"
-          :custom-nodes="designProps.customNodes"
-          :extra-extensions="designProps.extraExtensions"
-          :lf-options="designProps.lfOptions"
+          v-bind="designProps"
           @saved="onSaved"
           @close="onClose"
         >
@@ -143,6 +139,27 @@ const validateCustomNodes = [{ type: 'validate-custom-node', view: RectNode, mod
 const validateExtraExtensions = [Control]
 // ③ lfOptions：合并进 new LogicFlow 初始化选项（点状网格），验证顶层选项透传
 const validateLfOptions = { grid: { size: 20, type: 'dot' } }
+// ③ onBeforeUse：透出 LogicFlow 类（可注册带配置扩展，extraExtensions 无法传配置）。
+// 验证钩子被调用且拿到的是 LogicFlow 类（含静态 use）。
+const validateOnBeforeUse = (LF) => {
+  window.__WF_VALIDATE_ON_BEFORE_USE__ = !!(LF && typeof LF.use === 'function')
+  console.log('[validate] onBeforeUse 调用，LogicFlow.use =', typeof LF?.use)
+}
+// ③ onRegister：透出 lf 实例，命令式注册一个自定义节点（区别于声明式 customNodes），验证可访问实例 + 注册成功。
+const validateOnRegister = (lf) => {
+  let ok = false
+  try {
+    if (lf && typeof lf.register === 'function') {
+      lf.register({ type: 'validate-on-register-node', view: RectNode, model: RectNodeModel })
+      ok = true
+    }
+  }
+  catch (e) {
+    console.error('[validate] onRegister 注册失败', e)
+  }
+  window.__WF_VALIDATE_ON_REGISTER__ = ok
+  console.log('[validate] onRegister 调用，lf.register =', typeof lf?.register, 'registered =', ok)
+}
 
 const view = ref('list')
 const flows = ref([])
@@ -155,7 +172,7 @@ const designKey = ref(0)
 const designModeText = computed(() => {
   if (designMode.value === 'create') return '新建流程'
   if (designMode.value === 'edit') return '修改流程'
-  if (designMode.value === 'validate') return '扩展能力验证 · initialJson + node-form-extra 插槽 + 自定义节点/扩展/lfOptions'
+  if (designMode.value === 'validate') return '扩展能力验证 · initialJson + node-form-extra 插槽 + customNodes/extraExtensions/lfOptions + onBeforeUse/onRegister 钩子'
   return '预览流程（只读）'
 })
 
@@ -190,6 +207,9 @@ function onPreview(row) {
 // 扩展能力验证：一次性启用 initialJson(②) + customNodes/extraExtensions/lfOptions(③)，
 // 直达画布（onlyDesignShow）且可编辑（disabled:false），点击节点即可在属性面板看到 node-form-extra 插槽(①)
 function onValidateExt() {
+  // 复测前复位钩子标记，避免跨导航的旧值干扰断言
+  window.__WF_VALIDATE_ON_BEFORE_USE__ = false
+  window.__WF_VALIDATE_ON_REGISTER__ = false
   openDesigner('validate', {
     definitionId: null,
     disabled: false,
@@ -197,7 +217,9 @@ function onValidateExt() {
     initialJson: validateInitialJson,
     customNodes: validateCustomNodes,
     extraExtensions: validateExtraExtensions,
-    lfOptions: validateLfOptions
+    lfOptions: validateLfOptions,
+    onBeforeUse: validateOnBeforeUse,
+    onRegister: validateOnRegister
   })
 }
 

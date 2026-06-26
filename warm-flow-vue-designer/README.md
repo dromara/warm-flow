@@ -54,20 +54,28 @@ yarn build:lib   # 输出到 dist-lib/（ESM + 类型声明 .d.ts + 合并样式
 
 ### 安装与初始化
 
+> 主入口 **UI 库无关**，不内置任何 UI 组件库。渲染 `FlowDesigner` 前必须先 `setUiAdapter(...)` 选择一个 UI 适配器（element-plus 或 antdv），否则设计器内的中性组件 `wf-*` 无法映射到具体 UI 库、画布不渲染。
+
 ```ts
 import { createApp } from 'vue'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 
-import { WarmFlowDesigner, setDataProvider, createMockProvider } from '@dromara/warm-flow-designer'
+import { WarmFlowDesigner, setUiAdapter, setDataProvider, createMockProvider } from '@dromara/warm-flow-designer'
+// UI 适配器从子入口按需引入；antdv 用 `@dromara/warm-flow-designer/antdv` 的 `antdvAdapter`
+import { elementPlusAdapter } from '@dromara/warm-flow-designer/element-plus'
 import '@dromara/warm-flow-designer/style'
 
 const app = createApp(App)
+
+// ① 选择 UI 适配器（必须在渲染 FlowDesigner 之前调用）
+setUiAdapter(elementPlusAdapter)
+// ② 注册插件：全局 svg-icon 组件 + 中性组件 wf-*（图标零配置）
 app.use(ElementPlus)
-app.use(WarmFlowDesigner)   // 注册全局 svg-icon 组件 + Element Plus 图标（图标零配置）
+app.use(WarmFlowDesigner)
 app.mount('#app')
 
-// 可选：注入自定义数据源 / mock（脱后端）
+// ③ 可选：注入自定义数据源 / mock（脱后端）
 setDataProvider(createMockProvider())
 ```
 
@@ -75,22 +83,62 @@ setDataProvider(createMockProvider())
 
 ```vue
 <template>
-  <FlowDesigner :definition-id="defId" :only-design-show="true" :disabled="false" @close="onClose" />
+  <!-- 后端驱动：传 definitionId，组件自行 queryDef 加载 -->
+  <FlowDesigner :definition-id="defId" :only-design-show="true" :disabled="false" @close="onClose" @saved="onSaved" />
+
+  <!-- 脱后端驱动：直接喂一段流程 JSON（initialJson 优先于 definitionId / queryDef） -->
+  <FlowDesigner :initial-json="flowJson" :only-design-show="true" @saved="onSaved" />
 </template>
 <script setup>
 import { FlowDesigner } from '@dromara/warm-flow-designer'
 </script>
 ```
 
-#### FlowDesigner Props / Events
+#### FlowDesigner Props
 
 | 名称 | 类型 | 默认 | 说明 |
 | --- | --- | --- | --- |
-| definitionId | String | null | 流程定义 id，传入则加载该定义，否则新建 |
+| definitionId | String | null | 流程定义 id，传入则 `queryDef` 加载该定义，否则新建 |
+| initialJson | String \| Object | null | 初始流程 JSON（warm-flow 定义对象或其字符串）。**有值时优先于 `definitionId`/`queryDef`**，组件不再请求后端，直接渲染 / 编辑，实现纯组件用法 |
 | disabled | Boolean | false | 只读模式（隐藏保存等编辑操作） |
 | onlyDesignShow | Boolean | false | 仅显示画布（跳过基础信息步骤，直达流程设计） |
 | showGrid | Boolean | false | 画布显示网格 |
-| @close | event | - | 宿主关闭回调（替代 iframe postMessage） |
+| customNodes | Array | [] | 追加自定义 LogicFlow 节点（`lf.register`），在内置节点之后注册，可新增节点类型或覆盖内置同名 type |
+| extraExtensions | Array | [] | 追加自定义 LogicFlow 扩展（`LogicFlow.use`），如 MiniMap / Control / Group |
+| lfOptions | Object | {} | 透传合并到 LogicFlow 初始化选项（顶层覆盖内置 grid / keyboard / 交互开关等；`container` 由组件管理，请勿传入） |
+| onBeforeUse | Function | - | 命令式扩展钩子：在 `extraExtensions` 之后、`new LogicFlow()` 之前调用，透出 LogicFlow 类，可注册**带配置**的扩展 `LF.use(Ext, { ...options })` |
+| onRegister | Function | - | 命令式节点钩子：在 `customNodes` 之后、`render` 之前调用，透出 lf 实例，可批量 / 条件注册节点、注册自定义边或做渲染前设置 |
+
+#### FlowDesigner Events
+
+| 名称 | 回传 | 说明 |
+| --- | --- | --- |
+| @close | - | 宿主关闭回调（替代 iframe postMessage）；保存成功后也会自动触发 |
+| @saved | `{ id, data, json }` | 保存成功：当前定义 id、后端返回 data（如新建后的 definitionId）、本次提交的流程 json |
+| @ready | `{ lf }` | 画布初始化完成，透出底层 LogicFlow 实例，便于高级定制 |
+
+#### 插槽（slots，均带回退，不传则行为不变）
+
+| 名称 | 透出 | 说明 |
+| --- | --- | --- |
+| header-left | `{ flowName }` | 流程名区自定义 |
+| header-actions | `{ save, disabled }` | 保存按钮区追加 |
+| toolbar-extra | `{ lf, disabled }` | 工具栏追加自定义按钮 |
+| logo | - | 画布水印 |
+| node-form-extra | `{ form, disabled }` | 节点属性抽屉扩展点，可向任意节点注入自定义表单项 |
+
+#### 命令式 API
+
+通过组合式 `useFlowDesigner()`（推荐，带空安全包装）或模板 `ref` 获取实例，程序化操控设计器：
+
+```ts
+import { useFlowDesigner } from '@dromara/warm-flow-designer'
+
+const { designerRef, isReady, save, getFlowJson, getLogicFlow, zoom, undo, redo, clear } = useFlowDesigner()
+// 模板：<FlowDesigner ref="designerRef" ... />
+```
+
+可用方法：`save / validate / getGraphData / getFlowJson / getFlowName / getLogicFlow / zoom / zoomIn / zoomOut / fitView / resetZoom / undo / redo / clear / downloadImage / downloadJson`。
 
 ### 数据层（与后端解耦）
 

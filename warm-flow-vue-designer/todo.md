@@ -41,7 +41,15 @@
   - **公共类型集中**：新增 `src/designer/types.ts`（`FlowDesignerProps` / `FlowDesignerInstance` / `FlowDesignerSavedPayload` / `FlowDesignerReadyPayload`），入口统一 re-export；`vite.lib.config.js` dts include 增补 `src/composables/**` 使 hook/类型声明随包产出。
   - `build:lib` 三产物 exit 0（es.js 311.5KB），ReadLints 0 报错，完全向后兼容（纯增量，未改默认行为）。
 
+- [x] **扩展面收尾（Roadmap ②③）+ demo 端到端验证 + 文档同步**：
+  - **② initialJson** / **③ customNodes·extraExtensions·lfOptions** 已实现并提交（`1cd95777`）；两个 demo「扩展能力验证」入口已提交（`d973e07c`）。
+  - **③ 命令式钩子 onBeforeUse(LogicFlow) / onRegister(lf)**：在声明式数组之后调用（`use()` 内 `new LogicFlow()` 前 / `register()` 内 `render` 前），透出类与实例，覆盖带配置扩展 / 批量条件注册 / 自定义边场景；接口经 `FlowDesignerProps` 声明（自动成 prop），`?.` 调用零默认值。
+  - **验证**：`build:lib` 三产物 exit 0（es.js 314.87KB），新增钩子无新类型错误（仅余既有 preact TS2883 dts 告警，非本次、不阻断）；前轮 Playwright 实跑双 demo（EP/antdv）钩子断言 true、控制台 0 报错 0 NaN。
+  - **文档**：README 补全 setUiAdapter 安装步骤（修复主入口 UI 无关后旧示例缺适配器导致照抄跑不起来）+ props / 事件 / 插槽 / 命令式 API 表。
+
 ## 已知问题 / 待修
+
+- [ ] **仿钉钉节点 `getSvg`/`getShape` 的 TS2883 dts 告警（既有、非阻断）**：`mimic/js/{parallel,serial,inclusive,gatewayView}.ts` 的 `getSvg`/`getShape` 返回值被推断为 preact 的 `VNode`/`ClassAttributes`，dts 生成阶段报「inferred type cannot be named without a reference to ...preact」。`build:lib` 仍 exit 0、dts 仍产出，仅这几个内部节点视图方法的类型精度受影响（非对外公共 API）。修法：给方法补显式返回类型注解（引入 / 重导出 preact 对应类型，或退一步标注为已知 vnode 类型）。低优先，按需处理。
 
 - [x] **发布类型在消费方退化为 any（既有缺陷，影响所有导出类型）——已修复**。
   - **根因（两个叠加问题）**：① `vite-plugin-dts@5.0.2` 实为 `unplugin-dts@1.0.2` 转发，对**`@/` 别名派生**的相对 import 计算偏移一级——产物落在 `dist-lib/src/**`，却把别名目标按 entryRoot=src 锚定（少一层 `src`），生成 `../../data` 越出到 `dist-lib/data`（不存在）→ `tsc` 解析失败、`FlowDesignerInstance`/`DataProvider`/`ComponentSize`/`UiAdapter` 等**全部导出类型在消费方退化为 any**（源码原生 `./xxx` 相对导入不受影响）。② 主入口 UI 无关，不引用 `ui/elementPlusAdapter`、`ui/antdvAdapter` 等，**传递依赖 dts 漏产**（import 悬空，同样退化为 any）。
@@ -62,8 +70,9 @@
 ### 实施中 / 计划
 - [x] **① 属性面板插槽透传（断链修复 + 统一扩展点）**：`FlowDesigner` 渲染 `PropertySetting` 时未透传插槽，导致 `propertySetting.vue` 既有的 `v-slot` 转发链对外不可用。
       已修：FlowDesigner 透传全部插槽 → PropertySetting → 节点属性子组件；并为 5 个节点子组件（start/between/gateway/end/skip）统一新增 `#node-form-extra` 扩展插槽（透出 `{ form, disabled }`），消费方可往任意节点属性抽屉注入自定义表单项；`start.vue` 既有 `form-item-task-*` 插槽保留并随之可用。
-- [ ] **② initialJson / v-model 脱后端驱动**：`onMounted` 恒走 `queryDef(definitionId)`，消费方无法直接用一段流程 JSON 渲染/编辑。计划加 `props.initialJson`（或 `v-model:json`），有值时优先于 `queryDef`，实现脱后端纯组件用法。
-- [ ] **③ 自定义节点 / LogicFlow 扩展注册透传**：`register()`（节点）与 `use()`（扩展）写死。计划开放 `props.customNodes` / `props.extraExtensions` 或 `onRegister(lf)` / `onBeforeUse(LogicFlow)` 钩子，并支持 `props.lfOptions` 透传合并 LogicFlow 初始化选项。
+- [x] **② initialJson 脱后端驱动（v-model:json 待拍板）**：已加 `props.initialJson`（warm-flow 定义对象或其字符串），`onMounted` 时有值则优先于 `queryDef`，组件不再请求后端、直接渲染/编辑，实现纯组件用法（提交 `1cd95777`）。
+      > 剩余：双向绑定 `v-model:json`（响应式回写）涉及回环 / 脏检测取舍，留作待拍板项，未实施。
+- [x] **③ 自定义节点 / LogicFlow 扩展注册透传**：已开放声明式 `props.customNodes`（内置节点后 `lf.register`）/ `props.extraExtensions`（内置扩展后 `LogicFlow.use`）/ `props.lfOptions`（顶层合并 LogicFlow 初始化选项，`container` 强制内部管理）（提交 `1cd95777`）；并补命令式钩子 `onBeforeUse(LogicFlow)`（`new LogicFlow()` 前，支持 `LF.use(Ext,{...})` 带配置扩展 / 覆盖内置）与 `onRegister(lf)`（`render` 前，支持批量·条件注册 / 自定义边 / 实例级设置）。声明式数组与命令式钩子可同时使用（先数组、后钩子）。
 
 ### 待排期（按需）
 - **事件补全**：`change` / `dirty`（未保存离开拦截）、`before-save`（可改写 payload）、`validate-error`。
