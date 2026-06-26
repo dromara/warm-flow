@@ -83,6 +83,10 @@
           v-bind="designProps"
           @saved="onSaved"
           @close="onClose"
+          @ready="onDesignerReady"
+          @before-save="onBeforeSave"
+          @change="onDesignerChange"
+          @dirty="onDesignerDirty"
         >
           <!-- ① node-form-extra 插槽透传验证：仅扩展验证模式注入，证明 FlowDesigner→PropertySetting→节点子组件 链路打通 -->
           <template #node-form-extra="{ form, disabled }">
@@ -168,6 +172,38 @@ const validateOnRegister = (lf) => {
   window.__WF_VALIDATE_ON_REGISTER__ = ok
   console.log('[validate] onRegister 调用，lf.register =', typeof lf?.register, 'registered =', ok)
 }
+// ④ paletteNodes：自定义经典模式左侧拖拽面板节点（重命名基础节点 + 传空数组隐藏网关组），验证覆盖生效
+const validatePaletteNodes = {
+  flowNodes: [
+    { type: 'start', label: '开始(自定义)' },
+    { type: 'between', label: '审批(自定义)', properties: { collaborativeWay: '1' } },
+    { type: 'end', label: '结束(自定义)' }
+  ],
+  gatewayNodes: []
+}
+
+// ⑤ @ready：暴露底层 lf 实例（高级定制；本 demo 供冒烟测试经此程序化触发画布变更）
+function onDesignerReady(payload) {
+  window.__WF_LF__ = (payload && payload.lf) || null
+}
+// ⑥ @change：画布图数据变更（基于 history:change），带惰性 getJson / getGraphData
+function onDesignerChange(payload) {
+  if (designMode.value !== 'validate') return
+  window.__WF_VALIDATE_CHANGE__ = true
+  console.log('[validate] change，dirty =', payload && payload.dirty)
+}
+// ⑥ @dirty：未保存状态翻转（首次变更 false→true，保存成功 true→false）
+function onDesignerDirty(d) {
+  if (designMode.value !== 'validate') return
+  window.__WF_VALIDATE_DIRTY__ = !!d
+  console.log('[validate] dirty 翻转 =', d)
+}
+// ⑦ @before-save：保存提交前可改写 json / 取消保存（同步事件）
+function onBeforeSave(payload) {
+  if (designMode.value !== 'validate') return
+  window.__WF_VALIDATE_BEFORE_SAVE__ = !!(payload && typeof payload.setJson === 'function' && typeof payload.preventDefault === 'function')
+  console.log('[validate] before-save，json 长度 =', payload && payload.json && payload.json.length)
+}
 
 const columns = [
   { title: '流程名称', dataIndex: 'flowName', key: 'flowName', ellipsis: true },
@@ -188,7 +224,7 @@ const designKey = ref(0)
 const designModeText = computed(() => {
   if (designMode.value === 'create') return '新建流程'
   if (designMode.value === 'edit') return '修改流程'
-  if (designMode.value === 'validate') return '扩展能力验证 · initialJson + node-form-extra 插槽 + customNodes/extraExtensions/lfOptions + onBeforeUse/onRegister 钩子'
+  if (designMode.value === 'validate') return '扩展能力验证 · initialJson + node-form-extra 插槽 + customNodes/extraExtensions/lfOptions + onBeforeUse/onRegister 钩子 + paletteNodes + before-save/change/dirty 事件'
   return '预览流程（只读）'
 })
 
@@ -223,9 +259,12 @@ function onPreview(row) {
 // 扩展能力验证：一次性启用 initialJson(②) + customNodes/extraExtensions/lfOptions(③)，
 // 直达画布（onlyDesignShow）且可编辑（disabled:false），点击节点即可在属性面板看到 node-form-extra 插槽(①)
 function onValidateExt() {
-  // 复测前复位钩子标记，避免跨导航的旧值干扰断言
+  // 复测前复位钩子 / 事件标记，避免跨导航的旧值干扰断言
   window.__WF_VALIDATE_ON_BEFORE_USE__ = false
   window.__WF_VALIDATE_ON_REGISTER__ = false
+  window.__WF_VALIDATE_CHANGE__ = false
+  window.__WF_VALIDATE_DIRTY__ = false
+  window.__WF_VALIDATE_BEFORE_SAVE__ = false
   openDesigner('validate', {
     definitionId: null,
     disabled: false,
@@ -235,7 +274,8 @@ function onValidateExt() {
     extraExtensions: validateExtraExtensions,
     lfOptions: validateLfOptions,
     onBeforeUse: validateOnBeforeUse,
-    onRegister: validateOnRegister
+    onRegister: validateOnRegister,
+    paletteNodes: validatePaletteNodes
   })
 }
 function backToList() {

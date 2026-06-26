@@ -108,6 +108,7 @@ import { FlowDesigner } from '@dromara/warm-flow-designer'
 | lfOptions | Object | {} | 透传合并到 LogicFlow 初始化选项（顶层覆盖内置 grid / keyboard / 交互开关等；`container` 由组件管理，请勿传入） |
 | onBeforeUse | Function | - | 命令式扩展钩子：在 `extraExtensions` 之后、`new LogicFlow()` 之前调用，透出 LogicFlow 类，可注册**带配置**的扩展 `LF.use(Ext, { ...options })` |
 | onRegister | Function | - | 命令式节点钩子：在 `customNodes` 之后、`render` 之前调用，透出 lf 实例，可批量 / 条件注册节点、注册自定义边或做渲染前设置 |
+| paletteNodes | Object | - | 自定义经典模式左侧拖拽面板节点 `{ flowNodes?, gatewayNodes? }`（仅经典模式生效）。任一分组不传用内置默认，传空数组 `[]` 隐藏该分组；需完全替换面板用 `#sidebar` 插槽 |
 
 #### FlowDesigner Events
 
@@ -116,6 +117,9 @@ import { FlowDesigner } from '@dromara/warm-flow-designer'
 | @close | - | 宿主关闭回调（替代 iframe postMessage）；保存成功后也会自动触发 |
 | @saved | `{ id, data, json }` | 保存成功：当前定义 id、后端返回 data（如新建后的 definitionId）、本次提交的流程 json |
 | @ready | `{ lf }` | 画布初始化完成，透出底层 LogicFlow 实例，便于高级定制 |
+| @before-save | `{ id, json, onlyDesignShow, setJson, preventDefault }` | 保存提交前（**同步**）：可 `setJson(next)` 改写提交内容，或 `preventDefault()` 取消本次保存（异步逻辑不会被等待） |
+| @change | `{ dirty, getJson, getGraphData }` | 画布图数据变更（基于 LogicFlow `history:change`，初次渲染不触发）；getter 惰性，按需获取 json / 图数据 |
+| @dirty | `boolean` | 未保存状态翻转：首次变更 `false→true`，保存成功 / `resetDirty()` 后 `true→false`（仅画布图数据，不含基础信息表单字段） |
 
 #### 插槽（slots，均带回退，不传则行为不变）
 
@@ -126,6 +130,7 @@ import { FlowDesigner } from '@dromara/warm-flow-designer'
 | toolbar-extra | `{ lf, disabled }` | 工具栏追加自定义按钮 |
 | logo | - | 画布水印 |
 | node-form-extra | `{ form, disabled }` | 节点属性抽屉扩展点，可向任意节点注入自定义表单项 |
+| sidebar | `{ dragInNode, lf, disabled }` | 整体替换经典模式左侧拖拽面板；自定义面板调用 `dragInNode(type, properties?, text?)` 发起拖拽（仅经典模式流程设计页签渲染） |
 
 #### 命令式 API
 
@@ -138,7 +143,7 @@ const { designerRef, isReady, save, getFlowJson, getLogicFlow, zoom, undo, redo,
 // 模板：<FlowDesigner ref="designerRef" ... />
 ```
 
-可用方法：`save / validate / getGraphData / getFlowJson / getFlowName / getLogicFlow / zoom / zoomIn / zoomOut / fitView / resetZoom / undo / redo / clear / downloadImage / downloadJson`。
+可用方法：`save / validate / getGraphData / getFlowJson / getFlowName / getLogicFlow / zoom / zoomIn / zoomOut / fitView / resetZoom / undo / redo / clear / downloadImage / downloadJson / isDirty / resetDirty`。
 
 ### 数据层（与后端解耦）
 

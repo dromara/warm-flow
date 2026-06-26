@@ -73,11 +73,18 @@
 - [x] **② initialJson 脱后端驱动（v-model:json 待拍板）**：已加 `props.initialJson`（warm-flow 定义对象或其字符串），`onMounted` 时有值则优先于 `queryDef`，组件不再请求后端、直接渲染/编辑，实现纯组件用法（提交 `1cd95777`）。
       > 剩余：双向绑定 `v-model:json`（响应式回写）涉及回环 / 脏检测取舍，留作待拍板项，未实施。
 - [x] **③ 自定义节点 / LogicFlow 扩展注册透传**：已开放声明式 `props.customNodes`（内置节点后 `lf.register`）/ `props.extraExtensions`（内置扩展后 `LogicFlow.use`）/ `props.lfOptions`（顶层合并 LogicFlow 初始化选项，`container` 强制内部管理）（提交 `1cd95777`）；并补命令式钩子 `onBeforeUse(LogicFlow)`（`new LogicFlow()` 前，支持 `LF.use(Ext,{...})` 带配置扩展 / 覆盖内置）与 `onRegister(lf)`（`render` 前，支持批量·条件注册 / 自定义边 / 实例级设置）。声明式数组与命令式钩子可同时使用（先数组、后钩子）。
+- [x] **④ 事件补全（before-save / change / dirty）+ 拖拽侧边栏可配置（paletteNodes / #sidebar 插槽）**：组件库扩展面再补一批纯加法能力。
+  - **`before-save` 事件**（同步）：保存提交前透出 `{ id, json, onlyDesignShow, setJson, preventDefault }`，消费方可改写最终 json 或取消保存（异步逻辑不被等待，已在类型与 README 标注）。
+  - **`change` 事件**：基于 LogicFlow `history:change`，画布图数据变更时触发（初次渲染靠 `canvasReady` 守卫不触发），带惰性 `getJson` / `getGraphData` 避免每次序列化。
+  - **`dirty` 事件 + `isDirty()` / `resetDirty()` 命令式 API**：未保存状态翻转信号（首次变更 false→true，保存成功 / resetDirty true→false），用于「未保存离开拦截」；仅画布图数据，不含基础信息表单字段（已诚实标注 scope）。
+  - **`paletteNodes` prop**：开放经典模式 `DiagramSidebar` 的 `flowNodes` / `gatewayNodes`（任一不传用内置默认，传 `[]` 隐藏该分组，网关组为空连同标题 / 分隔线隐藏）；`PaletteNode.icon` 改可选。
+  - **`#sidebar` 插槽**：整体替换内置拖拽面板，透出命令式 `dragInNode(type, properties?, text?)` + `lf` / `disabled`。
+  - **类型与导出**：新增 `FlowDesignerBeforeSavePayload` / `FlowDesignerChangePayload` / `PaletteNode` / `FlowDesignerPaletteNodes`，`designer/index.ts` 统一 re-export；`useFlowDesigner` 同步 `isDirty` / `resetDirty`。
+  - **验证**：`build:lib` 三产物 exit 0（es.js 316.81KB），ReadLints 0 报错（仅余既有 preact TS2883 dts 告警，非本次）；EP / antdv 两个 demo `vite build` exit 0；Playwright 实跑 EP demo「扩展能力验证」断言 `paletteNodes` 自定义标签生效 + 网关组隐藏、`dirty`/`change` 仅在画布变更后翻转（初次渲染不误标）、`before-save` 携 setJson/preventDefault 触发，控制台 0 报错。
 
 ### 待排期（按需）
-- **事件补全**：`change` / `dirty`（未保存离开拦截）、`before-save`（可改写 payload）、`validate-error`。
-- **数据 hook**：`useFlowJson()`（响应式读写流程 JSON）、变更订阅 `onChange` / `onNodeClick`。
-- **拖拽侧边栏可配置**：`DiagramSidebar` 的 `flowNodes` / `gatewayNodes` 写死，开放 `props.paletteNodes` 或 `#sidebar` 插槽。
+- **事件补全（剩余）**：`validate-error`（基础信息校验失败回传）。
+- **数据 hook**：`useFlowJson()`（响应式读写流程 JSON）、变更订阅 `onNodeClick`。
 - **空 / 加载态插槽**、**步骤区 `header-center` 自定义**。
 - **第三方 UI 库适配器**：补 Naive / Arco / TDesign 示例（接口已具备）。
 - **i18n**：UI 文案目前写死中文，开放语言包。
