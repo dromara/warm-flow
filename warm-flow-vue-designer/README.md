@@ -109,6 +109,7 @@ import { FlowDesigner } from '@dromara/warm-flow-designer'
 | onBeforeUse | Function | - | 命令式扩展钩子：在 `extraExtensions` 之后、`new LogicFlow()` 之前调用，透出 LogicFlow 类，可注册**带配置**的扩展 `LF.use(Ext, { ...options })` |
 | onRegister | Function | - | 命令式节点钩子：在 `customNodes` 之后、`render` 之前调用，透出 lf 实例，可批量 / 条件注册节点、注册自定义边或做渲染前设置 |
 | paletteNodes | Object | - | 自定义经典模式左侧拖拽面板节点 `{ flowNodes?, gatewayNodes? }`（仅经典模式生效）。任一分组不传用内置默认，传空数组 `[]` 隐藏该分组；需完全替换面板用 `#sidebar` 插槽 |
+| json | String \| Object | - | 配合 `v-model:json` 的受控流程 JSON。语义：**初始注入（优先级高于 initialJson/definitionId）+ 变更回写**（`update:json`）。不做运行时反向重渲染（外部重载请配合 `:key` 重挂载，规避回环与撤销历史丢失） |
 
 #### FlowDesigner Events
 
@@ -121,6 +122,8 @@ import { FlowDesigner } from '@dromara/warm-flow-designer'
 | @change | `{ dirty, getJson, getGraphData }` | 画布图数据变更（基于 LogicFlow `history:change`，初次渲染不触发）；getter 惰性，按需获取 json / 图数据 |
 | @dirty | `boolean` | 未保存状态翻转：首次变更 `false→true`，保存成功 / `resetDirty()` 后 `true→false`（仅画布图数据，不含基础信息表单字段） |
 | @validate-error | `{ source, fields? }` | 基础信息校验未通过：`source` = save / step / api；`fields` 为无效字段明细（EP 提供，antd 暂为空）。onlyDesignShow 模式无校验、不触发 |
+| @node-click | `{ id, type, data, lf }` | 画布节点被点击（经典 / 仿钉钉双模式） |
+| @update:json | `string` | 配合 `v-model:json`：画布变更时回写最新流程 json（仅绑定 `json` 时派发） |
 
 #### 插槽（slots，均带回退，不传则行为不变）
 
@@ -132,6 +135,9 @@ import { FlowDesigner } from '@dromara/warm-flow-designer'
 | logo | - | 画布水印 |
 | node-form-extra | `{ form, disabled }` | 节点属性抽屉扩展点，可向任意节点注入自定义表单项 |
 | sidebar | `{ dragInNode, lf, disabled }` | 整体替换经典模式左侧拖拽面板；自定义面板调用 `dragInNode(type, properties?, text?)` 发起拖拽（仅经典模式流程设计页签渲染） |
+| header-center | `{ activeStep, steps, goToStep }` | 替换顶部中间的步骤切换区；`goToStep(index)` 跳转步骤 |
+| loading | - | 初始流程定义加载中的覆盖层（默认「加载中…」） |
+| empty | - | 加载完成但无可用定义（如 definitionId 失效）的覆盖层（默认「暂无流程定义」） |
 
 #### 命令式 API
 

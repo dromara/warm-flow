@@ -79,6 +79,7 @@
         <FlowDesigner
           ref="designerRef"
           :key="designKey"
+          v-model:json="modelJson"
           v-bind="designProps"
           @saved="onSaved"
           @close="onClose"
@@ -87,6 +88,7 @@
           @change="onDesignerChange"
           @dirty="onDesignerDirty"
           @validate-error="onValidateError"
+          @node-click="onNodeClick"
         >
           <!-- ① node-form-extra 插槽透传验证：仅扩展验证模式注入，证明 FlowDesigner→PropertySetting→节点子组件 链路打通 -->
           <template #node-form-extra="{ form, disabled }">
@@ -94,6 +96,9 @@
               <wf-input v-model="form.validateExt" :disabled="disabled" placeholder="node-form-extra 插槽已生效" />
             </wf-form-item>
           </template>
+          <!-- 加载态 / 空态插槽自定义（demo 演示，默认回退已够用） -->
+          <template #loading><div class="demo-state">流程加载中…</div></template>
+          <template #empty><div class="demo-state">没有找到流程定义</div></template>
         </FlowDesigner>
       </div>
     </div>
@@ -185,6 +190,19 @@ watch(() => flowJson.json.value, (v) => {
   window.__WF_VALIDATE_JSON_LEN__ = v ? v.length : 0
 })
 
+// ⑩ v-model:json：受控 json（初始注入 + 变更回写）。每次打开重置避免跨模式串数据
+const modelJson = ref(null)
+watch(modelJson, (v) => {
+  if (designMode.value !== 'validate') return
+  window.__WF_VALIDATE_VMODEL_LEN__ = v ? String(v).length : 0
+})
+// ⑪ @node-click：画布节点点击订阅，透出 id / type / data / lf
+function onNodeClick(payload) {
+  if (designMode.value !== 'validate') return
+  window.__WF_VALIDATE_NODE_CLICK__ = (payload && payload.type) || ''
+  console.log('[validate] node-click，id =', payload && payload.id, 'type =', payload && payload.type)
+}
+
 // ⑤ @ready：暴露底层 lf 实例（高级定制；本 demo 供冒烟测试经此程序化触发画布变更）+ 同步 useFlowJson
 function onDesignerReady(payload) {
   window.__WF_LF__ = (payload && payload.lf) || null
@@ -226,7 +244,7 @@ const designKey = ref(0)
 const designModeText = computed(() => {
   if (designMode.value === 'create') return '新建流程'
   if (designMode.value === 'edit') return '修改流程'
-  if (designMode.value === 'validate') return '扩展能力验证 · initialJson + node-form-extra 插槽 + customNodes/extraExtensions/lfOptions + onBeforeUse/onRegister 钩子 + paletteNodes + before-save/change/dirty/validate-error 事件 + useFlowJson'
+  if (designMode.value === 'validate') return '扩展能力验证 · initialJson + node-form-extra 插槽 + customNodes/extraExtensions/lfOptions + onBeforeUse/onRegister 钩子 + paletteNodes + before-save/change/dirty/validate-error/node-click 事件 + useFlowJson + v-model:json'
   return '预览流程（只读）'
 })
 
@@ -242,6 +260,8 @@ refresh()
 function openDesigner(mode, designerProps) {
   designMode.value = mode
   designProps.value = designerProps
+  // v-model:json 跨模式重置，避免上一会话的 json 串入新会话（json 优先级高于 queryDef/initialJson）
+  modelJson.value = null
   designKey.value++
   view.value = 'design'
 }
@@ -268,6 +288,8 @@ function onValidateExt() {
   window.__WF_VALIDATE_DIRTY__ = false
   window.__WF_VALIDATE_BEFORE_SAVE__ = false
   window.__WF_VALIDATE_JSON_LEN__ = 0
+  window.__WF_VALIDATE_VMODEL_LEN__ = 0
+  window.__WF_VALIDATE_NODE_CLICK__ = ''
   openDesigner('validate', {
     definitionId: null,
     disabled: false,

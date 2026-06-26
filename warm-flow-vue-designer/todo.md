@@ -85,10 +85,15 @@
   - **`validate-error` 事件**：基础信息表单校验失败时透出 `{ source: save|step|api, fields? }`（baseInfo 透出 EP 无效字段；antd 适配器仅回传布尔、fields 为空，已诚实标注）。onlyDesignShow 模式无校验、不触发。
   - **`useFlowJson(designerRef)` hook**：流程 json 响应式只读视图 `{ json, data, dirty, sync, bind }`。**单向读**（同步设计器当前 json，便于预览 / 脏检测）；写入仍走 `initialJson` + `:key` 重挂载，不做反向写回画布——明确与待拍板的 `v-model:json`（回环 / 脏检测取舍）区分。`bind` 可 `v-on` 展开；若已单独绑定同名事件，改用 `sync()` 避免覆盖。
   - **验证**：`build:lib` 三产物 exit 0；EP / antdv demo `vite build` exit 0；Playwright 实跑：create 模式空必填切「流程设计」步触发 `validate-error`（source=step）且停留基础信息页；validate 模式 `useFlowJson.json` 就绪同步（805）→ 画布加节点后增长（960），控制台 0 报错。
+- [x] **⑥ node-click 事件 + v-model:json + 空/加载态插槽 + header-center 插槽**：扩展面收尾。
+  - **`node-click` 事件**：经典 / 仿钉钉双模式节点点击透出 `{ id, type, data, lf }`。
+  - **`v-model:json`**（拍板：**初始注入 + 变更回写**，单向写出）：新增 `json` prop（优先级 json > initialJson > definitionId）+ `update:json`（受控时画布变更回写）。**不做运行时反向重渲染**——外部重载走 `:key` 重挂载，规避双向绑定回环与撤销历史丢失（与早先 `useFlowJson` 单向读一致的取舍）。
+  - **`#loading` / `#empty` 插槽**：初始定义加载中 / 加载后无可用定义（如 definitionId 失效）的覆盖层，均带默认回退。
+  - **`#header-center` 插槽**：替换顶部步骤切换区，透出 `{ activeStep, steps, goToStep }`。
+  - **验证**：`build:lib` exit 0；EP / antdv demo `vite build` exit 0；Playwright 实跑 validate 模式：`node-click`（type=start）、`v-model:json` 回写（加节点后 modelJson 长度 1011）、`useFlowJson` 同步一致、数据存在时无 loading/empty 覆盖层误盖，控制台 0 报错。
 
 ### 待排期（按需）
-- **数据 hook（剩余）**：变更订阅 `onNodeClick`；`v-model:json` 双向绑定（回环 / 脏检测取舍，待拍板）。
-- **空 / 加载态插槽**、**步骤区 `header-center` 自定义**。
+- **数据 hook（剩余）**：`v-model:json` 全反应式双向（运行时重渲染回环 / 撤销历史取舍，按需再议）；变更订阅 `onNodeDblclick` 等更多事件粒度。
 - **第三方 UI 库适配器**：补 Naive / Arco / TDesign 示例（接口已具备）。
 - **i18n**：UI 文案目前写死中文，开放语言包。
 - **表单设计步骤**（当前注释）、**流程结构校验钩子**（必须有开始/结束、网关成对等）。
