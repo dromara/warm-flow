@@ -43,6 +43,21 @@ export interface FlowDesignerProps {
    * 注意：container 由组件内部管理，请勿在此传入。
    */
   lfOptions?: Record<string, any>
+  /**
+   * LogicFlow 扩展注册钩子（命令式）：在内置扩展 + `extraExtensions` 之后、`new LogicFlow()` 之前调用，
+   * 透出 LogicFlow 类（静态）。相比 `extraExtensions`（仅 `LogicFlow.use(ext)`），此钩子能力更强：
+   * - 注册**带配置**的扩展：`LF.use(MiniMap, { ...options })`（数组形式无法传配置）；
+   * - 按条件注册 / 覆盖内置扩展。
+   * 与 `extraExtensions` 可同时使用（先数组、后钩子）。
+   */
+  onBeforeUse?: (LF: typeof import('@logicflow/core').default) => void
+  /**
+   * 自定义节点注册钩子（命令式）：在内置节点 + `customNodes` 之后调用，透出已创建的 LogicFlow 实例。
+   * 相比 `customNodes`（仅 `lf.register(node)`），此钩子能访问 lf 实例做批量 / 条件注册、注册自定义边，
+   * 或在首次渲染前对实例做额外设置（如 `lf.setTheme` / `lf.on`）。
+   * 与 `customNodes` 可同时使用（先数组、后钩子）。
+   */
+  onRegister?: (lf: LogicFlow) => void
 }
 
 /** `saved` 事件回传：当前定义 id、后端返回数据（如新建后的 definitionId）与本次保存的流程 json。 */
