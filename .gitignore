@@ -54,6 +54,9 @@ dist-lib/
 /warm-flow-designer-demo/warm-flow-ep-designer-demo/.playwright-cli/
 /warm-flow-designer-demo/warm-flow-ep-designer-demo/dist/
 /warm-flow-designer-demo/warm-flow-ep-designer-demo/node_modules/
+/warm-flow-designer-demo/warm-flow-naive-designer-demo/.playwright-cli/
+/warm-flow-designer-demo/warm-flow-naive-designer-demo/dist/
+/warm-flow-designer-demo/warm-flow-naive-designer-demo/node_modules/
 /warm-flow-vue-designer/node_modules/
 /warm-flow-vue-designer/output/
 /warm-flow-vue-designer/dist/
