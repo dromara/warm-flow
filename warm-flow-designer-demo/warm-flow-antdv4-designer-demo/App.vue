@@ -19,6 +19,7 @@
           </div>
           <div class="demo-actions">
             <a-button type="primary" size="large" @click="onCreate">+ 新建流程</a-button>
+            <a-button size="large" @click="onShowcase">集成案例</a-button>
             <a-button type="primary" ghost size="large" @click="onValidateExt">扩展能力验证</a-button>
             <a-button size="large" @click="refresh">刷新</a-button>
             <a-button danger size="large" :disabled="!flows.length" @click="onClearAll">清空</a-button>
@@ -75,33 +76,63 @@
         <a-button type="text" @click="backToList">← 返回列表</a-button>
         <span class="demo-design-mode" :class="designMode">{{ designModeText }}</span>
       </div>
-      <div class="demo-design-canvas">
-        <!-- 对象式消费：designProps 是细粒度 props 的集合，v-bind 直接摊开绑定到对应 prop，
-             无需组件提供单一 designProps prop —— 仍保留 per-prop 默认值 / 模板类型校验 / DevTools 粒度 -->
-        <FlowDesigner
-          ref="designerRef"
-          :key="designKey"
-          v-model:json="modelJson"
-          v-bind="designProps"
-          @saved="onSaved"
-          @close="onClose"
-          @ready="onDesignerReady"
-          @before-save="onBeforeSave"
-          @change="onDesignerChange"
-          @dirty="onDesignerDirty"
-          @validate-error="onValidateError"
-          @node-click="onNodeClick"
-        >
-          <!-- ① node-form-extra 插槽透传验证：仅扩展验证模式注入，证明 FlowDesigner→PropertySetting→节点子组件 链路打通 -->
-          <template #node-form-extra="{ form, disabled }">
-            <wf-form-item v-if="designMode === 'validate' && form" label="扩展字段(验证)：">
-              <wf-input v-model="form.validateExt" :disabled="disabled" placeholder="node-form-extra 插槽已生效" />
-            </wf-form-item>
-          </template>
-          <!-- 加载态 / 空态插槽自定义（demo 演示，默认回退已够用） -->
-          <template #loading><div class="demo-state">流程加载中…</div></template>
-          <template #empty><div class="demo-state">没有找到流程定义</div></template>
-        </FlowDesigner>
+      <div class="demo-design-body">
+        <div class="demo-design-canvas">
+          <!-- 对象式消费：designProps 是细粒度 props 的集合，v-bind 直接摊开绑定到对应 prop，
+               无需组件提供单一 designProps prop —— 仍保留 per-prop 默认值 / 模板类型校验 / DevTools 粒度 -->
+          <FlowDesigner
+            ref="designerRef"
+            :key="designKey"
+            v-model:json="modelJson"
+            v-bind="designProps"
+            @saved="onSaved"
+            @close="onClose"
+            @ready="onDesignerReady"
+            @before-save="onBeforeSave"
+            @change="onDesignerChange"
+            @dirty="onDesignerDirty"
+            @validate-error="onValidateError"
+            @node-click="onNodeClick"
+          >
+            <!-- ① node-form-extra 插槽透传验证：仅扩展验证模式注入，证明 FlowDesigner→PropertySetting→节点子组件 链路打通 -->
+            <template #node-form-extra="{ form, disabled }">
+              <wf-form-item v-if="designMode === 'validate' && form" label="扩展字段(验证)：">
+                <wf-input v-model="form.validateExt" :disabled="disabled" placeholder="node-form-extra 插槽已生效" />
+              </wf-form-item>
+            </template>
+            <!-- 加载态 / 空态插槽自定义（demo 演示，默认回退已够用） -->
+            <template #loading><div class="demo-state">流程加载中…</div></template>
+            <template #empty><div class="demo-state">没有找到流程定义</div></template>
+          </FlowDesigner>
+        </div>
+
+        <!-- 集成案例：右侧实时面板（实时 JSON + 事件日志 + 命令式工具条） -->
+        <aside v-if="designMode === 'showcase'" class="demo-showcase-panel">
+          <div class="sc-section">
+            <div class="sc-title">命令式 API（useFlowDesigner）</div>
+            <div class="sc-cmds">
+              <a-button v-for="c in showcaseCommands" :key="c.key" size="small" @click="c.run">{{ c.label }}</a-button>
+            </div>
+            <div class="sc-dirty">未保存改动：<b :class="{ 'is-dirty': flowJson.dirty.value }">{{ flowJson.dirty.value ? '是' : '否' }}</b></div>
+          </div>
+
+          <div class="sc-section sc-grow">
+            <div class="sc-title">事件日志（{{ eventLog.length }}）</div>
+            <div class="sc-log">
+              <div v-if="!eventLog.length" class="sc-empty">操作画布 / 点击节点 / 保存，事件将实时出现在这里</div>
+              <div v-for="(e, i) in eventLog" :key="i" class="sc-log-item">
+                <span class="sc-log-t">{{ e.t }}</span>
+                <span class="sc-log-name">{{ e.name }}</span>
+                <span class="sc-log-detail">{{ e.detail }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="sc-section sc-grow">
+            <div class="sc-title">实时流程 JSON（useFlowJson · {{ (flowJson.json.value || '').length }} 字符）</div>
+            <pre class="sc-json">{{ flowJson.json.value || '（暂无）' }}</pre>
+          </div>
+        </aside>
       </div>
     </div>
   </div>
@@ -116,7 +147,7 @@
  */
 import { computed, ref, watch } from 'vue'
 import { message, Modal } from 'ant-design-vue'
-import { FlowDesigner, useFlowJson } from '@dromara/warm-flow-designer'
+import { FlowDesigner, useFlowJson, useFlowDesigner } from '@dromara/warm-flow-designer'
 // 组件库扩展能力验证用：消费方自带的 LogicFlow 基类 / 官方扩展（库已把它们 externalize 为 peer，单实例共享）
 import { RectNode, RectNodeModel } from '@logicflow/core'
 import { Control } from '@logicflow/extension'
@@ -189,8 +220,10 @@ const validatePaletteNodes = {
   gatewayNodes: []
 }
 
-// ⑨ useFlowJson：流程 json 响应式只读视图（配合模板 ref，随就绪 / 变更自动 sync）
-const designerRef = ref(null)
+// ⑨ useFlowDesigner（命令式 API，空安全）+ useFlowJson（流程 json 响应式只读视图）
+// 两者共享同一个模板 ref（绑定到 <FlowDesigner ref="designerRef" />）
+const flowDesigner = useFlowDesigner()
+const designerRef = flowDesigner.designerRef
 const flowJson = useFlowJson(designerRef)
 // 验证 useFlowJson 响应式：json 刷新后暴露长度供冒烟断言
 watch(() => flowJson.json.value, (v) => {
@@ -206,37 +239,60 @@ watch(modelJson, (v) => {
 })
 // ⑪ @node-click：画布节点点击订阅，透出 id / type / data / lf
 function onNodeClick(payload) {
+  if (designMode.value === 'showcase') logEvent('node-click', `${payload?.type} #${payload?.id}`)
   if (designMode.value !== 'validate') return
   window.__WF_VALIDATE_NODE_CLICK__ = (payload && payload.type) || ''
   console.log('[validate] node-click，id =', payload && payload.id, 'type =', payload && payload.type)
 }
 
+// ===== 集成案例（showcase）：把扩展点做成可见的实时面板（实时 JSON + 事件日志 + 命令式工具条） =====
+const eventLog = ref([])
+function logEvent(name, detail) {
+  eventLog.value.unshift({ t: new Date().toLocaleTimeString(), name, detail: detail || '' })
+  if (eventLog.value.length > 30) eventLog.value.pop()
+}
+// 命令式 API（useFlowDesigner，空安全）：宿主自建工具条调用，无需依赖设计器内置按钮
+const showcaseCommands = [
+  { key: 'zoomIn', label: '放大', run: () => flowDesigner.zoomIn() },
+  { key: 'zoomOut', label: '缩小', run: () => flowDesigner.zoomOut() },
+  { key: 'fitView', label: '适应', run: () => flowDesigner.fitView() },
+  { key: 'undo', label: '撤销', run: () => flowDesigner.undo() },
+  { key: 'redo', label: '重做', run: () => flowDesigner.redo() },
+  { key: 'downloadJson', label: '导出JSON', run: () => flowDesigner.downloadJson() },
+  { key: 'resetDirty', label: '标记已存', run: () => flowDesigner.resetDirty() }
+]
+
 // ⑤ @ready：暴露底层 lf 实例（高级定制；本 demo 供冒烟测试经此程序化触发画布变更）+ 同步 useFlowJson
 function onDesignerReady(payload) {
   window.__WF_LF__ = (payload && payload.lf) || null
   flowJson.sync()
+  if (designMode.value === 'showcase') logEvent('ready', '画布初始化完成')
 }
 // ⑥ @change：画布图数据变更（基于 history:change），带惰性 getJson / getGraphData；同步 useFlowJson
 function onDesignerChange(payload) {
   flowJson.sync()
+  if (designMode.value === 'showcase') logEvent('change', `dirty=${payload?.dirty}`)
   if (designMode.value !== 'validate') return
   window.__WF_VALIDATE_CHANGE__ = true
   console.log('[validate] change，dirty =', payload && payload.dirty)
 }
 // ⑥ @dirty：未保存状态翻转（首次变更 false→true，保存成功 true→false）
 function onDesignerDirty(d) {
+  if (designMode.value === 'showcase') logEvent('dirty', String(!!d))
   if (designMode.value !== 'validate') return
   window.__WF_VALIDATE_DIRTY__ = !!d
   console.log('[validate] dirty 翻转 =', d)
 }
 // ⑦ @before-save：保存提交前可改写 json / 取消保存（同步事件）
 function onBeforeSave(payload) {
+  if (designMode.value === 'showcase') logEvent('before-save', `json 长度 ${payload?.json?.length || 0}`)
   if (designMode.value !== 'validate') return
   window.__WF_VALIDATE_BEFORE_SAVE__ = !!(payload && typeof payload.setJson === 'function' && typeof payload.preventDefault === 'function')
   console.log('[validate] before-save，json 长度 =', payload && payload.json && payload.json.length)
 }
 // ⑧ @validate-error：基础信息校验失败（保存 / 切步骤 / 命令式 validate 触发），透出来源与无效字段
 function onValidateError(payload) {
+  if (designMode.value === 'showcase') logEvent('validate-error', `source=${payload?.source}`)
   window.__WF_VALIDATE_VALIDATE_ERROR__ = (payload && payload.source) || ''
   console.log('[validate] validate-error，source =', payload && payload.source, 'fields =', payload && payload.fields)
 }
@@ -260,6 +316,7 @@ const designKey = ref(0)
 const designModeText = computed(() => {
   if (designMode.value === 'create') return '新建流程'
   if (designMode.value === 'edit') return '修改流程'
+  if (designMode.value === 'showcase') return '集成案例 · 右侧实时面板（useFlowJson 实时 JSON + 事件日志 + useFlowDesigner 命令式工具条）'
   if (designMode.value === 'validate') return '扩展能力验证 · initialJson + node-form-extra 插槽 + customNodes/extraExtensions/lfOptions + onBeforeUse/onRegister 钩子 + paletteNodes + before-save/change/dirty/validate-error/node-click 事件 + useFlowJson + v-model:json'
   return '预览流程（只读）'
 })
@@ -296,6 +353,24 @@ function onPreview(row) {
 
 // 扩展能力验证：一次性启用 initialJson(②) + customNodes/extraExtensions/lfOptions(③)，
 // 直达画布（onlyDesignShow）且可编辑（disabled:false），点击节点即可在属性面板看到 node-form-extra 插槽(①)
+// 集成案例入口：直达画布，开启全部扩展点（自定义节点 / 扩展 / lfOptions / 自定义拖拽面板），
+// 右侧实时面板展示 useFlowJson 实时 JSON、事件日志、useFlowDesigner 命令式工具条。
+function onShowcase() {
+  eventLog.value = []
+  openDesigner('showcase', {
+    definitionId: null,
+    disabled: false,
+    onlyDesignShow: true,
+    initialJson: validateInitialJson,
+    customNodes: validateCustomNodes,
+    extraExtensions: validateExtraExtensions,
+    lfOptions: validateLfOptions,
+    onBeforeUse: validateOnBeforeUse,
+    onRegister: validateOnRegister,
+    paletteNodes: validatePaletteNodes
+  })
+}
+
 function onValidateExt() {
   // 复测前复位钩子 / 事件标记，避免跨导航的旧值干扰断言
   window.__WF_VALIDATE_ON_BEFORE_USE__ = false
@@ -564,9 +639,74 @@ function onClearAll() {
   background: #f3e8ff;
   color: #7c3aed;
 }
+.demo-design-body {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
 .demo-design-canvas {
   flex: 1;
   position: relative;
   overflow: hidden;
+}
+
+/* ========== 集成案例右侧实时面板 ========== */
+.demo-showcase-panel {
+  width: 360px;
+  flex: 0 0 360px;
+  border-left: 1px solid #e2e8f0;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.sc-section {
+  padding: 12px 14px;
+  border-bottom: 1px solid #eef1f6;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.sc-section.sc-grow { flex: 1; }
+.sc-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 8px;
+}
+.sc-cmds { display: flex; flex-wrap: wrap; gap: 6px; }
+.sc-dirty { margin-top: 10px; font-size: 12.5px; color: #64748b; }
+.sc-dirty .is-dirty { color: #f5222d; }
+.sc-log {
+  flex: 1;
+  overflow-y: auto;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.sc-empty { color: #94a3b8; font-size: 12px; }
+.sc-log-item { display: flex; gap: 6px; padding: 2px 0; border-bottom: 1px dashed #f1f5f9; }
+.sc-log-t { color: #94a3b8; flex: 0 0 auto; }
+.sc-log-name { color: #1677ff; font-weight: 600; flex: 0 0 auto; }
+.sc-log-detail { color: #64748b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sc-json {
+  flex: 1;
+  margin: 0;
+  overflow: auto;
+  background: #0f172a;
+  color: #e2e8f0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-family: 'SF Mono', Monaco, Menlo, Consolas, monospace;
+  font-size: 11px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.demo-state { font-size: 14px; color: #909399; }
+
+@media (max-width: 900px) {
+  .demo-design-body { flex-direction: column; }
+  .demo-showcase-panel { width: 100%; flex: 0 0 auto; max-height: 40vh; border-left: none; border-top: 1px solid #e2e8f0; }
 }
 </style>
