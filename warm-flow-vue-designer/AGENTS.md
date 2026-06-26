@@ -6,7 +6,7 @@
 
 ## 模块职责
 
-`warm-flow-vue-designer` 是 Warm-Flow 流程设计器的 **Vue3 组件库 / npm 包工程**（包名 `@dromara/warm-flow-designer`，经典 + 仿钉钉双模式）。它由 `warm-flow-ui` 复制而来，承载**全部 npm 包化成果**，并作为**主动迭代 / 破坏性更新的工作区**（如 Element Plus 解耦、Ant Design Vue 适配）。已裁剪为**纯组件库**（无独立应用壳：无 `index.html`/`main.js`/`App.vue`/`views`/`build:prod`）。消费示例见 `warm-flow-designer-demo/warm-flow-ep-designer-demo`（Element Plus，:5180）/ `warm-flow-designer-demo/warm-flow-antdv4-designer-demo`（Ant Design Vue 4，:5181）。
+`warm-flow-vue-designer` 是 Warm-Flow 流程设计器的 **Vue3 组件库 / npm 包工程**（包名 `@dromara/warm-flow-designer`，经典 + 仿钉钉双模式）。它由 `warm-flow-ui` 复制而来，承载**全部 npm 包化成果**，并作为**主动迭代 / 破坏性更新的工作区**（如 Element Plus 解耦、Ant Design Vue 适配）。已裁剪为**纯组件库**（无独立应用壳：无 `index.html`/`main.js`/`App.vue`/`views`/`build:prod`）。消费示例见 `warm-flow-designer-demo/warm-flow-ep-designer-demo`（Element Plus，:5180）/ `warm-flow-designer-demo/warm-flow-antdv4-designer-demo`（Ant Design Vue 4，:5181）/ `warm-flow-designer-demo/warm-flow-naive-designer-demo`（Naive UI，:5182）。
 
 与 `warm-flow-ui` 的分工（务必分清）：
 
@@ -56,15 +56,16 @@ pnpm build       # 示例生产构建
 
 - **命令式 UI 一律走适配器**：消息 / 通知 / 弹框 / loading / `clickOutside` 指令统一通过 `src/ui/uiAdapter` 的 `getUiAdapter()`。**核心代码禁止直接 import 任何 UI 库的 `ElMessage`/`ElMessageBox`/`ElNotification`/`ElLoading`/`ClickOutside` 等**——只有 `src/ui/elementPlusAdapter.ts` / `src/ui/antdvAdapter.ts` 可引具体 UI 库（已实测：全 `src/` 仅这两个文件分别引 element-plus / ant-design-vue）。
 - **主入口 UI 库无关**：`designer/index.ts` 的 `install()` 只注册 svg-icon + 中性组件 `wf-*`，**不静态引、也不默认注册任何 UI 适配器**；主 bundle `dist-lib/warm-flow-designer.es.js` **零 element-plus / ant-design-vue import**（已实测 0 处）。消费方**必须**在渲染 `FlowDesigner` 前显式 `setUiAdapter(...)`，否则中性组件 `getUiAdapter()` 抛错。
-- **EP / antd 均为可选子入口（对称）**：
+- **EP / antd / naive 均为可选子入口（对称）**：
   - Element Plus：`src/ui/elementPlusAdapter.ts` → `vite.ep.config.js`（`build:ep`）→ `dist-lib/element-plus.es.js` → 包导出 `@dromara/warm-flow-designer/element-plus`。
   - Ant Design Vue 4：`src/ui/antdvAdapter.ts` → `vite.antdv.config.js`（`build:antdv`）→ `dist-lib/antdv.es.js` → 包导出 `@dromara/warm-flow-designer/antdv`。
-  - 两者各自 externalize `vue` + 对应 UI 库为 peer；`build:lib` = 主 + ep + antdv **三构建**。消费方：`import { elementPlusAdapter } from '@dromara/warm-flow-designer/element-plus'`（或 `/antdv` 的 `antdvAdapter`）+ `setUiAdapter(...)`。
+  - Naive UI：`src/ui/naiveAdapter.ts` → `vite.naive.config.js`（`build:naive`）→ `dist-lib/naive.es.js` → 包导出 `@dromara/warm-flow-designer/naive`。Naive 的 message/dialog/notification 是 provider 上下文式 API，适配器内用 `createDiscreteApi`（懒初始化）取脱上下文实例供命令式方法调用。
+  - 三者各自 externalize `vue` + 对应 UI 库为 peer；`build:lib` = 主 + ep + antdv + naive **四构建**。消费方：`import { elementPlusAdapter } from '@dromara/warm-flow-designer/element-plus'`（或 `/antdv` 的 `antdvAdapter`、`/naive` 的 `naiveAdapter`）+ `setUiAdapter(...)`。
 - **组件层中性化（Phase 2 已完成）**：全 28 种 `<el-*>` 已包成中性 `Wf*`（`src/ui/components`，注册名 `wf-*`），按当前 adapter 的 `components` 映射渲染。新写 UI 用中性 `<wf-*>`，**不新增直连 `<el-*>` 的耦合**。
 - **新增 UI 库**：实现一份同 `UiAdapter` 契约的适配器（含 28 个 `components` 映射 + 命令式反馈 + `clickOutside`）+ 拆**独立子入口**构建，**不在核心里写 `if (antdv) ... else ...`**。
 - **form-create（已移除）**：旧的自定义表单设计器组件 `components/form/formCreate.vue` / `design.vue` 在纯库化删 `views/` 后成为孤儿（无任何引用、未接入主入口图），已连同 `@form-create/designer` / `@form-create/element-ui` 依赖与 externalize 一并移除。`api/form/form.ts` 与 `DataProvider` 的表单方法（getFormContent/saveFormContent/executeLoad/executeHandle/hisLoad）暂保留为通用数据契约（不引 @form-create）。若未来需内置表单设计器，按「子入口 + 适配器」模式重新接入，勿直接耦合具体表单库。
 - **样式残留（Phase 4）**：库自带 SCSS 仍有针对 `.el-*` 类名写的选择器（antd 下不命中、属样式 token 双主题对齐范畴），非 EP 运行时依赖。
-- **对外契约**：`src/designer/index.ts` 的导出（`FlowDesigner`、`setDataProvider`、`setUiAdapter`/`getUiAdapter`、`UiAdapter` 类型等）+ `package.json` 的 `exports`（`.` / `./element-plus` / `./antdv` / `./style`）是**已发布 npm API**，向后兼容、优先「加法」。注：`elementPlusAdapter` 已从主入口移除、改由 `/element-plus` 子入口导出（主入口 UI 无关的必要改动；publish 前定型可接受）。
+- **对外契约**：`src/designer/index.ts` 的导出（`FlowDesigner`、`setDataProvider`、`setUiAdapter`/`getUiAdapter`、`UiAdapter` 类型等）+ `package.json` 的 `exports`（`.` / `./element-plus` / `./antdv` / `./naive` / `./style`）是**已发布 npm API**，向后兼容、优先「加法」。注：`elementPlusAdapter` 已从主入口移除、改由 `/element-plus` 子入口导出（主入口 UI 无关的必要改动；publish 前定型可接受）。
 
 ## 高风险点
 

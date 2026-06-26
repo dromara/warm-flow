@@ -94,7 +94,7 @@
 
 ### 待排期（按需）
 - **数据 hook（剩余）**：`v-model:json` 全反应式双向（运行时重渲染回环 / 撤销历史取舍，按需再议）；变更订阅 `onNodeDblclick` 等更多事件粒度。
-- **第三方 UI 库适配器**：补 Naive / Arco / TDesign 示例（接口已具备）。
+- [x] **第三方 UI 库适配器（Naive UI）**：`src/ui/naiveAdapter.ts`（UiAdapter 28 组件映射 + `createDiscreteApi` 脱上下文 message/dialog/notification + 自实现 clickOutside/loading）+ `vite.naive.config.js` 子入口 → `dist-lib/naive.es.js` + 包导出 `./naive` + naive-ui 可选 peer；新增 `warm-flow-naive-designer-demo`（:5182，含集成案例）。Playwright 实跑：列表 / baseInfo 表单（n-form/input/select/switch/radio + 必填校验）/ 画布 / 集成面板均渲染，console 0 报错 0 警告。Arco / TDesign 同模式按需再补。
 - **i18n**：UI 文案目前写死中文，开放语言包。
 - **表单设计步骤**（当前注释）、**流程结构校验钩子**（必须有开始/结束、网关成对等）。
 - **文档**：自定义 `UiAdapter` / `DataProvider` 端到端示例与最佳实践。

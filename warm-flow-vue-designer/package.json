@@ -32,6 +32,10 @@
       "types": "./dist-lib/src/ui/antdvAdapter.d.ts",
       "import": "./dist-lib/antdv.es.js"
     },
+    "./naive": {
+      "types": "./dist-lib/src/ui/naiveAdapter.d.ts",
+      "import": "./dist-lib/naive.es.js"
+    },
     "./style": "./dist-lib/warm-flow-designer.css",
     "./style.css": "./dist-lib/warm-flow-designer.css"
   },
@@ -46,9 +50,10 @@
   },
   "scripts": {
     "dev": "vite build --config vite.lib.config.js --watch",
-    "build:lib": "vite build --config vite.lib.config.js && vite build --config vite.ep.config.js && vite build --config vite.antdv.config.js",
+    "build:lib": "vite build --config vite.lib.config.js && vite build --config vite.ep.config.js && vite build --config vite.antdv.config.js && vite build --config vite.naive.config.js",
     "build:ep": "vite build --config vite.ep.config.js",
     "build:antdv": "vite build --config vite.antdv.config.js",
+    "build:naive": "vite build --config vite.naive.config.js",
     "mock": "node mock/server.mjs"
   },
   "repository": {
@@ -61,6 +66,7 @@
     "@logicflow/extension": "^2.1.15",
     "ant-design-vue": "^4.0.0",
     "element-plus": "^2.4.3",
+    "naive-ui": "^2.0.0",
     "pinia": "^2.1.7",
     "vue": "^3.3.9",
     "vue-router": "^4.2.5"
@@ -70,6 +76,9 @@
       "optional": true
     },
     "element-plus": {
+      "optional": true
+    },
+    "naive-ui": {
       "optional": true
     }
   },
@@ -85,6 +94,7 @@
     "axios": "0.27.2",
     "element-plus": "2.4.3",
     "file-saver": "2.0.5",
+    "naive-ui": "^2.44.1",
     "pinia": "2.1.7",
     "sass": "1.69.5",
     "typescript": "^6.0.3",

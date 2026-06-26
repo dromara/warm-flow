@@ -54,7 +54,7 @@ yarn build:lib   # 输出到 dist-lib/（ESM + 类型声明 .d.ts + 合并样式
 
 ### 安装与初始化
 
-> 主入口 **UI 库无关**，不内置任何 UI 组件库。渲染 `FlowDesigner` 前必须先 `setUiAdapter(...)` 选择一个 UI 适配器（element-plus 或 antdv），否则设计器内的中性组件 `wf-*` 无法映射到具体 UI 库、画布不渲染。
+> 主入口 **UI 库无关**，不内置任何 UI 组件库。渲染 `FlowDesigner` 前必须先 `setUiAdapter(...)` 选择一个 UI 适配器（element-plus / antdv / naive），否则设计器内的中性组件 `wf-*` 无法映射到具体 UI 库、画布不渲染。
 
 ```ts
 import { createApp } from 'vue'
@@ -186,7 +186,7 @@ setDataProvider({
 
 ### 依赖要求（peerDependencies）
 
-宿主需提供：`vue`、`vue-router`、`pinia`、`@logicflow/core`、`@logicflow/extension`（必选）；UI 库二选一——`element-plus`（配子入口 `@dromara/warm-flow-designer/element-plus`）或 `ant-design-vue@4`（配子入口 `@dromara/warm-flow-designer/antdv`），均为可选 peer，按所选适配器 `setUiAdapter(...)`。图标已内置（iconify 离线集 `ep` + `wf`，随库打包，无需额外依赖）。
+宿主需提供：`vue`、`vue-router`、`pinia`、`@logicflow/core`、`@logicflow/extension`（必选）；UI 库三选一——`element-plus`（子入口 `@dromara/warm-flow-designer/element-plus`）/ `ant-design-vue@4`（子入口 `@dromara/warm-flow-designer/antdv`）/ `naive-ui`（子入口 `@dromara/warm-flow-designer/naive`），均为可选 peer，按所选适配器 `setUiAdapter(...)`。图标已内置（iconify 离线集 `ep` + `wf`，随库打包，无需额外依赖）。
 
 ### 本地体验 playground
 
