@@ -30,7 +30,11 @@ import type {
   FlowDesignerProps,
   FlowDesignerInstance,
   FlowDesignerSavedPayload,
-  FlowDesignerReadyPayload
+  FlowDesignerReadyPayload,
+  FlowDesignerBeforeSavePayload,
+  FlowDesignerChangePayload,
+  PaletteNode,
+  FlowDesignerPaletteNodes
 } from '@/designer/types'
 
 /** WarmFlowDesigner 插件安装选项。 */
@@ -116,12 +120,16 @@ export {
 export type { DataProvider }
 export type { UiAdapter, UiFeedbackType, UiFeedbackOptions, UiLoadingHandle, UiComponents }
 export type { ComponentSize }
-// FlowDesigner 相关公共类型：props / 命令式实例 / 事件 payload / hook 返回值
+// FlowDesigner 相关公共类型：props / 命令式实例 / 事件 payload / 拖拽面板节点 / hook 返回值
 export type {
   FlowDesignerProps,
   FlowDesignerInstance,
   FlowDesignerSavedPayload,
   FlowDesignerReadyPayload,
+  FlowDesignerBeforeSavePayload,
+  FlowDesignerChangePayload,
+  PaletteNode,
+  FlowDesignerPaletteNodes,
   UseFlowDesignerReturn
 }
 

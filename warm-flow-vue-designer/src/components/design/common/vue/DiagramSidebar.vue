@@ -13,21 +13,21 @@
           :class="[`item-${item.type}`]"
           @mousedown="handleDragInNode(item)"
         >
-          <div class="item-icon-wrap" v-html="item.icon"></div>
+          <div class="item-icon-wrap" v-if="item.icon" v-html="item.icon"></div>
           <span class="item-label">{{ item.label }}</span>
         </div>
       </div>
 
-      <!-- 分隔线 -->
-      <div class="sidebar-divider"></div>
+      <!-- 分隔线（仅有网关节点时显示） -->
+      <div class="sidebar-divider" v-if="gatewayNodes.length"></div>
 
-      <!-- 网关节点组标题 -->
-      <div class="group-header">
+      <!-- 网关节点组标题（仅有网关节点时显示） -->
+      <div class="group-header" v-if="gatewayNodes.length">
         <span class="group-title">网关节点</span>
       </div>
 
       <!-- 网关节点组 -->
-      <div class="node-group">
+      <div class="node-group" v-if="gatewayNodes.length">
         <div
           v-for="item in gatewayNodes"
           :key="item.type"
@@ -35,7 +35,7 @@
           :class="[`item-${item.type}`]"
           @mousedown="handleDragInNode(item)"
         >
-          <div class="item-icon-wrap" v-html="item.icon"></div>
+          <div class="item-icon-wrap" v-if="item.icon" v-html="item.icon"></div>
           <span class="item-label">{{ item.label }}</span>
         </div>
       </div>
@@ -48,6 +48,7 @@ import {
   startIcon, betweenIcon, endIcon,
   serialIcon, parallelIcon, inclusiveIcon,
 } from '@/components/design/classics/js/sidebarIcons'
+import type { PaletteNode } from '@/designer/types'
 
 defineOptions({ name: 'DiagramSidebar' });
 
@@ -55,22 +56,33 @@ const emit = defineEmits<{
   (e: 'dragInNode', type: string, properties: Record<string, any>, text: any): void;
 }>()
 
-// 基础节点（开始/中间/结束）
-const flowNodes = [
-  { type: 'start', text: '开始', label: '开始', icon: startIcon },
-  { type: 'between', text: '中间节点', label: '中间节点', icon: betweenIcon, properties: { collaborativeWay: '1' } },
-  { type: 'end', text: '结束', label: '结束', icon: endIcon },
-]
+/**
+ * 节点列表可由外部覆盖（FlowDesigner 的 paletteNodes 透传）：
+ * 不传用内置默认；传空数组可隐藏对应分组（网关组为空时连同标题 / 分隔线一并隐藏）。
+ *
+ * 注意：Vue 3.3 会把 defineProps 默认值工厂提升到 setup 外，工厂内只能引用模块级 import
+ * （如此处的 *Icon），不能引用 <script setup> 内局部声明的常量，故内置默认直接内联于工厂中。
+ */
+withDefaults(defineProps<{
+  /** 基础节点组（不传用内置默认：开始 / 中间 / 结束） */
+  flowNodes?: PaletteNode[]
+  /** 网关节点组（不传用内置默认：互斥 / 并行 / 包含；传 [] 隐藏网关组） */
+  gatewayNodes?: PaletteNode[]
+}>(), {
+  flowNodes: () => ([
+    { type: 'start', text: '开始', label: '开始', icon: startIcon },
+    { type: 'between', text: '中间节点', label: '中间节点', icon: betweenIcon, properties: { collaborativeWay: '1' } },
+    { type: 'end', text: '结束', label: '结束', icon: endIcon },
+  ]),
+  gatewayNodes: () => ([
+    { type: 'serial', text: '', label: '互斥网关', icon: serialIcon, properties: {} },
+    { type: 'parallel', text: '', label: '并行网关', icon: parallelIcon, properties: {} },
+    { type: 'inclusive', text: '', label: '包含网关', icon: inclusiveIcon, properties: {} },
+  ]),
+})
 
-// 网关节点（互斥/并行/包含）
-const gatewayNodes = [
-  { type: 'serial', text: '', label: '互斥网关', icon: serialIcon, properties: {} },
-  { type: 'parallel', text: '', label: '并行网关', icon: parallelIcon, properties: {} },
-  { type: 'inclusive', text: '', label: '包含网关', icon: inclusiveIcon, properties: {} },
-]
-
-function handleDragInNode(item: any) {
-  emit('dragInNode', item.type, item.properties, item.text || {})
+function handleDragInNode(item: PaletteNode) {
+  emit('dragInNode', item.type, item.properties || {}, item.text || {})
 }
 </script>
 

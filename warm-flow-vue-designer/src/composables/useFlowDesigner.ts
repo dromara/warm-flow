@@ -69,5 +69,7 @@ export function useFlowDesigner(): UseFlowDesignerReturn {
     clear: () => { ensure('clear')?.clear() },
     downloadImage: () => { ensure('downloadImage')?.downloadImage() },
     downloadJson: () => { ensure('downloadJson')?.downloadJson() },
+    isDirty: () => ensure('isDirty')?.isDirty() ?? false,
+    resetDirty: () => { ensure('resetDirty')?.resetDirty() },
   }
 }

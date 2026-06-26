@@ -76,12 +76,19 @@
                 :definition-id="definitionId" :disabled="disabled"
                 @update:flow-name="handleFlowNameUpdate" @update:model-value="handleModelValueUpdate"/>
 
-      <!-- 自定义拖拽侧边栏：仅流程设计页签显示 + 延迟显示避免与 LogicFlow DOM 冲突 -->
-      <DiagramSidebar
-        v-if="sidebarVisible && activeStep === 1"
-        class="diagram-sidebar"
-        @dragInNode="handleDragInNode"
-      />
+      <!-- 自定义拖拽侧边栏：仅经典模式流程设计页签显示 + 延迟显示避免与 LogicFlow DOM 冲突。
+           #sidebar 插槽可整体替换内置面板（透出命令式 dragInNode + lf / disabled）；
+           paletteNodes 可仅自定义内置面板的节点列表（任一分组不传用内置默认）。 -->
+      <template v-if="sidebarVisible && activeStep === 1">
+        <slot name="sidebar" :drag-in-node="handleDragInNode" :lf="lf" :disabled="disabled">
+          <DiagramSidebar
+            class="diagram-sidebar"
+            :flow-nodes="paletteNodes?.flowNodes"
+            :gateway-nodes="paletteNodes?.gatewayNodes"
+            @dragInNode="handleDragInNode"
+          />
+        </slot>
+      </template>
 
       <div class="container" ref="containerRef" v-show="activeStep === 1">
         <PropertySetting ref="propertySettingRef" :node="nodeClick" :lf="lf" :disabled="disabled"
@@ -127,7 +134,13 @@ import {addBetweenNode, addGatewayNode, gatewayAddNode, removeNode} from "@/comp
 import EdgeTooltip from "@/components/design/mimic/vue/EdgeTooltip.vue";
 import DiagramSidebar from "@/components/design/common/vue/DiagramSidebar.vue";
 import { useLogicFlowCanvas } from '@/composables/useLogicFlowCanvas';
-import type { FlowDesignerProps, FlowDesignerSavedPayload, FlowDesignerReadyPayload } from '@/designer/types';
+import type {
+  FlowDesignerProps,
+  FlowDesignerSavedPayload,
+  FlowDesignerReadyPayload,
+  FlowDesignerBeforeSavePayload,
+  FlowDesignerChangePayload
+} from '@/designer/types';
 
 /**
  * 可复用流程设计器组件：画布核心从「直接读 URL/appParams」改为「props 驱动」，
@@ -151,11 +164,17 @@ const props = withDefaults(defineProps<FlowDesignerProps>(), {
  * - close：设计器请求关闭（保存成功后自动触发，宿主据此关闭弹窗 / 返回列表）
  * - saved：保存成功回传当前定义 id、后端返回数据（如新建后的 definitionId）与本次保存的流程 json
  * - ready：画布初始化完成，透出底层 LogicFlow 实例，便于高级定制（自定义事件 / 主题 / 扩展）
+ * - before-save：保存提交前（同步），可改写 json 或取消本次保存
+ * - change：画布图数据变更（基于 LogicFlow history:change，初次渲染不触发），带惰性 getter
+ * - dirty：未保存状态翻转（首次变更 false→true，保存成功 / resetDirty true→false）
  */
 const emit = defineEmits<{
   (e: 'close'): void;
   (e: 'saved', payload: FlowDesignerSavedPayload): void;
   (e: 'ready', payload: FlowDesignerReadyPayload): void;
+  (e: 'before-save', payload: FlowDesignerBeforeSavePayload): void;
+  (e: 'change', payload: FlowDesignerChangePayload): void;
+  (e: 'dirty', dirty: boolean): void;
 }>();
 
 const { proxy } = getCurrentInstance()!;
@@ -175,6 +194,29 @@ const formPathList = ref<any[]>([]);
 const containerRef = ref<HTMLElement>();
 // 控制侧边栏显示：延迟到画布初始化完成后显示，避免与 LogicFlow DOM 初始化冲突
 const sidebarVisible = ref(false);
+
+// —— 未保存（dirty）追踪：基于画布图数据变更（LogicFlow history:change），不含基础信息表单字段 ——
+// dirty：当前是否有未保存的画布改动；canvasReady：画布是否渲染完成（守卫初始渲染触发的 history:change 不误标 dirty）
+const dirty = ref(false);
+const canvasReady = ref(false);
+
+/** 画布内容变更：仅在画布就绪后计数，首次翻转 emit('dirty', true)，每次变更 emit('change', ...) 带惰性 getter。 */
+function markDirty() {
+  if (!canvasReady.value) return;
+  if (!dirty.value) {
+    dirty.value = true;
+    emit('dirty', true);
+  }
+  emit('change', { dirty: true, getJson: getFlowJson, getGraphData });
+}
+
+/** 复位为「干净 / 已保存」基线：若此前为 dirty 则 emit('dirty', false)。 */
+function markPristine() {
+  if (dirty.value) {
+    dirty.value = false;
+    emit('dirty', false);
+  }
+}
 
 /**
  * LogicFlow 画布生命周期（实例 / 视口 / IO / resize / 触摸桥接 / 暗黑）抽到 useLogicFlowCanvas。
@@ -204,6 +246,10 @@ const {
     if (isClassics(logicJson.value.modelValue)) {
       sidebarVisible.value = true;
     }
+    // 画布渲染完成：以当前内容为「干净」基线，并在下一 tick 开放变更追踪
+    // （跳过初始渲染同步触发的 history:change，避免一打开就被标记为 dirty）
+    markPristine();
+    nextTick(() => { canvasReady.value = true; });
     // 透出底层 LogicFlow 实例：消费方可据此做高级定制（自定义事件 / 主题 / 扩展）
     emit('ready', { lf: lfInstance });
   },
@@ -378,6 +424,8 @@ function handleModelValueUpdate() {
   if (!lf.value || modeOrg !== modeNew) {
     // 先隐藏侧边栏，等 initLogicFlow 完成后再显示
     sidebarVisible.value = false;
+    // 重新渲染期间关闭变更追踪：忽略初始渲染触发的 history:change（onReady 后下一 tick 重新开放）
+    canvasReady.value = false;
     nextTick(() => {
       if (!jsonString.value.nodeList || jsonString.value.nodeList.length === 0) {
         // 读取本地文件/initData.json文件，并将数据转换json对象
@@ -411,12 +459,30 @@ async function saveJsonModel() {
   logicJson.value['id'] = definitionId.value
 
   let jsonString = logicFlowJsonToWarmFlow(logicJson.value);
+
+  // before-save 钩子（同步）：消费方可改写本次提交的 json，或取消保存。
+  // 异步逻辑不会被等待——setJson / preventDefault 须在处理函数同步执行期间调用。
+  let saveCancelled = false;
+  emit('before-save', {
+    id: definitionId.value,
+    json: jsonString,
+    onlyDesignShow: onlyDesignShow.value,
+    setJson: (next: string) => { if (typeof next === 'string') jsonString = next; },
+    preventDefault: () => { saveCancelled = true; },
+  });
+  if (saveCancelled) {
+    loadingInstance.close();
+    return;
+  }
+
   saveJson(jsonString, onlyDesignShow.value).then(response => {
     if (response.code === 200) {
       // $modal 由宿主（如 ruoyi 体系 plugins）提供；npm 组件库消费场景可能未注册，做降级避免报错
       if (proxy.$modal && proxy.$modal.msgSuccess) {
         proxy.$modal.msgSuccess("保存成功");
       }
+      // 保存成功：复位未保存标记（dirty → false，必要时 emit('dirty', false)）
+      markPristine();
       // 通知宿主保存成功（向后兼容加法）：回传当前定义 id、后端返回数据（如新建后的 definitionId）与本次保存的流程 json，
       // 宿主据此可实现「保存→修改/预览」闭环；不影响既有 close 行为。
       emit('saved', { id: definitionId.value, data: response.data, json: jsonString });
@@ -435,6 +501,10 @@ async function saveJsonModel() {
 // —— 移动端触摸事件桥接 / initMenu / register / use 已抽到 useLogicFlowCanvas ——
 function initEvent() {
   const { eventCenter } = lf.value.graphModel
+
+  // 画布图数据变更（增删改节点 / 边、移动、撤销 / 重做）的统一信号：标记未保存 + 透出 change / dirty。
+  // 初始渲染同步触发的 history:change 由 canvasReady 守卫忽略（见 markDirty / onReady）。
+  eventCenter.on('history:change', markDirty)
 
   if (!isClassics(logicJson.value.modelValue)) {
     // 更新节点名称
@@ -594,6 +664,8 @@ defineExpose({
   clear,
   downloadImage: downLoad,
   downloadJson: downJson,
+  isDirty: () => dirty.value,
+  resetDirty: markPristine,
 });
 
 </script>
