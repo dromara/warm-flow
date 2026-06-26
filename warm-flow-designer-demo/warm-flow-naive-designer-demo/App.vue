@@ -1,6 +1,7 @@
 <template>
-  <!-- n-config-provider：Naive 推荐的根上下文（主题 / 组件配置），消除 n-data-table 等组件的 config-provider 注入告警 -->
-  <n-config-provider>
+  <!-- n-config-provider：Naive 推荐的根上下文（主题 / 组件配置 / 中文语言包），
+       消除组件 config-provider 注入告警，并把 select/input/date/pagination 等默认占位与文案本地化为中文 -->
+  <n-config-provider :locale="zhCN" :date-locale="dateZhCN">
   <div class="demo-root">
     <!-- ========== 列表视图 ========== -->
     <div v-if="view === 'list'" class="demo-list">
@@ -127,7 +128,7 @@
 
 <script setup>
 import { computed, h, ref, watch } from 'vue'
-import { createDiscreteApi, NButton, NTag } from 'naive-ui'
+import { createDiscreteApi, NButton, NTag, zhCN, dateZhCN } from 'naive-ui'
 import { FlowDesigner, useFlowJson, useFlowDesigner } from '@dromara/warm-flow-designer'
 // 组件库扩展能力验证用：消费方自带的 LogicFlow 基类 / 官方扩展（库已把它们 externalize 为 peer，单实例共享）
 import { RectNode, RectNodeModel } from '@logicflow/core'
