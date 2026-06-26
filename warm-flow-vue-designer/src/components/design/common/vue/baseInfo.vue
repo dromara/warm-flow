@@ -137,6 +137,7 @@ const { proxy } = getCurrentInstance()!;
 const emit = defineEmits<{
   (e: 'update:flow-name', flowName: string): void;
   (e: 'update:model-value'): void;
+  (e: 'validate-error', fields?: Record<string, any>): void;
 }>();
 
 // 响应式屏幕检测
@@ -258,12 +259,15 @@ function handleDeleteRow(index: number) {
 
 // 表单必填校验
 function validate() {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     proxy.$nextTick(() => {
-      proxy.$refs.formRef.validate(valid => {
+      // EP 回调签名为 (valid, fields)，校验失败透出 invalid fields；antd 适配器仅回传 valid（fields 为空）
+      proxy.$refs.formRef.validate((valid: boolean, fields?: Record<string, any>) => {
         if (valid) {
           resolve(true);
         } else {
+          // 透出校验失败字段，供上层 FlowDesigner 转发 validate-error 事件（best-effort，随 UI 适配器）
+          emit('validate-error', fields);
           resolve(false);
         }
       });

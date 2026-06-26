@@ -74,7 +74,8 @@
       <BaseInfo :style="baseInfoStyle" ref="baseInfoRef" v-if="!onlyDesignShow" v-show="activeStep === 0"
                 :logic-json="logicJson" :category-list="categoryList" :form-path-list="formPathList"
                 :definition-id="definitionId" :disabled="disabled"
-                @update:flow-name="handleFlowNameUpdate" @update:model-value="handleModelValueUpdate"/>
+                @update:flow-name="handleFlowNameUpdate" @update:model-value="handleModelValueUpdate"
+                @validate-error="handleBaseInfoValidateError"/>
 
       <!-- 自定义拖拽侧边栏：仅经典模式流程设计页签显示 + 延迟显示避免与 LogicFlow DOM 冲突。
            #sidebar 插槽可整体替换内置面板（透出命令式 dragInNode + lf / disabled）；
@@ -139,7 +140,8 @@ import type {
   FlowDesignerSavedPayload,
   FlowDesignerReadyPayload,
   FlowDesignerBeforeSavePayload,
-  FlowDesignerChangePayload
+  FlowDesignerChangePayload,
+  FlowDesignerValidateErrorPayload
 } from '@/designer/types';
 
 /**
@@ -167,6 +169,7 @@ const props = withDefaults(defineProps<FlowDesignerProps>(), {
  * - before-save：保存提交前（同步），可改写 json 或取消本次保存
  * - change：画布图数据变更（基于 LogicFlow history:change，初次渲染不触发），带惰性 getter
  * - dirty：未保存状态翻转（首次变更 false→true，保存成功 / resetDirty true→false）
+ * - validate-error：基础信息表单校验未通过（保存 / 切步骤 / 命令式 validate 触发），透出来源与无效字段
  */
 const emit = defineEmits<{
   (e: 'close'): void;
@@ -175,6 +178,7 @@ const emit = defineEmits<{
   (e: 'before-save', payload: FlowDesignerBeforeSavePayload): void;
   (e: 'change', payload: FlowDesignerChangePayload): void;
   (e: 'dirty', dirty: boolean): void;
+  (e: 'validate-error', payload: FlowDesignerValidateErrorPayload): void;
 }>();
 
 const { proxy } = getCurrentInstance()!;
@@ -216,6 +220,14 @@ function markPristine() {
     dirty.value = false;
     emit('dirty', false);
   }
+}
+
+// 记录当前一次基础信息校验的来源（save / step / api），供 BaseInfo 校验失败时归因 validate-error
+const validateSource = ref<'save' | 'step' | 'api'>('save');
+
+/** BaseInfo 校验失败回调：透出来源 + 无效字段（fields 随 UI 适配器，best-effort）。 */
+function handleBaseInfoValidateError(fields?: Record<string, any>) {
+  emit('validate-error', { source: validateSource.value, fields });
 }
 
 /**
@@ -312,6 +324,7 @@ const handleOptionClick = (item: any) => {
 
 async function handleStepClick(index: number) {
   if (activeStep.value === 0 && !onlyDesignShow.value) {
+    validateSource.value = 'step';
     let validate = await proxy.$refs.baseInfoRef.validate();
     if (!validate) return
   }
@@ -443,6 +456,7 @@ function handleModelValueUpdate() {
 async function saveJsonModel() {
   const loadingInstance = getUiAdapter().loading({ fullscreen: true, text: "保存中，请稍等" })
   if (!onlyDesignShow.value) {
+    validateSource.value = 'save';
     let validate = await proxy.$refs.baseInfoRef.validate();
     if (!validate) {
       loadingInstance.close();
@@ -620,6 +634,7 @@ function initEvent() {
  */
 async function validate(): Promise<boolean> {
   if (onlyDesignShow.value) return true;
+  validateSource.value = 'api';
   return await proxy.$refs.baseInfoRef.validate();
 }
 

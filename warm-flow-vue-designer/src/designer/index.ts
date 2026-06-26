@@ -24,6 +24,8 @@ import type { ComponentSize } from '@/ui/designerOptions'
 // 组合式 API（hooks）
 import { useFlowDesigner } from '@/composables/useFlowDesigner'
 import type { UseFlowDesignerReturn } from '@/composables/useFlowDesigner'
+import { useFlowJson } from '@/composables/useFlowJson'
+import type { UseFlowJsonReturn } from '@/composables/useFlowJson'
 import { useDark } from '@/composables/useDark'
 // 公共类型（消费方可直接 import 用于模板 ref / 事件回调标注）
 import type {
@@ -33,6 +35,7 @@ import type {
   FlowDesignerReadyPayload,
   FlowDesignerBeforeSavePayload,
   FlowDesignerChangePayload,
+  FlowDesignerValidateErrorPayload,
   PaletteNode,
   FlowDesignerPaletteNodes
 } from '@/designer/types'
@@ -109,6 +112,8 @@ export {
   getComponentSize,
   // 组合式 API：命令式操控设计器（save / zoom / getFlowJson 等，空安全包装）
   useFlowDesigner,
+  // 组合式 API：流程 json 响应式只读视图（json / data / dirty + sync + bind）
+  useFlowJson,
   // 组合式 API：暗黑模式与主题颜色（isDark / themeColors / setCustomThemeColors 等）
   useDark,
   // 设计器可组合子组件（高级用法）：基础信息表单 / 节点属性面板 / 拖拽侧边栏
@@ -128,9 +133,11 @@ export type {
   FlowDesignerReadyPayload,
   FlowDesignerBeforeSavePayload,
   FlowDesignerChangePayload,
+  FlowDesignerValidateErrorPayload,
   PaletteNode,
   FlowDesignerPaletteNodes,
-  UseFlowDesignerReturn
+  UseFlowDesignerReturn,
+  UseFlowJsonReturn
 }
 
 export default WarmFlowDesigner

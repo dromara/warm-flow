@@ -133,6 +133,22 @@ export interface FlowDesignerBeforeSavePayload {
 }
 
 /**
+ * `validate-error` 事件回传：基础信息表单校验未通过。
+ *
+ * 在保存 / 切到流程设计步骤 / 命令式 `validate()` 触发的校验失败时派发，宿主据此提示或拦截。
+ * onlyDesignShow 模式无基础信息步骤、恒校验通过，不会触发本事件。
+ */
+export interface FlowDesignerValidateErrorPayload {
+  /** 触发校验的来源：save=点击保存 / step=切到流程设计步骤 / api=命令式 validate() */
+  source: 'save' | 'step' | 'api'
+  /**
+   * 校验未通过的字段信息（来自 UI 库表单 validate 回传的 invalid fields）。
+   * 结构随 UI 适配器而异，可能为空：Element Plus 提供字段明细，Ant Design Vue 当前仅回传布尔、无明细。
+   */
+  fields?: Record<string, any>
+}
+
+/**
  * `change` 事件回传：画布图数据发生变更（基于 LogicFlow `history:change`，初次渲染不触发）。
  *
  * 提供惰性 getter，按需获取当前 json / 图数据，避免每次变更都序列化造成开销。
