@@ -81,10 +81,13 @@
   - **`#sidebar` 插槽**：整体替换内置拖拽面板，透出命令式 `dragInNode(type, properties?, text?)` + `lf` / `disabled`。
   - **类型与导出**：新增 `FlowDesignerBeforeSavePayload` / `FlowDesignerChangePayload` / `PaletteNode` / `FlowDesignerPaletteNodes`，`designer/index.ts` 统一 re-export；`useFlowDesigner` 同步 `isDirty` / `resetDirty`。
   - **验证**：`build:lib` 三产物 exit 0（es.js 316.81KB），ReadLints 0 报错（仅余既有 preact TS2883 dts 告警，非本次）；EP / antdv 两个 demo `vite build` exit 0；Playwright 实跑 EP demo「扩展能力验证」断言 `paletteNodes` 自定义标签生效 + 网关组隐藏、`dirty`/`change` 仅在画布变更后翻转（初次渲染不误标）、`before-save` 携 setJson/preventDefault 触发，控制台 0 报错。
+- [x] **⑤ validate-error 事件 + useFlowJson() hook**：补齐数据 / 校验扩展点。
+  - **`validate-error` 事件**：基础信息表单校验失败时透出 `{ source: save|step|api, fields? }`（baseInfo 透出 EP 无效字段；antd 适配器仅回传布尔、fields 为空，已诚实标注）。onlyDesignShow 模式无校验、不触发。
+  - **`useFlowJson(designerRef)` hook**：流程 json 响应式只读视图 `{ json, data, dirty, sync, bind }`。**单向读**（同步设计器当前 json，便于预览 / 脏检测）；写入仍走 `initialJson` + `:key` 重挂载，不做反向写回画布——明确与待拍板的 `v-model:json`（回环 / 脏检测取舍）区分。`bind` 可 `v-on` 展开；若已单独绑定同名事件，改用 `sync()` 避免覆盖。
+  - **验证**：`build:lib` 三产物 exit 0；EP / antdv demo `vite build` exit 0；Playwright 实跑：create 模式空必填切「流程设计」步触发 `validate-error`（source=step）且停留基础信息页；validate 模式 `useFlowJson.json` 就绪同步（805）→ 画布加节点后增长（960），控制台 0 报错。
 
 ### 待排期（按需）
-- **事件补全（剩余）**：`validate-error`（基础信息校验失败回传）。
-- **数据 hook**：`useFlowJson()`（响应式读写流程 JSON）、变更订阅 `onNodeClick`。
+- **数据 hook（剩余）**：变更订阅 `onNodeClick`；`v-model:json` 双向绑定（回环 / 脏检测取舍，待拍板）。
 - **空 / 加载态插槽**、**步骤区 `header-center` 自定义**。
 - **第三方 UI 库适配器**：补 Naive / Arco / TDesign 示例（接口已具备）。
 - **i18n**：UI 文案目前写死中文，开放语言包。

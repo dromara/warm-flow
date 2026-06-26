@@ -120,6 +120,7 @@ import { FlowDesigner } from '@dromara/warm-flow-designer'
 | @before-save | `{ id, json, onlyDesignShow, setJson, preventDefault }` | 保存提交前（**同步**）：可 `setJson(next)` 改写提交内容，或 `preventDefault()` 取消本次保存（异步逻辑不会被等待） |
 | @change | `{ dirty, getJson, getGraphData }` | 画布图数据变更（基于 LogicFlow `history:change`，初次渲染不触发）；getter 惰性，按需获取 json / 图数据 |
 | @dirty | `boolean` | 未保存状态翻转：首次变更 `false→true`，保存成功 / `resetDirty()` 后 `true→false`（仅画布图数据，不含基础信息表单字段） |
+| @validate-error | `{ source, fields? }` | 基础信息校验未通过：`source` = save / step / api；`fields` 为无效字段明细（EP 提供，antd 暂为空）。onlyDesignShow 模式无校验、不触发 |
 
 #### 插槽（slots，均带回退，不传则行为不变）
 
@@ -144,6 +145,23 @@ const { designerRef, isReady, save, getFlowJson, getLogicFlow, zoom, undo, redo,
 ```
 
 可用方法：`save / validate / getGraphData / getFlowJson / getFlowName / getLogicFlow / zoom / zoomIn / zoomOut / fitView / resetZoom / undo / redo / clear / downloadImage / downloadJson / isDirty / resetDirty`。
+
+#### useFlowJson（流程 json 响应式只读视图）
+
+把设计器当前 json 同步成响应式 `json` / `data`，便于实时预览、外部展示、脏检测（**单向读**：写入仍走 `initialJson` + `:key` 重挂载，不做反向写回画布，规避双向绑定回环）：
+
+```ts
+import { ref } from 'vue'
+import { FlowDesigner, useFlowJson } from '@dromara/warm-flow-designer'
+import type { FlowDesignerInstance } from '@dromara/warm-flow-designer'
+
+const designerRef = ref<FlowDesignerInstance | null>(null)
+const { json, data, dirty } = useFlowJson(designerRef)
+// 模板：<FlowDesigner ref="designerRef" :initial-json="initial" v-on="useFlowJson(designerRef).bind" />
+// 或在自己的 @ready/@change 里调用 flowJson.sync() 手动刷新
+```
+
+返回：`json`（字符串，响应式）、`data`（解析对象）、`dirty`（未保存标记）、`sync()`（手动拉取）、`bind`（可 `v-on` 展开的 ready/change/saved/dirty 监听集合；若你已单独绑定这些事件，请改用 `sync()` 以免事件被覆盖）。
 
 ### 数据层（与后端解耦）
 

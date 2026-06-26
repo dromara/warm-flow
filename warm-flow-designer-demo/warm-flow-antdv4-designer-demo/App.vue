@@ -79,6 +79,7 @@
         <!-- 对象式消费：designProps 是细粒度 props 的集合，v-bind 直接摊开绑定到对应 prop，
              无需组件提供单一 designProps prop —— 仍保留 per-prop 默认值 / 模板类型校验 / DevTools 粒度 -->
         <FlowDesigner
+          ref="designerRef"
           :key="designKey"
           v-bind="designProps"
           @saved="onSaved"
@@ -87,6 +88,7 @@
           @before-save="onBeforeSave"
           @change="onDesignerChange"
           @dirty="onDesignerDirty"
+          @validate-error="onValidateError"
         >
           <!-- ① node-form-extra 插槽透传验证：仅扩展验证模式注入，证明 FlowDesigner→PropertySetting→节点子组件 链路打通 -->
           <template #node-form-extra="{ form, disabled }">
@@ -107,9 +109,9 @@
  *
  * @author warm
  */
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { message, Modal } from 'ant-design-vue'
-import { FlowDesigner } from '@dromara/warm-flow-designer'
+import { FlowDesigner, useFlowJson } from '@dromara/warm-flow-designer'
 // 组件库扩展能力验证用：消费方自带的 LogicFlow 基类 / 官方扩展（库已把它们 externalize 为 peer，单实例共享）
 import { RectNode, RectNodeModel } from '@logicflow/core'
 import { Control } from '@logicflow/extension'
@@ -182,12 +184,23 @@ const validatePaletteNodes = {
   gatewayNodes: []
 }
 
-// ⑤ @ready：暴露底层 lf 实例（高级定制；本 demo 供冒烟测试经此程序化触发画布变更）
+// ⑨ useFlowJson：流程 json 响应式只读视图（配合模板 ref，随就绪 / 变更自动 sync）
+const designerRef = ref(null)
+const flowJson = useFlowJson(designerRef)
+// 验证 useFlowJson 响应式：json 刷新后暴露长度供冒烟断言
+watch(() => flowJson.json.value, (v) => {
+  if (designMode.value !== 'validate') return
+  window.__WF_VALIDATE_JSON_LEN__ = v ? v.length : 0
+})
+
+// ⑤ @ready：暴露底层 lf 实例（高级定制；本 demo 供冒烟测试经此程序化触发画布变更）+ 同步 useFlowJson
 function onDesignerReady(payload) {
   window.__WF_LF__ = (payload && payload.lf) || null
+  flowJson.sync()
 }
-// ⑥ @change：画布图数据变更（基于 history:change），带惰性 getJson / getGraphData
+// ⑥ @change：画布图数据变更（基于 history:change），带惰性 getJson / getGraphData；同步 useFlowJson
 function onDesignerChange(payload) {
+  flowJson.sync()
   if (designMode.value !== 'validate') return
   window.__WF_VALIDATE_CHANGE__ = true
   console.log('[validate] change，dirty =', payload && payload.dirty)
@@ -203,6 +216,11 @@ function onBeforeSave(payload) {
   if (designMode.value !== 'validate') return
   window.__WF_VALIDATE_BEFORE_SAVE__ = !!(payload && typeof payload.setJson === 'function' && typeof payload.preventDefault === 'function')
   console.log('[validate] before-save，json 长度 =', payload && payload.json && payload.json.length)
+}
+// ⑧ @validate-error：基础信息校验失败（保存 / 切步骤 / 命令式 validate 触发），透出来源与无效字段
+function onValidateError(payload) {
+  window.__WF_VALIDATE_VALIDATE_ERROR__ = (payload && payload.source) || ''
+  console.log('[validate] validate-error，source =', payload && payload.source, 'fields =', payload && payload.fields)
 }
 
 const columns = [
@@ -224,7 +242,7 @@ const designKey = ref(0)
 const designModeText = computed(() => {
   if (designMode.value === 'create') return '新建流程'
   if (designMode.value === 'edit') return '修改流程'
-  if (designMode.value === 'validate') return '扩展能力验证 · initialJson + node-form-extra 插槽 + customNodes/extraExtensions/lfOptions + onBeforeUse/onRegister 钩子 + paletteNodes + before-save/change/dirty 事件'
+  if (designMode.value === 'validate') return '扩展能力验证 · initialJson + node-form-extra 插槽 + customNodes/extraExtensions/lfOptions + onBeforeUse/onRegister 钩子 + paletteNodes + before-save/change/dirty/validate-error 事件 + useFlowJson'
   return '预览流程（只读）'
 })
 
@@ -265,6 +283,7 @@ function onValidateExt() {
   window.__WF_VALIDATE_CHANGE__ = false
   window.__WF_VALIDATE_DIRTY__ = false
   window.__WF_VALIDATE_BEFORE_SAVE__ = false
+  window.__WF_VALIDATE_JSON_LEN__ = 0
   openDesigner('validate', {
     definitionId: null,
     disabled: false,
