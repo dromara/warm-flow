@@ -16,20 +16,22 @@
         </slot>
       </div>
 
-      <!-- 中间：步骤切换 -->
+      <!-- 中间：步骤切换（slot: header-center 可整体替换，透出 activeStep / steps / goToStep） -->
       <div class="header-center">
-        <div class="steps-tabs">
-          <div
-              v-for="(step, index) in steps"
-              :key="index"
-              class="step-tab"
-              :class="{ 'active': activeStep === index }"
-              @click="handleStepClick(index)"
-          >
-            <svg-icon :icon-class="step.icon" class="tab-icon"/>
-            <span class="tab-text">{{ step.title }}</span>
+        <slot name="header-center" :active-step="activeStep" :steps="steps" :go-to-step="handleStepClick">
+          <div class="steps-tabs">
+            <div
+                v-for="(step, index) in steps"
+                :key="index"
+                class="step-tab"
+                :class="{ 'active': activeStep === index }"
+                @click="handleStepClick(index)"
+            >
+              <svg-icon :icon-class="step.icon" class="tab-icon"/>
+              <span class="tab-text">{{ step.title }}</span>
+            </div>
           </div>
-        </div>
+        </slot>
       </div>
 
       <!-- 右侧：保存按钮（slot: header-actions 可追加 / 替换操作按钮，透出 save / disabled） -->
@@ -114,6 +116,15 @@
         @option-click="handleOptionClick"
         @close-tooltip="tooltipVisible = false"
     />
+
+    <!-- 加载态 / 空态覆盖层：数据加载中 / 加载后无可用定义（如 definitionId 失效）。
+         均带默认回退，消费方可用 #loading / #empty 插槽自定义内容。 -->
+    <div class="wf-state-overlay" v-if="loading">
+      <slot name="loading"><div class="wf-state-default">加载中…</div></slot>
+    </div>
+    <div class="wf-state-overlay" v-else-if="isEmpty">
+      <slot name="empty"><div class="wf-state-default">暂无流程定义</div></slot>
+    </div>
   </div>
 </template>
 
@@ -141,7 +152,8 @@ import type {
   FlowDesignerReadyPayload,
   FlowDesignerBeforeSavePayload,
   FlowDesignerChangePayload,
-  FlowDesignerValidateErrorPayload
+  FlowDesignerValidateErrorPayload,
+  FlowDesignerNodeClickPayload
 } from '@/designer/types';
 
 /**
@@ -170,6 +182,8 @@ const props = withDefaults(defineProps<FlowDesignerProps>(), {
  * - change：画布图数据变更（基于 LogicFlow history:change，初次渲染不触发），带惰性 getter
  * - dirty：未保存状态翻转（首次变更 false→true，保存成功 / resetDirty true→false）
  * - validate-error：基础信息表单校验未通过（保存 / 切步骤 / 命令式 validate 触发），透出来源与无效字段
+ * - node-click：画布节点被点击，透出节点 id / type / data 与 lf
+ * - update:json：受控 json 回写（配合 v-model:json，仅 json prop 受控时派发）
  */
 const emit = defineEmits<{
   (e: 'close'): void;
@@ -179,6 +193,8 @@ const emit = defineEmits<{
   (e: 'change', payload: FlowDesignerChangePayload): void;
   (e: 'dirty', dirty: boolean): void;
   (e: 'validate-error', payload: FlowDesignerValidateErrorPayload): void;
+  (e: 'node-click', payload: FlowDesignerNodeClickPayload): void;
+  (e: 'update:json', json: string): void;
 }>();
 
 const { proxy } = getCurrentInstance()!;
@@ -199,6 +215,13 @@ const containerRef = ref<HTMLElement>();
 // 控制侧边栏显示：延迟到画布初始化完成后显示，避免与 LogicFlow DOM 初始化冲突
 const sidebarVisible = ref(false);
 
+// 数据加载态：初始流程定义加载中（queryDef 在途）；isEmpty：加载完成但无可用定义数据（如 definitionId 失效）
+const loading = ref(false);
+const isEmpty = ref(false);
+
+// 受控模式（绑定了 v-model:json）：仅此时回写 update:json，避免未使用 v-model 的消费方承担序列化开销
+const isJsonControlled = () => props.json !== undefined;
+
 // —— 未保存（dirty）追踪：基于画布图数据变更（LogicFlow history:change），不含基础信息表单字段 ——
 // dirty：当前是否有未保存的画布改动；canvasReady：画布是否渲染完成（守卫初始渲染触发的 history:change 不误标 dirty）
 const dirty = ref(false);
@@ -212,6 +235,10 @@ function markDirty() {
     emit('dirty', true);
   }
   emit('change', { dirty: true, getJson: getFlowJson, getGraphData });
+  // v-model:json 回写（仅受控时）：变更后同步最新 json 给宿主
+  if (isJsonControlled()) {
+    emit('update:json', getFlowJson());
+  }
 }
 
 /** 复位为「干净 / 已保存」基线：若此前为 dirty 则 emit('dirty', false)。 */
@@ -228,6 +255,12 @@ const validateSource = ref<'save' | 'step' | 'api'>('save');
 /** BaseInfo 校验失败回调：透出来源 + 无效字段（fields 随 UI 适配器，best-effort）。 */
 function handleBaseInfoValidateError(fields?: Record<string, any>) {
   emit('validate-error', { source: validateSource.value, fields });
+}
+
+/** 透出节点点击事件（经典 / 仿钉钉双模式共用），node 为 LogicFlow 节点 data。 */
+function emitNodeClick(node: any) {
+  if (!node) return;
+  emit('node-click', { id: node.id, type: node.type, data: node, lf: lf.value });
 }
 
 /**
@@ -344,12 +377,17 @@ onMounted(() => {
     // definitionId / initialJson / onlyDesignShow / disabled 均由 props 注入（见上方 ref 初始化）；
     // URL 主题与 postMessage 监听由外层页面壳负责，组件本身不直接依赖 URL。
 
-    // 数据源优先级：props.initialJson（脱后端，直接喂流程 JSON）> queryDef（走 DataProvider 后端/mock）
-    if (props.initialJson != null && props.initialJson !== '') {
-      const data = typeof props.initialJson === 'string' ? JSON.parse(props.initialJson) : props.initialJson;
+    // 数据源优先级：props.json（v-model 受控）> props.initialJson（脱后端，直接喂流程 JSON）> queryDef（走 DataProvider 后端/mock）
+    const localSource = (props.json != null && props.json !== '')
+      ? props.json
+      : ((props.initialJson != null && props.initialJson !== '') ? props.initialJson : null);
+    if (localSource != null) {
+      const data = typeof localSource === 'string' ? JSON.parse(localSource) : localSource;
       applyDefinition(data);
     } else {
-      queryDef(definitionId.value).then(res => applyDefinition(res.data));
+      // 走后端/mock：标记加载态，供 #loading 插槽展示
+      loading.value = true;
+      queryDef(definitionId.value).then(res => applyDefinition(res.data)).catch(() => applyDefinition(null));
     }
 })
 
@@ -359,6 +397,9 @@ onMounted(() => {
  * 抽出为独立函数，使「脱后端 initialJson」与「后端 queryDef」两条入口复用同一套装配逻辑。
  */
 function applyDefinition(data: any) {
+  // 加载结束：关闭加载态；无可用定义数据（如 definitionId 失效 / 请求失败）则标记空态供 #empty 插槽展示
+  loading.value = false;
+  isEmpty.value = !data;
   jsonString.value = data;
   if (data?.isPublish && data.isPublish !== 0) {
     disabled.value = true;
@@ -533,6 +574,7 @@ function initEvent() {
     // 网关节点单击事件
     eventCenter.on('node:click', (args) => {
       nodeClick.value = args.data
+      emitNodeClick(args.data)
       // 只读态不响应网关「加节点」
       if (isGateWay(nodeClick.value.type) && !disabled.value) {
         gatewayAddNode(lf.value, nodeClick.value);
@@ -586,6 +628,7 @@ function initEvent() {
     // 中间节点双击事件
     eventCenter.on('node:click', (args) => {
       nodeClick.value = args.data
+      emitNodeClick(args.data)
       let graphData = lf.value.getGraphData()
       nodes.value = graphData['nodes']
       skips.value = graphData['edges']
@@ -738,6 +781,27 @@ html.dark .container {
   background-color: var(--wf-bg-color) !important;
   box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.25) !important;
   border: 1px solid var(--wf-border-color) !important;
+}
+
+/* ========== 加载态 / 空态覆盖层 ========== */
+.wf-state-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  background: var(--wf-bg-white, #fff);
+}
+
+.wf-state-default {
+  font-size: 14px;
+  color: var(--wf-text-secondary, #909399);
+  letter-spacing: 1px;
+}
+
+html.dark .wf-state-overlay {
+  background: var(--wf-bg-color) !important;
 }
 
 /* ========== Logo 水印 ========== */

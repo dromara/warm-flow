@@ -94,6 +94,13 @@ export interface FlowDesignerProps {
    * 需要完全替换面板时改用 `#sidebar` 插槽（透出 dragInNode / lf / disabled）。
    */
   paletteNodes?: FlowDesignerPaletteNodes
+  /**
+   * 受控流程 JSON（配合 `v-model:json`）：warm-flow 定义对象或其 JSON 字符串。
+   * 语义为「初始注入 + 变更回写」——挂载时作为初始数据源（优先级高于 initialJson / definitionId），
+   * 画布变更时通过 `update:json` 事件回写最新 json。
+   * 注意：**不做运行时反向重渲染**（避免双向绑定回环与撤销历史丢失）；外部需重载流程请配合 `:key` 重挂载。
+   */
+  json?: string | Record<string, any> | null
 }
 
 /** `saved` 事件回传：当前定义 id、后端返回数据（如新建后的 definitionId）与本次保存的流程 json。 */
@@ -146,6 +153,18 @@ export interface FlowDesignerValidateErrorPayload {
    * 结构随 UI 适配器而异，可能为空：Element Plus 提供字段明细，Ant Design Vue 当前仅回传布尔、无明细。
    */
   fields?: Record<string, any>
+}
+
+/** `node-click` 事件回传：画布节点被点击（经典 / 仿钉钉双模式均触发）。 */
+export interface FlowDesignerNodeClickPayload {
+  /** 节点 id */
+  id: string
+  /** 节点类型（start / between / serial / ... 或自定义节点 type） */
+  type: string
+  /** 节点原始数据（LogicFlow 节点 data） */
+  data: any
+  /** 底层 LogicFlow 实例（便于在回调内做高级操作） */
+  lf: LogicFlow
 }
 
 /**

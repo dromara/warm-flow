@@ -36,6 +36,7 @@ import type {
   FlowDesignerBeforeSavePayload,
   FlowDesignerChangePayload,
   FlowDesignerValidateErrorPayload,
+  FlowDesignerNodeClickPayload,
   PaletteNode,
   FlowDesignerPaletteNodes
 } from '@/designer/types'
@@ -134,6 +135,7 @@ export type {
   FlowDesignerBeforeSavePayload,
   FlowDesignerChangePayload,
   FlowDesignerValidateErrorPayload,
+  FlowDesignerNodeClickPayload,
   PaletteNode,
   FlowDesignerPaletteNodes,
   UseFlowDesignerReturn,
