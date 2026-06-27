@@ -106,3 +106,16 @@
 - [x] **文档**：自定义 `UiAdapter` / `DataProvider` 端到端示例与最佳实践。（已补：README 新增「自定义 UiAdapter（适配未内置 UI 库）」编写指南 + 最佳实践，并为 DataProvider 段补全方法清单 / 合并回退 / 失败要抛 / 参考实现）
 
 > 详细决策与验证记录见 `.codex/warm-flow-ui-npm-packaging.md`。
+
+## 工程化重构 Roadmap（2026-06 代码 review）
+
+> **现状诊断（实测）**：4 个 god SFC > 1100 行——selectUser 1366 / FlowDesigner 1347 / between 1201 / baseInfo 1171。
+> 主因：① 超大内嵌 SCSS（baseInfo 844 / selectUser 771 / FlowDesigner 588 / between 500 行样式块），暗黑/表单/抽屉/`.el-*` 覆盖在各组件**重复堆叠**；② 大脚本（FlowDesigner script 626 行）数据/业务/编排混在 SFC；③ 设计 token `--wf-*` 仅 ~18 个（仅圆角/阴影/过渡/警告色，集中在 `index.scss`），**不成体系**，颜色/间距/字号/层级仍散用字面量与 `--el-*`；④ 已有 `mixin.scss`/`_common.scss`/`variables.module.scss` 但**未被充分复用**。
+> **原则**：纯增量、对外契约（adapter/provider/slot/hook/事件/命令式/i18n）稳定，每步 `build:lib` + 三 demo 验证，逐项独立提交。
+
+- [ ] **① i18n 文案分批抽取（接框架 951a9ad9，最高优先）**：按「FlowDesigner 顶部/工具栏 + 通用按钮 → baseInfo → 属性面板系列（start/between/end/gateway/skip）→ selectUser → nodeExtList/其余」顺序，逐文件硬编码中文迁移到 `t()` + 补 en catalog（按组件命名空间），每批 `build:lib` 验证。
+- [ ] **② 样式工程化（design tokens + 分层，先收敛不改观感）**：补全 `--wf-*` token 体系（color/space/radius/shadow/font/z-index/motion，light+dark）集中到 `tokens.scss`；把 form-item / drawer-dialog / 面板布局 / 滚动条 / 暗黑 等重复样式抽到 `mixin.scss` + 共享 partial，组件只 `@use` token/mixin。目标：单组件 SCSS 800+ → < 150。
+- [ ] **③ EP 样式归位（Phase 4 瘦身）**：把 `.el-*` 覆盖从组件/主样式抽到 EP 适配器样式入口，主/antdv/naive bundle 不再带死 CSS。
+- [ ] **④ god SFC 拆分**：FlowDesigner → 容器编排 + `Header`/`Toolbar`/`StepNav`/`CanvasHost` 子组件 + 逻辑入 composables（`useFlowSave`/`useFlowValidate`…，沿用已有 `useLogicFlowCanvas`）；selectUser → `UserPicker` 容器 + 列表/树/已选 子组件 + `useUserPicker`。目标单 SFC < 400 行。
+- [ ] **⑤ 属性面板 schema 化（组件化核心）**：抽 `NodePropertyForm` 基座，各节点以字段 schema 声明差异、消除 form-item 重复；保留 `#node-form-extra` 等扩展点。
+- [ ] **⑥ 逻辑分层**：SFC 只做视图 + 编排，数据/状态/算法入 composables 与 `common/js` 纯函数；副作用（LogicFlow / provider）收口。
