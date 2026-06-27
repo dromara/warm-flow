@@ -172,6 +172,40 @@ const { json, data, dirty } = useFlowJson(designerRef)
 
 返回：`json`（字符串，响应式）、`data`（解析对象）、`dirty`（未保存标记）、`sync()`（手动拉取）、`bind`（可 `v-on` 展开的 ready/change/saved/dirty 监听集合；若你已单独绑定这些事件，请改用 `sync()` 以免事件被覆盖）。
 
+### 自定义 UiAdapter（适配未内置的 UI 库）
+
+内置 `element-plus` / `antdv` / `naive` 三个适配器已覆盖主流场景。若要接入其它 UI 库（Arco / TDesign…），实现 `UiAdapter` 契约并 `setUiAdapter(yourAdapter)` 即可——核心逻辑与 UI 库解耦，无需改库源码。
+
+适配器需提供命令式反馈（`message` / `notify` / `alert` / `confirm` / `prompt` / `loading`）、两个可选指令（`clickOutside` / `loadingDirective`），以及中性组件注册表 `components`（语义名 → 具体 UI 库组件，供 `Wf*` 中性组件解析渲染目标）：
+
+```ts
+import { setUiAdapter } from '@dromara/warm-flow-designer'
+import type { UiAdapter } from '@dromara/warm-flow-designer'
+
+const myAdapter: UiAdapter = {
+  name: 'your-ui-lib',
+  // type: 'info' | 'success' | 'warning' | 'error'；content 可能是 string 或 { message, title, duration, ... }
+  message: (type, content) => MyMessage[type](typeof content === 'string' ? content : content.message ?? ''),
+  notify:  (type, content) => MyNotification[type](typeof content === 'string' ? { message: content } : content),
+  alert:   (content, options) => MyModal.alert({ content, ...options }),          // 返回 Promise
+  confirm: (content, options) => MyModal.confirm({ content, ...options }),         // 确认 resolve / 取消 reject
+  prompt:  (content, options) => MyModal.prompt({ content, ...options }).then((value) => ({ value })),
+  loading: (options) => { const inst = MyLoading.open(options); return { close: () => inst.close() } },
+  // 可选：自定义指令；不提供则相关交互降级（仍可用）
+  clickOutside: myClickOutsideDirective,
+  loadingDirective: myLoadingDirective,
+  // 中性组件映射（按需补全，未注册的语义名对应组件不渲染，调用方已容错）
+  components: { button: MyButton, input: MyInput }
+}
+setUiAdapter(myAdapter)
+```
+
+**最佳实践**
+- **脱上下文调用**：`message` / `notify` / `alert` 等由设计器内部命令式触发，需在「无组件上下文」下工作。优先用 UI 库的全局 / 脱离上下文 API（如 naive 的 `createDiscreteApi`），不要依赖 `app.use` 注入到组件树的实例。
+- **注册时机**：`setUiAdapter` 必须在渲染 `FlowDesigner` 之前调用；`app.use(WarmFlowDesigner)` 会默认注册 element-plus 适配器。
+- **取消即 reject**：`confirm` 取消走 reject，请在调用处 `.catch()` 吞掉取消，避免 unhandled rejection。
+- **参考实现**：`src/ui/{elementPlusAdapter,antdvAdapter,naiveAdapter}.ts`（含 28 组件映射 + 指令实现 + `createDiscreteApi` 脱上下文），照抄改名即可快速起步。
+
 ### 数据层（与后端解耦）
 
 所有后端交互经由「数据源」(DataProvider)，默认内置 axios；可注入自定义实现，仅覆盖关心的方法，其余自动回退：
@@ -186,6 +220,13 @@ setDataProvider({
 ```
 
 也可用 `createMockProvider()` 脱后端运行，或运行期 URL 加 `?mock=true`。
+
+**契约与最佳实践**
+- **方法清单**（均返回 `Promise`，对齐后端 `{ code, msg, data }`）：流程定义 `saveJson(data, onlyNodeSkip?)` / `queryDef(id?)` / `queryFlowChart(id)` / `publishedList()` / `nodeExt()` / `listenerList()`；办理人与表单 `handlerType()` / `handlerResult(query?)` / `handlerFeedback(query?)` / `handlerDict()`；配置 `config()`。
+- **部分覆盖**：`setDataProvider(partial)` 会与内置 http 实现 `Object.assign` 合并，只需覆盖关心的方法，其余自动回退；传 `null` / 不传恢复为纯默认 http。
+- **失败要抛**：方法内部失败请 `reject` / `throw`（而非静默返回空），以便设计器经 UiAdapter 反馈错误，避免「假成功」。
+- **入参/出参宽松**：业务数据保持 `any`，不强约束后端响应结构，便于跨后端适配；按需在自己的实现里做强类型。
+- **参考实现**：`src/data/{httpProvider,mockProvider}.ts`（默认 axios 实现 + 全量 mock，可作为自定义实现的对照）。
 
 ### 依赖要求（peerDependencies）
 
