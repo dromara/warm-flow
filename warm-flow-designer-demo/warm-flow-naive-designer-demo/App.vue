@@ -232,8 +232,11 @@ const showcaseCommands = [
   { key: 'undo', label: '撤销', run: () => flowDesigner.undo() },
   { key: 'redo', label: '重做', run: () => flowDesigner.redo() },
   { key: 'downloadJson', label: '导出JSON', run: () => flowDesigner.downloadJson() },
-  { key: 'resetDirty', label: '标记已存', run: () => flowDesigner.resetDirty() }
+  { key: 'resetDirty', label: '标记已存', run: () => flowDesigner.resetDirty() },
+  { key: 'validateStructure', label: '校验结构', run: () => { const r = flowDesigner.validateStructure(); logEvent('validate-structure', r.valid ? '通过' : r.errors.join('；')) } }
 ]
+// 示例自定义流程结构校验器：在内置检查（≥开始/结束、无孤立节点）之后追加业务规则
+const showcaseStructureValidator = ({ nodes }) => (nodes.length > 15 ? ['节点数过多（>15），建议拆分子流程'] : [])
 
 function onDesignerReady(payload) {
   window.__WF_LF__ = (payload && payload.lf) || null
@@ -344,7 +347,8 @@ function onShowcase() {
     lfOptions: validateLfOptions,
     onBeforeUse: validateOnBeforeUse,
     onRegister: validateOnRegister,
-    paletteNodes: validatePaletteNodes
+    paletteNodes: validatePaletteNodes,
+    structureValidator: showcaseStructureValidator
   })
 }
 

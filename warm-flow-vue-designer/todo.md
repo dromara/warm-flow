@@ -91,12 +91,17 @@
   - **`#loading` / `#empty` 插槽**：初始定义加载中 / 加载后无可用定义（如 definitionId 失效）的覆盖层，均带默认回退。
   - **`#header-center` 插槽**：替换顶部步骤切换区，透出 `{ activeStep, steps, goToStep }`。
   - **验证**：`build:lib` exit 0；EP / antdv demo `vite build` exit 0；Playwright 实跑 validate 模式：`node-click`（type=start）、`v-model:json` 回写（加节点后 modelJson 长度 1011）、`useFlowJson` 同步一致、数据存在时无 loading/empty 覆盖层误盖，控制台 0 报错。
+- [x] **⑦ 流程结构校验（validateStructure() + structureValidator prop）**：命令式结构校验扩展点。
+  - **`validateStructure()` 命令式 API**：返回 `{ valid, errors }`，内置校验 ≥1 开始节点 / ≥1 结束节点 / 无孤立节点（多节点时存在未连任何边的节点）；再追加 `props.structureValidator` 输出并合并 errors。不自动拦截保存，可在 `before-save` 据 `valid` 决定 `preventDefault()`（与既有「同步事件不等待异步」取舍一致）。
+  - **`structureValidator` prop**：`(graph:{nodes,edges}) => string[] | void`，在内置检查之后追加业务规则（如节点数上限）。
+  - **类型与导出**：新增 `FlowStructureValidateResult`，`designer/index.ts` re-export；`FlowDesignerInstance` 补 `validateStructure`；`useFlowDesigner` 同步 `validateStructure`（空安全回退 `{ valid:false, errors:['设计器尚未挂载'] }`）。
+  - **验证**：`build:lib` 四产物 exit 0（es.js 319.95KB），无新类型错误（仅余既有 preact TS2883 dts 告警，非本次）；EP/antdv/naive 三 demo「集成案例」均接入 `structureValidator` + 「校验结构」命令按钮；README props/命令式 API 已同步。
 
 ### 待排期（按需）
 - **数据 hook（剩余）**：`v-model:json` 全反应式双向（运行时重渲染回环 / 撤销历史取舍，按需再议）；变更订阅 `onNodeDblclick` 等更多事件粒度。
 - [x] **第三方 UI 库适配器（Naive UI）**：`src/ui/naiveAdapter.ts`（UiAdapter 28 组件映射 + `createDiscreteApi` 脱上下文 message/dialog/notification + 自实现 clickOutside/loading）+ `vite.naive.config.js` 子入口 → `dist-lib/naive.es.js` + 包导出 `./naive` + naive-ui 可选 peer；新增 `warm-flow-naive-designer-demo`（:5182，含集成案例）。Playwright 实跑：列表 / baseInfo 表单（n-form/input/select/switch/radio + 必填校验）/ 画布 / 集成面板均渲染，console 0 报错 0 警告。Arco / TDesign 同模式按需再补。
 - **i18n**：UI 文案目前写死中文，开放语言包。
-- **表单设计步骤**（当前注释）、**流程结构校验钩子**（必须有开始/结束、网关成对等）。
+- **表单设计步骤**（当前注释）。流程结构校验钩子已落地（见上「⑦ 流程结构校验」），网关成对等更复杂规则可经 `structureValidator` 自定义扩展。
 - **文档**：自定义 `UiAdapter` / `DataProvider` 端到端示例与最佳实践。
 
 > 详细决策与验证记录见 `.codex/warm-flow-ui-npm-packaging.md`。

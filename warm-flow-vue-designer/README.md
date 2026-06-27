@@ -110,6 +110,7 @@ import { FlowDesigner } from '@dromara/warm-flow-designer'
 | onRegister | Function | - | 命令式节点钩子：在 `customNodes` 之后、`render` 之前调用，透出 lf 实例，可批量 / 条件注册节点、注册自定义边或做渲染前设置 |
 | paletteNodes | Object | - | 自定义经典模式左侧拖拽面板节点 `{ flowNodes?, gatewayNodes? }`（仅经典模式生效）。任一分组不传用内置默认，传空数组 `[]` 隐藏该分组；需完全替换面板用 `#sidebar` 插槽 |
 | json | String \| Object | - | 配合 `v-model:json` 的受控流程 JSON。语义：**初始注入（优先级高于 initialJson/definitionId）+ 变更回写**（`update:json`）。不做运行时反向重渲染（外部重载请配合 `:key` 重挂载，规避回环与撤销历史丢失） |
+| structureValidator | Function | - | 自定义流程结构校验器 `(graph: { nodes, edges }) => string[] \| void`：在内置结构校验（≥1 开始 / ≥1 结束 / 无孤立节点）之后追加调用，返回错误信息数组。通过命令式 `validateStructure()` 触发；不自动拦截保存，可在 `before-save` 里据结果 `preventDefault()` |
 
 #### FlowDesigner Events
 
@@ -150,7 +151,9 @@ const { designerRef, isReady, save, getFlowJson, getLogicFlow, zoom, undo, redo,
 // 模板：<FlowDesigner ref="designerRef" ... />
 ```
 
-可用方法：`save / validate / getGraphData / getFlowJson / getFlowName / getLogicFlow / zoom / zoomIn / zoomOut / fitView / resetZoom / undo / redo / clear / downloadImage / downloadJson / isDirty / resetDirty`。
+可用方法：`save / validate / getGraphData / getFlowJson / getFlowName / getLogicFlow / zoom / zoomIn / zoomOut / fitView / resetZoom / undo / redo / clear / downloadImage / downloadJson / isDirty / resetDirty / validateStructure`。
+
+> `validateStructure()` 返回 `{ valid: boolean, errors: string[] }`：内置校验 ≥1 开始节点 / ≥1 结束节点 / 无孤立节点，并追加 `props.structureValidator` 的输出。不自动拦截保存，可在 `before-save` 里据 `valid` 决定是否 `preventDefault()`。
 
 #### useFlowJson（流程 json 响应式只读视图）
 
