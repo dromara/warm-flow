@@ -27,6 +27,9 @@ import type { UseFlowDesignerReturn } from '@/composables/useFlowDesigner'
 import { useFlowJson } from '@/composables/useFlowJson'
 import type { UseFlowJsonReturn } from '@/composables/useFlowJson'
 import { useDark } from '@/composables/useDark'
+// 国际化（i18n）：轻量内置 catalog + setLocale，零依赖，默认中文向后兼容
+import { setLocale, getLocale, useI18n, setMessages, translate } from '@/i18n'
+import type { WfLocale, WfMessageTree, UseI18nReturn } from '@/i18n'
 // 公共类型（消费方可直接 import 用于模板 ref / 事件回调标注）
 import type {
   FlowDesignerProps,
@@ -118,6 +121,12 @@ export {
   useFlowJson,
   // 组合式 API：暗黑模式与主题颜色（isDark / themeColors / setCustomThemeColors 等）
   useDark,
+  // 国际化：切换 / 获取语言、组合式 useI18n、扩展语言包 setMessages、独立翻译函数 translate
+  setLocale,
+  getLocale,
+  useI18n,
+  setMessages,
+  translate,
   // 设计器可组合子组件（高级用法）：基础信息表单 / 节点属性面板 / 拖拽侧边栏
   // 需先 app.use(WarmFlowDesigner) + setUiAdapter，依赖全局 wf-* 组件与 svg-icon
   BaseInfo,
@@ -127,6 +136,7 @@ export {
 export type { DataProvider }
 export type { UiAdapter, UiFeedbackType, UiFeedbackOptions, UiLoadingHandle, UiComponents }
 export type { ComponentSize }
+export type { WfLocale, WfMessageTree, UseI18nReturn }
 // FlowDesigner 相关公共类型：props / 命令式实例 / 事件 payload / 拖拽面板节点 / hook 返回值
 export type {
   FlowDesignerProps,

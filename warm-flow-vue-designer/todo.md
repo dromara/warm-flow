@@ -101,7 +101,7 @@
 ### 待排期（按需）
 - **数据 hook（剩余）**：`v-model:json` 全反应式双向（运行时重渲染回环 / 撤销历史取舍，按需再议）；变更订阅 `onNodeDblclick` 等更多事件粒度。
 - [x] **第三方 UI 库适配器（Naive UI）**：`src/ui/naiveAdapter.ts`（UiAdapter 28 组件映射 + `createDiscreteApi` 脱上下文 message/dialog/notification + 自实现 clickOutside/loading）+ `vite.naive.config.js` 子入口 → `dist-lib/naive.es.js` + 包导出 `./naive` + naive-ui 可选 peer；新增 `warm-flow-naive-designer-demo`（:5182，含集成案例）。Playwright 实跑：列表 / baseInfo 表单（n-form/input/select/switch/radio + 必填校验）/ 画布 / 集成面板均渲染，console 0 报错 0 警告。Arco / TDesign 同模式按需再补。
-- **i18n**：UI 文案目前写死中文，开放语言包。
+- [ ] **i18n**（框架骨架已落地，组件文案分批抽取中）：`src/i18n` 零依赖内置——响应式 `setLocale`/`getLocale` + `useI18n`（返回响应式 `locale` + `t`）+ `setMessages`（扩展/覆盖语言包）+ `translate`，点分 key + `{name}` 插值、缺失回落中文、默认 zh 向后兼容，已从入口导出（dts 正常、消费方可 `setLocale('en')`）。中英 `common` 文案起步。**剩余**：46 文件约 1981 行硬编码中文按文件分批迁移到 `t()` 并补全英文 catalog（迁移完成即随 `setLocale` 全量生效）。
 - **表单设计步骤**（当前注释）。流程结构校验钩子已落地（见上「⑦ 流程结构校验」），网关成对等更复杂规则可经 `structureValidator` 自定义扩展。
 - [x] **文档**：自定义 `UiAdapter` / `DataProvider` 端到端示例与最佳实践。（已补：README 新增「自定义 UiAdapter（适配未内置 UI 库）」编写指南 + 最佳实践，并为 DataProvider 段补全方法清单 / 合并回退 / 失败要抛 / 参考实现）
 
