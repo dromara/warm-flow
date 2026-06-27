@@ -30,56 +30,15 @@
 
       <!-- 右侧列表数据 -->
       <wf-col :span="groupOptions ? 19 : 24" :xs="24">
-        <!-- 工具栏：筛选 + 确定（移动端） -->
-        <div class="search-toggle-row mobile-only">
-          <button class="search-toggle-btn" @click="searchCollapsed = !searchCollapsed" :class="{ 'is-expanded': !searchCollapsed }">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="search-icon"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="currentColor"/></svg>
-            <span>{{ searchCollapsed ? t('selectUser.filter') : t('selectUser.filterExpanded') }}</span>
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="toggle-arrow-sm" :class="{ 'is-rotated': !searchCollapsed }"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" fill="currentColor"/></svg>
-          </button>
-          <button class="btn-confirm btn-confirm-inline mobile-only" @click="submitForm">{{ t('common.confirm') }}</button>
-        </div>
-        <div class="section-card search-card" v-show="showSearch && !searchCollapsed">
-          <div class="search-card-body">
-            <wf-form :model="queryParams" ref="queryRef" :inline="true" label-width="88px">
-              <wf-form-item :label="t('selectUser.permCode')" prop="handlerCode">
-                <wf-input
-                  v-model="queryParams.handlerCode"
-                  :placeholder="t('selectUser.permCodePlaceholder')"
-                  clearable
-                  style="width: 200px"
-                  @keyup.enter="handleQuery"
-                />
-              </wf-form-item>
-              <wf-form-item :label="t('between.handlerName')" prop="handlerName">
-                <wf-input
-                  v-model="queryParams.handlerName"
-                  :placeholder="t('selectUser.permNamePlaceholder')"
-                  clearable
-                  style="width: 200px"
-                  @keyup.enter="handleQuery"
-                />
-              </wf-form-item>
-              <wf-form-item :label="t('selectUser.createTime')">
-                <wf-date-picker
-                  v-model="dateRange"
-                  value-format="YYYY-MM-DD"
-                  type="daterange"
-                  range-separator="-"
-                  :start-placeholder="t('selectUser.startDate')"
-                  :end-placeholder="t('selectUser.endDate')"
-                ></wf-date-picker>
-              </wf-form-item>
-            </wf-form>
-            <div class="search-action-row">
-              <div class="search-action-left">
-                <button type="button" class="btn-action btn-primary" @click="handleQuery">{{ t('common.search') }}</button>
-                <button type="button" class="btn-action btn-default" @click="resetQuery">{{ t('common.reset') }}</button>
-              </div>
-              <button class="btn-confirm btn-confirm-search" @click="submitForm">{{ t('common.confirm') }}</button>
-            </div>
-          </div>
-        </div>
+        <!-- 搜索区：移动端筛选切换 + 查询表单 -->
+        <UserPickerSearch
+          ref="queryRef"
+          :query-params="queryParams"
+          v-model:date-range="dateRange"
+          @query="handleQuery"
+          @reset="resetQuery"
+          @confirm="submitForm"
+        />
 
         <!-- 已选提示（内嵌在表格卡片底部）- 智能显示策略 -->
         <UserPickerSelectedBar
@@ -185,6 +144,7 @@ import { useI18n } from '@/i18n';
 import { useUserPicker } from '@/composables/useUserPicker';
 import UserPickerTree from './UserPickerTree.vue';
 import UserPickerSelectedBar from './UserPickerSelectedBar.vue';
+import UserPickerSearch from './UserPickerSearch.vue';
 
 defineOptions({ name: 'User' });
 
@@ -217,13 +177,11 @@ const {
   tabsValue,
   tableList,
   loading,
-  showSearch,
   total,
   dateRange,
   groupName,
   groupOptions,
   treeCollapsed,
-  searchCollapsed,
   mobileLoadingMore,
   mobileNoMore,
   tabsList,

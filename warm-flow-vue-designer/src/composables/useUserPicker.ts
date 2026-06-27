@@ -39,15 +39,12 @@ export function useUserPicker(props: UseUserPickerProps, emit: UseUserPickerEmit
   const tabsValue = ref('');
   const tableList = ref<any[]>([]);
   const loading = ref(true);
-  const showSearch = ref(true);
   const total = ref(0);
   const dateRange = ref<any[]>([]);
   const groupName = ref('');
   const groupOptions = ref<any>(undefined);
   // 树形区域折叠状态（默认展开，数据加载后根据高度自动判断）
   const treeCollapsed = ref(window.innerWidth <= 768);
-  // 搜索区域折叠状态（移动端默认折叠）
-  const searchCollapsed = ref(window.innerWidth <= 768);
   // 移动端分页：每页10条，滚动加载更多
   const MOBILE_PAGE_SIZE = 10;
   const mobileLoadingMore = ref(false);
@@ -306,13 +303,11 @@ export function useUserPicker(props: UseUserPickerProps, emit: UseUserPickerEmit
     tabsValue,
     tableList,
     loading,
-    showSearch,
     total,
     dateRange,
     groupName,
     groupOptions,
     treeCollapsed,
-    searchCollapsed,
     mobileLoadingMore,
     mobileNoMore,
     tabsList,
