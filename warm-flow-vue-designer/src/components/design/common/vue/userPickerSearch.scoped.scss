@@ -1,0 +1,212 @@
+/* ========== 通用卡片（搜索卡片复用，与 selectUser 同源） ========== */
+.section-card {
+  border-radius: var(--wf-radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--wf-border-light);
+  background: var(--wf-bg-white);
+  box-shadow: var(--wf-shadow-sm);
+  transition: all 0.3s ease;
+  html.dark & {
+    border-color: var(--wf-border-color);
+    background: var(--wf-bg-color);
+  }
+  &:hover {
+    box-shadow: var(--wf-shadow);
+    html.dark & { box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3); }
+  }
+}
+
+/* ========== 搜索卡片 ========== */
+.search-card {
+  margin-bottom: 12px;
+}
+.search-card-body {
+  padding: 16px 18px;
+  background: var(--wf-bg-white);
+  html.dark & { background: var(--wf-bg-color); }
+
+  .el-form-item {
+    margin-bottom: 8px;
+    margin-right: 16px;
+    &__label {
+      font-weight: 500;
+      color: var(--wf-text-regular);
+      font-size: 13px;
+      white-space: nowrap;
+      &::after { content: '：'; }
+    }
+  }
+
+  /* 输入框统一风格：白底 + 浅边框（未填写也保持白色） */
+  ::v-deep(.el-input__wrapper),
+  ::v-deep(.el-range-editor) {
+    border-radius: 10px;
+    background-color: var(--wf-bg-white);
+    box-shadow: none !important;
+    border: 1px solid var(--wf-border-color);
+    transition: background-color .2s ease, box-shadow .2s ease, border-color .2s ease;
+
+    &:hover { border-color: var(--wf-primary); }
+    &.is-focus {
+      background-color: var(--wf-bg-white);
+      border-color: var(--wf-primary);
+      box-shadow: 0 0 0 4px rgba(64, 158, 255, 0.12) !important;
+    }
+  }
+  html.dark & {
+    ::v-deep(.el-input__wrapper),
+    ::v-deep(.el-range-editor) {
+      background-color: rgba(255, 255, 255, 0.06);
+      &.is-focus { background-color: var(--wf-bg-white); }
+    }
+  }
+
+  /* PC端：第二行操作按钮（搜索/重置 左 + 确定 右） */
+  .search-action-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+    padding-top: 12px;
+    border-top: 1px solid var(--wf-border-lighter);
+    html.dark & { border-top-color: var(--wf-border-color); }
+  }
+
+  .search-action-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* 搜索区内的确定按钮：缩小尺寸适配 */
+  .btn-confirm-search {
+    height: 32px;
+    padding: 0 24px;
+    font-size: 13px;
+    letter-spacing: 1px;
+  }
+}
+
+/* 按钮风格 */
+.btn-action {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 32px; padding: 0 16px;
+  border: 1.5px solid transparent;
+  border-radius: var(--wf-radius);
+  font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all .25s ease;
+  outline: none;
+
+  & + & { margin-left: 10px; }
+
+  &.btn-primary {
+    color: #fff;
+    background: linear-gradient(135deg, var(--wf-primary), var(--wf-primary-dark));
+    &:hover { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(64,158,255,.35); }
+  }
+  &.btn-default {
+    color: var(--wf-text-regular);
+    background: var(--wf-bg-white);
+    border-color: var(--wf-border-color);
+    &:hover { border-color: var(--wf-primary); color: var(--wf-primary); background: var(--wf-primary-lighter); }
+    html.dark & { background: var(--wf-bg-color); border-color: var(--wf-border-color); }
+  }
+}
+
+.btn-confirm {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 36px; padding: 0 28px;
+  border: none; border-radius: var(--wf-radius);
+  font-size: 14px; font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, var(--wf-primary), var(--wf-primary-dark));
+  cursor: pointer; transition: all .3s ease;
+  box-shadow: 0 2px 8px rgba(64, 158, 255, 0.25);
+  white-space: nowrap;
+  letter-spacing: 1px;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(64, 158, 255, 0.35);
+  }
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+/* mobile-only：默认隐藏，仅在移动端显示 */
+.mobile-only { display: none !important; }
+
+/* ========== 手机/平板端适配（≤768px） ========== */
+@media (max-width: 768px) {
+  /* 移动端专属元素显示（恢复各元素原有display） */
+  .search-toggle-row.mobile-only { display: flex !important; }
+  .btn-confirm-inline.mobile-only { display: inline-flex !important; }
+
+  /* ===== 工具栏：筛选 + 确认按钮并排 ===== */
+  .search-toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 0 8px;
+    gap: 10px;
+
+    /* 内联确认按钮样式 */
+    .btn-confirm-inline {
+      flex-shrink: 0;
+      height: 36px;
+      padding: 0 20px;
+      font-size: 14px;
+      letter-spacing: 1px;
+    }
+  }
+
+  .search-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    flex: 1;
+    min-width: 0; /* 允许收缩 */
+    padding: 7px 12px;
+    background: linear-gradient(135deg, rgba(64,158,255,.06), rgba(64,158,255,.02));
+    border: 1px solid rgba(64,158,255,.18);
+    border-radius: 20px;
+    color: var(--wf-primary);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all .25s ease;
+
+    &:hover { background: rgba(64,158,255,.12); border-color: rgba(64,158,255,.35); }
+    &.is-expanded {
+      background: rgba(103,194,58,.06);
+      border-color: rgba(103,194,58,.22);
+      color: #67c23a;
+    }
+
+    .search-icon { width: 16px; height: 16px; opacity: .75; flex-shrink: 0; }
+    .toggle-arrow-sm { width: 16px; height: 16px; transition: transform .3s ease; flex-shrink: 0; }
+    .toggle-arrow-sm.is-rotated { transform: rotate(180deg); }
+  }
+
+  /* 搜索表单：纵向紧凑堆叠 */
+  .search-card {
+    border-radius: 10px;
+    animation: searchSlideDown .25s ease-out;
+  }
+  .search-card-body {
+    :deep(.el-form) { display: flex; flex-direction: column; gap: 8px; }
+    :deep(.el-form-item) {
+      margin-right: 0; margin-bottom: 0;
+      .el-input, .el-date-editor { width: 100% !important; }
+    }
+    :deep(.el-form-item:last-child) {
+      display: flex; gap: 8px;
+      .btn-action { flex: 1; text-align: center; justify-content: center; }
+    }
+  }
+}
+
+@keyframes searchSlideDown {
+  from { opacity: 0; transform: translateY(-6px); max-height: 0; }
+  to { opacity: 1; transform: translateY(0); max-height: 400px; }
+}
