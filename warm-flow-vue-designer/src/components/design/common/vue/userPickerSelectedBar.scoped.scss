@@ -1,0 +1,88 @@
+/* ========== 已选提示（内嵌在表格上方 - 智能显示） ========== */
+.selected-inline-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, rgba(103,194,58,.06), rgba(82,155,46,.03));
+  border-bottom: 1px solid rgba(103,194,58,.12);
+  font-size: 13px; color: #67c23a;
+  flex-wrap: wrap;
+
+  .bar-icon { width: 16px; height: 16px; flex-shrink: 0; }
+  strong { font-weight: 600; margin: 0 2px; }
+
+  .selected-mini-tags {
+    display: inline-flex; align-items: center; gap: 6px; margin-left: auto;
+
+    .mini-tag {
+      border-radius: 12px; font-size: 11px;
+      background: linear-gradient(135deg, rgba(103,194,58,.1), rgba(103,194,58,.05));
+      border-color: rgba(103,194,58,.25); color: #529b2e;
+      transition: all .2s ease;
+
+      &:hover {
+        background: linear-gradient(135deg, rgba(103,194,58,.18), rgba(103,194,58,.1));
+        box-shadow: 0 1px 6px rgba(103,194,58,.15);
+      }
+    }
+
+    /* 溢出模式：显示 "+N 更多" */
+    &.selected-overflow { margin-left: auto; }
+  }
+
+  /* "+N 更多" 标签 */
+  .more-tag {
+    cursor: pointer;
+    border-style: dashed !important;
+    font-size: 11px !important;
+    color: var(--wf-primary) !important;
+    border-color: var(--wf-primary) !important;
+    background: linear-gradient(135deg, rgba(64,158,255,.08), rgba(64,158,255,.04)) !important;
+
+    &:hover {
+      background: linear-gradient(135deg, rgba(64,158,255,.15), rgba(64,158,255,.08)) !important;
+      box-shadow: 0 1px 6px rgba(64,158,255,.15) !important;
+    }
+  }
+
+  .clear-all-btn {
+    font-size: 12px; padding: 0 4px; flex-shrink: 0;
+    &:hover { color: #f56c6c !important; }
+  }
+}
+
+/* tooltip 全部列表弹窗 */
+.selected-all-tooltip {
+  max-width: 260px;
+  padding: 10px 14px !important;
+  border-radius: 10px !important;
+  border: 1px solid rgba(103,194,58,.18) !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,.12) !important;
+
+  .tooltip-tag-list {
+    max-height: 200px;
+    overflow-y: auto;
+    display: flex; flex-direction: column; gap: 5px;
+
+    &::-webkit-scrollbar { width: 4px; }
+    &::-webkit-scrollbar-thumb { background: rgba(0,0,0,.12); border-radius: 4px; }
+  }
+
+  .tooltip-item {
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #606266;
+    background: rgba(103,194,58,.06);
+
+    &:nth-child(even) { background: rgba(103,194,58,.02); }
+  }
+}
+
+/* ========== 手机/平板端适配（≤768px） ========== */
+@media (max-width: 768px) {
+  /* 已选提示栏紧凑化 */
+  .selected-inline-bar {
+    flex-wrap: wrap; gap: 6px; font-size: 13px;
+    padding: 10px 12px; border-radius: 10px;
+  }
+}
