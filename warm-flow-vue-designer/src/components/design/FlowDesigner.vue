@@ -153,7 +153,8 @@ import type {
   FlowDesignerBeforeSavePayload,
   FlowDesignerChangePayload,
   FlowDesignerValidateErrorPayload,
-  FlowDesignerNodeClickPayload
+  FlowDesignerNodeClickPayload,
+  FlowStructureValidateResult
 } from '@/designer/types';
 
 /**
@@ -697,6 +698,32 @@ function getFlowJson(): string {
 }
 
 /**
+ * 校验流程结构（命令式 API）。
+ * 内置检查：≥1 开始节点（type=start）、≥1 结束节点（type=end）、无孤立节点（多节点时存在未连任何边的节点）；
+ * 再追加调用消费方的 props.structureValidator（如有），合并错误信息。
+ * 不自动拦截保存——消费方可在 before-save 里据返回的 valid 决定是否 preventDefault()。
+ */
+function validateStructure(): FlowStructureValidateResult {
+  const errors: string[] = [];
+  const graph = lf.value ? lf.value.getGraphData() : { nodes: [], edges: [] };
+  const graphNodes: any[] = graph.nodes || [];
+  const graphEdges: any[] = graph.edges || [];
+  if (graphNodes.filter((n) => n.type === 'start').length < 1) errors.push('缺少开始节点');
+  if (graphNodes.filter((n) => n.type === 'end').length < 1) errors.push('缺少结束节点');
+  if (graphNodes.length > 1) {
+    const connected = new Set<string>();
+    graphEdges.forEach((e) => { connected.add(e.sourceNodeId); connected.add(e.targetNodeId); });
+    const isolated = graphNodes.filter((n) => !connected.has(n.id));
+    if (isolated.length > 0) errors.push('存在 ' + isolated.length + ' 个孤立节点（未连任何边）');
+  }
+  const custom = props.structureValidator ? props.structureValidator({ nodes: graphNodes, edges: graphEdges }) : undefined;
+  if (Array.isArray(custom)) {
+    custom.forEach((msg) => { if (msg) errors.push(String(msg)); });
+  }
+  return { valid: errors.length === 0, errors };
+}
+
+/**
  * 对外暴露命令式 API（FlowDesignerInstance）。
  *
  * 消费方两种用法：
@@ -724,6 +751,7 @@ defineExpose({
   downloadJson: downJson,
   isDirty: () => dirty.value,
   resetDirty: markPristine,
+  validateStructure,
 });
 
 </script>

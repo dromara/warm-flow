@@ -101,6 +101,20 @@ export interface FlowDesignerProps {
    * 注意：**不做运行时反向重渲染**（避免双向绑定回环与撤销历史丢失）；外部需重载流程请配合 `:key` 重挂载。
    */
   json?: string | Record<string, any> | null
+  /**
+   * 自定义流程结构校验器：在内置结构校验（≥1 开始节点 / ≥1 结束节点 / 无孤立节点）之后追加调用，
+   * 入参为当前画布图数据（LogicFlow getGraphData：nodes / edges），返回错误信息数组（空数组 / 无返回即通过）。
+   * 通过命令式 `validateStructure()` 触发；不自动拦截保存，可在 `before-save` 里据其结果 `preventDefault()`。
+   */
+  structureValidator?: (graph: { nodes: any[]; edges: any[] }) => string[] | void
+}
+
+/** `validateStructure()` 返回：流程结构校验结果。 */
+export interface FlowStructureValidateResult {
+  /** 是否通过（errors 为空即通过） */
+  valid: boolean
+  /** 校验未通过的错误信息列表（含内置检查与自定义 structureValidator 的输出） */
+  errors: string[]
 }
 
 /** `saved` 事件回传：当前定义 id、后端返回数据（如新建后的 definitionId）与本次保存的流程 json。 */
@@ -226,4 +240,6 @@ export interface FlowDesignerInstance {
   isDirty: () => boolean
   /** 将未保存标记复位为「干净 / 已保存」（如宿主自行保存后同步状态） */
   resetDirty: () => void
+  /** 校验流程结构（内置：≥1 开始 / ≥1 结束 / 无孤立节点；再追加自定义 structureValidator），返回 { valid, errors } */
+  validateStructure: () => FlowStructureValidateResult
 }

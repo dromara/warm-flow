@@ -71,5 +71,6 @@ export function useFlowDesigner(): UseFlowDesignerReturn {
     downloadJson: () => { ensure('downloadJson')?.downloadJson() },
     isDirty: () => ensure('isDirty')?.isDirty() ?? false,
     resetDirty: () => { ensure('resetDirty')?.resetDirty() },
+    validateStructure: () => ensure('validateStructure')?.validateStructure() ?? { valid: false, errors: ['设计器尚未挂载'] },
   }
 }
