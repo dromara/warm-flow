@@ -214,6 +214,25 @@ const zh: WfMessageTree = {
     loadedAll: '— 已加载全部 —',
     emptyUsers: '暂无人员数据',
     permGroup: '权限分组'
+  },
+  flowDesigner: {
+    untitled: '未命名流程',
+    zoomOut: '缩小',
+    fitView: '自适应',
+    zoomIn: '放大',
+    undo: '上一步',
+    redo: '下一步',
+    clear: '清空',
+    downloadImage: '下载流程图',
+    downloadJson: '下载JSON',
+    emptyDef: '暂无流程定义',
+    stepBaseInfo: '基础信息',
+    stepFlowDesign: '流程设计',
+    saving: '保存中，请稍等',
+    saveSuccess: '保存成功',
+    errNoStart: '缺少开始节点',
+    errNoEnd: '缺少结束节点',
+    errIsolated: '存在 {n} 个孤立节点（未连任何边）'
   }
 }
 
@@ -401,6 +420,25 @@ const en: WfMessageTree = {
     loadedAll: '— All loaded —',
     emptyUsers: 'No users',
     permGroup: 'Permission Group'
+  },
+  flowDesigner: {
+    untitled: 'Untitled Flow',
+    zoomOut: 'Zoom out',
+    fitView: 'Fit',
+    zoomIn: 'Zoom in',
+    undo: 'Undo',
+    redo: 'Redo',
+    clear: 'Clear',
+    downloadImage: 'Download image',
+    downloadJson: 'Download JSON',
+    emptyDef: 'No flow definition',
+    stepBaseInfo: 'Basic Info',
+    stepFlowDesign: 'Flow Design',
+    saving: 'Saving, please wait',
+    saveSuccess: 'Saved successfully',
+    errNoStart: 'Missing start node',
+    errNoEnd: 'Missing end node',
+    errIsolated: '{n} isolated node(s) (not connected to any edge)'
   }
 }
 

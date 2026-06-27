@@ -9,7 +9,7 @@
             <wf-tooltip :content="logicJson.flowName" placement="bottom" :show-after="500">
               <div class="flow-name">
                   <svg-icon icon-class="flowName" style="margin-right: 5px"/>
-                  {{ logicJson.flowName || '未命名流程' }}
+                  {{ logicJson.flowName || t('flowDesigner.untitled') }}
               </div>
             </wf-tooltip>
           </div>
@@ -39,7 +39,7 @@
         <slot name="header-actions" :save="saveJsonModel" :disabled="disabled">
           <wf-button class="save-btn" size="default" @click="saveJsonModel" v-if="!disabled">
             <svg-icon icon-class="save" class="save-icon"/>
-            <span>保存</span>
+            <span>{{ t('common.save') }}</span>
           </wf-button>
         </slot>
       </div>
@@ -49,22 +49,22 @@
       <div class="design-toolbar" style="padding: 5px 0; text-align: right;">
         <div v-if="activeStep === 1">
           <span class="toolbar-group">
-            <wf-tooltip content="缩小" placement="bottom"><wf-button size="small" @click="zoomViewport(false)"><svg-icon icon-class="ep:zoom-out"/></wf-button></wf-tooltip>
+            <wf-tooltip :content="t('flowDesigner.zoomOut')" placement="bottom"><wf-button size="small" @click="zoomViewport(false)"><svg-icon icon-class="ep:zoom-out"/></wf-button></wf-tooltip>
             <!-- 自适应：所有端均 fitView 显示全部节点（最大缩放 100%） -->
-            <wf-tooltip content="自适应" placement="bottom"><wf-button size="small" @click="zoomViewport('fit')"><svg-icon icon-class="ep:rank"/></wf-button></wf-tooltip>
-            <wf-tooltip content="放大" placement="bottom"><wf-button size="small" @click="zoomViewport(true)"><svg-icon icon-class="ep:zoom-in"/></wf-button></wf-tooltip>
+            <wf-tooltip :content="t('flowDesigner.fitView')" placement="bottom"><wf-button size="small" @click="zoomViewport('fit')"><svg-icon icon-class="ep:rank"/></wf-button></wf-tooltip>
+            <wf-tooltip :content="t('flowDesigner.zoomIn')" placement="bottom"><wf-button size="small" @click="zoomViewport(true)"><svg-icon icon-class="ep:zoom-in"/></wf-button></wf-tooltip>
           </span>
           <span class="toolbar-group">
-            <wf-tooltip content="上一步" placement="bottom"><wf-button size="small" @click="undoOrRedo(true)"><svg-icon icon-class="ep:d-arrow-left"/></wf-button></wf-tooltip>
-            <wf-tooltip content="下一步" placement="bottom"><wf-button size="small" @click="undoOrRedo(false)"><svg-icon icon-class="ep:d-arrow-right"/></wf-button></wf-tooltip>
-            <wf-tooltip content="清空" placement="bottom"><wf-button size="small" @click="clear()"><svg-icon icon-class="ep:delete"/></wf-button></wf-tooltip>
+            <wf-tooltip :content="t('flowDesigner.undo')" placement="bottom"><wf-button size="small" @click="undoOrRedo(true)"><svg-icon icon-class="ep:d-arrow-left"/></wf-button></wf-tooltip>
+            <wf-tooltip :content="t('flowDesigner.redo')" placement="bottom"><wf-button size="small" @click="undoOrRedo(false)"><svg-icon icon-class="ep:d-arrow-right"/></wf-button></wf-tooltip>
+            <wf-tooltip :content="t('flowDesigner.clear')" placement="bottom"><wf-button size="small" @click="clear()"><svg-icon icon-class="ep:delete"/></wf-button></wf-tooltip>
           </span>
           <span class="toolbar-group">
-            <wf-tooltip content="下载流程图" placement="bottom"><wf-button size="small" @click="downLoad"><svg-icon icon-class="ep:picture"/></wf-button></wf-tooltip>
-            <wf-tooltip content="下载JSON" placement="bottom"><wf-button size="small" @click="downJson"><svg-icon icon-class="ep:download"/></wf-button></wf-tooltip>
+            <wf-tooltip :content="t('flowDesigner.downloadImage')" placement="bottom"><wf-button size="small" @click="downLoad"><svg-icon icon-class="ep:picture"/></wf-button></wf-tooltip>
+            <wf-tooltip :content="t('flowDesigner.downloadJson')" placement="bottom"><wf-button size="small" @click="downJson"><svg-icon icon-class="ep:download"/></wf-button></wf-tooltip>
           </span>
           <span class="toolbar-group" v-if="onlyDesignShow && !disabled">
-            <wf-tooltip content="保存" placement="bottom"><wf-button size="small" class="toolbar-save-btn" @click="saveJsonModel">
+            <wf-tooltip :content="t('common.save')" placement="bottom"><wf-button size="small" class="toolbar-save-btn" @click="saveJsonModel">
               <svg-icon icon-class="save" style="width: 14px; height: 14px;"/>
             </wf-button></wf-tooltip>
           </span>
@@ -120,10 +120,10 @@
     <!-- 加载态 / 空态覆盖层：数据加载中 / 加载后无可用定义（如 definitionId 失效）。
          均带默认回退，消费方可用 #loading / #empty 插槽自定义内容。 -->
     <div class="wf-state-overlay" v-if="loading">
-      <slot name="loading"><div class="wf-state-default">加载中…</div></slot>
+      <slot name="loading"><div class="wf-state-default">{{ t('common.loading') }}</div></slot>
     </div>
     <div class="wf-state-overlay" v-else-if="isEmpty">
-      <slot name="empty"><div class="wf-state-default">暂无流程定义</div></slot>
+      <slot name="empty"><div class="wf-state-default">{{ t('flowDesigner.emptyDef') }}</div></slot>
     </div>
   </div>
 </template>
@@ -146,6 +146,7 @@ import {addBetweenNode, addGatewayNode, gatewayAddNode, removeNode} from "@/comp
 import EdgeTooltip from "@/components/design/mimic/vue/EdgeTooltip.vue";
 import DiagramSidebar from "@/components/design/common/vue/DiagramSidebar.vue";
 import { useLogicFlowCanvas } from '@/composables/useLogicFlowCanvas';
+import { useI18n } from '@/i18n';
 import type {
   FlowDesignerProps,
   FlowDesignerSavedPayload,
@@ -199,6 +200,7 @@ const emit = defineEmits<{
 }>();
 
 const { proxy } = getCurrentInstance()!;
+const { t } = useI18n();
 
 const definitionId = ref<string | null>(props.definitionId);
 const nodeClick = ref<any>(null);
@@ -335,11 +337,11 @@ const headerDiv = computed(() => {
 });
 
 // 步骤数据
-const steps = [
-  { title: '基础信息', icon: 'baseInfo' },
-  { title: '流程设计', icon: 'flowDesign' },
-  // { title: '表单设计', icon: 'formDesign' }
-];
+const steps = computed(() => [
+  { title: t('flowDesigner.stepBaseInfo'), icon: 'baseInfo' },
+  { title: t('flowDesigner.stepFlowDesign'), icon: 'flowDesign' },
+  // { title: t('flowDesigner.stepFormDesign'), icon: 'formDesign' }
+]);
 
 const tooltipVisible = ref(false);
 const tooltipPosition = ref({ x: 0, y: 0 });
@@ -496,7 +498,7 @@ function handleModelValueUpdate() {
 }
 
 async function saveJsonModel() {
-  const loadingInstance = getUiAdapter().loading({ fullscreen: true, text: "保存中，请稍等" })
+  const loadingInstance = getUiAdapter().loading({ fullscreen: true, text: t('flowDesigner.saving') })
   if (!onlyDesignShow.value) {
     validateSource.value = 'save';
     let validate = await proxy.$refs.baseInfoRef.validate();
@@ -535,7 +537,7 @@ async function saveJsonModel() {
     if (response.code === 200) {
       // $modal 由宿主（如 ruoyi 体系 plugins）提供；npm 组件库消费场景可能未注册，做降级避免报错
       if (proxy.$modal && proxy.$modal.msgSuccess) {
-        proxy.$modal.msgSuccess("保存成功");
+        proxy.$modal.msgSuccess(t('flowDesigner.saveSuccess'));
       }
       // 保存成功：复位未保存标记（dirty → false，必要时 emit('dirty', false)）
       markPristine();
@@ -708,13 +710,13 @@ function validateStructure(): FlowStructureValidateResult {
   const graph = lf.value ? lf.value.getGraphData() : { nodes: [], edges: [] };
   const graphNodes: any[] = graph.nodes || [];
   const graphEdges: any[] = graph.edges || [];
-  if (graphNodes.filter((n) => n.type === 'start').length < 1) errors.push('缺少开始节点');
-  if (graphNodes.filter((n) => n.type === 'end').length < 1) errors.push('缺少结束节点');
+  if (graphNodes.filter((n) => n.type === 'start').length < 1) errors.push(t('flowDesigner.errNoStart'));
+  if (graphNodes.filter((n) => n.type === 'end').length < 1) errors.push(t('flowDesigner.errNoEnd'));
   if (graphNodes.length > 1) {
     const connected = new Set<string>();
     graphEdges.forEach((e) => { connected.add(e.sourceNodeId); connected.add(e.targetNodeId); });
     const isolated = graphNodes.filter((n) => !connected.has(n.id));
-    if (isolated.length > 0) errors.push('存在 ' + isolated.length + ' 个孤立节点（未连任何边）');
+    if (isolated.length > 0) errors.push(t('flowDesigner.errIsolated', { n: isolated.length }));
   }
   const custom = props.structureValidator ? props.structureValidator({ nodes: graphNodes, edges: graphEdges }) : undefined;
   if (Array.isArray(custom)) {
