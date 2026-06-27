@@ -24,7 +24,7 @@
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="tree-icon">
               <path d="M15 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V8L15 2ZM18 20H6V4H14V9H18V20ZM8.5 12H10V17H8.5V12ZM11 12H12.5V17H11V12ZM13.5 12H15V17H13.5V12Z" fill="currentColor"/>
             </svg>
-            <span>组织架构</span>
+            <span>{{ t('selectUser.orgTree') }}</span>
             <span class="tree-collapse-toggle">
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="toggle-arrow" :class="{ 'is-expanded': !treeCollapsed }">
                 <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" fill="currentColor"/>
@@ -36,7 +36,7 @@
               <div class="tree-search">
             <wf-input
               v-model="groupName"
-              placeholder="搜索部门名称"
+              :placeholder="t('selectUser.searchDept')"
               clearable
               size="default"
             >
@@ -67,49 +67,49 @@
         <div class="search-toggle-row mobile-only">
           <button class="search-toggle-btn" @click="searchCollapsed = !searchCollapsed" :class="{ 'is-expanded': !searchCollapsed }">
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="search-icon"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="currentColor"/></svg>
-            <span>筛选{{ searchCollapsed ? '' : '条件' }}</span>
+            <span>{{ searchCollapsed ? t('selectUser.filter') : t('selectUser.filterExpanded') }}</span>
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="toggle-arrow-sm" :class="{ 'is-rotated': !searchCollapsed }"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" fill="currentColor"/></svg>
           </button>
-          <button class="btn-confirm btn-confirm-inline mobile-only" @click="submitForm">确 定</button>
+          <button class="btn-confirm btn-confirm-inline mobile-only" @click="submitForm">{{ t('common.confirm') }}</button>
         </div>
         <div class="section-card search-card" v-show="showSearch && !searchCollapsed">
           <div class="search-card-body">
             <wf-form :model="queryParams" ref="queryRef" :inline="true" label-width="88px">
-              <wf-form-item label="权限编码" prop="handlerCode">
+              <wf-form-item :label="t('selectUser.permCode')" prop="handlerCode">
                 <wf-input
                   v-model="queryParams.handlerCode"
-                  placeholder="请输入权限编码"
+                  :placeholder="t('selectUser.permCodePlaceholder')"
                   clearable
                   style="width: 200px"
                   @keyup.enter="handleQuery"
                 />
               </wf-form-item>
-              <wf-form-item label="权限名称" prop="handlerName">
+              <wf-form-item :label="t('between.handlerName')" prop="handlerName">
                 <wf-input
                   v-model="queryParams.handlerName"
-                  placeholder="请输入权限名称"
+                  :placeholder="t('selectUser.permNamePlaceholder')"
                   clearable
                   style="width: 200px"
                   @keyup.enter="handleQuery"
                 />
               </wf-form-item>
-              <wf-form-item label="创建时间">
+              <wf-form-item :label="t('selectUser.createTime')">
                 <wf-date-picker
                   v-model="dateRange"
                   value-format="YYYY-MM-DD"
                   type="daterange"
                   range-separator="-"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
+                  :start-placeholder="t('selectUser.startDate')"
+                  :end-placeholder="t('selectUser.endDate')"
                 ></wf-date-picker>
               </wf-form-item>
             </wf-form>
             <div class="search-action-row">
               <div class="search-action-left">
-                <button type="button" class="btn-action btn-primary" @click="handleQuery">搜索</button>
-                <button type="button" class="btn-action btn-default" @click="resetQuery">重置</button>
+                <button type="button" class="btn-action btn-primary" @click="handleQuery">{{ t('common.search') }}</button>
+                <button type="button" class="btn-action btn-default" @click="resetQuery">{{ t('common.reset') }}</button>
               </div>
-              <button class="btn-confirm btn-confirm-search" @click="submitForm">确 定</button>
+              <button class="btn-confirm btn-confirm-search" @click="submitForm">{{ t('common.confirm') }}</button>
             </div>
           </div>
         </div>
@@ -119,7 +119,7 @@
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="bar-icon">
             <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" fill="currentColor"/>
           </svg>
-          <span>已选择 <strong>{{ checkedItemList.length }}</strong> 项</span>
+          <span>{{ t('selectUser.selectedPrefix') }} <strong>{{ checkedItemList.length }}</strong> {{ t('selectUser.selectedUnit') }}</span>
           <div class="selected-mini-tags" v-if="checkedItemList.length <= 8">
             <wf-tag
               closable
@@ -156,10 +156,10 @@
                   </div>
                 </div>
               </template>
-              <wf-tag class="mini-tag more-tag" size="small">+{{ checkedItemList.length - visibleTagsCount }} 更多</wf-tag>
+              <wf-tag class="mini-tag more-tag" size="small">+{{ checkedItemList.length - visibleTagsCount }} {{ t('selectUser.more') }}</wf-tag>
             </wf-tooltip>
           </div>
-          <wf-button link type="danger" size="small" class="clear-all-btn" @click="clearAllSelected">清空</wf-button>
+          <wf-button link type="danger" size="small" class="clear-all-btn" @click="clearAllSelected">{{ t('selectUser.clear') }}</wf-button>
         </div>
 
         <!-- 移动端：卡片式列表 -->
@@ -191,13 +191,13 @@
           <!-- 加载更多 / 没有更多提示 -->
           <div class="mobile-load-more">
             <template v-if="tableList.length > 0">
-              <span v-if="mobileLoadingMore" class="load-text">加载中...</span>
-              <span v-else-if="mobileNoMore || tableList.length >= total.value" class="load-text load-end">— 已加载全部 —</span>
+              <span v-if="mobileLoadingMore" class="load-text">{{ t('selectUser.loadingMore') }}</span>
+              <span v-else-if="mobileNoMore || tableList.length >= total.value" class="load-text load-end">{{ t('selectUser.loadedAll') }}</span>
             </template>
           </div>
           <!-- 空状态 -->
           <div v-if="!loading && tableList.length === 0" class="mobile-empty">
-            暂无数据
+            {{ t('common.empty') }}
           </div>
         </div>
 
@@ -207,7 +207,7 @@
             <template #empty>
               <div class="user-empty">
                 <svg viewBox="0 0 24 24" class="user-empty-icon"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/></svg>
-                <span>暂无人员数据</span>
+                <span>{{ t('selectUser.emptyUsers') }}</span>
               </div>
             </template>
             <wf-table-column width="50" align="center">
@@ -223,11 +223,11 @@
                 <wf-checkbox :model-value="scope.row.isChecked"></wf-checkbox>
               </template>
             </wf-table-column>
-            <wf-table-column label="权限名称" align="center" key="handlerName" prop="handlerName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
-            <wf-table-column label="权限编码" align="center" key="handlerCode" prop="handlerCode" v-if="columns[1].visible" :show-overflow-tooltip="true" />
-            <wf-table-column label="入库主键" align="center" key="storageId" prop="storageId" v-if="columns[0].visible" class-name="mobile-hide-col" />
-            <wf-table-column label="权限分组" align="center" key="groupName" prop="groupName" v-if="columns[3].visible" :show-overflow-tooltip="true" class-name="mobile-hide-col" />
-            <wf-table-column label="创建时间" align="center" prop="createTime" v-if="columns[4].visible" width="160" class-name="mobile-hide-col">
+            <wf-table-column :label="t('between.handlerName')" align="center" key="handlerName" prop="handlerName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
+            <wf-table-column :label="t('selectUser.permCode')" align="center" key="handlerCode" prop="handlerCode" v-if="columns[1].visible" :show-overflow-tooltip="true" />
+            <wf-table-column :label="t('between.handlerStorageId')" align="center" key="storageId" prop="storageId" v-if="columns[0].visible" class-name="mobile-hide-col" />
+            <wf-table-column :label="t('selectUser.permGroup')" align="center" key="groupName" prop="groupName" v-if="columns[3].visible" :show-overflow-tooltip="true" class-name="mobile-hide-col" />
+            <wf-table-column :label="t('selectUser.createTime')" align="center" prop="createTime" v-if="columns[4].visible" width="160" class-name="mobile-hide-col">
               <template #default="scope">
                 <span>{{ parseTime(scope.row.createTime) }}</span>
               </template>
@@ -257,10 +257,12 @@ import { computed, getCurrentInstance, reactive, ref, toRefs, watch } from 'vue'
 import { handlerResult, handlerType } from "@/api/flow/definition";
 // 库化后不再依赖 ruoyi 全局注册的 parseTime，显式引入供模板格式化「创建时间」列
 import { parseTime } from "@/utils/ruoyi";
+import { useI18n } from '@/i18n';
 
 defineOptions({ name: 'User' });
 
 const { proxy } = getCurrentInstance()!;
+const { t } = useI18n();
 
 interface SelectUserProps {
   /** 弹窗显隐（v-model:userVisible） */
@@ -294,11 +296,11 @@ const mobileNoMore = ref(false);
 const tabsList = ref<any[]>([]);
 // 列显隐信息
 const columns = ref([
-  { key: 0, label: `入库主键`, visible: true },
-  { key: 1, label: `权限编码`, visible: true },
-  { key: 2, label: `权限名称`, visible: true },
-  { key: 3, label: `权限分组`, visible: true },
-  { key: 4, label: `创建时间`, visible: true }
+  { key: 0, label: t('between.handlerStorageId'), visible: true },
+  { key: 1, label: t('selectUser.permCode'), visible: true },
+  { key: 2, label: t('between.handlerName'), visible: true },
+  { key: 3, label: t('selectUser.permGroup'), visible: true },
+  { key: 4, label: t('selectUser.createTime'), visible: true }
 ]);
 const checkedItemList = ref<any[]>([]); // 已选的itemList
 // 已选标签显示策略：超过8个时只显示前3个 + "+N 更多"

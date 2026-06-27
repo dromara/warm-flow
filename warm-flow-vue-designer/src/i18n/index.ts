@@ -194,6 +194,26 @@ const zh: WfMessageTree = {
     descPassCount: '请输入固定通过人数，类型为正整数',
     descRejectCount: '请输入固定驳回人数，类型为正整数',
     descDefault: '请输入默认表达式,格式如: ${flag > 4}'
+  },
+  selectUser: {
+    orgTree: '组织架构',
+    searchDept: '搜索部门名称',
+    filter: '筛选',
+    filterExpanded: '筛选条件',
+    permCode: '权限编码',
+    permCodePlaceholder: '请输入权限编码',
+    permNamePlaceholder: '请输入权限名称',
+    createTime: '创建时间',
+    startDate: '开始日期',
+    endDate: '结束日期',
+    selectedPrefix: '已选择',
+    selectedUnit: '项',
+    more: '更多',
+    clear: '清空',
+    loadingMore: '加载中...',
+    loadedAll: '— 已加载全部 —',
+    emptyUsers: '暂无人员数据',
+    permGroup: '权限分组'
   }
 }
 
@@ -361,6 +381,26 @@ const en: WfMessageTree = {
     descPassCount: 'Enter fixed pass count (positive integer)',
     descRejectCount: 'Enter fixed reject count (positive integer)',
     descDefault: 'Enter a default expression, e.g.: ${flag > 4}'
+  },
+  selectUser: {
+    orgTree: 'Organization',
+    searchDept: 'Search department',
+    filter: 'Filter',
+    filterExpanded: 'Filters',
+    permCode: 'Permission Code',
+    permCodePlaceholder: 'Enter permission code',
+    permNamePlaceholder: 'Enter permission name',
+    createTime: 'Created At',
+    startDate: 'Start date',
+    endDate: 'End date',
+    selectedPrefix: 'Selected',
+    selectedUnit: 'items',
+    more: 'more',
+    clear: 'Clear',
+    loadingMore: 'Loading...',
+    loadedAll: '— All loaded —',
+    emptyUsers: 'No users',
+    permGroup: 'Permission Group'
   }
 }
 
