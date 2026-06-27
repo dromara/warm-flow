@@ -2,16 +2,16 @@
   <div class="app-container">
     <wf-form ref="formRef" :model="form" class="dialogForm" :rules="rules" label-width="150px" :disabled="disabled">
       <div class="form-section">
-        <div class="section-title">基本配置</div>
-        <wf-form-item label="流程编码" prop="flowCode">
-          <wf-input v-model="form.flowCode" placeholder="请输入流程编码" maxlength="40" />
+        <div class="section-title">{{ t('baseInfo.sectionBasic') }}</div>
+        <wf-form-item :label="t('baseInfo.flowCode')" prop="flowCode">
+          <wf-input v-model="form.flowCode" :placeholder="t('baseInfo.flowCodePlaceholder')" maxlength="40" />
         </wf-form-item>
 
-        <wf-form-item label="流程名称" prop="flowName">
-          <wf-input v-model="form.flowName" placeholder="请输入流程名称" maxlength="100" @input="nameChange" />
+        <wf-form-item :label="t('baseInfo.flowName')" prop="flowName">
+          <wf-input v-model="form.flowName" :placeholder="t('baseInfo.flowNamePlaceholder')" maxlength="100" @input="nameChange" />
         </wf-form-item>
 
-        <wf-form-item label="设计器模型" prop="modelValue">
+        <wf-form-item :label="t('baseInfo.model')" prop="modelValue">
           <wf-radio-group v-model="form.modelValue" :disabled="!!definitionId || isMobile" @change="modelValueChange" class="radio-card-group">
             <wf-radio label="CLASSICS" class="radio-card">
               <div class="radio-card-content">
@@ -19,8 +19,8 @@
                   <svg-icon icon-class="classic" class="model-icon"/>
                 </div>
                 <div class="radio-card-info">
-                  <div class="radio-card-title">经典模型</div>
-                  <div class="radio-card-desc">自由拖拽连线，灵活编排流程</div>
+                  <div class="radio-card-title">{{ t('baseInfo.modelClassic') }}</div>
+                  <div class="radio-card-desc">{{ t('baseInfo.modelClassicDesc') }}</div>
                 </div>
               </div>
             </wf-radio>
@@ -30,75 +30,75 @@
                   <svg-icon icon-class="mimic" class="model-icon"/>
                 </div>
                 <div class="radio-card-info">
-                  <div class="radio-card-title">仿钉钉模型</div>
-                  <div class="radio-card-desc">类钉钉审批流，上下结构布局</div>
+                  <div class="radio-card-title">{{ t('baseInfo.modelMimic') }}</div>
+                  <div class="radio-card-desc">{{ t('baseInfo.modelMimicDesc') }}</div>
                 </div>
               </div>
             </wf-radio>
           </wf-radio-group>
-          <div class="radio-card-warning">切换后重置节点，保存后不支持修改！</div>
-          <div class="radio-card-warning radio-card-warning--mobile" v-if="isMobile">移动端不支持选择模型，如果新增默认仿钉钉</div>
+          <div class="radio-card-warning">{{ t('baseInfo.modelSwitchWarning') }}</div>
+          <div class="radio-card-warning radio-card-warning--mobile" v-if="isMobile">{{ t('baseInfo.modelMobileWarning') }}</div>
         </wf-form-item>
 
-        <wf-form-item label="流程类别" prop="category">
+        <wf-form-item :label="t('baseInfo.category')" prop="category">
           <wf-tree-select
               v-model="form.category"
               :data="categoryList"
               :props="{ value: 'id', label: 'name', children: 'children' }"
               value-key="id"
-              placeholder="请选择流程类别"
+              :placeholder="t('baseInfo.categoryPlaceholder')"
               check-strictly/>
         </wf-form-item>
 
-        <wf-form-item label="自定义表单" prop="formCustom">
+        <wf-form-item :label="t('baseInfo.formCustom')" prop="formCustom">
           <wf-switch
             v-model="form.formCustom"
             size="large"
             active-value="Y"
             inactive-value="N"
-            active-text="是"
-            inactive-text="否" />
-          <span class="form-tip">{{ form.formCustom === 'Y' ? '选择已配置的自定义表单' : '填写审批页面路径' }}</span>
+            :active-text="t('common.yes')"
+            :inactive-text="t('common.no')" />
+          <span class="form-tip">{{ form.formCustom === 'Y' ? t('baseInfo.formCustomTipY') : t('baseInfo.formCustomTipN') }}</span>
         </wf-form-item>
 
-        <wf-form-item label="表单路径" prop="formPath" v-if="form.formCustom === 'N'">
-          <wf-input v-model="form.formPath" placeholder="请输入审批表单路径" maxlength="100"/>
+        <wf-form-item :label="t('baseInfo.formPath')" prop="formPath" v-if="form.formCustom === 'N'">
+          <wf-input v-model="form.formPath" :placeholder="t('baseInfo.formPathPlaceholder')" maxlength="100"/>
         </wf-form-item>
 
-        <wf-form-item label="表单唯一标识" prop="formPath" v-else-if="form.formCustom === 'Y'">
+        <wf-form-item :label="t('baseInfo.formKey')" prop="formPath" v-else-if="form.formCustom === 'Y'">
             <wf-tree-select
                 v-model="form.formPath"
                 :data="formPathList"
                 :props="{ value: 'id', label: 'name', children: 'children' }"
                 value-key="id"
-                placeholder="请选择流程类别"
+                :placeholder="t('baseInfo.categoryPlaceholder')"
                 check-strictly/>
         </wf-form-item>
       </div>
 
       <div class="form-section">
-        <div class="section-title">监听器配置</div>
+        <div class="section-title">{{ t('baseInfo.sectionListener') }}</div>
         <wf-form-item prop="listenerRows" class="listenerItem">
-          <wf-table :data="form.listenerRows" style="width: 100%" empty-text="暂无监听器，点击下方「增加行」添加">
-            <wf-table-column prop="listenerType" :width="isMobile ? 60 : 160" label="类型">
+          <wf-table :data="form.listenerRows" style="width: 100%" :empty-text="t('baseInfo.listenerEmpty')">
+            <wf-table-column prop="listenerType" :width="isMobile ? 60 : 160" :label="t('common.type')">
               <template #default="scope">
                 <wf-form-item :prop="`listenerRows.${scope.$index}.listenerType`" :rules="rules.listenerType">
-                  <wf-select v-model="scope.row.listenerType" placeholder="请选择类型">
-                    <wf-option label="开始" value="start"></wf-option>
-                    <wf-option label="分派" value="assignment"></wf-option>
-                    <wf-option label="完成" value="finish"></wf-option>
-                    <wf-option label="创建" value="create"></wf-option>
+                  <wf-select v-model="scope.row.listenerType" :placeholder="t('baseInfo.listenerTypePlaceholder')">
+                    <wf-option :label="t('start.listenerStart')" value="start"></wf-option>
+                    <wf-option :label="t('start.listenerAssignment')" value="assignment"></wf-option>
+                    <wf-option :label="t('start.listenerFinish')" value="finish"></wf-option>
+                    <wf-option :label="t('start.listenerCreate')" value="create"></wf-option>
                   </wf-select>
                 </wf-form-item>
               </template>
             </wf-table-column>
 
-            <wf-table-column prop="listenerPath" label="监听器（可输入类路径）">
+            <wf-table-column prop="listenerPath" :label="t('baseInfo.listenerPathLabel')">
               <template #default="scope">
                 <wf-form-item :prop="`listenerRows.${scope.$index}.listenerPath`" :rules="rules.listenerPath">
                     <wf-select
                         v-model="scope.row.listenerPath"
-                        placeholder="请输入或选择"
+                        :placeholder="t('baseInfo.listenerPathPlaceholder')"
                         allow-create
                         filterable
                         clearable
@@ -114,13 +114,13 @@
               </template>
             </wf-table-column>
 
-            <wf-table-column label="操作" width="65" align="center" v-if="!disabled">
+            <wf-table-column :label="t('common.operation')" width="65" align="center" v-if="!disabled">
               <template #default="scope">
                 <wf-button link size="small" type="danger" @click="handleDeleteRow(scope.$index)"><svg-icon icon-class="ep:delete"/></wf-button>
               </template>
             </wf-table-column>
           </wf-table>
-          <wf-button v-if="!disabled" class="add-row-btn" @click="handleAddRow">增加行</wf-button>
+          <wf-button v-if="!disabled" class="add-row-btn" @click="handleAddRow">{{ t('common.addRow') }}</wf-button>
         </wf-form-item>
       </div>
     </wf-form>
@@ -128,12 +128,14 @@
 </template>
 
 <script setup lang="ts">
-import { getCurrentInstance, onMounted, onUnmounted, ref, watch } from "vue";
+import { computed, getCurrentInstance, onMounted, onUnmounted, ref, watch } from "vue";
 import {listenerList} from "@/api/flow/definition";
+import { useI18n } from '@/i18n';
 
 defineOptions({ name: 'BaseInfo' });
 
 const { proxy } = getCurrentInstance()!;
+const { t } = useI18n();
 const emit = defineEmits<{
   (e: 'update:flow-name', flowName: string): void;
   (e: 'update:model-value'): void;
@@ -208,26 +210,26 @@ const definitionList = ref([]);
 const ListenerVo = ref([]); // 监听器列表
 
 
-const rules = {
+const rules = computed(() => ({
   modelValue: [
-    { required: true, message: "设计器模型不能为空", trigger: "blur" }
+    { required: true, message: t('baseInfo.ruleModelRequired'), trigger: "blur" }
   ],
   flowCode: [
-    { required: true, message: "流程编码不能为空", trigger: "blur" }
+    { required: true, message: t('baseInfo.ruleFlowCodeRequired'), trigger: "blur" }
   ],
   flowName: [
-    { required: true, message: "流程名称不能为空", trigger: "blur" }
+    { required: true, message: t('baseInfo.ruleFlowNameRequired'), trigger: "blur" }
   ],
   formCustom: [
-    { required: true, message: "请选择审批表单是否自定义", trigger: "change" }
+    { required: true, message: t('baseInfo.ruleFormCustomRequired'), trigger: "change" }
   ],
   listenerType: [
-    { required: true, message: '监听器不能为空', trigger: ['change', 'blur'] }
+    { required: true, message: t('baseInfo.ruleListenerRequired'), trigger: ['change', 'blur'] }
   ],
   listenerPath: [
-    { required: true, message: '监听器不能为空', trigger: ['change', 'blur'] }
+    { required: true, message: t('baseInfo.ruleListenerRequired'), trigger: ['change', 'blur'] }
   ]
-};
+}));
 
 // 表单引用（用于校验）
 const formRef = ref();

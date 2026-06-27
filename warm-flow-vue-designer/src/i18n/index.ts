@@ -54,7 +54,9 @@ const zh: WfMessageTree = {
     pleaseInput: '请输入',
     addRow: '增加行',
     operation: '操作',
-    type: '类型'
+    type: '类型',
+    yes: '是',
+    no: '否'
   },
   node: {
     codeLabel: '节点编码：',
@@ -115,6 +117,38 @@ const zh: WfMessageTree = {
     titleStart: '设置开始属性',
     titleEnd: '设置结束属性',
     titleBetween: '设置中间属性'
+  },
+  baseInfo: {
+    sectionBasic: '基本配置',
+    flowCode: '流程编码',
+    flowCodePlaceholder: '请输入流程编码',
+    flowName: '流程名称',
+    flowNamePlaceholder: '请输入流程名称',
+    model: '设计器模型',
+    modelClassic: '经典模型',
+    modelClassicDesc: '自由拖拽连线，灵活编排流程',
+    modelMimic: '仿钉钉模型',
+    modelMimicDesc: '类钉钉审批流，上下结构布局',
+    modelSwitchWarning: '切换后重置节点，保存后不支持修改！',
+    modelMobileWarning: '移动端不支持选择模型，如果新增默认仿钉钉',
+    category: '流程类别',
+    categoryPlaceholder: '请选择流程类别',
+    formCustom: '自定义表单',
+    formCustomTipY: '选择已配置的自定义表单',
+    formCustomTipN: '填写审批页面路径',
+    formPath: '表单路径',
+    formPathPlaceholder: '请输入审批表单路径',
+    formKey: '表单唯一标识',
+    sectionListener: '监听器配置',
+    listenerEmpty: '暂无监听器，点击下方「增加行」添加',
+    listenerTypePlaceholder: '请选择类型',
+    listenerPathLabel: '监听器（可输入类路径）',
+    listenerPathPlaceholder: '请输入或选择',
+    ruleModelRequired: '设计器模型不能为空',
+    ruleFlowCodeRequired: '流程编码不能为空',
+    ruleFlowNameRequired: '流程名称不能为空',
+    ruleFormCustomRequired: '请选择审批表单是否自定义',
+    ruleListenerRequired: '监听器不能为空'
   }
 }
 
@@ -142,7 +176,9 @@ const en: WfMessageTree = {
     pleaseInput: 'Please enter',
     addRow: 'Add row',
     operation: 'Action',
-    type: 'Type'
+    type: 'Type',
+    yes: 'Yes',
+    no: 'No'
   },
   node: {
     codeLabel: 'Node Code:',
@@ -203,6 +239,38 @@ const en: WfMessageTree = {
     titleStart: 'Start Properties',
     titleEnd: 'End Properties',
     titleBetween: 'Task Properties'
+  },
+  baseInfo: {
+    sectionBasic: 'Basic Settings',
+    flowCode: 'Flow Code',
+    flowCodePlaceholder: 'Enter flow code',
+    flowName: 'Flow Name',
+    flowNamePlaceholder: 'Enter flow name',
+    model: 'Designer Model',
+    modelClassic: 'Classic',
+    modelClassicDesc: 'Free drag & connect, flexible orchestration',
+    modelMimic: 'DingTalk-like',
+    modelMimicDesc: 'DingTalk-style approval, top-down layout',
+    modelSwitchWarning: 'Switching resets nodes and cannot be changed after saving!',
+    modelMobileWarning: 'Model selection is not supported on mobile; new flows default to DingTalk-like',
+    category: 'Category',
+    categoryPlaceholder: 'Select category',
+    formCustom: 'Custom Form',
+    formCustomTipY: 'Choose a configured custom form',
+    formCustomTipN: 'Enter the approval page path',
+    formPath: 'Form Path',
+    formPathPlaceholder: 'Enter approval form path',
+    formKey: 'Form Key',
+    sectionListener: 'Listeners',
+    listenerEmpty: 'No listeners. Click "Add row" below to add.',
+    listenerTypePlaceholder: 'Select type',
+    listenerPathLabel: 'Listener (class path allowed)',
+    listenerPathPlaceholder: 'Enter or select',
+    ruleModelRequired: 'Designer model is required',
+    ruleFlowCodeRequired: 'Flow code is required',
+    ruleFlowNameRequired: 'Flow name is required',
+    ruleFormCustomRequired: 'Please choose whether the form is custom',
+    ruleListenerRequired: 'Listener is required'
   }
 }
 
