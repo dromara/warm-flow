@@ -96,6 +96,25 @@ const zh: WfMessageTree = {
     descDefault: '请输入默认表达式,格式如: ${flag == 5 && flag > 4}',
     descSpel: '请输入spel表达式，格式如: #{@user.eval(#flag)}',
     descSnel: '请输入snel表达式，格式如: #{@user.eval(flag)}'
+  },
+  sidebar: {
+    baseNodes: '基础节点',
+    gatewayNodes: '网关节点',
+    start: '开始',
+    between: '中间节点',
+    end: '结束',
+    serial: '互斥网关',
+    parallel: '并行网关',
+    inclusive: '包含网关'
+  },
+  property: {
+    titleEdge: '设置边属性',
+    titleSerial: '设置串行网关属性',
+    titleParallel: '设置并行网关属性',
+    titleInclusive: '设置包含网关属性',
+    titleStart: '设置开始属性',
+    titleEnd: '设置结束属性',
+    titleBetween: '设置中间属性'
   }
 }
 
@@ -165,6 +184,25 @@ const en: WfMessageTree = {
     descDefault: 'Enter a default expression, e.g.: ${flag == 5 && flag > 4}',
     descSpel: 'Enter a SpEL expression, e.g.: #{@user.eval(#flag)}',
     descSnel: 'Enter a SNEL expression, e.g.: #{@user.eval(flag)}'
+  },
+  sidebar: {
+    baseNodes: 'Basic Nodes',
+    gatewayNodes: 'Gateways',
+    start: 'Start',
+    between: 'Task',
+    end: 'End',
+    serial: 'Exclusive',
+    parallel: 'Parallel',
+    inclusive: 'Inclusive'
+  },
+  property: {
+    titleEdge: 'Edge Properties',
+    titleSerial: 'Exclusive Gateway Properties',
+    titleParallel: 'Parallel Gateway Properties',
+    titleInclusive: 'Inclusive Gateway Properties',
+    titleStart: 'Start Properties',
+    titleEnd: 'End Properties',
+    titleBetween: 'Task Properties'
   }
 }
 

@@ -1,13 +1,13 @@
 <template>
   <div class="diagram-sidebar">
     <div class="sidebar-header">
-      <span class="sidebar-title">基础节点</span>
+      <span class="sidebar-title">{{ t('sidebar.baseNodes') }}</span>
     </div>
     <div class="sidebar-content">
       <!-- 基础流程节点组 -->
       <div class="node-group">
         <div
-          v-for="item in flowNodes"
+          v-for="item in effectiveFlowNodes"
           :key="item.type"
           class="sidebar-item"
           :class="[`item-${item.type}`]"
@@ -19,17 +19,17 @@
       </div>
 
       <!-- 分隔线（仅有网关节点时显示） -->
-      <div class="sidebar-divider" v-if="gatewayNodes.length"></div>
+      <div class="sidebar-divider" v-if="effectiveGatewayNodes.length"></div>
 
       <!-- 网关节点组标题（仅有网关节点时显示） -->
-      <div class="group-header" v-if="gatewayNodes.length">
-        <span class="group-title">网关节点</span>
+      <div class="group-header" v-if="effectiveGatewayNodes.length">
+        <span class="group-title">{{ t('sidebar.gatewayNodes') }}</span>
       </div>
 
       <!-- 网关节点组 -->
-      <div class="node-group" v-if="gatewayNodes.length">
+      <div class="node-group" v-if="effectiveGatewayNodes.length">
         <div
-          v-for="item in gatewayNodes"
+          v-for="item in effectiveGatewayNodes"
           :key="item.type"
           class="sidebar-item"
           :class="[`item-${item.type}`]"
@@ -44,13 +44,17 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import {
   startIcon, betweenIcon, endIcon,
   serialIcon, parallelIcon, inclusiveIcon,
 } from '@/components/design/classics/js/sidebarIcons'
 import type { PaletteNode } from '@/designer/types'
+import { useI18n } from '@/i18n'
 
 defineOptions({ name: 'DiagramSidebar' });
+
+const { t } = useI18n();
 
 const emit = defineEmits<{
   (e: 'dragInNode', type: string, properties: Record<string, any>, text: any): void;
@@ -58,28 +62,28 @@ const emit = defineEmits<{
 
 /**
  * 节点列表可由外部覆盖（FlowDesigner 的 paletteNodes 透传）：
- * 不传用内置默认；传空数组可隐藏对应分组（网关组为空时连同标题 / 分隔线一并隐藏）。
- *
- * 注意：Vue 3.3 会把 defineProps 默认值工厂提升到 setup 外，工厂内只能引用模块级 import
- * （如此处的 *Icon），不能引用 <script setup> 内局部声明的常量，故内置默认直接内联于工厂中。
+ * 不传用内置默认（默认列表走 computed + t()，随 setLocale 响应式刷新）；
+ * 传空数组可隐藏对应分组（effective* 用 props.* ?? 默认，`[]` 不会被回落，故保留「传 [] 隐藏」语义）。
  */
-withDefaults(defineProps<{
+const props = defineProps<{
   /** 基础节点组（不传用内置默认：开始 / 中间 / 结束） */
   flowNodes?: PaletteNode[]
   /** 网关节点组（不传用内置默认：互斥 / 并行 / 包含；传 [] 隐藏网关组） */
   gatewayNodes?: PaletteNode[]
-}>(), {
-  flowNodes: () => ([
-    { type: 'start', text: '开始', label: '开始', icon: startIcon },
-    { type: 'between', text: '中间节点', label: '中间节点', icon: betweenIcon, properties: { collaborativeWay: '1' } },
-    { type: 'end', text: '结束', label: '结束', icon: endIcon },
-  ]),
-  gatewayNodes: () => ([
-    { type: 'serial', text: '', label: '互斥网关', icon: serialIcon, properties: {} },
-    { type: 'parallel', text: '', label: '并行网关', icon: parallelIcon, properties: {} },
-    { type: 'inclusive', text: '', label: '包含网关', icon: inclusiveIcon, properties: {} },
-  ]),
-})
+}>()
+
+const defaultFlowNodes = computed<PaletteNode[]>(() => ([
+  { type: 'start', text: t('sidebar.start'), label: t('sidebar.start'), icon: startIcon },
+  { type: 'between', text: t('sidebar.between'), label: t('sidebar.between'), icon: betweenIcon, properties: { collaborativeWay: '1' } },
+  { type: 'end', text: t('sidebar.end'), label: t('sidebar.end'), icon: endIcon },
+]))
+const defaultGatewayNodes = computed<PaletteNode[]>(() => ([
+  { type: 'serial', text: '', label: t('sidebar.serial'), icon: serialIcon, properties: {} },
+  { type: 'parallel', text: '', label: t('sidebar.parallel'), icon: parallelIcon, properties: {} },
+  { type: 'inclusive', text: '', label: t('sidebar.inclusive'), icon: inclusiveIcon, properties: {} },
+]))
+const effectiveFlowNodes = computed<PaletteNode[]>(() => props.flowNodes ?? defaultFlowNodes.value)
+const effectiveGatewayNodes = computed<PaletteNode[]>(() => props.gatewayNodes ?? defaultGatewayNodes.value)
 
 function handleDragInNode(item: PaletteNode) {
   emit('dragInNode', item.type, item.properties || {}, item.text || {})

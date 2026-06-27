@@ -30,10 +30,12 @@ import inclusive from '@/components/design/common/vue/gateway.vue'
 import end from '@/components/design/common/vue/end.vue'
 import skip from '@/components/design/common/vue/skip.vue'
 import BaseInfo from "@/components/design/common/vue/baseInfo.vue";
+import { useI18n } from '@/i18n';
 
 defineOptions({ name: 'PropertySetting' });
 
 const { proxy } = getCurrentInstance()!;
+const { t } = useI18n();
 
 // 响应式窗口宽度：监听 resize 变化
 const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1024);
@@ -94,19 +96,19 @@ const objId = ref(undefined);
 const nodeCode = ref(null);
 const title = computed(() => {
   if (props.node && props.node.type === 'skip') {
-    return '设置边属性'
+    return t('property.titleEdge')
   } else if (props.node && props.node.type === 'serial') {
-    return '设置串行网关属性'
+    return t('property.titleSerial')
   } else if (props.node && props.node.type === 'parallel') {
-    return '设置并行网关属性'
+    return t('property.titleParallel')
   } else if (props.node && props.node.type === 'inclusive') {
-      return '设置包含网关属性'
+      return t('property.titleInclusive')
   }  else if (props.node && props.node.type === 'start') {
-    return '设置开始属性'
+    return t('property.titleStart')
   } else if (props.node && props.node.type === 'end') {
-    return '设置结束属性'
+    return t('property.titleEnd')
   }
-  return '设置中间属性'
+  return t('property.titleBetween')
 });
 
 // 组件类型
