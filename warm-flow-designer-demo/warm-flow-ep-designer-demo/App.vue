@@ -12,7 +12,7 @@
             </div>
             <p class="demo-hero-sub">轻量级工作流设计器 · npm 组件库消费示例 · 经典 + 仿钉钉双模式</p>
             <div class="demo-hero-chips">
-              <span class="chip">UI 适配器可插拔 · EP / antd</span>
+              <span class="chip">UI 适配器可插拔 · EP / antd / naive</span>
               <span class="chip">localStorage 持久化</span>
               <span class="chip">保存 / 修改 / 预览闭环</span>
             </div>
