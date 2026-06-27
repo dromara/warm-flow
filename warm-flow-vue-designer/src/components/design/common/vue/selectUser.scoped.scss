@@ -67,145 +67,6 @@
   }
 }
 
-/* ========== 左侧树形卡片（增强版 + 可折叠） ========== */
-.tree-card {
-  padding-bottom: 0;
-  display: flex; flex-direction: column;
-
-  /* PC端（>768px）固定高度 */
-  @media (min-width: 769px) {
-    height: 560px;
-  }
-
-  /* 折叠状态：只显示标题头 */
-  &.tree-collapsed {
-    height: auto;
-    min-height: auto;
-    .tree-header { border-bottom: none; border-radius: var(--wf-radius-lg); }
-  }
-
-  .tree-header {
-    display: flex; align-items: center; gap: 8px;
-    padding: 13px 16px;
-    font-size: 13px; font-weight: 600;
-    color: var(--wf-text-primary);
-    letter-spacing: .3px;
-    background: linear-gradient(135deg, #f5f7fa, #ecf1f6);
-    border-bottom: 1px solid var(--wf-border-lighter);
-    flex-shrink: 0;
-    html.dark & {
-      background: linear-gradient(135deg, rgba(120,128,140,.08), rgba(80,88,100,.05));
-      border-bottom-color: var(--wf-border-color);
-    }
-    .tree-icon {
-      width: 17px; height: 17px;
-      color: var(--wf-primary);
-      flex-shrink: 0;
-    }
-  }
-
-  /* 标题可点击 */
-  .tree-header-clickable {
-    cursor: pointer;
-    user-select: none;
-    transition: background .25s ease;
-
-    &:hover {
-      background: linear-gradient(135deg, rgba(64,158,255,.08), rgba(43,125,233,.04));
-      html.dark & { background: linear-gradient(135deg, rgba(64,158,255,.1), rgba(43,125,233,.06)); }
-    }
-  }
-
-  /* 折叠箭头 */
-  .tree-collapse-toggle {
-    margin-left: auto;
-    flex-shrink: 0;
-    width: 22px; height: 22px;
-    display: flex; align-items: center; justify-content: center;
-    color: var(--wf-text-secondary);
-    opacity: 0.5;
-    transition: all .25s ease;
-
-    .toggle-arrow {
-      width: 18px; height: 18px;
-      transition: transform .35s cubic-bezier(.4,0,.2,1);
-
-      &.is-expanded { transform: rotate(180deg); }
-    }
-
-    .tree-header-clickable:hover & {
-      opacity: 1;
-      color: var(--wf-primary);
-    }
-  }
-
-  /* 树内容区域（可折叠） */
-  .tree-content {
-    display: flex; flex-direction: column;
-    flex: 1; overflow: hidden;
-  }
-
-  .tree-search {
-    padding: 12px;
-    border-bottom: 1px solid var(--wf-border-lighter);
-    flex-shrink: 0;
-
-    ::v-deep(.el-input__wrapper) {
-      border-radius: 8px;
-      transition: all .25s ease;
-      box-shadow: 0 0 0 1px var(--wf-border-color) inset;
-      &:hover { box-shadow: 0 0 0 1px var(--wf-primary) inset; }
-      &.is-focus { box-shadow: 0 0 0 2px rgba(64,158,255,.15), 0 0 0 1px var(--wf-primary) inset !important; }
-    }
-  }
-
-  .tree-body {
-    flex: 1; overflow-y: auto;
-    padding: 10px 4px;
-
-    &::-webkit-scrollbar { width: 5px; }
-    &::-webkit-scrollbar-track { background: transparent; }
-    &::-webkit-scrollbar-thumb {
-      background: rgba(0,0,0,.14); border-radius: 5px;
-      &:hover { background: rgba(0,0,0,.24); }
-    }
-    html.dark &::-webkit-scrollbar-thumb { background: rgba(255,255,255,.18); }
-
-    ::v-deep(.el-tree) { background: transparent; }
-    ::v-deep(.el-tree-node) { display: table; min-width: 100%; }
-    ::v-deep(.el-tree-node__content:hover),
-    ::v-deep(.el-tree-node.is-current > .el-tree-node__content) {
-      color: var(--wf-primary);
-      background-color: var(--wf-primary-lighter);
-      border-radius: 7px;
-      html.dark & { background-color: rgba(64,158,255,.12); }
-    }
-
-    ::v-deep(.el-tree-node__expand-icon) {
-      color: var(--wf-text-secondary);
-      transition: transform .2s ease;
-    }
-    html.dark & {
-      ::v-deep(.el-tree-node__content) { color: #c0c4cc; }
-    }
-  }
-}
-
-/* 树折叠动画 */
-.tree-slide-enter-active,
-.tree-slide-leave-active {
-  transition: all .35s cubic-bezier(.4,0,.2,1);
-  overflow: hidden;
-}
-.tree-slide-enter-from,
-.tree-slide-leave-to {
-  max-height: 0; opacity: 0; padding-top: 0; padding-bottom: 0;
-}
-.tree-slide-enter-to,
-.tree-slide-leave-from {
-  max-height: 2000px; opacity: 1;
-}
-
 /* ========== 搜索卡片 ========== */
 .search-card {
   margin-bottom: 12px;
@@ -300,86 +161,6 @@
     border-color: var(--wf-border-color);
     &:hover { border-color: var(--wf-primary); color: var(--wf-primary); background: var(--wf-primary-lighter); }
     html.dark & { background: var(--wf-bg-color); border-color: var(--wf-border-color); }
-  }
-}
-
-/* ========== 已选提示（内嵌在表格上方 - 智能显示） ========== */
-.selected-inline-bar {
-  display: flex; align-items: center; gap: 8px;
-  padding: 10px 16px;
-  background: linear-gradient(135deg, rgba(103,194,58,.06), rgba(82,155,46,.03));
-  border-bottom: 1px solid rgba(103,194,58,.12);
-  font-size: 13px; color: #67c23a;
-  flex-wrap: wrap;
-
-  .bar-icon { width: 16px; height: 16px; flex-shrink: 0; }
-  strong { font-weight: 600; margin: 0 2px; }
-
-  .selected-mini-tags {
-    display: inline-flex; align-items: center; gap: 6px; margin-left: auto;
-
-    .mini-tag {
-      border-radius: 12px; font-size: 11px;
-      background: linear-gradient(135deg, rgba(103,194,58,.1), rgba(103,194,58,.05));
-      border-color: rgba(103,194,58,.25); color: #529b2e;
-      transition: all .2s ease;
-
-      &:hover {
-        background: linear-gradient(135deg, rgba(103,194,58,.18), rgba(103,194,58,.1));
-        box-shadow: 0 1px 6px rgba(103,194,58,.15);
-      }
-    }
-
-    /* 溢出模式：显示 "+N 更多" */
-    &.selected-overflow { margin-left: auto; }
-  }
-
-  /* "+N 更多" 标签 */
-  .more-tag {
-    cursor: pointer;
-    border-style: dashed !important;
-    font-size: 11px !important;
-    color: var(--wf-primary) !important;
-    border-color: var(--wf-primary) !important;
-    background: linear-gradient(135deg, rgba(64,158,255,.08), rgba(64,158,255,.04)) !important;
-
-    &:hover {
-      background: linear-gradient(135deg, rgba(64,158,255,.15), rgba(64,158,255,.08)) !important;
-      box-shadow: 0 1px 6px rgba(64,158,255,.15) !important;
-    }
-  }
-
-  .clear-all-btn {
-    font-size: 12px; padding: 0 4px; flex-shrink: 0;
-    &:hover { color: #f56c6c !important; }
-  }
-}
-
-/* tooltip 全部列表弹窗 */
-.selected-all-tooltip {
-  max-width: 260px;
-  padding: 10px 14px !important;
-  border-radius: 10px !important;
-  border: 1px solid rgba(103,194,58,.18) !important;
-  box-shadow: 0 4px 16px rgba(0,0,0,.12) !important;
-
-  .tooltip-tag-list {
-    max-height: 200px;
-    overflow-y: auto;
-    display: flex; flex-direction: column; gap: 5px;
-
-    &::-webkit-scrollbar { width: 4px; }
-    &::-webkit-scrollbar-thumb { background: rgba(0,0,0,.12); border-radius: 4px; }
-  }
-
-  .tooltip-item {
-    padding: 3px 8px;
-    border-radius: 6px;
-    font-size: 12px;
-    color: #606266;
-    background: rgba(103,194,58,.06);
-
-    &:nth-child(even) { background: rgba(103,194,58,.02); }
   }
 }
 
@@ -555,27 +336,6 @@ html.dark ::v-deep(.el-pager) li {
       .toggle-arrow-sm.is-rotated { transform: rotate(180deg); }
     }
 
-    /* 组织架构树：默认收起，展开时严格限制高度 */
-    .tree-card {
-      border-radius: 10px;
-      overflow: hidden;
-      min-height: 48px; /* 收起时保持与展开时一致的视觉高度 */
-
-      &.tree-collapsed {
-        border-color: var(--wf-border-color);
-        background: var(--wf-bg-white);
-        html.dark & { background: #1a1a1a; border-color: #333; }
-      }
-
-      .tree-header { padding: 10px 14px; font-size: 14px; }
-      .tree-content {
-        max-height: 300px !important;
-        overflow-y: auto;
-        padding: 0 10px 10px;
-        .tree-search { padding: 0 0 6px; }
-      }
-    }
-
     /* 搜索表单：纵向紧凑堆叠 */
     .search-card {
       border-radius: 10px;
@@ -591,12 +351,6 @@ html.dark ::v-deep(.el-pager) li {
         display: flex; gap: 8px;
         .btn-action { flex: 1; text-align: center; justify-content: center; }
       }
-    }
-
-    /* 已选提示栏紧凑化 */
-    .selected-inline-bar {
-      flex-wrap: wrap; gap: 6px; font-size: 13px;
-      padding: 10px 12px; border-radius: 10px;
     }
 
     /* ===== 隐藏 PC 端表格和底部栏 ===== */

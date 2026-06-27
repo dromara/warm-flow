@@ -19,46 +19,13 @@
     <wf-row :gutter="16" class="content">
       <!-- 左侧树状选择 -->
       <wf-col :span="5" :xs="24" v-show="groupOptions">
-        <div class="section-card tree-card" :class="{ 'tree-collapsed': treeCollapsed }">
-          <div class="tree-header tree-header-clickable" @click="treeCollapsed = !treeCollapsed">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="tree-icon">
-              <path d="M15 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V8L15 2ZM18 20H6V4H14V9H18V20ZM8.5 12H10V17H8.5V12ZM11 12H12.5V17H11V12ZM13.5 12H15V17H13.5V12Z" fill="currentColor"/>
-            </svg>
-            <span>{{ t('selectUser.orgTree') }}</span>
-            <span class="tree-collapse-toggle">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="toggle-arrow" :class="{ 'is-expanded': !treeCollapsed }">
-                <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" fill="currentColor"/>
-              </svg>
-            </span>
-          </div>
-          <transition name="tree-slide">
-            <div class="tree-content" v-show="!treeCollapsed">
-              <div class="tree-search">
-            <wf-input
-              v-model="groupName"
-              :placeholder="t('selectUser.searchDept')"
-              clearable
-              size="default"
-            >
-              <template #prefix><svg-icon icon-class="ep:search"/></template>
-            </wf-input>
-          </div>
-          <div class="tree-body">
-            <wf-tree
-              :data="groupOptions"
-              :props="{ label: 'name', children: 'children' }"
-              :expand-on-click-node="false"
-              :filter-node-method="filterNode"
-              ref="groupTreeRef"
-              node-key="id"
-              highlight-current
-              default-expand-all
-              @node-click="handleNodeClick"
-            />
-          </div>
-          </div>
-          </transition>
-        </div>
+        <UserPickerTree
+          ref="groupTreeRef"
+          :group-options="groupOptions"
+          v-model:group-name="groupName"
+          v-model:tree-collapsed="treeCollapsed"
+          @node-click="handleNodeClick"
+        />
       </wf-col>
 
       <!-- 右侧列表数据 -->
@@ -115,52 +82,11 @@
         </div>
 
         <!-- 已选提示（内嵌在表格卡片底部）- 智能显示策略 -->
-        <div class="selected-inline-bar" v-if="checkedItemList.length > 0">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="bar-icon">
-            <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" fill="currentColor"/>
-          </svg>
-          <span>{{ t('selectUser.selectedPrefix') }} <strong>{{ checkedItemList.length }}</strong> {{ t('selectUser.selectedUnit') }}</span>
-          <div class="selected-mini-tags" v-if="checkedItemList.length <= 8">
-            <wf-tag
-              closable
-              v-for="tag in checkedItemList"
-              :key="tag.storageId"
-              @close="handleClose(tag.storageId)"
-              class="mini-tag"
-              size="small"
-            >
-              {{ tag.handlerName || tag.storageId }}
-            </wf-tag>
-          </div>
-          <div class="selected-mini-tags selected-overflow" v-else>
-            <wf-tag
-              closable
-              v-for="tag in visibleTags"
-              :key="tag.storageId"
-              @close="handleClose(tag.storageId)"
-              class="mini-tag"
-              size="small"
-            >
-              {{ tag.handlerName || tag.storageId }}
-            </wf-tag>
-            <wf-tooltip
-              placement="top"
-              effect="light"
-              :offset="8"
-              popper-class="selected-all-tooltip"
-            >
-              <template #content>
-                <div class="tooltip-tag-list">
-                  <div class="tooltip-item" v-for="tag in checkedItemList" :key="tag.storageId">
-                    {{ tag.handlerName || tag.storageId }}
-                  </div>
-                </div>
-              </template>
-              <wf-tag class="mini-tag more-tag" size="small">+{{ checkedItemList.length - visibleTagsCount }} {{ t('selectUser.more') }}</wf-tag>
-            </wf-tooltip>
-          </div>
-          <wf-button link type="danger" size="small" class="clear-all-btn" @click="clearAllSelected">{{ t('selectUser.clear') }}</wf-button>
-        </div>
+        <UserPickerSelectedBar
+          :selected="checkedItemList"
+          @close="handleClose"
+          @clear="clearAllSelected"
+        />
 
         <!-- 移动端：卡片式列表 -->
         <div class="mobile-card-list mobile-only" v-loading="loading" @scroll="onMobileScroll">
@@ -253,15 +179,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, getCurrentInstance, reactive, ref, toRefs, watch } from 'vue';
-import { handlerResult, handlerType } from "@/api/flow/definition";
 // 库化后不再依赖 ruoyi 全局注册的 parseTime，显式引入供模板格式化「创建时间」列
 import { parseTime } from "@/utils/ruoyi";
 import { useI18n } from '@/i18n';
+import { useUserPicker } from '@/composables/useUserPicker';
+import UserPickerTree from './UserPickerTree.vue';
+import UserPickerSelectedBar from './UserPickerSelectedBar.vue';
 
 defineOptions({ name: 'User' });
 
-const { proxy } = getCurrentInstance()!;
 const { t } = useI18n();
 
 interface SelectUserProps {
@@ -277,279 +203,47 @@ const props = withDefaults(defineProps<SelectUserProps>(), {
   selectUser: () => [],
   permissionRows: () => [],
 });
-const tabsValue = ref("");
-const tableList = ref<any[]>([]);
-const loading = ref(true);
-const showSearch = ref(true);
-const total = ref(0);
-let dateRange = ref<any[]>([]);
-const groupName = ref("");
-const groupOptions = ref<any>(undefined);
-// 树形区域折叠状态（默认展开，数据加载后根据高度自动判断）
-const treeCollapsed = ref(window.innerWidth <= 768);
-// 搜索区域折叠状态（移动端默认折叠）
-const searchCollapsed = ref(window.innerWidth <= 768);
-// 移动端分页：每页10条，滚动加载更多
-const MOBILE_PAGE_SIZE = 10;
-const mobileLoadingMore = ref(false);
-const mobileNoMore = ref(false);
-const tabsList = ref<any[]>([]);
-// 列显隐信息
-const columns = ref([
-  { key: 0, label: t('between.handlerStorageId'), visible: true },
-  { key: 1, label: t('selectUser.permCode'), visible: true },
-  { key: 2, label: t('between.handlerName'), visible: true },
-  { key: 3, label: t('selectUser.permGroup'), visible: true },
-  { key: 4, label: t('selectUser.createTime'), visible: true }
-]);
-const checkedItemList = ref<any[]>([]); // 已选的itemList
-// 已选标签显示策略：超过8个时只显示前3个 + "+N 更多"
-const visibleTagsCount = 8;
-const visibleTags = computed(() => checkedItemList.value.slice(0, visibleTagsCount));
-const data = reactive({
-  queryParams: {
-    pageNum: 1,
-    pageSize: 10,
-    userName: undefined,
-    status: "0",
-    groupId: undefined
-  } as Record<string, any>,
-  checkAllInfo: {
-    isIndeterminate: false,
-    isChecked: false,
-  }
-});
-
-const { queryParams, checkAllInfo } = toRefs(data);
 const emit = defineEmits<{
   (e: 'update:userVisible', visible: boolean): void;
   (e: 'handleUserSelect', checkedItemList: any[]): void;
 }>();
 
-/** 通过条件过滤节点  */
-const filterNode = (value: string, data: any) => {
- if (!value) return true;
- return data.name.indexOf(value) !== -1;
-};
-
-/** 根据名称筛选部门树 */
-watch(groupName, val => {
-  proxy.$refs["groupTreeRef"].filter(val);
-});
-watch(() => props.selectUser, (val, oldVal) => {
-  if (oldVal) {
-    proxy.$nextTick(() => {
-      checkedItemList.value = checkedItemList.value.filter(e => {
-        let index = val ? val.findIndex(v => v === e.storageId) : -1;
-        tableList.value.forEach(u => {
-          if (u.storageId === e.storageId) u.isChecked = index !== -1;
-        });
-        return index !== -1;
-      });
-    });
-  } else checkedItemList.value = val ? props.permissionRows.filter(n => n.storageId) : [];
-},{ deep: true, immediate: true });
-
-/** 获取tabs列表 */
-function getTabsType() {
-  handlerType().then(res => {
-    tabsList.value = res.data;
-    if(res.data && res.data.length > 0) {
-        tabsValue.value = res.data[0]
-    }
-    // 移动端初始加载使用10条分页
-    if (window.innerWidth <= 768 && !queryParams.value.pageSize) {
-      queryParams.value.pageSize = MOBILE_PAGE_SIZE;
-      queryParams.value.pageNum = 1;
-    }
-    getList();
-  }).catch(() => {
-    // 接口异常也结束 loading，展示空状态而非一直转圈
-    loading.value = false;
-    mobileLoadingMore.value = false;
-  });
-}
-
-/** 查询用户列表 */
-function getList(append = false) {
-  if (append) {
-    mobileLoadingMore.value = true;
-  } else {
-    loading.value = true;
-  }
-  if (!tabsValue.value) {
-    loading.value = false;
-    mobileLoadingMore.value = false;
-    return;
-  }
-  queryParams.value.handlerType = tabsValue.value;
-  dateRange.value = Array.isArray(dateRange.value) ? dateRange.value : [];
-  queryParams.value.beginTime = dateRange.value[0]
-  queryParams.value.endTime = dateRange.value[1]
-  handlerResult(queryParams.value).then(res => {
-    loading.value = false;
-    mobileLoadingMore.value = false;
-    let handlerAuths = res.data.handlerAuths;
-    handlerAuths.rows.forEach(item => {
-      item.isChecked = checkedItemList.value.findIndex(e => e.storageId === item.storageId) !== -1;
-    });
-    if (append && window.innerWidth <= 768) {
-      tableList.value = [...tableList.value, ...handlerAuths.rows];
-    } else {
-      tableList.value = handlerAuths.rows;
-    }
-    total.value = handlerAuths.total;
-    groupOptions.value = res.data.treeSelections;
-    proxy.$nextTick(() => {
-      if (groupName.value) proxy.$refs["groupTreeRef"].filter(groupName.value);
-    });
-    isCheckedAll();
-  }).catch(() => {
-    // 接口异常也结束 loading，展示空状态而非一直转圈
-    loading.value = false;
-    mobileLoadingMore.value = false;
-  });
-}
-
-/** 移动端滚动加载更多 */
-function loadMoreMobile() {
-  if (mobileLoadingMore.value || mobileNoMore.value || loading.value) return;
-  if (tableList.value.length >= total.value) {
-    mobileNoMore.value = true;
-    return;
-  }
-  queryParams.value.pageNum++;
-  queryParams.value.pageSize = MOBILE_PAGE_SIZE;
-  getList(true);
-}
-
-/** 移动端卡片列表滚动事件 */
-function onMobileScroll(e: any) {
-  const el = e.target;
-  if (!el) return;
-  // 距离底部 60px 时触发加载
-  if (el.scrollTop + el.clientHeight >= el.scrollHeight - 60) {
-    loadMoreMobile();
-  }
-}
-
-/** 重置移动端分页状态 */
-function resetMobilePagination() {
-  mobileLoadingMore.value = false;
-  mobileNoMore.value = false;
-  queryParams.value.pageNum = 1;
-  if (window.innerWidth <= 768) {
-    queryParams.value.pageSize = MOBILE_PAGE_SIZE;
-  }
-}
-/** 节点单击事件 */
-function handleNodeClick(data: any) {
-  queryParams.value.groupId = data.id;
-  handleQuery();
-}
-
-/** tab切换 */
-function tabChange() {
-  queryParams.value.groupId = undefined;
-  resetQuery();
-}
-
-/** 搜索按钮操作 */
-function handleQuery() {
-  resetMobilePagination();
-  getList();
-}
-
-/** 重置按钮操作 */
-function resetQuery() {
-  dateRange.value = [];
-  groupName.value = "";
-  proxy.$refs.queryRef.resetFields();
-  queryParams.value.groupId = undefined;
-  proxy.$refs.groupTreeRef.setCurrentKey(null);
-  handleQuery();
-}
-
-// 是否全选中
-function isCheckedAll() {
-  const len = tableList.value.length;
-  let count = 0;
-  tableList.value.map(item => {
-    if (item.isChecked) count += 1;
-  });
-  checkAllInfo.value.isChecked = len === count && len > 0;
-  checkAllInfo.value.isIndeterminate = count > 0 && count < len;
-}
-
-// 全选
-function handleCheckAll() {
-  const checkedArr = checkedItemList.value;
-  checkAllInfo.value.isIndeterminate = false;
-  if (checkAllInfo.value.isChecked) {
-    tableList.value = tableList.value.map(item => {
-      item.isChecked = true;
-      if (checkedItemList.value.findIndex(e => e.storageId === item.storageId) === -1) {
-        checkedArr.push({ storageId: item.storageId, handlerName: item.handlerName });
-      }
-      return item;
-    });
-  } else {
-    tableList.value = tableList.value.map(item => {
-      item.isChecked = false;
-      let index = checkedArr.findIndex(e => e.storageId === item.storageId);
-      if (index !== -1) checkedArr.splice(index, 1);
-      return item;
-    });
-  }
-  checkedItemList.value = checkedArr;
-}
-
-function handleCheck(row: any) {
-  tableList.value.forEach(e => {
-    if (e.storageId === row.storageId) e.isChecked = !e.isChecked;
-  });
-  const checkedArr = [...checkedItemList.value];
-  if (row.isChecked) {
-    if (checkedArr.findIndex(e => e.storageId === row.storageId) === -1) checkedArr.push({ storageId: row.storageId, handlerName: row.handlerName });
-  } else {
-    const index = checkedArr.findIndex(n => n.storageId === row.storageId);
-    if (index !== -1) checkedArr.splice(index, 1);
-  }
-  checkedItemList.value = checkedArr;
-  isCheckedAll();
-};
-// 删除标签
-function handleClose(storageId: any) {
-  tableList.value.forEach(e => {
-    if (e.storageId === storageId) e.isChecked = !e.isChecked;
-  });
-  const checkedArr = checkedItemList.value
-  const index = checkedArr.findIndex(n => n.storageId === storageId);
-  if (index !== -1) checkedArr.splice(index, 1);
-  checkedItemList.value = checkedArr;
-  isCheckedAll();
-}
-
-// 清空所有已选
-function clearAllSelected() {
-  tableList.value.forEach(e => { e.isChecked = false; });
-  checkedItemList.value = [];
-  checkAllInfo.value.isChecked = false;
-  checkAllInfo.value.isIndeterminate = false;
-}
-
-// 取消按钮
-function cancel() {
-  emit("update:userVisible", false);
-}
-
-// 提交按钮
-function submitForm() {
-  emit("handleUserSelect", checkedItemList.value);
-  cancel();
-}
-
-getTabsType();
+// 逻辑层统一收口到 useUserPicker（state / 数据请求 / 勾选与已选维护），SFC 只保留模板与编排
+const {
+  // 模板 ref
+  groupTreeRef,
+  queryRef,
+  // state
+  tabsValue,
+  tableList,
+  loading,
+  showSearch,
+  total,
+  dateRange,
+  groupName,
+  groupOptions,
+  treeCollapsed,
+  searchCollapsed,
+  mobileLoadingMore,
+  mobileNoMore,
+  tabsList,
+  columns,
+  checkedItemList,
+  queryParams,
+  checkAllInfo,
+  // methods（模板事件）
+  getList,
+  onMobileScroll,
+  handleNodeClick,
+  tabChange,
+  handleQuery,
+  resetQuery,
+  handleCheckAll,
+  handleCheck,
+  handleClose,
+  clearAllSelected,
+  submitForm,
+} = useUserPicker(props, emit);
 </script>
 
 <style scoped lang="scss">
