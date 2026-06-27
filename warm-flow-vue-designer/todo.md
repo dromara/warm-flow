@@ -9,9 +9,10 @@
 - [ ] **CI**：前端库构建 / 发布纳入 CI 流水线（当前为手动 `npm publish`）。
 - [ ] **物理 monorepo**：是否拆 `packages/*`（设计器库 + playground + plugin-ui 产物）。
       默认不拆——单仓双构建（`build:prod`→`dist/` 打 jar，`build:lib`→`dist-lib/` 出 npm）已满足需求。
-- [ ] **剔除 Element Plus 硬依赖**：消费方现被迫 `app.use(ElementPlus)` + 引 EP 样式（peerDep）。
-      方向已记录（抽象可插拔 UI 适配，默认支持 element-plus + antdv），耦合面调研 + 分阶段路线已出（见 `.codex` 第 9 节）；
-      实施前仍需就 5 个取舍点拍板（antdv 版本 / form-create 范围 / 样式对齐 / 节奏 B 或 C / 过渡期容忍，见 `.codex` 9.4），尚未开始大规模实施。
+- [ ] **剔除 Element Plus 硬依赖（JS/依赖/适配器层已完成，仅剩样式层）**：⚠️ 原描述「尚未开始大规模实施」已滞后。
+      实际（见 `.codex` 9.5 + 实测复核）：路线 C 已全程落地——5 取舍点已拍板（Q1=antd 4.x、Q2=form-create 暂留 EP）；
+      Phase1 命令式 UI 收口（ElMessage/Box/Notification/Loading + ClickOutside → `src/ui/uiAdapter`）+ Phase2 28 组件中性化（`<el-*>` → `<wf-*>`）+ Phase3 antdv 适配器 + 主入口 bundle 级移除 EP（主 bundle `warm-flow-designer.es.js` grep element-plus = 0）+ 依赖治理（EP/antdv/naive 均为可选 peer、`dependencies` 清空）均已完成，并已补 naive 适配器。
+      **剩余仅 Phase 4 样式层**：bundle CSS 仍含 12 个 `--el-*` 变量 + 35 个 `.el-*` 选择器 → 给 `--el-*` 加 fallback（消费方不再被迫引 EP 样式）+ `.el-*` 中性化到 `wf-*`；form-create antdv 化（Q2 暂留）另算。
 
 ## 可选优化（未来）
 
@@ -62,7 +63,7 @@
 > 2026-06 盘点：FlowDesigner 已具备基础扩展面，但作为通用组件库仍有缺口。按价值排优先级，逐项落地。
 
 ### 已具备 ✓
-- **插拔**：`setUiAdapter`（EP/antdv 内置）、`setDataProvider`（部分覆盖合并）、`setComponentSize`、`setCustomThemeColors` / `useDark`。
+- **插拔**：`setUiAdapter`（EP/antdv/naive 内置）、`setDataProvider`（部分覆盖合并）、`setComponentSize`、`setCustomThemeColors` / `useDark`。
 - **slot**：`header-left` / `header-actions` / `toolbar-extra` / `logo`。
 - **hook**：`useFlowDesigner`（命令式 API）、`useDark`（主题）。
 - **事件**：`close` / `saved` / `ready`。
