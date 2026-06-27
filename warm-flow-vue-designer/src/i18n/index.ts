@@ -49,7 +49,25 @@ const zh: WfMessageTree = {
     tip: '提示',
     success: '操作成功',
     failed: '操作失败',
-    required: '必填项'
+    required: '必填项',
+    pleaseSelect: '请选择',
+    pleaseInput: '请输入',
+    addRow: '增加行',
+    operation: '操作',
+    type: '类型'
+  },
+  node: {
+    codeLabel: '节点编码：',
+    nameLabel: '节点名称：'
+  },
+  start: {
+    tabBase: '基础设置',
+    tabListener: '监听器',
+    listenerPath: '路径（可输入类路径）',
+    listenerStart: '开始',
+    listenerAssignment: '分派',
+    listenerFinish: '完成',
+    listenerCreate: '创建'
   }
 }
 
@@ -72,7 +90,25 @@ const en: WfMessageTree = {
     tip: 'Tip',
     success: 'Success',
     failed: 'Failed',
-    required: 'Required'
+    required: 'Required',
+    pleaseSelect: 'Please select',
+    pleaseInput: 'Please enter',
+    addRow: 'Add row',
+    operation: 'Action',
+    type: 'Type'
+  },
+  node: {
+    codeLabel: 'Node Code:',
+    nameLabel: 'Node Name:'
+  },
+  start: {
+    tabBase: 'Basic',
+    tabListener: 'Listeners',
+    listenerPath: 'Path (class path allowed)',
+    listenerStart: 'Start',
+    listenerAssignment: 'Assignment',
+    listenerFinish: 'Finish',
+    listenerCreate: 'Create'
   }
 }
 

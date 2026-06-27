@@ -22,12 +22,12 @@
         <div class="base-settings-section">
           <div class="base-settings-content">
             <slot name="form-item-task-name" :model="form" field="nodeCode">
-              <wf-form-item label="节点编码：">
+              <wf-form-item :label="t('node.codeLabel')">
                 <wf-input v-model="form.nodeCode" :disabled="disabled"></wf-input>
               </wf-form-item>
             </slot>
             <slot name="form-item-task-name" :model="form" field="nodeName">
-              <wf-form-item label="节点名称：">
+              <wf-form-item :label="t('node.nameLabel')">
                 <wf-input v-model="form.nodeName" ref="nodeInput" :disabled="disabled" @change="nodeNameChange"></wf-input>
               </wf-form-item>
             </slot>
@@ -44,26 +44,26 @@
           <div class="section-card-body">
           <slot name="form-item-task-listenerType" :model="form" field="listenerType">
             <wf-table :data="form.listenerRows" style="width: 100%">
-              <wf-table-column prop="listenerType" label="类型" :width="isMobile ? 60 : 160">
+              <wf-table-column prop="listenerType" :label="t('common.type')" :width="isMobile ? 60 : 160">
                 <template #default="scope">
                   <wf-form-item :prop="'listenerRows.' + scope.$index + '.listenerType'">
-                    <wf-select v-model="scope.row.listenerType" placeholder="请选择">
-                      <wf-option label="开始" value="start"></wf-option>
-                      <wf-option label="分派" value="assignment"></wf-option>
-                      <wf-option label="完成" value="finish"></wf-option>
-                      <wf-option label="创建" value="create"></wf-option>
+                    <wf-select v-model="scope.row.listenerType" :placeholder="t('common.pleaseSelect')">
+                      <wf-option :label="t('start.listenerStart')" value="start"></wf-option>
+                      <wf-option :label="t('start.listenerAssignment')" value="assignment"></wf-option>
+                      <wf-option :label="t('start.listenerFinish')" value="finish"></wf-option>
+                      <wf-option :label="t('start.listenerCreate')" value="create"></wf-option>
                     </wf-select>
                   </wf-form-item>
                 </template>
               </wf-table-column>
-              <wf-table-column prop="listenerPath" label="路径（可输入类路径）">
+              <wf-table-column prop="listenerPath" :label="t('start.listenerPath')">
                 <template #default="scope">
                   <wf-form-item :prop="'listenerRows.' + scope.$index + '.listenerPath'">
-                    <wf-input v-model="scope.row.listenerPath" placeholder="请输入"></wf-input>
+                    <wf-input v-model="scope.row.listenerPath" :placeholder="t('common.pleaseInput')"></wf-input>
                   </wf-form-item>
                 </template>
               </wf-table-column>
-              <wf-table-column label="操作" width="65" align="center" v-if="!disabled">
+              <wf-table-column :label="t('common.operation')" width="65" align="center" v-if="!disabled">
                 <template #default="scope">
                   <wf-button link size="small" type="danger" @click="handleDeleteRow(scope.$index)"><svg-icon icon-class="ep:delete"/></wf-button>
                 </template>
@@ -71,7 +71,7 @@
             </wf-table>
           </slot>
           <div class="action-buttons">
-            <wf-button v-if="!disabled" class="add-row-btn" @click="handleAddRow">增加行</wf-button>
+            <wf-button v-if="!disabled" class="add-row-btn" @click="handleAddRow">{{ t('common.addRow') }}</wf-button>
           </div>
         </div>
       </div>
@@ -81,8 +81,11 @@
 
 <script setup lang="ts">
 import { computed, getCurrentInstance, ref, watch } from 'vue';
+import { useI18n } from '@/i18n';
 
 defineOptions({ name: 'Start' });
+
+const { t } = useI18n();
 
 interface StartProps {
   /** 节点表单数据（v-model） */
@@ -100,9 +103,9 @@ const TAB_ICONS = {
   base: 'M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z',
   listener: 'M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z',
 };
-const tabsList = ref([
-  { name: "1", label: "基础设置", iconPath: TAB_ICONS.base },
-  { name: "2", label: "监听器", iconPath: TAB_ICONS.listener }
+const tabsList = computed(() => [
+  { name: "1", label: t('start.tabBase'), iconPath: TAB_ICONS.base },
+  { name: "2", label: t('start.tabListener'), iconPath: TAB_ICONS.listener }
 ]);
 
 const tabsValue = ref("1");

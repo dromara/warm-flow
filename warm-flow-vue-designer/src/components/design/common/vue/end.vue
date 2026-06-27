@@ -3,10 +3,10 @@
     <wf-form ref="formRef" class="endForm" :model="form" label-width="110px" :disabled="disabled">
       <div class="base-settings-section">
         <div class="base-settings-content">
-          <wf-form-item label="节点编码：" prop="nodeCode">
+          <wf-form-item :label="t('node.codeLabel')" prop="nodeCode">
             <wf-input v-model="form.nodeCode" :disabled="disabled"></wf-input>
           </wf-form-item>
-          <wf-form-item label="节点名称：" prop="nodeName">
+          <wf-form-item :label="t('node.nameLabel')" prop="nodeName">
             <wf-input v-model="form.nodeName" ref="nodeInput" :disabled="disabled" @change="nodeNameChange"></wf-input>
           </wf-form-item>
           <!-- 自定义扩展点：消费方可注入额外表单项（透出 { form, disabled }） -->
@@ -19,8 +19,11 @@
 
 <script setup lang="ts">
 import { getCurrentInstance, ref, watch } from 'vue';
+import { useI18n } from '@/i18n';
 
 defineOptions({ name: 'End' });
+
+const { t } = useI18n();
 
 interface EndProps {
   /** 节点表单数据（v-model） */
