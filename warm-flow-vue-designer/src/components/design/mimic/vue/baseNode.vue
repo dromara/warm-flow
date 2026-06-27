@@ -22,8 +22,11 @@
 <script setup lang="ts">
 import {computed, ref, watch} from 'vue';
 import {handlerFeedback} from "@/api/flow/definition";
+import { useI18n } from '@/i18n';
 
 defineOptions({ name: 'BaseInfo' });
+
+const { t } = useI18n();
 
 interface BaseNodeProps {
   /** 节点文本（节点名） */
@@ -53,8 +56,8 @@ const props = withDefaults(defineProps<BaseNodeProps>(), {
 
 const showSpan = ref(true);
 const baseNodeDiv = ref<any>(null);
-const nodeName = ref('发起人');
-const handler = ref('所有人');
+const nodeName = ref(t('baseNode.initiator'));
+const handler = ref(t('baseNode.everyone'));
 const nodeNameInput = ref<any>(null);
 const editingNodeName = ref(false);
 const emit = defineEmits<{
@@ -123,7 +126,7 @@ watch(
           }
         });
       } else {
-        handler.value = '所有人';
+        handler.value = t('baseNode.everyone');
       }
     },
     { immediate: true }

@@ -233,6 +233,16 @@ const zh: WfMessageTree = {
     errNoStart: '缺少开始节点',
     errNoEnd: '缺少结束节点',
     errIsolated: '存在 {n} 个孤立节点（未连任何边）'
+  },
+  edgeTooltip: {
+    approval: '审批'
+  },
+  baseNode: {
+    initiator: '发起人',
+    everyone: '所有人'
+  },
+  nodeExtList: {
+    required: '{label}不能为空'
   }
 }
 
@@ -439,6 +449,16 @@ const en: WfMessageTree = {
     errNoStart: 'Missing start node',
     errNoEnd: 'Missing end node',
     errIsolated: '{n} isolated node(s) (not connected to any edge)'
+  },
+  edgeTooltip: {
+    approval: 'Approval'
+  },
+  baseNode: {
+    initiator: 'Initiator',
+    everyone: 'Everyone'
+  },
+  nodeExtList: {
+    required: '{label} is required'
   }
 }
 

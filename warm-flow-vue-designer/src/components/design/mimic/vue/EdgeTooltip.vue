@@ -12,10 +12,12 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useDark } from '@/composables/useDark';
+import { useI18n } from '@/i18n';
 
 defineOptions({ name: 'EdgeTooltip' });
 
 const { isDark, themeColors } = useDark();
+const { t } = useI18n();
 
 interface EdgeTooltipProps {
   /** 浮层位置（画布坐标） */
@@ -29,10 +31,10 @@ const props = withDefaults(defineProps<EdgeTooltipProps>(), {
 });
 
 const options = [
-  { icon: 'between', label: '审批' },
-  { icon: 'serial', label: '互斥网关' },
-  { icon: 'parallel', label: '并行网关' },
-  { icon: 'inclusive', label: '包含网关' },
+  { icon: 'between', label: t('edgeTooltip.approval') },
+  { icon: 'serial', label: t('sidebar.serial') },
+  { icon: 'parallel', label: t('sidebar.parallel') },
+  { icon: 'inclusive', label: t('sidebar.inclusive') },
 ]
 
 const emit = defineEmits<{

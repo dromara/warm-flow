@@ -2,7 +2,7 @@
     <wf-form ref="nodeExtRef" class="nodeExtForm" :model="form" label-width="140px" size="small" :disabled="disabled"
              label-position="left">
         <wf-form-item :label="`${item.label}：`" :prop="item.code" v-for="(item, index) in formList" :key="index"
-                      :rules="[{ required: item.must, message: `${item.label}不能为空`, trigger: ['blur', 'change'] }]">
+                      :rules="[{ required: item.must, message: t('nodeExtList.required', { label: item.label }), trigger: ['blur', 'change'] }]">
             <template #label>
                 <span>{{ item.label }}</span>
                 <wf-tooltip v-if="[4, 5].includes(item.type)" effect="dark" :content="item.desc">
@@ -22,7 +22,7 @@
                            :value="dItem.value"></wf-option>
             </wf-select>
             <div v-else-if="item.type === 4">
-                <wf-radio-group v-if="!item.multiple" v-model="form[item.code]" placeholder="请输入">
+                <wf-radio-group v-if="!item.multiple" v-model="form[item.code]" :placeholder="t('common.pleaseInput')">
                     <wf-row :gutter="20">
                         <wf-col :span="item.dict.length < 3 ? null :8" v-for="(dItem, dIndex) in item.dict"
                                 :key="dIndex">
@@ -50,7 +50,7 @@
                         <svg-icon :icon-class="'close'"/>
                     </i>
                 </span>
-                <wf-button type="primary" @click="openSelectDialog(item.code)">选择</wf-button>
+                <wf-button type="primary" @click="openSelectDialog(item.code)">{{ t('between.selectHandler') }}</wf-button>
             </div>
             <wf-input-number
                 v-else-if="item.type === 6"
@@ -79,7 +79,7 @@
         </wf-form-item>
     </wf-form>
     <!-- 权限标识：会签票签选择用户 -->
-    <wf-dialog title="人员选择" v-if="userVisible" v-model="userVisible" width="80%" append-to-body>
+    <wf-dialog :title="t('between.userSelectTitle')" v-if="userVisible" v-model="userVisible" width="80%" append-to-body>
         <selectUser v-model:selectUser="form[itemCode]" v-model:userVisible="userVisible"
                     :permissionRows="permissionRows[itemCode]"
                     @handleUserSelect="(checkedItemList) => handleUserSelect(checkedItemList, itemCode)"></selectUser>
@@ -90,10 +90,12 @@
 import { getCurrentInstance, ref } from 'vue';
 import SelectUser from "@/components/design/common/vue/selectUser.vue";
 import {handlerFeedback} from "@/api/flow/definition";
+import { useI18n } from '@/i18n';
 
 defineOptions({ name: 'NodeExtList' });
 
 const {proxy} = getCurrentInstance()!;
+const { t } = useI18n();
 
 interface NodeExtListProps {
   /** 扩展属性表单数据（v-model） */
