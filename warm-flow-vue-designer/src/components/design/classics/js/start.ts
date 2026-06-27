@@ -17,7 +17,7 @@ class StartModel extends CircleNodeModel {
 
 class StartView extends CircleNode {
 
-  getShape() {
+  getShape(): h.JSX.Element {
     const { model } = this.props;
     const { x, y, r } = model;
     const style = model.getNodeStyle();

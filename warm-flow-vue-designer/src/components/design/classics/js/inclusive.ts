@@ -35,7 +35,7 @@ class InclusiveModel extends PolygonNodeModel {
 
 class InclusiveView extends PolygonNode {
   static extendKey = 'InclusiveNode';
-  getShape () {
+  getShape (): h.JSX.Element {
     const { model } = this.props
     const { x, y, width, height, points } = model
     const style = model.getNodeStyle()

@@ -18,7 +18,7 @@ class ParallelModel extends GatewayModel {
 
 class ParallelView extends GatewayView {
 
-  getSvg(x: number, y: number, width: number, height: number, textValue: string, style: { stroke: string, fill: string }) {
+  getSvg(x: number, y: number, width: number, height: number, textValue: string, style: { stroke: string, fill: string }): h.JSX.Element {
     // 创建一个包含图标和文本的容器
     return h('g', {}, [
       // 图标 SVG

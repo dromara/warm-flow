@@ -2,9 +2,9 @@ import { RectNode, h} from '@logicflow/core'
 
 export abstract class GatewayView extends RectNode {
 
-  abstract getSvg(x: number, y: number, width: number, height: number, textValue: string, style: any): any
+  abstract getSvg(x: number, y: number, width: number, height: number, textValue: string, style: any): h.JSX.Element
 
-  getLabelShape() {
+  getLabelShape(): h.JSX.Element {
     const {model} = this.props;
     const {x, y, width, height, text} = model;
     const style = model.getNodeStyle();
@@ -42,7 +42,7 @@ export abstract class GatewayView extends RectNode {
   }
 
   // 自定义节点外观
-  getShape() {
+  getShape(): h.JSX.Element {
     const { model } = this.props;
     const { x, y, width, height, radius } = model;
     const style = model.getNodeStyle();

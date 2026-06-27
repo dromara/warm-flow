@@ -35,7 +35,7 @@ class SerialModel extends PolygonNodeModel {
 
 class SerialView extends PolygonNode {
   static extendKey = 'SerialNode';
-  getShape () {
+  getShape (): h.JSX.Element {
     const { model } = this.props
     const { x, y, width, height, points } = model
     const style = model.getNodeStyle()

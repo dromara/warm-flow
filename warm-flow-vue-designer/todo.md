@@ -49,7 +49,7 @@
 
 ## 已知问题 / 待修
 
-- [ ] **仿钉钉节点 `getSvg`/`getShape` 的 TS2883 dts 告警（既有、非阻断）**：`mimic/js/{parallel,serial,inclusive,gatewayView}.ts` 的 `getSvg`/`getShape` 返回值被推断为 preact 的 `VNode`/`ClassAttributes`，dts 生成阶段报「inferred type cannot be named without a reference to ...preact」。`build:lib` 仍 exit 0、dts 仍产出，仅这几个内部节点视图方法的类型精度受影响（非对外公共 API）。修法：给方法补显式返回类型注解（引入 / 重导出 preact 对应类型，或退一步标注为已知 vnode 类型）。低优先，按需处理。
+- [x] **节点视图 `getSvg`/`getShape`/`getIconShape` 的 TS2883 dts 告警——已修复**：根因为这些方法返回 `h(...)`（LogicFlow 底层 preact），dts 推断到 preact 的 `VNode`/`ClassAttributes` 无法可移植命名。修法：统一补显式返回类型 `h.JSX.Element`（`h` 来自 `@logicflow/core`，与 LogicFlow 自身 d.ts 用法一致，可命名、不引 preact）。覆盖 `mimic/js/{gatewayView(getShape/getLabelShape/abstract getSvg),parallel,serial,inclusive(getSvg)}` 与 `classics/js/{between(getIconShape/getShape),start,end,parallel,serial,inclusive(getShape)}` 共 10 处。验证：`build:lib` 四产物 exit 0，**TS2883 计数 0、error TS 计数 0**（此前每次构建必刷 14 处告警）。
 
 - [x] **发布类型在消费方退化为 any（既有缺陷，影响所有导出类型）——已修复**。
   - **根因（两个叠加问题）**：① `vite-plugin-dts@5.0.2` 实为 `unplugin-dts@1.0.2` 转发，对**`@/` 别名派生**的相对 import 计算偏移一级——产物落在 `dist-lib/src/**`，却把别名目标按 entryRoot=src 锚定（少一层 `src`），生成 `../../data` 越出到 `dist-lib/data`（不存在）→ `tsc` 解析失败、`FlowDesignerInstance`/`DataProvider`/`ComponentSize`/`UiAdapter` 等**全部导出类型在消费方退化为 any**（源码原生 `./xxx` 相对导入不受影响）。② 主入口 UI 无关，不引用 `ui/elementPlusAdapter`、`ui/antdvAdapter` 等，**传递依赖 dts 漏产**（import 悬空，同样退化为 any）。

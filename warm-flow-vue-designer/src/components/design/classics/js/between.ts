@@ -19,7 +19,7 @@ class BetweenModel extends RectNodeModel {
 class BetweenView extends RectNode {
 
   /** 现代化审批/任务图标 */
-  getIconShape() {
+  getIconShape(): h.JSX.Element {
     const {model} = this.props;
     const {x, y} = model;
     const style = model.getNodeStyle();
@@ -76,7 +76,7 @@ class BetweenView extends RectNode {
   }
 
   // 自定义节点外观
-  getShape() {
+  getShape(): h.JSX.Element {
     const { model } = this.props;
     const { x, y, width, height, radius } = model;
     const style = model.getNodeStyle();

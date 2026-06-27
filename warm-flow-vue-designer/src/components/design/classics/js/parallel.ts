@@ -36,7 +36,7 @@ class ParallelModel extends PolygonNodeModel {
 
 class ParallelView extends PolygonNode {
   static extendKey = 'ParallelNode';
-  getShape () {
+  getShape (): h.JSX.Element {
     const { model } = this.props
     const { x, y, width, height, points } = model
     const style = model.getNodeStyle()

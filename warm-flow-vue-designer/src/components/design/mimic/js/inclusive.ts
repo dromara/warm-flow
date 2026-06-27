@@ -17,7 +17,7 @@ class InclusiveModel extends GatewayModel {
 
 class InclusiveView extends GatewayView {
 
-  getSvg(x: number, y: number, width: number, height: number, textValue: string, style: { stroke: string, fill: string }) {
+  getSvg(x: number, y: number, width: number, height: number, textValue: string, style: { stroke: string, fill: string }): h.JSX.Element {
     return h('g', {}, [
       // 图标 SVG
       h('svg', {
