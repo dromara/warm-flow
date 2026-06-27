@@ -1,77 +1,41 @@
 <template>
   <div :style="headerDiv">
-    <!-- 顶部导航栏 -->
-    <div class="design-header" v-if="!onlyDesignShow">
-      <!-- 左侧：流程名称（slot: header-left 可整体替换，透出 flowName） -->
-      <div class="header-left">
-        <slot name="header-left" :flow-name="logicJson.flowName">
-          <div class="flow-name-wrapper">
-            <wf-tooltip :content="logicJson.flowName" placement="bottom" :show-after="500">
-              <div class="flow-name">
-                  <svg-icon icon-class="flowName" style="margin-right: 5px"/>
-                  {{ logicJson.flowName || t('flowDesigner.untitled') }}
-              </div>
-            </wf-tooltip>
-          </div>
-        </slot>
-      </div>
-
-      <!-- 中间：步骤切换（slot: header-center 可整体替换，透出 activeStep / steps / goToStep） -->
-      <div class="header-center">
-        <slot name="header-center" :active-step="activeStep" :steps="steps" :go-to-step="handleStepClick">
-          <div class="steps-tabs">
-            <div
-                v-for="(step, index) in steps"
-                :key="index"
-                class="step-tab"
-                :class="{ 'active': activeStep === index }"
-                @click="handleStepClick(index)"
-            >
-              <svg-icon :icon-class="step.icon" class="tab-icon"/>
-              <span class="tab-text">{{ step.title }}</span>
-            </div>
-          </div>
-        </slot>
-      </div>
-
-      <!-- 右侧：保存按钮（slot: header-actions 可追加 / 替换操作按钮，透出 save / disabled） -->
-      <div class="header-right">
-        <slot name="header-actions" :save="saveJsonModel" :disabled="disabled">
-          <wf-button class="save-btn" size="default" @click="saveJsonModel" v-if="!disabled">
-            <svg-icon icon-class="save" class="save-icon"/>
-            <span>{{ t('common.save') }}</span>
-          </wf-button>
-        </slot>
-      </div>
-    </div>
+    <!-- 顶部导航栏（抽为 FlowDesignerHeader 子组件；状态仍由容器持有，props 入 / 事件出） -->
+    <FlowDesignerHeader
+      v-if="!onlyDesignShow"
+      :flow-name="logicJson.flowName"
+      :active-step="activeStep"
+      :steps="steps"
+      :disabled="disabled"
+      @step-click="handleStepClick"
+      @save="saveJsonModel"
+    >
+      <!-- 仅转发消费方实际提供的具名插槽；未提供时由子组件渲染默认内容（保留默认回退） -->
+      <template v-if="$slots['header-left']" #header-left="s"><slot name="header-left" v-bind="s" /></template>
+      <template v-if="$slots['header-center']" #header-center="s"><slot name="header-center" v-bind="s" /></template>
+      <template v-if="$slots['header-actions']" #header-actions="s"><slot name="header-actions" v-bind="s" /></template>
+    </FlowDesignerHeader>
 
     <wf-header :style="headerStyle">
-      <div class="design-toolbar" style="padding: 5px 0; text-align: right;">
-        <div v-if="activeStep === 1">
-          <span class="toolbar-group">
-            <wf-tooltip :content="t('flowDesigner.zoomOut')" placement="bottom"><wf-button size="small" @click="zoomViewport(false)"><svg-icon icon-class="ep:zoom-out"/></wf-button></wf-tooltip>
-            <!-- 自适应：所有端均 fitView 显示全部节点（最大缩放 100%） -->
-            <wf-tooltip :content="t('flowDesigner.fitView')" placement="bottom"><wf-button size="small" @click="zoomViewport('fit')"><svg-icon icon-class="ep:rank"/></wf-button></wf-tooltip>
-            <wf-tooltip :content="t('flowDesigner.zoomIn')" placement="bottom"><wf-button size="small" @click="zoomViewport(true)"><svg-icon icon-class="ep:zoom-in"/></wf-button></wf-tooltip>
-          </span>
-          <span class="toolbar-group">
-            <wf-tooltip :content="t('flowDesigner.undo')" placement="bottom"><wf-button size="small" @click="undoOrRedo(true)"><svg-icon icon-class="ep:d-arrow-left"/></wf-button></wf-tooltip>
-            <wf-tooltip :content="t('flowDesigner.redo')" placement="bottom"><wf-button size="small" @click="undoOrRedo(false)"><svg-icon icon-class="ep:d-arrow-right"/></wf-button></wf-tooltip>
-            <wf-tooltip :content="t('flowDesigner.clear')" placement="bottom"><wf-button size="small" @click="clear()"><svg-icon icon-class="ep:delete"/></wf-button></wf-tooltip>
-          </span>
-          <span class="toolbar-group">
-            <wf-tooltip :content="t('flowDesigner.downloadImage')" placement="bottom"><wf-button size="small" @click="downLoad"><svg-icon icon-class="ep:picture"/></wf-button></wf-tooltip>
-            <wf-tooltip :content="t('flowDesigner.downloadJson')" placement="bottom"><wf-button size="small" @click="downJson"><svg-icon icon-class="ep:download"/></wf-button></wf-tooltip>
-          </span>
-          <span class="toolbar-group" v-if="onlyDesignShow && !disabled">
-            <wf-tooltip :content="t('common.save')" placement="bottom"><wf-button size="small" class="toolbar-save-btn" @click="saveJsonModel">
-              <svg-icon icon-class="save" style="width: 14px; height: 14px;"/>
-            </wf-button></wf-tooltip>
-          </span>
-          <!-- slot: toolbar-extra 追加自定义工具栏按钮（透出底层 lf / disabled） -->
-          <slot name="toolbar-extra" :lf="lf" :disabled="disabled" />
-        </div>
-      </div>
+      <!-- 画布工具栏（抽为 FlowDesignerToolbar 子组件；画布操作仍由容器持有，props 入 / 事件出） -->
+      <FlowDesignerToolbar
+        :active-step="activeStep"
+        :only-design-show="onlyDesignShow"
+        :disabled="disabled"
+        :lf="lf"
+        @zoom-out="zoomViewport(false)"
+        @fit-view="zoomViewport('fit')"
+        @zoom-in="zoomViewport(true)"
+        @undo="undoOrRedo(true)"
+        @redo="undoOrRedo(false)"
+        @clear="clear()"
+        @download-image="downLoad"
+        @download-json="downJson"
+        @save="saveJsonModel"
+      >
+        <!-- 仅转发消费方实际提供的 toolbar-extra 插槽（透出 lf / disabled） -->
+        <template v-if="$slots['toolbar-extra']" #toolbar-extra="s"><slot name="toolbar-extra" v-bind="s" /></template>
+      </FlowDesignerToolbar>
 
       <BaseInfo :style="baseInfoStyle" ref="baseInfoRef" v-if="!onlyDesignShow" v-show="activeStep === 0"
                 :logic-json="logicJson" :category-list="categoryList" :form-path-list="formPathList"
@@ -145,6 +109,8 @@ import initMimicData from "@/components/design/mimic/initMimicData.json";
 import {addBetweenNode, addGatewayNode, gatewayAddNode, removeNode} from "@/components/design/mimic/js/mimic";
 import EdgeTooltip from "@/components/design/mimic/vue/EdgeTooltip.vue";
 import DiagramSidebar from "@/components/design/common/vue/DiagramSidebar.vue";
+import FlowDesignerHeader from "@/components/design/FlowDesignerHeader.vue";
+import FlowDesignerToolbar from "@/components/design/FlowDesignerToolbar.vue";
 import { useLogicFlowCanvas } from '@/composables/useLogicFlowCanvas';
 import { useI18n } from '@/i18n';
 import type {
