@@ -473,16 +473,8 @@ async function saveJsonModel() {
       return;
     }
   }
-  getBaseInfo();
-
-  if (lf.value) {
-    let graphData = lf.value.getGraphData()
-    logicJson.value['nodes'] = graphData['nodes']
-    logicJson.value['edges'] = graphData['edges']
-  }
-  logicJson.value['id'] = definitionId.value
-
-  let jsonString = logicFlowJsonToWarmFlow(logicJson.value);
+  // 装配本次提交的流程 json（基础信息 + 画布图数据 → warm-flow 结构）。与命令式 getFlowJson 同一来源，避免重复装配逻辑。
+  let jsonString = getFlowJson();
 
   // before-save 钩子（同步）：消费方可改写本次提交的 json，或取消保存。
   // 异步逻辑不会被等待——setJson / preventDefault 须在处理函数同步执行期间调用。
