@@ -198,6 +198,11 @@ const form = ref({
 watch(() => props.logicJson, newValue => {
   if (newValue && Object.keys(newValue).length > 0) {
     Object.assign(form.value, newValue);
+    // 自定义表单为「是/否」开关项：新建流程 definition.formCustom 为 null，会覆盖默认值导致开关失去取值，
+    // 进而触发 required 校验（点「流程设计」被拦）。此处兜底回「否」，与 propertySetting 的空值默认范式一致。
+    if (!form.value.formCustom) {
+      form.value.formCustom = "N";
+    }
     setListenerData();
     // 移动端新增时强制默认仿钉钉（覆盖logicJson中可能为空的值）
     if (isMobile.value && !props.definitionId) {
