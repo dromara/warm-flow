@@ -335,35 +335,35 @@ const rules = reactive({
         if (!type) return [];
         if (type === 'passRatio') {
             return [
-                {required: true, message: "请输入", trigger: "change"},
+                {required: true, message: t('common.pleaseInput'), trigger: "change"},
                 {validator: validatePassRatio, trigger: ["change", "blur"]}
             ];
         } else if (['passCount', 'rejectCount'].includes(type)) {
             return [
-                {required: true, message: "请输入", trigger: "change"},
+                {required: true, message: t('common.pleaseInput'), trigger: "change"},
                 {validator: validatePassCount, trigger: ["change", "blur"]}
             ];
         } else if (type === 'default') {
             return [
-                {required: true, message: "请输入", trigger: "change"},
+                {required: true, message: t('common.pleaseInput'), trigger: "change"},
                 {validator: validateDefault, trigger: ["change", "blur"]}
             ];
         }  else if (type === 'spel') {
             return [
-                {required: true, message: "请输入", trigger: "change"},
+                {required: true, message: t('common.pleaseInput'), trigger: "change"},
                 {validator: validateSpel, trigger: ["change", "blur"]}
             ];
         }  else if (type === 'snel') {
             return [
-                {required: true, message: "请输入", trigger: "change"},
+                {required: true, message: t('common.pleaseInput'), trigger: "change"},
                 {validator: validateSnel, trigger: ["change", "blur"]}
             ];
         }
         // 其他类型不作限制
         return [];
     }),
-    listenerType: [{required: true, message: '监听器类型不能为空', trigger: 'change'}],
-    listenerPath: [{required: true, message: '监听器路径不能为空', trigger: 'blur'}]
+    listenerType: [{required: true, message: t('between.listenerTypeRequired'), trigger: 'change'}],
+    listenerPath: [{required: true, message: t('between.listenerPathRequired'), trigger: 'blur'}]
 });
 
 watch(() => form.value, n => {
@@ -383,15 +383,15 @@ watch(() => form.value, n => {
 
 function validatePassRatio(rule: any, value: any, callback: (error?: Error) => void) {
     if (value === '' || value === undefined || value === null) {
-        callback(new Error('请输入通过率'));
+        callback(new Error(t('between.ratioPassRatioRequired')));
     } else {
         const numValue = Number(value);
         if (isNaN(numValue)) {
-            callback(new Error('请输入有效数字'));
+            callback(new Error(t('between.ratioInvalidNumber')));
         } else if (numValue < 0.001 || numValue > 100) {
-            callback(new Error('通过率必须在0.001-100之间'));
+            callback(new Error(t('between.ratioRange')));
         } else if (!/^\d+(\.\d{1,3})?$/.test(value)) {
-            callback(new Error('通过率最多保留三位小数'));
+            callback(new Error(t('between.ratioDecimal')));
         }  else {
             callback();
         }
@@ -400,12 +400,12 @@ function validatePassRatio(rule: any, value: any, callback: (error?: Error) => v
 
 function validatePassCount(rule: any, value: any, callback: (error?: Error) => void) {
     if (value === '' || value === undefined || value === null) {
-        callback(new Error('请输入固定人数'));
+        callback(new Error(t('between.ratioCountRequired')));
     } else {
         value = value.replace('passCount', '').replace('rejectCount', '').replace('=', '').trim();
         const reg = /^[1-9]\d*$/;
         if (!reg.test(value)) {
-            callback(new Error('请输入正整数'));
+            callback(new Error(t('between.ratioPositiveInt')));
         } else {
             callback();
         }
@@ -415,9 +415,9 @@ function validatePassCount(rule: any, value: any, callback: (error?: Error) => v
 function validateDefault(rule: any, value: any, callback: (error?: Error) => void) {
     value = value.replace('default@@', '').replace('=', '').trim();
     if (value === '' || value === undefined || value === null) {
-        callback(new Error('请输入默认表达式'));
+        callback(new Error(t('skip.defaultRequired')));
     } else if (!/^\$\{.*\}$/.test(value)) {
-        callback(new Error('默认表达式必须以${开头，以}结尾'));
+        callback(new Error(t('skip.defaultFormat')));
     } else {
         callback();
     }
@@ -426,9 +426,9 @@ function validateDefault(rule: any, value: any, callback: (error?: Error) => voi
 function validateSpel(rule: any, value: any, callback: (error?: Error) => void) {
     value = value.replace('spel@@', '').replace('=', '').trim();
     if (value === '' || value === undefined || value === null) {
-        callback(new Error('请输入spel表达式'));
+        callback(new Error(t('skip.spelRequired')));
     } else if (!/^\#\{.*\}$/.test(value)) {
-        callback(new Error('spel表达式必须以#{开头，以}结尾'));
+        callback(new Error(t('skip.spelFormat')));
     } else {
         callback();
     }
@@ -437,9 +437,9 @@ function validateSpel(rule: any, value: any, callback: (error?: Error) => void) 
 function validateSnel(rule: any, value: any, callback: (error?: Error) => void) {
     value = value.replace('snel@@', '').replace('=', '').trim();
     if (value === '' || value === undefined || value === null) {
-        callback(new Error('请输入snel表达式'));
+        callback(new Error(t('skip.snelRequired')));
     } else if (!/^\#\{.*\}$/.test(value)) {
-        callback(new Error('snel表达式必须以#{开头，以}结尾'));
+        callback(new Error(t('skip.snelFormat')));
     } else {
         callback();
     }
@@ -449,19 +449,19 @@ function getNodeRatioDescription() {
     const type = form.value.nodeRatioType;
     switch (type) {
         case 'passRatio':
-            return '请输入通过率(0.001-100)';
+            return t('between.descPassRatio');
         case 'passCount':
-            return '请输入固定通过人数，类型为正整数';
+            return t('between.descPassCount');
         case 'rejectCount':
-            return '请输入固定驳回人数，类型为正整数';
+            return t('between.descRejectCount');
         case 'default':
-            return '请输入默认表达式,格式如: ${flag > 4}';
+            return t('between.descDefault');
         case 'spel':
-            return '请输入spel表达式，格式如: #{@user.eval(#flag)}';
+            return t('skip.descSpel');
         case 'snel':
-            return '请输入snel表达式，格式如: #{@user.eval(flag)}';
+            return t('skip.descSnel');
         default:
-            return '请输入';
+            return t('common.pleaseInput');
     }
 }
 

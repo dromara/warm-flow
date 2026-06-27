@@ -181,7 +181,19 @@ const zh: WfMessageTree = {
     handlerName: '权限名称',
     addRowHandler: '添加行',
     selectHandler: '选择',
-    userSelectTitle: '人员选择'
+    userSelectTitle: '人员选择',
+    ratioPassRatioRequired: '请输入通过率',
+    ratioInvalidNumber: '请输入有效数字',
+    ratioRange: '通过率必须在0.001-100之间',
+    ratioDecimal: '通过率最多保留三位小数',
+    ratioCountRequired: '请输入固定人数',
+    ratioPositiveInt: '请输入正整数',
+    listenerTypeRequired: '监听器类型不能为空',
+    listenerPathRequired: '监听器路径不能为空',
+    descPassRatio: '请输入通过率(0.001-100)',
+    descPassCount: '请输入固定通过人数，类型为正整数',
+    descRejectCount: '请输入固定驳回人数，类型为正整数',
+    descDefault: '请输入默认表达式,格式如: ${flag > 4}'
   }
 }
 
@@ -336,7 +348,19 @@ const en: WfMessageTree = {
     handlerName: 'Permission Name',
     addRowHandler: 'Add row',
     selectHandler: 'Select',
-    userSelectTitle: 'Select Users'
+    userSelectTitle: 'Select Users',
+    ratioPassRatioRequired: 'Please enter pass ratio',
+    ratioInvalidNumber: 'Please enter a valid number',
+    ratioRange: 'Pass ratio must be between 0.001 and 100',
+    ratioDecimal: 'Pass ratio keeps at most 3 decimals',
+    ratioCountRequired: 'Please enter a fixed count',
+    ratioPositiveInt: 'Please enter a positive integer',
+    listenerTypeRequired: 'Listener type is required',
+    listenerPathRequired: 'Listener path is required',
+    descPassRatio: 'Enter pass ratio (0.001-100)',
+    descPassCount: 'Enter fixed pass count (positive integer)',
+    descRejectCount: 'Enter fixed reject count (positive integer)',
+    descDefault: 'Enter a default expression, e.g.: ${flag > 4}'
   }
 }
 
