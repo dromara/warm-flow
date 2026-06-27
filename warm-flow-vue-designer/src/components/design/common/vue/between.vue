@@ -13,7 +13,7 @@
           >
             <svg class="tab-icon" viewBox="0 0 24 24"><path :d="item.iconPath || TAB_ICONS.ext" fill="currentColor"/></svg>
             <span class="tab-label">{{ item.label }}</span>
-            <span v-if="index >= 3" class="tab-ext-tag">扩展</span>
+            <span v-if="index >= 3" class="tab-ext-tag">{{ t('between.extTag') }}</span>
           </div>
         </div>
       </div>
@@ -23,15 +23,15 @@
         <!-- 基础配置卡片 -->
         <div class="base-settings-section">
           <div class="base-settings-content">
-        <wf-form-item label="节点编码：" prop="nodeCode">
+        <wf-form-item :label="t('node.codeLabel')" prop="nodeCode">
           <wf-input v-model="form.nodeCode" :disabled="disabled"></wf-input>
         </wf-form-item>
-        <wf-form-item label="节点名称：" prop="nodeName">
+        <wf-form-item :label="t('node.nameLabel')" prop="nodeName">
           <wf-input v-model="form.nodeName" type="textarea" :disabled="disabled"></wf-input>
         </wf-form-item>
 
         <!-- 协作方式 - 卡片式单选 -->
-        <wf-form-item label="协作方式：" prop="collaborativeWay">
+        <wf-form-item :label="t('between.collaborativeWay')" prop="collaborativeWay">
           <div class="radio-card-group">
             <label
               class="radio-card-item"
@@ -40,8 +40,8 @@
               v-if="form.collaborativeWay === '1' || showWays"
             >
               <span class="radio-card-dot"></span>
-              <span class="radio-card-text">或签</span>
-              <wf-tooltip effect="dark" placement="top" content="只需一个人审批">
+              <span class="radio-card-text">{{ t('between.wayOr') }}</span>
+              <wf-tooltip effect="dark" placement="top" :content="t('between.wayOrTip')">
                 <wf-icon :size="13" class="radio-card-tip"><svg-icon icon-class="ep:warning-filled" /></wf-icon>
               </wf-tooltip>
             </label>
@@ -52,8 +52,8 @@
               v-if="form.collaborativeWay === '2' || showWays"
             >
               <span class="radio-card-dot"></span>
-              <span class="radio-card-text">票签</span>
-              <wf-tooltip effect="dark" placement="top" content="部分办理人审批，建议选择用户；如果选择角色或者部门等，需自行通过办理人表达式或者监听器，转成具体办理用户">
+              <span class="radio-card-text">{{ t('between.wayVote') }}</span>
+              <wf-tooltip effect="dark" placement="top" :content="t('between.wayVoteTip')">
                 <wf-icon :size="13" class="radio-card-tip"><svg-icon icon-class="ep:warning-filled" /></wf-icon>
               </wf-tooltip>
             </label>
@@ -64,29 +64,29 @@
               v-if="form.collaborativeWay === '3' || showWays"
             >
               <span class="radio-card-dot"></span>
-              <span class="radio-card-text">会签</span>
-              <wf-tooltip effect="dark" placement="top" content="所有办理都需要审批，建议选择用户；如果选择角色或者部门等，需自行通过办理人表达式或者监听器，转成具体办理用户">
+              <span class="radio-card-text">{{ t('between.waySign') }}</span>
+              <wf-tooltip effect="dark" placement="top" :content="t('between.waySignTip')">
                 <wf-icon :size="13" class="radio-card-tip"><svg-icon icon-class="ep:warning-filled" /></wf-icon>
               </wf-tooltip>
             </label>
           </div>
         </wf-form-item>
 
-        <wf-form-item label="票签策略：" prop="nodeRatio" v-if="form.collaborativeWay === '2'">
-          <wf-select v-model="form.nodeRatioType" placeholder="请选择策略类型" style="width: 25%"
+        <wf-form-item :label="t('between.ratioStrategy')" prop="nodeRatio" v-if="form.collaborativeWay === '2'">
+          <wf-select v-model="form.nodeRatioType" :placeholder="t('between.ratioStrategyPlaceholder')" style="width: 25%"
                      clearable @clear="handleClear">
-              <wf-option label="通过率" value="passRatio"/>
-              <wf-option label="固定通过人数" value="passCount"/>
-              <wf-option label="固定驳回人数" value="rejectCount"/>
-              <wf-option label="默认表达式" value="default" v-if="framework ==='SPRING_BOOT'"/>
-              <wf-option label="spel表达式" value="spel" v-if="framework ==='SPRING_BOOT'"/>
-              <wf-option label="snel表达式" value="snel" v-if="framework ==='SOLON'"/>
+              <wf-option :label="t('between.ratioPassRatio')" value="passRatio"/>
+              <wf-option :label="t('between.ratioPassCount')" value="passCount"/>
+              <wf-option :label="t('between.ratioRejectCount')" value="rejectCount"/>
+              <wf-option :label="t('between.ratioDefaultExpr')" value="default" v-if="framework ==='SPRING_BOOT'"/>
+              <wf-option :label="t('between.ratioSpelExpr')" value="spel" v-if="framework ==='SPRING_BOOT'"/>
+              <wf-option :label="t('between.ratioSnelExpr')" value="snel" v-if="framework ==='SOLON'"/>
           </wf-select>
           <wf-input v-model="form.nodeRatioValue" :placeholder="getNodeRatioDescription()" style="width: 74%; margin-left: 1%"/>
         </wf-form-item>
-        <wf-form-item label="驳回到指定节点" prop="formCustom">
+        <wf-form-item :label="t('between.rejectToNode')" prop="formCustom">
           <template #label>
-            <span v-if="form.collaborativeWay === '2'"  class="mr5" style="color: red;">*</span>驳回到指定节点
+            <span v-if="form.collaborativeWay === '2'"  class="mr5" style="color: red;">*</span>{{ t('between.rejectToNode') }}
           </template>
           <wf-select v-model="form.anyNodeSkip" style="width: 80%" clearable>
             <wf-option
@@ -96,11 +96,11 @@
                 :value="dict.id"
             />
           </wf-select>
-          <div class="placeholder mt5">【票签】必须选择驳到指定节点！</div>
+          <div class="placeholder mt5">{{ t('between.voteRejectRequired') }}</div>
         </wf-form-item>
 
         <!-- 自定义表单 - 卡片式单选 -->
-        <wf-form-item label="自定义表单：" prop="formCustom">
+        <wf-form-item :label="t('between.formCustom')" prop="formCustom">
           <div class="radio-card-group radio-card-sm">
             <label
               class="radio-card-item"
@@ -108,8 +108,8 @@
               @click="!disabled && (form.formCustom = 'N')"
             >
               <span class="radio-card-dot"></span>
-              <span class="radio-card-text">否</span>
-              <wf-tooltip effect="dark" placement="top" content="填写页面地址：如system/process/approve">
+              <span class="radio-card-text">{{ t('common.no') }}</span>
+              <wf-tooltip effect="dark" placement="top" :content="t('between.formCustomNoTip')">
                 <wf-icon :size="13" class="radio-card-tip"><svg-icon icon-class="ep:warning-filled" /></wf-icon>
               </wf-tooltip>
             </label>
@@ -119,24 +119,24 @@
               @click="!disabled && (form.formCustom = 'Y')"
             >
               <span class="radio-card-dot"></span>
-              <span class="radio-card-text">是</span>
-              <wf-tooltip effect="dark" placement="top" content="填写自定义表单的唯一标识：如formCode+version">
+              <span class="radio-card-text">{{ t('common.yes') }}</span>
+              <wf-tooltip effect="dark" placement="top" :content="t('between.formCustomYesTip')">
                 <wf-icon :size="13" class="radio-card-tip"><svg-icon icon-class="ep:warning-filled" /></wf-icon>
               </wf-tooltip>
             </label>
           </div>
         </wf-form-item>
 
-        <wf-form-item label="表单路径：" prop="formPath" v-if="form.formCustom === 'N'">
+        <wf-form-item :label="t('between.formPath')" prop="formPath" v-if="form.formCustom === 'N'">
           <wf-input v-model="form.formPath"></wf-input>
         </wf-form-item>
-        <wf-form-item label="表单唯一标识：" prop="formPath" v-else-if="form.formCustom === 'Y'">
+        <wf-form-item :label="t('between.formKey')" prop="formPath" v-else-if="form.formCustom === 'Y'">
             <wf-tree-select
                 v-model="form.formPath"
                 :data="formPathList"
                 :props="{ value: 'id', label: 'name', children: 'children' }"
                 value-key="id"
-                placeholder="请选择流程类别"
+                :placeholder="t('baseInfo.categoryPlaceholder')"
                 check-strictly/>
         </wf-form-item>
         <!-- 自定义扩展点：消费方可注入额外表单项（透出 { form, disabled }） -->
@@ -152,8 +152,8 @@
                 <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="currentColor"/>
               </svg>
             </span>
-            <span class="ext-attributes-title">节点扩展属性</span>
-            <span class="ext-attributes-badge">{{ baseList.length }}项</span>
+            <span class="ext-attributes-title">{{ t('between.extAttributes') }}</span>
+            <span class="ext-attributes-badge">{{ t('between.extCount', { n: baseList.length }) }}</span>
             <span class="ext-collapse-arrow">
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" :class="{ 'arrow-rotated': !baseExtCollapsed }" fill="currentColor"/>
@@ -175,23 +175,23 @@
               <wf-table :data="permissionRows" style="width: 100%;" class="inputGroup handler-table-mobile"
                   :table-layout="isMobile ? 'fixed' : 'auto'"
               >
-                  <wf-table-column prop="storageId" label="入库主键" :width="isMobile ? undefined : 250">
+                  <wf-table-column prop="storageId" :label="t('between.handlerStorageId')" :width="isMobile ? undefined : 250">
                       <template #default="scope">
                           <wf-form-item prop="storageId">
                               <wf-input v-model="scope.row.storageId" style="width: 100%;" @blur="event => inputBlur(event, scope.$index)"></wf-input>
                           </wf-form-item>
                       </template>
                   </wf-table-column>
-                  <wf-table-column prop="handlerName" label="权限名称"></wf-table-column>
-                  <wf-table-column label="操作" :width="isMobile ? undefined : 65" align="center" v-if="!disabled">
+                  <wf-table-column prop="handlerName" :label="t('between.handlerName')"></wf-table-column>
+                  <wf-table-column :label="t('common.operation')" :width="isMobile ? undefined : 65" align="center" v-if="!disabled">
                       <template #default="scope">
                           <wf-button link size="small" type="danger" v-if="!disabled" @click="delPermission(scope.$index)"><svg-icon icon-class="ep:delete"/></wf-button>
                       </template>
                   </wf-table-column>
               </wf-table>
               <div class="action-buttons">
-                <wf-button v-if="!disabled" class="add-row-btn" @click="addPermission">添加行</wf-button>
-                <wf-button v-if="!disabled" class="add-row-btn add-row-btn-secondary" @click="initUser">选择</wf-button>
+                <wf-button v-if="!disabled" class="add-row-btn" @click="addPermission">{{ t('between.addRowHandler') }}</wf-button>
+                <wf-button v-if="!disabled" class="add-row-btn add-row-btn-secondary" @click="initUser">{{ t('between.selectHandler') }}</wf-button>
               </div>
           </div>
         </div>
@@ -202,24 +202,24 @@
         <div class="section-card section-purple">
           <div class="section-card-body">
             <wf-table :data="form.listenerRows" style="width: 100%">
-              <wf-table-column prop="listenerType" label="类型" :width="isMobile ? 60 : 160">
+              <wf-table-column prop="listenerType" :label="t('common.type')" :width="isMobile ? 60 : 160">
                 <template #default="scope">
                   <wf-form-item :prop="'listenerRows.' + scope.$index + '.listenerType'" :rules="rules.listenerType">
-                    <wf-select v-model="scope.row.listenerType" placeholder="请选择">
-                      <wf-option label="开始" value="start"></wf-option>
-                      <wf-option label="分派" value="assignment"></wf-option>
-                      <wf-option label="完成" value="finish"></wf-option>
-                      <wf-option label="创建" value="create"></wf-option>
+                    <wf-select v-model="scope.row.listenerType" :placeholder="t('common.pleaseSelect')">
+                      <wf-option :label="t('start.listenerStart')" value="start"></wf-option>
+                      <wf-option :label="t('start.listenerAssignment')" value="assignment"></wf-option>
+                      <wf-option :label="t('start.listenerFinish')" value="finish"></wf-option>
+                      <wf-option :label="t('start.listenerCreate')" value="create"></wf-option>
                     </wf-select>
                   </wf-form-item>
                 </template>
               </wf-table-column>
-              <wf-table-column prop="listenerPath" label="监听器（可输入类路径）">
+              <wf-table-column prop="listenerPath" :label="t('baseInfo.listenerPathLabel')">
                 <template #default="scope">
                   <wf-form-item :prop="'listenerRows.' + scope.$index + '.listenerPath'" :rules="rules.listenerPath">
                       <wf-select
                           v-model="scope.row.listenerPath"
-                          placeholder="请输入或选择"
+                          :placeholder="t('baseInfo.listenerPathPlaceholder')"
                           allow-create
                           filterable
                           clearable
@@ -234,14 +234,14 @@
                   </wf-form-item>
                 </template>
               </wf-table-column>
-              <wf-table-column label="操作" width="65" align="center" v-if="!disabled">
+              <wf-table-column :label="t('common.operation')" width="65" align="center" v-if="!disabled">
                 <template #default="scope">
                   <wf-button link size="small" type="danger" @click="handleDeleteRow(scope.$index)"><svg-icon icon-class="ep:delete"/></wf-button>
                 </template>
               </wf-table-column>
             </wf-table>
             <div class="action-buttons">
-              <wf-button v-if="!disabled" class="add-row-btn" @click="handleAddRow">增加行</wf-button>
+              <wf-button v-if="!disabled" class="add-row-btn" @click="handleAddRow">{{ t('common.addRow') }}</wf-button>
             </div>
           </div>
         </div>
@@ -256,7 +256,7 @@
     </wf-form>
 
     <!-- 权限标识：会签票签选择用户 -->
-    <wf-dialog title="人员选择" v-if="userVisible" v-model="userVisible" :width="isMobile ? '96%' : '80%'" append-to-body
+    <wf-dialog :title="t('between.userSelectTitle')" v-if="userVisible" v-model="userVisible" :width="isMobile ? '96%' : '80%'" append-to-body
       class="person-select-dialog" :class="{ 'mobile-user-dialog': isMobile }"
     >
       <selectUser v-model:selectUser="form.permissionFlag" v-model:userVisible="userVisible" :permissionRows="permissionRows" @handleUserSelect="handleUserSelect"></selectUser>
@@ -271,10 +271,12 @@ import {publishedList, handlerDict, nodeExt, handlerFeedback, listenerList} from
 import nodeExtList from "./nodeExtList";
 import {getPreviousNodes} from "@/components/design/common/js/tool";
 import {getFramework} from "@/utils/auth";
+import { useI18n } from '@/i18n';
 
 defineOptions({ name: 'Between' });
 
 const { proxy } = getCurrentInstance()!;
+const { t } = useI18n();
 
 interface BetweenProps {
   /** 节点表单数据（v-model） */
@@ -310,9 +312,9 @@ const TAB_ICONS = {
   ext: 'M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h3.8v-1.5c0-1.49 1.21-2.7 2.7-2.7 1.49 0 2.7 1.21 2.7 2.7V22H17c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5S21.88 11 20.5 11z',
 };
 const tabsList = ref([
-  { label: "基础设置", name: "1", iconPath: TAB_ICONS.base },
-  { label: "办理人设置", name: "2", iconPath: TAB_ICONS.handler },
-  { label: "监听器", name: "3", iconPath: TAB_ICONS.listener },
+  { label: t('start.tabBase'), name: "1", iconPath: TAB_ICONS.base },
+  { label: t('between.tabHandler'), name: "2", iconPath: TAB_ICONS.handler },
+  { label: t('start.tabListener'), name: "3", iconPath: TAB_ICONS.listener },
 ]);
 const form = ref<Record<string, any>>(props.modelValue);
 const userVisible = ref(false);
