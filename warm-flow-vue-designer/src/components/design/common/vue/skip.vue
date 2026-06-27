@@ -3,28 +3,28 @@
     <wf-form ref="formRef" class="skipForm" :model="form" label-width="110px" :rules="rules" :disabled="disabled">
       <div class="base-settings-section">
         <div class="base-settings-content">
-          <wf-form-item label="跳转名称：" v-if="skipConditionShow" prop="skipName">
-            <wf-input v-model="form.skipName" placeholder="跳转名称"/>
+          <wf-form-item :label="t('skip.nameLabel')" v-if="skipConditionShow" prop="skipName">
+            <wf-input v-model="form.skipName" :placeholder="t('skip.namePlaceholder')"/>
           </wf-form-item>
-          <wf-form-item label="跳转类型：" prop="skipType">
+          <wf-form-item :label="t('skip.typeLabel')" prop="skipType">
             <wf-select v-model="form.skipType">
-              <wf-option label="审批通过" value="PASS"/>
-              <wf-option label="退回" value="REJECT"/>
+              <wf-option :label="t('skip.typePass')" value="PASS"/>
+              <wf-option :label="t('skip.typeReject')" value="REJECT"/>
             </wf-select>
           </wf-form-item>
-          <wf-form-item label="跳转条件：" v-if="skipConditionShow" prop="skipCondition">
-            <wf-input v-model="form.condition" v-if="!expressFlag" placeholder="条件名" :style="{ width: !expressFlag? '30%' : '0%' }"/>
-            <wf-select v-model="form.conditionType" placeholder="请选择条件方式" :style="{ width: expressFlag? '18%' : '25%', 'margin-left': '1%' }"
+          <wf-form-item :label="t('skip.conditionLabel')" v-if="skipConditionShow" prop="skipCondition">
+            <wf-input v-model="form.condition" v-if="!expressFlag" :placeholder="t('skip.conditionName')" :style="{ width: !expressFlag? '30%' : '0%' }"/>
+            <wf-select v-model="form.conditionType" :placeholder="t('skip.conditionTypePlaceholder')" :style="{ width: expressFlag? '18%' : '25%', 'margin-left': '1%' }"
                        clearable @change="changeOper" @clear="handleClear">
-                <wf-option label="大于" value="gt"/>
-                <wf-option label="大于等于" value="ge"/>
-                <wf-option label="等于" value="eq"/>
-                <wf-option label="不等于" value="ne"/>
-                <wf-option label="小于" value="lt"/>
-                <wf-option label="小于等于" value="le"/>
-                <wf-option label="包含" value="like"/>
-                <wf-option label="不包含" value="notLike"/>
-                <wf-option label="默认" value="default" v-if="framework ==='SPRING_BOOT'"/>
+                <wf-option :label="t('skip.opGt')" value="gt"/>
+                <wf-option :label="t('skip.opGe')" value="ge"/>
+                <wf-option :label="t('skip.opEq')" value="eq"/>
+                <wf-option :label="t('skip.opNe')" value="ne"/>
+                <wf-option :label="t('skip.opLt')" value="lt"/>
+                <wf-option :label="t('skip.opLe')" value="le"/>
+                <wf-option :label="t('skip.opLike')" value="like"/>
+                <wf-option :label="t('skip.opNotLike')" value="notLike"/>
+                <wf-option :label="t('skip.opDefault')" value="default" v-if="framework ==='SPRING_BOOT'"/>
                 <wf-option label="spel" value="spel" v-if="framework ==='SPRING_BOOT'"/>
                 <wf-option label="snel" value="snel" v-if="framework ==='SOLON'"/>
             </wf-select>
@@ -42,8 +42,11 @@
 
 import { computed, reactive, ref, watch } from 'vue';
 import {getFramework} from "@/utils/auth";
+import { useI18n } from '@/i18n';
 
 defineOptions({ name: 'Skip' });
+
+const { t } = useI18n();
 
 interface SkipProps {
   /** 边表单数据（v-model） */
@@ -70,22 +73,22 @@ const rules = reactive({
 
         if (type === 'default') {
             return [
-                {required: true, message: "请输入", trigger: "change"},
+                {required: true, message: t('common.pleaseInput'), trigger: "change"},
                 {validator: validateDefault, trigger: ["change", "blur"]}
             ];
         } else if (type === 'spel') {
             return [
-                {required: true, message: "请输入", trigger: "change"},
+                {required: true, message: t('common.pleaseInput'), trigger: "change"},
                 {validator: validateSpel, trigger: ["change", "blur"]}
             ];
         } else if (type === 'snel') {
             return [
-                {required: true, message: "请输入", trigger: "change"},
+                {required: true, message: t('common.pleaseInput'), trigger: "change"},
                 {validator: validateSnel, trigger: ["change", "blur"]}
             ];
         }
         // 其他类型不作限制
-        return [{required: false, message: "请输入", trigger: "change"}];
+        return [{required: false, message: t('common.pleaseInput'), trigger: "change"}];
     }),
 });
 
@@ -123,9 +126,9 @@ if (['spel', 'default', 'snel'].includes(props.modelValue?.conditionType)) {
 function validateDefault(rule: any, value: any, callback: (error?: Error) => void) {
     value = value.replace('default@@', '').replace('=', '').trim();
     if (value === '' || value === undefined || value === null) {
-        callback(new Error('请输入默认表达式'));
+        callback(new Error(t('skip.defaultRequired')));
     } else if (!/^\$\{.*\}$/.test(value)) {
-        callback(new Error('默认表达式必须以${开头，以}结尾'));
+        callback(new Error(t('skip.defaultFormat')));
     } else {
         callback();
     }
@@ -134,9 +137,9 @@ function validateDefault(rule: any, value: any, callback: (error?: Error) => voi
 function validateSpel(rule: any, value: any, callback: (error?: Error) => void) {
     value = value.replace('spel@@', '').replace('=', '').trim();
     if (value === '' || value === undefined || value === null) {
-        callback(new Error('请输入spel表达式'));
+        callback(new Error(t('skip.spelRequired')));
     } else if (!/^\#\{.*\}$/.test(value)) {
-        callback(new Error('spel表达式必须以#{开头，以}结尾'));
+        callback(new Error(t('skip.spelFormat')));
     } else {
         callback();
     }
@@ -145,9 +148,9 @@ function validateSpel(rule: any, value: any, callback: (error?: Error) => void) 
 function validateSnel(rule: any, value: any, callback: (error?: Error) => void) {
     value = value.replace('snel@@', '').replace('=', '').trim();
     if (value === '' || value === undefined || value === null) {
-        callback(new Error('请输入snel表达式'));
+        callback(new Error(t('skip.snelRequired')));
     } else if (!/^\#\{.*\}$/.test(value)) {
-        callback(new Error('snel表达式必须以#{开头，以}结尾'));
+        callback(new Error(t('skip.snelFormat')));
     } else {
         callback();
     }
@@ -157,13 +160,13 @@ function getConditionDescription() {
     const type = form.value.conditionType;
     switch (type) {
         case 'default':
-            return '请输入默认表达式,格式如: ${flag == 5 && flag > 4}';
+            return t('skip.descDefault');
         case 'spel':
-            return '请输入spel表达式，格式如: #{@user.eval(#flag)}';
+            return t('skip.descSpel');
         case 'snel':
-            return '请输入snel表达式，格式如: #{@user.eval(flag)}';
+            return t('skip.descSnel');
         default:
-            return '请输入';
+            return t('common.pleaseInput');
     }
 }
 

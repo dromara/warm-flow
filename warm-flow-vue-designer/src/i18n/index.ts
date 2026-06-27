@@ -68,6 +68,34 @@ const zh: WfMessageTree = {
     listenerAssignment: '分派',
     listenerFinish: '完成',
     listenerCreate: '创建'
+  },
+  skip: {
+    nameLabel: '跳转名称：',
+    namePlaceholder: '跳转名称',
+    typeLabel: '跳转类型：',
+    conditionLabel: '跳转条件：',
+    conditionName: '条件名',
+    conditionTypePlaceholder: '请选择条件方式',
+    typePass: '审批通过',
+    typeReject: '退回',
+    opGt: '大于',
+    opGe: '大于等于',
+    opEq: '等于',
+    opNe: '不等于',
+    opLt: '小于',
+    opLe: '小于等于',
+    opLike: '包含',
+    opNotLike: '不包含',
+    opDefault: '默认',
+    defaultRequired: '请输入默认表达式',
+    defaultFormat: '默认表达式必须以${开头，以}结尾',
+    spelRequired: '请输入spel表达式',
+    spelFormat: 'spel表达式必须以#{开头，以}结尾',
+    snelRequired: '请输入snel表达式',
+    snelFormat: 'snel表达式必须以#{开头，以}结尾',
+    descDefault: '请输入默认表达式,格式如: ${flag == 5 && flag > 4}',
+    descSpel: '请输入spel表达式，格式如: #{@user.eval(#flag)}',
+    descSnel: '请输入snel表达式，格式如: #{@user.eval(flag)}'
   }
 }
 
@@ -109,6 +137,34 @@ const en: WfMessageTree = {
     listenerAssignment: 'Assignment',
     listenerFinish: 'Finish',
     listenerCreate: 'Create'
+  },
+  skip: {
+    nameLabel: 'Transition Name:',
+    namePlaceholder: 'Transition name',
+    typeLabel: 'Transition Type:',
+    conditionLabel: 'Condition:',
+    conditionName: 'Condition name',
+    conditionTypePlaceholder: 'Select condition operator',
+    typePass: 'Approved',
+    typeReject: 'Rejected',
+    opGt: 'Greater than',
+    opGe: 'Greater or equal',
+    opEq: 'Equal',
+    opNe: 'Not equal',
+    opLt: 'Less than',
+    opLe: 'Less or equal',
+    opLike: 'Contains',
+    opNotLike: 'Not contains',
+    opDefault: 'Default',
+    defaultRequired: 'Please enter a default expression',
+    defaultFormat: 'Default expression must start with ${ and end with }',
+    spelRequired: 'Please enter a SpEL expression',
+    spelFormat: 'SpEL expression must start with #{ and end with }',
+    snelRequired: 'Please enter a SNEL expression',
+    snelFormat: 'SNEL expression must start with #{ and end with }',
+    descDefault: 'Enter a default expression, e.g.: ${flag == 5 && flag > 4}',
+    descSpel: 'Enter a SpEL expression, e.g.: #{@user.eval(#flag)}',
+    descSnel: 'Enter a SNEL expression, e.g.: #{@user.eval(flag)}'
   }
 }
 
