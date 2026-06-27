@@ -12,7 +12,7 @@
 - [ ] **剔除 Element Plus 硬依赖（JS/依赖/适配器层已完成，仅剩样式层）**：⚠️ 原描述「尚未开始大规模实施」已滞后。
       实际（见 `.codex` 9.5 + 实测复核）：路线 C 已全程落地——5 取舍点已拍板（Q1=antd 4.x、Q2=form-create 暂留 EP）；
       Phase1 命令式 UI 收口（ElMessage/Box/Notification/Loading + ClickOutside → `src/ui/uiAdapter`）+ Phase2 28 组件中性化（`<el-*>` → `<wf-*>`）+ Phase3 antdv 适配器 + 主入口 bundle 级移除 EP（主 bundle `warm-flow-designer.es.js` grep element-plus = 0）+ 依赖治理（EP/antdv/naive 均为可选 peer、`dependencies` 清空）均已完成，并已补 naive 适配器。
-      **剩余仅 Phase 4 样式层**：bundle CSS 仍含 12 个 `--el-*` 变量 + 35 个 `.el-*` 选择器 → 给 `--el-*` 加 fallback（消费方不再被迫引 EP 样式）+ `.el-*` 中性化到 `wf-*`；form-create antdv 化（Q2 暂留）另算。
+      **剩余仅 Phase 4 样式层（功能上已解耦，属可选 bundle 瘦身）**：src 约 120 个去重 `.el-*` 选择器 / 8 文件含 `--el-*`。复核确认这些 `.el-*` 全是 **EP-DOM 作用域**（如 `.el-tabs__item`/`.el-dropdown`/`.el-table` …），对 antdv/naive **永不命中**＝惰性死 CSS；仅有的 2 处无兜底 `var(--el-*)` 消费（`baseInfo` 的 `.el-tabs__item`、`element-ui.scss` 的 `.el-dropdown`）也都在 EP 专属选择器内，对非 EP 渲染无影响。故 **EP 硬依赖功能上已彻底解耦**（antdv demo 完全移除 EP 实跑 0 错，见 `.codex` 9.5）。Phase 4 余下仅为**可选优化**：把非 EP 用户用不到的死 `.el-*` CSS 从主/antdv/naive bundle 剥离（移入 EP 适配器样式入口）以瘦身，**非功能必需，低优先**；form-create antdv 化（Q2 暂留）另算。
 
 ## 可选优化（未来）
 
