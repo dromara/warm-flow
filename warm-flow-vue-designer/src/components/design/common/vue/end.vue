@@ -54,7 +54,7 @@ function nodeNameChange() {
 <style scoped lang="scss">
 @import '@/assets/styles/_common.scss';
 
-.end-wrapper { width: 100%; html.dark & { background: var(--wf-bg-color, #141414); border-radius: var(--wf-radius-lg, 12px); } }
+.end-wrapper { width: 100%; html.dark & { background: var(--wf-bg-color); border-radius: var(--wf-radius-lg); } }
 .endForm { border-top: 0; width: 100%; }
 
 /* 引入公共样式：基础配置卡片 */

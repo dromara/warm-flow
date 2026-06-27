@@ -1,0 +1,40 @@
+/* 分页器页码按钮 - 暗黑模式 */
+html.dark .el-pagination--small .el-pager li,
+html.dark .el-pager li.number {
+  background: #1a1a1a !important;
+  color: #c0c4cc !important;
+  border: 1px solid #414243;
+  min-width: 28px;
+  line-height: 24px;
+}
+html.dark .el-pagination--small .el-pager li.is-active,
+html.dark .el-pager li.is-active {
+  background: var(--wf-primary) !important;
+  color: #fff !important;
+  border-color: transparent !important;
+}
+html.dark .el-pagination--small .el-pager li:hover,
+html.dark .el-pager li.number:hover:not(.is-active) {
+  color: var(--wf-primary) !important;
+  background: rgba(64,158,255,.08) !important;
+}
+
+/* el-tree 树节点区域 - 暗黑模式 */
+html.dark .el-tree { background-color: transparent !important; }
+html.dark .el-tree-node__content { color: #c0c4cc !important; }
+html.dark .el-tree-node__content:hover,
+html.dark .el-tree-node.is-current > .el-tree-node__content {
+  background-color: rgba(64,158,255,.12) !important;
+}
+
+/* 分页器前后按钮 - 暗黑模式 */
+html.dark .el-pagination .btn-prev,
+html.dark .el-pagination .btn-next {
+  background-color: transparent !important;
+  border-color: #414243 !important;
+  color: #c0c4cc !important;
+}
+html.dark .el-pagination .btn-prev:hover,
+html.dark .el-pagination .btn-next:hover {
+  color: var(--wf-primary) !important;
+}

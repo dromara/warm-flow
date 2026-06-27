@@ -97,10 +97,10 @@ function handleDragInNode(item: PaletteNode) {
   top: 70px;
   width: 76px;
   border-radius: 14px;
-  background: var(--wf-sidebar-bg, rgba(255, 255, 255, 0.95));
+  background: var(--wf-sidebar-bg);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--wf-border-light, rgba(226, 232, 240, 0.8));
+  border: 1px solid var(--wf-border-light);
   box-shadow:
     0 4px 24px rgba(0, 0, 0, 0.06),
     0 1px 4px rgba(0, 0, 0, 0.04);
@@ -121,13 +121,13 @@ function handleDragInNode(item: PaletteNode) {
 /* ====== 头部 ====== */
 .sidebar-header {
   padding: 12px 4px 8px;
-  border-bottom: 1px solid var(--wf-border-light, #f1f5f9);
+  border-bottom: 1px solid var(--wf-border-light);
 }
 
 .sidebar-title {
   font-size: 13px;
   font-weight: 600;
-  color: var(--wf-text-primary, #303133);
+  color: var(--wf-text-primary);
   text-align: center;
   letter-spacing: 2px;
 }
@@ -158,7 +158,7 @@ function handleDragInNode(item: PaletteNode) {
 .sidebar-divider {
   height: 1px;
   margin: 8px 8px;
-  background: linear-gradient(90deg, transparent, var(--wf-border-light, #e2e8f0) 30%, var(--wf-border-light, #e2e8f0) 70%, transparent);
+  background: linear-gradient(90deg, transparent, var(--wf-border-light) 30%, var(--wf-border-light) 70%, transparent);
 }
 
 /* ====== 网关分组标题 ====== */
@@ -169,7 +169,7 @@ function handleDragInNode(item: PaletteNode) {
 .group-title {
   font-size: 12px;
   font-weight: 600;
-  color: var(--wf-text-primary, #303133);
+  color: var(--wf-text-primary);
   text-align: center;
   letter-spacing: 2px;
 }
@@ -196,7 +196,7 @@ function handleDragInNode(item: PaletteNode) {
   }
 
   .item-label {
-    color: var(--wf-primary, #409eff);
+    color: var(--wf-primary);
     font-weight: 500;
   }
 }
@@ -238,7 +238,7 @@ function handleDragInNode(item: PaletteNode) {
 /* ====== 标签文字 ====== */
 .item-label {
   font-size: 12px;
-  color: var(--wf-text-regular, #606266);
+  color: var(--wf-text-regular);
   text-align: center;
   margin-top: 5px;
   line-height: 1.3;
@@ -250,8 +250,8 @@ function handleDragInNode(item: PaletteNode) {
 
 /* ====== 暗黑模式（统一走 wf-* 变量） ====== */
 html.dark .diagram-sidebar {
-  background: var(--wf-sidebar-bg, rgba(30, 30, 35, 0.92));
-  border-color: var(--wf-border-color, rgba(60, 60, 70, 0.6));
+  background: var(--wf-sidebar-bg);
+  border-color: var(--wf-border-color);
   box-shadow:
     0 4px 24px rgba(0, 0, 0, 0.3),
     0 1px 4px rgba(0, 0, 0, 0.2);
@@ -265,20 +265,20 @@ html.dark .diagram-sidebar:hover {
 
 html.dark .sidebar-header,
 html.dark .group-header {
-  border-bottom-color: var(--wf-border-color, #333);
+  border-bottom-color: var(--wf-border-color);
 }
 
 html.dark .sidebar-title,
 html.dark .group-title {
-  color: var(--wf-text-primary, #e0e0e0);
+  color: var(--wf-text-primary);
 }
 
 html.dark .sidebar-divider {
-  background: linear-gradient(90deg, transparent, var(--wf-border-color, #333) 30%, var(--wf-border-color, #333) 70%, transparent);
+  background: linear-gradient(90deg, transparent, var(--wf-border-color) 30%, var(--wf-border-color) 70%, transparent);
 }
 
 html.dark .item-icon-wrap {
-  background: var(--wf-bg-color, #222) !important;
+  background: var(--wf-bg-color) !important;
 }
 
 /* 暗黑模式下 SVG 图标内部背景色切换 */
@@ -291,11 +291,11 @@ html.dark .sidebar-item:hover {
 }
 
 html.dark .item-label {
-  color: var(--wf-text-regular, #c0c4cc);
+  color: var(--wf-text-regular);
 }
 
 html.dark .sidebar-item:hover .item-label {
-  color: var(--wf-primary, #409eff);
+  color: var(--wf-primary);
 }
 
 /* ====== 响应式：平板端 ====== */

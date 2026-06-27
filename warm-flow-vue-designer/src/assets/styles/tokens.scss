@@ -1,0 +1,193 @@
+/* ============================================================
+ * Warm-Flow 设计 token 统一归口（Design Tokens · SSOT 静态层）
+ *
+ * 本文件是设计器全部 CSS 变量（--wf-*）的静态归口：
+ *   - 颜色 token：镜像 themeConfig.ts 的 lightColors / darkColors（见 cssVarMap）。
+ *     themeConfig.ts 仍是「运行时」SSOT（applyCssVariables 注入 + 自定义换肤），
+ *     本文件提供「静态默认层」，使库无需运行时注入也能正确渲染、且可被 :root 覆盖换肤。
+ *     ⚠️ 改颜色需同步本文件与 themeConfig.ts 两处（值必须一致）。
+ *   - 非颜色 token：圆角 / 阴影 / 过渡 / warning 变体（迁移自原 index.scss，值不变）。
+ *   - 标度 token：间距 / 字号 / 行高 / 层级 / 动效（供组件收敛字面量，逐步替换）。
+ *
+ * 设计原则：组件统一用 var(--wf-*) 引用本层 token，避免散落硬编码颜色/尺寸，
+ * 实现样式与具体取值解耦（单一可换肤来源）。
+ * ============================================================ */
+:root {
+  /* ======================== 颜色（亮色，镜像 themeConfig.lightColors） ======================== */
+  /* ---- 主题色 ---- */
+  --wf-primary: #409eff;
+  --wf-primary-dark: #2b7de9;
+  --wf-primary-light: #ecf5ff;
+  --wf-primary-lighter: #f0f7ff;
+  --wf-success: #67c23a;
+  --wf-warning: #e6a23c;
+  --wf-danger: #f56c6c;
+
+  /* ---- 文字 ---- */
+  --wf-text-primary: #303133;
+  --wf-text-regular: #606266;
+  --wf-text-secondary: #909399;
+  --wf-text-placeholder: #c0c4cc;
+
+  /* ---- 边框 ---- */
+  --wf-border-color: #dcdfe6;
+  --wf-border-light: #e4e7ed;
+  --wf-border-lighter: #ebeef5;
+
+  /* ---- 背景 ---- */
+  --wf-bg-color: #f5f7fa;
+  --wf-bg-white: #ffffff;
+  --wf-bg-page: #ffffff;
+  --wf-bg-container: #f5f7fa;
+  --wf-disabled-bg: #f5f7fa;
+
+  /* ---- LogicFlow 画布 ---- */
+  --wf-grid-color: #ccc;
+  --wf-node-text-color: #303133;
+  --wf-node-text-fill: #303133;
+  --wf-edge-text-bg: #fff;
+  --wf-snapline-stroke: #1e90ff;
+
+  /* ---- 特殊组件（Tooltip / 快照 / 侧栏 / 步骤 / 保存按钮 / 流程名 / 工具栏 / 滚动条） ---- */
+  --wf-tooltip-bg: #fff;
+  --wf-tooltip-border: #ccc;
+  --wf-tooltip-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  --wf-tooltip-color: #333;
+  --wf-snapshot-bg: #f5f5f5;
+  --wf-sidebar-bg: rgba(255, 255, 255, 0.95);
+  --wf-sidebar-icon-bg: #f8fafc;
+  --wf-icon-bg: #ffffff; /* 侧栏拖拽节点 SVG 图标底色（sidebarIcons.ts，支持暗黑切换） */
+  --wf-step-tab-color: #64748b;
+  --wf-step-tab-active-bg-start: #3b82f6;
+  --wf-step-tab-active-bg-end: #2563eb;
+  --wf-save-btn-bg-start: #10b981;
+  --wf-save-btn-bg-end: #059669;
+  --wf-save-btn-shadow: rgba(16, 185, 129, 0.3);
+  --wf-flow-name-color: #1e293b;
+  --wf-toolbar-border: #e2e8f0;
+  --wf-scrollbar-thumb: #c0c4cc;
+  --wf-scrollbar-thumb-hover: #909399;
+
+  /* ---- warning 变体（不在 themeConfig 色板中） ---- */
+  --wf-warning-light: #fef0f0;
+  --wf-warning-lighter: #fdf6ec;
+  --wf-warning-border: #fbc4c4;
+
+  /* ======================== 圆角 ======================== */
+  --wf-radius-sm: 4px;
+  --wf-radius: 8px;
+  --wf-radius-lg: 12px;
+  --wf-radius-round: 20px;
+
+  /* ======================== 阴影 ======================== */
+  --wf-shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.04);
+  --wf-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  --wf-shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.1);
+  --wf-shadow-primary: 0 2px 8px rgba(64, 158, 255, 0.3);
+
+  /* ======================== 过渡 ======================== */
+  --wf-transition: all 0.3s ease;
+
+  /* ======================== 间距标度（新增·增量；逐步替换字面量） ======================== */
+  --wf-space-xs: 4px;
+  --wf-space-sm: 8px;
+  --wf-space: 12px;
+  --wf-space-md: 16px;
+  --wf-space-lg: 20px;
+  --wf-space-xl: 24px;
+
+  /* ======================== 字号标度（新增·增量） ======================== */
+  --wf-font-size-xs: 11px;
+  --wf-font-size-sm: 12px;
+  --wf-font-size: 14px;
+  --wf-font-size-md: 15px;
+  --wf-font-size-lg: 16px;
+
+  /* ======================== 行高（新增·增量） ======================== */
+  --wf-line-height: 1.5;
+
+  /* ======================== 层级标度（新增·增量；统一弹层 z-index 体系） ======================== */
+  --wf-z-base: 1;
+  --wf-z-dropdown: 1000;
+  --wf-z-sticky: 1020;
+  --wf-z-drawer: 2000;
+  --wf-z-modal: 2100;
+  --wf-z-tooltip: 3000;
+
+  /* ======================== 动效标度（新增·增量） ======================== */
+  --wf-motion-fast: 0.2s;
+  --wf-motion: 0.3s;
+  --wf-motion-slow: 0.45s;
+  --wf-ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html.dark {
+  /* ======================== 颜色（暗色，镜像 themeConfig.darkColors） ======================== */
+  /* ---- 主题色 ---- */
+  --wf-primary: #409eff;
+  --wf-primary-dark: #2b7de9;
+  --wf-primary-light: #1a3a5c;
+  --wf-primary-lighter: #1a2e4a;
+  --wf-success: #67c23a;
+  --wf-warning: #f56c6c;
+  --wf-danger: #f56c6c;
+
+  /* ---- 文字 ---- */
+  --wf-text-primary: #e0e0e0;
+  --wf-text-regular: #b0b0b0;
+  --wf-text-secondary: #888888;
+  --wf-text-placeholder: #5a5a5a;
+
+  /* ---- 边框 ---- */
+  --wf-border-color: #333333;
+  --wf-border-light: #404040;
+  --wf-border-lighter: #4a4a4a;
+
+  /* ---- 背景（bgWhite 取组件一致的悬浮层色 #1f1f1f；themeConfig 同步修正） ---- */
+  --wf-bg-color: #141414;
+  --wf-bg-white: #1f1f1f;
+  --wf-bg-page: #141414;
+  --wf-bg-container: #141414;
+  --wf-disabled-bg: #2a2d35;
+
+  /* ---- LogicFlow 画布 ---- */
+  --wf-grid-color: #404040;
+  --wf-node-text-color: #e0e0e0;
+  --wf-node-text-fill: #e0e0e0;
+  --wf-edge-text-bg: #141414;
+  --wf-snapline-stroke: #1e90ff;
+
+  /* ---- 特殊组件 ---- */
+  --wf-tooltip-bg: #1f1f1f;
+  --wf-tooltip-border: #333333;
+  --wf-tooltip-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  --wf-tooltip-color: #e0e0e0;
+  --wf-snapshot-bg: #141414;
+  --wf-sidebar-bg: #141414;
+  --wf-sidebar-icon-bg: #141414;
+  --wf-icon-bg: #1f1f1f;
+  --wf-step-tab-color: #b0b0b0;
+  --wf-step-tab-active-bg-start: #3b82f6;
+  --wf-step-tab-active-bg-end: #2563eb;
+  --wf-save-btn-bg-start: #0d9488;
+  --wf-save-btn-bg-end: #0f766e;
+  --wf-save-btn-shadow: rgba(13, 148, 136, 0.25);
+  --wf-flow-name-color: #e0e0e0;
+  --wf-toolbar-border: #333333;
+  --wf-scrollbar-thumb: #4a4a4a;
+  --wf-scrollbar-thumb-hover: #606060;
+
+  /* ---- warning 变体暗黑版 ---- */
+  --wf-warning-light: #2e1a1a;
+  --wf-warning-lighter: #2e2418;
+  --wf-warning-border: #5a2c2c;
+
+  /* ======================== 阴影（暗黑加深，迁自 index.scss） ======================== */
+  --wf-shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.2);
+  --wf-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  --wf-shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --wf-shadow-primary: 0 2px 8px rgba(64, 158, 255, 0.3);
+
+  /* ======================== 过渡（不变） ======================== */
+  --wf-transition: all 0.3s ease;
+}

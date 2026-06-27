@@ -1,0 +1,201 @@
+/* ========== 现代化属性面板抽屉 ========== */
+.property-drawer-modern {
+  /* 与基础信息页统一：系统字体栈 + 字形平滑 */
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* 表单标签：与基础信息页统一（加粗；右对齐由 EP 默认 label-position 提供） */
+  .el-form-item__label {
+    font-weight: 600;
+    color: var(--wf-text-primary);
+  }
+
+  /* 抽屉头部：收紧与正文间距（EP 默认 margin 32px 太空）+ 标题加深加粗（默认偏浅灰、不清晰） */
+  .el-drawer__header {
+    background: transparent !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 14px !important;
+    border-bottom: 1px solid var(--wf-border-lighter);
+    > span {
+      color: var(--wf-text-primary);
+      font-weight: 600;
+      font-size: 16px;
+    }
+  }
+
+  /* 正文上内边距收紧，让 tab 紧跟头部 */
+  .el-drawer__body {
+    padding-top: 12px !important;
+  }
+  /* 含 Tab 的面板（开始/中间节点）：tab 栏紧贴抽屉标题，去掉上方间距，对齐更自然 */
+  .el-drawer__body:has(.modern-tabs-wrapper) {
+    padding-top: 0 !important;
+  }
+
+  .el-drawer__close-btn {
+    color: #909399 !important;
+    transition: all .25s ease !important;
+    &:hover { color: #409eff !important; transform: rotate(90deg); }
+  }
+
+  /* 白底描边输入框：与基础信息表单统一（白底 + 浅边框 + 柔和 focus 光环） */
+  .el-input__wrapper,
+  .el-textarea__inner {
+    border-radius: 10px;
+    background-color: var(--wf-bg-white);
+    box-shadow: none;
+    border: 1px solid var(--wf-border-light);
+    transition: background-color .2s ease, box-shadow .2s ease, border-color .2s ease;
+    &:hover { border-color: var(--wf-primary); }
+    &.is-focus,
+    &:focus {
+      background-color: var(--wf-bg-white);
+      border-color: var(--wf-primary);
+      box-shadow: 0 0 0 4px rgba(64, 158, 255, 0.12);
+    }
+  }
+
+  /* 校验失败态：红边 + 红光环，压过 focus 蓝色（与基础信息一致） */
+  .el-form-item.is-error .el-input__wrapper,
+  .el-form-item.is-error .el-input__wrapper.is-focus {
+    border-color: var(--wf-danger);
+    box-shadow: 0 0 0 4px rgba(245, 108, 108, 0.12);
+  }
+
+  /* 表格：与基础信息页统一（圆角边框 + 中性表头 + hover 蓝条 + 删除按钮红渐变） */
+  .el-table {
+    border-radius: var(--wf-radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--wf-border-lighter);
+
+    .el-table__header-wrapper th {
+      background: var(--wf-bg-white) !important;
+      color: var(--wf-text-regular);
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .el-table__row {
+      transition: background-color 0.2s ease;
+      & > td:first-child { position: relative; }
+      & > td:first-child::before {
+        content: '';
+        position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+        width: 3px; height: 0;
+        background: var(--wf-primary);
+        border-radius: 0 2px 2px 0;
+        transition: height 0.25s ease;
+      }
+      &:hover > td:first-child::before { height: 60%; }
+      &:hover > td { background-color: var(--wf-primary-light) !important; }
+    }
+    /* 删除按钮：无实底，仅红色图标，hover 浅红圆底 */
+    .el-button--danger.is-link {
+      color: var(--wf-danger);
+      padding: 5px;
+      height: auto;
+      border: none;
+      transition: all 0.2s ease;
+      &:hover {
+        color: #e04848;
+        background: rgba(245, 108, 108, 0.12) !important;
+        border-radius: 8px;
+      }
+    }
+
+    /* 表格内控件默认透明：整行读作干净白底，hover 轻填充、focus 才显白底+蓝环。
+       避免「全是下拉/输入的行」被填充底染灰、与「含纯文本列的行」深浅不一致 */
+    .el-input__wrapper,
+    .el-select .el-input__wrapper {
+      background-color: transparent;
+      &:hover { background-color: rgba(118, 128, 150, 0.07); }
+      &.is-focus { background-color: var(--wf-bg-white); }
+    }
+  }
+}
+
+/* ========== 暗黑模式：el-drawer 抽屉完整适配（全局生效） ========== */
+html.dark {
+  .property-drawer-modern {
+    /* 整体抽屉：覆盖 Element Plus 默认白色变量 + 直接设色双重保险 */
+    .el-drawer {
+      --el-drawer-bg-color: var(--wf-bg-color) !important;
+      --el-bg-color: var(--wf-bg-color) !important;
+      background-color: var(--wf-bg-color) !important;
+
+      /* 消除 header 和 body 之间的白色缝隙 */
+      &__header {
+        margin-bottom: 0 !important;
+        padding-bottom: 12px !important;
+        background: var(--wf-bg-color) !important;
+        border-bottom: 1px solid var(--wf-border-color) !important;
+
+        > span {
+          color: var(--wf-text-primary) !important;
+          font-weight: 600;
+        }
+      }
+
+      &__body {
+        background-color: var(--wf-bg-color) !important;
+        margin-top: 0 !important;
+      }
+
+      &__close-btn {
+        color: var(--wf-text-secondary) !important;
+        &:hover { color: #409eff !important; }
+      }
+    }
+
+    /* 抽屉容器本身也要深色（防止 append-to-body 后外层残留白色） */
+    &.el-drawer,
+    &.el-drawer__wrapper,
+    .v-modal + .el-overlay .el-drawer {
+      --el-drawer-bg-color: var(--wf-bg-color) !important;
+      background-color: var(--wf-bg-color) !important;
+    }
+
+    /* iOS 填充式输入框：暗黑覆盖 */
+    .el-input__wrapper,
+    .el-textarea__inner {
+      background-color: rgba(255, 255, 255, 0.06) !important;
+      box-shadow: none !important;
+      border: 1px solid transparent !important;
+    }
+    .el-input__wrapper.is-focus {
+      border-color: var(--wf-primary) !important;
+      box-shadow: 0 0 0 4px rgba(64, 158, 255, 0.18) !important;
+    }
+
+    /* 表格暗黑：中性表头 + 蓝调 hover */
+    .el-table {
+      border-color: var(--wf-border-color);
+      .el-table__header-wrapper th {
+        background: rgba(255, 255, 255, 0.04) !important;
+        color: var(--wf-text-regular);
+      }
+      .el-table__row:hover > td {
+        background-color: rgba(64, 158, 255, 0.12) !important;
+      }
+    }
+  }
+
+  /* el-dialog 对话框暗黑适配（selectUser 等弹窗） */
+  .el-dialog {
+    --el-dialog-bg-color: var(--wf-bg-white);
+
+    &__header {
+      background: linear-gradient(135deg, rgba(64,158,255,.08), rgba(43,125,233,.04));
+      border-bottom: 1px solid var(--wf-border-color);
+    }
+
+    &__title { color: var(--wf-text-primary); }
+
+    &__body { color: var(--wf-text-regular); }
+
+    &__headerbtn {
+      color: var(--wf-text-secondary);
+      &:hover { color: var(--wf-text-primary); }
+    }
+  }
+}

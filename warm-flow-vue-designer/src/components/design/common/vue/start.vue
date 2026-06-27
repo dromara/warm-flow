@@ -152,7 +152,7 @@ function handleDeleteRow(index: number) {
 <style scoped lang="scss">
 @import '@/assets/styles/_common.scss';
 
-.start { width: 100%; html.dark & { background: var(--wf-bg-color, #141414); border-radius: var(--wf-radius-lg, 12px); } }
+.start { width: 100%; html.dark & { background: var(--wf-bg-color); border-radius: var(--wf-radius-lg); } }
 .startForm { border-top: 0; width: 100%; }
 
 /* 引入公共样式：现代化页签 + 基础配置卡片 + 监听器卡片 */
@@ -165,8 +165,8 @@ function handleDeleteRow(index: number) {
 .section-purple {
   .section-purple-header {
     background: transparent;
-    border-bottom-color: var(--wf-border-lighter, #ebeef5);
-    html.dark & { background: transparent; border-bottom-color: var(--wf-border-color, #333333); }
+    border-bottom-color: var(--wf-border-lighter);
+    html.dark & { background: transparent; border-bottom-color: var(--wf-border-color); }
   }
   .section-purple-icon { color: #8960dc; }
   .section-purple-title { color: #8960dc; }
@@ -178,8 +178,8 @@ function handleDeleteRow(index: number) {
 }
 .add-row-btn {
   width: 100%;
-  border: 1.5px dashed var(--wf-primary, #409eff) !important;
-  color: var(--wf-primary, #409eff) !important;
+  border: 1.5px dashed var(--wf-primary) !important;
+  color: var(--wf-primary) !important;
   background: transparent !important;
   border-radius: 10px;
   transition: all 0.3s ease;
@@ -191,10 +191,10 @@ function handleDeleteRow(index: number) {
   justify-content: center;
 
   &:hover {
-    background: var(--wf-primary-light, #ecf5ff) !important;
+    background: var(--wf-primary-light) !important;
     border-style: solid !important;
-    border-color: var(--wf-primary, #409eff) !important;
-    box-shadow: var(--wf-shadow-primary, 0 2px 8px rgba(64, 158, 255, 0.3));
+    border-color: var(--wf-primary) !important;
+    box-shadow: var(--wf-shadow-primary);
   }
 }
 

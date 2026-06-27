@@ -166,7 +166,7 @@ function handleLeave() {
   height: 80px;
   box-sizing: border-box;
   border-radius: 10px;
-  background: var(--wf-bg-white, #fff);
+  background: var(--wf-bg-white);
   /* 去边框，仅用多层柔和阴影区分层次（现代卡片质感） */
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.10), 0 1px 4px rgba(0, 0, 0, 0.05);
   overflow: hidden; /* 让头部跟随卡片圆角 */
@@ -200,7 +200,7 @@ function handleLeave() {
   padding: 10px;
   height: calc(100%);
   font-size: 14px;
-  color: var(--wf-text-primary, #303133);
+  color: var(--wf-text-primary);
 }
 
 .edit-icon {

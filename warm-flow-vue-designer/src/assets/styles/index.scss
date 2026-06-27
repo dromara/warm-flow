@@ -1,46 +1,13 @@
 /* ============================================================
- * CSS 变量声明（非颜色部分）
+ * 全局样式入口
  *
- * 颜色值（--wf-primary, --wf-bg-color 等）由 themeConfig.js SSOT 统一管理，
- * 在 initFromUrl() 中通过 applyCssVariables() 动态注入到 DOM。
- * 此处仅保留：圆角、阴影、过渡动画、warning 变体等非颜色 token。
+ * 设计 token（圆角 / 阴影 / 过渡 / warning + 间距 / 字号 / 层级 / 动效标度）
+ * 已集中到 tokens.scss 统一归口。
+ * 颜色 token（--wf-primary / --wf-bg-* / --wf-text-* 等）以 themeConfig.ts
+ * 为运行时 SSOT，经 applyCssVariables() 注入；组件内 var(--wf-color, 回退值)
+ * 的回退值为静态兜底。
  * ============================================================ */
-:root {
-  /* ---- 圆角 ---- */
-  --wf-radius-sm: 4px;
-  --wf-radius: 8px;
-  --wf-radius-lg: 12px;
-  --wf-radius-round: 20px;
-
-  /* ---- 阴影 ---- */
-  --wf-shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.04);
-  --wf-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-  --wf-shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.1);
-  --wf-shadow-primary: 0 2px 8px rgba(64, 158, 255, 0.3);
-
-  /* ---- 过渡 ---- */
-  --wf-transition: all 0.3s ease;
-
-  /* ---- warning 变体（不在 themeConfig 色板中） ---- */
-  --wf-warning-light: #fef0f0;
-  --wf-warning-border: #fbc4c4;
-}
-
-html.dark {
-  /* ---- 暗黑模式阴影加深 ---- */
-  --wf-shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.2);
-  --wf-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
-  --wf-shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.4);
-  --wf-shadow-primary: 0 2px 8px rgba(64, 158, 255, 0.3);
-
-  /* ---- 过渡不变 ---- */
-  --wf-transition: all 0.3s ease;
-
-  /* ---- warning 变体暗黑版 ---- */
-  --wf-warning-light: #2e1a1a;
-  --wf-warning-border: #5a2c2c;
-}
-
+@import './tokens.scss';
 @import './variables.module.scss';
 @import './mixin.scss';
 @import './transition.scss';
@@ -296,278 +263,278 @@ html.dark {
 
   /* --- el-input 输入框 --- */
   .el-input__wrapper {
-    background-color: var(--wf-bg-color, #141414);
-    box-shadow: 0 0 0 1px var(--wf-border-color, #333333) inset;
+    background-color: var(--wf-bg-color);
+    box-shadow: 0 0 0 1px var(--wf-border-color) inset;
 
     &:hover {
-      box-shadow: 0 0 0 1px var(--wf-primary, #409eff) inset;
+      box-shadow: 0 0 0 1px var(--wf-primary) inset;
     }
 
     &.is-focus {
-      box-shadow: 0 0 0 1px var(--wf-primary, #409eff) inset, 0 0 0 3px rgba(64, 158, 255, 0.15);
+      box-shadow: 0 0 0 1px var(--wf-primary) inset, 0 0 0 3px rgba(64, 158, 255, 0.15);
     }
 
     /* 禁用态（已发布/失效状态）— 覆盖 Element Plus 默认浅色背景 */
     &.is-disabled {
-      background-color: var(--wf-bg-color, #2a2d35) !important;
+      background-color: var(--wf-disabled-bg) !important;
       box-shadow: none !important;
     }
   }
 
   .el-input__inner {
-    color: var(--wf-text-primary, #e0e0e0);
+    color: var(--wf-text-primary);
 
     &::placeholder {
-      color: var(--wf-text-placeholder, #5a5a5a);
+      color: var(--wf-text-placeholder);
     }
   }
 
   /* 输入框字数统计（show-word-limit） */
   .el-input .el-input__suffix .el-input__count .el-input__count-inner {
     background: transparent !important;
-    color: var(--wf-text-secondary, #888888) !important;
+    color: var(--wf-text-secondary) !important;
   }
 
   .el-input .el-input__count {
     background: transparent !important;
-    color: var(--wf-text-secondary, #888888) !important;
+    color: var(--wf-text-secondary) !important;
   }
 
   .el-input__count-inner {
     background: transparent !important;
-    color: var(--wf-text-secondary, #888888) !important;
+    color: var(--wf-text-secondary) !important;
   }
 
   /* --- el-radio 单选框 --- */
   .el-radio__inner {
-    background-color: var(--wf-bg-color, #141414);
-    border-color: var(--wf-border-color, #333333);
+    background-color: var(--wf-bg-color);
+    border-color: var(--wf-border-color);
   }
 
   .el-radio__input.is-checked .el-radio__inner {
-    background-color: var(--wf-primary, #409eff);
-    border-color: var(--wf-primary, #409eff);
+    background-color: var(--wf-primary);
+    border-color: var(--wf-primary);
   }
 
   .el-radio__label {
-    color: var(--wf-text-primary, #e0e0e0);
+    color: var(--wf-text-primary);
   }
 
   /* --- el-textarea 文本域 --- */
   .el-textarea__inner {
-    background-color: var(--wf-bg-color, #141414);
-    border-color: var(--wf-border-color, #333333);
-    color: var(--wf-text-primary, #e0e0e0);
-    box-shadow: 0 0 0 1px var(--wf-border-color, #333333) inset;
+    background-color: var(--wf-bg-color);
+    border-color: var(--wf-border-color);
+    color: var(--wf-text-primary);
+    box-shadow: 0 0 0 1px var(--wf-border-color) inset;
 
     &::placeholder {
-      color: var(--wf-text-placeholder, #5a5a5a);
+      color: var(--wf-text-placeholder);
     }
 
     &:hover {
-      box-shadow: 0 0 0 1px var(--wf-primary, #409eff) inset;
+      box-shadow: 0 0 0 1px var(--wf-primary) inset;
     }
 
     &:focus {
-      box-shadow: 0 0 0 1px var(--wf-primary, #409eff) inset, 0 0 0 3px rgba(64, 158, 255, 0.15);
+      box-shadow: 0 0 0 1px var(--wf-primary) inset, 0 0 0 3px rgba(64, 158, 255, 0.15);
     }
 
     /* 禁用态 */
     &.is-disabled {
-      background-color: var(--wf-bg-color, #2a2d35) !important;
+      background-color: var(--wf-disabled-bg) !important;
     }
   }
 
   /* --- el-select 选择框 --- */
   .el-select {
     .el-input__wrapper {
-      background-color: var(--wf-bg-color, #141414);
-      box-shadow: 0 0 0 1px var(--wf-border-color, #333333) inset;
+      background-color: var(--wf-bg-color);
+      box-shadow: 0 0 0 1px var(--wf-border-color) inset;
     }
 
     .el-select__input {
-      color: var(--wf-text-primary, #e0e0e0);
+      color: var(--wf-text-primary);
     }
   }
 
   .el-select__wrapper {
-    background-color: var(--wf-bg-color, #141414);
-    box-shadow: 0 0 0 1px var(--wf-border-color, #333333) inset;
+    background-color: var(--wf-bg-color);
+    box-shadow: 0 0 0 1px var(--wf-border-color) inset;
 
     &:hover {
-      box-shadow: 0 0 0 1px var(--wf-primary, #409eff) inset;
+      box-shadow: 0 0 0 1px var(--wf-primary) inset;
     }
 
     &.is-focused {
-      box-shadow: 0 0 0 1px var(--wf-primary, #409eff) inset, 0 0 0 3px rgba(64, 158, 255, 0.15);
+      box-shadow: 0 0 0 1px var(--wf-primary) inset, 0 0 0 3px rgba(64, 158, 255, 0.15);
     }
 
     /* 禁用态 */
     &.is-disabled {
-      background-color: var(--wf-bg-color, #2a2d35) !important;
+      background-color: var(--wf-disabled-bg) !important;
     }
 
     .el-select__selected-item,
     .el-select__placeholder {
-      color: var(--wf-text-primary, #e0e0e0);
+      color: var(--wf-text-primary);
     }
 
     .el-select__placeholder.is-transparent {
-      color: var(--wf-text-placeholder, #5a5a5a);
+      color: var(--wf-text-placeholder);
     }
   }
 
   /* select 下拉面板 */
   .el-select-dropdown {
-    background-color: var(--wf-bg-white, #1f1f1f);
-    border: 1px solid var(--wf-border-color, #333333);
+    background-color: var(--wf-bg-white);
+    border: 1px solid var(--wf-border-color);
   }
 
   .el-select-dropdown__item {
-    color: var(--wf-text-primary, #e0e0e0);
+    color: var(--wf-text-primary);
 
     &.hover,
     &:hover {
-      background-color: var(--wf-bg-color, #141414);
+      background-color: var(--wf-bg-color);
     }
 
     &.selected {
-      color: var(--wf-primary, #409eff);
+      color: var(--wf-primary);
     }
   }
 
   /* --- el-tree-select 树形选择框 --- */
   .el-tree-select__popper,
   .el-select__popper {
-    background-color: var(--wf-bg-white, #1f1f1f);
-    border: 1px solid var(--wf-border-color, #333333);
+    background-color: var(--wf-bg-white);
+    border: 1px solid var(--wf-border-color);
 
     .el-tree {
-      background-color: var(--wf-bg-white, #1f1f1f);
-      color: var(--wf-text-primary, #e0e0e0);
+      background-color: var(--wf-bg-white);
+      color: var(--wf-text-primary);
 
       .el-tree-node__content:hover {
-        background-color: var(--wf-bg-color, #141414);
+        background-color: var(--wf-bg-color);
       }
 
       .el-tree-node.is-current > .el-tree-node__content {
-        background-color: var(--wf-primary-light, #1a3a5c);
-        color: var(--wf-primary, #409eff);
+        background-color: var(--wf-primary-light);
+        color: var(--wf-primary);
       }
     }
   }
 
   /* --- el-form-item 表单项 --- */
   .el-form-item__label {
-    color: var(--wf-text-primary, #e0e0e0);
+    color: var(--wf-text-primary);
   }
 
   .el-form-item__error {
-    color: var(--wf-danger, #f56c6c);
+    color: var(--wf-danger);
   }
 
   /* --- el-table 表格 --- */
   .el-table {
-    --el-table-bg-color: var(--wf-bg-white, #1f1f1f);
-    --el-table-tr-bg-color: var(--wf-bg-white, #1f1f1f);
-    --el-table-header-bg-color: var(--wf-primary-lighter, #1a2e4a);
-    --el-table-row-hover-bg-color: var(--wf-primary-light, #1a3a5c);
-    --el-table-border-color: var(--wf-border-color, #333333);
-    --el-table-text-color: var(--wf-text-primary, #e0e0e0);
-    --el-table-header-text-color: var(--wf-text-primary, #e0e0e0);
+    --el-table-bg-color: var(--wf-bg-white);
+    --el-table-tr-bg-color: var(--wf-bg-white);
+    --el-table-header-bg-color: var(--wf-primary-lighter);
+    --el-table-row-hover-bg-color: var(--wf-primary-light);
+    --el-table-border-color: var(--wf-border-color);
+    --el-table-text-color: var(--wf-text-primary);
+    --el-table-header-text-color: var(--wf-text-primary);
 
-    background-color: var(--wf-bg-white, #1f1f1f);
-    color: var(--wf-text-primary, #e0e0e0);
+    background-color: var(--wf-bg-white);
+    color: var(--wf-text-primary);
 
     tr {
-      background-color: var(--wf-bg-white, #1f1f1f);
+      background-color: var(--wf-bg-white);
     }
 
     th.el-table__cell {
-      background-color: var(--wf-primary-lighter, #1a2e4a) !important;
-      color: var(--wf-text-primary, #e0e0e0);
+      background-color: var(--wf-primary-lighter) !important;
+      color: var(--wf-text-primary);
     }
 
     td.el-table__cell {
-      border-bottom-color: var(--wf-border-color, #333333);
+      border-bottom-color: var(--wf-border-color);
     }
 
     .el-table__row {
       &:hover > td.el-table__cell {
-        background-color: var(--wf-primary-light, #1a3a5c) !important;
+        background-color: var(--wf-primary-light) !important;
       }
     }
 
     /* 斑马纹 - 偶数行 */
     .el-table__row--striped td.el-table__cell {
-      background-color: var(--wf-bg-color, #141414);
+      background-color: var(--wf-bg-color);
     }
 
     .el-table__empty-text {
-      color: var(--wf-text-secondary, #888888);
+      color: var(--wf-text-secondary);
     }
 
     .el-table__inner-wrapper::before,
     .el-table__border-left-patch,
     &::before {
-      background-color: var(--wf-border-color, #333333);
+      background-color: var(--wf-border-color);
     }
 
     /* 表格内输入框/选择框 */
     .el-input__wrapper {
-      background-color: var(--wf-bg-color, #141414);
-      box-shadow: 0 0 0 1px var(--wf-border-color, #333333) inset;
+      background-color: var(--wf-bg-color);
+      box-shadow: 0 0 0 1px var(--wf-border-color) inset;
     }
 
     .el-select .el-input__wrapper {
-      background-color: var(--wf-bg-color, #141414);
-      box-shadow: 0 0 0 1px var(--wf-border-color, #333333) inset;
+      background-color: var(--wf-bg-color);
+      box-shadow: 0 0 0 1px var(--wf-border-color) inset;
     }
 
     .el-select__wrapper {
-      background-color: var(--wf-bg-color, #141414);
-      box-shadow: 0 0 0 1px var(--wf-border-color, #333333) inset;
+      background-color: var(--wf-bg-color);
+      box-shadow: 0 0 0 1px var(--wf-border-color) inset;
     }
   }
 
   /* --- el-autocomplete 下拉面板 --- */
   .el-autocomplete__popper {
-    background-color: var(--wf-bg-white, #1f1f1f);
-    border: 1px solid var(--wf-border-color, #333333);
+    background-color: var(--wf-bg-white);
+    border: 1px solid var(--wf-border-color);
   }
 
   .el-autocomplete-suggestion li {
-    color: var(--wf-text-primary, #e0e0e0);
+    color: var(--wf-text-primary);
 
     &:hover {
-      background-color: var(--wf-bg-color, #141414);
+      background-color: var(--wf-bg-color);
     }
   }
 
   /* --- el-popper / el-tooltip --- */
   .el-popper.is-light {
-    background-color: var(--wf-bg-white, #1f1f1f);
-    border-color: var(--wf-border-color, #333333);
-    color: var(--wf-text-primary, #e0e0e0);
+    background-color: var(--wf-bg-white);
+    border-color: var(--wf-border-color);
+    color: var(--wf-text-primary);
 
     .el-popper__arrow::before {
-      background-color: var(--wf-bg-white, #1f1f1f);
-      border-color: var(--wf-border-color, #333333);
+      background-color: var(--wf-bg-white);
+      border-color: var(--wf-border-color);
     }
   }
 
   /* --- LogicFlow Control 顶部控制栏暗黑适配 --- */
   .lf-control {
-    background: var(--wf-bg-white, #1f1f1f);
+    background: var(--wf-bg-white);
     box-shadow: none;
-    border: 1px solid var(--wf-border-color, #333333);
+    border: 1px solid var(--wf-border-color);
 
     .lf-control-item:hover {
-      background: var(--wf-bg-color, #141414);
+      background: var(--wf-bg-color);
     }
 
     .lf-control-text {
-      color: var(--wf-text-primary, #e0e0e0);
+      color: var(--wf-text-primary);
     }
   }
 

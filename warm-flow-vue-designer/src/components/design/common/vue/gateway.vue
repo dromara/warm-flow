@@ -40,7 +40,7 @@ const form = ref<Record<string, any>>(props.modelValue);
 <style scoped lang="scss">
 @import '@/assets/styles/_common.scss';
 
-.gateway-wrapper { width: 100%; html.dark & { background: var(--wf-bg-color, #141414); border-radius: var(--wf-radius-lg, 12px); } }
+.gateway-wrapper { width: 100%; html.dark & { background: var(--wf-bg-color); border-radius: var(--wf-radius-lg); } }
 .gatewayForm { border-top: 0; width: 100%; }
 
 /* 引入公共样式：基础配置卡片 */
@@ -49,7 +49,7 @@ const form = ref<Record<string, any>>(props.modelValue);
 
 /* gateway 特有图标 */
 .ext-icon-base {
-  color: var(--wf-primary, #409eff);
+  color: var(--wf-primary);
   svg { width: 16px; height: 16px; }
 }
 </style>

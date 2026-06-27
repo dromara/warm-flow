@@ -759,6 +759,11 @@ defineExpose({
 </script>
 
 <style>
+/* 设计 token 静态层（--wf-* 颜色/圆角/阴影/间距/层级…）。
+   置于设计器根组件的「全局（非 scoped）样式」中，经组件样式管线打进库唯一 CSS 产物，
+   使组件库无需运行时注入即可正确渲染，且消费方可覆盖 :root --wf-* 整体换肤。
+   （相比在入口 JS `import 'tokens.scss'`，此处走 CSS 抽取，避免 token 被内联进 JS 包。） */
+@import '@/assets/styles/tokens.scss';
 
 
 /* ========== 画布容器 ========== */
@@ -768,7 +773,7 @@ defineExpose({
   /* 真机兼容：使用 dvh（动态视口高度）+ vh 兜底，解决移动端地址栏导致 100vh 不准确的问题 */
   height: calc(100dvh - 100px);
   min-height: 400px;
-  border-radius: var(--wf-radius, 8px);
+  border-radius: var(--wf-radius);
   box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.04);
   overflow: hidden;
   /* 关键：禁止浏览器默认触摸手势，让 LogicFlow 接管画布拖动 */
@@ -821,12 +826,12 @@ html.dark .container {
   align-items: center;
   justify-content: center;
   z-index: 20;
-  background: var(--wf-bg-white, #fff);
+  background: var(--wf-bg-white);
 }
 
 .wf-state-default {
   font-size: 14px;
-  color: var(--wf-text-secondary, #909399);
+  color: var(--wf-text-secondary);
   letter-spacing: 1px;
 }
 
@@ -841,7 +846,7 @@ html.dark .wf-state-overlay {
   right: 50px;
   bottom: 10px;
   font-size: 14px;
-  color: var(--wf-text-placeholder, #c0c4cc);
+  color: var(--wf-text-placeholder);
   opacity: 0.5;
   z-index: 1;
   letter-spacing: 1px;
@@ -855,7 +860,7 @@ html.dark .wf-state-overlay {
   align-items: center;
   justify-content: space-between;
   padding: 12px 20px;
-  background: var(--wf-bg-white, #fff);
+  background: var(--wf-bg-white);
   border-bottom: 1px solid #e2e8f0;
   min-height: 56px;
 }
@@ -895,9 +900,9 @@ html.dark .wf-state-overlay {
   text-overflow: ellipsis;
   color: #1e293b;
   padding: 8px 16px;
-  background: var(--wf-bg-white, #fff);
+  background: var(--wf-bg-white);
   border-radius: 8px;
-  border: 1px solid var(--wf-border-light, #e2e8f0);
+  border: 1px solid var(--wf-border-light);
   cursor: default;
   transition: all 0.2s ease;
 }
@@ -916,7 +921,7 @@ html.dark .flow-name {
   display: flex;
   gap: 4px;
   padding: 4px;
-  background: var(--wf-bg-white, #fff);
+  background: var(--wf-bg-white);
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
 }
@@ -942,8 +947,8 @@ html.dark .steps-tabs {
 }
 
 .step-tab:hover {
-  color: var(--wf-primary, #409eff);
-  background: var(--wf-primary-light, #ecf5ff);
+  color: var(--wf-primary);
+  background: var(--wf-primary-light);
 }
 
 .step-tab .tab-icon {
@@ -959,7 +964,7 @@ html.dark .steps-tabs {
 
 .step-tab.active {
   color: #fff;
-  background: var(--wf-primary, #409eff);
+  background: var(--wf-primary);
   box-shadow: 0 2px 8px rgba(64, 158, 255, 0.28);
 }
 
@@ -968,7 +973,7 @@ html.dark .steps-tabs {
 }
 
 .step-tab.active:hover {
-  background: var(--wf-primary-dark, #2b7de9);
+  background: var(--wf-primary-dark);
 }
 
 /* ========== 保存按钮 ========== */
@@ -976,7 +981,7 @@ html.dark .steps-tabs {
   display: flex;
   align-items: center;
   gap: 6px;
-  background: var(--wf-primary, #409eff) !important;
+  background: var(--wf-primary) !important;
   border: none !important;
   color: #fff !important;
   font-weight: 500;
@@ -988,7 +993,7 @@ html.dark .steps-tabs {
 }
 
 .save-btn:hover {
-  background: var(--wf-primary-dark, #2b7de9) !important;
+  background: var(--wf-primary-dark) !important;
 }
 
 /* Element Plus 会把按钮默认插槽内容包进一层 span，
@@ -1014,12 +1019,12 @@ html.dark .design-header {
 /* 暗黑模式：保存按钮统一主色，扁平 */
 html.dark .save-btn,
 html.dark .toolbar-save-btn {
-  background: var(--wf-primary, #409eff) !important;
+  background: var(--wf-primary) !important;
   box-shadow: none !important;
 }
 html.dark .save-btn:hover,
 html.dark .toolbar-save-btn:hover {
-  background: var(--wf-primary-dark, #2b7de9) !important;
+  background: var(--wf-primary-dark) !important;
 }
 
 /* 工具栏区域（el-header 第二行）暗黑模式 */
@@ -1093,7 +1098,7 @@ html.dark .logo-text {
 
 /* ========== 工具栏内保存按钮 ========== */
 .toolbar-save-btn {
-  background: var(--wf-primary, #409eff) !important;
+  background: var(--wf-primary) !important;
   border: none !important;
   color: #fff !important;
   font-weight: 500;
@@ -1103,7 +1108,7 @@ html.dark .logo-text {
 }
 
 .toolbar-save-btn:hover {
-  background: var(--wf-primary-dark, #2b7de9) !important;
+  background: var(--wf-primary-dark) !important;
 }
 
 /* ========== 响应式适配：平板端 (<= 1024px) ========== */

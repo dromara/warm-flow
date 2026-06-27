@@ -175,7 +175,7 @@ function getConditionDescription() {
 <style scoped lang="scss">
 @import '@/assets/styles/_common.scss';
 
-.skip-wrapper { width: 100%; html.dark & { background: var(--wf-bg-color, #141414); border-radius: var(--wf-radius-lg, 12px); } }
+.skip-wrapper { width: 100%; html.dark & { background: var(--wf-bg-color); border-radius: var(--wf-radius-lg); } }
 .skipForm { border-top: 0; width: 100%; }
 .placeholder { color: #828f9e; font-size: 12px; }
 
@@ -185,7 +185,7 @@ function getConditionDescription() {
 
 /* skip 特有图标 */
 .ext-icon-skip {
-  color: var(--wf-text-regular, #606266); svg { width: 16px; height: 16px; }
+  color: var(--wf-text-regular); svg { width: 16px; height: 16px; }
 }
 
 /* skip 特有：手机端跳转条件区域输入框堆叠 */

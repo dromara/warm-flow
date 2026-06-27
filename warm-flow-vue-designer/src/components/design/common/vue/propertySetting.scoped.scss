@@ -1,0 +1,4 @@
+/* 抽屉容器隐藏滚动条（组件内部生效） */
+.el-drawer__container ::-webkit-scrollbar {
+  display: none;
+}

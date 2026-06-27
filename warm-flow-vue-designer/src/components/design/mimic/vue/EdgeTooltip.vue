@@ -95,7 +95,7 @@ const handleClick = (item: any) => {
     transition: background-color 0.18s ease;
 
     &:hover {
-      background-color: var(--wf-primary-lighter, #f0f7ff);
+      background-color: var(--wf-primary-lighter);
     }
 
     /* 暗黑模式 hover */
@@ -119,7 +119,7 @@ const handleClick = (item: any) => {
   justify-content: center;
   width: 30px;
   height: 30px;
-  background: var(--wf-primary-light, #ecf5ff);
+  background: var(--wf-primary-light);
   border-radius: 50%;
   transition: all 0.18s ease;
 
