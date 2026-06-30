@@ -155,7 +155,6 @@ onMounted(() => {
   // 移动端新增（无definitionId）时强制默认仿钉钉
   if (isMobile.value && !props.definitionId) {
     form.value.modelValue = 'MIMIC';
-    emit('update:model-value');
   }
 });
 
