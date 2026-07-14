@@ -6,7 +6,7 @@
 
     <groupId>org.dromara.warm</groupId>
     <artifactId>warm-flow</artifactId>
-    <version>1.8.8</version>
+    <version>1.8.9</version>
     <packaging>pom</packaging>
 
     <name>warm-flow</name>
@@ -512,6 +512,8 @@
                             <publishingServerId>ossrh</publishingServerId>
                             <!-- 是否自动发布，false需要在手动发布：https://central.sonatype.com/publishing -->
                             <autoPublish>true</autoPublish>
+                            <!-- 只生成 md5 + sha1，砍掉 sha256/sha512，减少文件数 -->
+                            <checksums>required</checksums>
                         </configuration>
                     </plugin>
                     <plugin>
