@@ -235,7 +235,12 @@ const zh: WfMessageTree = {
     errIsolated: '存在 {n} 个孤立节点（未连任何边）'
   },
   edgeTooltip: {
-    approval: '审批'
+    title: '添加节点',
+    approval: '审批',
+    approvalDesc: '人工审批处理',
+    serialDesc: '多分支仅走一条',
+    parallelDesc: '多分支同时执行',
+    inclusiveDesc: '按条件走多条'
   },
   baseNode: {
     initiator: '发起人',
@@ -451,7 +456,12 @@ const en: WfMessageTree = {
     errIsolated: '{n} isolated node(s) (not connected to any edge)'
   },
   edgeTooltip: {
-    approval: 'Approval'
+    title: 'Add Node',
+    approval: 'Approval',
+    approvalDesc: 'Manual approval step',
+    serialDesc: 'Only one branch runs',
+    parallelDesc: 'All branches run',
+    inclusiveDesc: 'Conditional branches'
   },
   baseNode: {
     initiator: 'Initiator',

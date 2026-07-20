@@ -12,13 +12,14 @@ export abstract class GatewayView extends RectNode {
 
     // 创建一个包含图标和文本的容器
     if (incomingEdges.length > 1) {
+      // 汇聚（结束）网关只有图标：水平垂直居中于胶囊（24px 保证小尺寸下依然清晰）
       return h(
           'svg',
           {
-            x: x - width / 2  + 23,
-            y: y - height / 2 + 3,
-            width: 25,
-            height: 25,
+            x: x - 12,
+            y: y - 12,
+            width: 24,
+            height: 24,
             viewBox: '0 0 1024 1024',
           },
           [
@@ -41,12 +42,14 @@ export abstract class GatewayView extends RectNode {
     return this.getSvg(x, y, width, height, text.value, style)
   }
 
-  // 自定义节点外观
+  // 自定义节点外观：语义色胶囊 chip（阴影 / hover 放大见 FlowDesigner 全局样式 .wf-gateway-chip）
   getShape(): h.JSX.Element {
     const { model } = this.props;
     const { x, y, width, height, radius } = model;
     const style = model.getNodeStyle();
-    return h('g', {style: {
+    return h('g', {
+      className: 'wf-gateway-chip',
+      style: {
         cursor: 'pointer'
       }}, [
       h('rect', {
@@ -57,6 +60,7 @@ export abstract class GatewayView extends RectNode {
         ry: radius,
         width,
         height,
+        'stroke-width': 1.2,
       }),
       this.getLabelShape(),
     ]);

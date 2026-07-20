@@ -10,7 +10,7 @@ class ParallelModel extends GatewayModel {
     applyClassicDesignColor(style, this.properties, '19,194,194');
     const inDesigner = typeof window !== 'undefined' && (window as any).__WF_FLOW_DESIGN_MODE__;
     if (inDesigner && typeof style._statusRgba === 'function') {
-      style.fill = style._statusRgba(0.12);
+      style.fill = style._statusRgba(0.15);
     }
     return style;
   }
@@ -21,12 +21,12 @@ class ParallelView extends GatewayView {
   getSvg(x: number, y: number, width: number, height: number, textValue: string, style: { stroke: string, fill: string }): h.JSX.Element {
     // 创建一个包含图标和文本的容器
     return h('g', {}, [
-      // 图标 SVG
+      // 图标 SVG：垂直居中于胶囊，左内边距 9
       h('svg', {
-        x: x - width / 2,
-        y: y - height / 2 + 3,
-        width: 25,
-        height: 25,
+        x: x - width / 2 + 8,
+        y: y - 12,
+        width: 24,
+        height: 24,
         viewBox: '0 0 1024 1024',
       }, [
         h('path', {
@@ -42,14 +42,15 @@ class ParallelView extends GatewayView {
           d: 'M512 970.453333a66.56 66.56 0 0 1-47.146667-19.626666L72.96 558.933333a66.346667 66.346667 0 0 1 0-94.293333L464.853333 72.533333a68.266667 68.266667 0 0 1 94.293334 0l391.893333 392.106667a66.346667 66.346667 0 0 1 0 94.293333L559.146667 950.826667a66.56 66.56 0 0 1-47.146667 19.626666z m0-853.333333a2.986667 2.986667 0 0 0-1.92 0L118.186667 509.866667a2.56 2.56 0 0 0 0 3.626666l391.893333 392.106667a3.2 3.2 0 0 0 3.84 0l391.893333-392.106667a2.986667 2.986667 0 0 0 0-3.626666L513.92 117.76a2.986667 2.986667 0 0 0-1.92-0.64z',
         }),
       ]),
-      // 文本元素，相对于g元素定位
+      // 文本元素：随类型语义色着色 + 半粗，与图标同基线垂直居中
       textValue ? h('text', {
-        x: x - width / 2 + 27,
-        y: y - height / 2 + 20,
-        fontSize: 13,
+        x: x - width / 2 + 35,
+        y: y + 4.5,
+        fontSize: 12.5,
         style: {
           userSelect: 'none',
-          fill: 'var(--wf-text-primary, #303133)',
+          fill: style.stroke || '#409eff',
+          fontWeight: 600,
         }
       }, textValue) : null
     ]);

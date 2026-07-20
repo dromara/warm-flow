@@ -9,7 +9,7 @@ class SerialModel extends GatewayModel {
     applyClassicDesignColor(style, this.properties, '245,158,11');
     const inDesigner = typeof window !== 'undefined' && (window as any).__WF_FLOW_DESIGN_MODE__;
     if (inDesigner && typeof style._statusRgba === 'function') {
-      style.fill = style._statusRgba(0.12);
+      style.fill = style._statusRgba(0.15);
     }
     return style;
   }
@@ -19,12 +19,12 @@ class SerialView extends GatewayView {
 
   getSvg(x: number, y: number, width: number, height: number, textValue: string, style: { stroke: string, fill: string }): h.JSX.Element {
     return h('g', {}, [
-      // 图标 SVG
+      // 图标 SVG：垂直居中于胶囊，左内边距 9
       h('svg', {
-        x: x - width / 2,
-        y: y - height / 2 + 3,
-        width: 25,
-        height: 25,
+        x: x - width / 2 + 8,
+        y: y - 12,
+        width: 24,
+        height: 24,
         viewBox: '0 0 1024 1024',
       }, [
         // 单个输入边时的图标
@@ -41,14 +41,15 @@ class SerialView extends GatewayView {
           d: 'M554.666667 516.266667l107.946666-107.946667a30.506667 30.506667 0 0 0-42.666666-42.666667L512 473.173333l-107.946667-107.946666a30.506667 30.506667 0 0 0-42.666666 42.666666L469.333333 516.266667l-108.8 107.946666a30.506667 30.506667 0 1 0 42.666667 42.666667l108.8-107.306667 106.666667 107.733334a30.506667 30.506667 0 0 0 42.666666-42.666667z',
         }),
       ]),
-      // 文本元素，相对于g元素定位
+      // 文本元素：随类型语义色着色 + 半粗，与图标同基线垂直居中
       textValue ? h('text', {
-        x: x - width / 2 + 27,
-        y: y - height / 2 + 20,
-        fontSize: 13,
+        x: x - width / 2 + 35,
+        y: y + 4.5,
+        fontSize: 12.5,
         style: {
           userSelect: 'none',
-          fill: 'var(--wf-text-primary, #303133)',
+          fill: style.stroke || '#409eff',
+          fontWeight: 600,
         }
       }, textValue) : null
     ]);

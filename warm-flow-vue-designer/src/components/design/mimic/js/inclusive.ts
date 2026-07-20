@@ -9,7 +9,7 @@ class InclusiveModel extends GatewayModel {
     applyClassicDesignColor(style, this.properties, '146,84,222');
     const inDesigner = typeof window !== 'undefined' && (window as any).__WF_FLOW_DESIGN_MODE__;
     if (inDesigner && typeof style._statusRgba === 'function') {
-      style.fill = style._statusRgba(0.12);
+      style.fill = style._statusRgba(0.15);
     }
     return style;
   }
@@ -19,12 +19,12 @@ class InclusiveView extends GatewayView {
 
   getSvg(x: number, y: number, width: number, height: number, textValue: string, style: { stroke: string, fill: string }): h.JSX.Element {
     return h('g', {}, [
-      // 图标 SVG
+      // 图标 SVG：垂直居中于胶囊，左内边距 9
       h('svg', {
-        x: x - width / 2,
-        y: y - height / 2 + 3,
-        width: 25,
-        height: 25,
+        x: x - width / 2 + 8,
+        y: y - 12,
+        width: 24,
+        height: 24,
         viewBox: '0 0 1024 1024',
       }, [
         // 单个输入边时的图标
@@ -45,14 +45,15 @@ class InclusiveView extends GatewayView {
             strokeWidth: 60,
         }),
       ]),
-      // 文本元素，相对于g元素定位
+      // 文本元素：随类型语义色着色 + 半粗，与图标同基线垂直居中
       textValue ? h('text', {
-        x: x - width / 2 + 27,
-        y: y - height / 2 + 20,
-        fontSize: 13,
+        x: x - width / 2 + 35,
+        y: y + 4.5,
+        fontSize: 12.5,
         style: {
           userSelect: 'none',
-          fill: 'var(--wf-text-primary, #303133)',
+          fill: style.stroke || '#409eff',
+          fontWeight: 600,
         }
       }, textValue) : null
     ]);

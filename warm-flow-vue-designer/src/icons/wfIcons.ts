@@ -68,6 +68,27 @@ export const wfIcons: IconifyJSON = {
       height: 1024,
       body: '<path d="M85.418667 512L512.021333 85.397333 938.624 512 512.021333 938.602667z" fill="#ecf5ff"/><path d="M512 714.453333A32 32 0 0 1 480 682.666667v-138.666667H341.333333a32 32 0 1 1 0-64h138.666667V341.333333a32 32 0 0 1 64 0v138.666667H682.666667a32 32 0 0 1 0 64h-138.666667V682.666667a32 32 0 0 1-32 31.786666z" fill="#409eff"/><path d="M512 970.453333a66.56 66.56 0 0 1-47.146667-19.626666L72.96 558.933333a66.346667 66.346667 0 0 1 0-94.293333L464.853333 72.533333a68.266667 68.266667 0 0 1 94.293334 0l391.893333 392.106667a66.346667 66.346667 0 0 1 0 94.293333L559.146667 950.826667a66.56 66.56 0 0 1-47.146667 19.626666z m0-853.333333a2.986667 2.986667 0 0 0-1.92 0L118.186667 509.866667a2.56 2.56 0 0 0 0 3.626666l391.893333 392.106667a3.2 3.2 0 0 0 3.84 0l391.893333-392.106667a2.986667 2.986667 0 0 0 0-3.626666L513.92 117.76a2.986667 2.986667 0 0 0-1.92-0.64z" fill="#409eff"/>'
     },
+    /* ===== 边「+」加节点弹层专用线性图标（currentColor，可随类型语义色着色） ===== */
+    addBetween: {
+      width: 24,
+      height: 24,
+      body: '<circle cx="12" cy="8.2" r="3.4" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M5.2 19.2c0-3.3 3-5.6 6.8-5.6s6.8 2.3 6.8 5.6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>'
+    },
+    addSerial: {
+      width: 24,
+      height: 24,
+      body: '<path d="M12 2.6 21.4 12 12 21.4 2.6 12Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9.4 9.4l5.2 5.2M14.6 9.4l-5.2 5.2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>'
+    },
+    addParallel: {
+      width: 24,
+      height: 24,
+      body: '<path d="M12 2.6 21.4 12 12 21.4 2.6 12Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 8.4v7.2M8.4 12h7.2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>'
+    },
+    addInclusive: {
+      width: 24,
+      height: 24,
+      body: '<path d="M12 2.6 21.4 12 12 21.4 2.6 12Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="12" cy="12" r="3.6" fill="none" stroke="currentColor" stroke-width="1.7"/>'
+    },
     formDesign: {
       width: 1024,
       height: 1024,

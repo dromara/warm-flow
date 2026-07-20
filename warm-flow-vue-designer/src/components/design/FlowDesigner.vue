@@ -314,10 +314,12 @@ const tooltipPosition = ref({ x: 0, y: 0 });
 const tooltipEdge = ref({});
 
 const handleOptionClick = (item: any) => {
-  if (item.icon === "between") {
+  // item.type 为节点类型（between/serial/parallel/inclusive）；item.icon 仅为弹层展示图标名
+  const nodeType = item.type || item.icon;
+  if (nodeType === "between") {
     addBetweenNode(lf.value, item.tooltipEdge);
   } else {
-    addGatewayNode(lf.value, item.tooltipEdge, item.icon);
+    addGatewayNode(lf.value, item.tooltipEdge, nodeType);
   }
   tooltipVisible.value = false;
   // 移动端/平板端：新增节点后自适应画布，确保所有节点可见
@@ -796,6 +798,43 @@ html.dark .container {
 
 .lf-menu .lf-menu-item__disabled:hover {
   background: transparent;
+}
+
+/* ========== 仿钉钉边「+」加节点按钮 / 条件徽标（SVG 组，类名由 mimic/js/skip.ts 注入） ==========
+   悬浮放大 + 主色投影，让「可点击加节点」的示能更明显；transform-box 保证以按钮自身为中心缩放。 */
+.wf-edge-plus {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 0.18s cubic-bezier(0.4, 0, 0.2, 1), filter 0.18s ease;
+  filter: drop-shadow(0 2px 6px rgba(64, 158, 255, 0.35));
+}
+
+.wf-edge-plus:hover {
+  transform: scale(1.18);
+  filter: drop-shadow(0 4px 10px rgba(64, 158, 255, 0.5));
+}
+
+.wf-edge-cond {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.wf-edge-cond:hover {
+  transform: scale(1.08);
+}
+
+/* 仿钉钉网关胶囊 chip（类名由 mimic/js/gatewayView.ts 注入）：柔和投影 + hover 微放大 */
+.wf-gateway-chip {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 0.18s cubic-bezier(0.4, 0, 0.2, 1), filter 0.18s ease;
+  filter: drop-shadow(0 2px 6px rgba(15, 23, 42, 0.10));
+}
+
+.wf-gateway-chip:hover {
+  transform: scale(1.06);
+  filter: drop-shadow(0 4px 10px rgba(15, 23, 42, 0.16));
 }
 
 /* ========== 加载态 / 空态覆盖层 ========== */
