@@ -288,7 +288,13 @@ const AntCheckbox = vModelComp('WfAntCheckbox', ACheckbox, 'checked', (props, ra
 const AntTreeSelect = vModelComp('WfAntTreeSelect', ATreeSelect, 'value', (props, raw) => {
   if (raw.data != null) { props.treeData = raw.data; delete props.data }
   if (raw.props != null) { props.fieldNames = raw.props; delete props.props }
-  if (raw['check-strictly'] != null) { props.treeCheckStrictly = raw['check-strictly']; delete props['check-strictly'] }
+  if (raw['check-strictly'] != null) {
+    // EP 的 check-strictly（父子不联动、任意节点可选）只在勾选（多选）模式下才对应 antd 的
+    // treeCheckStrictly；单选 TreeSelect 本就任意节点可选，若误传 treeCheckStrictly 会被 antd
+    // 判定为 checkable 模式，进而告警「value should be an array」且值形态错乱。
+    if (raw.multiple != null || raw.treeCheckable != null) props.treeCheckStrictly = raw['check-strictly']
+    delete props['check-strictly']
+  }
   delete props['value-key']
   // antd TreeSelect 不接受空串作为 value，空值统一为 undefined
   if (props.value === '' || props.value == null) props.value = undefined

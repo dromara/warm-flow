@@ -571,6 +571,26 @@ html.dark {
     }
   }
 
+  /* --- LogicFlow Menu 节点/边右键菜单暗黑适配（LF 默认白底不设文字色，暗黑下继承浅色文字导致白底白字不可见） --- */
+  .lf-menu {
+    background: var(--wf-bg-white, #1f1f1f);
+    border: 1px solid var(--wf-border-color, #333333);
+    color: var(--wf-text-primary, #e0e0e0);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+
+    .lf-menu-item:hover {
+      background: var(--wf-bg-color, #141414);
+    }
+
+    .lf-menu-item__disabled {
+      color: var(--wf-text-secondary, #808080);
+
+      &:hover {
+        background: transparent;
+      }
+    }
+  }
+
   /* --- 全局滚动条暗黑适配 --- */
   ::-webkit-scrollbar-thumb {
     background: #4a4a4a;

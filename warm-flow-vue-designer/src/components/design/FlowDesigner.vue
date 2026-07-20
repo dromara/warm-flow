@@ -776,6 +776,28 @@ html.dark .container {
   border: 1px solid var(--wf-border-color) !important;
 }
 
+/* ========== LogicFlow 节点/边右键菜单（Menu 扩展） ==========
+   LF 默认样式白底且不设文字色：暗黑下页面继承浅色文字 → 白底白字不可见（gitee #IJVBTJ）。
+   这里统一走 --wf-* token（html.dark 自动翻转），亮暗两态均显式着色。 */
+.lf-menu {
+  background: var(--wf-bg-white, #fff);
+  border: 1px solid var(--wf-border-light, #efefee);
+  color: var(--wf-text-primary, #303133);
+  box-shadow: var(--wf-shadow-lg, 0 4px 16px rgba(0, 0, 0, 0.1));
+}
+
+.lf-menu .lf-menu-item:hover {
+  background: var(--wf-bg-color, #f3f3f3);
+}
+
+.lf-menu .lf-menu-item__disabled {
+  color: var(--wf-text-placeholder, #aaa);
+}
+
+.lf-menu .lf-menu-item__disabled:hover {
+  background: transparent;
+}
+
 /* ========== 加载态 / 空态覆盖层 ========== */
 .wf-state-overlay {
   position: absolute;

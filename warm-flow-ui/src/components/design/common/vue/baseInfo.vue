@@ -131,6 +131,10 @@
 import { ref, onMounted, onUnmounted, watch } from "vue";
 import {listenerList} from "@/api/flow/definition.js";
 
+// 显式声明 emits：未声明时 Vue3 会把事件当作 attrs 透传，部分浏览器下引发
+// setAttribute 无效属性名异常（gitee #IJV7GC / PR #393 根因之一）
+const emit = defineEmits(['update:model-value', 'update:flow-name']);
+
 const { proxy } = getCurrentInstance();
 
 // 响应式屏幕检测
@@ -199,6 +203,7 @@ const form = ref({
 watch(() => props.logicJson, newValue => {
   if (newValue && Object.keys(newValue).length > 0) {
     Object.assign(form.value, newValue);
+    normalizeStringFields();
     setListenerData();
     // 移动端新增时强制默认仿钉钉（覆盖logicJson中可能为空的值）
     if (isMobile.value && !props.definitionId) {
@@ -234,6 +239,19 @@ const rules = {
 
 // 表单引用（用于校验）
 const formRef = ref();
+
+/**
+ * formPath / category 必须是字符串：el-tree-select 在部分（旧内核）浏览器下 v-model 可能回传数组，
+ * 数组渗入后会被下游组件展开成 DOM 属性，触发 setAttribute('0') 异常白屏（gitee #IJV7GC / PR #393）
+ */
+function normalizeStringFields() {
+  if (Array.isArray(form.value.formPath)) {
+    form.value.formPath = form.value.formPath[0] || '';
+  }
+  if (Array.isArray(form.value.category)) {
+    form.value.category = form.value.category[0] || '';
+  }
+}
 
 function setListenerData() {
   // 处理监听器数据
@@ -277,16 +295,17 @@ function validate() {
 
 function nameChange(flowName) {
   // 可以在这里添加额外的逻辑，比如验证或格式化
-  proxy.$emit('update:flow-name', flowName); // 如果需要通知父组件
+  emit('update:flow-name', flowName); // 如果需要通知父组件
 }
 
 function modelValueChange() {
-  proxy.$emit('update:model-value'); // 如果需要通知父组件
+  emit('update:model-value'); // 如果需要通知父组件
 }
 
 function getFormData() {
   form.value.listenerType = form.value.listenerRows.map(row => row.listenerType).join(",")
   form.value.listenerPath = form.value.listenerRows.map(row => row.listenerPath).join("@@")
+  normalizeStringFields();
   return form.value;
 }
 

@@ -202,6 +202,7 @@ watch(() => props.logicJson, newValue => {
     if (!form.value.formCustom) {
       form.value.formCustom = "N";
     }
+    normalizeStringFields();
     setListenerData();
     // 移动端新增时强制默认仿钉钉（覆盖logicJson中可能为空的值）
     if (isMobile.value && !props.definitionId) {
@@ -237,6 +238,19 @@ const rules = computed(() => ({
 
 // 表单引用（用于校验）
 const formRef = ref();
+
+/**
+ * formPath / category 必须是字符串：tree-select 在部分（旧内核）浏览器下 v-model 可能回传数组，
+ * 数组渗入后会被下游组件展开成 DOM 属性，触发 setAttribute('0') 异常白屏（gitee #IJV7GC / PR #393）
+ */
+function normalizeStringFields() {
+  if (Array.isArray(form.value.formPath)) {
+    form.value.formPath = (form.value.formPath[0] as string) || '';
+  }
+  if (Array.isArray(form.value.category)) {
+    form.value.category = (form.value.category[0] as string) || '';
+  }
+}
 
 function setListenerData() {
   // 处理监听器数据
@@ -293,6 +307,7 @@ function modelValueChange() {
 function getFormData() {
   form.value.listenerType = form.value.listenerRows.map(row => row.listenerType).join(",")
   form.value.listenerPath = form.value.listenerRows.map(row => row.listenerPath).join("@@")
+  normalizeStringFields();
   return form.value;
 }
 
